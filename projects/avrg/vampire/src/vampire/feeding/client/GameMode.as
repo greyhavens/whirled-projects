@@ -19,7 +19,6 @@ public class GameMode extends AppMode
 {
     public function GameMode (predatorIds :Array, preyId :int)
     {
-        GameCtx.init();
         GameCtx.predatorIds = predatorIds;
         GameCtx.preyId = preyId;
         GameCtx.gameMode = this;
@@ -136,7 +135,7 @@ public class GameMode extends AppMode
     protected function setupNetwork () :void
     {
         if (ClientCtx.isConnected) {
-            registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
+            registerListener(GameCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
         }
     }
 
@@ -147,9 +146,19 @@ public class GameMode extends AppMode
 
         } else if (e.msg is GameOverMsg) {
             // send our final score to the server
-            ClientCtx.msgMgr.sendMessage(FinalScoreMsg.create(GameCtx.bloodMeter.bloodCount));
-            gameOver("Final score: " + GameCtx.bloodMeter.bloodCount);
+            GameCtx.msgMgr.sendMessage(FinalScoreMsg.create(GameCtx.bloodMeter.bloodCount));
+            onGameOver(true);
+
+        } else if (e.msg is GameEndedPrematurelyMsg) {
+            onGameOver(false);
+            log.info("Game ended prematurely");
+
         }
+    }
+
+    protected function onGameOver (successfullyEnded :Boolean) :void
+    {
+        GameCtx.gameCompleteCallback();
     }
 
     protected function onNewMultiplier (msg :CreateBonusMsg) :void
@@ -173,14 +182,6 @@ public class GameMode extends AppMode
         }
 
         super.update(dt);
-    }
-
-    public function gameOver (reason :String) :void
-    {
-        if (!_gameOver) {
-            ClientCtx.mainLoop.changeMode(new GameOverMode(reason));
-            _gameOver = true;
-        }
     }
 
     protected function onHeartbeat (...ignored) :void

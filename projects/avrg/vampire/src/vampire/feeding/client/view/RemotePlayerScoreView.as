@@ -17,7 +17,7 @@ public class RemotePlayerScoreView extends SceneObject
         _tf = UIBits.createText("");
 
         updateScore(0);
-        registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
+        registerListener(GameCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
     }
 
     override public function get displayObject () :DisplayObject

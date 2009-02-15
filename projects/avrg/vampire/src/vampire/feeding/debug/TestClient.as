@@ -52,6 +52,7 @@ public class TestClient extends Sprite
     protected function onGameComplete (completedSuccessfully :Boolean) :void
     {
         log.info("Feeding complete", "completedSuccessfully", completedSuccessfully);
+        removeChild(_curGame);
         _curGame = null;
     }
 

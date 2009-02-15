@@ -14,6 +14,7 @@ public class Util
         mgr.addMessageType(StartGameMsg);
         mgr.addMessageType(GameOverMsg);
         mgr.addMessageType(FinalScoreMsg);
+        mgr.addMessageType(GameEndedPrematurelyMsg);
     }
 }
 

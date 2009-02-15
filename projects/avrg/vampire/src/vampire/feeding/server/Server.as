@@ -56,30 +56,33 @@ public class Server extends FeedingGameServer
 
     override public function playerLeft (playerId :int) :Boolean
     {
+        var didShutdown :Boolean;
+
         if (playerId == _preyId) {
             _preyId = -1;
         } else {
             ArrayUtil.removeFirst(_predatorIds, playerId);
         }
 
-        if (_state == STATE_WAITING_FOR_PLAYERS) {
-            ArrayUtil.removeFirst(_playersNeedingCheckin, playerId);
-            startGameIfReady();
-
-        } else if (_state == STATE_WAITING_FOR_SCORES) {
-            ArrayUtil.removeFirst(_playersNeedingScoreUpdate, playerId);
-            endGameIfReady();
-        }
-
-        // If the last predator or prey just left the game, we're done and should shut down
-        // prematurely
         if (_predatorIds.length == 0 || _preyId == -1) {
+            // If the last predator or prey just left the game, we're done and should shut down
+            // prematurely
             shutdown();
-            return true;
+            didShutdown = true;
+            sendMessage(GameEndedPrematurelyMsg.create());
 
         } else {
-            return false;
+            if (_state == STATE_WAITING_FOR_PLAYERS) {
+                ArrayUtil.removeFirst(_playersNeedingCheckin, playerId);
+                startGameIfReady();
+
+            } else if (_state == STATE_WAITING_FOR_SCORES) {
+                ArrayUtil.removeFirst(_playersNeedingScoreUpdate, playerId);
+                endGameIfReady();
+            }
         }
+
+        return didShutdown;
     }
 
     override public function get gameId () :int
@@ -200,7 +203,7 @@ public class Server extends FeedingGameServer
         }
     }
 
-    protected function onTimeOver () :void
+    protected function onTimeOver (...ignored) :void
     {
         if (_state == STATE_PLAYING) {
             _state = STATE_WAITING_FOR_SCORES;

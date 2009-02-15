@@ -1,0 +1,24 @@
+<!-- build configuration -->
+<project name="FeedingGameTest" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="TestClient"/>
+  <property name="app.source-dir" value="src"/>
+  <property name="app.package-dir" value="vampire/feeding/debug"/>
+  <property name="app.enable-server-agent" value="true"/>
+  <property name="app.server-agent" value="TestServer"/>
+  <property name="app.server-agent-package-dir" value="vampire/feeding/debug"/>
+
+  <property name="local.msoy-pages-dir" value="/export/msoy/pages/media"/>
+  <property name="local.client-name" value="cc390909cae539c4763d175478d34abce6cdd604.swf"/>
+  <property name="local.server-name" value="09043a0d67d1ac5d1659c52e00c86ae0c917b17c.abc"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+  <target name="copylocal">
+	<copy overwrite="true" file="${app.name}.swf" toFile="${local.msoy-pages-dir}/${local.client-name}"/>
+	<copy overwrite="true" file="${app.name}.abc" toFile="${local.msoy-pages-dir}/${local.server-name}"/>
+  </target>
+
+</project>

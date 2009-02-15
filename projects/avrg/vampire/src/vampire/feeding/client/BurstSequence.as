@@ -76,7 +76,7 @@ public class BurstSequence extends SceneObject
             }
 
             if (_totalBursts >= Constants.CREATE_BONUS_BURST_SIZE) {
-                ClientCtx.msgMgr.sendMessage(CreateBonusMsg.create(
+                GameCtx.msgMgr.sendMessage(CreateBonusMsg.create(
                     ClientCtx.localPlayerId,
                     this.x,
                     this.y,

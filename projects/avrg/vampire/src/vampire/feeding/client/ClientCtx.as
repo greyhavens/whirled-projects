@@ -18,7 +18,6 @@ public class ClientCtx
     public static var mainLoop :MainLoop;
     public static var rsrcs :ResourceManager;
     public static var audio :AudioManager;
-    public static var msgMgr :ClientMsgMgr;
 
     public static function get localPlayerId () :int
     {

@@ -38,7 +38,6 @@ public class BloodBloom extends FeedingGameClient
         ClientCtx.mainLoop = _sg.ctx.mainLoop;
         ClientCtx.rsrcs = _sg.ctx.rsrcs;
         ClientCtx.audio = _sg.ctx.audio;
-        _sg.run();
 
         loadResources();
 
@@ -53,9 +52,12 @@ public class BloodBloom extends FeedingGameClient
 
         DEBUG_REMOVE_ME();
 
-        ClientCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);
-        Util.initMessageManager(ClientCtx.msgMgr);
-        _events.registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
+        GameCtx.init();
+
+        GameCtx.gameCompleteCallback = gameCompleteCallback;
+        GameCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);
+        Util.initMessageManager(GameCtx.msgMgr);
+        _events.registerListener(GameCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
 
         _events.registerListener(this, Event.ADDED_TO_STAGE, onAddedToStage);
         _events.registerListener(this, Event.REMOVED_FROM_STAGE, onQuit);
@@ -74,6 +76,8 @@ public class BloodBloom extends FeedingGameClient
                 }
             }
         }
+
+        ClientCtx.mainLoop.run();
     }
 
     protected function onMsgReceived (e :ClientMsgEvent) :void
@@ -97,6 +101,8 @@ public class BloodBloom extends FeedingGameClient
     protected function onQuit (...ignored) :void
     {
         _events.freeAllHandlers();
+        ClientCtx.mainLoop.stop();
+        ClientCtx.audio.stopAllSounds();
     }
 
     protected function maybeReportReady () :void
@@ -106,7 +112,7 @@ public class BloodBloom extends FeedingGameClient
             if (ClientCtx.isSinglePlayer) {
                 startGame([ 0 ], -1);
             } else {
-                ClientCtx.msgMgr.sendMessage(ClientReadyMsg.create());
+                GameCtx.msgMgr.sendMessage(ClientReadyMsg.create());
             }
         }
     }
