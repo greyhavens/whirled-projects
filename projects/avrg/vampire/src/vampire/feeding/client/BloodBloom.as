@@ -101,8 +101,10 @@ public class BloodBloom extends FeedingGameClient
     protected function onQuit (...ignored) :void
     {
         _events.freeAllHandlers();
-        ClientCtx.mainLoop.stop();
+        ClientCtx.mainLoop.shutdown();
         ClientCtx.audio.stopAllSounds();
+
+        log.info("Quitting BloodBloom");
     }
 
     protected function maybeReportReady () :void
