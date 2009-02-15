@@ -45,7 +45,7 @@ public class BloodBloom extends FeedingGameClient
         _inited = true;
     }
 
-    public function BloodBloom (gameId :int)
+    public function BloodBloom (gameId :int, gameCompleteCallback :Function)
     {
          if (!_inited) {
             throw new Error("FeedingGameClient.init has not been called");

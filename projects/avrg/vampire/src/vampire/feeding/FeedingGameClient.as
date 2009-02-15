@@ -21,10 +21,14 @@ public class FeedingGameClient extends Sprite
     /**
      * Starts a FeedingGameClient and connects it to the given game.
      * @see FeedingGameServer.get gameId
+     *
+     * @param gameCompleteCallback this function will be called on successful completion of
+     * a game. It takes no parameters and returns nothing.
+     * function gameCompleteCallback () :void
      */
-    public static function create (gameId :int) :FeedingGameClient
+    public static function create (gameId :int, gameCompleteCallback :Function) :FeedingGameClient
     {
-        return new BloodBloom(gameId);
+        return new BloodBloom(gameId, gameCompleteCallback);
     }
 
     /**

@@ -122,6 +122,8 @@ public class Server extends FeedingGameServer
             return;
         }
 
+        log.info("Received message", "name", msg.name, "sender", e.senderId);
+
         switch (name) {
         case ClientReadyMsg.NAME:
             if (_state != STATE_WAITING_FOR_PLAYERS) {

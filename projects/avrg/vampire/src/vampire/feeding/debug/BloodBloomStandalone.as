@@ -12,7 +12,7 @@ public class BloodBloomStandalone extends Sprite
     public function BloodBloomStandalone ()
     {
         BloodBloom.init(this, new AVRGameControl(this));
-        addChild(new BloodBloom(0));
+        addChild(new BloodBloom(0, function () :void {}));
     }
 }
 
