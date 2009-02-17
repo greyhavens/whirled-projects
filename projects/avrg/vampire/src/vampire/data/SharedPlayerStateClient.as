@@ -36,9 +36,13 @@ public class SharedPlayerStateClient
 //        return int(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL));
     }
     
-    public static function getXP (playerId :int) :int
+    public static function getXP (playerId :int) :Number
     {
-        return int(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP));
+        var xp :Number = Number(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP));
+        if( isNaN( xp )) {
+            return 0;
+        }
+        return xp;
     }
     
     public static function getBloodBonded (playerId :int) :int
@@ -69,7 +73,7 @@ public class SharedPlayerStateClient
     
     public static function getTargetHotspot (playerId :int) :Array
     {
-        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_HOTSPOT) as Array;
+        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT) as Array;
     }
     
     public static function getTargetBlood (playerId :int) :Number
@@ -84,7 +88,7 @@ public class SharedPlayerStateClient
     
     public static function getTargetLocation (playerId :int) :Array
     {
-        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_LOCATION) as Array;
+        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LOCATION) as Array;
     }
     
     public static function getCurrentAction (playerId :int) :String
