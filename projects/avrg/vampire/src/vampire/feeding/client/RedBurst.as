@@ -1,9 +1,9 @@
 package vampire.feeding.client {
 
-import vampire.feeding.*;
-
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.tasks.*;
+
+import vampire.feeding.*;
 
 public class RedBurst extends CellBurst
 {

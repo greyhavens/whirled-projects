@@ -69,7 +69,7 @@ public class GameMode extends AppMode
         timerView.y = TIMER_LOC.y;
         addObject(timerView, GameCtx.effectLayer);
 
-        GameCtx.bloodMeter = new PredatorBloodMeter();
+        GameCtx.bloodMeter = new BloodMeter();
         GameCtx.bloodMeter.x = BLOOD_METER_LOC.x;
         GameCtx.bloodMeter.y = BLOOD_METER_LOC.y;
         addObject(GameCtx.bloodMeter, GameCtx.effectLayer);

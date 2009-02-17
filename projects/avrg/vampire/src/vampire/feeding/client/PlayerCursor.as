@@ -1,10 +1,15 @@
 package vampire.feeding.client {
 
-import vampire.feeding.*;
-
 import com.threerings.flash.MathUtil;
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.SimObjectRef;
+import com.whirled.contrib.simplegame.resource.SwfResource;
+import com.whirled.contrib.simplegame.tasks.RotationTask;
+
+import flash.display.DisplayObject;
+import flash.display.MovieClip;
+
+import vampire.feeding.*;
 
 public class PlayerCursor extends CollidableObj
 {
@@ -12,6 +17,18 @@ public class PlayerCursor extends CollidableObj
     {
         _radius = Constants.CURSOR_RADIUS;
         _playerType = playerType;
+
+        _movie = ClientCtx.instantiateMovieClip("blood", "cursor", true, true);
+    }
+
+    override public function get displayObject () :DisplayObject
+    {
+        return _movie;
+    }
+
+    override protected function destroyed () :void
+    {
+        SwfResource.releaseMovieClip(_movie);
     }
 
     public function set moveTarget (val :Vector2) :void
@@ -66,7 +83,32 @@ public class PlayerCursor extends CollidableObj
             }
         }
 
+        // rotate towards our move direction
+        if (!_loc.similar(_lastLoc, 0.5)) {
+            // rotate towards our move direction. 0 degrees == straight down
+            var targetRotation :Number =
+                -90 + ((_loc.subtract(_lastLoc).angle) * (180 / Math.PI));
+
+            var curRotation :Number = this.rotation;
+            if (targetRotation - curRotation > 180) {
+                targetRotation -= 360;
+            } else if (targetRotation - curRotation < -180) {
+                targetRotation += 360;
+            }
+
+            addNamedTask(
+                "Rotate",
+                RotationTask.CreateEaseOut(
+                    targetRotation,
+                    Math.abs((targetRotation % 360) - curRotation) / ROTATE_SPEED),
+                true);
+
+        }
+
         _lastLoc = _loc.clone();
+
+        this.displayObject.x = _loc.x;
+        this.displayObject.y = _loc.y;
     }
 
     public function offsetSpeedPenalty (offset :Number) :void
@@ -136,6 +178,8 @@ public class PlayerCursor extends CollidableObj
             Constants.CURSOR_SPEED_MAX);
     }
 
+    protected var _movie :MovieClip;
+
     protected var _playerType :int;
 
     protected var _moveDirection :Vector2 = new Vector2();
@@ -146,6 +190,8 @@ public class PlayerCursor extends CollidableObj
 
     protected var _lastLoc :Vector2 = new Vector2();
     protected var _lastArtery :int = -1;
+
+    protected static const ROTATE_SPEED :Number = 180; // degrees/second
 }
 
 }

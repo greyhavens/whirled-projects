@@ -1,11 +1,19 @@
 package vampire.feeding.client {
 
-import vampire.feeding.*;
-
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.SimObjectRef;
+import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
+
+import flash.display.DisplayObject;
+import flash.display.MovieClip;
+import flash.display.Sprite;
+import flash.text.TextField;
+
+import vampire.feeding.*;
+import vampire.feeding.client.view.SpriteUtil;
+import vampire.feeding.client.view.UIBits;
 
 public class Cell extends CollidableObj
 {
@@ -71,12 +79,41 @@ public class Cell extends CollidableObj
                     GameObjects.createWhiteBurst(thisCell);
                 })));
         }
+
+        _sprite = SpriteUtil.createSprite();
+        _movie = ClientCtx.instantiateMovieClip("blood", MOVIE_NAMES[type], true, true);
+        _sprite.addChild(_movie);
+
+        if (type == Constants.CELL_BONUS) {
+            var text :String = "x" + _multiplier;
+            var tf :TextField = UIBits.createText(text, 1, 0, 0xffffff);
+            tf.x = -tf.width * 0.5;
+            tf.y = -tf.height * 0.5;
+            _sprite.addChild(tf);
+        }
+
+        if (_state == Cell.STATE_BIRTH) {
+            // fade in
+            this.alpha = 0;
+            addTask(new AlphaTask(1, 0.4));
+        }
+    }
+
+    override public function get displayObject () :DisplayObject
+    {
+        return _sprite;
+    }
+
+    override protected function destroyed () :void
+    {
+        SwfResource.releaseMovieClip(_movie);
+        super.destroyed();
     }
 
     public function attachToCursor (cursor :PlayerCursor) :void
     {
         _attachedTo = cursor.ref;
-        _attachedOffset = new Vector2(this.x - cursor.x, this.y - cursor.y);
+        _attachedOffset = _loc.subtract(cursor.loc);
     }
 
     public function detachFromCursor () :void
@@ -89,8 +126,7 @@ public class Cell extends CollidableObj
         _state = STATE_BIRTH;
 
         // When red cells are born, they burst out of the center of the heart
-        this.x = Constants.GAME_CTR.x;
-        this.y = Constants.GAME_CTR.y;
+        _loc = Constants.GAME_CTR.clone();
 
         // fire out of the heart in a random direction
         var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
@@ -113,10 +149,7 @@ public class Cell extends CollidableObj
         var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
         var distRange :NumRange = Constants.CELL_BIRTH_DISTANCE[Constants.CELL_WHITE];
         var dist :Number = distRange.next();
-        var loc :Vector2 = Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
-
-        this.x = loc.x;
-        this.y = loc.y;
+        _loc = Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
 
         addTask(After(Constants.CELL_BIRTH_TIME,
             new FunctionTask(function () :void {
@@ -152,6 +185,9 @@ public class Cell extends CollidableObj
         }
 
         super.update(dt);
+
+        this.displayObject.x = _loc.x;
+        this.displayObject.y = _loc.y;
     }
 
     override public function getObjectGroup (groupNum :int) :String
@@ -210,11 +246,16 @@ public class Cell extends CollidableObj
     protected var _attachedTo :SimObjectRef = SimObjectRef.Null();
     protected var _attachedOffset :Vector2;
 
+    protected var _sprite :Sprite;
+    protected var _movie :MovieClip;
+
     protected static const SPEED_BASE :Number = 5;
     protected static const SPEED_FOLLOW :Number = 7;
 
     protected static const MOVE_INWARDS :int = 0;
     protected static const MOVE_OUTWARDS :int = 1;
+
+    protected static const MOVIE_NAMES :Array = [ "cell_red", "cell_white", "cell_bonus" ];
 }
 
 }

@@ -131,11 +131,6 @@ public class BloodBloom extends FeedingGameClient
         rm.queueResourceLoad("swf",   "blood",          { embeddedClass: SWF_BLOOD });
         rm.queueResourceLoad("swf",   "uiBits",         { embeddedClass: SWF_UIBITS });
         rm.queueResourceLoad("image", "bg",             { embeddedClass: IMG_BG });
-        rm.queueResourceLoad("image", "red_cell",       { embeddedClass: IMG_RED_CELL });
-        rm.queueResourceLoad("image", "white_cell",     { embeddedClass: IMG_WHITE_CELL });
-        rm.queueResourceLoad("image", "bonus_cell",     { embeddedClass: IMG_BONUS_CELL });
-        rm.queueResourceLoad("image", "predator_cursor", { embeddedClass: IMG_PREDATOR_CURSOR });
-        rm.queueResourceLoad("image", "prey_cursor",    { embeddedClass: IMG_PREY_CURSOR });
 
         rm.queueResourceLoad("sound", "sfx_heartbeat",  { embeddedClass: SOUND_HEARTBEAT });
         rm.queueResourceLoad("sound", "sfx_red_burst",  { embeddedClass: SOUND_RED_BURST });
@@ -166,16 +161,6 @@ public class BloodBloom extends FeedingGameClient
     protected static const SWF_UIBITS :Class;
     [Embed(source="../../../../rsrc/feeding/bg.png", mimeType="application/octet-stream")]
     protected static const IMG_BG :Class;
-    [Embed(source="../../../../rsrc/feeding/red_cell.png", mimeType="application/octet-stream")]
-    protected static const IMG_RED_CELL :Class;
-    [Embed(source="../../../../rsrc/feeding/white_cell.png", mimeType="application/octet-stream")]
-    protected static const IMG_WHITE_CELL :Class;
-    [Embed(source="../../../../rsrc/feeding/bonus_cell.png", mimeType="application/octet-stream")]
-    protected static const IMG_BONUS_CELL :Class;
-    [Embed(source="../../../../rsrc/feeding/vampire_cursor.png", mimeType="application/octet-stream")]
-    protected static const IMG_PREDATOR_CURSOR :Class;
-    [Embed(source="../../../../rsrc/feeding/victim_cursor.png", mimeType="application/octet-stream")]
-    protected static const IMG_PREY_CURSOR :Class;
 
     [Embed(source="../../../../rsrc/feeding/heartbeat.mp3")]
     protected static const SOUND_HEARTBEAT :Class;
