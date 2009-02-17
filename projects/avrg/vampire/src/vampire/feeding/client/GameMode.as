@@ -48,7 +48,17 @@ public class GameMode extends AppMode
         }
 
         // Setup game objects
-        GameCtx.heart = new Heart();
+        GameCtx.bgLayer.addChild(ClientCtx.instantiateBitmap("bg"));
+
+        var heartMovie :MovieClip = ClientCtx.instantiateMovieClip("blood", "circulatory");
+        heartMovie.x = Constants.GAME_CTR.x;
+        heartMovie.y = Constants.GAME_CTR.y;
+        GameCtx.bgLayer.addChild(heartMovie);
+
+        _arteryBottom = heartMovie["artery_bottom"];
+        _arteryTop = heartMovie["artery_TOP"];
+
+        GameCtx.heart = new Heart(heartMovie["heart"]);
         GameCtx.gameMode.addObject(GameCtx.heart);
         registerListener(GameCtx.heart, GameEvent.HEARTBEAT, onHeartbeat);
 
@@ -73,19 +83,6 @@ public class GameMode extends AppMode
         GameCtx.bloodMeter.x = BLOOD_METER_LOC.x;
         GameCtx.bloodMeter.y = BLOOD_METER_LOC.y;
         addObject(GameCtx.bloodMeter, GameCtx.effectLayer);
-
-        GameCtx.bgLayer.addChild(ClientCtx.instantiateBitmap("bg"));
-
-        var heartMovie :MovieClip = ClientCtx.instantiateMovieClip("blood", "circulatory");
-        heartMovie.x = Constants.GAME_CTR.x;
-        heartMovie.y = Constants.GAME_CTR.y;
-        GameCtx.bgLayer.addChild(heartMovie);
-
-        _arteryBottom = heartMovie["artery_bottom"];
-        _arteryTop = heartMovie["artery_TOP"];
-
-        var heartView :HeartView = new HeartView(heartMovie["heart"]);
-        addObject(heartView);
 
         GameCtx.cursor = GameObjects.createPlayerCursor();
         registerListener(GameCtx.cursor, GameEvent.WHITE_CELL_DELIVERED, onWhiteCellDelivered);

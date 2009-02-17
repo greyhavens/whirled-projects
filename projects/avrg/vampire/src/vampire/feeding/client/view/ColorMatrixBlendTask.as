@@ -35,7 +35,7 @@ public class ColorMatrixBlendTask
         var sceneObj :SceneComponent = obj as SceneComponent;
         if (sceneObj == null) {
             throw new Error("ColorMatrixBlendTask can only be applied to objects that " +
-                "implement SceneComponent");
+                            "implement SceneComponent");
         }
 
         _elapsedTime += dt;
