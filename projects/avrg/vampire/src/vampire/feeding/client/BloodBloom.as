@@ -32,6 +32,10 @@ public class BloodBloom extends FeedingGameClient
         ClientCtx.rsrcs = _sg.ctx.rsrcs;
         ClientCtx.audio = _sg.ctx.audio;
 
+        if (Constants.DEBUG_DISABLE_AUDIO) {
+            ClientCtx.audio.masterControls.volume(0);
+        }
+
         loadResources();
 
         _inited = true;
