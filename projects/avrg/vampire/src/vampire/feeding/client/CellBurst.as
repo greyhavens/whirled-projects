@@ -1,12 +1,14 @@
 package vampire.feeding.client {
 
-import com.threerings.flash.Vector2;
+import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
+import flash.display.Sprite;
 
 import vampire.feeding.*;
+import vampire.feeding.client.view.SpriteUtil;
 
 public class CellBurst extends CollidableObj
 {
@@ -16,7 +18,10 @@ public class CellBurst extends CollidableObj
         _radius = radiusMin;
         _radiusMax = radiusMax;
 
-        _movie = ClientCtx.instantiateMovieClip("blood", MOVIE_NAMES[cellType], true, false);
+        _movie = ClientCtx.instantiateMovieClip("blood", MOVIE_NAMES[cellType], true, true);
+        _sprite = SpriteUtil.createSprite();
+        _sprite.addChild(_movie);
+
         _movie.gotoAndStop(1);
 
         addTask(After(Constants.BURST_COMPLETE_TIME - 0.25,
@@ -35,13 +40,13 @@ public class CellBurst extends CollidableObj
 
     override protected function destroyed () :void
     {
-        //SwfResource.releaseMovieClip(_movie);
+        SwfResource.releaseMovieClip(_movie);
         super.destroyed();
     }
 
     override public function get displayObject () :DisplayObject
     {
-        return _movie;
+        return _sprite;
     }
 
     public function get radiusMax () :Number
@@ -69,6 +74,7 @@ public class CellBurst extends CollidableObj
         // Superclasses override
     }
 
+    protected var _sprite :Sprite;
     protected var _movie :MovieClip;
 
     protected var _cellType :int;
