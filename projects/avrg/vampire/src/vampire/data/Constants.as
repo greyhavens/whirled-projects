@@ -4,6 +4,9 @@
     
 public class Constants
 {
+    
+    public static const NON_PLAYER_TIMEOUT :Number = 20;
+    
     public static const CHAT_FEEDING_MIN_CHATS_PER_TIME_INTERVAL :int = 3;
     
     public static const CHAT_FEEDING_TIME_INTERVAL_MILLISECS :int = 60000;//A minute
@@ -130,11 +133,18 @@ public class Constants
     public static const ROOM_SIGNAL_ENTITYID_REPONSE :String = "EntityId Response";
     public static const SIGNAL_CLOSEST_ENTITY :String = "Signal: Closest Entity";
     public static const SIGNAL_PLAYER_TARGET :String = "Signal: Player Target";
+    public static const SIGNAL_PLAYER_IDS :String = "Signal: Player Ids";
+    public static const SIGNAL_AVATAR_MOVED :String = "Signal: Avatar Moved";
+    public static const SIGNAL_NON_PLAYER_LEFT_ROOM :String = "Signal: NonPlayer Left Room";
+    
     public static const SIGNAL_PLAYER_ARRIVED_AT_DESTINATION :String = "Signal: Player Arrived";
     public static const SIGNAL_TARGET_CHATTED :String = "Signal: Player Target Said Something";
     public static const SIGNAL_CHANGE_COLOR_SCHEME :String = "Signal: Change Color Scheme";
     public static const SIGNAL_CHANGE_COLOR_SCHEME_REQUEST :String = "Signal: Change Color Scheme REQUEST";
     
     public static const FEEDING_AVATAR_OFFSET :Vector2 = new Vector2(15, -5);
+    
+    public static const COLOR_SCHEME_VAMPIRE :String = "vampireColors";
+    public static const COLOR_SCHEME_HUMAN :String = "humanColors";
 }
 }
