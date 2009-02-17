@@ -1,14 +1,44 @@
 package vampire.server
 {
     import com.threerings.util.HashSet;
+    import com.threerings.util.Log;
+    
+    import vampire.feeding.FeedingGameServer;
     
 public class BloodBloomGameRecord
 {
-    public function BloodBloomGameRecord( predatorId :int, preyId :int)
+    public function BloodBloomGameRecord( room :Room, gameId :int, predatorId :int, preyId :int)
     {
+        _room = room;
+        _gameId = gameId;
         primaryPredator = predatorId;
         predators.add( primaryPredator );
         prey = preyId;
+    }
+    
+    public function startGame() :void
+    {
+        _gameServer = FeedingGameServer.create( _room.roomId, predators.toArray(), prey, gameFinishedCallback);
+        
+        // send a message with the game ID to each of the players, and store the
+        // playerIds in a map
+        ServerContext.ctrl.doBatch(function () :void {
+            for each (var playerId :int in playerIds) {
+//                _playerGameMap.put(playerId, game);
+                ServerContext.ctrl.getPlayer(playerId).sendMessage("StartClient", _gameServer.gameId);
+            }
+        });
+        
+        
+        _started = true;
+    }
+    
+    protected function gameFinishedCallback() :void
+    {
+        log.debug("Game finished");
+        log.debug("_gameServer.finalScore=" + _gameServer);
+        _finished = true;
+        
     }
     
     public function addPredator( playerId :int ) :void
@@ -31,11 +61,6 @@ public class BloodBloomGameRecord
         
     }
     
-    public function startGame() :void
-    {
-        _started = true;
-    }
-    
     public function get isStarted() :Boolean
     {
         return _started;
@@ -46,11 +71,44 @@ public class BloodBloomGameRecord
         return _started;
     }
     
+    public function setFinished( finished :Boolean) :void
+    {
+        _finished = finished;
+    }
+
+    
+    
+    
+    public function get gameId() :int
+    {
+        return _gameId;
+    }
+    
+    public function get playerIds() :Array
+    {
+        return predators.toArray().concat([prey]);
+    }
+    
+    public function get gameServer() :FeedingGameServer
+    {
+        return _gameServer;
+    }
+    
+    
+    
+    
+    protected var _room :Room;
+    protected var _gameId :int;
+    
+    protected var _gameServer :FeedingGameServer;
+    
     public var predators :HashSet = new HashSet();
     public var prey :int;
     public var primaryPredator :int;
     protected  var _started :Boolean = false;
     protected  var _finished :Boolean = false;
+    
+    protected var log :Log = Log.getLog( BloodBloomGameRecord );
 
 }
 }
