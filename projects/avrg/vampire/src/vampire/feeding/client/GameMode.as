@@ -12,7 +12,7 @@ import flash.display.MovieClip;
 import flash.geom.Point;
 
 import vampire.feeding.*;
-import vampire.feeding.client.view.*;
+import vampire.feeding.client.*;
 import vampire.feeding.net.*;
 
 public class GameMode extends AppMode
@@ -79,7 +79,7 @@ public class GameMode extends AppMode
         timerView.y = TIMER_LOC.y;
         addObject(timerView, GameCtx.effectLayer);
 
-        GameCtx.bloodMeter = new BloodMeter();
+        GameCtx.bloodMeter = new ScoreView();
         GameCtx.bloodMeter.x = BLOOD_METER_LOC.x;
         GameCtx.bloodMeter.y = BLOOD_METER_LOC.y;
         addObject(GameCtx.bloodMeter, GameCtx.effectLayer);
@@ -214,7 +214,7 @@ public class GameMode extends AppMode
 
     protected static var log :Log = Log.getLog(GameMode);
 
-    protected static const BLOOD_METER_LOC :Point = new Point(550, 75);
+    protected static const BLOOD_METER_LOC :Point = Constants.GAME_CTR.toPoint();
     protected static const TIMER_LOC :Point = Constants.GAME_CTR.toPoint();
     protected static const SCORE_VIEWS_LOC :Point = new Point(550, 120);
 }

@@ -1,4 +1,4 @@
-package vampire.feeding.client.view {
+package vampire.feeding.client {
 
 import com.whirled.contrib.simplegame.objects.SceneObject;
 

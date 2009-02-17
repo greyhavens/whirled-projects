@@ -2,23 +2,29 @@ package vampire.feeding.client {
 
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.tasks.*;
+import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
-import flash.display.Sprite;
+import flash.display.MovieClip;
 import flash.geom.Point;
 import flash.text.TextField;
 
 import vampire.feeding.*;
-import vampire.feeding.client.view.*;
+import vampire.feeding.client.*;
 
-public class BloodMeter extends SceneObject
+public class ScoreView extends SceneObject
 {
-    public function BloodMeter ()
+    public function ScoreView ()
     {
-        _sprite = new Sprite();
-        _tf = UIBits.createText("", 1.5);
-        _sprite.addChild(_tf);
+        _movie = ClientCtx.instantiateMovieClip("blood", "score", true, true);
+        _tf = _movie["score_field"];
+    }
+
+    override protected function destroyed () :void
+    {
+        SwfResource.releaseMovieClip(_movie);
+        super.destroyed();
     }
 
     public function addBlood (x :Number, y :Number, count :int) :void
@@ -34,7 +40,7 @@ public class BloodMeter extends SceneObject
             // fly the cell to the meter, make it disappear, increase the blood count
             cellObj.addTask(new SerialTask(
                 new TimedTask(delay),
-                LocationTask.CreateSmooth(0, 0, 1),
+                LocationTask.CreateSmooth(196, -147, 1),
                 new FunctionTask(
                     function () :void {
                         _displayedBloodCount++;
@@ -56,18 +62,18 @@ public class BloodMeter extends SceneObject
 
     override public function get displayObject () :DisplayObject
     {
-        return _sprite;
+        return _movie;
     }
 
     override protected function update (dt :Number) :void
     {
         if (_displayedBloodCount != _lastDisplayedBloodCount) {
-            UIBits.initTextField(_tf, "Predator Blood: " + _displayedBloodCount, 1.5, 0, 0xff0000);
+            _tf.text = String(_displayedBloodCount);
             _lastDisplayedBloodCount = _displayedBloodCount;
         }
     }
 
-    protected var _sprite :Sprite;
+    protected var _movie :MovieClip;
     protected var _tf :TextField;
     protected var _bloodCount :int;
     protected var _lastDisplayedBloodCount :int = -1;
@@ -83,7 +89,7 @@ import flash.display.DisplayObject;
 import vampire.feeding.client.*;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 import flash.display.Sprite;
-import vampire.feeding.client.view.SpriteUtil;
+import vampire.feeding.client.SpriteUtil;
 
 class FlyingCell extends SceneObject
 {

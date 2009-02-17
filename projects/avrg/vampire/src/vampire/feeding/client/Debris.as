@@ -1,4 +1,4 @@
-package vampire.feeding.client.view {
+package vampire.feeding.client {
 
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.objects.SceneObject;

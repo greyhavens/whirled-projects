@@ -1,7 +1,7 @@
 package vampire.feeding.client {
 
 import vampire.feeding.*;
-import vampire.feeding.client.view.*;
+import vampire.feeding.client.*;
 import vampire.feeding.net.CreateBonusMsg;
 
 import com.threerings.util.ArrayUtil;

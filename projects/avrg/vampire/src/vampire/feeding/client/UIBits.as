@@ -1,4 +1,4 @@
-package vampire.feeding.client.view {
+package vampire.feeding.client {
 
 import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.ColorMatrix;

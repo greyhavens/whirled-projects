@@ -13,7 +13,7 @@ public class GameCtx
     public static var gameMode :GameMode;
     public static var heart :Heart;
     public static var cursor :PlayerCursor;
-    public static var bloodMeter :BloodMeter;
+    public static var bloodMeter :ScoreView;
 
     public static var bgLayer :Sprite;
     public static var cellLayer :Sprite;

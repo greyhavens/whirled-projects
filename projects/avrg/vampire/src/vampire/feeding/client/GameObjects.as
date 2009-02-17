@@ -3,7 +3,7 @@ package vampire.feeding.client {
 import flash.geom.Point;
 
 import vampire.feeding.*;
-import vampire.feeding.client.view.*;
+import vampire.feeding.client.*;
 
 public class GameObjects
 {

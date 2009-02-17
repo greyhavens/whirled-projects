@@ -12,8 +12,8 @@ import flash.display.Sprite;
 import flash.text.TextField;
 
 import vampire.feeding.*;
-import vampire.feeding.client.view.SpriteUtil;
-import vampire.feeding.client.view.UIBits;
+import vampire.feeding.client.SpriteUtil;
+import vampire.feeding.client.UIBits;
 
 public class Cell extends CollidableObj
 {
