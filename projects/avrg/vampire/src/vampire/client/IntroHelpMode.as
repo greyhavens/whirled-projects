@@ -79,7 +79,7 @@ public class IntroHelpMode extends AppMode
         toVampireButton.addEventListener( MouseEvent.CLICK, function(...ignored):void { 
             ClientContext.gameCtrl.agent.sendMessage( 
                 Constants.SIGNAL_CHANGE_COLOR_SCHEME_REQUEST, 
-                AvatarGameBridge.COLOR_SCHEME_VAMPIRE ); 
+                Constants.COLOR_SCHEME_VAMPIRE ); 
         });
         
         modeSprite.addChild( toVampireButton );
@@ -90,7 +90,7 @@ public class IntroHelpMode extends AppMode
         toHumanButton.addEventListener( MouseEvent.CLICK, function(...ignored):void{ 
             ClientContext.gameCtrl.agent.sendMessage( 
                 Constants.SIGNAL_CHANGE_COLOR_SCHEME_REQUEST, 
-                AvatarGameBridge.COLOR_SCHEME_HUMAN ); 
+                Constants.COLOR_SCHEME_HUMAN ); 
         });
         modeSprite.addChild( toHumanButton );
         
