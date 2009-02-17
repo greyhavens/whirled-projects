@@ -3,6 +3,7 @@ package vampire.server
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRServerGameControl;
 
+import vampire.data.AvatarManager;
 import vampire.data.MinionHierarchyServer;
 import vampire.net.MessageManager;
     
@@ -12,7 +13,9 @@ public class ServerContext
     public static var ctrl :AVRServerGameControl;
     public static var vserver :VServer;
     public static var minionHierarchy :MinionHierarchyServer;
-    public static var nonPlayers :NonPlayerAvatars = new NonPlayerAvatars();
+    public static var nonPlayersBloodMonitor :NonPlayerAvatarsBloodMonitor = new NonPlayerAvatarsBloodMonitor();
+    
+//    public static var avatarManager :AvatarManager = new AvatarManager();
     
     public static var serverLogBroadcast: AVRGAgentLogTarget;
     
