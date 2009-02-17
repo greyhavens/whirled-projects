@@ -7,6 +7,7 @@ import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.AgentSubControl;
 import com.whirled.contrib.EventHandlerManager;
+import com.whirled.contrib.simplegame.Updatable;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.PropertyGetSubControl;
@@ -18,6 +19,7 @@ import flash.utils.Dictionary;
 import vampire.client.events.ChangeActionEvent;
 import vampire.client.events.ClosestPlayerChangedEvent;
 import vampire.client.events.HierarchyUpdatedEvent;
+import vampire.data.AvatarManager;
 import vampire.data.Codes;
 import vampire.data.Constants;
 import vampire.data.MinionHierarchy;
@@ -29,6 +31,7 @@ import vampire.data.SharedPlayerStateClient;
  * 
  */
 public class GameModel extends EventDispatcher
+    implements Updatable
 {
     public function setup () :void
     {
@@ -37,15 +40,39 @@ public class GameModel extends EventDispatcher
         _agentCtrl = ClientContext.gameCtrl.agent;
         _propsCtrl = ClientContext.gameCtrl.room.props;
 
-        _events.registerListener( _propsCtrl, PropertyChangedEvent.PROPERTY_CHANGED, propChanged);
-        _events.registerListener( _propsCtrl, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+        _events.registerListener( _propsCtrl, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged);
+        _events.registerListener( _propsCtrl, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
         
         
         //Update the HUD when the room props come in.
         _events.registerListener(ClientContext.gameCtrl.player, AVRGamePlayerEvent.ENTERED_ROOM, playerEnteredRoom);
         
+        //Update the HUD when the room props come in.
+        _events.registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.AVATAR_CHANGED, 
+            function ( e :AVRGameRoomEvent) :void {
+                trace("GameModel heard " + AVRGameRoomEvent.AVATAR_CHANGED + " " + e);
+            });
+            
+        _events.registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.PLAYER_MOVED, 
+            function ( e :AVRGameRoomEvent) :void {
+                trace("GameModel heard " + AVRGameRoomEvent.PLAYER_MOVED + " " + e);
+            });
+            
+        _events.registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED, 
+            function ( e :AVRGameRoomEvent) :void {
+                trace("GameModel heard " + AVRGameRoomEvent.SIGNAL_RECEIVED + " " + e);
+            });
+            
+            
+        
         //Update the closest userId (might not be a player)
-        _events.registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
+//        _events.registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
+        
+        
+//        _nonPlayerLocations = new NonPlayerMonitor( ClientContext.gameCtrl.room );
+        
+        
+        _avatarManager = new AvatarManager(ClientContext.gameCtrl.room);
         
         //If the room props are already present, update the HUD now.
         if( SharedPlayerStateClient.isProps( ClientContext.ourPlayerId ) ) {
@@ -57,6 +84,11 @@ public class GameModel extends EventDispatcher
 //        _events.registerListener( _proximityTimer, TimerEvent.TIMER, checkProximity );
 //        _proximityTimer.start();
         
+    }
+    
+    public function update( dt :Number ) :void
+    {
+//        _avatarManager.update( dt );
     }
     
     /**
@@ -113,7 +145,6 @@ public class GameModel extends EventDispatcher
             trace(Constants.DEBUG_MINION + " loadHierarchyFromProps()=" + _hierarchy);
             dispatchEvent( new HierarchyUpdatedEvent( _hierarchy ) );
                 
-                
 //            var bytes :ByteArray = ClientContext.gameCtrl.room.props.get( Codes.ROOM_PROP_MINION_HIERARCHY ) as ByteArray;
 //            if( bytes != null) {
 //                _hierarchy = new MinionHierarchy();
@@ -128,6 +159,7 @@ public class GameModel extends EventDispatcher
     public function shutdown () :void
     {
         _events.freeAllHandlers();
+        _avatarManager.shutdown();
 //        _proximityTimer.stop();
     }
     
@@ -167,7 +199,7 @@ public class GameModel extends EventDispatcher
         return hierarchy;
     }
     
-    protected function propChanged (e :PropertyChangedEvent) :void
+    protected function handlePropChanged (e :PropertyChangedEvent) :void
     {
         //Check if it is non-player properties changed??
         log.debug(Constants.DEBUG_MINION + " propChanged", "e", e);
@@ -186,6 +218,10 @@ public class GameModel extends EventDispatcher
             
             dispatchEvent( new HierarchyUpdatedEvent( _hierarchy ) );
         }
+//        else if( e.name == Codes.ROOM_PROP_NON_PLAYERS ) {
+//            updateNonPlayersIds();
+//            
+//        }
             
 //            if( e.newValue is ByteArray) {
 //                _hierarchy = new MinionHierarchy();
@@ -240,7 +276,9 @@ public class GameModel extends EventDispatcher
 //        }
     }
     
-    public function elementChanged (e :ElementChangedEvent) :void
+
+    
+    public function handleElementChanged (e :ElementChangedEvent) :void
     {
 //        log.debug(Constants.DEBUG_MINION + " elementChanged()", "e", e); 
         if( e.name == Codes.ROOM_PROP_MINION_HIERARCHY) {
@@ -380,6 +418,15 @@ public class GameModel extends EventDispatcher
 //        return null;
     }
     
+    public function printNonPlayers() :void
+    {
+        trace( avatarManager );
+//        trace("Non Players: (nonplayers=" + nonPlayerManager + ")");
+//        for each( var np :NonPlayerAvatar in nonPlayerManager.values ) {
+//            trace("   " + np );
+//        }
+    }
+    
 
     
 //    public function get state () :SharedPlayerStateServer
@@ -408,10 +455,20 @@ public class GameModel extends EventDispatcher
 //        
 //    }
     
+    public function get avatarManager() :AvatarManager
+    {
+        return _avatarManager;
+    }
     
     protected var _hierarchy :MinionHierarchy;
     protected var _agentCtrl :AgentSubControl;
     protected var _propsCtrl :PropertyGetSubControl;
+    
+    protected var _avatarManager :AvatarManager;
+    
+//    protected var _nonplayers :HashMap = new HashMap();
+//    protected var _nonPlayerLocations :NonPlayerMonitor;
+//    protected var _nonPlayers :HashMap = new HashMap();
     
 //    protected var _proximityTimer :Timer;
     
