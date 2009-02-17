@@ -36,41 +36,18 @@ public class HUD extends SceneObject
 {
     public function HUD()
     {
-//        super(ClientContext.gameCtrl, "HUD");
-        _sprite = new Sprite();
+        _displaySprite = new Sprite();
         
-//        log.debug("Initializing HUD");
         setupUI();
         
         //Listen to events that might cause us to update ourselves
-        registerListener(ClientContext.gameCtrl.player, AVRGamePlayerEvent.ENTERED_ROOM, updateOurPlayerState );
+        registerListener( ClientContext.gameCtrl.player, AVRGamePlayerEvent.ENTERED_ROOM, updateOurPlayerState );
         registerListener( ClientContext.gameCtrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED, propChanged );
         registerListener( ClientContext.gameCtrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
         
 //        registerListener( ClientContext.model, ClosestPlayerChangedEvent.CLOSEST_PLAYER_CHANGED, closestPlayerChanged);
         
-        
-//        trace("Player stats: " + SharedPlayerStateClient.toStringForPlayer( ClientContext.ourPlayerId));
-        
-//        updateOurPlayerState();
-//        if( ClientContext.model.isState ) {
-//            log.debug("    there is our state in the room props.");
-//            updatePlayerState( ClientContext.model.state );
-//        }
-//        else {
-//            log.debug("    our state is not in the room props.");
-//        }
-
-        // now that we know our dimensions, initialize DraggableSprite
-        
-//        init( new Rectangle(0, 0, 100, 100), 10, 10, 10, 10);
-        
         updateOurPlayerState();
-           
-        
-//        _checkRoomProps2ShowStatsTimer = new Timer(300, 0);
-//        EventHandlers.registerListener( _checkRoomProps2ShowStatsTimer, TimerEvent.TIMER, checkPlayerRoomProps);    
-//        _checkRoomProps2ShowStatsTimer.start();   
 
         if( Constants.LOCAL_DEBUG_MODE) {
             showTarget( ClientContext.gameCtrl.player.getPlayerId() );
@@ -86,7 +63,7 @@ public class HUD extends SceneObject
     
     override public function get displayObject () :DisplayObject
     {
-        return _sprite;
+        return _displaySprite;
     }
     
     override public function get objectName () :String
@@ -115,12 +92,24 @@ public class HUD extends SceneObject
 //        log.debug("propChanged", "e", e);
 //        trace("Player stats: " + SharedPlayerStateClient.toStringForPlayer( ClientContext.ourPlayerId));
         //Otherwise check for player updates
-        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
-        if( !isNaN(playerIdUpdated) && playerIdUpdated == ClientContext.ourPlayerId) {
-            updateOurPlayerState();
+        
+        
+        if( e.name == Codes.ROOM_PROP_NON_PLAYERS ) {
+            
         }
         else {
-//            log.warning("  Failed to update PropertyChangedEvent" + e);
+        
+            var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
+            
+            if( isNaN(playerIdUpdated) ) {
+                log.warning("propChanged, but no player id, ", "e", e);
+                return;
+            }
+            
+            //If the ROOM_PROP_NON_PLAYERS prop is changed, update it
+            if( playerIdUpdated == ClientContext.ourPlayerId) {
+                updateOurPlayerState();
+            }
         }
         
     }
@@ -137,6 +126,7 @@ public class HUD extends SceneObject
         
         
         if( !isNaN( playerIdUpdated ) ) { 
+            //If it's us, update the player HUD
             if( playerIdUpdated == ClientContext.ourPlayerId) {
             
                 if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
@@ -162,8 +152,8 @@ public class HUD extends SceneObject
                 }
                 else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_DISPLAY_VISIBLE
                          || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME
-                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_LOCATION
-                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_HOTSPOT
+                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_LOCATION
+                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT
                          || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD
                          || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD
                 ) {
@@ -205,20 +195,38 @@ public class HUD extends SceneObject
 //    }
     protected function findSafely (name :String) :DisplayObject
     {
-        var o :DisplayObject = DisplayUtil.findInHierarchy(_sprite, name);
+        var o :DisplayObject = DisplayUtil.findInHierarchy(_displaySprite, name);
         if (o == null) {
             throw new Error("Cannot find object: " + name);
         }
         return o;
     }
     
+    
+    override protected function addedToDB () :void
+    {
+        db.addObject( _targetingOverlay );
+//        _targetingOverlay.displayObject.visible = false;
+    }
+    
+    
     protected function setupUI() :void
     {
         
         _hud = new DraggableSprite(ClientContext.gameCtrl, "HUD");
-        _sprite.addChild( _hud );
+        _displaySprite.addChild( _hud );
         _hud.init( new Rectangle(0, 0, 100, 100), 10, 10, 10, 10);
         
+        
+        //Create the ratgeting overlay
+        _targetingOverlay = new TargetingOverlayAvatars( ClientContext.gameCtrl, 
+            ClientContext.model.avatarManager, function(...ignored) :void {
+                trace("Target Clicked");    
+            });
+//        _targetingOverlay.visible = false;
+        
+        
+            
         
         _hudMC = ClientContext.instantiateMovieClip("HUD", "HUD", true);
         
@@ -290,7 +298,7 @@ public class HUD extends SceneObject
         
         var hudPredator :SimpleButton = SimpleButton( findSafely("HUDpredator") );
 //        Command.bind( hudPredator, MouseEvent.CLICK, VampireController.SWITCH_MODE, Constants.GAME_MODE_FEED_FROM_PLAYER);
-        Command.bind( hudPredator, MouseEvent.CLICK, VampireController.FEED_REQUEST);
+        Command.bind( hudPredator, MouseEvent.CLICK, VampireController.FEED_REQUEST, [_targetingOverlay, _displaySprite] );
         
         var hudPrey :SimpleButton = SimpleButton( findSafely("HUDprey") );
         Command.bind( hudPrey, MouseEvent.CLICK, VampireController.SWITCH_MODE, Constants.GAME_MODE_BARED);
@@ -391,7 +399,7 @@ public class HUD extends SceneObject
         
         //The target overlay
         _targetSprite = new Sprite();
-        _sprite.addChild( _targetSprite );
+        _displaySprite.addChild( _targetSprite );
 //        _targetSprite.graphics.lineStyle(4, 0xcc0000);
 //        _targetSprite.graphics.drawCircle(0, 0, 20);
         _targetSprite.visible = false;
@@ -676,7 +684,7 @@ public class HUD extends SceneObject
         }
     }
 
-    protected var _sprite :Sprite;
+    protected var _displaySprite :Sprite;
     protected var _hud :DraggableSprite;
     protected var _hudMC :MovieClip;
     
@@ -714,6 +722,8 @@ public class HUD extends SceneObject
     
     protected var _targetSpriteBloodBondIcon :MovieClip;
     protected var _targetSpriteHierarchyIcon :SimpleButton;
+    
+    protected var _targetingOverlay :TargetingOverlayAvatars;
     
     protected var _checkRoomProps2ShowStatsTimer :Timer;//Stupid hack, the first time a player enters a room, the 
     
