@@ -1,5 +1,7 @@
 package vampire.feeding.client {
 
+import flash.geom.Point;
+
 import vampire.feeding.*;
 import vampire.feeding.client.view.*;
 
@@ -17,8 +19,11 @@ public class GameObjects
         :RedBurst
     {
         var obj :RedBurst = new RedBurst(fromCell, sequence);
-        obj.x = fromCell.x;
-        obj.y = fromCell.y;
+        var loc :Point =
+            fromCell.displayObject.parent.localToGlobal(new Point(fromCell.x, fromCell.y));
+        loc = GameCtx.cellLayer.globalToLocal(loc);
+        obj.x = loc.x;
+        obj.y = loc.y;
         GameCtx.gameMode.addObject(obj, GameCtx.cellLayer);
 
         fromCell.destroySelf();
@@ -34,8 +39,12 @@ public class GameObjects
         }
 
         var obj :WhiteBurst = new WhiteBurst(isBlackBurst);
-        obj.x = fromObj.loc.x;
-        obj.y = fromObj.loc.y;
+
+        var loc :Point =
+            fromObj.displayObject.parent.localToGlobal(new Point(fromObj.x, fromObj.y));
+        loc = GameCtx.cellLayer.globalToLocal(loc);
+        obj.x = loc.x;
+        obj.y = loc.y;
         GameCtx.gameMode.addObject(obj, GameCtx.cellLayer);
 
         fromObj.destroySelf();

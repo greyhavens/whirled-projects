@@ -9,7 +9,7 @@ public class CollidableObj extends SceneObject
 {
     public function collidesWith (other :CollidableObj) :Boolean
     {
-        return Collision.circlesIntersect(_loc, this.radius, other.loc, other.radius);
+        return Collision.circlesIntersect(this.loc, this.radius, other.loc, other.radius);
     }
 
     public function get radius () :Number
@@ -17,33 +17,12 @@ public class CollidableObj extends SceneObject
         return _radius * this.scaleX;
     }
 
-    override public function get x () :Number
-    {
-        return _loc.x;
-    }
-
-    override public function get y () :Number
-    {
-        return _loc.y;
-    }
-
-    override public function set x (val :Number) :void
-    {
-        _loc.x = val;
-    }
-
-    override public function set y (val :Number) :void
-    {
-        _loc.y = val;
-    }
-
     public function get loc () :Vector2
     {
-        return _loc;
+        return new Vector2(this.x, this.y);
     }
 
     protected var _radius :Number = 0;
-    protected var _loc :Vector2 = new Vector2();
 }
 
 }

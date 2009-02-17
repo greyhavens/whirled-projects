@@ -98,12 +98,6 @@ public class Cell extends CollidableObj
     public function attachToCursor (cursor :PlayerCursor) :void
     {
         _attachedTo = cursor.ref;
-        _attachedOffset = _loc.subtract(cursor.loc);
-    }
-
-    public function detachFromCursor () :void
-    {
-        _attachedTo = SimObjectRef.Null();
     }
 
     protected function birthRedCell () :void
@@ -111,7 +105,8 @@ public class Cell extends CollidableObj
         _state = STATE_BIRTH;
 
         // When red cells are born, they burst out of the center of the heart
-        _loc = Constants.GAME_CTR.clone();
+        this.x = Constants.GAME_CTR.x;
+        this.y = Constants.GAME_CTR.y;
 
         // fire out of the heart in a random direction
         var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
@@ -134,7 +129,9 @@ public class Cell extends CollidableObj
         var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
         var distRange :NumRange = Constants.CELL_BIRTH_DISTANCE[Constants.CELL_WHITE];
         var dist :Number = distRange.next();
-        _loc = Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
+        var loc :Vector2 = Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
+        this.x = loc.x;
+        this.y = loc.y;
 
         addTask(After(Constants.CELL_BIRTH_TIME,
             new FunctionTask(function () :void {
@@ -158,35 +155,34 @@ public class Cell extends CollidableObj
 
     override protected function update (dt :Number) :void
     {
-        var cursor :PlayerCursor = _attachedTo.object as PlayerCursor;
-        if (cursor != null) {
-            _loc.x = cursor.x + _attachedOffset.x;
-            _loc.y = cursor.y + _attachedOffset.y;
-
-        } else if (_state == STATE_NORMAL) {
-            // move around the heart
-            var ctrImpulse :Vector2 = (this.movementType == MOVE_OUTWARDS ?
-                _loc.subtract(Constants.GAME_CTR) :
-                Constants.GAME_CTR.subtract(_loc));
-
-            ctrImpulse.length = 2;
-
-            var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
-            perpImpulse.length = 3.5;
-
-            var impulse :Vector2 = ctrImpulse.add(perpImpulse);
-            impulse.length = SPEED_BASE * dt;
-
-            _loc.x += impulse.x;
-            _loc.y += impulse.y;
-
-            _loc = GameCtx.clampLoc(_loc);
-        }
-
         super.update(dt);
 
-        this.displayObject.x = _loc.x;
-        this.displayObject.y = _loc.y;
+        var cursor :PlayerCursor = _attachedTo.object as PlayerCursor;
+        if (cursor == null) {
+            var curLoc :Vector2 = this.loc;
+            if (_state == STATE_NORMAL) {
+                // move around the heart
+                var ctrImpulse :Vector2 = (this.movementType == MOVE_OUTWARDS ?
+                    curLoc.subtract(Constants.GAME_CTR) :
+                    Constants.GAME_CTR.subtract(curLoc));
+
+                ctrImpulse.length = 2;
+
+                var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
+                perpImpulse.length = 3.5;
+
+                var impulse :Vector2 = ctrImpulse.add(perpImpulse);
+                impulse.length = SPEED_BASE * dt;
+
+                curLoc.x += impulse.x;
+                curLoc.y += impulse.y;
+            }
+
+            curLoc = GameCtx.clampLoc(curLoc);
+
+            this.x = curLoc.x;
+            this.y = curLoc.y;
+        }
     }
 
     override public function getObjectGroup (groupNum :int) :String
@@ -243,7 +239,6 @@ public class Cell extends CollidableObj
     protected var _multiplier :int;
     protected var _moveCCW :Boolean;
     protected var _attachedTo :SimObjectRef = SimObjectRef.Null();
-    protected var _attachedOffset :Vector2;
 
     protected var _sprite :Sprite;
     protected var _movie :MovieClip;

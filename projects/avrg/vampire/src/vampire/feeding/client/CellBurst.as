@@ -29,14 +29,6 @@ public class CellBurst extends CollidableObj
             })));
     }
 
-    override protected function update (dt :Number) :void
-    {
-        super.update(dt);
-
-        this.displayObject.x = _loc.x;
-        this.displayObject.y = _loc.y;
-    }
-
     override protected function destroyed () :void
     {
         SwfResource.releaseMovieClip(_movie);

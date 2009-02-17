@@ -8,8 +8,11 @@ import com.whirled.contrib.simplegame.tasks.RotationTask;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
+import flash.display.Sprite;
+import flash.geom.Point;
 
 import vampire.feeding.*;
+import vampire.feeding.client.view.SpriteUtil;
 
 public class PlayerCursor extends CollidableObj
 {
@@ -18,11 +21,13 @@ public class PlayerCursor extends CollidableObj
         _radius = Constants.CURSOR_RADIUS;
 
         _movie = ClientCtx.instantiateMovieClip("blood", "cursor", true, true);
+        _sprite = SpriteUtil.createSprite();
+        _sprite.addChild(_movie);
     }
 
     override public function get displayObject () :DisplayObject
     {
-        return _movie;
+        return _sprite;
     }
 
     override protected function destroyed () :void
@@ -32,7 +37,7 @@ public class PlayerCursor extends CollidableObj
 
     public function set moveTarget (val :Vector2) :void
     {
-        _moveDirection = val.subtract(_loc).normalizeLocal();
+        _moveDirection = val.subtract(this.loc).normalizeLocal();
     }
 
     override protected function update (dt :Number) :void
@@ -40,19 +45,24 @@ public class PlayerCursor extends CollidableObj
         super.update(dt);
 
         // update location
+        var curLoc :Vector2 = this.loc;
         var moveDist :Number = this.speed * dt;
-        _loc.x += (_moveDirection.x * moveDist);
-        _loc.y += (_moveDirection.y * moveDist);
-        _loc = GameCtx.clampLoc(_loc);
+        curLoc.x += (_moveDirection.x * moveDist);
+        curLoc.y += (_moveDirection.y * moveDist);
+        curLoc = GameCtx.clampLoc(curLoc);
 
         // collide with cells
         var cell :Cell = Cell.getCellCollision(this);
         if (cell != null) {
             if (cell.type == Constants.CELL_WHITE) {
-                //_whiteCellCount++;
-                //dispatchEvent(new GameEvent(GameEvent.ATTACHED_CELL, cell));
-                cell.attachToCursor(this);
+                var loc :Point = cell.displayObject.parent.localToGlobal(new Point(cell.x, cell.y));
+                loc = _sprite.globalToLocal(loc);
+                cell.x = loc.x;
+                cell.y = loc.y;
+                _sprite.addChild(cell.displayObject);
                 _attachedWhiteCells.push(cell.ref);
+
+                cell.attachToCursor(this);
 
             } else {
                 // create a cell burst
@@ -62,14 +72,14 @@ public class PlayerCursor extends CollidableObj
 
         // collide with the arteries
         var crossedCtr :Boolean =
-            (_loc.x >= Constants.GAME_CTR.x && _lastLoc.x < Constants.GAME_CTR.x) ||
-            (_loc.x < Constants.GAME_CTR.x && _lastLoc.x >= Constants.GAME_CTR.x);
+            (curLoc.x >= Constants.GAME_CTR.x && _lastLoc.x < Constants.GAME_CTR.x) ||
+            (curLoc.x < Constants.GAME_CTR.x && _lastLoc.x >= Constants.GAME_CTR.x);
 
         var artery :int = -1;
         if (crossedCtr) {
-            if (_loc.y < Constants.GAME_CTR.y && canCollideArtery(Constants.ARTERY_TOP)) {
+            if (curLoc.y < Constants.GAME_CTR.y && canCollideArtery(Constants.ARTERY_TOP)) {
                 artery = Constants.ARTERY_TOP;
-            } else if (_loc.y >= Constants.GAME_CTR.y && canCollideArtery(Constants.ARTERY_BOTTOM)) {
+            } else if (curLoc.y >= Constants.GAME_CTR.y && canCollideArtery(Constants.ARTERY_BOTTOM)) {
                 artery = Constants.ARTERY_BOTTOM;
             }
 
@@ -77,16 +87,16 @@ public class PlayerCursor extends CollidableObj
                 collideArtery(artery);
             } else {
                 // we're prevented from crossing the artery
-                _loc.x = (_loc.x >= Constants.GAME_CTR.x ?
+                curLoc.x = (curLoc.x >= Constants.GAME_CTR.x ?
                             Constants.GAME_CTR.x - 1 : Constants.GAME_CTR.x);
             }
         }
 
         // rotate towards our move direction
-        if (!_loc.similar(_lastLoc, 0.5)) {
+        if (!curLoc.similar(_lastLoc, 0.5)) {
             // rotate towards our move direction. 0 degrees == straight down
             var targetRotation :Number =
-                -90 + ((_loc.subtract(_lastLoc).angle) * (180 / Math.PI));
+                -90 + ((curLoc.subtract(_lastLoc).angle) * (180 / Math.PI));
 
             var curRotation :Number = this.rotation;
             if (targetRotation - curRotation > 180) {
@@ -104,10 +114,10 @@ public class PlayerCursor extends CollidableObj
 
         }
 
-        _lastLoc = _loc.clone();
+        _lastLoc = curLoc.clone();
 
-        this.displayObject.x = _loc.x;
-        this.displayObject.y = _loc.y;
+        this.x = curLoc.x;
+        this.y = curLoc.y;
     }
 
     public function offsetSpeedPenalty (offset :Number) :void
@@ -118,11 +128,6 @@ public class PlayerCursor extends CollidableObj
     public function offsetSpeedBonus (offset :Number) :void
     {
         _speedBonus = Math.max(_speedBonus + offset, 0);
-    }
-
-    public function get numWhiteCells () :int
-    {
-        return _attachedWhiteCells.length;
     }
 
     protected function collideArtery (arteryType :int) :void
@@ -137,7 +142,6 @@ public class PlayerCursor extends CollidableObj
         }
 
         _attachedWhiteCells = [];
-        //dispatchEvent(new GameEvent(GameEvent.DETACHED_ALL_CELLS));
 
         _lastArtery = arteryType;
 
@@ -172,6 +176,7 @@ public class PlayerCursor extends CollidableObj
             Constants.CURSOR_SPEED_MAX);
     }
 
+    protected var _sprite :Sprite;
     protected var _movie :MovieClip;
 
     protected var _moveDirection :Vector2 = new Vector2();
