@@ -8,6 +8,7 @@ import com.whirled.game.SeatingSubControl;
 import com.whirled.game.PlayerSubControl;
 import com.whirled.game.ServicesSubControl;
 import com.whirled.game.BagsSubControl;
+import com.whirled.game.LocalSubControl;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.game.OccupantChangedEvent;
 import com.whirled.game.UserChatEvent;
@@ -65,6 +66,7 @@ public class Definitions
         _funcs.services = createServicesFuncs();
         _funcs.bags = createBagsFuncs();
         _funcs.messages = createMessageFuncs();
+        _funcs.local = createLocalFuncs();
     }
 
     public function getGameFuncs () :Array
@@ -100,6 +102,11 @@ public class Definitions
     public function getMessageFuncs () :Array
     {
         return _funcs.messages.slice();
+    }
+
+    public function getLocalFuncs () :Array
+    {
+        return _funcs.local.slice();
     }
 
     public function findByName (name :String) :FunctionSpec
@@ -199,6 +206,47 @@ public class Definitions
                 [new Parameter("propName", String),
                  new ObjectParameter("newValue"),
                  new ObjectParameter("testValue")])
+        ];
+    }
+
+    protected function createLocalFuncs () :Array
+    {
+        var local :LocalSubControl = _ctrl.local;
+        return [
+            new FunctionSpec("getSize", local.getSize, []),
+            new FunctionSpec("feedback", local.feedback,
+                [new Parameter("msg", String)]),
+            new FunctionSpec("filter", local.filter,
+                [new Parameter("text", String)]),
+            new FunctionSpec("getHeadShot", local.getHeadShot,
+                [new Parameter("occupantId", int)]),
+            new FunctionSpec("setFrameRate", local.setFrameRate,
+                [new Parameter("frameRate", Number, Parameter.OPTIONAL)]),
+            new FunctionSpec("setStageQuality", local.setStageQuality,
+                [new Parameter("quality", String, Parameter.OPTIONAL)]),
+            new FunctionSpec("setShowReplay", local.setShowReplay,
+                [new Parameter("show", Boolean)]),
+            new FunctionSpec("setOccupantsLabel", local.setOccupantsLabel,
+                [new Parameter("label", String)]),
+            new FunctionSpec("clearScores", local.clearScores,
+                [new Parameter("clearValue", Object, Parameter.OPTIONAL),
+                 new Parameter("sortValuesToo", Boolean, Parameter.OPTIONAL)]),
+            new FunctionSpec("setPlayerScores", local.setPlayerScores,
+                [new Parameter("scores", Array),
+                 new Parameter("sortValues", Array, Parameter.OPTIONAL)]),
+            new FunctionSpec("setMappedScores", local.setMappedScores,
+                [new ObjectParameter("scores")]),
+            new FunctionSpec("showGameLobby", local.showGameLobby,
+                [new Parameter("multiplayerOnly", Boolean, Parameter.OPTIONAL)]),
+            new FunctionSpec("showGameShop", local.showGameShop,
+                [new Parameter("itemType", String),
+                 new Parameter("catalogId", int, Parameter.OPTIONAL)]),
+            new FunctionSpec("showSharePage", local.showSharePage,
+                [new Parameter("defmsg", String),
+                 new Parameter("token", String, Parameter.OPTIONAL)]),
+            new FunctionSpec("showTrophies", local.showTrophies, []),
+            new FunctionSpec("getShareToken", local.getShareToken, []),
+            new FunctionSpec("getShareMemberId", local.getShareMemberId, [])
         ];
     }
 
