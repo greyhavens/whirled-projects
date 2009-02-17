@@ -147,9 +147,29 @@ public class VampireController extends Controller
         }
     }
     
-    public function handleFeedRequest( targetPlayerId :int, targetIsVictim :Boolean) :void
+//    public function handleFeedRequest( targetPlayerId :int, targetIsVictim :Boolean) :void
+    public function handleFeedRequest( targetingOverlay :TargetingOverlayAvatars, parentSprite :Sprite) :void
     {
-        ClientContext.gameCtrl.agent.sendMessage( FeedRequestMessage.NAME, new FeedRequestMessage( ClientContext.ourPlayerId, targetPlayerId, targetIsVictim).toBytes() );
+//        trace("handle handleFeedRequest");
+//        if( parentSprite.contains( targetingOverlay.displayObject )) {
+//            parentSprite.removeChild( targetingOverlay.displayObject );
+//        }
+//        else {
+//            parentSprite.addChildAt( targetingOverlay.displayObject, 0 );
+//        }
+//        targetingOverlay.visible = !targetingOverlay.visible;
+//        if( targetingOverlay.visible ) {
+////            Sprite(targetingOverlay.displayObject).mouseEnabled = true;
+//            parentSprite.addChild( targetingOverlay.displayObject );
+//        }
+//        else {
+//            if( parentSprite.contains( targetingOverlay.displayObject )) {
+//                parentSprite.removeChild( targetingOverlay.displayObject );
+//            }
+////            Sprite(targetingOverlay.displayObject).mouseEnabled = false;
+//        }
+        ClientContext.gameCtrl.agent.sendMessage( FeedRequestMessage.NAME, new FeedRequestMessage( ClientContext.ourPlayerId, 0).toBytes() );
+//        ClientContext.gameCtrl.agent.sendMessage( FeedRequestMessage.NAME, new FeedRequestMessage( ClientContext.ourPlayerId, 0, false).toBytes() );
     }
     
     public function handleFeed() :void

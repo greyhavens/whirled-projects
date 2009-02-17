@@ -1,4 +1,5 @@
 package vampire.client {
+import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
@@ -12,6 +13,7 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
+import vampire.data.AvatarManager;
 import vampire.data.Constants;
 import vampire.net.MessageManager;
 import vampire.server.AVRGAgentLogTarget;
@@ -22,9 +24,15 @@ public class VampireMain extends Sprite
     public function VampireMain()
     {
         
-        
-        Log.setLevel("com.threerings", Log.OFF);
-        Log.setLevel("vampire.client", Log.DEBUG);
+//        Log.setLevel("com.threerings", Log.ERROR);
+//        Log.setLevel("", Log.ERROR);
+//        Log.setLevel("vampire.client", Log.DEBUG);
+        Log.setLevel("vampire.avatar", Log.DEBUG); 
+//        Log.setLevel("vampire.client.MainGameMode", Log.DEBUG); 
+//        Log.setLevel(ClassUtil.getClassName( GameModel ), Log.DEBUG);
+//        Log.setLevel(ClassUtil.getClassName( AvatarManager ), Log.DEBUG);
+//        Log.setLevel(ClassUtil.getClassName( PlayerAvatar ), Log.DEBUG);
+//        Log.setLevel(ClassUtil.getClassName( TargetingOverlayAvatars ), Log.DEBUG);
         
 //        trace("VampireMain()");
         /* Register mode classes so that they can be instatiated just by name*/
