@@ -32,6 +32,11 @@ public class EventCollecter extends EventDispatcher
         _events.unregisterListener(dispatcher, event, listener, useCapture);
     }
     
+    public function shutdown() :void
+    {
+        freeEventHandlers();
+    } 
+    
     protected function freeEventHandlers () :void
     {
         _events.freeAllHandlers();
