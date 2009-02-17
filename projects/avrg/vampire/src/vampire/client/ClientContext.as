@@ -11,6 +11,7 @@ import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.geom.Rectangle;
 
+import vampire.data.AvatarManager;
 import vampire.data.Constants;
 import vampire.net.MessageManager;
 
@@ -30,6 +31,9 @@ public class ClientContext
     public static var currentClosestPlayerId :int;
     
     public static var controller :VampireController;
+    
+    
+    
 
     public static function quit () :void
     {
