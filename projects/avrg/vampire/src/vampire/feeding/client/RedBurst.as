@@ -49,6 +49,8 @@ public class RedBurst extends CellBurst
             GameCtx.gameMode.addObject(_sequence, GameCtx.effectLayer);
         }
         _sequence.addCellBurst(this);
+
+        ClientCtx.audio.playSoundNamed("sfx_red_burst");
     }
 
     override protected function removedFromDB () :void

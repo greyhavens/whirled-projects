@@ -46,6 +46,11 @@ public class Constants
     public static const CELL_RADIUS :Number = 6;
     public static const CELL_BIRTH_TIME :Number = 0.5;
 
+    public static const BURST_RED :int = 0;
+    public static const BURST_WHITE :int = 1;
+    public static const BURST_BONUS :int = 2;
+    public static const BURST_BLACK :int = 3;
+
     public static const WHITE_CELL_CREATION_TIME :NumRange = new NumRange(7, 9, Rand.STREAM_GAME);
     public static const WHITE_CELL_CREATION_COUNT :IntRange = new IntRange(1, 3, Rand.STREAM_GAME);
     public static const WHITE_CELL_NORMAL_TIME :NumRange = new NumRange(5, 8, Rand.STREAM_GAME);

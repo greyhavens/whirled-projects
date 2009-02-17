@@ -1,7 +1,5 @@
 package vampire.feeding.client {
 
-import com.whirled.contrib.simplegame.SimObject;
-
 import vampire.feeding.*;
 import vampire.feeding.client.view.*;
 
@@ -30,7 +28,12 @@ public class GameObjects
 
     public static function createWhiteBurst (fromObj :CollidableObj) :WhiteBurst
     {
-        var obj :WhiteBurst = new WhiteBurst();
+        var isBlackBurst :Boolean = true;
+        if (fromObj is Cell) {
+            isBlackBurst = !((fromObj as Cell).isWhiteCell);
+        }
+
+        var obj :WhiteBurst = new WhiteBurst(isBlackBurst);
         obj.x = fromObj.loc.x;
         obj.y = fromObj.loc.y;
         GameCtx.gameMode.addObject(obj, GameCtx.cellLayer);

@@ -21,11 +21,6 @@ public class Cell extends CollidableObj
     public static const STATE_NORMAL :int = 1;
     public static const STATE_PREPARING_TO_EXPLODE :int = 2;
 
-    public static function destroyCells (cellType :int = -1) :void
-    {
-        GameCtx.gameMode.destroyObjectsInGroup(getGroupName(cellType));
-    }
-
     public static function getCellCount (cellType :int = -1) :int
     {
         return GameCtx.gameMode.getObjectRefsInGroup(getGroupName(cellType)).length;
@@ -53,32 +48,8 @@ public class Cell extends CollidableObj
         _radius = Constants.CELL_RADIUS;
         _type = type;
         _multiplier = multiplier;
-
         _moveCCW = Rand.nextBoolean(Rand.STREAM_GAME);
-
         _state = STATE_NORMAL;
-
-        if (beingBorn) {
-            if (type == Constants.CELL_RED) {
-                birthRedCell();
-            } else if (type == Constants.CELL_WHITE) {
-                birthWhiteCell();
-            }
-        }
-
-        if (type == Constants.CELL_WHITE) {
-            // white cells explode after a bit of time
-            var thisCell :Cell = this;
-            addTask(new SerialTask(
-                new TimedTask(Constants.WHITE_CELL_NORMAL_TIME.next()),
-                new FunctionTask(function () :void {
-                    _state = STATE_PREPARING_TO_EXPLODE;
-                }),
-                new TimedTask(Constants.WHITE_CELL_EXPLODE_TIME),
-                new FunctionTask(function () :void {
-                    GameObjects.createWhiteBurst(thisCell);
-                })));
-        }
 
         _sprite = SpriteUtil.createSprite();
         _movie = ClientCtx.instantiateMovieClip("blood", MOVIE_NAMES[type], true, true);
@@ -92,7 +63,13 @@ public class Cell extends CollidableObj
             _sprite.addChild(tf);
         }
 
-        if (_state == Cell.STATE_BIRTH) {
+        if (beingBorn) {
+            if (type == Constants.CELL_RED) {
+                birthRedCell();
+            } else if (type == Constants.CELL_WHITE) {
+                birthWhiteCell();
+            }
+
             // fade in
             this.alpha = 0;
             addTask(new AlphaTask(1, 0.4));
@@ -154,6 +131,20 @@ public class Cell extends CollidableObj
         addTask(After(Constants.CELL_BIRTH_TIME,
             new FunctionTask(function () :void {
                 _state = STATE_NORMAL;
+            })));
+
+        // white cells explode after a bit of time
+        _movie.gotoAndStop(1);
+        var thisCell :Cell = this;
+        addTask(new SerialTask(
+            new TimedTask(Constants.WHITE_CELL_NORMAL_TIME.next()),
+            new FunctionTask(function () :void {
+                _state = STATE_PREPARING_TO_EXPLODE;
+            }),
+            new ShowFramesTask(
+                _movie, 1, ShowFramesTask.LAST_FRAME, Constants.WHITE_CELL_EXPLODE_TIME),
+            new FunctionTask(function () :void {
+                GameObjects.createWhiteBurst(thisCell);
             })));
     }
 

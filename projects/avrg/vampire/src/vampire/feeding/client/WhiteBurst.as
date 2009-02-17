@@ -6,10 +6,10 @@ import vampire.feeding.*;
 
 public class WhiteBurst extends CellBurst
 {
-    public function WhiteBurst ()
+    public function WhiteBurst (isBlackBurst :Boolean)
     {
         super(
-            Constants.CELL_WHITE,
+            isBlackBurst ? Constants.BURST_BLACK : Constants.BURST_WHITE,
             Constants.WHITE_BURST_RADIUS_MIN,
             Constants.WHITE_BURST_RADIUS_MAX);
     }
@@ -24,6 +24,8 @@ public class WhiteBurst extends CellBurst
         addTask(new SerialTask(
             new TimedTask(Constants.BURST_COMPLETE_TIME),
             new SelfDestructTask()));
+
+        ClientCtx.audio.playSoundNamed("sfx_white_burst");
     }
 
     override protected function update (dt :Number) :void

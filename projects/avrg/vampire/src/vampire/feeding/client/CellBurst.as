@@ -12,13 +12,12 @@ import vampire.feeding.client.view.SpriteUtil;
 
 public class CellBurst extends CollidableObj
 {
-    public function CellBurst (cellType :int, radiusMin :Number, radiusMax :Number)
+    public function CellBurst (burstType :int, radiusMin :Number, radiusMax :Number)
     {
-        _cellType = cellType;
         _radius = radiusMin;
         _radiusMax = radiusMax;
 
-        _movie = ClientCtx.instantiateMovieClip("blood", MOVIE_NAMES[cellType], true, true);
+        _movie = ClientCtx.instantiateMovieClip("blood", MOVIE_NAMES[burstType], true, true);
         _sprite = SpriteUtil.createSprite();
         _sprite.addChild(_movie);
 
@@ -59,11 +58,6 @@ public class CellBurst extends CollidableObj
         return (_radiusMax / _radius);
     }
 
-    public function get cellType () :int
-    {
-        return _cellType;
-    }
-
     override protected function addedToDB () :void
     {
         beginBurst();
@@ -84,6 +78,7 @@ public class CellBurst extends CollidableObj
         "cell_red_burst",
         "cell_white_burst",
         "cell_coop_burst",
+        "cell_black_burst",
     ];
 }
 
