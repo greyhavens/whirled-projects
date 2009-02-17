@@ -215,7 +215,7 @@ public class GameMode extends AppMode
     protected static var log :Log = Log.getLog(GameMode);
 
     protected static const BLOOD_METER_LOC :Point = new Point(550, 75);
-    protected static const TIMER_LOC :Point = new Point(550, 25);
+    protected static const TIMER_LOC :Point = Constants.GAME_CTR.toPoint();
     protected static const SCORE_VIEWS_LOC :Point = new Point(550, 120);
 }
 
