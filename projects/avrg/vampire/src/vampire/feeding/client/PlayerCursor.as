@@ -13,10 +13,9 @@ import vampire.feeding.*;
 
 public class PlayerCursor extends CollidableObj
 {
-    public function PlayerCursor (playerType :int)
+    public function PlayerCursor ()
     {
         _radius = Constants.CURSOR_RADIUS;
-        _playerType = playerType;
 
         _movie = ClientCtx.instantiateMovieClip("blood", "cursor", true, true);
     }
@@ -121,11 +120,6 @@ public class PlayerCursor extends CollidableObj
         _speedBonus = Math.max(_speedBonus + offset, 0);
     }
 
-    public function get playerType () :int
-    {
-        return _playerType;
-    }
-
     public function get numWhiteCells () :int
     {
         return _attachedWhiteCells.length;
@@ -179,8 +173,6 @@ public class PlayerCursor extends CollidableObj
     }
 
     protected var _movie :MovieClip;
-
-    protected var _playerType :int;
 
     protected var _moveDirection :Vector2 = new Vector2();
     protected var _speedPenalty :Number = 0;

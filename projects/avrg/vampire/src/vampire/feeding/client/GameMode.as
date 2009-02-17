@@ -87,7 +87,7 @@ public class GameMode extends AppMode
         var heartView :HeartView = new HeartView(heartMovie["heart"]);
         addObject(heartView);
 
-        GameCtx.cursor = GameObjects.createPlayerCursor(_playerType);
+        GameCtx.cursor = GameObjects.createPlayerCursor();
         registerListener(GameCtx.cursor, GameEvent.WHITE_CELL_DELIVERED, onWhiteCellDelivered);
 
         // keep tabs on everyone else's score

@@ -43,9 +43,9 @@ public class GameObjects
         return obj;
     }
 
-    public static function createPlayerCursor (playerType :int) :PlayerCursor
+    public static function createPlayerCursor () :PlayerCursor
     {
-        var obj :PlayerCursor = new PlayerCursor(playerType);
+        var obj :PlayerCursor = new PlayerCursor();
         GameCtx.gameMode.addObject(obj, GameCtx.cursorLayer);
 
         return obj;
