@@ -55,7 +55,7 @@ public class Heart extends SceneObject
         if (showHeartbeat) {
             // Flash is refusing to stop on the final frame of this animation, even
             // though it has a call to stop() on it. So let's jump through a stupid hoop
-            // to force the move to do what we want.
+            // to force the movie to do what we want.
             addNamedTask(
                 "HeartbeatAnim",
                 new SerialTask(
