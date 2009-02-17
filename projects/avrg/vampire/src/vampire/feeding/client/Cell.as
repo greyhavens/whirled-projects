@@ -74,6 +74,14 @@ public class Cell extends CollidableObj
             this.alpha = 0;
             addTask(new AlphaTask(1, 0.4));
         }
+
+        if (type == Constants.CELL_RED || type == Constants.CELL_BONUS) {
+            var rotationTime :Number = (type == Constants.CELL_RED ?
+                RED_ROTATION_TIME : BONUS_ROTATION_TIME);
+            addTask(new SerialTask(
+                new VariableTimedTask(0, 1, Rand.STREAM_GAME),
+                new ConstantRotationTask(rotationTime, _moveCCW)));
+        }
     }
 
     override public function get displayObject () :DisplayObject
@@ -245,6 +253,9 @@ public class Cell extends CollidableObj
 
     protected static const MOVE_INWARDS :int = 0;
     protected static const MOVE_OUTWARDS :int = 1;
+
+    protected static const RED_ROTATION_TIME :Number = 3;
+    protected static const BONUS_ROTATION_TIME :Number = 1.5;
 
     protected static const MOVIE_NAMES :Array = [ "cell_red", "cell_white", "cell_bonus" ];
 }
