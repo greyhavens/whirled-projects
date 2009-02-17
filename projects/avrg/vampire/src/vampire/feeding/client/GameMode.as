@@ -105,6 +105,11 @@ public class GameMode extends AppMode
 
         addObject(new LocalScoreReporter()); // will report our score to everyone else periodically
 
+        // create some non-interactive debris that floats around the heart
+        for (var ii :int = 0; ii < Constants.DEBRIS_COUNT; ++ii) {
+            addObject(new Debris(), GameCtx.bgLayer);
+        }
+
         // create initial cells
         /*for (var cellType :int = 0; cellType < Constants.CELL__LIMIT; ++cellType) {
             var count :int = Constants.INITIAL_CELL_COUNT[cellType];

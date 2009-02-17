@@ -17,7 +17,7 @@ public class Constants
     public static const CURSOR_SPEED_MAX :Number = 70;
     public static const CURSOR_RADIUS :Number = 9;
 
-    public static const HEART_RADIUS :Number = 60;
+    public static const HEART_RADIUS :Number = 55;
     public static const HEART_RADIUS2 :Number = HEART_RADIUS * HEART_RADIUS;
 
     public static const CREATE_BONUS_BURST_SIZE :int = 3;
@@ -65,12 +65,13 @@ public class Constants
     public static const BURST_CONTRACT_TIME :Number = 1.5;
 
     public static const GAME_RADIUS :Number = 200;
-    public static const GAME_CTR :Vector2 = new Vector2(267, 246);
-
     public static const GAME_RADIUS2 :Number = GAME_RADIUS * GAME_RADIUS;
+    public static const GAME_CTR :Vector2 = new Vector2(267, 246);
 
     public static const HEMISPHERE_WEST :int = 0;
     public static const HEMISPHERE_EAST :int = 1;
+
+    public static const DEBRIS_COUNT :int = 12;
 }
 
 }
