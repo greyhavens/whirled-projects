@@ -22,9 +22,25 @@ public class BloodBloomStandalone extends Sprite
     {
         DEBUG_REMOVE_ME();
 
-        BloodBloom.init(this, new AVRGameControl(this));
+        BloodBloom.init(this, new DisconnectedControl(this));
         addChild(new BloodBloom(0, function () :void {}));
     }
 }
 
+}
+
+import com.whirled.avrg.AVRGameControl;
+import flash.display.DisplayObject;
+
+class DisconnectedControl extends AVRGameControl
+{
+    public function DisconnectedControl (disp :DisplayObject)
+    {
+        super(disp);
+    }
+
+    override public function isConnected () :Boolean
+    {
+        return false;
+    }
 }
