@@ -57,7 +57,7 @@ public class Constants
     /**
     * B
     */
-    public static const BLOOD_LOSS_FROM_THRALL_OR_NO_FROM_FEED :Number = 10;
+    public static const BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED :Number = 20;
 
 
     /** 
