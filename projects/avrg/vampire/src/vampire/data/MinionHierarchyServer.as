@@ -142,7 +142,7 @@ public class MinionHierarchyServer extends MinionHierarchy
                 
                 //Get the subtree containing all trees of all players in the room
                 var playerTree :HashMap = new HashMap();
-                room.players.forEach( function( player :Player) :void {
+                room.players.forEach( function( playerId :int, player :Player) :void {
                     getMapOfSiresAndMinions( player.playerId, playerTree );
                     
                 });
