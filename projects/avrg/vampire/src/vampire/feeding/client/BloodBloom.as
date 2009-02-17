@@ -13,16 +13,9 @@ import flash.utils.Timer;
 
 import vampire.feeding.*;
 import vampire.feeding.net.*;
-import vampire.feeding.server.Server;
 
 public class BloodBloom extends FeedingGameClient
 {
-    public static function DEBUG_REMOVE_ME () :void
-    {
-        var c :Class;
-        c = vampire.feeding.server.Server;
-    }
-
     public static function init (hostSprite :Sprite, gameCtrl :AVRGameControl) :void
     {
         if (_inited) {
@@ -49,8 +42,6 @@ public class BloodBloom extends FeedingGameClient
          if (!_inited) {
             throw new Error("FeedingGameClient.init has not been called");
         }
-
-        DEBUG_REMOVE_ME();
 
         GameCtx.init();
 

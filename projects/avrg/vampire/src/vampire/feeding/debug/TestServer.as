@@ -68,14 +68,13 @@ class TestGameController extends OneRoomGameRoom
         // send a message with the game ID to each of the players, and store the
         // playerIds in a map
         _gameCtrl.doBatch(function () :void {
-            var playerIds :Array = game.playerIds;
             for each (var playerId :int in game.playerIds) {
                 _playerGameMap.put(playerId, game);
                 _gameCtrl.getPlayer(playerId).sendMessage("StartClient", game.gameId);
             }
-        }
+        });
 
-        log.info("Starting game", "gameId", game.gameId, "players", playerIds);
+        log.info("Starting game", "gameId", game.gameId, "players", game.playerIds);
     }
 
     protected function onGameComplete (game :FeedingGameServer, successfullyEnded :Boolean) :void
