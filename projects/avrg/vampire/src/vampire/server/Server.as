@@ -14,6 +14,11 @@ package vampire.server
             ServerContext.serverLogBroadcast = new AVRGAgentLogTarget( ServerContext.ctrl );
             Log.addTarget( ServerContext.serverLogBroadcast );
             Log.setLevel("", Log.DEBUG);
+            //Log.setLevel("vampire.avatar.NonPlayerMonitor", Log.DEBUG);
+//            Log.setLevel("vampire.server.Room", Log.DEBUG);
+//            Log.setLevel("vampire.server.NonPlayerAvatar", Log.DEBUG);
+//            Log.setLevel("vampire.data.NonPlayerManager", Log.DEBUG);
+            
             
             //Start the game server
             var v :VServer = new VServer();
