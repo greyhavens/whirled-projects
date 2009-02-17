@@ -401,7 +401,7 @@ public class ObjectDBThane
      * to call this function - it's called automatically when an {@link AppMode} is popped from
      * the mode stack.
      */
-    protected function shutdown () :void
+    public function shutdown () :void
     {
         var ref :SimObjectRefThane = _listHead;
         while (null != ref) {
