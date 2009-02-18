@@ -560,6 +560,11 @@ public class Player extends EventHandlerManager
 //            return;
 //        }
         
+        //In case we are in bared state, get out of bared mode.
+        if( action == Constants.GAME_MODE_BARED ) {
+            setAction( Constants.GAME_MODE_NOTHING );
+        }
+        
         room.handleFeedRequest( e );
         //        setTargetBlood( room.getCurrentBlood( closestId ));
 //        setTargetMaxBlood( room.getMaxBlood( closestId ));
