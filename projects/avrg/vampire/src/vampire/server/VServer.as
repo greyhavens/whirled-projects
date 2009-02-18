@@ -80,7 +80,7 @@ public class VServer extends ObjectDBThane
         //Tim's bloodbond game server
         FeedingGameServer.init( _ctrl );
         
-        _stub = new ServerStub(_ctrl);
+//        _stub = new ServerStub(_ctrl);
     }
 
 
