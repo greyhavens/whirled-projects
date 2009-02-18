@@ -42,25 +42,25 @@ import com.threerings.brawler.util.MessageThrottle;
  */
 public class BrawlerController extends Controller
 {
-	/** Variables for the trophies  */
-	public var difficulty_setting :String 		= "Normal";
-	public var timeSpentBlocking :Number 		= 0;
-    public var timeSpentBlocking_goal :Number 	= 180;
+    /** Variables for the trophies  */
+    public var difficulty_setting :String         = "Normal";
+    public var timeSpentBlocking :Number         = 0;
+    public var timeSpentBlocking_goal :Number     = 180;
     public var timeSpentBlocking_awarded :Boolean = false;
-	public var lemmingCount :Number 			= 0;
-    public var lemmingCount_goal :Number 		= 10;
-    public var lemmingCount_awarded :Boolean 	= false;
-	public var damageTaken :Number 				= 0;
-    public var damageTaken_goal :Number 		= 30000;
-    public var damageTaken_awarded :Boolean 	= false;
-	public var coinsCollected :Number 			= 0;
-    public var coinsCollected_goal :Number 		= 100;
-    public var coinsCollected_awarded :Boolean 	= false;
-	public var weaponsBroken :Number 			= 0;
-    public var weaponsBroken_goal :Number 		= 25;
-    public var weaponsBroken_awarded :Boolean 	= false;
-	public var weaponsCollected :Number 		= 0;
-    public var weaponsCollected_goal :Number 	= 50;
+    public var lemmingCount :Number             = 0;
+    public var lemmingCount_goal :Number         = 10;
+    public var lemmingCount_awarded :Boolean     = false;
+    public var damageTaken :Number                 = 0;
+    public var damageTaken_goal :Number         = 30000;
+    public var damageTaken_awarded :Boolean     = false;
+    public var coinsCollected :Number             = 0;
+    public var coinsCollected_goal :Number         = 100;
+    public var coinsCollected_awarded :Boolean     = false;
+    public var weaponsBroken :Number             = 0;
+    public var weaponsBroken_goal :Number         = 25;
+    public var weaponsBroken_awarded :Boolean     = false;
+    public var weaponsCollected :Number         = 0;
+    public var weaponsCollected_goal :Number     = 50;
     public var weaponsCollected_awarded :Boolean = false;
 
     public function BrawlerController (disp :DisplayObject)
@@ -198,9 +198,9 @@ public class BrawlerController extends Controller
     {
         var oscore :int = _score;
         _score = value;
-		if(_score < 0){
-			_score = 0;
-		}
+        if(_score < 0){
+            _score = 0;
+        }
         _view.hud.updateScore(_score - oscore);
     }
 
@@ -224,12 +224,12 @@ public class BrawlerController extends Controller
         _view.exitRoom();
     }
 
-	/**
-	 * Called by the view when the post-room fade has completed.
-	 */
-	public function fadedOut () :void
-	{
-	    // clear out the old actors, replace with the new
+    /**
+    * Called by the view when the post-room fade has completed.
+    */
+    public function fadedOut () :void
+    {
+        // clear out the old actors, replace with the new
         for each (var actor :Actor in _actors) {
             if (actor.amOwner && actor != _self) {
                 actor.destroy();
@@ -237,53 +237,53 @@ public class BrawlerController extends Controller
         }
         createEnemies();
         if (_clear) {
-			endGame();
+            endGame();
             // post our score to the dobj and show the game results
             //_view.showResults();
-			//_grade = calculateGrade();
-			//if (amPlaying) {
+            //_grade = calculateGrade();
+            //if (amPlaying) {
             //    _throttle.setAt("scores", _control.game.seating.getMyPosition(), _grade);
             //}
         } else {
             _view.enterRoom();
         }
-	}
+    }
 
-	/**
+    /**
      * Ends the game and brings up the Grade Card.
      */
     public function endGame () :void
     {
-		_disableEnemies = true;
-		_disableControls = true;
+        _disableEnemies = true;
+        _disableControls = true;
 
         // post our score to the dobj
-		_grade = calculateGrade();
+        _grade = calculateGrade();
 
-		// show the game results
-		_view.showResults();
+        // show the game results
+        _view.showResults();
 
-		// hide exit key
-		_view.results.exit_btn.visible = false;
+        // hide exit key
+        _view.results.exit_btn.visible = false;
 
-		//Listen to coin award.
-		control.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, coinsAwarded);
+        //Listen to coin award.
+        control.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, coinsAwarded);
 
-		if (amPlaying) {
+        if (amPlaying) {
             _throttle.setAt("scores", _control.game.seating.getMyPosition(), _grade);
         }
     }
 
-	/**
+    /**
      * The game is over and coins have been awarded.
      */
     public function coinsAwarded (event :CoinsAwardedEvent) :void
     {
-		control.local.feedback("You recieved "+event.amount+" bits!");
-		control.local.feedback("[DEBUG] Performance Rate: "+event.percentile+"%");
-		control.player.removeEventListener(CoinsAwardedEvent.COINS_AWARDED, coinsAwarded);
-		_control.game.playerReady();
-	}
+        control.local.feedback("You recieved "+event.amount+" bits!");
+        control.local.feedback("[DEBUG] Performance Rate: "+event.percentile+"%");
+        control.player.removeEventListener(CoinsAwardedEvent.COINS_AWARDED, coinsAwarded);
+        _control.game.playerReady();
+    }
 
     /**
      * Sets the current wave.
@@ -343,8 +343,8 @@ public class BrawlerController extends Controller
                     actor.destroy();
                 }
             }
-			_clear = true;
-			endGame();
+            _clear = true;
+            endGame();
         }
         if (--_enemies == 0 && _control.game.amInControl()) {
             // proceed to the next wave
@@ -403,37 +403,37 @@ public class BrawlerController extends Controller
     // Calculate grade and return it.
     public function calculateGrade (toggle:String = "grade", handicap:Boolean = false) :Number
     {
-		var temp_grade:Number = 0;
-		var num_players:Number = control.game.seating.getPlayerIds().length;
-		var koCount :Number = 0;//control.net.get("koCount") as Number;
+        var temp_grade:Number = 0;
+        var num_players:Number = control.game.seating.getPlayerIds().length;
+        var koCount :Number = 0;//control.net.get("koCount") as Number;
         var koPoints :Number = 0;//Math.max(0, 5000 - 5000*koCount);
 
-		var local_dmgpar:Number = (_score+koPoints)/(_mobHpTotal/num_players);
-		var local_timepar:Number = (_mobHpTotal/(300*num_players))/clock;
-		var local_difficult:Number;
-		if(handicap){
-			if(_difficulty == 0){
-				local_difficult = 0.5;
-			}else if(_difficulty == 2){
-				local_difficult = 1.5;
-			}else if(_difficulty == 3){
-				local_difficult = 2.0;
-			}else{
-				local_difficult = 1.0;
-			}
-		}else{
-			local_difficult = 1.0;
-		}
-		temp_grade = Math.round((local_dmgpar*local_timepar*local_difficult)*100);
-		if(toggle == "grade"){
-			return temp_grade;
-		}else if(toggle == "damage"){
-			return local_dmgpar;
-		}else if(toggle == "time"){
-			return local_timepar;
-		}else{
-			return temp_grade;
-		}
+        var local_dmgpar:Number = (_score+koPoints)/(_mobHpTotal/num_players);
+        var local_timepar:Number = (_mobHpTotal/(300*num_players))/clock;
+        var local_difficult:Number;
+        if(handicap){
+            if(_difficulty == 0){
+                local_difficult = 0.5;
+            }else if(_difficulty == 2){
+                local_difficult = 1.5;
+            }else if(_difficulty == 3){
+                local_difficult = 2.0;
+            }else{
+                local_difficult = 1.0;
+            }
+        }else{
+            local_difficult = 1.0;
+        }
+        temp_grade = Math.round((local_dmgpar*local_timepar*local_difficult)*100);
+        if(toggle == "grade"){
+            return temp_grade;
+        }else if(toggle == "damage"){
+            return local_dmgpar;
+        }else if(toggle == "time"){
+            return local_timepar;
+        }else{
+            return temp_grade;
+        }
     }
 
     /**
@@ -464,9 +464,9 @@ public class BrawlerController extends Controller
     protected function finishInit () :void
     {
         if (init_finished) {
-			if (_control.game.amInControl()) {
-				_throttle.startTicker("clock", CLOCK_DELAY);
-			}
+            if (_control.game.amInControl()) {
+                _throttle.startTicker("clock", CLOCK_DELAY);
+            }
             return;
         }
         init_finished = true;
@@ -474,10 +474,10 @@ public class BrawlerController extends Controller
         // find existing actors, start listening for updates
         var names :Array = _control.net.getPropertyNames("actor");
         for each (var name :String in names) {
-			createActor(name, _control.net.get(name));
-		}
-		_control.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, propertyChanged);
-		_control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+            createActor(name, _control.net.get(name));
+        }
+        _control.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, propertyChanged);
+        _control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         _control.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         _control.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
         _control.game.addEventListener(StateChangedEvent.CONTROL_CHANGED, controlChanged);
@@ -558,7 +558,7 @@ public class BrawlerController extends Controller
                     pscores.push(scores[ii]);
                 }
             }
-			_throttle.set("clockOffset", _clock);
+            _throttle.set("clockOffset", _clock);
             _control.game.endGameWithScores(pplayers, pscores, GameSubControl.TO_EACH_THEIR_OWN);
 
         } else if (StringUtil.startsWith(event.name, "actor")) {
@@ -588,7 +588,7 @@ public class BrawlerController extends Controller
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
         if (event.name == "clock") {
-			_clock = _control.net.get("clockOffset") + (event.value as int);
+            _clock = _control.net.get("clockOffset") + (event.value as int);
             //_clock = event.value as int;
             _view.hud.updateClock();
 
@@ -685,13 +685,13 @@ public class BrawlerController extends Controller
         if (_self.locationEquals(x, y)) {
             return;
         }
-		// Double-click test
-		if(_lastClick <= 400){
-			_sprinting = true;
-		}else{
-			_sprinting = false;
-		}
-		_lastClick = 0;
+        // Double-click test
+        if(_lastClick <= 400){
+            _sprinting = true;
+        }else{
+            _sprinting = false;
+        }
+        _lastClick = 0;
         _view.showGoal(x, y);
         _self.move(x, y, _sprinting ? Pawn.SPRINT : Pawn.WALK);
     }
@@ -737,12 +737,12 @@ public class BrawlerController extends Controller
             });
     }
 
-	private function onClickTimer( e: Event):void
+    private function onClickTimer( e: Event):void
     {
-		_lastClick += 100;
-	}
+        _lastClick += 100;
+    }
 
-	/** Do this only once */
+    /** Do this only once */
     protected var init_finished :Boolean;
 
     /** The SWF loader. */
@@ -778,7 +778,7 @@ public class BrawlerController extends Controller
     /** The local score. */
     protected var _score :int = 0;
 
-	/** The local grade. */
+    /** The local grade. */
     public var _grade :int = 0;
 
     /** The currently occupied room. */
@@ -799,34 +799,34 @@ public class BrawlerController extends Controller
     /** Whether or not we should sprint, if possible, when moving. */
     protected var _sprinting :Boolean = false;
 
-	/** Time since last click. */
+    /** Time since last click. */
     protected var _lastClick :Number = 0;
 
-	/** Time since last click. */
+    /** Time since last click. */
     protected var _clickTimer :Timer = new Timer(100);
 
     /** The enemy configurations. */
     protected var _econfigs :Array = new Array();
 
-	/** Total amount of Mob Hit Points. */
-	public var _mobHpTotal :Number = 0;
+    /** Total amount of Mob Hit Points. */
+    public var _mobHpTotal :Number = 0;
 
-	/** If on, turns off enemies. */
-	public var _disableEnemies :Boolean = false;
+    /** If on, turns off enemies. */
+    public var _disableEnemies :Boolean = false;
 
-	/** If on, turns off controls.  */
-	public var _disableControls :Boolean = false;
+    /** If on, turns off controls.  */
+    public var _disableControls :Boolean = false;
 
     /** The raw SWF data. */
     //[Embed(source="../../../../rsrc/raw.swf", mimeType="application/octet-stream")]
     //protected static const RAW_SWF :Class;
-	[Embed(source="../../../../rsrc/hud_effects.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../../../rsrc/hud_effects.swf", mimeType="application/octet-stream")]
     protected static const RAW_SWF :Class;
-	[Embed(source="../../../../rsrc/bgs.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../../../rsrc/bgs.swf", mimeType="application/octet-stream")]
     protected static const BGS_SWF :Class;
-	[Embed(source="../../../../rsrc/pc.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../../../rsrc/pc.swf", mimeType="application/octet-stream")]
     protected static const PC_SWF :Class;
-	[Embed(source="../../../../rsrc/mobs.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../../../rsrc/mobs.swf", mimeType="application/octet-stream")]
     protected static const MOBS_SWF :Class;
 
     /** The SWFs to load on initialization. */

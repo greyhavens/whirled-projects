@@ -76,9 +76,9 @@ public class Player extends Pawn
         if (_weapon == Weapon.FISTS) {
             // show the break effect
             _view.addTransient(_ctrl.create("WeaponBreak"), x, y, true);
-			if (amOwner) {
-				_ctrl.weaponsBroken += 1;
-			}
+            if (amOwner) {
+                _ctrl.weaponsBroken += 1;
+            }
         }
         maybePublish();
     }
@@ -115,7 +115,7 @@ public class Player extends Pawn
         return Math.max(level, 1);
     }
 
-	// documentation inherited
+    // documentation inherited
     override public function get bounds () :Sprite
     {
         return _dmgbox.boundbox;
@@ -215,13 +215,13 @@ public class Player extends Pawn
     // documentation inherited
     override public function wasHit (attacker :Pawn, damage :Number) :void
     {
-		var points :int = Math.round(damage * 4);
+        var points :int = Math.round(damage * 4);
         _ctrl.score -= points;
         super.wasHit(attacker, damage);
         _ctrl.incrementStat("playerDamage", damage);
-		if (amOwner) {
-			_ctrl.damageTaken += damage;
-		}
+        if (amOwner) {
+            _ctrl.damageTaken += damage;
+        }
     }
 
     // documentation inherited
@@ -233,9 +233,9 @@ public class Player extends Pawn
         _hitResetCountdown = HIT_RESET_INTERVAL;
         _view.hud.updateHits();
 
-		if(damage >= 1500){
-			_ctrl.control.player.awardTrophy("hax");
-		}
+        if(damage >= 1500){
+            _ctrl.control.player.awardTrophy("hax");
+        }
 
         // damage the weapon for hits after the first
         if (_hits > 1) {
@@ -308,70 +308,70 @@ public class Player extends Pawn
     override public function enterFrame (elapsed :Number) :void
     {
         super.enterFrame(elapsed);
-		if(_ctrl._disableControls != true){
-			// check for collision of damage box with enemies when attacking
-			hitTestEnemies();
+        if(_ctrl._disableControls != true){
+            // check for collision of damage box with enemies when attacking
+            hitTestEnemies();
 
-			// if he's on the door, notify the controller
-			if (!dead && _view.door.hitTestObject(_bounds)) {
-				_ctrl.playerOnDoor();
-			}
-			if (!amOwner) {
-				return;
-			}
+            // if he's on the door, notify the controller
+            if (!dead && _view.door.hitTestObject(_bounds)) {
+                _ctrl.playerOnDoor();
+            }
+            if (!amOwner) {
+                return;
+            }
 
-			// respawn if enough time has passed since death
-			if (dead) {
-				if (_deathClock > RESPAWN_INTERVAL) {
-					respawn();
-				}
-				return;
-			}
+            // respawn if enough time has passed since death
+            if (dead) {
+                if (_deathClock > RESPAWN_INTERVAL) {
+                    respawn();
+                }
+                return;
+            }
 
-			// blocking and sprinting deplete energy
-			var rate :Number;
-			if (sprinting) {
-				rate = SPRINT_ENERGY_RATE;
-			} else if (blocking) {
-				rate = BLOCK_ENERGY_RATE;
-			} else if (_depleted) {
-				rate = DEPLETED_ENERGY_RATE;
-			} else {
-				rate = NORMAL_ENERGY_RATE;
-			}
-			_energy = MathUtil.clamp(_energy + rate*elapsed, 0, 100);
-			if (_energy == 0) {
-				_depleted = true;
-				if (blocking) {
-					blocking = false;
-				} else if (sprinting) {
-					stop();
-				}
-			} else if (_energy == 100) {
-				_depleted = false;
-			}
+            // blocking and sprinting deplete energy
+            var rate :Number;
+            if (sprinting) {
+                rate = SPRINT_ENERGY_RATE;
+            } else if (blocking) {
+                rate = BLOCK_ENERGY_RATE;
+            } else if (_depleted) {
+                rate = DEPLETED_ENERGY_RATE;
+            } else {
+                rate = NORMAL_ENERGY_RATE;
+            }
+            _energy = MathUtil.clamp(_energy + rate*elapsed, 0, 100);
+            if (_energy == 0) {
+                _depleted = true;
+                if (blocking) {
+                    blocking = false;
+                } else if (sprinting) {
+                    stop();
+                }
+            } else if (_energy == 100) {
+                _depleted = false;
+            }
 
-			// reset the attack level if enough time has passed
-			if ((_attackResetCountdown -= elapsed) <= 0) {
-				_attackLevel = 0;
-			}
+            // reset the attack level if enough time has passed
+            if ((_attackResetCountdown -= elapsed) <= 0) {
+                _attackLevel = 0;
+            }
 
-			// reset the hit count if enough time has passed
-			if ((_hitResetCountdown -= elapsed) <= 0) {
-				_hits = 0;
-			}
+            // reset the hit count if enough time has passed
+            if ((_hitResetCountdown -= elapsed) <= 0) {
+                _hits = 0;
+            }
 
-			// increment the player's health over time
-			if ((_healthTickCountdown -= elapsed) <= 0) {
-				heal(maxhp * HEALTH_TICK_AMOUNTS[_ctrl.difficulty]);
-				_healthTickCountdown = HEALTH_TICK_INTERVAL;
-			}
+            // increment the player's health over time
+            if ((_healthTickCountdown -= elapsed) <= 0) {
+                heal(maxhp * HEALTH_TICK_AMOUNTS[_ctrl.difficulty]);
+                _healthTickCountdown = HEALTH_TICK_INTERVAL;
+            }
 
-			// if he isn't moving, have him face the cursor
-			if (_action == "idle") {
-				face(_view.cursor.x);
-			}
-		}
+            // if he isn't moving, have him face the cursor
+            if (_action == "idle") {
+                face(_view.cursor.x);
+            }
+        }
     }
 
     /**
@@ -421,72 +421,72 @@ public class Player extends Pawn
         _plate.name_plate.defaultTextFormat = format;
         _plate.name_plate.text = _ctrl.control.game.getOccupantName(playerId);
 
-		// Configure appearance based on name
-		var ta: String = _plate.name_plate.text; //Grab the name
-		var face: int = 0; //Which hair/face to use
-		var appearance: int = 1; //Which Frame to use
-		var gender: Boolean = false; //False = male, True = female
-		if ((ta.length % 2) == 0) { gender = false; } else { gender = true; }
-		ta = ta.toLowerCase(); //convert to lower case
-		switch (ta.charAt()) {
-			case "a":
-			case "d":
-			case "g":
-			case "j":
-			case "m":
-			case "p":
-			case "s":
-			case "v":
-			case "y":
-				face = 1;
-				break;
-			case "c":
-			case "f":
-			case "i":
-			case "l":
-			case "o":
-			case "r":
-			case "u":
-			case "x":
-				face = 1;
-				break;
-			default :
-				face = 0;
-				break;
-		}
-		if(gender){
-			if(face == 2){
-				appearance = 5;
-			}else if(face == 1){
-				appearance = 3;
-			}else{
-				appearance = 1;
-			}
-		}else{
-			if(face == 2){
-				appearance = 6;
-			}else if(face == 1){
-				appearance = 4;
-			}else{
-				appearance = 2;
-			}
-		}
+        // Configure appearance based on name
+        var ta: String = _plate.name_plate.text; //Grab the name
+        var face: int = 0; //Which hair/face to use
+        var appearance: int = 1; //Which Frame to use
+        var gender: Boolean = false; //False = male, True = female
+        if ((ta.length % 2) == 0) { gender = false; } else { gender = true; }
+        ta = ta.toLowerCase(); //convert to lower case
+        switch (ta.charAt()) {
+            case "a":
+            case "d":
+            case "g":
+            case "j":
+            case "m":
+            case "p":
+            case "s":
+            case "v":
+            case "y":
+                face = 1;
+                break;
+            case "c":
+            case "f":
+            case "i":
+            case "l":
+            case "o":
+            case "r":
+            case "u":
+            case "x":
+                face = 1;
+                break;
+            default :
+                face = 0;
+                break;
+        }
+        if(gender){
+            if(face == 2){
+                appearance = 5;
+            }else if(face == 1){
+                appearance = 3;
+            }else{
+                appearance = 1;
+            }
+        }else{
+            if(face == 2){
+                appearance = 6;
+            }else if(face == 1){
+                appearance = 4;
+            }else{
+                appearance = 2;
+            }
+        }
 
-		//Special Cases
-		if(ta == "cherub"){ //Myself
-			appearance = 7;
-		}else if(ta == "jes"){ //My dearest
-			appearance = 8;
-		}else if(ta == "tester_1"){ //Testing
-			appearance = 2;
-		}
-		_character.hat.gotoAndStop(appearance);
-		_character.face.gotoAndStop(appearance);
-		_character.f_hair.gotoAndStop(appearance);
-		_character.f_ear.gotoAndStop(appearance);
-		_character.skull.gotoAndStop(appearance);
-		_character.r_ear.gotoAndStop(appearance);
-		_character.r_hair.gotoAndStop(appearance);
+        //Special Cases
+        if(ta == "cherub"){ //Myself
+            appearance = 7;
+        }else if(ta == "jes"){ //My dearest
+            appearance = 8;
+        }else if(ta == "tester_1"){ //Testing
+            appearance = 2;
+        }
+        _character.hat.gotoAndStop(appearance);
+        _character.face.gotoAndStop(appearance);
+        _character.f_hair.gotoAndStop(appearance);
+        _character.f_ear.gotoAndStop(appearance);
+        _character.skull.gotoAndStop(appearance);
+        _character.r_ear.gotoAndStop(appearance);
+        _character.r_hair.gotoAndStop(appearance);
 
         // set the weapon
         weapon = state.weapon;
@@ -582,7 +582,7 @@ public class Player extends Pawn
         _ctrl.incrementStat("koCount");
         if (amOwner) {
             experience = 0;
-			_ctrl.lemmingCount += 1;
+            _ctrl.lemmingCount += 1;
         }
     }
 
@@ -592,9 +592,9 @@ public class Player extends Pawn
         invulnerableCountdown = RESPAWN_INVULNERABILITY;
         _energy = 100;
         _depleted = false;
-		if (amOwner) {
+        if (amOwner) {
             setWeapon(1,1);
-			_experience = 100;
+            _experience = 100;
         }
         super.respawn(); // publishes the state
     }
@@ -699,7 +699,7 @@ public class Player extends Pawn
     /** For each difficulty level, the health proportion regained at regular intervals. */
     protected static const HEALTH_TICK_AMOUNTS :Array = [ 1/10, 1/20, 1/20, 0 ];
 
-	/** Attack damage multipliers for each weapon level. */
+    /** Attack damage multipliers for each weapon level. */
     protected static const ATTACK_LEVEL_MULTIPLIERS :Array = [ 1.00, 1.50, 2.00, 2.50 ];
 
     /** Weapon damage multipliers for each difficulty level. */
@@ -707,7 +707,7 @@ public class Player extends Pawn
 
     /** Weapon damage multipliers for each weapon level (starting at one). */
     protected static const LEVEL_DAMAGE_MULTIPLIERS :Array = [ 1, 1.5, 2 ];
-	//protected static const LEVEL_DAMAGE_MULTIPLIERS :Array = [ 0, 0, 0 ]; //<---Weapon decay disabled for testing
+    //protected static const LEVEL_DAMAGE_MULTIPLIERS :Array = [ 0, 0, 0 ]; //<---Weapon decay disabled for testing
 
     /** The number of seconds to wait before respawning the player. */
     protected static const RESPAWN_INTERVAL :Number = 10;

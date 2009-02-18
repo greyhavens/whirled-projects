@@ -34,12 +34,12 @@ public class HudView extends Sprite
         _hud.respawn.state = "off";
         _hud.fader.gotoAndStop("out");
         _hud.fader.addEventListener("animationComplete", handleFadeComplete);
-		_hud.zoneclear_off.mouseEnabled = false;
-		_hud.zoneclear.mouseEnabled = false;
-		_hud.zoneclear_off.scaleX = 0.1;
-		_hud.zoneclear_off.scaleY = 0.1;
-		_hud.zoneclear.scaleX = 0.1;
-		_hud.zoneclear.scaleY = 0.1;
+        _hud.zoneclear_off.mouseEnabled = false;
+        _hud.zoneclear.mouseEnabled = false;
+        _hud.zoneclear_off.scaleX = 0.1;
+        _hud.zoneclear_off.scaleY = 0.1;
+        _hud.zoneclear.scaleX = 0.1;
+        _hud.zoneclear.scaleY = 0.1;
 
         // update the room
         updateRoom();
@@ -96,7 +96,7 @@ public class HudView extends Sprite
         // update the weapon display
         setState(_hud.stats.exp.weapon.weapon, Weapon.FRAME_LABELS[self.weapon]);
 
-		// update the energy display (the "depleted" frames follow the normal ones)
+        // update the energy display (the "depleted" frames follow the normal ones)
         var pct :Number = Math.round(self.energy);
         _hud.stats.energy.gotoAndStop((self.depleted ? 101 : 0) + pct + 1);
         _hud.stats.energy.num.text = pct + "%";
@@ -189,44 +189,44 @@ public class HudView extends Sprite
         var minutes :Number = Math.floor(_ctrl.clock / 60);
         var seconds :String = (_ctrl.clock % 60).toString();
         _hud.time.text = minutes + "'" + StringUtil.prepad(seconds, 2, "0") + "''";
-		_hud.score_par.text = (_ctrl.calculateGrade("damage"));
-		_hud.score_time.text = (_ctrl.calculateGrade("time"));
-		_hud.score_grade.text = _ctrl.calculateGrade()+"%";
+        _hud.score_par.text = (_ctrl.calculateGrade("damage"));
+        _hud.score_time.text = (_ctrl.calculateGrade("time"));
+        _hud.score_grade.text = _ctrl.calculateGrade()+"%";
 
-		var self :Player = _ctrl.self;
+        var self :Player = _ctrl.self;
         if (self == null) {
             return;
         }
 
-		if (_ctrl.difficulty_setting != "Easy"){
-			if(self.blocking && _ctrl.timeSpentBlocking_awarded != true){
-				_ctrl.timeSpentBlocking += 1;
-				if(_ctrl.timeSpentBlocking >= _ctrl.timeSpentBlocking_goal && _ctrl.timeSpentBlocking_awarded != true){
-					_ctrl.control.player.awardTrophy("cautious");
-					_ctrl.timeSpentBlocking_awarded = true;
-				}
-			}
-			if(_ctrl.lemmingCount >= _ctrl.lemmingCount_goal && _ctrl.lemmingCount_awarded != true){
-				_ctrl.control.player.awardTrophy("lemming");
-				_ctrl.lemmingCount_awarded = true;
-			}
-			if(_ctrl.damageTaken >= _ctrl.damageTaken_goal && _ctrl.damageTaken_awarded != true){
-				_ctrl.control.player.awardTrophy("battle_scarred");
-				_ctrl.damageTaken_awarded = true;
-			}
-			if(_ctrl.coinsCollected >= _ctrl.coinsCollected_goal && _ctrl.coinsCollected_awarded != true){
-				_ctrl.control.player.awardTrophy("extra_life");
-				_ctrl.coinsCollected_awarded = true;
-			}
-			if(_ctrl.weaponsBroken >= _ctrl.weaponsBroken_goal && _ctrl.weaponsBroken_awarded != true){
-				_ctrl.control.player.awardTrophy("entropy");
-				_ctrl.weaponsBroken_awarded = true;
-			}
-			if(_ctrl.weaponsCollected >= _ctrl.weaponsCollected_goal && _ctrl.weaponsCollected_awarded != true){
-				_ctrl.control.player.awardTrophy("arms_dealer");
-				_ctrl.weaponsCollected_awarded = true;
-			}
-		}
+        if (_ctrl.difficulty_setting != "Easy"){
+            if(self.blocking && _ctrl.timeSpentBlocking_awarded != true){
+                _ctrl.timeSpentBlocking += 1;
+                if(_ctrl.timeSpentBlocking >= _ctrl.timeSpentBlocking_goal && _ctrl.timeSpentBlocking_awarded != true){
+                    _ctrl.control.player.awardTrophy("cautious");
+                    _ctrl.timeSpentBlocking_awarded = true;
+                }
+            }
+            if(_ctrl.lemmingCount >= _ctrl.lemmingCount_goal && _ctrl.lemmingCount_awarded != true){
+                _ctrl.control.player.awardTrophy("lemming");
+                _ctrl.lemmingCount_awarded = true;
+            }
+            if(_ctrl.damageTaken >= _ctrl.damageTaken_goal && _ctrl.damageTaken_awarded != true){
+                _ctrl.control.player.awardTrophy("battle_scarred");
+                _ctrl.damageTaken_awarded = true;
+            }
+            if(_ctrl.coinsCollected >= _ctrl.coinsCollected_goal && _ctrl.coinsCollected_awarded != true){
+                _ctrl.control.player.awardTrophy("extra_life");
+                _ctrl.coinsCollected_awarded = true;
+            }
+            if(_ctrl.weaponsBroken >= _ctrl.weaponsBroken_goal && _ctrl.weaponsBroken_awarded != true){
+                _ctrl.control.player.awardTrophy("entropy");
+                _ctrl.weaponsBroken_awarded = true;
+            }
+            if(_ctrl.weaponsCollected >= _ctrl.weaponsCollected_goal && _ctrl.weaponsCollected_awarded != true){
+                _ctrl.control.player.awardTrophy("arms_dealer");
+                _ctrl.weaponsCollected_awarded = true;
+            }
+        }
     }
 
     /**
@@ -276,14 +276,14 @@ public class HudView extends Sprite
      */
     public function updateClear () :void
     {
-		if(_ctrl.clear){
-			if(_hud.go.playthrough != true){
-				_hud.go.playthrough = true;
-				_hud.go.gotoAndPlay(1);
-			}
-		}else{
-			_hud.go.playthrough = false;
-		}
+        if(_ctrl.clear){
+            if(_hud.go.playthrough != true){
+                _hud.go.playthrough = true;
+                _hud.go.gotoAndPlay(1);
+            }
+        }else{
+            _hud.go.playthrough = false;
+        }
         _hud.go.visible = _ctrl.clear;
     }
 
@@ -321,65 +321,65 @@ public class HudView extends Sprite
         _hud.stats.exp.weapon.gotoAndPlay("damage");
     }
 
-	/**
+    /**
      * Flash PICKUP image for new weapon.
      */
     public function showPickUp(weaponX:Number) :void
     {
-		var self :Player = _ctrl.self;
+        var self :Player = _ctrl.self;
         if (self == null) {
             return;
         }
-		var local :Point = self.parent.localToGlobal(new Point(weaponX, 0));
-		_hud.pickup.x = local.x;
+        var local :Point = self.parent.localToGlobal(new Point(weaponX, 0));
+        _hud.pickup.x = local.x;
         if(_hud.pickup.currentFrame > 14){
-				_hud.pickup.gotoAndPlay(1);
-		}
+                _hud.pickup.gotoAndPlay(1);
+        }
     }
 
-	/**
+    /**
      * Toggle Zone Clear results.
      */
     public function zoneClear(off:Boolean = false) :void
     {
-		if(off){
-			_hud.zoneclear_off.scaleX = 1.0;
-			_hud.zoneclear_off.scaleY = 1.0;
-			_hud.zoneclear.scaleX = 0.1;
-			_hud.zoneclear.scaleY = 0.1;
-			_hud.zoneclear_off.alpha = 1;
+        if(off){
+            _hud.zoneclear_off.scaleX = 1.0;
+            _hud.zoneclear_off.scaleY = 1.0;
+            _hud.zoneclear.scaleX = 0.1;
+            _hud.zoneclear.scaleY = 0.1;
+            _hud.zoneclear_off.alpha = 1;
 
-			//_hud.zoneclear.alpha = 0;
-			_hud.zoneclear.alpha = 1;
-			_hud.zoneclear_off.gotoAndPlay(1);
-			_hud.zoneclear.gotoAndStop(1);
-		}else{
-			_hud.zoneclear_off.scaleX = 0.1;
-			_hud.zoneclear_off.scaleY = 0.1;
-			_hud.zoneclear.scaleX = 1.0;
-			_hud.zoneclear.scaleY = 1.0;
+            //_hud.zoneclear.alpha = 0;
+            _hud.zoneclear.alpha = 1;
+            _hud.zoneclear_off.gotoAndPlay(1);
+            _hud.zoneclear.gotoAndStop(1);
+        }else{
+            _hud.zoneclear_off.scaleX = 0.1;
+            _hud.zoneclear_off.scaleY = 0.1;
+            _hud.zoneclear.scaleX = 1.0;
+            _hud.zoneclear.scaleY = 1.0;
 
-			_hud.zoneclear.alpha = 1;
-			_hud.zoneclear_off.alpha = 0;
-			var pct :Number = Math.round(_ctrl.calculateGrade("grade",false));
-			var grade :Number = BrawlerUtil.indexIfLessEqual(GRADE_LEVELS, pct);
-			_hud.zoneclear.grade.points.text = (GRADES[grade]);
-			_hud.zoneclear.percent.points.text = pct;
-			_hud.zoneclear_off.grade.points.text = (GRADES[grade]);
-			_hud.zoneclear_off.percent.points.text = pct;
-			_hud.zoneclear.gotoAndPlay(2);
+            _hud.zoneclear.alpha = 1;
+            _hud.zoneclear_off.alpha = 0;
+            var pct :Number = Math.round(_ctrl.calculateGrade("grade",false));
+            var grade :Number = BrawlerUtil.indexIfLessEqual(GRADE_LEVELS, pct);
+            _hud.zoneclear.grade.points.text = (GRADES[grade]);
+            _hud.zoneclear.percent.points.text = pct;
+            _hud.zoneclear_off.grade.points.text = (GRADES[grade]);
+            _hud.zoneclear_off.percent.points.text = pct;
+            _hud.zoneclear.gotoAndPlay(2);
 
-			//Award Trophy and Room for beating room at rank S on Normal+
-			if (_ctrl.difficulty_setting != "Easy" || _ctrl.difficulty_setting != "Normal"){
-				if ((GRADES[grade]) == "S"){
-					//Got a rank S!
-					var zone:int = _ctrl.room-1;
-					if (_ctrl.control.player.awardTrophy(String("room"+zone))) {
-						_ctrl.control.player.awardPrize(String("prize_z"+zone));
-					}
-				}
-			}
-		}
+            //Award Trophy and Room for beating room at rank S on Normal+
+            if (_ctrl.difficulty_setting != "Easy" || _ctrl.difficulty_setting != "Normal"){
+                if ((GRADES[grade]) == "S"){
+                    //Got a rank S!
+                    var zone:int = _ctrl.room-1;
+                    if (_ctrl.control.player.awardTrophy(String("room"+zone))) {
+                        _ctrl.control.player.awardPrize(String("prize_z"+zone));
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -424,10 +424,10 @@ public class HudView extends Sprite
     /** The number of kick levels in the attack bar. */
     protected static const KICK_LEVELS :int = 3;
 
-	/** The array of possible grades. */
+    /** The array of possible grades. */
     protected static const GRADES :Array = [ "S", "A", "B", "C", "D", "F" ];
 
-	/** The required percent score for each grade. */
+    /** The required percent score for each grade. */
     protected static const GRADE_LEVELS :Array = [ 100, 90, 80, 70, 60, 0 ];
 }
 }

@@ -24,39 +24,39 @@ public class Attack
 
     /** The primary sword attacks for each level. */
     public static const PRIMARY_SWORD_ATTACKS :Array = [
-        new Attack("sword_lt_1", "sword_lt_1", 90, 120),					//Left
-        new Attack("sword_lt_2", "sword_lt_2", 100, 135),					//Right
-        new Attack("sword_lt_3", "sword_lt_3", 120, 150, 2, 6, 0, 2) ];		//Down
+        new Attack("sword_lt_1", "sword_lt_1", 90, 120),                    //Left
+        new Attack("sword_lt_2", "sword_lt_2", 100, 135),                    //Right
+        new Attack("sword_lt_3", "sword_lt_3", 120, 150, 2, 6, 0, 2) ];        //Down
 
     /** The secondary sword attacks for each level. */
     public static const SECONDARY_SWORD_ATTACKS :Array = [
-        new Attack("sword_hv_1", "sword_hv_1", 120, 150, 0, 15, 0, 0),		//Upper Cut
-        new Attack("sword_hv_2", "sword_hv_2", 150, 240, 15, 30, 0, 0),		//Dash
-        new Attack("sword_hv_3", "sword_hv_3", 300, 450, 0, 0, 2, 3) ];		//Final Smash
+        new Attack("sword_hv_1", "sword_hv_1", 120, 150, 0, 15, 0, 0),        //Upper Cut
+        new Attack("sword_hv_2", "sword_hv_2", 150, 240, 15, 30, 0, 0),        //Dash
+        new Attack("sword_hv_3", "sword_hv_3", 300, 450, 0, 0, 2, 3) ];        //Final Smash
 
     /** The primary hammer attacks for each level. */
     public static const PRIMARY_HAMMER_ATTACKS :Array = [
-        new Attack("hammer_lt_1", "hammer_lt_1", 120, 165),					//Swing
-        new Attack("hammer_lt_2", "hammer_lt_2", 200, 255, 0, 0, 1, 2),		//Sledge
-        new Attack("hammer_lt_3", "hammer_lt_3", 240, 300, 40, 60) ]; 		//Golf
+        new Attack("hammer_lt_1", "hammer_lt_1", 120, 165),                    //Swing
+        new Attack("hammer_lt_2", "hammer_lt_2", 200, 255, 0, 0, 1, 2),        //Sledge
+        new Attack("hammer_lt_3", "hammer_lt_3", 240, 300, 40, 60) ];         //Golf
 
     /** The secondary hammer attacks for each level. */
     public static const SECONDARY_HAMMER_ATTACKS :Array = [
-        new Attack("hammer_hv_1", "hammer_hv_1", 210, 240, 70, 85, 0, 0),	// Home Run
-        new Attack("hammer_hv_2", "hammer_hv_2", 120, 150, 0, 6, 2, 3),		// Stun
-        new Attack("hammer_hv_3", "hammer_hv_3", 300, 600, 25, 40, 0, 0) ];	// Round House
+        new Attack("hammer_hv_1", "hammer_hv_1", 210, 240, 70, 85, 0, 0),    // Home Run
+        new Attack("hammer_hv_2", "hammer_hv_2", 120, 150, 0, 6, 2, 3),        // Stun
+        new Attack("hammer_hv_3", "hammer_hv_3", 300, 600, 25, 40, 0, 0) ];    // Round House
 
     /** The primary bow attacks for each level. */
     public static const PRIMARY_BOW_ATTACKS :Array = [
-        new Attack("bow_lt_1", "bow_lt_1", 75, 90),							//Pew
-        new Attack("bow_lt_2", "bow_lt_2", 85, 110),						//Pew
-        new Attack("bow_lt_3", "bow_lt_3", 100, 120, 2, 20) ];				//BLAM
+        new Attack("bow_lt_1", "bow_lt_1", 75, 90),                            //Pew
+        new Attack("bow_lt_2", "bow_lt_2", 85, 110),                        //Pew
+        new Attack("bow_lt_3", "bow_lt_3", 100, 120, 2, 20) ];                //BLAM
 
     /** The secondary bow attacks for each level. */
     public static const SECONDARY_BOW_ATTACKS :Array = [
-        new Attack("bow_hv_1", "bow_hv_1", 90, 120),						//Long Shot
-        new Attack("bow_hv_2", "bow_hv_2", 145, 210, 0, 8, 0, 1),						//???
-        new Attack("bow_hv_3", "bow_hv_3", 300, 450, 10, 20, 0, 2) ];		//Crystal Rain
+        new Attack("bow_hv_1", "bow_hv_1", 90, 120),                        //Long Shot
+        new Attack("bow_hv_2", "bow_hv_2", 145, 210, 0, 8, 0, 1),                        //???
+        new Attack("bow_hv_3", "bow_hv_3", 300, 450, 10, 20, 0, 2) ];        //Crystal Rain
 
     /** Primary attack arrays for each weapon. */
     public static const PRIMARY_ATTACKS :Array = [

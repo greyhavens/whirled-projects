@@ -38,7 +38,7 @@ public class BrawlerView extends Sprite
         // create the game display, fetching references to its various bits and bobs
         _game = _ctrl.create("Game");
         _camera = _game["camera"];
-		_camera._zoom.addChild(_camera._zoom.bg = MovieClip(_ctrl.create("bg_export")));
+        _camera._zoom.addChild(_camera._zoom.bg = MovieClip(_ctrl.create("bg_export")));
         _background = _camera._zoom.bg;
         _ground = _background.ground;
 
@@ -248,17 +248,17 @@ public class BrawlerView extends Sprite
         // start the fade-out (the hud will report to the controller when finished)
         _hud.fade("out");
 
-		// status report
-		_hud.zoneClear();
+        // status report
+        _hud.zoneClear();
 
-		// end game, sorta, and award flow.
-		_ctrl._grade = _ctrl.calculateGrade();
-		var self :Player = _ctrl.self;
-		if(self.special && _ctrl._grade > 125){
-			_ctrl._grade = 125;
-		}
-		_ctrl.control.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, _ctrl.coinsAwarded);
-		_ctrl.throttle.setAt("scores", _ctrl.control.game.seating.getMyPosition(), _ctrl._grade);
+        // end game, sorta, and award flow.
+        _ctrl._grade = _ctrl.calculateGrade();
+        var self :Player = _ctrl.self;
+        if(self.special && _ctrl._grade > 125){
+            _ctrl._grade = 125;
+        }
+        _ctrl.control.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, _ctrl.coinsAwarded);
+        _ctrl.throttle.setAt("scores", _ctrl.control.game.seating.getMyPosition(), _ctrl._grade);
     }
 
     /**
@@ -283,8 +283,8 @@ public class BrawlerView extends Sprite
         // fade in
         _hud.fade("in");
 
-		// status report remove
-		_hud.zoneClear(true);
+        // status report remove
+        _hud.zoneClear(true);
     }
 
     /**
@@ -294,9 +294,9 @@ public class BrawlerView extends Sprite
     {
         results = _ctrl.create("Endscreen");
         //removeChild(_game);
-		_hud.alpha = 0;
+        _hud.alpha = 0;
         addChild(results);
-		results.gotoAndPlay(1);
+        results.gotoAndPlay(1);
 
         // display the KO count/points
         //var koCount :Number = _ctrl.control.get("koCount") as Number;
@@ -306,15 +306,15 @@ public class BrawlerView extends Sprite
         // display the damage points
         results.score.points.text = Math.round(_ctrl.score);
 
-		if(_ctrl.difficulty_setting == "Easy"){
-			results.difficulty.text = "EASY";
-		}else if(_ctrl.difficulty_setting == "Normal"){
-			results.difficulty.text = "NORMAL";
-		}else if(_ctrl.difficulty_setting == "Hard"){
-			results.difficulty.text = "HARD";
-		}else if(_ctrl.difficulty_setting == "Inferno"){
-			results.difficulty.text = "INFERNO";
-		}
+        if(_ctrl.difficulty_setting == "Easy"){
+            results.difficulty.text = "EASY";
+        }else if(_ctrl.difficulty_setting == "Normal"){
+            results.difficulty.text = "NORMAL";
+        }else if(_ctrl.difficulty_setting == "Hard"){
+            results.difficulty.text = "HARD";
+        }else if(_ctrl.difficulty_setting == "Inferno"){
+            results.difficulty.text = "INFERNO";
+        }
 
         // display the final clock value, bonus score
         results.time.points.text = _hud.clock;
@@ -323,30 +323,30 @@ public class BrawlerView extends Sprite
         var pct :Number = Math.round(_ctrl.calculateGrade("grade",false));
         var grade :Number = BrawlerUtil.indexIfLessEqual(GRADE_LEVELS, pct);
         results.grade.gotoAndStop(GRADES[grade]);
-		results.percent.points.text = pct;
+        results.percent.points.text = pct;
 
-		//Award trophy/prize for room
-		if (_ctrl.difficulty_setting != "Easy" || _ctrl.difficulty_setting != "Normal"){
-			if ((GRADES[grade]) == "S"){
-				//Got a rank S!
-				var zone:int = 9;
-				if (_ctrl.control.player.awardTrophy(String("room"+zone))) {
-					_ctrl.control.player.awardPrize(String("prize_z"+zone));
-				}
-			}
-		}
+        //Award trophy/prize for room
+        if (_ctrl.difficulty_setting != "Easy" || _ctrl.difficulty_setting != "Normal"){
+            if ((GRADES[grade]) == "S"){
+                //Got a rank S!
+                var zone:int = 9;
+                if (_ctrl.control.player.awardTrophy(String("room"+zone))) {
+                    _ctrl.control.player.awardPrize(String("prize_z"+zone));
+                }
+            }
+        }
 
-		//Award trophy/prize for completion
-		if (_ctrl.control.player.awardTrophy(String("trophy_"+_ctrl.difficulty_setting))) {
-			_ctrl.control.player.awardPrize(String("prize_"+_ctrl.difficulty_setting));
-		}
+        //Award trophy/prize for completion
+        if (_ctrl.control.player.awardTrophy(String("trophy_"+_ctrl.difficulty_setting))) {
+            _ctrl.control.player.awardPrize(String("prize_"+_ctrl.difficulty_setting));
+        }
 
-		//Award Immortal Trophy if they didn't die.
-		if (_ctrl.difficulty_setting != "Easy"){
-			if(_ctrl.lemmingCount <= 0){
-				_ctrl.control.player.awardTrophy("immortal");
-			}
-		}
+        //Award Immortal Trophy if they didn't die.
+        if (_ctrl.difficulty_setting != "Easy"){
+            if(_ctrl.lemmingCount <= 0){
+                _ctrl.control.player.awardTrophy("immortal");
+            }
+        }
 
 
     }
@@ -356,24 +356,24 @@ public class BrawlerView extends Sprite
      */
     protected function finishInit () :void
     {
-		if(init_finished){
-		}else{
-			init_finished = true;
-			// add the game display
-			addChild(_game);
+        if(init_finished){
+        }else{
+            init_finished = true;
+            // add the game display
+            addChild(_game);
 
-			// turn the camera effect off
-			_camera.stop();
+            // turn the camera effect off
+            _camera.stop();
 
-			// set up the first room
-			updateRoom();
+            // set up the first room
+            updateRoom();
 
-			// initialize the hud
-			_hud.init();
+            // initialize the hud
+            _hud.init();
 
-			// start updating at every frame
-			root.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
-		}
+            // start updating at every frame
+            root.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+        }
     }
 
     /**
@@ -525,7 +525,7 @@ public class BrawlerView extends Sprite
         door.height = _ground.height;
     }
 
-	/** Do this only once */
+    /** Do this only once */
     protected var init_finished :Boolean;
 
     /** The Brawler controller. */
@@ -534,7 +534,7 @@ public class BrawlerView extends Sprite
     /** Keeps the HUD up-to-date. */
     protected var _hud :HudView;
 
-	/** The Score Card display. */
+    /** The Score Card display. */
     public var results :MovieClip;
 
     /** The preloader display. */

@@ -380,85 +380,85 @@ public class Pawn extends Actor
     // documentation inherited
     override public function enterFrame (elapsed :Number) :void
     {
-		if (_ctrl._disableEnemies != true){
-			// experimentally derived (?)
-			var scale :Number = 3 - 2*scaleX;
+        if (_ctrl._disableEnemies != true){
+            // experimentally derived (?)
+            var scale :Number = 3 - 2*scaleX;
 
-			// update the scale of the name plate
-			if (_plate.parent != null) {
-				_plate.name_plate.scaleX = scale;
-				_plate.name_plate.scaleY = scale;
-				_plate.name_plate.x = -_plate.width/2; // recenter
-			}
+            // update the scale of the name plate
+            if (_plate.parent != null) {
+                _plate.name_plate.scaleX = scale;
+                _plate.name_plate.scaleY = scale;
+                _plate.name_plate.x = -_plate.width/2; // recenter
+            }
 
-			// update the scale and state of the health bar
-			if (_health.parent != null) {
-				_health.scaleX = scale;
-				_health.scaleY = scale;
-				var frame :int = Math.floor((_hp / maxhp) * 100) + 1;
-				_health.gotoAndStop(frame);
-			}
+            // update the scale and state of the health bar
+            if (_health.parent != null) {
+                _health.scaleX = scale;
+                _health.scaleY = scale;
+                var frame :int = Math.floor((_hp / maxhp) * 100) + 1;
+                _health.gotoAndStop(frame);
+            }
 
-			// update the stun countdown
-			_effects.gotoAndStop((_stunCountdown -= elapsed) > 0 ? "stunned" : "normal");
+            // update the stun countdown
+            _effects.gotoAndStop((_stunCountdown -= elapsed) > 0 ? "stunned" : "normal");
 
-			// update the invulnerability countdown
-			if ((_invulnerableCountdown -= elapsed) > 0) {
-				_character.alpha = (_blink++ % 2 == 0) ? 1 : 0;
-			} else {
-				_character.alpha = 1;
-			}
+            // update the invulnerability countdown
+            if ((_invulnerableCountdown -= elapsed) > 0) {
+                _character.alpha = (_blink++ % 2 == 0) ? 1 : 0;
+            } else {
+                _character.alpha = 1;
+            }
 
-			// update the death clock
-			if (dead && (_deathClock += elapsed) >= 1) {
-				if (_deathClock >= 2 && visible) {
-					_character.visible = false;
-					disappeared();
-				} else {
-					// toggle alpha every other frame
-					_character.alpha = ((_blink++ / 2) % 2 == 0) ? 1 : 0;
-				}
-			}
+            // update the death clock
+            if (dead && (_deathClock += elapsed) >= 1) {
+                if (_deathClock >= 2 && visible) {
+                    _character.visible = false;
+                    disappeared();
+                } else {
+                    // toggle alpha every other frame
+                    _character.alpha = ((_blink++ / 2) % 2 == 0) ? 1 : 0;
+                }
+            }
 
-			// move towards our goal, if we're not there yet
-			if (moving) {
-				var location :Point = new Point(x, y);
-				var distance :Number = Point.distance(location, _goal);
-				var speed :Number = getSpeed(distance);
-				var wspeed :Number = getWalkSpeed(scaleX, true);
-				var f :Number = (speed <= SLIDE_STOP_SPEED) ?
-					1 : Math.min(1, (speed * elapsed) / distance);
+            // move towards our goal, if we're not there yet
+            if (moving) {
+                var location :Point = new Point(x, y);
+                var distance :Number = Point.distance(location, _goal);
+                var speed :Number = getSpeed(distance);
+                var wspeed :Number = getWalkSpeed(scaleX, true);
+                var f :Number = (speed <= SLIDE_STOP_SPEED) ?
+                    1 : Math.min(1, (speed * elapsed) / distance);
 
-				// update the location
-				location = Point.interpolate(_goal, location, f);
-				_view.setPosition(this, location.x, location.y);
+                // update the location
+                location = Point.interpolate(_goal, location, f);
+                _view.setPosition(this, location.x, location.y);
 
-				// are we there yet?
-				if (!moving) {
-					stopped();
+                // are we there yet?
+                if (!moving) {
+                    stopped();
 
-				// find out if we've switched from sprinting to sliding
-				} else if (_motion == SPRINT && speed < wspeed) {
-					stopped();
-					_motion = SLIDE;
-				}
+                // find out if we've switched from sprinting to sliding
+                } else if (_motion == SPRINT && speed < wspeed) {
+                    stopped();
+                    _motion = SLIDE;
+                }
 
-				// perhaps emit a dust poof
-				if ((_dustCountdown -= elapsed) <= 0) {
-					_view.addTransient(_ctrl.create("Dust"), x, y);
-					_dustCountdown = dustInterval;
-				}
-			}
+                // perhaps emit a dust poof
+                if ((_dustCountdown -= elapsed) <= 0) {
+                    _view.addTransient(_ctrl.create("Dust"), x, y);
+                    _dustCountdown = dustInterval;
+                }
+            }
 
-			// update the pawn's action
-			updateAction();
+            // update the pawn's action
+            updateAction();
 
-			// update the pawn's direction
-			updateDirection();
+            // update the pawn's direction
+            updateDirection();
 
-			// update the location of the radar blip
-			_view.hud.updateRadarBlip(_blip, x);
-		}
+            // update the location of the radar blip
+            _view.hud.updateRadarBlip(_blip, x);
+        }
     }
 
     // documentation inherited
@@ -691,7 +691,7 @@ public class Pawn extends Actor
             setAction("block");
         } else if (moving && _motion == SPRINT) {
             setAction("sprint");
-		} else if (moving && _motion == WALK) {
+        } else if (moving && _motion == WALK) {
             setAction("walk");
         } else {
             setAction("idle");

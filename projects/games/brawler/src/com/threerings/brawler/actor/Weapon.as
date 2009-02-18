@@ -38,7 +38,7 @@ public class Weapon extends Pickup
 
         // initialize the scale
         _clip.scaleX = 1 / scaleX;
-		_clip.scaleY = 1 / scaleX;
+        _clip.scaleY = 1 / scaleX;
 
         // initialize the type and level
         _weapon = state.weapon;
@@ -70,18 +70,18 @@ public class Weapon extends Pickup
     // documentation inherited
     override protected function hit (player :Player) :void
     {
-		if(player.blocking || player.weapon == _weapon || player.weapon == FISTS){
-			super.hit(player);
-			_ctrl.weaponsCollected += 1;
-			var sparks :MovieClip = _ctrl.create("WeaponSparks");
-			sparks.cn.gotoAndStop(label);
-			_view.addTransient(sparks, x, y, true);
-		}else{
-			var self :Player = _ctrl.self;
-			if(self == player){
-				_view.hud.showPickUp(x);
-			}
-		}
+        if(player.blocking || player.weapon == _weapon || player.weapon == FISTS){
+            super.hit(player);
+            _ctrl.weaponsCollected += 1;
+            var sparks :MovieClip = _ctrl.create("WeaponSparks");
+            sparks.cn.gotoAndStop(label);
+            _view.addTransient(sparks, x, y, true);
+        }else{
+            var self :Player = _ctrl.self;
+            if(self == player){
+                _view.hud.showPickUp(x);
+            }
+        }
     }
 
     /**

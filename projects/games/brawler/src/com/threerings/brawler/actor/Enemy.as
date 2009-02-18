@@ -136,12 +136,12 @@ public class Enemy extends Pawn
         attacker :Pawn, damage :Number, knockback :Number, stun :Number) :void
     {
         // perhaps release a coin
-		if(knockback > 0){
-			var temp_kb:Number = knockback - _weight;
-			if(temp_kb < 0){
-				temp_kb = 0;
-			}
-		}
+        if(knockback > 0){
+            var temp_kb:Number = knockback - _weight;
+            if(temp_kb < 0){
+                temp_kb = 0;
+            }
+        }
         super.hurt(attacker, damage, temp_kb, stun);
         if (Math.random() < COIN_DROP_PROBABILITY) {
             _ctrl.createPickup(Coin.createState(_view, x, y));
@@ -297,8 +297,8 @@ public class Enemy extends Pawn
         _max = parseFloat(config.max.text) * MINMAX_MULTIPLIERS[difficulty];
         _knockback = parseFloat(config.knockback.text) * KNOCKBACK_MULTIPLIERS[difficulty];
         _stun = parseFloat(config.stun.text) * STUN_MULTIPLIERS[difficulty];
-		_weight = parseFloat(config.weight.text);
-		_def = parseFloat(config.def.text);
+        _weight = parseFloat(config.weight.text);
+        _def = parseFloat(config.def.text);
         _respawns = state.respawns;
 
         // remove various unnecessary bits
@@ -321,8 +321,8 @@ public class Enemy extends Pawn
         // play the spawn animation
         setAction("spawn");
 
-		// add to total Monster HP
-		_ctrl._mobHpTotal += _maxhp;
+        // add to total Monster HP
+        _ctrl._mobHpTotal += _maxhp;
     }
 
     /**
@@ -383,8 +383,8 @@ public class Enemy extends Pawn
         // perhaps drop a pickup
         var prob :Number = Math.random();
         var state :Object;
-		if (prob < PET_DROP_PROBABILITY && !boss && _ctrl.difficulty_setting != "Easy") {
-		    // TODO: this class is not in SVN
+        if (prob < PET_DROP_PROBABILITY && !boss && _ctrl.difficulty_setting != "Easy") {
+            // TODO: this class is not in SVN
             // _ctrl.createPickup(Loot.createState(x, y, _variant));
         } else if (prob < PET_DROP_PROBABILITY + HEALTH_DROP_PROBABILITY) {
             _ctrl.createPickup(Health.createState(x, y));
@@ -416,8 +416,8 @@ public class Enemy extends Pawn
     override protected function respawn () :void
     {
         super.respawn();
-		// add to total Monster HP
-		_ctrl._mobHpTotal += _maxhp;
+        // add to total Monster HP
+        _ctrl._mobHpTotal += _maxhp;
         _attackCountdown = _cooldown;
     }
 
@@ -549,10 +549,10 @@ public class Enemy extends Pawn
     /** The enemy's stun amount. */
     protected var _stun :Number;
 
-	/** The enemy's knockback dampening. */
+    /** The enemy's knockback dampening. */
     protected var _weight :Number;
 
-	/** The enemy's chance to block attacks. */
+    /** The enemy's chance to block attacks. */
     protected var _def :Number;
 
     /** The enemy's remaining respawns. */
@@ -611,7 +611,7 @@ public class Enemy extends Pawn
     /** The chance that the enemy will drop a weapon pickup when it dies. */
     protected static const WEAPON_DROP_PROBABILITY :Number = 0.65;
 
-	/** The chance that the enemy will drop a Pet of itself when it dies. */
+    /** The chance that the enemy will drop a Pet of itself when it dies. */
     protected static const PET_DROP_PROBABILITY :Number = 0.005;
 
     /** The weapon types carried by each enemy variant. */
