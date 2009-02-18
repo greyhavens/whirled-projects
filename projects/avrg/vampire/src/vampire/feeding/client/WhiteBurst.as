@@ -36,7 +36,7 @@ public class WhiteBurst extends CellBurst
         var collided :CollidableObj = RedBurst.getRedBurstCollision(this);
         if (collided == null) {
             var cell :Cell = Cell.getCellCollision(this);
-            if (cell != null && cell.state == Cell.STATE_NORMAL && !cell.isWhiteCell) {
+            if (cell != null && cell.state == Cell.STATE_NORMAL) {
                 collided = cell;
             }
         }
