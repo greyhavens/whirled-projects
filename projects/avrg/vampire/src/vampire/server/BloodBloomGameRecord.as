@@ -17,6 +17,9 @@ public class BloodBloomGameRecord
         _preyId = preyId;
         _multiplePredators = multiplePredators;
         
+        if( _multiplePredators ) {
+            startCountDownTimer();
+        }
     }
     
     protected function startCountDownTimer() :void
@@ -36,6 +39,7 @@ public class BloodBloomGameRecord
         var flooredCurrentTime :int = Math.floor( _countdownTimeRemaining );
         if( flooredCurrentTime != _currentCountdownSecond) {
             
+            log.debug("setCountDownIntoRoomProps()", "_currentCountdownSecond", _currentCountdownSecond);
             _currentCountdownSecond = flooredCurrentTime;
             _room.ctrl.sendMessage( Constants.NAMED_EVENT_BLOODBLOOM_COUNTDOWN, toArray() );
 //            _room.ctrl.props.set(Codes.ROOM_PROP_BLOODBLOOM_COUNTDOWN, toArray());
@@ -72,9 +76,18 @@ public class BloodBloomGameRecord
     
     public function startGame() :void
     {
+        log.debug("startGame()");
+        
+        if( _started ) {
+            log.error("startGame(), but we have already started...WTF?");
+            return;
+        }
+        
         var gamePreyId :int = _room.isPlayer( _preyId ) ? _preyId : -1;
-            _gameServer = FeedingGameServer.create( _room.roomId, _predators.toArray(), gamePreyId, 
-                gameFinishedCallback);
+        
+        _gameServer = FeedingGameServer.create( _room.roomId, _predators.toArray(), gamePreyId, 
+            gameFinishedCallback);
+        log.debug("starting gameServer", "gameId", _gameServer.gameId ,"roomId", _room.roomId, "_predators", _predators.toArray(), "gamePreyId", gamePreyId);
         
         // send a message with the game ID to each of the players, a
         ServerContext.ctrl.doBatch(function () :void {
@@ -92,7 +105,7 @@ public class BloodBloomGameRecord
     
     protected function gameFinishedCallback() :void
     {
-        log.debug("Game finished");
+        log.debug("gameFinishedCallback");
         log.debug("_gameServer.finalScore=" + _gameServer.finalScore);
         log.debug("_gameServer.playerIds=" + _gameServer.playerIds);
         shutdown();
@@ -116,12 +129,14 @@ public class BloodBloomGameRecord
     public function removePlayer ( playerId :int ) :void
     {
         if( _preyId == playerId ) {
+            log.info("Shutting down bloodbloom game because prey removed");
             shutdown();
         }
         else {
             _predators.remove( playerId ) ;
             _gameServer.playerLeft( playerId );
             if( _predators.size() == 0) {
+                log.info("Shutting down bloodbloom game because pred==0");
                 shutdown();
             }
         }
@@ -129,6 +144,7 @@ public class BloodBloomGameRecord
     
     public function update( dt :Number ) :void
     {
+        log.debug("update(" + dt + ")");
         if( !_started && _multiplePredators) {
             _countdownTimeRemaining -= dt;
             
@@ -148,10 +164,10 @@ public class BloodBloomGameRecord
     
     public function get isFinished() :Boolean
     {
-        return _started;
+        return _finished;
     }
     
-    public function setFinished( finished :Boolean) :void
+    protected function setFinished( finished :Boolean) :void
     {
         _finished = finished;
     }
@@ -181,6 +197,7 @@ public class BloodBloomGameRecord
         }
         _room = null;
         _gameServer = null;
+        
         _finished = true;
     }
     
@@ -189,7 +206,14 @@ public class BloodBloomGameRecord
         return _preyId;
     }
     
-    
+    public function get predators() :HashSet
+    {
+        return _predators;
+    }
+    public function get currentCountDownSecond() :int
+    {
+        return _currentCountdownSecond;    
+    }
     
     
     protected var _room :Room;
@@ -197,9 +221,9 @@ public class BloodBloomGameRecord
     
     protected var _gameServer :FeedingGameServer;
     
-    public var _predators :HashSet = new HashSet();
-    public var _preyId :int;
-    public var _primaryPredatorId :int;
+    protected var _predators :HashSet = new HashSet();
+    protected var _preyId :int;
+    protected var _primaryPredatorId :int;
     protected var _started :Boolean = false;
     protected var _finished :Boolean = false;
     protected var _multiplePredators :Boolean;
