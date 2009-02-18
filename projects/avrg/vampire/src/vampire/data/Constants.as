@@ -5,6 +5,8 @@
 public class Constants
 {
     
+    public static const BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME :int = 5;
+    
     public static const NON_PLAYER_TIMEOUT :Number = 20;
     
     public static const CHAT_FEEDING_MIN_CHATS_PER_TIME_INTERVAL :int = 3;
@@ -109,6 +111,9 @@ public class Constants
     public static const NAMED_EVENT_MAKE_MINION :String = "MakeMinion";//Only for testing purposes
     public static const NAMED_EVENT_CHAT :String = "ChatMessage";//Only for testing purposes
     public static const NAMED_EVENT_QUIT :String = "Quit";//Only for testing purposes
+    
+    public static const NAMED_EVENT_START_BLOOD_BLOOM :String = "StartBloodBloom";
+    public static const NAMED_EVENT_BLOODBLOOM_COUNTDOWN :String = "BloodbloomCountDown";
         
     public static var LOCAL_DEBUG_MODE :Boolean = false;
     

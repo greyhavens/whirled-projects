@@ -18,6 +18,7 @@ public class Codes
     public static const ROOM_PROP_BLOODBLOOM_PLAYERS :String = "bloodbloom";
     
     
+    
         /** Pplayer name.  Needed even when player is offline*/
     public static const PLAYER_PROP_PREFIX_NAME:String = NetConstants.makePersistent("playerName");
     

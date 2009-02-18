@@ -15,19 +15,16 @@ public class BloomBloomManager extends SimObjectThane
     
     override protected function destroyed () :void
     {
-        _room = null;
         var gamesShutdown :HashSet = new HashSet();
         _playerId2Game.forEach( function( playerId :int, game :BloodBloomGameRecord) :void {
             if( !gamesShutdown.contains( game.gameServer.gameId ) ) {
-                for each( var gamePlayerId :int in game.gameServer.playerIds ) {
-                    game.gameServer.playerLeft( gamePlayerId );
-                }
                 gamesShutdown.add( game.gameServer.gameId );
                 game.shutdown();
             }
         });
         _playerId2Game.clear();
         _games.splice(0);
+        _room = null;
     }
     
     public function predatorBeginsGame( predatorId :int ) :void
@@ -47,7 +44,7 @@ public class BloomBloomManager extends SimObjectThane
         return ++_bloodBloomIdCounter;
     }
     
-    public function requestFeed( predatorId :int, preyId :int, multiplePredators :Boolean = false ) :void
+    public function requestFeed( predatorId :int, preyId :int, multiplePredators :Boolean ) :void
     {
         if( _playerId2Game.containsKey( preyId ) ) {
             var gameRecord :BloodBloomGameRecord = _playerId2Game.get( preyId ) as BloodBloomGameRecord;
@@ -60,18 +57,28 @@ public class BloomBloomManager extends SimObjectThane
     
     override protected function update( dt :Number ) :void
     {
+        removeFinishedGames();
+        
+        for each( var game :BloodBloomGameRecord in _games ) {
+            game.update( dt );
+        }
+    }
+    
+    protected function removeFinishedGames() :void
+    {
         var index :int = 0;
         while( index < _games.length) {
             var gameRecord :BloodBloomGameRecord = _games[index] as BloodBloomGameRecord;
             if( gameRecord.isFinished ) {
+                log.debug("Removing finished BloodBloomGameRecord");
                 _games.splice( index, 1);
-                gameRecord.predators.forEach( function( predatorId :int) :void {
+                gameRecord._predators.forEach( function( predatorId :int) :void {
                     if( _playerId2Game.get(predatorId) == gameRecord) {
                         _playerId2Game.remove( predatorId );
                     }
                     
                 });
-                _playerId2Game.remove( gameRecord.prey );
+                _playerId2Game.remove( gameRecord._preyId );
                 gameRecord.shutdown();
             }
             else {
@@ -80,6 +87,14 @@ public class BloomBloomManager extends SimObjectThane
         }
     }
     
+    public function playerQuitsGame( playerId :int ) :void
+    {
+        if( _playerId2Game.containsKey( playerId ) ) {
+            var gameRecord :BloodBloomGameRecord = _playerId2Game.get( playerId ) as BloodBloomGameRecord;
+            gameRecord.removePlayer( playerId );
+            removeFinishedGames();
+        }
+    }
     
     
     protected function createNewBloodBloomGameRecord( predatorId :int, preyId :int, multiplePredators :Boolean ) :void
@@ -91,7 +106,7 @@ public class BloomBloomManager extends SimObjectThane
         _games.push( gameRecord );
         
         if( !multiplePredators ) {
-            predatorBeginsGame( predatorId );
+            gameRecord.startGame();
         }
     }
     
