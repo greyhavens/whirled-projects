@@ -6,25 +6,25 @@ package vampire.net.messages
     
     public class FeedRequestMessage extends BaseGameMessage
     {
-        public function FeedRequestMessage(playerId :int = 0, targetPlayerId :int = 0, targetPlayerIdVictim :Boolean = false)
+        public function FeedRequestMessage(playerId :int = 0, targetPlayerId :int = 0, allowMultiplePredators :Boolean = false)
         {
             super(playerId);
             _targetPlayerId = targetPlayerId;
-            _targetPlayerIsVictim = targetPlayerIdVictim;
+            _allowMultiplePredators = allowMultiplePredators;
         }
         
         override public function fromBytes (bytes :ByteArray) :void
         {
             super.fromBytes(bytes);
             _targetPlayerId = bytes.readInt();
-            _targetPlayerIsVictim = bytes.readBoolean();
+            _allowMultiplePredators = bytes.readBoolean();
         }
         
         override public function toBytes (bytes :ByteArray = null) :ByteArray
         {
             var bytes :ByteArray = super.toBytes(bytes);
             bytes.writeInt( _targetPlayerId );
-            bytes.writeBoolean( _targetPlayerIsVictim );
+            bytes.writeBoolean( _allowMultiplePredators );
             return bytes;
         }
         
@@ -33,9 +33,9 @@ package vampire.net.messages
            return _targetPlayerId;     
         }
         
-        public function get isTargetPlayerTheVictim () :Boolean
+        public function get isAllowingMultiplePredators () :Boolean
         {
-           return _targetPlayerIsVictim;     
+           return _allowMultiplePredators;     
         }
         
         override public function get name () :String
@@ -45,12 +45,12 @@ package vampire.net.messages
         
         override public function toString() :String
         {
-            return ClassUtil.tinyClassName( this ) + ": player=" + _playerId + ", " + (_targetPlayerIsVictim ? " feeds on " : " is eaten by ") + " " + targetPlayer;
+            return ClassUtil.tinyClassName( this ) + ": player=" + _playerId + ", " + (_allowMultiplePredators ? " Allows multiple predators " : " eating alone ") + ", eating " + targetPlayer;
         }
         
         
         protected var _targetPlayerId :int;
-        protected var _targetPlayerIsVictim :Boolean;
+        protected var _allowMultiplePredators :Boolean;
         
         public static const NAME :String = "Message: Request Feed"; 
         
