@@ -10,6 +10,7 @@ import com.threerings.util.Hashable;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.RoomSubControlServer;
+import com.whirled.contrib.simplegame.server.ObjectDBThane;
 import com.whirled.contrib.simplegame.server.SimObjectThane;
 
 import vampire.data.Constants;
@@ -145,7 +146,9 @@ public class Room extends SimObjectThane
         }
 
         try {
-            _tick(dt);
+            _players.forEach( function( playerId :int, p :Player) :void{ p.tick(dt)});
+//            _bloodBloomGameStarter.update( dt );
+        
 
         } catch (e :Error) {
             log.error("Tick error", e);
@@ -269,11 +272,11 @@ public class Room extends SimObjectThane
 //        log.debug("Room state set", "roomId", this.roomId, "state", state);
 //    }
 
-    protected function _tick (dt :Number) :void
-    {
-        _players.forEach( function( playerId :int, p :Player) :void{ p.tick(dt)});
-        _bloodBloomGameStarter.update( dt );
-    }
+//    protected function _tick (dt :Number) :void
+//    {
+//        _players.forEach( function( playerId :int, p :Player) :void{ p.tick(dt)});
+//        _bloodBloomGameStarter.update( dt );
+//    }
 
     protected function maybeLoadControl () :void
     {
@@ -295,7 +298,8 @@ public class Room extends SimObjectThane
 //            registerListener(_ctrl, AVRGameRoomEvent.PLAYER_MOVED, handlePlayerMoved);
             registerListener(_ctrl, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
             
-            _bloodBloomGameStarter = new BloomBloomStarter( this );
+            _bloodBloomGameStarter = new BloomBloomManager( this );
+            _roomDB.addObject( _bloodBloomGameStarter );
             
         }
     }
@@ -406,6 +410,8 @@ public class Room extends SimObjectThane
 //        }
         
 //        _nonplayerMonitor.destroySelf();
+        
+        _roomDB.shutdown();
         
         _ctrl = null;
         if (_players.size() != 0) {
@@ -567,6 +573,11 @@ public class Room extends SimObjectThane
 //        return ids;
     }
     
+    public function get roomDB () :ObjectDBThane
+    {
+        return _roomDB;
+    }
+    
 //    public function isPlayerPredatorInBloodBloomGame( playerId :int ) :Boolean
 //    {
 //        for each( var g :BloodBloomGameRecord in _bloodBloomGames) {
@@ -611,6 +622,9 @@ public class Room extends SimObjectThane
 //        return location.nonPlayerAvatarIds;
 //    }
 
+
+    protected var _roomDB :ObjectDBThane = new ObjectDBThane();
+    
     protected var _roomId :int;
     protected var _ctrl :RoomSubControlServer;
 
@@ -621,7 +635,7 @@ public class Room extends SimObjectThane
     
 //    public var _nonplayers :HashSet = new HashSet();
     
-    public var _bloodBloomGameStarter :BloomBloomStarter;
+    public var _bloodBloomGameStarter :BloomBloomManager;
     
 //    public var _bloodBloomGames :Array = new Array();
     

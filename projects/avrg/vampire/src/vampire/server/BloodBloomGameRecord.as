@@ -7,13 +7,14 @@ package vampire.server
     
 public class BloodBloomGameRecord
 {
-    public function BloodBloomGameRecord( room :Room, gameId :int, predatorId :int, preyId :int)
+    public function BloodBloomGameRecord( room :Room, gameId :int, predatorId :int, preyId :int, multiplePredators :Boolean)
     {
         _room = room;
         _gameId = gameId;
         primaryPredator = predatorId;
         predators.add( primaryPredator );
         prey = preyId;
+        _multiplePredators = multiplePredators
     }
     
     public function startGame() :void
@@ -107,6 +108,7 @@ public class BloodBloomGameRecord
     public var primaryPredator :int;
     protected  var _started :Boolean = false;
     protected  var _finished :Boolean = false;
+    protected  var _multiplePredators :Boolean;
     
     protected var log :Log = Log.getLog( BloodBloomGameRecord );
 
