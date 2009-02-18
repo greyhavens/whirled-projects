@@ -46,6 +46,8 @@ public class Resources
         for each (var loadCompleteCallback :Function in _loadCompleteCallbacks) {
             loadCompleteCallback();
         }
+
+        _loadCompleteCallbacks = [];
     }
 
     protected static var _loaded :Boolean;
@@ -54,8 +56,6 @@ public class Resources
     protected static var _appDom :ApplicationDomain = new ApplicationDomain();
 
     /** The raw SWF data. */
-    //[Embed(source="../../../../rsrc/raw.swf", mimeType="application/octet-stream")]
-    //protected static const RAW_SWF :Class;
     [Embed(source="../../../../rsrc/hud_effects.swf", mimeType="application/octet-stream")]
     protected static const RAW_SWF :Class;
     [Embed(source="../../../../rsrc/bgs.swf", mimeType="application/octet-stream")]

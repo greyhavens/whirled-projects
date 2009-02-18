@@ -34,12 +34,12 @@ public class TitleScreen extends Sprite
         var singleBtn :SimpleButton = titleMode["btn_single"];
         var multiBtn :SimpleButton = titleMode["btn_multi"];
 
-        _events.registerOneShotCallback(singleBtn, MouseEvent.CLICK,
+        _events.registerListener(singleBtn, MouseEvent.CLICK,
             function (...ignored) :void {
                 showDifficultySelect();
             });
 
-        _events.registerOneShotCallback(multiBtn, MouseEvent.CLICK,
+        _events.registerListener(multiBtn, MouseEvent.CLICK,
             function (...ignored) :void {
                 Brawler.showMultiplayerLobby();
             });
