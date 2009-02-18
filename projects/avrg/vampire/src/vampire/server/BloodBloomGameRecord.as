@@ -72,12 +72,17 @@ public class BloodBloomGameRecord
     
     public function startGame() :void
     {
-        _gameServer = FeedingGameServer.create( _room.roomId, _predators.toArray(), _preyId, gameFinishedCallback);
+        var gamePreyId :int = _room.isPlayer( _preyId ) ? _preyId : -1;
+            _gameServer = FeedingGameServer.create( _room.roomId, _predators.toArray(), gamePreyId, 
+                gameFinishedCallback);
         
         // send a message with the game ID to each of the players, a
         ServerContext.ctrl.doBatch(function () :void {
             for each (var playerId :int in playerIds) {
-                ServerContext.ctrl.getPlayer(playerId).sendMessage("StartClient", _gameServer.gameId);
+                if( _room.isPlayer( playerId )) {
+                    _room.getPlayer( playerId ).ctrl.sendMessage("StartClient", _gameServer.gameId);
+//                    ServerContext.ctrl.getPlayer(playerId).sendMessage("StartClient", _gameServer.gameId);
+                }
             }
         });
         
