@@ -237,7 +237,12 @@ public class VServer extends ObjectDBThane
                 log.warning("Quitting player not known", "playerId", playerId);
                 return;
             }
+            
+            //Make sure the avatar is in the default state when we quit.
+            player.ctrl.setAvatarState( Constants.GAME_MODE_NOTHING );
+            
             _ctrl.doBatch(function () :void {
+                
                 player.shutdown();
             });
     
