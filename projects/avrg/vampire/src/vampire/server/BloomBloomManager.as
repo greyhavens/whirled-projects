@@ -1,9 +1,8 @@
 package vampire.server
 {
     import com.threerings.util.HashMap;
+    import com.threerings.util.HashSet;
     import com.threerings.util.Log;
-    import com.whirled.contrib.simplegame.EventCollecter;
-    import com.whirled.contrib.simplegame.Updatable;
     import com.whirled.contrib.simplegame.server.SimObjectThane;
     
 public class BloomBloomManager extends SimObjectThane
@@ -14,7 +13,22 @@ public class BloomBloomManager extends SimObjectThane
         
     }
     
-//    public shutdown
+    override protected function destroyed () :void
+    {
+        _room = null;
+        var gamesShutdown :HashSet = new HashSet();
+        _playerId2Game.forEach( function( playerId :int, game :BloodBloomGameRecord) :void {
+            if( !gamesShutdown.contains( game.gameServer.gameId ) ) {
+                for each( var gamePlayerId :int in game.gameServer.playerIds ) {
+                    game.gameServer.playerLeft( gamePlayerId );
+                }
+                gamesShutdown.add( game.gameServer.gameId );
+                game.shutdown();
+            }
+        });
+        _playerId2Game.clear();
+        _games.splice(0);
+    }
     
     public function predatorBeginsGame( predatorId :int ) :void
     {
@@ -58,6 +72,7 @@ public class BloomBloomManager extends SimObjectThane
                     
                 });
                 _playerId2Game.remove( gameRecord.prey );
+                gameRecord.shutdown();
             }
             else {
                 index++;

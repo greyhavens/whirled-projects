@@ -95,6 +95,12 @@ public class BloodBloomGameRecord
         return _gameServer;
     }
     
+    public function shutdown() :void
+    {
+        _room = null;
+        _gameServer = null;
+    }
+    
     
     
     
