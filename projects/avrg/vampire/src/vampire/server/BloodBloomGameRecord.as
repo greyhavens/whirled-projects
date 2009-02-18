@@ -1,5 +1,6 @@
 package vampire.server
 {
+    import com.threerings.util.ClassUtil;
     import com.threerings.util.HashSet;
     import com.threerings.util.Log;
     
@@ -103,7 +104,7 @@ public class BloodBloomGameRecord
         _started = true;
     }
     
-    protected function gameFinishedCallback() :void
+    protected function gameFinishedCallback(...ignored) :void
     {
         log.debug("gameFinishedCallback");
         log.debug("_gameServer.finalScore=" + _gameServer.finalScore);
@@ -133,8 +134,10 @@ public class BloodBloomGameRecord
             shutdown();
         }
         else {
-            _predators.remove( playerId ) ;
-            _gameServer.playerLeft( playerId );
+            _predators.remove( playerId );
+            if( _gameServer != null ) {
+                _gameServer.playerLeft( playerId );
+            }
             if( _predators.size() == 0) {
                 log.info("Shutting down bloodbloom game because pred==0");
                 shutdown();
@@ -144,7 +147,6 @@ public class BloodBloomGameRecord
     
     public function update( dt :Number ) :void
     {
-        log.debug("update(" + dt + ")");
         if( !_started && _multiplePredators) {
             _countdownTimeRemaining -= dt;
             
@@ -192,8 +194,10 @@ public class BloodBloomGameRecord
     
     public function shutdown() :void
     {
-        for each( var gamePlayerId :int in _gameServer.playerIds ) {
-            _gameServer.playerLeft( gamePlayerId );
+        if( _gameServer != null ) {
+            for each( var gamePlayerId :int in _gameServer.playerIds ) {
+                _gameServer.playerLeft( gamePlayerId );
+            }
         }
         _room = null;
         _gameServer = null;
@@ -213,6 +217,17 @@ public class BloodBloomGameRecord
     public function get currentCountDownSecond() :int
     {
         return _currentCountdownSecond;    
+    }
+    
+    public function toString() :String
+    {
+        return ClassUtil.tinyClassName(this) 
+            + " _preyId=" + _preyId
+            + "_predators=" + _predators 
+            + "_primaryPredatorId=" + _primaryPredatorId
+            + "_currentCountdownSecond=" + _currentCountdownSecond
+            + "_started=" + _started
+            + "_finished=" + _finished
     }
     
     
