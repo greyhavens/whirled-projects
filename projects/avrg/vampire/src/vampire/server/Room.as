@@ -147,9 +147,10 @@ public class Room extends SimObjectThane
         }
 
         try {
+            _roomDB.update( dt );
             _players.forEach( function( playerId :int, p :Player) :void{ p.tick(dt)});
+            
 //            _bloodBloomGameStarter.update( dt );
-
 
             //Send queued avatar movement messages.
             var playersMoved :HashSet = new HashSet();
@@ -512,10 +513,10 @@ public class Room extends SimObjectThane
     public function bloodBloomGameOver( gameRecord :BloodBloomGameRecord ) :void
     {
         log.debug("bloodBloomGameOver");
-        var preyIsPlayer :Boolean = isPlayer( gameRecord._preyId );
+        var preyIsPlayer :Boolean = isPlayer( gameRecord.preyId );
         var victim :Player;
         if( preyIsPlayer ) {
-            victim = getPlayer( gameRecord._preyId );
+            victim = getPlayer( gameRecord.preyId );
             if( victim.isVampire() ) {
                 victim.damage( Constants.BLOOD_FRACTION_LOST_PER_FEED * victim.maxBlood );
             }
@@ -524,12 +525,12 @@ public class Room extends SimObjectThane
             }
         }
         else {
-            ServerContext.nonPlayersBloodMonitor.nonplayerLosesBlood( gameRecord._preyId, Constants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED );
+            ServerContext.nonPlayersBloodMonitor.nonplayerLosesBlood( gameRecord.preyId, Constants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED );
         }
         
-        for each( var predatorId :int in gameRecord._predators.toArray()) {
+        for each( var predatorId :int in gameRecord.predators.toArray()) {
             var pred :Player = getPlayer( predatorId );
-            pred.mostRecentVictimId = gameRecord._preyId;
+            pred.mostRecentVictimId = gameRecord.preyId;
             pred.addBlood( 20 );
         }
     }
