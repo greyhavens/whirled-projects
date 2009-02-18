@@ -12,8 +12,6 @@ import flash.display.Sprite;
 import flash.text.TextField;
 
 import vampire.feeding.*;
-import vampire.feeding.client.SpriteUtil;
-import vampire.feeding.client.UIBits;
 
 public class Cell extends CollidableObj
 {
@@ -50,6 +48,7 @@ public class Cell extends CollidableObj
         _multiplier = multiplier;
         _moveCCW = Rand.nextBoolean(Rand.STREAM_GAME);
         _state = STATE_NORMAL;
+        _needsBirth = beingBorn;
 
         _sprite = SpriteUtil.createSprite();
         _movie = ClientCtx.instantiateMovieClip("blood", MOVIE_NAMES[type], true, true);
@@ -63,7 +62,18 @@ public class Cell extends CollidableObj
             _sprite.addChild(tf);
         }
 
-        if (beingBorn) {
+        if (type == Constants.CELL_RED || type == Constants.CELL_BONUS) {
+            var rotationTime :Number = (type == Constants.CELL_RED ?
+                RED_ROTATION_TIME : BONUS_ROTATION_TIME);
+            addTask(new SerialTask(
+                new VariableTimedTask(0, 1, Rand.STREAM_GAME),
+                new ConstantRotationTask(rotationTime, _moveCCW)));
+        }
+    }
+
+    override protected function addedToDB () :void
+    {
+        if (_needsBirth) {
             if (type == Constants.CELL_RED) {
                 birthRedCell();
             } else if (type == Constants.CELL_WHITE) {
@@ -73,14 +83,6 @@ public class Cell extends CollidableObj
             // fade in
             this.alpha = 0;
             addTask(new AlphaTask(1, 0.4));
-        }
-
-        if (type == Constants.CELL_RED || type == Constants.CELL_BONUS) {
-            var rotationTime :Number = (type == Constants.CELL_RED ?
-                RED_ROTATION_TIME : BONUS_ROTATION_TIME);
-            addTask(new SerialTask(
-                new VariableTimedTask(0, 1, Rand.STREAM_GAME),
-                new ConstantRotationTask(rotationTime, _moveCCW)));
         }
     }
 
@@ -108,15 +110,21 @@ public class Cell extends CollidableObj
         this.x = Constants.GAME_CTR.x;
         this.y = Constants.GAME_CTR.y;
 
+        // Hack: put birthed red cells on a different layer, so that they appear under the heart.
+        // Pop them up to the cell layer after they're born.
+        GameCtx.bgLayer.addChild(this.displayObject);
+
         // fire out of the heart in a random direction
         var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
         var distRange :NumRange = Constants.CELL_BIRTH_DISTANCE[Constants.CELL_RED];
         var dist :Number = distRange.next();
         var birthTarget :Vector2 = Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
 
+        var thisCell :Cell = this;
         addTask(new SerialTask(
             LocationTask.CreateEaseOut(birthTarget.x, birthTarget.y, Constants.CELL_BIRTH_TIME),
             new FunctionTask(function () :void {
+                GameCtx.cellLayer.addChild(thisCell.displayObject);
                 _state = STATE_NORMAL;
             })));
     }
@@ -239,6 +247,7 @@ public class Cell extends CollidableObj
     protected var _multiplier :int;
     protected var _moveCCW :Boolean;
     protected var _attachedTo :SimObjectRef = SimObjectRef.Null();
+    protected var _needsBirth :Boolean;
 
     protected var _sprite :Sprite;
     protected var _movie :MovieClip;

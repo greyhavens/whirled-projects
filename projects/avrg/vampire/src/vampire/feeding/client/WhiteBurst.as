@@ -10,8 +10,8 @@ public class WhiteBurst extends CellBurst
     {
         super(
             isBlackBurst ? Constants.BURST_BLACK : Constants.BURST_WHITE,
-            Constants.WHITE_BURST_RADIUS_MIN,
-            Constants.WHITE_BURST_RADIUS_MAX);
+            isBlackBurst ? Constants.BLACK_BURST_RADIUS_MIN : Constants.WHITE_BURST_RADIUS_MIN,
+            isBlackBurst ? Constants.BLACK_BURST_RADIUS_MAX : Constants.WHITE_BURST_RADIUS_MAX);
     }
 
     override protected function beginBurst () :void
