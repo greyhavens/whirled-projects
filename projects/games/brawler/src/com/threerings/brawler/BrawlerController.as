@@ -11,13 +11,14 @@ import flash.geom.Point;
 import flash.utils.ByteArray;
 import flash.utils.getTimer;
 import flash.utils.Timer;
+import flash.system.ApplicationDomain;
 
 import com.threerings.flash.KeyRepeatLimiter;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Controller;
-import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.StringUtil;
+import com.threerings.util.MultiLoader;
 
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
@@ -74,25 +75,13 @@ public class BrawlerController extends Controller
         // create the view
         _view = new BrawlerView(disp, this);
 
-        // create the SWF loader and use it to load the raw data, one swf at a time
-        _loader = new EmbeddedSwfLoader();
-        var idx :int = 0;
-        _loader.addEventListener(Event.COMPLETE, function (event :Event) :void {
-            if (++idx == INIT_SWFS.length) {
-                init();
-            } else {
-                _loader.load(new INIT_SWFS[idx] as ByteArray);
-            }
-        });
-        _loader.load(new INIT_SWFS[0] as ByteArray);
-    }
-
-    /**
-     * Returns a reference to the embedded SWF loader.
-     */
-    public function get loader () :EmbeddedSwfLoader
-    {
-        return _loader;
+        // Load the embedded SWFs that contain the game's resources. This will call init() when
+        // it completes.
+        MultiLoader.getLoaders(
+            INIT_SWFS,
+            function (...ignored) :void { init(); },
+            false,
+            _rsrcDomain);
     }
 
     /**
@@ -100,7 +89,7 @@ public class BrawlerController extends Controller
      */
     public function create (name :String) :*
     {
-        var clazz :Class = _loader.getClass(name);
+        var clazz :Class = _rsrcDomain.getDefinition(name) as Class;
         return new clazz();
     }
 
@@ -745,8 +734,8 @@ public class BrawlerController extends Controller
     /** Do this only once */
     protected var init_finished :Boolean;
 
-    /** The SWF loader. */
-    protected var _loader :EmbeddedSwfLoader;
+    /** The ApplicationDomain that will contain our loaded resources. */
+    protected var _rsrcDomain :ApplicationDomain = new ApplicationDomain();
 
     /** The Whirled interface. */
     protected var _control :GameControl;
