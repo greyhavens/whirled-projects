@@ -13,12 +13,12 @@ public class GameCtx
     public static var gameMode :GameMode;
     public static var heart :Heart;
     public static var cursor :PlayerCursor;
-    public static var bloodMeter :ScoreView;
+    public static var scoreView :ScoreHelpQuitView;
 
     public static var bgLayer :Sprite;
     public static var cellLayer :Sprite;
     public static var cursorLayer :Sprite;
-    public static var effectLayer :Sprite;
+    public static var uiLayer :Sprite;
 
     public static var timeLeft :Number;
 
@@ -43,12 +43,12 @@ public class GameCtx
         gameMode = null;
         heart = null;
         cursor = null;
-        bloodMeter = null;
+        scoreView = null;
 
         bgLayer = null;
         cellLayer = null;
         cursorLayer = null;
-        effectLayer = null;
+        uiLayer = null;
 
         timeLeft = Constants.GAME_TIME;
 

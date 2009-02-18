@@ -1,24 +1,37 @@
 package vampire.feeding.client {
 
 import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.resource.SwfResource;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
+import flash.display.SimpleButton;
+import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.text.TextField;
 
 import vampire.feeding.*;
-import vampire.feeding.client.*;
 
-public class ScoreView extends SceneObject
+public class ScoreHelpQuitView extends SceneObject
 {
-    public function ScoreView ()
+    public function ScoreHelpQuitView ()
     {
-        _movie = ClientCtx.instantiateMovieClip("blood", "score", true, true);
+        _movie = ClientCtx.instantiateMovieClip("blood", "score", false, true);
         _tf = _movie["score_field"];
+
+        var quitButton :SimpleButton = _movie["button_quit"];
+        registerListener(quitButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                GameCtx.gameMode.quitFeeding();
+            });
+
+        var helpButton :SimpleButton = _movie["button_info"];
+        registerListener(helpButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                // TODO
+            });
     }
 
     override protected function destroyed () :void

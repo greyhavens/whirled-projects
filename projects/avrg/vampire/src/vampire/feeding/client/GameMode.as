@@ -24,6 +24,11 @@ public class GameMode extends AppMode
         GameCtx.gameMode = this;
     }
 
+    public function quitFeeding () :void
+    {
+        onGameOver(false);
+    }
+
     override protected function setup () :void
     {
         super.setup();
@@ -34,17 +39,17 @@ public class GameMode extends AppMode
         GameCtx.bgLayer = SpriteUtil.createSprite();
         GameCtx.cellLayer = SpriteUtil.createSprite();
         GameCtx.cursorLayer = SpriteUtil.createSprite();
-        GameCtx.effectLayer = SpriteUtil.createSprite();
+        GameCtx.uiLayer = SpriteUtil.createSprite(true, true);
         _modeSprite.addChild(GameCtx.bgLayer);
         _modeSprite.addChild(GameCtx.cellLayer);
         _modeSprite.addChild(GameCtx.cursorLayer);
-        _modeSprite.addChild(GameCtx.effectLayer);
+        _modeSprite.addChild(GameCtx.uiLayer);
 
         if (Constants.DEBUG_SHOW_STATS) {
             var statView :StatView = new StatView();
             statView.x = 0;
             statView.y = 460;
-            addObject(statView, GameCtx.effectLayer);
+            addObject(statView, GameCtx.uiLayer);
         }
 
         // Setup game objects
@@ -80,12 +85,12 @@ public class GameMode extends AppMode
         var timerView :TimerView = new TimerView();
         timerView.x = TIMER_LOC.x;
         timerView.y = TIMER_LOC.y;
-        addObject(timerView, GameCtx.effectLayer);
+        addObject(timerView, GameCtx.uiLayer);
 
-        GameCtx.bloodMeter = new ScoreView();
-        GameCtx.bloodMeter.x = BLOOD_METER_LOC.x;
-        GameCtx.bloodMeter.y = BLOOD_METER_LOC.y;
-        addObject(GameCtx.bloodMeter, GameCtx.effectLayer);
+        GameCtx.scoreView = new ScoreHelpQuitView();
+        GameCtx.scoreView.x = SCORE_LOC.x;
+        GameCtx.scoreView.y = SCORE_LOC.y;
+        addObject(GameCtx.scoreView, GameCtx.uiLayer);
 
         GameCtx.cursor = GameObjects.createPlayerCursor();
         registerListener(GameCtx.cursor, GameEvent.WHITE_CELL_DELIVERED, onWhiteCellDelivered);
@@ -97,7 +102,7 @@ public class GameMode extends AppMode
                 var scoreView :RemotePlayerScoreView = new RemotePlayerScoreView(playerId);
                 scoreView.x = SCORE_VIEWS_LOC.x;
                 scoreView.y = SCORE_VIEWS_LOC.y + yOffset;
-                addObject(scoreView, GameCtx.effectLayer);
+                addObject(scoreView, GameCtx.uiLayer);
 
                 yOffset += scoreView.height + 1;
             }
@@ -109,17 +114,6 @@ public class GameMode extends AppMode
         for (var ii :int = 0; ii < Constants.DEBRIS_COUNT; ++ii) {
             addObject(new Debris(), GameCtx.bgLayer);
         }
-
-        // create initial cells
-        /*for (var cellType :int = 0; cellType < Constants.CELL__LIMIT; ++cellType) {
-            var count :int = Constants.INITIAL_CELL_COUNT[cellType];
-            for (var ii :int = 0; ii < count; ++ii) {
-                var loc :Vector2 = Cell.getBirthTargetLoc(cellType);
-                var cell :Cell = GameObjects.createCell(cellType, false);
-                cell.x = loc.x;
-                cell.y = loc.y;
-            }
-        }*/
     }
 
     override protected function enter () :void
@@ -151,7 +145,7 @@ public class GameMode extends AppMode
 
         } else if (e.msg is GameOverMsg) {
             // send our final score to the server
-            GameCtx.msgMgr.sendMessage(FinalScoreMsg.create(GameCtx.bloodMeter.bloodCount));
+            GameCtx.msgMgr.sendMessage(FinalScoreMsg.create(GameCtx.scoreView.bloodCount));
             onGameOver(true);
 
         } else if (e.msg is GameEndedPrematurelyMsg) {
@@ -164,6 +158,7 @@ public class GameMode extends AppMode
     protected function onGameOver (successfullyEnded :Boolean) :void
     {
         GameCtx.gameCompleteCallback();
+        ClientCtx.mainLoop.popMode();
     }
 
     protected function onNewMultiplier (msg :CreateBonusMsg) :void
@@ -224,7 +219,7 @@ public class GameMode extends AppMode
 
     protected static var log :Log = Log.getLog(GameMode);
 
-    protected static const BLOOD_METER_LOC :Point = Constants.GAME_CTR.toPoint();
+    protected static const SCORE_LOC :Point = Constants.GAME_CTR.toPoint();
     protected static const TIMER_LOC :Point = Constants.GAME_CTR.toPoint();
     protected static const SCORE_VIEWS_LOC :Point = new Point(550, 120);
 }

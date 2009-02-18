@@ -10,7 +10,7 @@ public class LocalScoreReporter extends SimObject
     {
         _nextReportTime = Math.max(_nextReportTime - dt, 0);
         if (_nextReportTime == 0) {
-            var score :int = GameCtx.bloodMeter.bloodCount;
+            var score :int = GameCtx.scoreView.bloodCount;
             if (score != _lastScore) {
                 GameCtx.msgMgr.sendMessage(
                     CurrentScoreMsg.create(ClientCtx.localPlayerId, score));

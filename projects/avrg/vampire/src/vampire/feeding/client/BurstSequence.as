@@ -72,7 +72,7 @@ public class BurstSequence extends SceneObject
         if (!isSequenceAlive) {
             if (this.totalValue > 0) {
                 var loc :Point = this.displayObject.parent.localToGlobal(new Point(this.x, this.y));
-                GameCtx.bloodMeter.addBlood(loc.x, loc.y, this.totalValue);
+                GameCtx.scoreView.addBlood(loc.x, loc.y, this.totalValue);
             }
 
             if (_totalBursts >= Constants.CREATE_BONUS_BURST_SIZE) {

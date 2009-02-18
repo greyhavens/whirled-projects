@@ -36,7 +36,6 @@ public class Constants
     public static const CELL_WHITE :int = 1;
     public static const CELL_BONUS :int = 2;
     public static const CELL__LIMIT :int = 3;
-    public static const INITIAL_CELL_COUNT :Array = [ 4, 2, 0 ];
     public static const MAX_CELL_COUNT :Array = [ 60, 8, 999 ];
     public static const BEAT_CELL_BIRTH_COUNT :IntRange = new IntRange(3, 4, Rand.STREAM_GAME);
     public static const CELL_BIRTH_DISTANCE :Array = [

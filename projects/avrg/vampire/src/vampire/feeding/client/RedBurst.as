@@ -46,7 +46,7 @@ public class RedBurst extends CellBurst
             _sequence = new BurstSequence();
             _sequence.x = x;
             _sequence.y = y;
-            GameCtx.gameMode.addObject(_sequence, GameCtx.effectLayer);
+            GameCtx.gameMode.addObject(_sequence, GameCtx.uiLayer);
         }
         _sequence.addCellBurst(this);
 
