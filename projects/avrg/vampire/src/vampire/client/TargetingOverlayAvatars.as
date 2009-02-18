@@ -160,7 +160,7 @@ public class TargetingOverlayAvatars extends TargetingOverlay
     {
         _dirty = true;
         
-        if( !_playerId2Sprite.containsKey(e.playerId) ) {
+        if( !_playerId2Sprite.containsKey(e.playerId) && e.playerId != _ctrl.player.getPlayerId() ) {
             _playerId2Sprite.put( e.playerId, createSprite( e.hotspot ));
         }
     }
@@ -224,7 +224,7 @@ public class TargetingOverlayAvatars extends TargetingOverlay
             
             var playerId :int = avatar.playerId;
             //Make sure we have sprites for all avatars
-            if( !_playerId2Sprite.containsKey(playerId) ) {
+            if( !_playerId2Sprite.containsKey(playerId) && playerId != _ctrl.player.getPlayerId() ) {
                 var s :Sprite = createSprite( avatar.hotspot );
 //                trace("Created sprite with dimensions(" + s.width + ", " + s.height + ")"); 
                         
