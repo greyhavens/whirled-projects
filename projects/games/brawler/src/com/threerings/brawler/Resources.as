@@ -19,41 +19,39 @@ public class Resources
      * Loads the game's resources, and calls a function when loading is complete.
      * It's not an error to call this function multiple times.
      */
-    public static function load (loadCompleteCallback :Function = null) :void
+    public static function load (completeCallback :Function = null) :void
     {
-        if (_loaded) {
-            if (loadCompleteCallback != null) {
-                loadCompleteCallback();
+        if (_appDom != null) {
+            if (completeCallback != null) {
+                completeCallback();
             }
 
         } else {
-            if (loadCompleteCallback != null) {
-                _loadCompleteCallbacks.push(loadCompleteCallback);
+            var alreadyLoading :Boolean = (_callbacks != null);
+            if (!alreadyLoading) {
+                _callbacks = [];
             }
-
-            if (!_loading) {
+            if (completeCallback != null) {
+                _callbacks.push(completeCallback);
+            }
+            if (!alreadyLoading) {
                 // Load the embedded SWFs that contain the game's resources.
-                MultiLoader.getLoaders(INIT_SWFS, onLoaded, false, _appDom);
-                _loading = true;
+                MultiLoader.loadClasses(INIT_SWFS, new ApplicationDomain(), onLoaded);
             }
         }
     }
 
-    protected static function onLoaded (...ignored) :void
+    protected static function onLoaded (appDom :ApplicationDomain) :void
     {
-        _loaded = true;
-        _loading = false;
-        for each (var loadCompleteCallback :Function in _loadCompleteCallbacks) {
-            loadCompleteCallback();
+        _appDom = appDom;
+        for each (var callback :Function in _callbacks) {
+            callback();
         }
-
-        _loadCompleteCallbacks = [];
+        _callbacks = null;
     }
 
-    protected static var _loaded :Boolean;
-    protected static var _loading :Boolean;
-    protected static var _loadCompleteCallbacks :Array = [];
-    protected static var _appDom :ApplicationDomain = new ApplicationDomain();
+    protected static var _callbacks :Array; // non-null if we're currently loading
+    protected static var _appDom :ApplicationDomain; // non-null after everything's loaded
 
     /** The raw SWF data. */
     [Embed(source="../../../../rsrc/hud_effects.swf", mimeType="application/octet-stream")]
