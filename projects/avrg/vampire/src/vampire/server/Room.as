@@ -320,6 +320,8 @@ public class Room extends SimObjectThane
                     ServerContext.nonPlayersBloodMonitor.setUserRoom( playerId, roomId );
                 }
                 
+                //Temp hack: 
+                
             
 //                
 //                
@@ -489,10 +491,10 @@ public class Room extends SimObjectThane
     public function bloodBloomGameOver( gameRecord :BloodBloomGameRecord ) :void
     {
         log.debug("bloodBloomGameOver");
-        var preyIsPlayer :Boolean = isPlayer( gameRecord.prey );
+        var preyIsPlayer :Boolean = isPlayer( gameRecord._preyId );
         var victim :Player;
         if( preyIsPlayer ) {
-            victim = getPlayer( gameRecord.prey );
+            victim = getPlayer( gameRecord._preyId );
             if( victim.isVampire() ) {
                 victim.damage( Constants.BLOOD_FRACTION_LOST_PER_FEED * victim.maxBlood );
             }
@@ -501,12 +503,12 @@ public class Room extends SimObjectThane
             }
         }
         else {
-            ServerContext.nonPlayersBloodMonitor.nonplayerLosesBlood( gameRecord.prey, Constants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED );
+            ServerContext.nonPlayersBloodMonitor.nonplayerLosesBlood( gameRecord._preyId, Constants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED );
         }
         
-        for each( var predatorId :int in gameRecord.predators.toArray()) {
+        for each( var predatorId :int in gameRecord._predators.toArray()) {
             var pred :Player = getPlayer( predatorId );
-            pred.mostRecentVictimId = gameRecord.prey;
+            pred.mostRecentVictimId = gameRecord._preyId;
             pred.addBlood( 20 );
         }
     }
@@ -514,13 +516,13 @@ public class Room extends SimObjectThane
     public function handleFeedRequest(  e :FeedRequestMessage ) :void
     {
         
-        _bloodBloomGameStarter.requestFeed( e.playerId, e.targetPlayer );
+        _bloodBloomGameStarter.requestFeed( e.playerId, e.targetPlayer, e.isAllowingMultiplePredators );
         
-        var playerIds :Array = playerIds;
-        if( playerIds.length >= 2 ) {
-            _bloodBloomGameStarter.requestFeed( playerIds[0], playerIds[1] );
-            _bloodBloomGameStarter.predatorBeginsGame( playerIds[0] );
-        }
+//        var playerIds :Array = playerIds;
+//        if( playerIds.length >= 2 ) {
+//            _bloodBloomGameStarter.requestFeed( playerIds[0], playerIds[1] );
+//            _bloodBloomGameStarter.predatorBeginsGame( playerIds[0] );
+//        }
         
 //        if( _players.size() == 2) {
 //            _bloodBloomGameStarter.predatorBeginsGame( e.playerId );
