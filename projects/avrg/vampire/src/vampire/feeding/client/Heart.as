@@ -17,7 +17,6 @@ public class Heart extends SceneObject
         _totalBeatTime = Constants.BEAT_TIME_BASE;
 
         _movie = heartMovie;
-        _movie.gotoAndStop(1);
     }
 
     public function deliverWhiteCell () :void
@@ -53,18 +52,7 @@ public class Heart extends SceneObject
         }
 
         if (showHeartbeat) {
-            // Flash is refusing to stop on the final frame of this animation, even
-            // though it has a call to stop() on it. So let's jump through a stupid hoop
-            // to force the movie to do what we want.
-            addNamedTask(
-                "HeartbeatAnim",
-                new SerialTask(
-                    new ShowFramesTask(_movie, 1, ShowFramesTask.LAST_FRAME, 25/30),
-                    new FunctionTask(function () :void {
-                        _movie.gotoAndStop(1);
-                    })),
-                true);
-            //_movie.gotoAndPlay(1);
+            _movie.gotoAndPlay(2);
             ClientCtx.audio.playSoundNamed("sfx_heartbeat");
         }
     }
