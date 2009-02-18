@@ -124,7 +124,6 @@ public class BloodBloom extends FeedingGameClient
         var rm :ResourceManager = ClientCtx.rsrcs;
 
         rm.queueResourceLoad("swf",   "blood",          { embeddedClass: SWF_BLOOD });
-        rm.queueResourceLoad("swf",   "uiBits",         { embeddedClass: SWF_UIBITS });
         rm.queueResourceLoad("image", "bg",             { embeddedClass: IMG_BG });
 
         rm.queueResourceLoad("sound", "sfx_heartbeat",  { embeddedClass: SOUND_HEARTBEAT });
@@ -152,8 +151,6 @@ public class BloodBloom extends FeedingGameClient
 
     [Embed(source="../../../../rsrc/feeding/blood.swf", mimeType="application/octet-stream")]
     protected static const SWF_BLOOD :Class;
-    [Embed(source="../../../../rsrc/feeding/UI_bits.swf", mimeType="application/octet-stream")]
-    protected static const SWF_UIBITS :Class;
     [Embed(source="../../../../rsrc/feeding/bg.png", mimeType="application/octet-stream")]
     protected static const IMG_BG :Class;
 

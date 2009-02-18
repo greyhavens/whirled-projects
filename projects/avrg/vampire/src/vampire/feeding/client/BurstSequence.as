@@ -21,7 +21,7 @@ public class BurstSequence extends SceneObject
 
     public function BurstSequence ()
     {
-        _tf = UIBits.createText("");
+        _tf = TextBits.createText("");
     }
 
     override public function get displayObject () :DisplayObject
@@ -96,7 +96,7 @@ public class BurstSequence extends SceneObject
                 }
             }
 
-            UIBits.initTextField(_tf, text, 2, 0, 0x0000ff);
+            TextBits.initTextField(_tf, text, 2, 0, 0x0000ff);
             _lastCellCount = _bursts.length;
         }
     }

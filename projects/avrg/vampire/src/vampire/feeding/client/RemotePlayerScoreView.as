@@ -14,7 +14,7 @@ public class RemotePlayerScoreView extends SceneObject
     {
         _playerId = playerId;
 
-        _tf = UIBits.createText("");
+        _tf = TextBits.createText("");
 
         updateScore(0);
         registerListener(GameCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
@@ -36,7 +36,7 @@ public class RemotePlayerScoreView extends SceneObject
     protected function updateScore (score :int) :void
     {
         var text :String = ClientCtx.getPlayerName(_playerId) + ": " + score;
-        UIBits.initTextField(_tf, text, 1.5, 0, 0x0000ff);
+        TextBits.initTextField(_tf, text, 1.5, 0, 0x0000ff);
     }
 
     protected var _playerId :int;
