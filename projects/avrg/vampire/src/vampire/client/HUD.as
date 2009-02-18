@@ -9,6 +9,7 @@ import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.EventHandlers;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.DisplayObject;
@@ -27,6 +28,7 @@ import vampire.data.Codes;
 import vampire.data.Constants;
 import vampire.data.Logic;
 import vampire.data.SharedPlayerStateClient;
+import vampire.server.BloodBloomGameRecord;
 
 /**
  * The main game HUD, showing e.g. blood, game notifications, and buttons to select the subgame to
@@ -46,6 +48,9 @@ public class HUD extends SceneObject
         registerListener( ClientContext.gameCtrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
         
 //        registerListener( ClientContext.model, ClosestPlayerChangedEvent.CLOSEST_PLAYER_CHANGED, closestPlayerChanged);
+
+        registerListener( ClientContext.gameCtrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
+
         
         updateOurPlayerState();
 
@@ -54,6 +59,14 @@ public class HUD extends SceneObject
         }
 
           
+    }
+    
+    protected function handleMessageReceived( e :MessageReceivedEvent ) :void
+    {
+        if( e.name == Constants.NAMED_EVENT_BLOODBLOOM_COUNTDOWN ) {
+            var bb :BloodBloomGameRecord = BloodBloomGameRecord.fromArray( e.value as Array );
+            trace("Prey " + bb.preyId + ", time=" + bb.currentCountDownSecond);
+        }
     }
     
     override protected function destroyed () :void
@@ -220,9 +233,10 @@ public class HUD extends SceneObject
         
         //Create the ratgeting overlay
         _targetingOverlay = new TargetingOverlayAvatars( ClientContext.gameCtrl, 
-            ClientContext.model.avatarManager, function(...ignored) :void {
-                trace("Target Clicked");    
-            });
+            ClientContext.model.avatarManager, ClientContext.controller.handleSendFeedRequest );
+//            ClientContext.model.avatarManager, function(...ignored) :void {
+//                trace("Target Clicked");    
+//            });
 //        _targetingOverlay.visible = false;
         
         

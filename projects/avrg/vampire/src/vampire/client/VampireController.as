@@ -186,7 +186,10 @@ public class VampireController extends Controller
     
     public function handleSendFeedRequest( targetId :int, multiPredators :Boolean  ) :void
     {
-        ClientContext.gameCtrl.agent.sendMessage( FeedRequestMessage.NAME, new FeedRequestMessage( ClientContext.ourPlayerId, targetId, multiPredators).toBytes() );        
+        var msg :FeedRequestMessage = new FeedRequestMessage( ClientContext.ourPlayerId, targetId, 
+            multiPredators);
+        log.debug(ClientContext.gameCtrl + " handleSendFeedRequest() sending " + msg)
+        ClientContext.gameCtrl.agent.sendMessage( FeedRequestMessage.NAME, msg.toBytes() );        
     }
     
     public function handleFeed() :void

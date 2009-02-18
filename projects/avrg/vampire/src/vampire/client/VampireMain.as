@@ -27,7 +27,7 @@ public class VampireMain extends Sprite
 //        Log.setLevel("com.threerings", Log.ERROR);
 //        Log.setLevel("", Log.ERROR);
 //        Log.setLevel("vampire.client", Log.DEBUG);
-        Log.setLevel("vampire.avatar", Log.DEBUG); 
+        Log.setLevel("", Log.DEBUG); 
 //        Log.setLevel("vampire.client.MainGameMode", Log.DEBUG); 
 //        Log.setLevel(ClassUtil.getClassName( GameModel ), Log.DEBUG);
 //        Log.setLevel(ClassUtil.getClassName( AvatarManager ), Log.DEBUG);

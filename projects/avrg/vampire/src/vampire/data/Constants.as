@@ -114,6 +114,8 @@ public class Constants
     
     public static const NAMED_EVENT_START_BLOOD_BLOOM :String = "StartBloodBloom";
     public static const NAMED_EVENT_BLOODBLOOM_COUNTDOWN :String = "BloodbloomCountDown";
+    
+    public static const NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER :String = "AvatarRoomSignalFromServer";
         
     public static var LOCAL_DEBUG_MODE :Boolean = false;
     

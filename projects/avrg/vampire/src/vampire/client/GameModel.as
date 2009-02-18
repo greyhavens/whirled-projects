@@ -9,6 +9,7 @@ import com.whirled.avrg.AgentSubControl;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.Updatable;
 import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.PropertyGetSubControl;
 
@@ -78,6 +79,14 @@ public class GameModel extends EventDispatcher
         if( SharedPlayerStateClient.isProps( ClientContext.ourPlayerId ) ) {
             playerEnteredRoom();
         }
+        
+        
+        _events.registerListener( ClientContext.gameCtrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, 
+            function(e:MessageReceivedEvent):void{
+                trace(ClientContext.gameCtrl.player.getPlayerId() + ", got " + e);
+            } );
+        
+        
         
         //Every second, update who is our closest player.  Used for targeting e.g. feeding.
 //        _proximityTimer = new Timer(Constants.TIME_INTERVAL_PROXIMITY_CHECK, 0);

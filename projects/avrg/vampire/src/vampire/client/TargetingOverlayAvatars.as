@@ -4,8 +4,10 @@ import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.HashSet;
+import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameRoomEvent;
+import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.Sprite;
@@ -14,6 +16,7 @@ import flash.geom.Point;
 
 import vampire.client.events.AvatarUpdatedEvent;
 import vampire.data.AvatarManager;
+import vampire.data.Codes;
 import vampire.data.Constants;
 import vampire.data.SharedPlayerStateClient;
 
@@ -31,11 +34,20 @@ public class TargetingOverlayAvatars extends TargetingOverlay
         registerListener( ctrl.room, AVRGameRoomEvent.PLAYER_MOVED, dirty );
         registerListener( ctrl.room, AVRGameRoomEvent.PLAYER_ENTERED, dirty );
         registerListener( ctrl.room, AVRGameRoomEvent.PLAYER_LEFT, dirty );
+        registerListener( ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, dirty );
+        registerListener( ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged );
         
         
         //Temporary, until we wait till Zells fixes client room signals.
         registerListener( ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, dirty);
         
+    }
+    
+    protected function handleElementChanged( e :ElementChangedEvent ) :void
+    {
+        if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION) {
+            dirty();
+        }
     }
     
     
@@ -54,6 +66,11 @@ public class TargetingOverlayAvatars extends TargetingOverlay
         
         //Add players in 'bare' mode
         for each( var playerId :int in playerIds ) {
+            
+            if( playerId == _ctrl.player.getPlayerId() ) {
+                continue;
+            }
+            
             var action :String = SharedPlayerStateClient.getCurrentAction( playerId );
             if( action != null && action == Constants.GAME_MODE_BARED) {
                 validIds.add( playerId );
@@ -96,6 +113,8 @@ public class TargetingOverlayAvatars extends TargetingOverlay
             return;
         }
         else {
+            log.debug( _ctrl.player.getPlayerId() + " mouse state changed", "_mouseOverPlayerId", 
+                _mouseOverPlayerId);
             _dirty = true;
             
             if( previousMouseOverPlayer > 0) {
@@ -125,7 +144,7 @@ public class TargetingOverlayAvatars extends TargetingOverlay
         
         
         var validTargetIds :HashSet = getValidPlayerIdTargets();
-        trace("handleMouseClick, validTargetIds=" + validTargetIds);
+        log.debug(_ctrl.player.getPlayerId() + " handleMouseClick, validTargetIds=" + validTargetIds.toArray());
             
         if( _targetClickedCallback != null) {
             var _mouseOverPlayerId :int = 0;
@@ -150,7 +169,7 @@ public class TargetingOverlayAvatars extends TargetingOverlay
             
             if( _mouseOverPlayerId ) {
                 //Send the feed request
-                _targetClickedCallback(_mouseOverPlayerId, _singlePred);
+                _targetClickedCallback(_mouseOverPlayerId, !_singlePred);
             }
         }
     }
@@ -160,7 +179,7 @@ public class TargetingOverlayAvatars extends TargetingOverlay
     {
         _dirty = true;
         
-        if( !_playerId2Sprite.containsKey(e.playerId) && e.playerId != _ctrl.player.getPlayerId() ) {
+        if( !_playerId2Sprite.containsKey(e.playerId)  ) {
             _playerId2Sprite.put( e.playerId, createSprite( e.hotspot ));
         }
     }
@@ -172,7 +191,7 @@ public class TargetingOverlayAvatars extends TargetingOverlay
     
     protected function handleSignalReceived( e :AVRGameRoomEvent ) :void
     {
-        trace("TargetingOverlayAvatars got signal");
+        log.debug("TargetingOverlayAvatars got signal");
         if( e.name == Constants.SIGNAL_AVATAR_MOVED ) {
             dirty();
         }
@@ -209,6 +228,8 @@ public class TargetingOverlayAvatars extends TargetingOverlay
     
     protected function redraw() :void
     {
+        
+        log.debug(_ctrl.player.getPlayerId() + " Upon redraw" , "valid targets", getValidPlayerIdTargets().toArray());
 //        trace("_ctrl.local.locationToRoom(0, 0.5, 0)=" + _ctrl.local.locationToRoom(0, 0.5, 0));
 //        trace("_ctrl.local.locationToRoom(0, 0.5, 0.8)=" + _ctrl.local.locationToRoom(0, 0.5, 0.8));
 //        trace("_ctrl.local.locationToPaintable(0, 0.5, 0)=" + _ctrl.local.locationToPaintable(0, 0.5, 0));
@@ -224,11 +245,13 @@ public class TargetingOverlayAvatars extends TargetingOverlay
             
             var playerId :int = avatar.playerId;
             //Make sure we have sprites for all avatars
-            if( !_playerId2Sprite.containsKey(playerId) && playerId != _ctrl.player.getPlayerId() ) {
+            if( !_playerId2Sprite.containsKey(playerId) ) {
                 var s :Sprite = createSprite( avatar.hotspot );
-//                trace("Created sprite with dimensions(" + s.width + ", " + s.height + ")"); 
+                log.debug(_ctrl.player.getPlayerId() + "Created sprite with dimensions(" + s.width + ", " + s.height + ")"); 
                         
-                _paintableOverlay.addChild( s );
+                if( playerId != _ctrl.player.getPlayerId() ) {
+                    _paintableOverlay.addChild( s );
+                }
                 _playerId2Sprite.put( playerId, s );
                 
             }
@@ -310,6 +333,8 @@ public class TargetingOverlayAvatars extends TargetingOverlay
     
     protected var _mouseOverPlayerId :int = 0;
     protected var _singlePred :Boolean = true;
+    
+    protected static const log :Log = Log.getLog( TargetingOverlayAvatars );
     
 }
 }

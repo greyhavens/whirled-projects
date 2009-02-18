@@ -1,5 +1,6 @@
 package vampire.data
 {
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
@@ -8,6 +9,7 @@ import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.RoomSubControlBase;
 import com.whirled.avrg.RoomSubControlServer;
 import com.whirled.contrib.simplegame.EventCollecter;
+import com.whirled.net.MessageReceivedEvent;
 
 import flash.events.IEventDispatcher;
 
@@ -24,19 +26,20 @@ public class AvatarManager extends EventCollecter
         
         _roomCtrl = roomCtrlClient;
 //        
-        registerListener( roomCtrlClient, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
+//        registerListener( roomCtrlClient, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
+        registerListener( roomCtrlClient, MessageReceivedEvent.MESSAGE_RECEIVED , handleSignalReceivedFromServer);
         
         //testing
         
-        var p1 :PlayerAvatar = new PlayerAvatar( true, 23340 );
-        p1.setLocation( [0.6, 0, 0.4] );
-        p1.setHotspot( [300, 390] );
-        addAvatar( p1 );
-        
-        var p2 :PlayerAvatar = new PlayerAvatar( true, 10393 );
-        p2.setLocation( [0.2, 0, 0.8] );
-        p2.setHotspot( [300, 390] );
-        addAvatar( p2 );
+//        var p1 :PlayerAvatar = new PlayerAvatar( true, 23340 );
+//        p1.setLocation( [0.6, 0, 0.4] );
+//        p1.setHotspot( [300, 390] );
+//        addAvatar( p1 );
+//        
+//        var p2 :PlayerAvatar = new PlayerAvatar( true, 10393 );
+//        p2.setLocation( [0.2, 0, 0.8] );
+//        p2.setHotspot( [300, 390] );
+//        addAvatar( p2 );
         
         //If running on the client, we update by listening to the room prop changes.
 //        if( _roomCtrlClient != null ) {
@@ -57,7 +60,27 @@ public class AvatarManager extends EventCollecter
     
     public function avatarMoved( roomCtrl :RoomSubControlBase, userId :int, location :Array, hotspot :Array) :void
     {
+        log.debug(userId + " avatarMoved ", "location", location, "hotspot", hotspot);
         
+        
+        if( !_avatars.containsKey( userId ) ) {
+            var isPlayer :Boolean = ArrayUtil.contains(roomCtrl.getPlayerIds(), userId);
+            var av :PlayerAvatar = new PlayerAvatar( isPlayer, userId );
+            _avatars.put( userId, av);
+        }
+        
+        var avatar :PlayerAvatar = _avatars.get( userId ) as PlayerAvatar;
+        
+        avatar.setLocation( location );
+        avatar.setHotspot( hotspot );
+        
+        log.debug("    me=" + this)
+    }
+    
+    public function avatarLeftRoom( roomCtrl :RoomSubControlBase, userId :int) :void
+    {
+        log.debug(userId + " avatarLeftRoom ");
+        _avatars.remove( userId );
     }
     
     
@@ -142,6 +165,26 @@ public class AvatarManager extends EventCollecter
 //        }
 //    }
 
+    /**
+    * By listening to signals from the game avatar, build up location and hotspot data on 
+    * the rooms avatars.
+    * 
+    */
+    protected function handleSignalReceivedFromServer( e :MessageReceivedEvent ) :void
+    {
+        log.debug(" handleSignalReceivedFromServer() "  + e);
+        
+        if( e.name == Constants.NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER ) {
+            var data :Array = e.value as Array;
+            var playerId :int = int(data[0]);
+            
+            
+            var location :Array = data[1] as Array;
+            var hotspot :Array = data[2] as Array;
+            
+            avatarMoved( _roomCtrl, playerId, location, hotspot );
+        }
+    }
 
     /**
     * By listening to signals from the game avatar, build up location and hotspot data on 

@@ -70,11 +70,7 @@ public class MainGameMode extends AppMode
             if (_feedingGameClient != null) {
                 log.warning("Received StartFeeding message while already in game");
             } else {
-                _feedingGameClient = FeedingGameClient.create(
-                    gameId,
-                    function () :void {
-                        onGameComplete(true);
-                    });
+                _feedingGameClient = FeedingGameClient.create( gameId, onGameComplete);
 
                 modeSprite.addChild(_feedingGameClient);
             }
@@ -85,6 +81,7 @@ public class MainGameMode extends AppMode
     {
         log.info("Feeding complete", "completedSuccessfully", completedSuccessfully);
         modeSprite.removeChild(_feedingGameClient);
+        
         _feedingGameClient = null;
     }
     
