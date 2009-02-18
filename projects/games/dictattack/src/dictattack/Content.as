@@ -169,9 +169,7 @@ public class Content
 
     public function Content (onReady :Function)
     {
-        MultiLoader.getLoaders([INVADERS, SCREENS, BETWEEN], function (result :Object) :void {
-            onReady();
-        }, false, _contentDomain);
+        MultiLoader.loadClasses([INVADERS, SCREENS, BETWEEN], _contentDomain, onReady);
     }
 
     public function getShootSound () :Sound
