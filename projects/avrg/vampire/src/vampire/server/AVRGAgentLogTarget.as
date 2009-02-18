@@ -16,7 +16,7 @@ package vampire.server
         {
             _ctrl = ctrl;
             _messageCache = new StringBuilder();
-            setInterval(sendLogs, 1000);
+            setInterval(sendLogs, MESSAGE_BROADCAST_INTERVAL_MS);
         }
         
         public function sendLogs(...ignored) :void
@@ -32,12 +32,13 @@ package vampire.server
         {
             _messageCache.append("\n\t\t>>>>>SERVER " + msg);
             _isLogs = true;
-                
         }
         
         protected var _isLogs :Boolean = false;
         protected var _ctrl :AVRServerGameControl;
         protected var _messageCache :StringBuilder;
+        
+        protected static const MESSAGE_BROADCAST_INTERVAL_MS :int = 1000;
         
         public static const SERVER_LOG :String = "Server log broadcast";
     }
