@@ -6,6 +6,7 @@ package vampire.server {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.HashMap;
+import com.threerings.util.HashSet;
 import com.threerings.util.Hashable;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameRoomEvent;
@@ -148,7 +149,23 @@ public class Room extends SimObjectThane
         try {
             _players.forEach( function( playerId :int, p :Player) :void{ p.tick(dt)});
 //            _bloodBloomGameStarter.update( dt );
-        
+
+
+            //Send queued avatar movement messages.
+            var playersMoved :HashSet = new HashSet();
+            
+            while( _avatarMovedSignalQueue.length > 0 ) {
+                var data :Array = _avatarMovedSignalQueue.pop() as Array;
+                var userId :int = int(data[0]);
+                if( !playersMoved.contains( userId ) ) {
+                    playersMoved.add( userId );
+                    log.info("sending room message "  
+                        + Constants.NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER + " " + data);
+                    _ctrl.sendMessage( Constants.NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER, data);
+                    
+                }
+            }
+            
 
         } catch (e :Error) {
             log.error("Tick error", e);
@@ -320,8 +337,12 @@ public class Room extends SimObjectThane
                     ServerContext.nonPlayersBloodMonitor.setUserRoom( playerId, roomId );
                 }
                 
-                //Temp hack: 
                 
+                _avatarMovedSignalQueue.push( e.value );
+                //Temp hack: 
+//                log.info("sending room message "  
+//                    + Constants.NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER + " " + e.value);
+//                _ctrl.sendMessage( Constants.NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER, e.value);
             
 //                
 //                
@@ -650,6 +671,10 @@ public class Room extends SimObjectThane
 //    protected var _playerEntityIds :HashSet = new HashSet();
 
     protected var _errorCount :int = 0;
+    
+    
+    //temp signal fix
+    protected var _avatarMovedSignalQueue :Array = new Array();
 
     // each player's contribution to a ghost's eventual defeat is accumulated here, by player
 //    protected var _stats :HashMap = new HashMap();
