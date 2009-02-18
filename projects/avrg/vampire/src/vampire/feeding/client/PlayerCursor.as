@@ -147,20 +147,8 @@ public class PlayerCursor extends CollidableObj
 
         // Deliver a white cell to the heart
         if (hadWhiteCell) {
-            dispatchEvent(new GameEvent(GameEvent.WHITE_CELL_DELIVERED));
+            dispatchEvent(new GameEvent(GameEvent.WHITE_CELL_DELIVERED, arteryType));
         }
-
-        // animate the white cell delivery
-        /*var sprite :Sprite = SpriteUtil.createSprite();
-        sprite.addChild(ClientCtx.createCellBitmap(Constants.CELL_WHITE));
-        var animationObj :SceneObject = new SimpleSceneObject(sprite);
-        animationObj.x = Constants.GAME_CTR.x;
-        animationObj.y = this.y;
-        animationObj.addTask(ScaleTask.CreateSmooth(2, 2, 1));
-        animationObj.addTask(new SerialTask(
-            LocationTask.CreateEaseIn(Constants.GAME_CTR.x, Constants.GAME_CTR.y, 1),
-            new SelfDestructTask()));
-        GameCtx.gameMode.addObject(animationObj, GameCtx.cellLayer);*/
     }
 
     protected function canCollideArtery (arteryType :int) :Boolean

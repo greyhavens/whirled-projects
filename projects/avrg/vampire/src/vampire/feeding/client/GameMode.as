@@ -1,6 +1,7 @@
 package vampire.feeding.client {
 
 import com.threerings.flash.Vector2;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
@@ -12,7 +13,6 @@ import flash.display.MovieClip;
 import flash.geom.Point;
 
 import vampire.feeding.*;
-import vampire.feeding.client.*;
 import vampire.feeding.net.*;
 
 public class GameMode extends AppMode
@@ -55,8 +55,11 @@ public class GameMode extends AppMode
         heartMovie.y = Constants.GAME_CTR.y;
         GameCtx.bgLayer.addChild(heartMovie);
 
-        _arteryBottom = heartMovie["artery_bottom"];
-        _arteryTop = heartMovie["artery_TOP"];
+        _arteries = ArrayUtil.create(2, null);
+        _arteries[Constants.ARTERY_TOP] = heartMovie["artery_top"];
+        _arteries[Constants.ARTERY_BOTTOM] = heartMovie["artery_bottom"];
+
+        _sparkles = heartMovie["sparkles"];
 
         GameCtx.heart = new Heart(heartMovie["heart"]);
         GameCtx.gameMode.addObject(GameCtx.heart);
@@ -200,15 +203,22 @@ public class GameMode extends AppMode
         }
     }
 
-    protected function onWhiteCellDelivered (...ignored) :void
+    protected function onWhiteCellDelivered (e :GameEvent) :void
     {
         GameCtx.heart.deliverWhiteCell();
+
+        // show the delivery animation
+        var arteryType :int = e.data as int;
+        var artery :MovieClip = _arteries[arteryType];
+        artery.gotoAndPlay(2);
+
+        _sparkles.gotoAndPlay(2);
     }
 
     protected var _playerType :int;
     protected var _gameOver :Boolean;
-    protected var _arteryTop :MovieClip;
-    protected var _arteryBottom :MovieClip;
+    protected var _arteries :Array;
+    protected var _sparkles :MovieClip;
     protected var _lastMoveTarget :Vector2 = new Vector2();
     protected var _musicChannel :AudioChannel;
 
