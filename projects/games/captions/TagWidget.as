@@ -19,6 +19,8 @@ import fl.controls.Label;
 import fl.controls.ScrollPolicy;
 import fl.controls.TextInput;
 
+import fl.core.UIComponent;
+
 import fl.events.ComponentEvent;
 
 import com.threerings.util.StringUtil;
@@ -34,11 +36,14 @@ public class TagWidget extends Sprite
     public static const MAX_TAGS :int = 3;
 
     public function TagWidget (
-        ctrl :GameControl, searchPhotoService :SearchFlickrPhotoService, cleanMode :Boolean = true)
+        ctrl :GameControl, searchPhotoService :SearchFlickrPhotoService,
+        header :String = "Tags:", editable :Boolean = true, cleanMode :Boolean = true,
+        starterTags :Array = null)
         :void
     {
         _ctrl = ctrl;
         _searchPhotoService = searchPhotoService;
+        _editable = editable;
         _cleanMode = cleanMode;
         _ctrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, handlePropertyChanged);
 
@@ -50,16 +55,18 @@ public class TagWidget extends Sprite
 
         var label :Label = new Label();
         label.setStyle("textFormat", _tagFormat);
-        label.text = "Requested tags:";
+        label.text = header;
         label.setSize(100, 22);
         addChild(label);
 
-        _tagInput = new TextInput();
-        _tagInput.restrict = "^ ";
-        //_tagInput.addEventListener(TextEvent.TEXT_INPUT, handleTagInput);
-        _tagInput.addEventListener(ComponentEvent.ENTER, handleTagInput);
-        _tagInput.y = 25;
-        addChild(_tagInput);
+        if (_editable) {
+            _tagInput = new TextInput();
+            _tagInput.restrict = "^ ";
+            //_tagInput.addEventListener(TextEvent.TEXT_INPUT, handleTagInput);
+            _tagInput.addEventListener(ComponentEvent.ENTER, handleTagInput);
+            _tagInput.y = 25;
+            addChild(_tagInput);
+        }
 
         _tagPane = new ScrollPane();
         _tagPane.horizontalScrollPolicy = ScrollPolicy.OFF;
@@ -68,10 +75,15 @@ public class TagWidget extends Sprite
         _tagPane.y = 50;
         addChild(_tagPane);
 
-        // initialize tags
-        if (_ctrl.net.get("tagsInit") == null) {
-            _ctrl.net.set("tagsInit", true, true);
-            _ctrl.net.set("tag:cat", true, true);
+        // do we need to initialize tags?
+        if ((starterTags != null) && (_ctrl.net.get("tagsInit") == null)) {
+            _ctrl.net.doBatch(function () :void {
+                _ctrl.net.set("tagsInit", true, true);
+                for each (var tag :String in starterTags) {
+                    trace("Setting starter tag: " + tag);
+                    _ctrl.net.set("tag:" + tag, true, true);
+                }
+            });
         }
 
         updateSearchTags();
@@ -79,41 +91,54 @@ public class TagWidget extends Sprite
 
     public function setSize (w :Number, h :Number) :void
     {
-        _tagInput.setSize(w, 22);
+        if (_tagInput != null) {
+            _tagInput.setSize(w, 22);
+        }
         _tagPane.setSize(w, h - 50);
     }
 
     protected function addTag (tag :String) :void
     {
-        var tagBox :CheckBox = new CheckBox();
-        tagBox.setStyle("textFormat", _tagFormat);
-        tagBox.setStyle("upIcon", X_UP_SKIN);
-        tagBox.setStyle("overIcon", X_OVER_SKIN);
-        tagBox.setStyle("downIcon", X_DOWN_SKIN);
-        tagBox.addEventListener(MouseEvent.CLICK, handleTagRemove);
-        tagBox.label = tag;
-        tagBox.y = 25 * _tagSprite.numChildren;
-        _tagSprite.addChild(tagBox);
+        var tagUI :UIComponent;
+        if (_editable) {
+            tagUI = new CheckBox();
+            CheckBox(tagUI).label = tag;
+            tagUI.setStyle("upIcon", X_UP_SKIN);
+            tagUI.setStyle("overIcon", X_OVER_SKIN);
+            tagUI.setStyle("downIcon", X_DOWN_SKIN);
+            tagUI.addEventListener(MouseEvent.CLICK, handleTagRemove);
+        } else {
+            tagUI = new Label();
+            Label(tagUI).text = tag;
+            tagUI.setSize(100, 22);
+            tagUI.setStyle("textFormat", _tagFormat);
+        }
+        tagUI.setStyle("textFormat", _tagFormat);
+        tagUI.y = 25 * _tagSprite.numChildren;
+        _tagSprite.addChild(tagUI);
 
         _tagPane.update();
 
-        _tagInput.enabled = (_tagSprite.numChildren < MAX_TAGS);
+        if (_tagInput != null) {
+            _tagInput.enabled = (_tagSprite.numChildren < MAX_TAGS);
+        }
     }
 
     protected function removeTag (tag :String) :void
     {
         var removed :Boolean = false;
         for (var ii :int = 0; ii < _tagSprite.numChildren; ii++) {
-            var cb :CheckBox = _tagSprite.getChildAt(ii) as CheckBox;
+            var tagUI :UIComponent = _tagSprite.getChildAt(ii) as UIComponent;
             if (!removed) {
-                if (cb.label == tag) {
+                if (((tagUI is CheckBox) && (CheckBox(tagUI).label == tag)) ||
+                        ((tagUI is Label) && (Label(tagUI).text == tag))) {
                     // this is the one to remove
                     _tagSprite.removeChildAt(ii);
                     ii--;
                     removed = true;
                 }
             } else {
-                cb.y -= 25;
+                tagUI.y -= 25;
             }
         }
 
@@ -121,7 +146,9 @@ public class TagWidget extends Sprite
             _tagPane.update();
         }
 
-        _tagInput.enabled = (_tagSprite.numChildren < MAX_TAGS);
+        if (_tagInput != null) {
+            _tagInput.enabled = (_tagSprite.numChildren < MAX_TAGS);
+        }
     }
 
     protected function handleTagInput (event :ComponentEvent) :void
@@ -214,6 +241,8 @@ public class TagWidget extends Sprite
     protected var _tagFormat :TextFormat;
 
     protected var _searchPhotoService :SearchFlickrPhotoService;
+
+    protected var _editable :Boolean;
 
     protected var _cleanMode :Boolean;
 

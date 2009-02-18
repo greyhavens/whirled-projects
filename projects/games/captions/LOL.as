@@ -118,7 +118,31 @@ public class LOL extends Sprite
         _game.configureTrophyCaptionsSubmittedEver("1000caps", 1000);
         _game.configureTrophyUnanimous("unanimous", 5 /* mincaptions*/);
 
-        _tagWidget = new TagWidget(_ctrl, _searchPhotos);
+        const config :Object = _ctrl.game.getConfig();
+        const mode :String = String(config["Game Mode"]);
+        var tagHeader :String = "Tags:";
+        var editableTags :Boolean = false;
+        var cleanMode :Boolean = true;
+        var starterTags :Array = null;
+        if (mode.indexOf("tags: ") == 0) {
+            starterTags = mode.substring("tags: ".length).split(" ");
+
+        } else if (mode == "naughty free-for-all") {
+            editableTags = true;
+            cleanMode = false;
+
+        } else if (mode == "creator's choice") {
+            editableTags = (_ctrl.game.getOccupantIds().length == 1);
+            if (editableTags) {
+                tagHeader = "Your tags:";
+            }
+            cleanMode = false;
+
+        } else {
+            tagHeader = "Latest photos";
+        }
+        _tagWidget = new TagWidget(
+            _ctrl, _searchPhotos, tagHeader, editableTags, cleanMode, starterTags);
 
         _timer = new Timer(500);
         _timer.addEventListener(TimerEvent.TIMER, handleSubmitCaption);
