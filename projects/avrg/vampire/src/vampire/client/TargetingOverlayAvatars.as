@@ -1,8 +1,12 @@
 package vampire.client
 {
+import com.threerings.flash.TextFieldUtil;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
+import com.threerings.util.HashSet;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameRoomEvent;
+import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.Sprite;
 import flash.events.MouseEvent;
@@ -11,6 +15,7 @@ import flash.geom.Point;
 import vampire.client.events.AvatarUpdatedEvent;
 import vampire.data.AvatarManager;
 import vampire.data.Constants;
+import vampire.data.SharedPlayerStateClient;
 
 public class TargetingOverlayAvatars extends TargetingOverlay
 {
@@ -23,11 +28,39 @@ public class TargetingOverlayAvatars extends TargetingOverlay
 //        registerListener( _avatarManager, AvatarUpdatedEvent.LOCATION_CHANGED, handleAvatarUpdated);
         
         registerListener( ctrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived );
-        registerListener( ctrl.room, AVRGameRoomEvent.PLAYER_MOVED, handlePlayerMoved );
-        registerListener( ctrl.room, AVRGameRoomEvent.PLAYER_ENTERED, handlePlayerEntered );
-        registerListener( ctrl.room, AVRGameRoomEvent.PLAYER_LEFT, handlePlayerLeft );
+        registerListener( ctrl.room, AVRGameRoomEvent.PLAYER_MOVED, dirty );
+        registerListener( ctrl.room, AVRGameRoomEvent.PLAYER_ENTERED, dirty );
+        registerListener( ctrl.room, AVRGameRoomEvent.PLAYER_LEFT, dirty );
         
         
+        //Temporary, until we wait till Zells fixes client room signals.
+        registerListener( ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, dirty);
+        
+    }
+    
+    
+    protected function getValidPlayerIdTargets() :HashSet
+    {
+        var validIds :HashSet = new HashSet();
+        
+        var playerIds :Array = _ctrl.room.getPlayerIds();
+        
+        //Add the nonplayers
+        _playerId2Sprite.forEach( function( playerId :int, s :Sprite) :void {
+            if( !ArrayUtil.contains(playerIds, playerId )) {
+                validIds.add( playerId );
+            }
+        });
+        
+        //Add players in 'bare' mode
+        for each( var playerId :int in playerIds ) {
+            var action :String = SharedPlayerStateClient.getCurrentAction( playerId );
+            if( action != null && action == Constants.GAME_MODE_BARED) {
+                validIds.add( playerId );
+            }
+        }
+        
+        return validIds;
     }
     
     
@@ -35,20 +68,31 @@ public class TargetingOverlayAvatars extends TargetingOverlay
     {
 //        trace("Mouse move e=" + e);
         var previousMouseOverPlayer :int = _mouseOverPlayerId;
+        var previousPredStatus :Boolean = _singlePred;
         _mouseOverPlayerId = 0;
         
+        var validTargetIds :HashSet = getValidPlayerIdTargets();
+        
         _playerId2Sprite.forEach( function( playerId :int, s :Sprite) :void {
+            
+            if( !validTargetIds.contains(playerId)) {
+                return;
+            }
+            
             if( _mouseOverPlayerId ) {
                 return;
             }
             
             if( s.hitTestPoint( e.stageX, e.stageY )) {
                 _mouseOverPlayerId = playerId;
+                
+                _singlePred = e.localX < s.x;
+                
             }
             
         });
         
-        if( previousMouseOverPlayer == _mouseOverPlayerId) {
+        if( previousMouseOverPlayer == _mouseOverPlayerId && previousPredStatus == _singlePred) {
             return;
         }
         else {
@@ -60,8 +104,15 @@ public class TargetingOverlayAvatars extends TargetingOverlay
             }
             
             if( _mouseOverPlayerId > 0) {
-                drawSelectedSprite( (_playerId2Sprite.get( _mouseOverPlayerId ) as Sprite), 
-                    _avatarManager.getAvatar( _mouseOverPlayerId ).hotspot);
+                
+                if( _singlePred ) {
+                    drawSelectedSpriteSinglePredator( (_playerId2Sprite.get( _mouseOverPlayerId ) as Sprite), 
+                        _avatarManager.getAvatar( _mouseOverPlayerId ).hotspot);
+                }
+                else {
+                    drawSelectedSpriteFrenzyPredator( (_playerId2Sprite.get( _mouseOverPlayerId ) as Sprite), 
+                        _avatarManager.getAvatar( _mouseOverPlayerId ).hotspot);
+                }
             }
         }
         
@@ -69,41 +120,39 @@ public class TargetingOverlayAvatars extends TargetingOverlay
     
     override protected function handleMouseClick( e :MouseEvent ) :void
     {
-        trace("handleMouseClick");
-        //Send the feed request here
+        //Remove ourselves from the display hierarchy
         _displaySprite.parent.removeChild( _displaySprite );
-////        trace("Mouse move e=" + e);
-//        var previousMouseOverPlayer :int = _mouseOverPlayerId;
-//        _mouseOverPlayerId = 0;
-//        
-//        _playerId2Sprite.forEach( function( playerId :int, s :Sprite) :void {
-//            if( _mouseOverPlayerId ) {
-//                return;
-//            }
-//            
-//            if( s.hitTestPoint( e.stageX, e.stageY )) {
-//                _mouseOverPlayerId = playerId;
-//            }
-//            
-//        });
-//        
-//        if( previousMouseOverPlayer == _mouseOverPlayerId) {
-//            return;
-//        }
-//        else {
-//            _dirty = true;
-//            
-//            if( previousMouseOverPlayer > 0) {
-//                drawNonSelectedSprite( (_playerId2Sprite.get( previousMouseOverPlayer ) as Sprite), 
-//                    _avatarManager.getAvatar( previousMouseOverPlayer ).hotspot);
-//            }
-//            
-//            if( _mouseOverPlayerId > 0) {
-//                drawSelectedSprite( (_playerId2Sprite.get( _mouseOverPlayerId ) as Sprite), 
-//                    _avatarManager.getAvatar( _mouseOverPlayerId ).hotspot);
-//            }
-//        }
         
+        
+        var validTargetIds :HashSet = getValidPlayerIdTargets();
+        trace("handleMouseClick, validTargetIds=" + validTargetIds);
+            
+        if( _targetClickedCallback != null) {
+            var _mouseOverPlayerId :int = 0;
+            
+            _playerId2Sprite.forEach( function( playerId :int, s :Sprite) :void {
+                
+                if( !validTargetIds.contains(playerId)) {
+                    return;
+                }
+            
+                if( _mouseOverPlayerId ) {
+                    return;
+                }
+                
+                if( s.hitTestPoint( e.stageX, e.stageY )) {
+                    _mouseOverPlayerId = playerId;
+                    //If on the left of the sprite, play with a single predator
+                    _singlePred = e.localX < s.x;
+                }
+                
+            });
+            
+            if( _mouseOverPlayerId ) {
+                //Send the feed request
+                _targetClickedCallback(_mouseOverPlayerId, _singlePred);
+            }
+        }
     }
         
     
@@ -116,12 +165,16 @@ public class TargetingOverlayAvatars extends TargetingOverlay
         }
     }
     
+    protected function dirty( ...ignored ) :void
+    {
+        _dirty = true;
+    }
     
     protected function handleSignalReceived( e :AVRGameRoomEvent ) :void
     {
         trace("TargetingOverlayAvatars got signal");
         if( e.name == Constants.SIGNAL_AVATAR_MOVED ) {
-            _dirty = true;
+            dirty();
         }
     }
     
@@ -220,6 +273,7 @@ public class TargetingOverlayAvatars extends TargetingOverlay
     
     protected function drawNonSelectedSprite( s :Sprite, hotspot :Array ) :void
     {
+        while( s.numChildren ) { s.removeChildAt(0);}
         s.graphics.clear();
         s.graphics.beginFill(0, 0);
         s.graphics.drawRect( -hotspot[0]/2, -hotspot[1], hotspot[0], hotspot[1]);
@@ -227,12 +281,24 @@ public class TargetingOverlayAvatars extends TargetingOverlay
         s.graphics.lineStyle(1, 0);
         s.graphics.drawRect( -hotspot[0]/2, -hotspot[1], hotspot[0], hotspot[1]);
     }
-    protected function drawSelectedSprite( s :Sprite, hotspot :Array ) :void
+    protected function drawSelectedSpriteSinglePredator( s :Sprite, hotspot :Array ) :void
     {
+        while( s.numChildren ) { s.removeChildAt(0);}
         s.graphics.clear();
         s.graphics.beginFill(0, 0.3);
         s.graphics.drawRect( -hotspot[0]/2, -hotspot[1], hotspot[0], hotspot[1]);
         s.graphics.endFill();
+        s.addChild( TextFieldUtil.createField("Single Pred.", {scaleX:2, scaleY:2, textColor:0xffffff} ));
+    }
+    protected function drawSelectedSpriteFrenzyPredator( s :Sprite, hotspot :Array ) :void
+    {
+        while( s.numChildren ) { s.removeChildAt(0);}
+        s.graphics.clear();
+        s.graphics.beginFill(0, 0.3);
+        s.graphics.drawRect( -hotspot[0]/2, -hotspot[1], hotspot[0], hotspot[1]);
+        s.graphics.endFill();
+        
+        s.addChild( TextFieldUtil.createField("Frenzy", {scaleX:2, scaleY:2, textColor:0xffffff} ));
     }
     
     protected var _playerId2Sprite :HashMap = new HashMap();
@@ -243,6 +309,7 @@ public class TargetingOverlayAvatars extends TargetingOverlay
     protected var _avatarManager :AvatarManager;
     
     protected var _mouseOverPlayerId :int = 0;
+    protected var _singlePred :Boolean = true;
     
 }
 }
