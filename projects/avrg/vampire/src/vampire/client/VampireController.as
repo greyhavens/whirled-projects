@@ -95,6 +95,8 @@ public class VampireController extends Controller
     
     public function handleQuit() :void
     {
+        ClientContext.gameCtrl.player.setAvatarState( Constants.GAME_MODE_NOTHING );
+        
         ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_QUIT );
                 
         ClientContext.quit();
@@ -150,13 +152,16 @@ public class VampireController extends Controller
 //    public function handleFeedRequest( targetPlayerId :int, targetIsVictim :Boolean) :void
     public function handleFeedRequest( targetingOverlay :TargetingOverlayAvatars, parentSprite :Sprite) :void
     {
-//        trace("handle handleFeedRequest");
-//        if( parentSprite.contains( targetingOverlay.displayObject )) {
-//            parentSprite.removeChild( targetingOverlay.displayObject );
-//        }
-//        else {
-//            parentSprite.addChildAt( targetingOverlay.displayObject, 0 );
-//        }
+        trace("handle handleFeedRequest");
+        if( parentSprite.contains( targetingOverlay.displayObject )) {
+            parentSprite.removeChild( targetingOverlay.displayObject );
+        }
+        else {
+            parentSprite.addChildAt( targetingOverlay.displayObject, 0 );
+        }
+        
+        
+        
 //        targetingOverlay.visible = !targetingOverlay.visible;
 //        if( targetingOverlay.visible ) {
 ////            Sprite(targetingOverlay.displayObject).mouseEnabled = true;
@@ -168,8 +173,20 @@ public class VampireController extends Controller
 //            }
 ////            Sprite(targetingOverlay.displayObject).mouseEnabled = false;
 //        }
-        ClientContext.gameCtrl.agent.sendMessage( FeedRequestMessage.NAME, new FeedRequestMessage( ClientContext.ourPlayerId, 0).toBytes() );
+
+
+
+
+
+
+
+
 //        ClientContext.gameCtrl.agent.sendMessage( FeedRequestMessage.NAME, new FeedRequestMessage( ClientContext.ourPlayerId, 0, false).toBytes() );
+    }
+    
+    public function handleSendFeedRequest( targetId :int, multiPredators :Boolean  ) :void
+    {
+        ClientContext.gameCtrl.agent.sendMessage( FeedRequestMessage.NAME, new FeedRequestMessage( ClientContext.ourPlayerId, targetId, multiPredators).toBytes() );        
     }
     
     public function handleFeed() :void
