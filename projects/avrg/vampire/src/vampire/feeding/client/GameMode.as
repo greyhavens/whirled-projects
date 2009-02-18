@@ -143,22 +143,26 @@ public class GameMode extends AppMode
         if (e.msg is CreateBonusMsg) {
             onNewMultiplier(e.msg as CreateBonusMsg);
 
-        } else if (e.msg is GameOverMsg) {
-            // send our final score to the server
-            GameCtx.msgMgr.sendMessage(FinalScoreMsg.create(GameCtx.scoreView.bloodCount));
-            onGameOver(true);
-
         } else if (e.msg is GameEndedPrematurelyMsg) {
             onGameOver(false);
             log.info("Game ended prematurely");
 
+        } else if (e.msg is GameOverMsg) {
+            // Send our final score to the server. We'll wait for the GameResultsMsg
+            // to display the game over screen.
+            GameCtx.msgMgr.sendMessage(FinalScoreMsg.create(GameCtx.scoreView.bloodCount));
+
+        } else if (e.msg is GameResultsMsg) {
+            onGameOver(true, e.msg as GameResultsMsg);
         }
     }
 
-    protected function onGameOver (successfullyEnded :Boolean) :void
+    protected function onGameOver (successfullyEnded :Boolean, results :GameResultsMsg = null) :void
     {
         GameCtx.gameCompleteCallback();
-        ClientCtx.mainLoop.popMode();
+        if (results != null) {
+            ClientCtx.mainLoop.pushMode(new GameOverMode(results));
+        }
     }
 
     protected function onNewMultiplier (msg :CreateBonusMsg) :void
@@ -173,6 +177,10 @@ public class GameMode extends AppMode
     override public function update (dt :Number) :void
     {
         GameCtx.timeLeft = Math.max(GameCtx.timeLeft - dt, 0);
+        if (GameCtx.timeLeft == 0 && !ClientCtx.isConnected) {
+            onGameOver(true);
+            return;
+        }
 
         // Move the player cursor towards the mouse
         var moveTarget :Vector2 = new Vector2(GameCtx.cellLayer.mouseX, GameCtx.cellLayer.mouseY);

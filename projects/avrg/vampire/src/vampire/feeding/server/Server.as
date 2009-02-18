@@ -1,6 +1,7 @@
 package vampire.feeding.server {
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.RoomSubControlServer;
@@ -102,7 +103,16 @@ public class Server extends FeedingGameServer
 
     override public function get finalScore () :int
     {
-        return _finalScore;
+        if (_finalScores == null) {
+            return 0;
+        } else {
+            var totalScore :int;
+            _finalScores.forEach(
+                function (playerId :int, score :int) :void {
+                    totalScore += score;
+                });
+            return totalScore;
+        }
     }
 
     protected function shutdown () :void
@@ -149,7 +159,7 @@ public class Server extends FeedingGameServer
                 if (!ArrayUtil.removeFirst(_playersNeedingScoreUpdate, e.senderId)) {
                     logBadMessage(e, "unrecognized player, or player already reported score");
                 } else {
-                    _finalScore += (msg as FinalScoreMsg).score;
+                    _finalScores.put(e.senderId, (msg as FinalScoreMsg).score);
                     endGameIfReady();
                 }
             }
@@ -208,6 +218,7 @@ public class Server extends FeedingGameServer
         if (_state == STATE_PLAYING) {
             _state = STATE_WAITING_FOR_SCORES;
             _playersNeedingScoreUpdate = this.playerIds;
+            _finalScores = new HashMap();
             sendMessage(GameOverMsg.create());
         }
     }
@@ -220,6 +231,9 @@ public class Server extends FeedingGameServer
 
         if (_playersNeedingScoreUpdate.length == 0) {
             _state = STATE_GAME_OVER;
+            // Send the final scores to the clients.
+            // TODO - get prey blood levels from somewhere.
+            sendMessage(GameResultsMsg.create(_finalScores, 100, 50));
             _gameCompleteCallback();
             shutdown();
         }
@@ -244,7 +258,7 @@ public class Server extends FeedingGameServer
     protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _roomCtrl :RoomSubControlServer;
     protected var _nameUtil :NameUtil;
-    protected var _finalScore :int;
+    protected var _finalScores :HashMap; // Map<playerId, score>
 
     protected var _playersNeedingCheckin :Array;
     protected var _playersNeedingScoreUpdate :Array;
