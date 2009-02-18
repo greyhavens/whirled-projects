@@ -119,7 +119,7 @@ public class LOL extends Sprite
         _game.configureTrophyUnanimous("unanimous", 5 /* mincaptions*/);
 
         const config :Object = _ctrl.game.getConfig();
-        const mode :String = String(config["Game Mode"]);
+        const mode :String = String(config["Game mode"]);
         var tagHeader :String = "Tags:";
         var editableTags :Boolean = false;
         var cleanMode :Boolean = true;
@@ -136,7 +136,6 @@ public class LOL extends Sprite
             if (editableTags) {
                 tagHeader = "Your tags:";
             }
-            cleanMode = false;
 
         } else {
             tagHeader = "Latest photos";
