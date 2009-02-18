@@ -1,41 +1,28 @@
 package com.threerings.brawler {
 
 import flash.display.DisplayObject;
-import flash.display.LoaderInfo;
 import flash.display.MovieClip;
-import flash.events.Event;
-import flash.events.KeyboardEvent;
-import flash.events.MouseEvent;
 import flash.events.*;
 import flash.geom.Point;
-import flash.utils.ByteArray;
-import flash.utils.getTimer;
 import flash.utils.Timer;
-import flash.system.ApplicationDomain;
 
 import com.threerings.flash.KeyRepeatLimiter;
-
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Controller;
 import com.threerings.util.StringUtil;
-import com.threerings.util.MultiLoader;
-
+import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
-import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.OccupantChangedEvent;
+import com.whirled.game.StateChangedEvent;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
-import com.whirled.game.StateChangedEvent;
 
 import com.threerings.brawler.actor.Actor;
-import com.threerings.brawler.actor.Coin;
 import com.threerings.brawler.actor.Enemy;
-import com.threerings.brawler.actor.Health;
 import com.threerings.brawler.actor.Pawn;
 import com.threerings.brawler.actor.Player;
-import com.threerings.brawler.actor.Weapon;
 import com.threerings.brawler.util.MessageThrottle;
 
 /**
@@ -44,30 +31,34 @@ import com.threerings.brawler.util.MessageThrottle;
 public class BrawlerController extends Controller
 {
     /** Variables for the trophies  */
-    public var difficulty_setting :String         = "Normal";
-    public var timeSpentBlocking :Number         = 0;
-    public var timeSpentBlocking_goal :Number     = 180;
-    public var timeSpentBlocking_awarded :Boolean = false;
-    public var lemmingCount :Number             = 0;
-    public var lemmingCount_goal :Number         = 10;
-    public var lemmingCount_awarded :Boolean     = false;
-    public var damageTaken :Number                 = 0;
-    public var damageTaken_goal :Number         = 30000;
-    public var damageTaken_awarded :Boolean     = false;
-    public var coinsCollected :Number             = 0;
-    public var coinsCollected_goal :Number         = 100;
-    public var coinsCollected_awarded :Boolean     = false;
-    public var weaponsBroken :Number             = 0;
-    public var weaponsBroken_goal :Number         = 25;
-    public var weaponsBroken_awarded :Boolean     = false;
-    public var weaponsCollected :Number         = 0;
-    public var weaponsCollected_goal :Number     = 50;
-    public var weaponsCollected_awarded :Boolean = false;
+    public var difficulty_setting :String           = "Normal";
+    public var timeSpentBlocking :Number            = 0;
+    public var timeSpentBlocking_goal :Number       = 180;
+    public var timeSpentBlocking_awarded :Boolean   = false;
+    public var lemmingCount :Number                 = 0;
+    public var lemmingCount_goal :Number            = 10;
+    public var lemmingCount_awarded :Boolean        = false;
+    public var damageTaken :Number                  = 0;
+    public var damageTaken_goal :Number             = 30000;
+    public var damageTaken_awarded :Boolean         = false;
+    public var coinsCollected :Number               = 0;
+    public var coinsCollected_goal :Number          = 100;
+    public var coinsCollected_awarded :Boolean      = false;
+    public var weaponsBroken :Number                = 0;
+    public var weaponsBroken_goal :Number           = 25;
+    public var weaponsBroken_awarded :Boolean       = false;
+    public var weaponsCollected :Number             = 0;
+    public var weaponsCollected_goal :Number        = 50;
+    public var weaponsCollected_awarded :Boolean    = false;
 
-    public function BrawlerController (disp :DisplayObject)
+    public function BrawlerController (control :GameControl, disp :DisplayObject,
+                                       difficultyName :String)
     {
-        // create the whirled control
-        _control = new GameControl(disp, false);
+        _control = control;
+
+        // fetch the difficulty level
+        _difficulty = DIFFICULTY_LEVELS.indexOf(difficultyName);
+        difficulty_setting = difficultyName;
 
         // create the throttle to limit message output (to about eight messages per second)
         _throttle = new MessageThrottle(disp, _control, 200);
@@ -75,13 +66,8 @@ public class BrawlerController extends Controller
         // create the view
         _view = new BrawlerView(disp, this);
 
-        // Load the embedded SWFs that contain the game's resources. This will call init() when
-        // it completes.
-        MultiLoader.getLoaders(
-            INIT_SWFS,
-            function (...ignored) :void { init(); },
-            false,
-            _rsrcDomain);
+        // Load the game's resources, and call the init() function when they've loaded
+        Resources.load(init);
     }
 
     /**
@@ -89,8 +75,7 @@ public class BrawlerController extends Controller
      */
     public function create (name :String) :*
     {
-        var clazz :Class = _rsrcDomain.getDefinition(name) as Class;
-        return new clazz();
+        return Resources.create(name);
     }
 
     /**
@@ -471,10 +456,6 @@ public class BrawlerController extends Controller
         _control.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
         _control.game.addEventListener(StateChangedEvent.CONTROL_CHANGED, controlChanged);
 
-        // fetch the difficulty level
-        _difficulty = DIFFICULTY_LEVELS.indexOf(_control.game.getConfig()["difficulty"]);
-        difficulty_setting = _control.game.getConfig()["difficulty"];
-
         // if we are in control, initialize
         if (_control.game.amInControl()) {
             _throttle.set("room", _room);
@@ -734,9 +715,6 @@ public class BrawlerController extends Controller
     /** Do this only once */
     protected var init_finished :Boolean;
 
-    /** The ApplicationDomain that will contain our loaded resources. */
-    protected var _rsrcDomain :ApplicationDomain = new ApplicationDomain();
-
     /** The Whirled interface. */
     protected var _control :GameControl;
 
@@ -805,21 +783,6 @@ public class BrawlerController extends Controller
 
     /** If on, turns off controls.  */
     public var _disableControls :Boolean = false;
-
-    /** The raw SWF data. */
-    //[Embed(source="../../../../rsrc/raw.swf", mimeType="application/octet-stream")]
-    //protected static const RAW_SWF :Class;
-    [Embed(source="../../../../rsrc/hud_effects.swf", mimeType="application/octet-stream")]
-    protected static const RAW_SWF :Class;
-    [Embed(source="../../../../rsrc/bgs.swf", mimeType="application/octet-stream")]
-    protected static const BGS_SWF :Class;
-    [Embed(source="../../../../rsrc/pc.swf", mimeType="application/octet-stream")]
-    protected static const PC_SWF :Class;
-    [Embed(source="../../../../rsrc/mobs.swf", mimeType="application/octet-stream")]
-    protected static const MOBS_SWF :Class;
-
-    /** The SWFs to load on initialization. */
-    protected static const INIT_SWFS :Array = [ RAW_SWF, BGS_SWF, PC_SWF, MOBS_SWF ];
 
     /** The available difficulty levels. */
     protected static const DIFFICULTY_LEVELS :Array = [ "Easy", "Normal", "Hard", "Inferno" ];
