@@ -29,6 +29,8 @@ public class TextBits
         tf.wordWrap = wordWrap;
         tf.scaleX = textScale;
         tf.scaleY = textScale;
+        // If this is not set to true, modifying the TextField's alpha won't work
+        tf.embedFonts = true;
 
         if (wordWrap) {
             tf.width = maxWidth / textScale;
