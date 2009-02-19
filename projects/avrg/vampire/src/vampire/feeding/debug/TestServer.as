@@ -42,12 +42,11 @@ class TestGameController extends OneRoomGameRoom
 
     override protected function playerLeft (playerId :int) :void
     {
+        log.info("Player left", "playerId", playerId);
+
         var game :FeedingGameServer = _playerGameMap.remove(playerId) as FeedingGameServer;
         if (game != null) {
-            var gameOver :Boolean = game.playerLeft(playerId);
-            if (gameOver) {
-                onGameComplete(game, false);
-            }
+            game.playerLeft(playerId);
         }
     }
 

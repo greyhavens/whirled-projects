@@ -53,13 +53,11 @@ public class FeedingGameServer
     }
 
     /**
-     * Call this function when a player leaves the feeding game prematurely. If the function
-     * returns true, the game has endeded prematurely and should no longer be tracked.
+     * Call this function when a player leaves the feeding game prematurely.
      */
-    public function playerLeft (playerId :int) :Boolean
+    public function playerLeft (playerId :int) :void
     {
-        // Overridden by Server
-        return false;
+        // Overriden by server
     }
 
     /**

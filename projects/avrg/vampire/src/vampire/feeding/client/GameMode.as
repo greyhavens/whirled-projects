@@ -172,9 +172,6 @@ public class GameMode extends AppMode
         if (e.msg is CreateBonusMsg) {
             onNewMultiplier(e.msg as CreateBonusMsg);
 
-        } else if (e.msg is GameEndedMsg) {
-           ClientCtx.quit(false);
-
         } else if (e.msg is RoundOverMsg) {
             // Send our final score to the server. We'll wait for the GameResultsMsg
             // to display the game over screen.

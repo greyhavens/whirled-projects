@@ -38,22 +38,19 @@ public class TestClient extends Sprite
             if (_curGame != null) {
                 log.warning("Received StartFeeding message while already in game");
             } else {
-                _curGame = FeedingGameClient.create(
-                    gameId,
-                    function () :void {
-                        onGameComplete(true);
-                    });
-
+                _curGame = FeedingGameClient.create(gameId, onGameComplete);
                 addChild(_curGame);
             }
         }
     }
 
-    protected function onGameComplete (completedSuccessfully :Boolean) :void
+    protected function onGameComplete () :void
     {
-        log.info("Feeding complete", "completedSuccessfully", completedSuccessfully);
         removeChild(_curGame);
         _curGame = null;
+
+        // In the test client, we just disconnect from the game when it ends.
+        _gameCtrl.player.deactivateGame();
     }
 
 

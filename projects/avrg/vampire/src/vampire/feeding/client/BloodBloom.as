@@ -53,7 +53,8 @@ public class BloodBloom extends FeedingGameClient
         ClientCtx.roundMgr = new GameRoundMgr(ClientCtx.msgMgr);
 
         _events.registerListener(this, Event.ADDED_TO_STAGE, onAddedToStage);
-        _events.registerListener(this, Event.REMOVED_FROM_STAGE, onQuit);
+        _events.registerListener(this, Event.REMOVED_FROM_STAGE, onRemovedFromStage);
+        _events.registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
 
         // If the resources aren't loaded, wait for them to load
         if (!_resourcesLoaded) {
@@ -73,13 +74,21 @@ public class BloodBloom extends FeedingGameClient
         ClientCtx.mainLoop.run();
     }
 
+    protected function onMsgReceived (e :ClientMsgEvent) :void
+    {
+        if (e.msg is GameEndedMsg) {
+            // if we receive this message, the game has ended prematurely
+            ClientCtx.quit(false);
+        }
+    }
+
     protected function onAddedToStage (...ignored) :void
     {
         _addedToStage = true;
         maybeReportReady();
     }
 
-    protected function onQuit (...ignored) :void
+    protected function onRemovedFromStage (...ignored) :void
     {
         _events.freeAllHandlers();
         ClientCtx.mainLoop.shutdown();

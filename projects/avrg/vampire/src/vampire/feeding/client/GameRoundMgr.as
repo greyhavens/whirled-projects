@@ -4,6 +4,7 @@ import com.threerings.util.Log;
 import com.whirled.contrib.EventHandlerManager;
 
 import vampire.feeding.net.ClientReadyMsg;
+import vampire.feeding.net.GameEndedMsg;
 import vampire.feeding.net.StartRoundMsg;
 
 public class GameRoundMgr
@@ -27,6 +28,7 @@ public class GameRoundMgr
 
         } else {
             if (!_ready) {
+                log.info("Client ready for next round", "playerId", ClientCtx.localPlayerId);
                 _ready = true;
                 _msgMgr.sendMessage(ClientReadyMsg.create());
             }

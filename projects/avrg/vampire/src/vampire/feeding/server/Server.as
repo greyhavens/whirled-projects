@@ -56,10 +56,8 @@ public class Server extends FeedingGameServer
             onMsgReceived);
     }
 
-    override public function playerLeft (playerId :int) :Boolean
+    override public function playerLeft (playerId :int) :void
     {
-        var didShutdown :Boolean;
-
         if (playerId == _preyId) {
             _preyId = -1;
         } else {
@@ -70,8 +68,6 @@ public class Server extends FeedingGameServer
             // If the last predator or prey just left the game, we're done and should shut down
             // prematurely
             shutdown();
-            didShutdown = true;
-            sendMessage(GameEndedMsg.create());
 
         } else {
             if (_state == STATE_WAITING_FOR_PLAYERS) {
@@ -83,8 +79,6 @@ public class Server extends FeedingGameServer
                 endGameIfReady();
             }
         }
-
-        return didShutdown;
     }
 
     override public function get gameId () :int
@@ -124,9 +118,14 @@ public class Server extends FeedingGameServer
 
     protected function shutdown () :void
     {
+        // Tell any remaining players that we're done
+        sendMessage(GameEndedMsg.create());
+
         _timerMgr.shutdown();
         _events.freeAllHandlers();
         _gameCompleteCallback();
+
+        log.info("Shutting down Blood Bloom server");
     }
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
