@@ -32,11 +32,16 @@ public class ShowFramesTask
 
         _elapsedTime += dt;
 
-        var frame :int = _interpolateFn(
-            Math.min(_elapsedTime, _totalTime),
-            _startFrame,
-            _endFrame - _startFrame,
-            _totalTime);
+        var frame :int;
+        if (_totalTime <= 0) {
+            frame = _endFrame;
+        } else {
+            frame = _interpolateFn(
+                Math.min(_elapsedTime, _totalTime),
+                _startFrame,
+                _endFrame - _startFrame,
+                _totalTime);
+        }
 
         _movie.gotoAndStop(frame);
 
