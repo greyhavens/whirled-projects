@@ -160,6 +160,7 @@ public class GameMode extends AppMode
     {
         if (_musicChannel != null) {
             _musicChannel.audioControls.fadeOutAndStop(0.5);
+            _musicChannel = null;
         }
     }
 
@@ -175,25 +176,25 @@ public class GameMode extends AppMode
         if (e.msg is CreateBonusMsg) {
             onNewMultiplier(e.msg as CreateBonusMsg);
 
-        } else if (e.msg is GameEndedPrematurelyMsg) {
+        } else if (e.msg is GameEndedMsg) {
             onGameOver(false);
             log.info("Game ended prematurely");
 
-        } else if (e.msg is GameOverMsg) {
+        } else if (e.msg is RoundOverMsg) {
             // Send our final score to the server. We'll wait for the GameResultsMsg
             // to display the game over screen.
-            GameCtx.msgMgr.sendMessage(FinalScoreMsg.create(GameCtx.scoreView.bloodCount));
+            GameCtx.msgMgr.sendMessage(RoundScoreMsg.create(GameCtx.scoreView.bloodCount));
 
-        } else if (e.msg is GameResultsMsg) {
-            onGameOver(true, e.msg as GameResultsMsg);
+        } else if (e.msg is RoundResultsMsg) {
+            onGameOver(true, e.msg as RoundResultsMsg);
         }
     }
 
-    protected function onGameOver (successfullyEnded :Boolean, results :GameResultsMsg = null) :void
+    protected function onGameOver (successfullyEnded :Boolean, results :RoundResultsMsg = null) :void
     {
         GameCtx.gameCompleteCallback();
         if (results != null) {
-            ClientCtx.mainLoop.pushMode(new GameOverMode(results));
+            ClientCtx.mainLoop.changeMode(new GameOverMode(results));
         }
     }
 
@@ -239,7 +240,7 @@ public class GameMode extends AppMode
             for (var ii :int = 0; ii < 10; ++ii) {
                 dummyScores.put(ii + 1, Rand.nextIntRange(50, 500, Rand.STREAM_COSMETIC));
             }
-            onGameOver(true, GameResultsMsg.create(dummyScores, 1, 0.25));
+            onGameOver(true, RoundResultsMsg.create(dummyScores, 1, 0.25));
             return;
         }
 

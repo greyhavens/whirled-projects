@@ -12,10 +12,10 @@ public class Util
         mgr.addMessageType(CurrentScoreMsg);
         mgr.addMessageType(ClientReadyMsg);
         mgr.addMessageType(StartGameMsg);
-        mgr.addMessageType(GameOverMsg);
-        mgr.addMessageType(FinalScoreMsg);
-        mgr.addMessageType(GameEndedPrematurelyMsg);
-        mgr.addMessageType(GameResultsMsg);
+        mgr.addMessageType(RoundOverMsg);
+        mgr.addMessageType(RoundScoreMsg);
+        mgr.addMessageType(GameEndedMsg);
+        mgr.addMessageType(RoundResultsMsg);
     }
 }
 

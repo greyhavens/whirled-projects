@@ -48,7 +48,8 @@ public class FeedingGameServer
                                    roundCompleteCallback :Function,
                                    gameCompleteCallback :Function) :FeedingGameServer
     {
-        return new vampire.feeding.server.Server(roomId, predatorIds, preyId, gameCompleteCallback);
+        return new vampire.feeding.server.Server(roomId, predatorIds, preyId, preyBlood,
+                                                 roundCompleteCallback, gameCompleteCallback);
     }
 
     /**

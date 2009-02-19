@@ -4,16 +4,16 @@ import com.whirled.contrib.simplegame.net.Message;
 
 import flash.utils.ByteArray;
 
-public class FinalScoreMsg
+public class RoundScoreMsg
     implements Message
 {
-    public static const NAME :String = "FinalScore";
+    public static const NAME :String = "RoundScore";
 
     public var score :int;
 
-    public static function create (score :int) :FinalScoreMsg
+    public static function create (score :int) :RoundScoreMsg
     {
-        var msg :FinalScoreMsg = new FinalScoreMsg();
+        var msg :RoundScoreMsg = new RoundScoreMsg();
         msg.score = score;
 
         return msg;

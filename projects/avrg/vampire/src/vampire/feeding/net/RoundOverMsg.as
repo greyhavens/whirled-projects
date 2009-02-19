@@ -4,14 +4,14 @@ import com.whirled.contrib.simplegame.net.Message;
 
 import flash.utils.ByteArray;
 
-public class GameEndedPrematurelyMsg
+public class RoundOverMsg
     implements Message
 {
-    public static const NAME :String = "GameEndedPrematurely";
+    public static const NAME :String = "RoundOver";
 
-    public static function create () :GameEndedPrematurelyMsg
+    public static function create () :RoundOverMsg
     {
-        return new GameEndedPrematurelyMsg();
+        return new RoundOverMsg();
     }
 
     public function toBytes (ba :ByteArray = null) :ByteArray

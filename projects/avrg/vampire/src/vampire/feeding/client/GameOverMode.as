@@ -12,11 +12,11 @@ import flash.text.TextField;
 
 import mx.effects.easing.Cubic;
 
-import vampire.feeding.net.GameResultsMsg;
+import vampire.feeding.net.RoundResultsMsg;
 
 public class GameOverMode extends AppMode
 {
-    public function GameOverMode (results :GameResultsMsg)
+    public function GameOverMode (results :RoundResultsMsg)
     {
         _results = results;
     }
@@ -89,7 +89,7 @@ public class GameOverMode extends AppMode
             });
     }
 
-    protected var _results :GameResultsMsg
+    protected var _results :RoundResultsMsg
 }
 
 }

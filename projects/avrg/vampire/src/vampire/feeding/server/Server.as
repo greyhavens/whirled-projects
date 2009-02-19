@@ -29,8 +29,8 @@ public class Server extends FeedingGameServer
         _inited = true;
     }
 
-    public function Server (roomId :int, predatorIds :Array, preyId :int,
-                            gameCompleteCallback :Function)
+    public function Server (roomId :int, predatorIds :Array, preyId :int, preyBlood :Number,
+                            roundCompleteCallback :Function, gameCompleteCallback :Function)
     {
          if (!_inited) {
             throw new Error("FeedingGameServer.init has not been called");
@@ -39,12 +39,13 @@ public class Server extends FeedingGameServer
         _gameId = _gameIdCounter++;
         _predatorIds = predatorIds;
         _preyId = preyId;
+        _preyBlood = preyBlood;
+        _roundCompleteCallback = roundCompleteCallback;
         _gameCompleteCallback = gameCompleteCallback;
         _roomCtrl = _gameCtrl.getRoom(roomId);
         _nameUtil = new NameUtil(_gameId);
 
-        _state = STATE_WAITING_FOR_PLAYERS;
-        _playersNeedingCheckin = this.playerIds;
+        waitForPlayers();
 
         if (_roomCtrl == null) {
             log.warning("Failed to get RoomSubControl", "roomId", roomId);
@@ -70,7 +71,7 @@ public class Server extends FeedingGameServer
             // prematurely
             shutdown();
             didShutdown = true;
-            sendMessage(GameEndedPrematurelyMsg.create());
+            sendMessage(GameEndedMsg.create());
 
         } else {
             if (_state == STATE_WAITING_FOR_PLAYERS) {
@@ -115,10 +116,17 @@ public class Server extends FeedingGameServer
         }
     }
 
+    protected function waitForPlayers () :void
+    {
+        _state = STATE_WAITING_FOR_PLAYERS;
+        _playersNeedingCheckin = this.playerIds;
+    }
+
     protected function shutdown () :void
     {
         _timerMgr.shutdown();
         _events.freeAllHandlers();
+        _gameCompleteCallback();
     }
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
@@ -151,7 +159,7 @@ public class Server extends FeedingGameServer
             }
             break;
 
-        case FinalScoreMsg.NAME:
+        case RoundScoreMsg.NAME:
             if (_state != STATE_WAITING_FOR_SCORES) {
                 logBadMessage(e, "not waiting for scores");
 
@@ -159,7 +167,7 @@ public class Server extends FeedingGameServer
                 if (!ArrayUtil.removeFirst(_playersNeedingScoreUpdate, e.senderId)) {
                     logBadMessage(e, "unrecognized player, or player already reported score");
                 } else {
-                    _finalScores.put(e.senderId, (msg as FinalScoreMsg).score);
+                    _finalScores.put(e.senderId, (msg as RoundScoreMsg).score);
                     endGameIfReady();
                 }
             }
@@ -219,7 +227,7 @@ public class Server extends FeedingGameServer
             _state = STATE_WAITING_FOR_SCORES;
             _playersNeedingScoreUpdate = this.playerIds;
             _finalScores = new HashMap();
-            sendMessage(GameOverMsg.create());
+            sendMessage(RoundOverMsg.create());
         }
     }
 
@@ -232,10 +240,11 @@ public class Server extends FeedingGameServer
         if (_playersNeedingScoreUpdate.length == 0) {
             _state = STATE_GAME_OVER;
             // Send the final scores to the clients.
-            // TODO - get prey blood levels from somewhere.
-            sendMessage(GameResultsMsg.create(_finalScores, 100, 50));
-            _gameCompleteCallback();
-            shutdown();
+            var preyBloodStart :Number = _preyBlood;
+            _preyBlood = _roundCompleteCallback();
+            sendMessage(RoundResultsMsg.create(_finalScores, preyBloodStart, _preyBlood));
+            // move to the waiting_for_players state
+            waitForPlayers();
         }
     }
 
@@ -253,6 +262,8 @@ public class Server extends FeedingGameServer
     protected var _state :int;
     protected var _predatorIds :Array;
     protected var _preyId :int;
+    protected var _preyBlood :Number;
+    protected var _roundCompleteCallback :Function;
     protected var _gameCompleteCallback :Function;
     protected var _timerMgr :TimerManager = new TimerManager();
     protected var _events :EventHandlerManager = new EventHandlerManager();

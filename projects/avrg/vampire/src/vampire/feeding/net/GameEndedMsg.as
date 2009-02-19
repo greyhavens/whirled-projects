@@ -4,14 +4,14 @@ import com.whirled.contrib.simplegame.net.Message;
 
 import flash.utils.ByteArray;
 
-public class GameOverMsg
+public class GameEndedMsg
     implements Message
 {
-    public static const NAME :String = "GameOver";
+    public static const NAME :String = "GameEnded";
 
-    public static function create () :GameOverMsg
+    public static function create () :GameEndedMsg
     {
-        return new GameOverMsg();
+        return new GameEndedMsg();
     }
 
     public function toBytes (ba :ByteArray = null) :ByteArray

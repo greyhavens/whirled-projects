@@ -21,7 +21,7 @@ public class ClientCtx
 
     public static function get localPlayerId () :int
     {
-        return (isSinglePlayer ? 0 : gameCtrl.player.getPlayerId());
+        return (isSinglePlayer ? 1 : gameCtrl.player.getPlayerId());
     }
 
     public static function get isSinglePlayer () :Boolean

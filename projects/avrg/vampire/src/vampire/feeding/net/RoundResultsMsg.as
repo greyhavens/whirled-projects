@@ -5,19 +5,19 @@ import com.whirled.contrib.simplegame.net.Message;
 
 import flash.utils.ByteArray;
 
-public class GameResultsMsg
+public class RoundResultsMsg
     implements Message
 {
-    public static const NAME :String = "GameResults";
+    public static const NAME :String = "RoundResults";
 
     public var scores :HashMap; // Map<playerId, score>
     public var preyBloodStart :Number;
     public var preyBloodEnd :Number;
 
     public static function create (scores :HashMap, preyBloodStart :Number,
-        preyBloodEnd :Number) :GameResultsMsg
+        preyBloodEnd :Number) :RoundResultsMsg
     {
-        var msg :GameResultsMsg = new GameResultsMsg();
+        var msg :RoundResultsMsg = new RoundResultsMsg();
         msg.scores = scores;
         msg.preyBloodStart = preyBloodStart;
         msg.preyBloodEnd = preyBloodEnd;
