@@ -53,7 +53,7 @@ public class ClientCtx
             }
         }
 
-        return "";
+        return "[Unrecognized player " + playerId + "]";
     }
 
     public static function instantiateBitmap (name :String) :Bitmap

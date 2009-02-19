@@ -2,6 +2,7 @@ package vampire.feeding.client {
 
 import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
@@ -177,8 +178,15 @@ public class GameMode extends AppMode
     override public function update (dt :Number) :void
     {
         GameCtx.timeLeft = Math.max(GameCtx.timeLeft - dt, 0);
+
+        // For testing purposes, end the game manually if we're in standalone mode, and
+        // create some dummy game results
         if (GameCtx.timeLeft == 0 && !ClientCtx.isConnected) {
-            onGameOver(true);
+            var dummyScores :HashMap = new HashMap();
+            for (var ii :int = 0; ii < 10; ++ii) {
+                dummyScores.put(ii + 1, Rand.nextIntRange(50, 500, Rand.STREAM_COSMETIC));
+            }
+            onGameOver(true, GameResultsMsg.create(dummyScores, 1, 0.25));
             return;
         }
 
