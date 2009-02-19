@@ -194,6 +194,7 @@ public class BloodBloomGameRecord
     
     public function shutdown() :void
     {
+        log.debug("shutdown() " + (_gameServer==null ? "Already shutdown...":""));
         if( _gameServer != null ) {
             for each( var gamePlayerId :int in _gameServer.playerIds ) {
                 _gameServer.playerLeft( gamePlayerId );
