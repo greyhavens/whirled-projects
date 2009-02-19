@@ -60,6 +60,10 @@ class TestGameController extends OneRoomGameRoom
             _roomCtrl.getRoomId(),
             predators,
             preyId,
+            1.0,    // the amount of blood the prey is starting the feeding with
+            function () :Number {
+                return onRoundComplete(game);
+            },
             function () :void {
                 onGameComplete(game, true);
             });
@@ -77,6 +81,14 @@ class TestGameController extends OneRoomGameRoom
         log.info("Starting game", "gameId", game.gameId, "players", game.playerIds);
     }
 
+    protected function onRoundComplete (game :FeedingGameServer) :Number
+    {
+        log.info("Round ended", "gameId", game.gameId, "score", game.lastRoundScore);
+        // return the amount of blood the prey has left. Real games will want to return a real
+        // value here, obviously.
+        return 0.5;
+    }
+
     protected function onGameComplete (game :FeedingGameServer, successfullyEnded :Boolean) :void
     {
         var playerIds :Array = game.playerIds;
@@ -86,7 +98,7 @@ class TestGameController extends OneRoomGameRoom
 
         if (successfullyEnded) {
             log.info("Game successfully ended", "gameId", game.gameId,
-                     "finalScore", game.finalScore);
+                     "finalScore", game.lastRoundScore);
         } else {
             log.info("Game ended prematurely", "gameId", game.gameId);
         }

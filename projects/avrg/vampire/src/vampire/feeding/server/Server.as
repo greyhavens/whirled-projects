@@ -101,7 +101,7 @@ public class Server extends FeedingGameServer
         return playerIds;
     }
 
-    override public function get finalScore () :int
+    override public function get lastRoundScore () :int
     {
         if (_finalScores == null) {
             return 0;

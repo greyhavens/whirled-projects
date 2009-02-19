@@ -24,12 +24,28 @@ public class FeedingGameServer
      * @param preyId the occupantId of the player acting as the prey, or -1 if the prey
      * is an AI player
      *
-     * @param gameCompleteCallback this function will be called on successful completion of
-     * a game. It takes no parameters and returns nothing.
-     * function gameCompleteCallback () :void
+     * @param preyBlood the amount of blood the prey currently has, normalized to a value between
+     * 0 and 1.
+     *
+     * @param roundCompleteCallback this function will be called after each successful round
+     * of feeding. It must return the new amount of blood the prey has, normalized between
+     * 0 and 1.
+     *
+     * function roundCompleteCallback () :Number {
+     *    return getNewPreyBlood();
+     * }
+     *
+     * @param gameCompleteCallback this function will be called when the game ends (this will
+     * happen when enough players leave).
+     *
+     * function gameCompleteCallback () :void {}
      *
      */
-    public static function create (roomId :int, predatorIds :Array, preyId :int,
+    public static function create (roomId :int,
+                                   predatorIds :Array,
+                                   preyId :int,
+                                   preyBlood :Number,
+                                   roundCompleteCallback :Function,
                                    gameCompleteCallback :Function) :FeedingGameServer
     {
         return new vampire.feeding.server.Server(roomId, predatorIds, preyId, gameCompleteCallback);
@@ -67,7 +83,7 @@ public class FeedingGameServer
     /**
      * Returns the final score for this game. Valid only after the game has ended.
      */
-    public function get finalScore () :int
+    public function get lastRoundScore () :int
     {
         // Overridden by Server
         return 0;
