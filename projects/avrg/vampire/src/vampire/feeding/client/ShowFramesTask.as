@@ -45,7 +45,7 @@ public class ShowFramesTask
 
     public function clone () :ObjectTask
     {
-        return new ShowFramesTask(_movie, _startFrame, _endFrame, _totalTime);
+        return new ShowFramesTask(_movie, _startFrame, _endFrame, _totalTime, _interpolateFn);
     }
 
     public function receiveMessage (msg :ObjectMessage) :Boolean
