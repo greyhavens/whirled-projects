@@ -4,18 +4,22 @@ import com.whirled.contrib.simplegame.*;
 
 import flash.display.MovieClip;
 
+import mx.effects.easing.Linear;
+
 public class ShowFramesTask
     implements ObjectTask
 {
     public static const LAST_FRAME :int = -1;
 
     public function ShowFramesTask (movie :MovieClip, startFrame :int, endFrame :int,
-                                    totalTime :Number)
+                                    totalTime :Number, interpolateFn :Function = null)
     {
         _movie = movie;
         _startFrame = startFrame;
         _endFrame = endFrame;
         _totalTime = totalTime;
+        _interpolateFn =
+            (interpolateFn != null ? interpolateFn : mx.effects.easing.Linear.easeNone);
     }
 
     public function update (dt :Number, obj :SimObject) :Boolean
@@ -28,8 +32,11 @@ public class ShowFramesTask
 
         _elapsedTime += dt;
 
-        var percent :Number = Math.min(_elapsedTime, _totalTime) / _totalTime;
-        var frame :int = _startFrame + ((_endFrame - _startFrame) * percent);
+        var frame :int = _interpolateFn(
+            Math.min(_elapsedTime, _totalTime),
+            _startFrame,
+            _endFrame - _startFrame,
+            _totalTime);
 
         _movie.gotoAndStop(frame);
 
@@ -50,6 +57,7 @@ public class ShowFramesTask
     protected var _startFrame :int;
     protected var _endFrame :int;
     protected var _totalTime :Number;
+    protected var _interpolateFn :Function;
 
     protected var _elapsedTime :Number = 0;
 }
