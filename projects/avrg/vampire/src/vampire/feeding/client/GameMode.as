@@ -23,19 +23,15 @@ public class GameMode extends AppMode
 {
     public function GameMode (predatorIds :Array, preyId :int)
     {
+        GameCtx.init();
         GameCtx.predatorIds = predatorIds;
         GameCtx.preyId = preyId;
         GameCtx.gameMode = this;
     }
 
-    public function quitFeeding () :void
-    {
-        onGameOver(false);
-    }
-
     public function sendMultiplier (multiplier :int, x :int, y :int) :void
     {
-        GameCtx.msgMgr.sendMessage(
+        ClientCtx.msgMgr.sendMessage(
             CreateBonusMsg.create(ClientCtx.localPlayerId, x, y, multiplier));
 
         if (ClientCtx.isSinglePlayer) {
@@ -167,7 +163,7 @@ public class GameMode extends AppMode
     protected function setupNetwork () :void
     {
         if (ClientCtx.isConnected) {
-            registerListener(GameCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
+            registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
         }
     }
 
@@ -177,25 +173,21 @@ public class GameMode extends AppMode
             onNewMultiplier(e.msg as CreateBonusMsg);
 
         } else if (e.msg is GameEndedMsg) {
-            onGameOver(false);
-            log.info("Game ended prematurely");
+           ClientCtx.quit(false);
 
         } else if (e.msg is RoundOverMsg) {
             // Send our final score to the server. We'll wait for the GameResultsMsg
             // to display the game over screen.
-            GameCtx.msgMgr.sendMessage(RoundScoreMsg.create(GameCtx.scoreView.bloodCount));
+            ClientCtx.msgMgr.sendMessage(RoundScoreMsg.create(GameCtx.scoreView.bloodCount));
 
         } else if (e.msg is RoundResultsMsg) {
-            onGameOver(true, e.msg as RoundResultsMsg);
+            onRoundOver(e.msg as RoundResultsMsg);
         }
     }
 
-    protected function onGameOver (successfullyEnded :Boolean, results :RoundResultsMsg = null) :void
+    protected function onRoundOver (results :RoundResultsMsg) :void
     {
-        GameCtx.gameCompleteCallback();
-        if (results != null) {
-            ClientCtx.mainLoop.changeMode(new GameOverMode(results));
-        }
+        ClientCtx.mainLoop.changeMode(new RoundOverMode(results));
     }
 
     protected function onNewMultiplier (msg :CreateBonusMsg) :void
@@ -240,7 +232,7 @@ public class GameMode extends AppMode
             for (var ii :int = 0; ii < 10; ++ii) {
                 dummyScores.put(ii + 1, Rand.nextIntRange(50, 500, Rand.STREAM_COSMETIC));
             }
-            onGameOver(true, RoundResultsMsg.create(dummyScores, 1, 0.25));
+            onRoundOver(RoundResultsMsg.create(dummyScores, 1, 0.25));
             return;
         }
 

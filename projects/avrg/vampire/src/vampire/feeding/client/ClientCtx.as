@@ -14,10 +14,22 @@ import vampire.feeding.*;
 
 public class ClientCtx
 {
+    // Initialized just once
     public static var gameCtrl :AVRGameControl;
     public static var mainLoop :MainLoop;
     public static var rsrcs :ResourceManager;
     public static var audio :AudioManager;
+
+    // Initialized every time a new feeding takes place
+    public static var roundMgr :GameRoundMgr;
+    public static var msgMgr :ClientMsgMgr;
+    public static var gameCompleteCallback :Function;
+
+    public static function quit (playerInitiated :Boolean) :void
+    {
+        gameCompleteCallback();
+        // TODO: if the player didn't initiate the quit, show a screen explaining what happened
+    }
 
     public static function get localPlayerId () :int
     {

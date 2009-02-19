@@ -4,7 +4,7 @@ import com.whirled.contrib.simplegame.net.Message;
 
 import flash.utils.ByteArray;
 
-public class StartGameMsg
+public class StartRoundMsg
     implements Message
 {
     public static const NAME :String = "StartGame";
@@ -12,9 +12,9 @@ public class StartGameMsg
     public var predatorIds :Array = [];
     public var preyId :int;
 
-    public static function create (predatorIds :Array, preyId :int) :StartGameMsg
+    public static function create (predatorIds :Array, preyId :int) :StartRoundMsg
     {
-        var msg :StartGameMsg = new StartGameMsg();
+        var msg :StartRoundMsg = new StartRoundMsg();
         msg.predatorIds = predatorIds.slice();
         msg.preyId = preyId;
         return msg;

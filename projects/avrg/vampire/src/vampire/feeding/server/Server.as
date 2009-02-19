@@ -216,7 +216,7 @@ public class Server extends FeedingGameServer
 
         if (_playersNeedingCheckin.length == 0) {
             _state = STATE_PLAYING;
-            sendMessage(StartGameMsg.create(_predatorIds, _preyId));
+            sendMessage(StartRoundMsg.create(_predatorIds, _preyId));
             _timerMgr.createTimer(Constants.GAME_TIME * 1000, 1, onTimeOver).start();
         }
     }

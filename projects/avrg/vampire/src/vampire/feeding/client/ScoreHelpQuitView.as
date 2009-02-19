@@ -24,7 +24,7 @@ public class ScoreHelpQuitView extends SceneObject
         var quitButton :SimpleButton = _movie["button_quit"];
         registerListener(quitButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                GameCtx.gameMode.quitFeeding();
+                ClientCtx.quit(true);
             });
 
         var helpButton :SimpleButton = _movie["button_info"];

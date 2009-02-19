@@ -25,9 +25,6 @@ public class GameCtx
     public static var predatorIds :Array;
     public static var preyId :int;
 
-    public static var msgMgr :ClientMsgMgr;
-    public static var gameCompleteCallback :Function;
-
     public static function get playerIds () :Array
     {
         var playerIds :Array = predatorIds.slice();
@@ -54,9 +51,6 @@ public class GameCtx
 
         predatorIds = [];
         preyId = -1;
-
-        msgMgr = null;
-        gameCompleteCallback = null;
     }
 
     // Returns a new Vector, clamped within the bounds of the game

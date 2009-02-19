@@ -47,12 +47,10 @@ public class BloodBloom extends FeedingGameClient
             throw new Error("FeedingGameClient.init has not been called");
         }
 
-        GameCtx.init();
-
-        GameCtx.gameCompleteCallback = gameCompleteCallback;
-        GameCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);
-        Util.initMessageManager(GameCtx.msgMgr);
-        _events.registerListener(GameCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
+        ClientCtx.gameCompleteCallback = gameCompleteCallback;
+        ClientCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);
+        Util.initMessageManager(ClientCtx.msgMgr);
+        ClientCtx.roundMgr = new GameRoundMgr(ClientCtx.msgMgr);
 
         _events.registerListener(this, Event.ADDED_TO_STAGE, onAddedToStage);
         _events.registerListener(this, Event.REMOVED_FROM_STAGE, onQuit);
@@ -75,18 +73,6 @@ public class BloodBloom extends FeedingGameClient
         ClientCtx.mainLoop.run();
     }
 
-    protected function onMsgReceived (e :ClientMsgEvent) :void
-    {
-        if (e.msg is StartGameMsg) {
-            if (!_ready) {
-                log.warning("Game started before we were ready!");
-            } else {
-                var msg :StartGameMsg = e.msg as StartGameMsg;
-                startGame(msg.predatorIds, msg.preyId);
-            }
-        }
-    }
-
     protected function onAddedToStage (...ignored) :void
     {
         _addedToStage = true;
@@ -99,18 +85,17 @@ public class BloodBloom extends FeedingGameClient
         ClientCtx.mainLoop.shutdown();
         ClientCtx.audio.stopAllSounds();
 
+        ClientCtx.msgMgr.shutdown();
+        ClientCtx.roundMgr.shutdown();
+        ClientCtx.gameCompleteCallback = null;
+
         log.info("Quitting BloodBloom");
     }
 
     protected function maybeReportReady () :void
     {
         if (_addedToStage && _resourcesLoaded) {
-            _ready = true;
-            if (ClientCtx.isSinglePlayer) {
-                startGame([ 0 ], -1);
-            } else {
-                GameCtx.msgMgr.sendMessage(ClientReadyMsg.create());
-            }
+            ClientCtx.roundMgr.reportReadyForNextRound();
         }
     }
 
@@ -141,7 +126,6 @@ public class BloodBloom extends FeedingGameClient
     }
 
     protected var _addedToStage :Boolean;
-    protected var _ready :Boolean;
     protected var _events :EventHandlerManager = new EventHandlerManager();
 
     protected static var _inited :Boolean;

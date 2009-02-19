@@ -11,7 +11,7 @@ public class Util
         mgr.addMessageType(CreateBonusMsg);
         mgr.addMessageType(CurrentScoreMsg);
         mgr.addMessageType(ClientReadyMsg);
-        mgr.addMessageType(StartGameMsg);
+        mgr.addMessageType(StartRoundMsg);
         mgr.addMessageType(RoundOverMsg);
         mgr.addMessageType(RoundScoreMsg);
         mgr.addMessageType(GameEndedMsg);

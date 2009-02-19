@@ -14,9 +14,9 @@ import mx.effects.easing.Cubic;
 
 import vampire.feeding.net.RoundResultsMsg;
 
-public class GameOverMode extends AppMode
+public class RoundOverMode extends AppMode
 {
-    public function GameOverMode (results :RoundResultsMsg)
+    public function RoundOverMode (results :RoundResultsMsg)
     {
         _results = results;
     }
@@ -79,13 +79,13 @@ public class GameOverMode extends AppMode
         var replayBtn :SimpleButton = panelMovie["panel_button"];
         registerOneShotCallback(replayBtn, MouseEvent.CLICK,
             function (...ignored) :void {
-                // TODO
+                ClientCtx.roundMgr.reportReadyForNextRound();
             });
 
         var quitBtn :SimpleButton = panelMovie["button_close"];
         registerOneShotCallback(quitBtn, MouseEvent.CLICK,
             function (...ignored) :void {
-                // TODO
+                ClientCtx.quit(true);
             });
     }
 
