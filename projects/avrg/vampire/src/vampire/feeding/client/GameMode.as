@@ -49,7 +49,7 @@ public class GameMode extends AppMode
                 sendMultiplierObj.addTask(new SerialTask(
                     new TimedTask(Constants.SP_MULTIPLIER_RETURN_TIME.next()),
                     new FunctionTask(function () :void {
-                        onNewMultiplier(CreateBonusMsg.create(-1, loc.x, loc.y, multiplier + 1));
+                        onNewMultiplier(CreateBonusMsg.create(0, loc.x, loc.y, multiplier + 1));
                     }),
                     new SelfDestructTask()));
                 addObject(sendMultiplierObj);
@@ -204,25 +204,27 @@ public class GameMode extends AppMode
             cell.x = msg.x;
             cell.y = msg.y;
 
-            // show a little animation showing who gave us the multiplier
-            var playerName :String = ClientCtx.getPlayerName(msg.playerId);
-            var tfName :TextField = TextBits.createText(playerName, 1.4, 0, 0xffffff);
-            tfName.cacheAsBitmap = true;
-            var sprite :Sprite = SpriteUtil.createSprite();
-            sprite.addChild(tfName);
-            var animName :SimpleSceneObject = new SimpleSceneObject(sprite);
-            var animX :Number = msg.x - (animName.width * 0.5);
-            var animY :Number = msg.y - animName.height;
-            animName.x = animX;
-            animName.y = animY;
-            animName.addTask(new SerialTask(
-                new TimedTask(1),
-                new AlphaTask(0, 0.5)));
-            animName.addTask(new SerialTask(
-                new TimedTask(0.5),
-                LocationTask.CreateEaseIn(animX, animY - 50, 1),
-                new SelfDestructTask()));
-            addObject(animName, GameCtx.uiLayer);
+            if (!ClientCtx.isSinglePlayer) {
+                // show a little animation showing who gave us the multiplier
+                var playerName :String = ClientCtx.getPlayerName(msg.playerId);
+                var tfName :TextField = TextBits.createText(playerName, 1.4, 0, 0xffffff);
+                tfName.cacheAsBitmap = true;
+                var sprite :Sprite = SpriteUtil.createSprite();
+                sprite.addChild(tfName);
+                var animName :SimpleSceneObject = new SimpleSceneObject(sprite);
+                var animX :Number = msg.x - (animName.width * 0.5);
+                var animY :Number = msg.y - animName.height;
+                animName.x = animX;
+                animName.y = animY;
+                animName.addTask(new SerialTask(
+                    new TimedTask(1),
+                    new AlphaTask(0, 0.5)));
+                animName.addTask(new SerialTask(
+                    new TimedTask(0.5),
+                    LocationTask.CreateEaseIn(animX, animY - 50, 1),
+                    new SelfDestructTask()));
+                addObject(animName, GameCtx.uiLayer);
+            }
         }
     }
 
