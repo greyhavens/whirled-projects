@@ -44,10 +44,6 @@ public class Probe extends ClientPanel
 
         x = (_ctrl.local.getPaintableArea().width - width) / 2;
         y = 10;
-
-        addEventListener(Event.REMOVED_FROM_STAGE, function (...args) :void {
-            trace("Removed from stage: " + (new Error()).getStackTrace());
-        });
     }
 
     protected function handleClose (event :ButtonEvent) :void
