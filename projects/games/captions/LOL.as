@@ -120,22 +120,25 @@ public class LOL extends Sprite
 
         const config :Object = _ctrl.game.getConfig();
         const mode :String = String(config["Game mode"]);
-        var tagHeader :String = "Tags:";
+        var tagHeader :String = "Mode: " + mode;
         var editableTags :Boolean = false;
         var cleanMode :Boolean = true;
         var starterTags :Array = null;
-        if (mode.indexOf("tags: ") == 0) {
+        if (mode == "standard") {
+            starterTags = [ "captionable", "funny", "cute" ];
+
+        } else if (mode.indexOf("tags: ") == 0) {
+            tagHeader = "Tags:";
             starterTags = mode.substring("tags: ".length).split(" ");
 
         } else if (mode == "naughty free-for-all") {
+            tagHeader = "Mode: naughty";
             editableTags = true;
             cleanMode = false;
 
         } else if (mode == "creator's choice") {
             editableTags = (_ctrl.game.getOccupantIds().length == 1);
-            if (editableTags) {
-                tagHeader = "Your tags:";
-            }
+            tagHeader = "Creator's tags";
 
         } else {
             tagHeader = "Latest photos";
