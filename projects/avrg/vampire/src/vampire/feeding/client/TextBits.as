@@ -2,7 +2,7 @@ package vampire.feeding.client {
 
 import com.whirled.contrib.simplegame.resource.*;
 
-import flash.text.Font;
+import flash.text.AntiAliasType;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
@@ -31,6 +31,7 @@ public class TextBits
         tf.scaleY = textScale;
         // If this is not set to true, modifying the TextField's alpha won't work
         tf.embedFonts = true;
+        tf.antiAliasType = AntiAliasType.ADVANCED;
 
         if (wordWrap) {
             tf.width = maxWidth / textScale;
@@ -49,6 +50,7 @@ public class TextBits
         var format :TextFormat = tf.defaultTextFormat;
         format.align = align;
         format.font = "Juice ITC";
+        format.bold = true;
 
         if (textColor > 0) {
             format.color = textColor;

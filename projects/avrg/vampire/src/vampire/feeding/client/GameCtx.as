@@ -2,7 +2,6 @@ package vampire.feeding.client {
 
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.components.LocationComponent;
-import com.whirled.contrib.simplegame.util.Collision;
 
 import flash.display.Sprite;
 
@@ -16,6 +15,7 @@ public class GameCtx
     public static var scoreView :ScoreHelpQuitView;
 
     public static var bgLayer :Sprite;
+    public static var burstLayer :Sprite;
     public static var cellLayer :Sprite;
     public static var cursorLayer :Sprite;
     public static var uiLayer :Sprite;

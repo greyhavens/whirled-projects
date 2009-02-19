@@ -65,10 +65,12 @@ public class GameMode extends AppMode
 
         // Setup display layers
         GameCtx.bgLayer = SpriteUtil.createSprite();
+        GameCtx.burstLayer = SpriteUtil.createSprite();
         GameCtx.cellLayer = SpriteUtil.createSprite();
         GameCtx.cursorLayer = SpriteUtil.createSprite();
         GameCtx.uiLayer = SpriteUtil.createSprite(true, true);
         _modeSprite.addChild(GameCtx.bgLayer);
+        _modeSprite.addChild(GameCtx.burstLayer);
         _modeSprite.addChild(GameCtx.cellLayer);
         _modeSprite.addChild(GameCtx.cursorLayer);
         _modeSprite.addChild(GameCtx.uiLayer);

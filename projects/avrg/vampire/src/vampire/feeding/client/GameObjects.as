@@ -24,7 +24,7 @@ public class GameObjects
         loc = GameCtx.cellLayer.globalToLocal(loc);
         obj.x = loc.x;
         obj.y = loc.y;
-        GameCtx.gameMode.addObject(obj, GameCtx.cellLayer);
+        GameCtx.gameMode.addObject(obj, GameCtx.burstLayer);
 
         fromCell.destroySelf();
 
@@ -45,7 +45,7 @@ public class GameObjects
         loc = GameCtx.cellLayer.globalToLocal(loc);
         obj.x = loc.x;
         obj.y = loc.y;
-        GameCtx.gameMode.addObject(obj, GameCtx.cellLayer);
+        GameCtx.gameMode.addObject(obj, GameCtx.burstLayer);
 
         fromObj.destroySelf();
 
