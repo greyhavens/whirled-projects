@@ -76,11 +76,8 @@ public class BurstSequence extends SceneObject
             }
 
             if (_totalBursts >= Constants.CREATE_BONUS_BURST_SIZE) {
-                GameCtx.msgMgr.sendMessage(CreateBonusMsg.create(
-                    ClientCtx.localPlayerId,
-                    this.x,
-                    this.y,
-                    _largestMultiplier + 1));
+                // Send a multiplier to the other players
+                GameCtx.gameMode.sendMultiplier(_largestMultiplier + 1, this.x, this.y);
             }
 
             destroySelf();

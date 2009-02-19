@@ -5,8 +5,8 @@ import com.whirled.contrib.simplegame.util.*;
 
 public class Constants
 {
-    public static const DEBUG_SHOW_STATS :Boolean = false;
-    public static const DEBUG_DISABLE_AUDIO :Boolean = false;
+    public static const DEBUG_SHOW_STATS :Boolean = true;
+    public static const DEBUG_DISABLE_AUDIO :Boolean = true;
 
     public static const GAME_TIME :Number = 60 * 2;
 
@@ -72,6 +72,9 @@ public class Constants
 
     public static const HEMISPHERE_WEST :int = 0;
     public static const HEMISPHERE_EAST :int = 1;
+
+    public static const SP_MULTIPLIER_RETURN_CHANCE :Number = 0.5;
+    public static const SP_MULTIPLIER_RETURN_TIME :NumRange = new NumRange(2, 5, Rand.STREAM_GAME);
 
     public static const DEBRIS_COUNT :int = 12;
 }

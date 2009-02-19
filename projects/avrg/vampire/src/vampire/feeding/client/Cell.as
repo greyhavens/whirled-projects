@@ -56,7 +56,7 @@ public class Cell extends CollidableObj
 
         if (type == Constants.CELL_BONUS) {
             var text :String = "x" + _multiplier;
-            var tf :TextField = TextBits.createText(text, 1, 0, 0xffffff);
+            var tf :TextField = TextBits.createText(text, 1, 0, 0);
             tf.x = -tf.width * 0.5;
             tf.y = -tf.height * 0.5;
             _sprite.addChild(tf);
@@ -261,7 +261,7 @@ public class Cell extends CollidableObj
     protected static const RED_ROTATION_TIME :Number = 3;
     protected static const BONUS_ROTATION_TIME :Number = 1.5;
 
-    protected static const MOVIE_NAMES :Array = [ "cell_red", "cell_white", "cell_bonus" ];
+    protected static const MOVIE_NAMES :Array = [ "cell_red", "cell_white", "cell_coop" ];
 }
 
 }

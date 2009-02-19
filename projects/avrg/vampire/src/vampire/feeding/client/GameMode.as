@@ -7,11 +7,14 @@ import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.net.*;
+import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
 import flash.display.MovieClip;
+import flash.display.Sprite;
 import flash.geom.Point;
+import flash.text.TextField;
 
 import vampire.feeding.*;
 import vampire.feeding.net.*;
@@ -28,6 +31,30 @@ public class GameMode extends AppMode
     public function quitFeeding () :void
     {
         onGameOver(false);
+    }
+
+    public function sendMultiplier (multiplier :int, x :int, y :int) :void
+    {
+        GameCtx.msgMgr.sendMessage(
+            CreateBonusMsg.create(ClientCtx.localPlayerId, x, y, multiplier));
+
+        if (ClientCtx.isSinglePlayer) {
+            // In single-player games, there's nobody else to volley our multipliers back
+            // to us, so we fake it by sending occasionally sending fake multipliers to ourselves
+            if (Rand.nextNumber(Rand.STREAM_GAME) < Constants.SP_MULTIPLIER_RETURN_CHANCE) {
+                var sendMultiplierObj :SimObject = new SimObject();
+                var loc :Vector2 = new Vector2(x, y);
+                loc.x += Rand.nextNumberRange(5, 25, Rand.STREAM_COSMETIC);
+                loc.y += Rand.nextNumberRange(5, 25, Rand.STREAM_COSMETIC);
+                sendMultiplierObj.addTask(new SerialTask(
+                    new TimedTask(Constants.SP_MULTIPLIER_RETURN_TIME.next()),
+                    new FunctionTask(function () :void {
+                        onNewMultiplier(CreateBonusMsg.create(-1, loc.x, loc.y, multiplier + 1));
+                    }),
+                    new SelfDestructTask()));
+                addObject(sendMultiplierObj);
+            }
+        }
     }
 
     override protected function setup () :void
@@ -172,6 +199,26 @@ public class GameMode extends AppMode
             var cell :Cell = GameObjects.createCell(Constants.CELL_BONUS, false, msg.multiplier);
             cell.x = msg.x;
             cell.y = msg.y;
+
+            // show a little animation showing who gave us the multiplier
+            var playerName :String = ClientCtx.getPlayerName(msg.playerId);
+            var tfName :TextField = TextBits.createText(playerName, 1.4, 0, 0xffffff);
+            tfName.cacheAsBitmap = true;
+            var sprite :Sprite = SpriteUtil.createSprite();
+            sprite.addChild(tfName);
+            var animName :SimpleSceneObject = new SimpleSceneObject(sprite);
+            var animX :Number = msg.x - (animName.width * 0.5);
+            var animY :Number = msg.y - animName.height;
+            animName.x = animX;
+            animName.y = animY;
+            animName.addTask(new SerialTask(
+                new TimedTask(1),
+                new AlphaTask(0, 0.5)));
+            animName.addTask(new SerialTask(
+                new TimedTask(0.5),
+                LocationTask.CreateEaseIn(animX, animY - 50, 1),
+                new SelfDestructTask()));
+            addObject(animName, GameCtx.uiLayer);
         }
     }
 
