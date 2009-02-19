@@ -41,16 +41,15 @@ public class GameView extends Sprite
         y = 5;
 
         // create the text field via which we'll accept player input
-        _input = TextFieldUtil.createField("",
-            {
-                background: true,
-                backgroundColor: 0xFFFFFF,
-                defaultTextFormat: _ctx.content.makeInputFormat(uint(0x000000), true),
-                type: TextFieldType.INPUT,
-                restrict: "[A-Za-z]", // only allow letters to be typed; TODO: i18n?
-                width: _ctx.content.inputRect.width,
-                height: _ctx.content.inputRect.height
-            });
+        _input = TextFieldUtil.createField("", {
+            background: true,
+            backgroundColor: 0xFFFFFF,
+            defaultTextFormat: _ctx.content.makeInputFormat(uint(0x000000), true),
+            type: TextFieldType.INPUT,
+            restrict: "[A-Za-z]", // only allow letters to be typed; TODO: i18n?
+            width: _ctx.content.inputRect.width,
+            height: _ctx.content.inputRect.height
+        });
 
         // listen for property changed and message events
         _ctx.control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
@@ -60,14 +59,22 @@ public class GameView extends Sprite
 
     public function init (playerCount :int) :void
     {
+        // clear out old bits
+        while (numChildren > 0) {
+            removeChildAt(0);
+        }
+
+        // create new bits
         _board = new Board(_ctx);
         _board.x = Content.BOARD_BORDER;
         _board.y = Content.BOARD_BORDER;
         addChild(_board);
 
         var isMulti :Boolean = _ctx.control.isConnected() ? _ctx.model.isMultiPlayer() : true;
-        var mypidx :int = _ctx.control.isConnected() ? _ctx.control.game.seating.getMyPosition() : 0;
+        var mypidx :int = _ctx.control.isConnected() ?
+            _ctx.control.game.seating.getMyPosition() : 0;
         var psize :int = Content.BOARD_BORDER * 2 + _board.getPixelSize();
+        _shooters = new Array();
         for (var pidx :int = 0; pidx < playerCount; pidx++) {
             // the board is rotated so that our position is always at the bottom (if we're a
             // non-player use position 0)
@@ -468,7 +475,7 @@ public class GameView extends Sprite
     protected var _input :TextField;
 
     protected var _board :Board;
-    protected var _shooters :Array = new Array();
+    protected var _shooters :Array;
 
     protected var _roundEndPending :Boolean;
     protected var _shotsInProgress :int;

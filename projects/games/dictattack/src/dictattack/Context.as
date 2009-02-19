@@ -3,6 +3,8 @@
 
 package dictattack {
 
+import flash.display.Sprite;
+
 import com.whirled.game.GameControl;
 
 /**
@@ -10,6 +12,11 @@ import com.whirled.game.GameControl;
  */
 public class Context
 {
+    public function get top () :DictionaryAttack
+    {
+        return _top;
+    }
+
     public function get control () :GameControl
     {
         return _control;
@@ -30,8 +37,9 @@ public class Context
         return _view;
     }
 
-    public function Context (control :GameControl, content :Content)
+    public function Context (top :DictionaryAttack, control :GameControl, content :Content)
     {
+        _top = top;
         _control = control;
         _content = content;
     }
@@ -42,6 +50,7 @@ public class Context
         _view = view;
     }
 
+    protected var _top :DictionaryAttack;
     protected var _control :GameControl;
     protected var _content :Content;
 

@@ -27,21 +27,16 @@ public class DictionaryAttack extends Sprite
         // wire up our unloader
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
-        // we use this function to wait for our various bits to complete
-        var initComplete :int = 0;
-        var maybeFinishInit :Function = function () :void {
-            if (++initComplete == 2) {
-                finishInit();
-            }
-        };
-
         // create and wire ourselves into our multiplayer game control (and create our content)
-        _ctx = new Context(new GameControl(this, false), new Content(maybeFinishInit));
-        _ctx.control.game.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
-        _ctx.control.game.addEventListener(StateChangedEvent.ROUND_STARTED, roundDidStart);
-        _ctx.control.game.addEventListener(StateChangedEvent.ROUND_ENDED, roundDidEnd);
-        _ctx.control.game.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
-        _ctx.control.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, coinsAwarded);
+        _ctx = new Context(this, new GameControl(this, false), new Content(contentLoaded));
+        if (_ctx.control.isConnected()) {
+            _ctx.control.game.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
+            _ctx.control.game.addEventListener(StateChangedEvent.ROUND_STARTED, roundDidStart);
+            _ctx.control.game.addEventListener(StateChangedEvent.ROUND_ENDED, roundDidEnd);
+            _ctx.control.game.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
+            _ctx.control.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, coinsAwarded);
+            _ctx.init(new Model(Content.BOARD_SIZE, _ctx), new GameView(_ctx));
+        }
 
         // make our background totally black
         opaqueBackground = 0x000000;
@@ -49,21 +44,39 @@ public class DictionaryAttack extends Sprite
             _ctx.control.local.getSize() : new Point(1000, 550);
         graphics.drawRect(0, 0, size.x, size.y);
 
-        // show our splash screen
-        var splash :SplashView = new SplashView(this, function () :void {
-            removeChild(splash);
-            maybeFinishInit();
-        });
-        addChild(splash);
+        // if we're playing a multiplayer game, don't show the splash screen, just start the game
+        // straight away
+        if (_ctx.control.isConnected() && _ctx.control.game.seating.getPlayerIds().length > 1) {
+            startGame();
+        } else {
+            showSplashMenu();
+        }
     }
 
-    protected function finishInit () :void
+    public function showSplashMenu () :void
     {
+        if (_ctx.view.parent != null) {
+            removeChild(_ctx.view);
+        }
+        addChild(_splash = new SplashView(_ctx, this));
+    }
+
+    public function startGame () :void
+    {
+        // if our content is not ready, we have to wait
+        if (!_contentLoaded) {
+            _onLoaded = startGame;
+            return;
+        }
+
+        // clear out our splash view
+        if (_splash != null) {
+            removeChild(_splash);
+            _splash = null;
+        }
+
         var pcount :int = _ctx.control.isConnected() ?
             _ctx.control.game.seating.getPlayerIds().length : 4;
-
-        // create our model and our view, and initialize them
-        _ctx.init(new Model(Content.BOARD_SIZE, _ctx), new GameView(_ctx));
         _ctx.view.init(pcount);
         addChild(_ctx.view);
 
@@ -74,6 +87,27 @@ public class DictionaryAttack extends Sprite
             _ctx.control.player.getCookie(gotUserCookie);
         } else {
             _ctx.view.attractMode();
+        }
+    }
+
+    public function showLobby () :void
+    {
+        if (_ctx.control.isConnected()) {
+            _ctx.control.local.showGameLobby();
+        }
+    }
+
+    public function showHelp () :void
+    {
+        HelpView.show(_ctx);
+    }
+
+    protected function contentLoaded () :void
+    {
+        _contentLoaded = true;
+        if (_onLoaded != null) {
+            _onLoaded();
+            _onLoaded = null;
         }
     }
 
@@ -246,6 +280,10 @@ public class DictionaryAttack extends Sprite
     protected var _ctx :Context;
     protected var _cookie :Object;
     protected var _coinsAward :int;
+
+    protected var _splash :SplashView;
+    protected var _contentLoaded :Boolean;
+    protected var _onLoaded :Function;
 
     protected static const LONG_WORD :int = 8;
     protected static const MAX_HISCORES :int = 4;

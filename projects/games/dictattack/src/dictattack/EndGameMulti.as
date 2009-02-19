@@ -47,9 +47,9 @@ public class EndGameMulti extends Dialog
         if (_ctx.control.game.seating.getMyPosition() >= 0) {
             var restart :SimpleButton = _ctx.content.makeButton("Rematch");
             restart.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-                    _ctx.view.clearOverView();
-                    _ctx.control.game.playerReady();
-                });
+                _ctx.view.clearOverView();
+                _ctx.control.game.playerReady();
+            });
             addButton(restart, CENTER);
         }
     }

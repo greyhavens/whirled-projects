@@ -55,18 +55,24 @@ public class Dialog extends Sprite
 
     public function show (fromTop :Boolean = true) :void
     {
-        _view = _ctx.view;
-
         // draw a background and border around our bits
         graphics.beginFill(uint(0x222222));
         graphics.lineStyle(2, 0xCCCCCC);
         graphics.drawRect(0, 0, width + 2*BORDER, height + 2*BORDER);
         graphics.endFill();
 
-        _view.addChild(this);
-        var dx :int = Content.BOARD_BORDER + (_view.getBoard().getPixelSize() - width)/2;
-        dx = Math.max(5, dx);
-        var dy :int = Content.BOARD_BORDER + (_view.getBoard().getPixelSize() - height)/2;
+        var dx :int, dy :int;
+        var board :Board = _ctx.view.getBoard();
+        if (board == null) {
+            dx = (_ctx.control.local.getSize().x - width)/2;
+            dy = (_ctx.control.local.getSize().y - height)/2;
+        } else {
+            dx = Content.BOARD_BORDER + (board.getPixelSize() - width)/2;
+            dx = Math.max(5, dx);
+            dy = Content.BOARD_BORDER + (board.getPixelSize() - height)/2;
+        }
+
+        _ctx.top.addChild(this);
         if (fromTop) {
             LinePath.move(this, dx, -height, dx, dy, 500).start();
         } else {
@@ -77,16 +83,17 @@ public class Dialog extends Sprite
     public function clear () :void
     {
         // if we've already been asked to clear, ignore subsequent reqeusts
-        if (_view == null) {
+        if (_content == null) {
             return;
         }
+        _content = null;
 
         var meMyselfAndI :Sprite = this;
-        var view :GameView = _view;
-        _view = null;
         LinePath.moveTo(this, x, -height, 500).start(function (path :Path) :void {
-            view.removeChild(meMyselfAndI);
-            view.focusInput(true);
+            _ctx.top.removeChild(meMyselfAndI);
+            if (_ctx.view != null) {
+                _ctx.view.focusInput(true);
+            }
         });
     }
 
@@ -116,7 +123,6 @@ public class Dialog extends Sprite
     }
 
     protected var _ctx :Context;
-    protected var _view :GameView;
     protected var _content :DisplayObject;
 
     protected static const BORDER :int = 15;

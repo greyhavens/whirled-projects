@@ -45,10 +45,17 @@ public class EndGameSingle extends Dialog
         if (_ctx.control.game.seating.getMyPosition() >= 0) {
             var restart :SimpleButton = _ctx.content.makeButton("Play Again");
             restart.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-                    _ctx.view.clearOverView();
-                    _ctx.control.game.playerReady();
-                });
-            addButton(restart, CENTER);
+                _ctx.view.clearOverView();
+                _ctx.control.game.playerReady();
+            });
+            addButton(restart, LEFT);
+
+            var menu :SimpleButton = _ctx.content.makeButton("Main Menu");
+            menu.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+                _ctx.view.clearOverView();
+                _ctx.top.showSplashMenu();
+            });
+            addButton(menu, RIGHT);
         }
     }
 }
