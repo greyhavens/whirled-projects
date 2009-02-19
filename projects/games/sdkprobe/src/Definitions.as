@@ -241,12 +241,12 @@ public class Definitions
             new FunctionSpec("showGameShop", local.showGameShop,
                 [new Parameter("itemType", String),
                  new Parameter("catalogId", int, Parameter.OPTIONAL)]),
-            new FunctionSpec("showSharePage", local.showSharePage,
+            new FunctionSpec("invPage", local.showInvitePage,
                 [new Parameter("defmsg", String),
                  new Parameter("token", String, Parameter.OPTIONAL)]),
             new FunctionSpec("showTrophies", local.showTrophies, []),
-            new FunctionSpec("getShareToken", local.getShareToken, []),
-            new FunctionSpec("getShareMemberId", local.getShareMemberId, [])
+            new FunctionSpec("invToken", local.getInviteToken, []),
+            new FunctionSpec("invMemberId", local.getInviterMemberId, [])
         ];
     }
 
