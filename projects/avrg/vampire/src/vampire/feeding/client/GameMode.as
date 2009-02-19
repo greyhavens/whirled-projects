@@ -123,6 +123,7 @@ public class GameMode extends AppMode
         GameCtx.cursor = GameObjects.createPlayerCursor();
         registerListener(GameCtx.cursor, GameEvent.WHITE_CELL_DELIVERED, onWhiteCellDelivered);
 
+        /* We're not doing this anymore
         // keep tabs on everyone else's score
         var yOffset :Number = 0;
         for each (var playerId :int in GameCtx.playerIds) {
@@ -137,6 +138,7 @@ public class GameMode extends AppMode
         }
 
         addObject(new LocalScoreReporter()); // will report our score to everyone else periodically
+        */
 
         // create some non-interactive debris that floats around the heart
         for (var ii :int = 0; ii < Constants.DEBRIS_COUNT; ++ii) {
