@@ -6,8 +6,12 @@ import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.contrib.EventHandlers;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
+import com.whirled.contrib.simplegame.tasks.SelfDestructTask;
+import com.whirled.contrib.simplegame.tasks.SerialTask;
+import com.whirled.contrib.simplegame.tasks.TimedTask;
+import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
@@ -17,10 +21,13 @@ import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
-import flash.events.TimerEvent;
+import flash.filters.BlurFilter;
+import flash.filters.DropShadowFilter;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.TextField;
+import flash.text.TextFormat;
+import flash.text.TextFormatAlign;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.events.ClosestPlayerChangedEvent;
@@ -257,13 +264,13 @@ public class HUD extends SceneObject
         
         
         _hudFeedback = TextField( findSafely("HUDfeedback") );
-        _hudFeedback.visible = true;
-        _hudFeedback.text = "afsadfafa sdf";
+//        _hudFeedback.visible = true;
+//        _hudFeedback.text = "afsadfafa sdf";
 //        _hudFeedback.embedFonts = true;
 //        _hudFeedback.appendText("sdfsdfsdfsdf");
 //        trace("_hudFeedback=" + _hudFeedback);
         //The _hudFeedback is stealing mouse focus while invisible.  We'll add it when we need to
-//        _hudMC.removeChild( _hudFeedback );
+        _hudMC.removeChild( _hudFeedback );
         
         
         if( VConstants.LOCAL_DEBUG_MODE) {
@@ -500,18 +507,88 @@ public class HUD extends SceneObject
     
     override protected function update(dt:Number):void
     {
-        _feedbackMessageTimeElapsed += dt;
+        //Show feedback messages in queue, and fade out old messages.
+        if( _feedbackMessageQueue.length > 0 && db != null) {
+            _feedbackMessageTimeElapsed += dt;
+            
+            if( _feedbackMessageTimeElapsed > VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY ) {
+                _feedbackMessageTimeElapsed = 0;
+                var feedbackMessage :String = _feedbackMessageQueue.shift() as String;
+                if( feedbackMessage != null ) {
+                    
+                    var textSprite :Sprite = new Sprite();
+                    
+                    var feedbackMessageTextField :TextField = 
+                        TextFieldUtil.createField(feedbackMessage);
+                    feedbackMessageTextField.selectable = false;
+                    feedbackMessageTextField.tabEnabled = false;
+                    feedbackMessageTextField.embedFonts = true;
+                    
+                    var lineageformat :TextFormat = new TextFormat();
+                    lineageformat.font = "JuiceEmbedded";
+                    lineageformat.size = 24.;
+                    lineageformat.color = 0x000000;
+                    lineageformat.align = TextFormatAlign.RIGHT;
+                    lineageformat.bold = true;
+                    feedbackMessageTextField.setTextFormat( lineageformat );
+                    feedbackMessageTextField.textColor = _hudFeedback.textColor;
+                    feedbackMessageTextField.width = _hudFeedback.width;
+                    feedbackMessageTextField.height = _hudFeedback.height;
+                    feedbackMessageTextField.x = _hudFeedback.x - 10;
+                    feedbackMessageTextField.y = _hudFeedback.y + 10;
+                    feedbackMessageTextField.multiline = _hudFeedback.multiline;
+                    
+                    
+                    
+                    var shadowText :TextField = 
+                        TextFieldUtil.createField(feedbackMessage);
+                    shadowText.selectable = false;
+                    shadowText.tabEnabled = false;
+                    shadowText.embedFonts = true;
+                    
+                    shadowText.setTextFormat( lineageformat );
+                    shadowText.textColor = 0xffffff;
+                    shadowText.width = _hudFeedback.width;
+                    shadowText.height = _hudFeedback.height;
+                    shadowText.x = _hudFeedback.x - 10;
+                    shadowText.y = _hudFeedback.y + 10;
+                    shadowText.multiline = _hudFeedback.multiline;
+                    
+                    var blurredShadow:DropShadowFilter = new DropShadowFilter(0.8, 0, 0xffffff, 1.0, 5, 5, 1000 );
+                    var storedBlurShadow :Array = [blurredShadow];
+                    shadowText.filters = storedBlurShadow;
+                    
+                    
+                    textSprite.addChild( shadowText );
+                    textSprite.addChild( feedbackMessageTextField );
+                    
+                    
+                    var textSceneObject :SimpleSceneObject = 
+                        new SimpleSceneObject( textSprite );
+                    db.addObject( textSceneObject, _hudMC);
+                    
+                    var serialTask :SerialTask = new SerialTask();
+                    serialTask.addTask( 
+                        new TimedTask( VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY * 0.9 ));
+                    serialTask.addTask( new SelfDestructTask() );  
+                    textSceneObject.addTask( serialTask );
+                    
+                }
+            }
+        }
         
-//        if( _feedbackMessageTimeElapsed
+//        _DEBUGGING_add_feedback_timer += dt;
+//        if( _DEBUGGING_add_feedback_timer > 2 ) {
+//            _DEBUGGING_add_feedback_timer = 0;
+//            
+//            _feedbackMessageQueue.push(generateRandomString(Rand.nextIntRange(10, 40, 0)));
+//            trace("_feedbackMessageQueue=" + _feedbackMessageQueue);
+//        }
     }
     
     public function showFeedBack( msg :String ) :void
     {
-        trace("Showing text " + msg);
-        _hudMC.addChild( _hudFeedback );
-        _hudFeedback.text = msg;
-        _hudFeedback.visible = true;
-        _hudFeedback.textColor = 0xffffff;
+        _feedbackMessageQueue.push( msg )
     }
     
     
@@ -790,6 +867,18 @@ public class HUD extends SceneObject
     {
         return _targetingOverlay;
     }
+    
+    //Debugging purposes
+    protected static function generateRandomString(newLength:uint = 1, userAlphabet:String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"):String
+    {
+        var alphabet:Array = userAlphabet.split("");
+        var alphabetLength:int = alphabet.length;
+        var randomLetters:String = "";
+        for (var i:uint = 0; i < newLength; i++){
+            randomLetters += alphabet[int(Math.floor(Math.random() * alphabetLength))];
+        }
+        return randomLetters;
+    }
 
     protected var _displaySprite :Sprite;
     protected var _hud :DraggableSprite;
@@ -834,6 +923,8 @@ public class HUD extends SceneObject
     
     protected var _feedbackMessageQueue :Array = new Array();
     protected var _feedbackMessageTimeElapsed :Number = 0;
+    
+    protected var _DEBUGGING_add_feedback_timer :Number = 0;
     
 //    protected var _checkRoomProps2ShowStatsTimer :Timer;//Stupid hack, the first time a player enters a room, the 
     
