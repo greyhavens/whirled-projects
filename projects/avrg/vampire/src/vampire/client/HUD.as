@@ -7,6 +7,7 @@ import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.EventHandlers;
+import com.whirled.contrib.avrg.TargetingOverlayAvatars;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
@@ -245,6 +246,13 @@ public class HUD extends SceneObject
         _hudMC = ClientContext.instantiateMovieClip("HUD", "HUD", true);
         
         _hud.addChild( _hudMC );
+        
+        
+        _hudFeedback = TextField( findSafely("HUDfeedback") );
+        
+        //The _hudFeedback is stealing mouse focus while invisible.  We'll add it when we need to
+        _hudMC.removeChild( _hudFeedback );
+        
         
         if( Constants.LOCAL_DEBUG_MODE) {
             _hudMC.x = 500;
@@ -710,7 +718,7 @@ public class HUD extends SceneObject
     protected var _hudXPBottom :int;
     protected var _hudXPStartHeight :Number;
     
-    protected var _hudFeedback :MovieClip;
+    protected var _hudFeedback :TextField;
     
     protected var _blood :Sprite;
     protected var _bloodText :TextField;
