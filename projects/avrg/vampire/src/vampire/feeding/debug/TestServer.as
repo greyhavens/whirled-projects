@@ -24,10 +24,38 @@ import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.avrg.oneroom.OneRoomGameRoom;
 
 import vampire.feeding.*;
+import com.whirled.net.MessageReceivedEvent;
+import com.whirled.contrib.EventHandlerManager;
 
 class TestGameController extends OneRoomGameRoom
 {
-    override protected function playerEntered (playerId :int) :void
+    override protected function finishInit () :void
+    {
+        super.finishInit();
+        _events.registerListener(_gameCtrl.game, MessageReceivedEvent.MESSAGE_RECEIVED,
+            onMsgReceived);
+    }
+
+    override public function shutdown () :void
+    {
+        _events.freeAllHandlers();
+        super.shutdown();
+    }
+
+    protected function onMsgReceived (e :MessageReceivedEvent) :void
+    {
+        if (e.name == "TestClientReady") {
+            _waitingPlayers.push(e.senderId);
+             if (_waitingPlayers.length >= NUM_PLAYERS) {
+                startGame();
+            } else {
+                log.info("Waiting for " + String(NUM_PLAYERS - _waitingPlayers.length) +
+                         " more players to start game");
+            }
+        }
+    }
+
+    /*override protected function playerEntered (playerId :int) :void
     {
         log.info("Player joined", "playerId", playerId);
 
@@ -38,11 +66,13 @@ class TestGameController extends OneRoomGameRoom
             log.info("Waiting for " + String(NUM_PLAYERS - _waitingPlayers.length) +
                      " more players to start game");
         }
-    }
+    }*/
 
     override protected function playerLeft (playerId :int) :void
     {
         log.info("Player left", "playerId", playerId);
+
+        ArrayUtil.removeFirst(_waitingPlayers, playerId);
 
         var game :FeedingGameServer = _playerGameMap.remove(playerId) as FeedingGameServer;
         if (game != null) {
@@ -54,6 +84,7 @@ class TestGameController extends OneRoomGameRoom
     {
         var preyId :int = _waitingPlayers.pop();
         var predators :Array = _waitingPlayers;
+        _waitingPlayers = [];
 
         var game :FeedingGameServer = FeedingGameServer.create(
             _roomCtrl.getRoomId(),
@@ -73,7 +104,7 @@ class TestGameController extends OneRoomGameRoom
         _gameCtrl.doBatch(function () :void {
             for each (var playerId :int in game.playerIds) {
                 _playerGameMap.put(playerId, game);
-                _gameCtrl.getPlayer(playerId).sendMessage("StartClient", game.gameId);
+                _gameCtrl.getPlayer(playerId).sendMessage("StartFeeding", game.gameId);
             }
         });
 
@@ -105,6 +136,7 @@ class TestGameController extends OneRoomGameRoom
 
     protected var _waitingPlayers :Array = [];
     protected var _playerGameMap :HashMap = new HashMap(); // Map<playerId, FeedingGameServer>
+    protected var _events :EventHandlerManager = new EventHandlerManager();
 
     // the number of players the game will wait for before starting a new game
     protected static const NUM_PLAYERS :int = 2;

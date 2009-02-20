@@ -22,6 +22,11 @@ public class TestClient extends Sprite
         _events.registerListener(this, Event.REMOVED_FROM_STAGE, onQuit);
         _events.registerListener(_gameCtrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
             onMsgReceived);
+
+        // Tell the TestServer we're ready to start receiving messages. Real clients
+        // probably won't need to do this - the client will have already started receiving
+        // messages by the time feeding starts.
+        _gameCtrl.agent.sendMessage("TestClientReady");
     }
 
     protected function onQuit (...ignored) :void
@@ -31,9 +36,11 @@ public class TestClient extends Sprite
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
     {
-        if (e.name == "StartClient") {
+        // The TestServer sends the StartFeeding message when enough players have connected
+        // to the game to start.
+        if (e.name == "StartFeeding") {
             var gameId :int = e.value as int;
-            log.info("Received StartClient message", "gameId", gameId);
+            log.info("Received StartFeeding message", "gameId", gameId);
 
             if (_curGame != null) {
                 log.warning("Received StartFeeding message while already in game");
