@@ -100,9 +100,9 @@ public class VampireAvatarHUD extends AvatarHUD
         
         
         
+        _hudSprite.addChild( _blood );  
         _hudSprite.addChild( _hierarchyIcon );
         _hudSprite.addChild( _bloodBondIcon );
-        _hudSprite.addChild( _blood );  
         
         updateInfoHud();
         
@@ -149,12 +149,13 @@ public class VampireAvatarHUD extends AvatarHUD
     }
     
     
+    protected static const BLOOD_BAR_MIN_WIDTH :int = 50;
     
     protected function updateInfoHud(...ignored) :void
     {
         var currentBlood :Number = SharedPlayerStateClient.getBlood( playerId );
         if( isNaN( currentBlood ) ) {
-            currentBlood = 1;
+            currentBlood = 50;
         }
         var maxBlood :Number = VConstants.MAX_BLOOD_NONPLAYERS;
         if( isPlayer ) {
@@ -175,9 +176,10 @@ public class VampireAvatarHUD extends AvatarHUD
         _hierarchyIcon.visible = isHierarch;
         _bloodBondIcon.visible = isBloodBond;
         
-        _blood.width = maxBlood;
+        _blood.width = BLOOD_BAR_MIN_WIDTH;
+        _blood.height = 30;
         
-        _blood.y = 10;
+//        _blood.y = 10;
         
         var scaleY :Number = maxBlood / VConstants.MAX_BLOOD_FOR_LEVEL(1);
 //        _blood.scaleY = 50;//scaleY;
@@ -186,11 +188,11 @@ public class VampireAvatarHUD extends AvatarHUD
 //        _blood.gotoAndStop(50);
             
 //        _blood.width = maxBlood;
-        _hierarchyIcon.y = 40;
-        _hierarchyIcon.x = 0;
+//        _hierarchyIcon.y = 40;
+        _hierarchyIcon.x = 10;
         
-        _bloodBondIcon.y = 40;
-        _bloodBondIcon.x = -20;
+//        _bloodBondIcon.y = 40;
+        _bloodBondIcon.x = -10;
              
     }
     
@@ -305,6 +307,7 @@ public class VampireAvatarHUD extends AvatarHUD
     protected var _selected :Boolean = false;
     
     protected var _roomKey :String;
+    
     
 }
 }
