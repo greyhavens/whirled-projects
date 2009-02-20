@@ -297,6 +297,8 @@ public class VServer extends ObjectDBThane
             if( isPlayerOnline( sireId )) {
                 var sire :Player = getPlayer( sireId );
                 sire.addXP( xpForEachSire );
+                
+                sire.addFeedback( "You gained " + xpForEachSire + " experience from minion " + player.name );
             }
             else {//Add to offline database
                 ServerContext.ctrl.loadOfflinePlayer(sireId, 
