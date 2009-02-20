@@ -16,6 +16,7 @@ public class Util
         mgr.addMessageType(RoundScoreMsg);
         mgr.addMessageType(GameEndedMsg);
         mgr.addMessageType(RoundResultsMsg);
+        mgr.addMessageType(ClientQuitMsg);
     }
 }
 

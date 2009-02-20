@@ -11,6 +11,7 @@ import flash.display.MovieClip;
 import flash.utils.getTimer;
 
 import vampire.feeding.*;
+import vampire.feeding.net.*;
 
 public class ClientCtx
 {
@@ -27,7 +28,12 @@ public class ClientCtx
 
     public static function quit (playerInitiated :Boolean) :void
     {
+        if (playerInitiated) {
+            msgMgr.sendMessage(ClientQuitMsg.create());
+        }
+
         gameCompleteCallback();
+
         // TODO: if the player didn't initiate the quit, show a screen explaining what happened
     }
 

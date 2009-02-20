@@ -181,11 +181,14 @@ public class Server extends FeedingGameServer
             }
             break;
 
-        // resend these messages to all the clients
         case CurrentScoreMsg.NAME:
             if (_state == STATE_PLAYING) {
                 resendMessage(e);
             }
+            break;
+
+        case ClientQuitMsg.NAME:
+            playerLeft(e.senderId);
             break;
 
         default:
