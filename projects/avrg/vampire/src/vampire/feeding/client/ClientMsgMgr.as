@@ -20,6 +20,8 @@ public class ClientMsgMgr extends EventDispatcher
         if (gameCtrl.isConnected()) {
             _events.registerListener(gameCtrl.room, MessageReceivedEvent.MESSAGE_RECEIVED,
                 onMsgReceived);
+            _events.registerListener(gameCtrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
+                onMsgReceived);
         }
     }
 

@@ -9,6 +9,7 @@ import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.simplegame.net.BasicMessageManager;
 import com.whirled.contrib.simplegame.net.Message;
+import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.net.MessageReceivedEvent;
 
 import vampire.feeding.*;
@@ -68,7 +69,6 @@ public class Server extends FeedingGameServer
             // If the last predator or prey just left the game, we're done and should shut down
             // prematurely
             shutdown();
-            _gameCompleteCallback();//Dions test
 
         } else {
             if (_state == STATE_WAITING_FOR_PLAYERS) {
@@ -173,8 +173,15 @@ public class Server extends FeedingGameServer
             }
             break;
 
-        // resend these messages to all the clients
         case CreateBonusMsg.NAME:
+            // bonuses are delivered to another randomly-picked player
+            var targetPlayerId :int = getAnotherPlayer(e.senderId);
+            if (targetPlayerId != 0) {
+                sendMessage(msg, targetPlayerId);
+            }
+            break;
+
+        // resend these messages to all the clients
         case CurrentScoreMsg.NAME:
             if (_state == STATE_PLAYING) {
                 resendMessage(e);
@@ -248,9 +255,28 @@ public class Server extends FeedingGameServer
         }
     }
 
-    protected function sendMessage (msg :Message) :void
+    protected function getAnotherPlayer (playerId :int) :int
     {
-        _roomCtrl.sendMessage(_nameUtil.encodeName(msg.name), _msgMgr.serializeMsg(msg));
+        // returns a random player id
+
+        var players :Array = this.playerIds.slice();
+        if (players.length <= 1) {
+            return 0;
+        }
+
+        ArrayUtil.removeFirst(players, playerId);
+        return Rand.nextElement(players, Rand.STREAM_GAME);
+    }
+
+    protected function sendMessage (msg :Message, toPlayer :int = 0) :void
+    {
+        var name :String = _nameUtil.encodeName(msg.name);
+        var val :Object = _msgMgr.serializeMsg(msg);
+        if (toPlayer == 0) {
+            _roomCtrl.sendMessage(name, val);
+        } else {
+            _gameCtrl.getPlayer(toPlayer).sendMessage(name, val);
+        }
     }
 
     protected function resendMessage (e :MessageReceivedEvent) :void
