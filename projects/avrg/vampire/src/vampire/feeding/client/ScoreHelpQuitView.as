@@ -42,30 +42,43 @@ public class ScoreHelpQuitView extends SceneObject
 
     public function addBlood (x :Number, y :Number, count :int) :void
     {
-        var loc :Point = this.displayObject.globalToLocal(new Point(x, y));
-        var delay :Number = 0;
-        for (var ii :int = 0; ii < count; ++ii) {
-            var cellObj :FlyingCell = new FlyingCell();
-            cellObj.x = loc.x;
-            cellObj.y = loc.y;
-            GameCtx.gameMode.addObject(cellObj, this.displayObject as DisplayObjectContainer);
-
-            // fly the cell to the meter, make it disappear, increase the blood count
-            cellObj.addTask(new SerialTask(
-                new TimedTask(delay),
-                LocationTask.CreateSmooth(196, -147, 1),
-                new FunctionTask(
-                    function () :void {
-                        _displayedBloodCount++;
-                    }),
-                new SelfDestructTask()));
-
-            cellObj.addTask(After(delay + 0.9, new AlphaTask(0, 0.1)));
-
-            delay += 0.1;
-        }
-
         _bloodCount += count;
+
+        var loc :Point = this.displayObject.globalToLocal(new Point(x, y));
+
+        var delay :Number = 0;
+        for (var cellSize :int = 0; cellSize < CELL_SIZE_VALUES.length; ++cellSize) {
+            var cellValue :int = CELL_SIZE_VALUES[cellSize];
+            var numCells :int = count / cellValue;
+            for (var ii :int = 0; ii < numCells; ++ii) {
+                var cell :FlyingCell = createFlyingCell(cellSize, delay);
+                cell.x = loc.x;
+                cell.y = loc.y;
+                delay += 0.1;
+            }
+
+            count %= cellValue;
+        }
+    }
+
+    protected function createFlyingCell (size :int, delay :Number) :FlyingCell
+    {
+        var cellObj :FlyingCell = new FlyingCell(size);
+        GameCtx.gameMode.addObject(cellObj, this.displayObject as DisplayObjectContainer);
+
+        // fly the cell to the meter, make it disappear, increase the blood count
+        cellObj.addTask(new SerialTask(
+            new TimedTask(delay),
+            LocationTask.CreateSmooth(196, -147, 1),
+            new FunctionTask(
+                function () :void {
+                    _displayedBloodCount += CELL_SIZE_VALUES[size];
+                }),
+            new SelfDestructTask()));
+
+        cellObj.addTask(After(delay + 0.9, new AlphaTask(0, 0.1)));
+
+        return cellObj;
     }
 
     public function get bloodCount () :int
@@ -91,6 +104,8 @@ public class ScoreHelpQuitView extends SceneObject
     protected var _bloodCount :int;
     protected var _lastDisplayedBloodCount :int = -1;
     protected var _displayedBloodCount :int;
+
+    protected static const CELL_SIZE_VALUES :Array = [ 50, 5, 1 ];
 }
 
 }
@@ -106,11 +121,12 @@ import vampire.feeding.client.SpriteUtil;
 
 class FlyingCell extends SceneObject
 {
-    public function FlyingCell ()
+    public function FlyingCell (size :int)
     {
         _sprite = SpriteUtil.createSprite();
         _movie = ClientCtx.instantiateMovieClip("blood", "cell_red", true, true);
         _sprite.addChild(_movie);
+        _sprite.scaleX = _sprite.scaleY = SCALE[size];
     }
 
     override public function get displayObject () :DisplayObject
@@ -125,4 +141,6 @@ class FlyingCell extends SceneObject
 
     protected var _sprite :Sprite;
     protected var _movie :MovieClip;
+
+    protected static const SCALE :Array = [ 4, 2, 1 ];
 }

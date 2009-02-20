@@ -73,8 +73,8 @@ public class Constants
     public static const HEMISPHERE_WEST :int = 0;
     public static const HEMISPHERE_EAST :int = 1;
 
-    public static const SP_MULTIPLIER_RETURN_CHANCE :Number = 0.5;
-    public static const SP_MULTIPLIER_RETURN_TIME :NumRange = new NumRange(2, 5, Rand.STREAM_GAME);
+    public static const SP_MULTIPLIER_RETURN_CHANCE :Number = 1;
+    public static const SP_MULTIPLIER_RETURN_TIME :NumRange = new NumRange(4, 9, Rand.STREAM_GAME);
 
     public static const DEBRIS_COUNT :int = 12;
 }
