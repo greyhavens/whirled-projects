@@ -600,13 +600,13 @@ public class HUD extends SceneObject
             }
         }
         
-        _DEBUGGING_add_feedback_timer += dt;
-        if( _DEBUGGING_add_feedback_timer > 2 ) {
-            _DEBUGGING_add_feedback_timer = 0;
-            
-            _feedbackMessageQueue.push(generateRandomString(Rand.nextIntRange(50, 100, 0)));
-            trace("_feedbackMessageQueue=" + _feedbackMessageQueue);
-        }
+//        _DEBUGGING_add_feedback_timer += dt;
+//        if( _DEBUGGING_add_feedback_timer > 2 ) {
+//            _DEBUGGING_add_feedback_timer = 0;
+//            
+//            _feedbackMessageQueue.push(generateRandomString(Rand.nextIntRange(50, 100, 0)));
+//            trace("_feedbackMessageQueue=" + _feedbackMessageQueue);
+//        }
     }
     
     public function showFeedBack( msg :String ) :void
