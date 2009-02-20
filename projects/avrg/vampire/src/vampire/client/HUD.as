@@ -21,7 +21,6 @@ import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
-import flash.filters.BlurFilter;
 import flash.filters.DropShadowFilter;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -114,22 +113,45 @@ public class HUD extends SceneObject
         //Otherwise check for player updates
         
         
-        if( e.name == Codes.ROOM_PROP_NON_PLAYERS ) {
+        switch( e.name ) {
+            case Codes.ROOM_PROP_NON_PLAYERS:
+                break;
+                
+            case Codes.ROOM_PROP_MINION_HIERARCHY:
+                break;
+                
+            case Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS:
+                break;
+                
+            case Codes.ROOM_PROP_BLOODBLOOM_PLAYERS:
+                break;
+                
+            case Codes.ROOM_PROP_FEEDBACK:
+                var messages :Array = e.newValue as Array;
+                if( messages != null ) {
+                    for each( var m :Array in messages ) {
+                        var forPlayer :int = int(m[0]);
+                        var msg :String = m[1] as String;
+                        if( forPlayer <= 0 || forPlayer == ClientContext.ourPlayerId ) {
+                            showFeedBack( msg );
+                        }
+                    }
+                }
+                break;
+                
+            default:
+                var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
+                
+                if( isNaN(playerIdUpdated) ) {
+                    log.warning("propChanged, but no player id, ", "e", e);
+                    return;
+                }
+                
+                //If the ROOM_PROP_NON_PLAYERS prop is changed, update it
+                if( playerIdUpdated == ClientContext.ourPlayerId) {
+                    updateOurPlayerState();
+                }
             
-        }
-        else {
-        
-            var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
-            
-            if( isNaN(playerIdUpdated) ) {
-                log.warning("propChanged, but no player id, ", "e", e);
-                return;
-            }
-            
-            //If the ROOM_PROP_NON_PLAYERS prop is changed, update it
-            if( playerIdUpdated == ClientContext.ourPlayerId) {
-                updateOurPlayerState();
-            }
         }
         
     }
@@ -537,7 +559,7 @@ public class HUD extends SceneObject
                     feedbackMessageTextField.x = _hudFeedback.x - 10;
                     feedbackMessageTextField.y = _hudFeedback.y + 10;
                     feedbackMessageTextField.multiline = _hudFeedback.multiline;
-                    
+                    feedbackMessageTextField.wordWrap = true;
                     
                     
                     var shadowText :TextField = 
@@ -553,6 +575,7 @@ public class HUD extends SceneObject
                     shadowText.x = _hudFeedback.x - 10;
                     shadowText.y = _hudFeedback.y + 10;
                     shadowText.multiline = _hudFeedback.multiline;
+                    shadowText.wordWrap = true;
                     
                     var blurredShadow:DropShadowFilter = new DropShadowFilter(0.8, 0, 0xffffff, 1.0, 5, 5, 1000 );
                     var storedBlurShadow :Array = [blurredShadow];
@@ -577,13 +600,13 @@ public class HUD extends SceneObject
             }
         }
         
-//        _DEBUGGING_add_feedback_timer += dt;
-//        if( _DEBUGGING_add_feedback_timer > 2 ) {
-//            _DEBUGGING_add_feedback_timer = 0;
-//            
-//            _feedbackMessageQueue.push(generateRandomString(Rand.nextIntRange(10, 40, 0)));
-//            trace("_feedbackMessageQueue=" + _feedbackMessageQueue);
-//        }
+        _DEBUGGING_add_feedback_timer += dt;
+        if( _DEBUGGING_add_feedback_timer > 2 ) {
+            _DEBUGGING_add_feedback_timer = 0;
+            
+            _feedbackMessageQueue.push(generateRandomString(Rand.nextIntRange(50, 100, 0)));
+            trace("_feedbackMessageQueue=" + _feedbackMessageQueue);
+        }
     }
     
     public function showFeedBack( msg :String ) :void
@@ -601,8 +624,6 @@ public class HUD extends SceneObject
     
     public function updateOurPlayerState( ...ignored ) :void
     {
-        
-        
         
         if( !SharedPlayerStateClient.isProps( ClientContext.ourPlayerId )) {
             log.warning("updatePlayerState, but no props found");
