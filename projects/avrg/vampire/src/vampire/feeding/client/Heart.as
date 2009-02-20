@@ -1,8 +1,6 @@
 package vampire.feeding.client {
 
 import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.tasks.FunctionTask;
-import com.whirled.contrib.simplegame.tasks.SerialTask;
 import com.whirled.contrib.simplegame.util.*;
 
 import flash.display.DisplayObject;
@@ -22,8 +20,9 @@ public class Heart extends SceneObject
     public function deliverWhiteCell () :void
     {
         // when white cells are delivered, the beat speeds up a bit
-        _totalBeatTime -= Constants.BEAT_TIME_DECREASE_PER_DELIVERY;
-        _totalBeatTime = Math.max(_totalBeatTime, Constants.BEAT_TIME_MIN);
+        //_totalBeatTime -= Constants.BEAT_TIME_DECREASE_PER_DELIVERY;
+        //_totalBeatTime = Math.max(_totalBeatTime, Constants.BEAT_TIME_MIN);
+        beat(1);
     }
 
     public function get totalBeatTime () :Number
@@ -41,25 +40,22 @@ public class Heart extends SceneObject
         super.update(dt);
 
         _liveTime += dt;
-        var showHeartbeat :Boolean = (_liveTime >= this.nextBeat);
 
-        while (_liveTime >= this.nextBeat) {
-            _lastBeat = this.nextBeat;
-            _totalBeatTime += Constants.BEAT_TIME_INCREASE_PER_SECOND;
-            _totalBeatTime = Math.min(_totalBeatTime, Constants.BEAT_TIME_MAX);
-
-            dispatchEvent(new GameEvent(GameEvent.HEARTBEAT));
-        }
-
-        if (showHeartbeat) {
-            _movie.gotoAndPlay(2);
-            ClientCtx.audio.playSoundNamed("sfx_heartbeat");
+        if (_liveTime >= _lastBeat + _totalBeatTime) {
+            beat(Math.floor((_liveTime - _lastBeat) / _totalBeatTime));
+            _lastBeat = _liveTime + ((_liveTime - _lastBeat) % _totalBeatTime);
         }
     }
 
-    protected function get nextBeat () :Number
+    protected function beat (numBeats :int) :void
     {
-        return _lastBeat + _totalBeatTime;
+        for (var ii :int = 0; ii < numBeats; ++ii) {
+            dispatchEvent(new GameEvent(GameEvent.HEARTBEAT));
+        }
+
+        // only show the animation once
+        _movie.gotoAndPlay(2);
+        ClientCtx.audio.playSoundNamed("sfx_heartbeat");
     }
 
     protected var _totalBeatTime :Number;
