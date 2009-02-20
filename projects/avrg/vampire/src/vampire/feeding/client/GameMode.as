@@ -197,7 +197,8 @@ public class GameMode extends AppMode
             if (!ClientCtx.isSinglePlayer) {
                 // show a little animation showing who gave us the multiplier
                 var playerName :String = ClientCtx.getPlayerName(msg.playerId);
-                var tfName :TextField = TextBits.createText(playerName, 1.4, 0, 0xffffff);
+                var tfName :TextField = TextBits.createText(playerName, 1.4, 0, 0xffffff,
+                                                            "center", TextBits.FONT_GARAMOND);
                 tfName.cacheAsBitmap = true;
                 var sprite :Sprite = SpriteUtil.createSprite();
                 sprite.addChild(tfName);

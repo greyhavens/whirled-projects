@@ -56,7 +56,8 @@ public class Cell extends CollidableObj
 
         if (type == Constants.CELL_BONUS) {
             var text :String = "x" + _multiplier;
-            var tf :TextField = TextBits.createText(text, 1, 0, 0);
+            var tf :TextField =
+                TextBits.createText(text, 1.1, 0, 0, "center", TextBits.FONT_GARAMOND);
             tf.x = -tf.width * 0.5;
             tf.y = -tf.height * 0.5;
             _sprite.addChild(tf);
