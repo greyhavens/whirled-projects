@@ -22,7 +22,7 @@ public class Logic
     
     public static function bloodLostPerFeed( level :int ) :Number
     {
-        return Constants.BLOOD_FRACTION_LOST_PER_FEED * Constants.MAX_BLOOD_FOR_LEVEL( level );
+        return VConstants.BLOOD_FRACTION_LOST_PER_FEED * VConstants.MAX_BLOOD_FOR_LEVEL( level );
     }
     
     public static function bloodgGainedVampireVampireFeeding( feederLevel :int, victimLevel :int, bloodLost :Number) :Number

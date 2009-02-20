@@ -12,16 +12,16 @@ import flash.events.EventDispatcher;
 import flash.utils.ByteArray;
 
 import vampire.net.messages.BloodBondRequestMessage;
-import vampire.net.messages.FeedRequestMessage;
+import vampire.net.messages.FeedRequestMessage2;
 import vampire.net.messages.RequestActionChangeMessage;
 import vampire.net.messages.SuccessfulFeedMessage;
 
 
-public class MessageManager extends EventDispatcher
+public class VMessageManager extends EventDispatcher
 {
-    internal static const log :Log = Log.getLog(MessageManager);
+    internal static const log :Log = Log.getLog(VMessageManager);
     
-    public function MessageManager (gameCtrl :AbstractControl = null)
+    public function VMessageManager (gameCtrl :AbstractControl = null)
     {
         
         _gameCtrl = gameCtrl;
@@ -52,7 +52,7 @@ public class MessageManager extends EventDispatcher
         //Move this out of here!  But to where???
         addMessageType( RequestActionChangeMessage );
         addMessageType( BloodBondRequestMessage );
-        addMessageType( FeedRequestMessage );
+        addMessageType( FeedRequestMessage2 );
         addMessageType( SuccessfulFeedMessage );
         
         

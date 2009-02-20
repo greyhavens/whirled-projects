@@ -9,6 +9,7 @@ import com.threerings.util.Log;
 import com.threerings.util.Random;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRServerGameControl;
+import com.whirled.avrg.OfflinePlayerPropertyControl;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.avrg.probe.ServerStub;
 import com.whirled.contrib.simplegame.server.ObjectDBThane;
@@ -18,10 +19,10 @@ import flash.utils.getTimer;
 import flash.utils.setInterval;
 
 import vampire.data.Codes;
-import vampire.data.Constants;
 import vampire.data.MinionHierarchyServer;
+import vampire.data.VConstants;
 import vampire.feeding.FeedingGameServer;
-import vampire.net.MessageManager;
+import vampire.net.VMessageManager;
 
 public class VServer extends ObjectDBThane
 {
@@ -65,12 +66,12 @@ public class VServer extends ObjectDBThane
         registerListener(_ctrl.game, AVRGameControlEvent.PLAYER_JOINED_GAME, playerJoinedGame);
         registerListener(_ctrl.game, AVRGameControlEvent.PLAYER_QUIT_GAME, playerQuitGame);
 
-        ServerContext.msg = new MessageManager( _ctrl );
+        ServerContext.msg = new VMessageManager( _ctrl );
         registerListener(ServerContext.msg, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage );
         
         _startTime = getTimer();
         _lastTickTime = _startTime;
-        setInterval(tick, Constants.SERVER_TICK_UPDATE_MILLISECONDS);
+        setInterval(tick, VConstants.SERVER_TICK_UPDATE_MILLISECONDS);
         
         ServerContext.minionHierarchy = new MinionHierarchyServer( this );
         
@@ -239,7 +240,7 @@ public class VServer extends ObjectDBThane
             }
             
             //Make sure the avatar is in the default state when we quit.
-            player.ctrl.setAvatarState( Constants.GAME_MODE_NOTHING );
+            player.ctrl.setAvatarState( VConstants.GAME_MODE_NOTHING );
             
             _ctrl.doBatch(function () :void {
                 
@@ -273,13 +274,41 @@ public class VServer extends ObjectDBThane
     */
     public function playerGainedBlood( player :Player, blood :Number, sourcePlayerId :int = 0 ) :void
     {
-        var bloodShared :Number = Constants.BLOOD_GAIN_FRACTION_SHARED_WITH_SIRES * blood;
+        var bloodShared :Number = VConstants.BLOOD_GAIN_FRACTION_SHARED_WITH_SIRES * blood;
         var allsires :HashSet = ServerContext.minionHierarchy.getAllSiresAndGrandSires( player.playerId );
         var bloodForEachSire :Number = bloodShared / allsires.size();
         allsires.forEach( function ( sireId :int) :void {
             if( isPlayerOnline( sireId )) {
                 var sire :Player = getPlayer( sireId );
                 sire.addBlood( bloodForEachSire );
+            }
+        });
+    }
+    
+    /**
+    * When a player gains blood, his sires all share a portion of the gain
+    * 
+    */
+    public function awardSiresXpEarned( player :Player, xp :Number ) :void
+    {
+        var allsires :HashSet = ServerContext.minionHierarchy.getAllSiresAndGrandSires( player.playerId );
+        var xpForEachSire :Number = xp * 0.1 / allsires.size();
+        allsires.forEach( function ( sireId :int) :void {
+            if( isPlayerOnline( sireId )) {
+                var sire :Player = getPlayer( sireId );
+                sire.addXP( xpForEachSire );
+            }
+            else {//Add to offline database
+                ServerContext.ctrl.loadOfflinePlayer(sireId, 
+                    function (props :OfflinePlayerPropertyControl) :void {
+                        var currentXP :Number = Number(props.get(Codes.PLAYER_PROP_PREFIX_XP));
+                        if( !isNaN(currentXP)) {
+                            props.set(Codes.PLAYER_PROP_PREFIX_XP, currentXP + xpForEachSire);
+                        }
+                    },
+                    function (failureCause :Object) :void {
+                        log.warning("Eek! Sending message to offline player failed!", "cause", failureCause);
+                    });
             }
         });
     }

@@ -68,6 +68,7 @@ public class Server extends FeedingGameServer
             // If the last predator or prey just left the game, we're done and should shut down
             // prematurely
             shutdown();
+            _gameCompleteCallback();//Dions test
 
         } else {
             if (_state == STATE_WAITING_FOR_PLAYERS) {

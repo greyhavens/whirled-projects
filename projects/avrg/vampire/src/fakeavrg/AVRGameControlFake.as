@@ -109,7 +109,7 @@ public class AVRGameControlFake extends AVRGameControl
             _game = new GameSubControlClient(this),
             _room = new RoomSubControlClientFake(this),
             _player = new PlayerSubControlClientFake(this),
-            _local = new LocalSubControl(this),
+            _local = new LocalSubControlFake(this),
             _agent = new AgentSubControl(this),
         ];
     }

@@ -6,23 +6,21 @@ import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.AgentSubControl;
-import com.whirled.contrib.EventHandlerManager;
-import com.whirled.contrib.simplegame.Updatable;
+import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.PropertyGetSubControl;
 
-import flash.events.EventDispatcher;
 import flash.geom.Point;
 import flash.utils.Dictionary;
 
+import vampire.avatar.VampireAvatarHUDManager;
 import vampire.client.events.ChangeActionEvent;
 import vampire.client.events.ClosestPlayerChangedEvent;
 import vampire.client.events.HierarchyUpdatedEvent;
-import vampire.data.AvatarManager;
 import vampire.data.Codes;
-import vampire.data.Constants;
+import vampire.data.VConstants;
 import vampire.data.MinionHierarchy;
 import vampire.data.SharedPlayerStateClient;
 
@@ -31,8 +29,8 @@ import vampire.data.SharedPlayerStateClient;
  * The game and subgames interact with the agent code and properties via this class.
  * 
  */
-public class GameModel extends EventDispatcher
-    implements Updatable
+public class GameModel extends SimObject//EventDispatcher
+    //implements Updatable
 {
     public function setup () :void
     {
@@ -73,7 +71,10 @@ public class GameModel extends EventDispatcher
 //        _nonPlayerLocations = new NonPlayerMonitor( ClientContext.gameCtrl.room );
         
         
-        _avatarManager = new AvatarManager(ClientContext.gameCtrl.room);
+        _avatarManager = new VampireAvatarHUDManager(ClientContext.gameCtrl);
+        
+        this.db.addObject( _avatarManager );
+        
         
         //If the room props are already present, update the HUD now.
         if( SharedPlayerStateClient.isProps( ClientContext.ourPlayerId ) ) {
@@ -95,7 +96,7 @@ public class GameModel extends EventDispatcher
         
     }
     
-    public function update( dt :Number ) :void
+    override protected function update( dt :Number ) :void
     {
 //        _avatarManager.update( dt );
     }
@@ -106,7 +107,7 @@ public class GameModel extends EventDispatcher
     protected function handleSignalReceived( e :AVRGameRoomEvent) :void
     {
         trace("model.handleSignalReceived(), e=" + e);
-        if( e.name == Constants.SIGNAL_CLOSEST_ENTITY) {
+        if( e.name == VConstants.SIGNAL_CLOSEST_ENTITY) {
             var args :Array = e.value as Array;
             if( args != null && args.length >= 2 && args[0] == ClientContext.ourPlayerId) {
                 closestUserId = int(args[1]);
@@ -146,12 +147,12 @@ public class GameModel extends EventDispatcher
     }
     public function playerEnteredRoom( ...ignored ) :void
     {
-        trace(Constants.DEBUG_MINION + " Player entered room");
+        trace(VConstants.DEBUG_MINION + " Player entered room");
         
         if( hierarchy == null) {
             
             _hierarchy = loadHierarchyFromProps();
-            trace(Constants.DEBUG_MINION + " loadHierarchyFromProps()=" + _hierarchy);
+            trace(VConstants.DEBUG_MINION + " loadHierarchyFromProps()=" + _hierarchy);
             dispatchEvent( new HierarchyUpdatedEvent( _hierarchy ) );
                 
 //            var bytes :ByteArray = ClientContext.gameCtrl.room.props.get( Codes.ROOM_PROP_MINION_HIERARCHY ) as ByteArray;
@@ -167,21 +168,21 @@ public class GameModel extends EventDispatcher
     }
     public function shutdown () :void
     {
-        _events.freeAllHandlers();
-        _avatarManager.shutdown();
+//        _events.freeAllHandlers();
+//        _avatarManager.shutdown();
 //        _proximityTimer.stop();
     }
     
     protected function loadHierarchyFromProps() :MinionHierarchy
     {
-        log.debug(Constants.DEBUG_MINION + " loadHierarchyFromProps()");
+        log.debug(VConstants.DEBUG_MINION + " loadHierarchyFromProps()");
         var hierarchy :MinionHierarchy = new MinionHierarchy();
         var playerIds :Array = ClientContext.gameCtrl.room.props.get( Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS ) as Array;
         
 //        log.debug(Constants.DEBUG_MINION + " loadHierarchyFromProps()", "playerIds", playerIds);
             
         if( playerIds == null) {
-            log.error(Constants.DEBUG_MINION +  " playerIds=" + playerIds);
+            log.error(VConstants.DEBUG_MINION +  " playerIds=" + playerIds);
             return hierarchy;
         }
         
@@ -201,17 +202,17 @@ public class GameModel extends EventDispatcher
             }
         } 
         else {
-            log.debug(Constants.DEBUG_MINION + " loadHierarchyFromProps()", "dict==null");
+            log.debug(VConstants.DEBUG_MINION + " loadHierarchyFromProps()", "dict==null");
         }
         hierarchy.recomputeMinions();
-        log.debug(Constants.DEBUG_MINION + " loadHierarchyFromProps()", "hierarchy", hierarchy);
+        log.debug(VConstants.DEBUG_MINION + " loadHierarchyFromProps()", "hierarchy", hierarchy);
         return hierarchy;
     }
     
     protected function handlePropChanged (e :PropertyChangedEvent) :void
     {
         //Check if it is non-player properties changed??
-        log.debug(Constants.DEBUG_MINION + " propChanged", "e", e);
+        log.debug(VConstants.DEBUG_MINION + " propChanged", "e", e);
         
         if( e.name == Codes.ROOM_PROP_MINION_HIERARCHY || e.name == Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS) {
             
@@ -223,7 +224,7 @@ public class GameModel extends EventDispatcher
 //            }
             
             _hierarchy = loadHierarchyFromProps();
-            log.debug(Constants.DEBUG_MINION + " HUD updating hierarchy=" + _hierarchy);
+            log.debug(VConstants.DEBUG_MINION + " HUD updating hierarchy=" + _hierarchy);
             
             dispatchEvent( new HierarchyUpdatedEvent( _hierarchy ) );
         }
@@ -343,7 +344,7 @@ public class GameModel extends EventDispatcher
     
     public function get bloodbonded() :int
     {
-        if( Constants.LOCAL_DEBUG_MODE) {
+        if( VConstants.LOCAL_DEBUG_MODE) {
            return 1;    
         }
         else {
@@ -353,7 +354,7 @@ public class GameModel extends EventDispatcher
     
     public function get bloodbondedName() :String
     {
-        if( Constants.LOCAL_DEBUG_MODE) {
+        if( VConstants.LOCAL_DEBUG_MODE) {
             return "Bloodbond name";
         }
         else {
@@ -390,7 +391,7 @@ public class GameModel extends EventDispatcher
     
     public function get name() :String
     {
-        if( Constants.LOCAL_DEBUG_MODE) {
+        if( VConstants.LOCAL_DEBUG_MODE) {
             return "Player Name";  
         }
         else {
@@ -464,7 +465,7 @@ public class GameModel extends EventDispatcher
 //        
 //    }
     
-    public function get avatarManager() :AvatarManager
+    public function get avatarManager() :VampireAvatarHUDManager
     {
         return _avatarManager;
     }
@@ -473,7 +474,7 @@ public class GameModel extends EventDispatcher
     protected var _agentCtrl :AgentSubControl;
     protected var _propsCtrl :PropertyGetSubControl;
     
-    protected var _avatarManager :AvatarManager;
+    protected var _avatarManager :VampireAvatarHUDManager;
     
 //    protected var _nonplayers :HashMap = new HashMap();
 //    protected var _nonPlayerLocations :NonPlayerMonitor;
@@ -489,6 +490,6 @@ public class GameModel extends EventDispatcher
 
     protected static var log :Log = Log.getLog(GameModel);
     
-    protected var _events :EventHandlerManager = new EventHandlerManager();
+//    protected var _events :EventHandlerManager = new EventHandlerManager();
 }
 }

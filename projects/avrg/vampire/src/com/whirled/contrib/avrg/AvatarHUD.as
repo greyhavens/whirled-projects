@@ -1,28 +1,42 @@
-package vampire.client
+package com.whirled.contrib.avrg
 {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Hashable;
 import com.threerings.util.Log;
-import com.whirled.avrg.RoomSubControlServer;
+import com.whirled.contrib.simplegame.EventCollecter;
 
-import flash.utils.Dictionary;
+import flash.display.Sprite;
 
-import vampire.data.Codes;
-
-public class PlayerAvatar //extends SimObject
+public class AvatarHUD extends EventCollecter
     implements Hashable
 {
-    public function PlayerAvatar( isPlayer :Boolean, userId :int)//,  updateCallback :Function )//roomCtrl :RoomSubControlBase,
+    public function AvatarHUD(userId :int)//,  updateCallback :Function )//roomCtrl :RoomSubControlBase,
     {
 //        if( roomCtrl == null )
 //        {
 //            throw new Error("Cannot create NonPlayerAvatar without RoomSubControlBase");
 //        }
-        _isPlayer = isPlayer;
+        _isPlayer = true;
         _userId = userId;
 //        _roomCtrl = roomCtrl;
-        _roomKey = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + _userId;
+        
+        
+        _sprite = new Sprite();
+        
+        
+//        frenzyCountdown.y = -30;
+        
+        
+        
+        
+        
+        
+        
+        
+//        drawMouseSelectionGraphics();
+        
+//        drawNonSelectedSprite();
 //        setBlood( maxBlood );
         
         //Set up event listeners.
@@ -43,6 +57,9 @@ public class PlayerAvatar //extends SimObject
 //            
 //        }
     }
+    
+    
+    
     
 //    protected function handleElementChanged( e :ElementChangedEvent ) :void
 //    {
@@ -217,41 +234,41 @@ public class PlayerAvatar //extends SimObject
 //    }
  
 
-    public function setIntoRoomProps( roomCtrl :RoomSubControlServer ) :void
-    {
-        if( _updated ) {
-            return;
-        }
-        log.debug("setIntoRoomProps() " + this);
-        if( roomCtrl == null) {
-            log.error("setIntoRoomProps() but roomCtrl == null");
-            return;
-        }
-        
-        var serverRoomCtrl :RoomSubControlServer = roomCtrl as RoomSubControlServer;
-        if( serverRoomCtrl == null ) {
-            log.error("setIntoRoomProps() but serverRoomCtrl == null");
-            return;
-        }
-        
-            
-        var dict :Dictionary = roomCtrl.props.get(_roomKey) as Dictionary;
-        if (dict == null) {
-            dict = new Dictionary(); 
-        }
-
-        if (!ArrayUtil.equals( dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT], hotspot )) {
-            log.debug("Setting new hotspot=" + hotspot);
-            roomCtrl.props.setIn(_roomKey, Codes.ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT, hotspot);
-        }
-        if (!ArrayUtil.equals( dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_LOCATION], location )) {
-            log.debug("Setting new location=" + location);
-            roomCtrl.props.setIn(_roomKey, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LOCATION, location);
-        }
-        
-        _updated = true;
-            
-    }
+//    public function setIntoRoomProps( roomCtrl :RoomSubControlServer ) :void
+//    {
+//        if( _updated ) {
+//            return;
+//        }
+//        log.debug("setIntoRoomProps() " + this);
+//        if( roomCtrl == null) {
+//            log.error("setIntoRoomProps() but roomCtrl == null");
+//            return;
+//        }
+//        
+//        var serverRoomCtrl :RoomSubControlServer = roomCtrl as RoomSubControlServer;
+//        if( serverRoomCtrl == null ) {
+//            log.error("setIntoRoomProps() but serverRoomCtrl == null");
+//            return;
+//        }
+//        
+//            
+//        var dict :Dictionary = roomCtrl.props.get(_roomKey) as Dictionary;
+//        if (dict == null) {
+//            dict = new Dictionary(); 
+//        }
+//
+//        if (!ArrayUtil.equals( dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT], hotspot )) {
+//            log.debug("Setting new hotspot=" + hotspot);
+//            roomCtrl.props.setIn(_roomKey, Codes.ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT, hotspot);
+//        }
+//        if (!ArrayUtil.equals( dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_LOCATION], location )) {
+//            log.debug("Setting new location=" + location);
+//            roomCtrl.props.setIn(_roomKey, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LOCATION, location);
+//        }
+//        
+//        _updated = true;
+//            
+//    }
 
     
 //    public function setIntoRoomProps() :void
@@ -382,7 +399,7 @@ public class PlayerAvatar //extends SimObject
     
 //    public function handleElementChanged( 
     
-    public function toString () :String
+    override public function toString () :String
     {
         return "NonPlayer [userId=" + _userId
             + ", roomId="
@@ -413,7 +430,10 @@ public class PlayerAvatar //extends SimObject
             return;
         }
         _hotspot = hotspot;
-        _updated = false;
+//        _updated = false;
+        
+        drawMouseSelectionGraphics();
+        
         // and if we're in a room, update the room properties
 //        if (_roomCtrl != null && _roomCtrl is RoomSubControlServer) {
 //            setIntoRoomProps();
@@ -428,7 +448,7 @@ public class PlayerAvatar //extends SimObject
             return;
         }
         _location = location;
-        _updated = false;
+//        _updated = false;
         // and if we're in a room, update the room properties
 //        if (_roomCtrl != null && _roomCtrl is RoomSubControlServer) {
 //            setIntoRoomProps();
@@ -497,7 +517,7 @@ public class PlayerAvatar //extends SimObject
         if (other == null || !ClassUtil.isSameClass(this, other)) {
             return false;
         }
-        return PlayerAvatar(other).hashCode() == this.hashCode();
+        return AvatarHUD(other).hashCode() == this.hashCode();
     }
 
     public function hashCode () :int
@@ -525,8 +545,112 @@ public class PlayerAvatar //extends SimObject
     
     public function get isPlayer() :Boolean
     {
+        
         return _isPlayer;
     }
+    
+    public function set isPlayer( p :Boolean ) :void
+    {
+        _isPlayer = p;
+    }
+    
+    override public function shutdown() :void
+    {
+        super.shutdown();
+        if( _sprite.parent != null ) {
+            _sprite.parent.removeChild( _sprite );
+        }
+    }
+    
+    /**
+    * Override this
+    */
+    protected function drawMouseSelectionGraphics() :void
+    {
+    }
+    
+//    public function setSelectable( s :Boolean ) :void
+//    {
+//        if( s ) {
+//            drawNonSelected_sprite( );
+//        }
+//        else { 
+//            _sprite.graphics.clear();
+//        }
+//    }
+//    
+//    public function setMouseOver( m :Boolean ) :void
+//    {
+//        if( m ) {
+//            
+//        }
+//        else { 
+//            drawNonSelected_sprite();
+//        }
+//    }
+
+//    public function mouseState( sele
+    
+//    public function drawNonSelectedSprite() :void
+//    {
+//        if( hotspot == null )
+//        {
+//            return;
+//        }
+////        while( _sprite.numChildren ) { _sprite.removeChildAt(0);}
+//        _sprite.graphics.clear();
+//        _sprite.graphics.beginFill(0, 0);
+//        _sprite.graphics.drawRect( -hotspot[0]/2, -hotspot[1], hotspot[0], hotspot[1]);
+//        _sprite.graphics.endFill();
+//        _sprite.graphics.lineStyle(1, 0);
+//        _sprite.graphics.drawRect( -hotspot[0]/2, -hotspot[1], hotspot[0], hotspot[1]);
+//    }
+//    public function drawSelectedSpriteSinglePredator( ) :void
+//    {
+//        if( hotspot == null )
+//        {
+//            return;
+//        }
+//        
+////        while( _sprite.numChildren ) { _sprite.removeChildAt(0);}
+//        _sprite.graphics.clear();
+//        _sprite.graphics.beginFill(0, 0.3);
+//        _sprite.graphics.drawRect( -hotspot[0]/2, -hotspot[1], hotspot[0], hotspot[1]);
+//        _sprite.graphics.endFill();
+//        _sprite.addChild( TextFieldUtil.createField("Single Pred.", {scaleX:2, scaleY:2, textColor:0xffffff} ));
+//    }
+//    public function drawSelectedSpriteFrenzyPredator() :void
+//    {
+//        if( hotspot == null )
+//        {
+//            return;
+//        }
+//        
+////        while( _sprite.numChildren ) { _sprite.removeChildAt(0);}
+//        _sprite.graphics.clear();
+//        _sprite.graphics.beginFill(0, 0.3);
+//        _sprite.graphics.drawRect( -hotspot[0]/2, -hotspot[1], hotspot[0], hotspot[1]);
+//        _sprite.graphics.endFill();
+//        
+//        _sprite.addChild( TextFieldUtil.createField("Frenzy", {scaleX:2, scaleY:2, textColor:0xffffff} ));
+//    }
+    
+    public function get sprite(): Sprite
+    {
+        return _sprite;
+    }
+    
+    public function setZScaleFactor( f :Number ) :void
+    {
+        _zScaleFactor = f;
+       
+       drawMouseSelectionGraphics();
+//        _sprite.addChild( TextFieldUtil.createField("Single Pred.", {scaleX:2, scaleY:2, textColor:0xffffff} )); 
+       
+    }
+    
+    protected var _sprite :Sprite;
+    
     
     
     
@@ -538,9 +662,11 @@ public class PlayerAvatar //extends SimObject
     
     protected var _isPlayer :Boolean;
     
-    protected var _updated :Boolean = false;
+//    protected var _updated :Boolean = false;
     
-    protected var _roomKey :String;
+    
+    
+    protected var _zScaleFactor :Number = 1.0;
 //    protected var _roomCtrl :RoomSubControlBase;
 //    protected var _roomCtrlClient :RoomSubControlClient;
     
@@ -552,6 +678,6 @@ public class PlayerAvatar //extends SimObject
 //    protected var _updateCallback :Function;
     
 //    public static const GROUP :String = "NonPlayerGroup";
-    protected static const log :Log = Log.getLog( PlayerAvatar );
+    protected static const log :Log = Log.getLog( AvatarHUD );
 }
 }

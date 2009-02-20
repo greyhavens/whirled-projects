@@ -4,13 +4,22 @@ package vampire.net.messages
     
     import flash.utils.ByteArray;
     
-    public class FeedRequestMessage extends BaseGameMessage
+    public class FeedRequestMessage2 extends BaseGameMessage
     {
-        public function FeedRequestMessage(playerId :int = 0, targetPlayerId :int = 0, allowMultiplePredators :Boolean = false)
+        public function FeedRequestMessage2(playerId :int = 0, 
+                                            targetPlayerId :int = 0, 
+                                            allowMultiplePredators :Boolean = false,
+                                            targetLocationX :Number = 0,
+                                            targetLocationY :Number = 0,
+                                            targetLocationZ :Number = 0
+                                            )
         {
             super(playerId);
             _targetPlayerId = targetPlayerId;
             _allowMultiplePredators = allowMultiplePredators;
+            _targetX = targetLocationX;
+            _targetY = targetLocationY;
+            _targetZ = targetLocationZ;
         }
         
         override public function fromBytes (bytes :ByteArray) :void
@@ -18,6 +27,9 @@ package vampire.net.messages
             super.fromBytes(bytes);
             _targetPlayerId = bytes.readInt();
             _allowMultiplePredators = bytes.readBoolean();
+            _targetX = bytes.readFloat();
+            _targetY = bytes.readFloat();
+            _targetZ = bytes.readFloat();
         }
         
         override public function toBytes (bytes :ByteArray = null) :ByteArray
@@ -25,6 +37,9 @@ package vampire.net.messages
             var bytes :ByteArray = super.toBytes(bytes);
             bytes.writeInt( _targetPlayerId );
             bytes.writeBoolean( _allowMultiplePredators );
+            bytes.writeFloat( _targetX );
+            bytes.writeFloat( _targetY );
+            bytes.writeFloat( _targetZ );
             return bytes;
         }
         
@@ -48,8 +63,24 @@ package vampire.net.messages
             return ClassUtil.tinyClassName( this ) + ": player=" + _playerId + ", " + (_allowMultiplePredators ? " Allows multiple predators " : " eating alone ") + ", eating " + targetPlayer;
         }
         
+        public function get targetX () :Number
+        {
+           return _targetX;     
+        }
+        public function get targetY () :Number
+        {
+           return _targetY;     
+        }
+        public function get targetZ () :Number
+        {
+           return _targetZ;     
+        }
+        
         
         protected var _targetPlayerId :int;
+        protected var _targetX :Number;
+        protected var _targetY :Number;
+        protected var _targetZ :Number;
         protected var _allowMultiplePredators :Boolean;
         
         public static const NAME :String = "Message: Request Feed"; 

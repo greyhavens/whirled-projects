@@ -13,7 +13,7 @@ import vampire.client.ClientContext;
 import vampire.client.VampireController;
 import vampire.client.actions.BaseVampireMode;
 import vampire.data.Codes;
-import vampire.data.Constants;
+import vampire.data.VConstants;
 import vampire.data.Logic;
 [RemoteClass(alias="vampire.client.modes.FeedMode")]
 
@@ -67,8 +67,8 @@ public class FeedMode extends BaseVampireMode
         toVampireButton.y = loseXPButton.y + 50;
         toVampireButton.addEventListener( MouseEvent.CLICK, function(...ignored):void { 
             ClientContext.gameCtrl.agent.sendMessage( 
-                Constants.SIGNAL_CHANGE_COLOR_SCHEME_REQUEST, 
-                Constants.COLOR_SCHEME_VAMPIRE ); 
+                VConstants.SIGNAL_CHANGE_COLOR_SCHEME_REQUEST, 
+                VConstants.COLOR_SCHEME_VAMPIRE ); 
         });
         
         modeSprite.addChild( toVampireButton );
@@ -78,8 +78,8 @@ public class FeedMode extends BaseVampireMode
         toHumanButton.y = toVampireButton.y + 30;
         toHumanButton.addEventListener( MouseEvent.CLICK, function(...ignored):void{ 
             ClientContext.gameCtrl.agent.sendMessage( 
-                Constants.SIGNAL_CHANGE_COLOR_SCHEME_REQUEST, 
-                Constants.COLOR_SCHEME_HUMAN ); 
+                VConstants.SIGNAL_CHANGE_COLOR_SCHEME_REQUEST, 
+                VConstants.COLOR_SCHEME_HUMAN ); 
         });
         modeSprite.addChild( toHumanButton );
         
@@ -94,8 +94,8 @@ public class FeedMode extends BaseVampireMode
     
     protected function gainBlood( ... ignored ) :void
     {
-        ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_BLOOD_UP );
-        if( Constants.LOCAL_DEBUG_MODE) {
+        ClientContext.gameCtrl.agent.sendMessage( VConstants.NAMED_EVENT_BLOOD_UP );
+        if( VConstants.LOCAL_DEBUG_MODE) {
             
             var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.gameCtrl.room.props);
             
@@ -109,9 +109,9 @@ public class FeedMode extends BaseVampireMode
     
     protected function loseBlood( ... ignored ) :void
     {
-        ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_BLOOD_DOWN );
+        ClientContext.gameCtrl.agent.sendMessage( VConstants.NAMED_EVENT_BLOOD_DOWN );
         
-        if( Constants.LOCAL_DEBUG_MODE) {
+        if( VConstants.LOCAL_DEBUG_MODE) {
             
             var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.gameCtrl.room.props);
             
@@ -125,9 +125,9 @@ public class FeedMode extends BaseVampireMode
     
     protected function gainLevel( ... ignored ) :void
     {
-        ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_LEVEL_UP );
+        ClientContext.gameCtrl.agent.sendMessage( VConstants.NAMED_EVENT_LEVEL_UP );
         
-        if( Constants.LOCAL_DEBUG_MODE) {
+        if( VConstants.LOCAL_DEBUG_MODE) {
             
             var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.gameCtrl.room.props);
             
@@ -141,9 +141,9 @@ public class FeedMode extends BaseVampireMode
     
     protected function loseLevel( ... ignored ) :void
     {
-        ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_LEVEL_DOWN );
+        ClientContext.gameCtrl.agent.sendMessage( VConstants.NAMED_EVENT_LEVEL_DOWN );
         
-        if( Constants.LOCAL_DEBUG_MODE) {
+        if( VConstants.LOCAL_DEBUG_MODE) {
             
             var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.gameCtrl.room.props);
             
@@ -159,7 +159,7 @@ public class FeedMode extends BaseVampireMode
     protected function gainXP( ... ignored ) :void
     {
         
-        if( Constants.LOCAL_DEBUG_MODE) {
+        if( VConstants.LOCAL_DEBUG_MODE) {
             
             var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.gameCtrl.room.props);
             
@@ -172,7 +172,7 @@ public class FeedMode extends BaseVampireMode
     
     protected function loseXP( ... ignored ) :void
     {
-        if( Constants.LOCAL_DEBUG_MODE) {
+        if( VConstants.LOCAL_DEBUG_MODE) {
             
             var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.gameCtrl.room.props);
             

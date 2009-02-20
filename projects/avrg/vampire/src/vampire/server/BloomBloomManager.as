@@ -6,6 +6,8 @@ package vampire.server
     import com.threerings.util.Log;
     import com.whirled.contrib.simplegame.server.SimObjectThane;
     
+    import vampire.data.VConstants;
+    
 public class BloomBloomManager extends SimObjectThane
 {
     public function BloomBloomManager( room :Room )
@@ -45,28 +47,41 @@ public class BloomBloomManager extends SimObjectThane
         return ++_bloodBloomIdCounter;
     }
     
-    public function requestFeed( predatorId :int, preyId :int, multiplePredators :Boolean ) :void
+    public function requestFeed( predatorId :int, preyId :int, multiplePredators :Boolean ) :BloodBloomGameRecord
     {
         log.debug("begin requestFeed " + this);
+        
+        var currentGame :BloodBloomGameRecord = _playerId2Game.get( predatorId ) as BloodBloomGameRecord;
+        if( currentGame != null ) {
+            if( currentGame.preyId == preyId ) {
+                log.debug(predatorId + " doing nothing, prey is already in a game I am also in.");        
+            }
+            else {
+                log.debug(predatorId + "  I am alrady in a game with a different prey, so leaving that game");
+                currentGame.removePlayer( predatorId );
+            }
+        }
+        
+        
         if( _playerId2Game.containsKey( preyId ) ) {
             log.debug(predatorId + " requestFeed, adding to existing game");
             var gameRecord :BloodBloomGameRecord = _playerId2Game.get( preyId ) as BloodBloomGameRecord;
             gameRecord.addPredator( predatorId );
+            return gameRecord;
         }
         else {
             log.debug(predatorId + " requestFeed, creating a new game");
-            createNewBloodBloomGameRecord( predatorId, preyId, multiplePredators );
+            return createNewBloodBloomGameRecord( predatorId, preyId, multiplePredators );
         }
-        log.debug("  end requestFeed " + this);
     }
     
     override protected function update( dt :Number ) :void
     {
-        removeFinishedGames();
         
         for each( var game :BloodBloomGameRecord in _games ) {
             game.update( dt );
         }
+        removeFinishedGames();
     }
     
     protected function removeFinishedGames() :void
@@ -74,15 +89,22 @@ public class BloomBloomManager extends SimObjectThane
         var index :int = 0;
         while( index < _games.length) {
             var gameRecord :BloodBloomGameRecord = _games[index] as BloodBloomGameRecord;
-            if( gameRecord.isFinished ) {
+            if( gameRecord != null && gameRecord.isFinished ) {
                 log.debug("Removing finished BloodBloomGameRecord");
                 _games.splice( index, 1);
                 gameRecord.predators.forEach( function( predatorId :int) :void {
                     if( _playerId2Game.get(predatorId) == gameRecord) {
                         _playerId2Game.remove( predatorId );
                     }
-                    
                 });
+                
+                //Set the avatars to the default state after a game.
+                for each( var playerId :int in gameRecord.playerIds) {
+                    if( _room.isPlayer( playerId ) ) {
+                        _room.getPlayer( playerId ).setAction( VConstants.GAME_MODE_NOTHING );
+                    }
+                }
+                
                 _playerId2Game.remove( gameRecord.preyId );
                 gameRecord.shutdown();
             }
@@ -102,7 +124,7 @@ public class BloomBloomManager extends SimObjectThane
     }
     
     
-    protected function createNewBloodBloomGameRecord( predatorId :int, preyId :int, multiplePredators :Boolean ) :void
+    protected function createNewBloodBloomGameRecord( predatorId :int, preyId :int, multiplePredators :Boolean ) :BloodBloomGameRecord
     {
         log.debug("createNewBloodBloomGameRecord ", "predatorId", predatorId, "preyId", preyId, "multiplePredators", multiplePredators);
         var gameRecord :BloodBloomGameRecord = new BloodBloomGameRecord( _room, nextBloodBloomGameId, predatorId, preyId, multiplePredators);
@@ -113,6 +135,7 @@ public class BloomBloomManager extends SimObjectThane
         if( !multiplePredators ) {
             gameRecord.startGame();
         }
+        return gameRecord;
     }
     
     override public function toString() :String

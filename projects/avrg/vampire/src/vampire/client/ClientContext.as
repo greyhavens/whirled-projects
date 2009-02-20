@@ -1,6 +1,7 @@
 package vampire.client {
 
 
+import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.SimpleGame;
@@ -11,9 +12,8 @@ import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.geom.Rectangle;
 
-import vampire.data.AvatarManager;
-import vampire.data.Constants;
-import vampire.net.MessageManager;
+import vampire.data.VConstants;
+import vampire.net.VMessageManager;
 
 /**
  * Client specific functions and info.
@@ -21,19 +21,20 @@ import vampire.net.MessageManager;
 public class ClientContext
 {
     public static var gameCtrl :AVRGameControl;
-    public static var msg :MessageManager;
+    public static var msg :VMessageManager;
     
     public static var game :SimpleGame;
     public static var gameResources :ResourceManager;
     
     public static var model :GameModel;
+    public static var hud :HUD;
     public static var ourPlayerId :int;
     public static var currentClosestPlayerId :int;
     
     public static var controller :VampireController;
     
     
-    
+    protected static var _playerEntityId :String;
 
     public static function quit () :void
     {
@@ -55,7 +56,7 @@ public class ClientContext
 
     public static function getPlayerName (playerId :int) :String
     {
-        if (gameCtrl != null && gameCtrl.isConnected() && !Constants.LOCAL_DEBUG_MODE) {
+        if (gameCtrl != null && gameCtrl.isConnected() && !VConstants.LOCAL_DEBUG_MODE) {
             var avatar :AVRGameAvatar = gameCtrl.room.getAvatarInfo(playerId);
             if (null != avatar) {
                 return avatar.name;
@@ -81,12 +82,30 @@ public class ClientContext
             fromCache);
     }
     
-     public static function instantiateButton (rsrcName :String, className :String) :SimpleButton
+    public static function instantiateButton (rsrcName :String, className :String) :SimpleButton
     {
         return SwfResource.instantiateButton(
             game.ctx.rsrcs,
             rsrcName,
             className);
+    }
+    
+    public static function get playerEntityId () :String
+    {
+        if( _playerEntityId == null ) {
+            for each( var entityId :String in gameCtrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
+            
+                var entityUserId :int = int(gameCtrl.room.getEntityProperty( EntityControl.PROP_MEMBER_ID, entityId));
+                
+                if( entityUserId == gameCtrl.player.getPlayerId() ) {
+                    _playerEntityId = entityId;
+                    break;
+                }
+                
+            }
+        }
+        
+        return _playerEntityId;
     }
     
     

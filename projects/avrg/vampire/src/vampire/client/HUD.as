@@ -7,7 +7,6 @@ import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.EventHandlers;
-import com.whirled.contrib.avrg.TargetingOverlayAvatars;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
@@ -24,11 +23,12 @@ import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.utils.Timer;
 
+import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.events.ClosestPlayerChangedEvent;
 import vampire.data.Codes;
-import vampire.data.Constants;
 import vampire.data.Logic;
 import vampire.data.SharedPlayerStateClient;
+import vampire.data.VConstants;
 import vampire.server.BloodBloomGameRecord;
 
 /**
@@ -55,7 +55,7 @@ public class HUD extends SceneObject
         
         updateOurPlayerState();
 
-        if( Constants.LOCAL_DEBUG_MODE) {
+        if( VConstants.LOCAL_DEBUG_MODE) {
             showTarget( ClientContext.gameCtrl.player.getPlayerId() );
         }
 
@@ -64,7 +64,7 @@ public class HUD extends SceneObject
     
     protected function handleMessageReceived( e :MessageReceivedEvent ) :void
     {
-        if( e.name == Constants.NAMED_EVENT_BLOODBLOOM_COUNTDOWN ) {
+        if( e.name == VConstants.NAMED_EVENT_BLOODBLOOM_COUNTDOWN ) {
             var bb :BloodBloomGameRecord = BloodBloomGameRecord.fromArray( e.value as Array );
             trace("Prey " + bb.preyId + ", time=" + bb.currentCountDownSecond);
         }
@@ -219,7 +219,9 @@ public class HUD extends SceneObject
     
     override protected function addedToDB () :void
     {
-        db.addObject( _targetingOverlay );
+//        db.addObject( _targetingOverlay );
+        db.addObject( _targetingOverlay, _displaySprite );
+        _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
 //        _targetingOverlay.displayObject.visible = false;
     }
     
@@ -233,8 +235,11 @@ public class HUD extends SceneObject
         
         
         //Create the ratgeting overlay
-        _targetingOverlay = new TargetingOverlayAvatars( ClientContext.gameCtrl, 
-            ClientContext.model.avatarManager, ClientContext.controller.handleSendFeedRequest );
+        _targetingOverlay = new VampireAvatarHUDOverlay( ClientContext.gameCtrl, 
+            ClientContext.model.avatarManager );
+        
+        
+//        _displaySprite.addChild( _targetingOverlay.displayObject );
 //            ClientContext.model.avatarManager, function(...ignored) :void {
 //                trace("Target Clicked");    
 //            });
@@ -248,13 +253,34 @@ public class HUD extends SceneObject
         _hud.addChild( _hudMC );
         
         
+        //Add the mouse over and rollout events.
+        //When the mouse is over the HUD, show the avatar info for all players.
+        //When the mouse rolls out, disable the avatar info
+        registerListener(_hudMC, MouseEvent.ROLL_OVER, function(...ignored) :void {
+            if( _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SELECT_FEED_TARGET && 
+                _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET ) {
+                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ); 
+            }
+        });
+        
+        registerListener(_hudMC, MouseEvent.ROLL_OUT, function(...ignored) :void {
+            if( _targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ) {
+                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF ); 
+            }
+        });
+        
+        
         _hudFeedback = TextField( findSafely("HUDfeedback") );
-        
+        _hudFeedback.visible = true;
+        _hudFeedback.text = "afsadfafa sdf";
+//        _hudFeedback.embedFonts = true;
+//        _hudFeedback.appendText("sdfsdfsdfsdf");
+//        trace("_hudFeedback=" + _hudFeedback);
         //The _hudFeedback is stealing mouse focus while invisible.  We'll add it when we need to
-        _hudMC.removeChild( _hudFeedback );
+//        _hudMC.removeChild( _hudFeedback );
         
         
-        if( Constants.LOCAL_DEBUG_MODE) {
+        if( VConstants.LOCAL_DEBUG_MODE) {
             _hudMC.x = 500;
             _hudMC.y = 400;
         }
@@ -320,10 +346,10 @@ public class HUD extends SceneObject
         
         var hudPredator :SimpleButton = SimpleButton( findSafely("HUDpredator") );
 //        Command.bind( hudPredator, MouseEvent.CLICK, VampireController.SWITCH_MODE, Constants.GAME_MODE_FEED_FROM_PLAYER);
-        Command.bind( hudPredator, MouseEvent.CLICK, VampireController.FEED_REQUEST, [_targetingOverlay, _displaySprite] );
+        Command.bind( hudPredator, MouseEvent.CLICK, VampireController.FEED_REQUEST, [_targetingOverlay, _displaySprite, this] );
         
         var hudPrey :SimpleButton = SimpleButton( findSafely("HUDprey") );
-        Command.bind( hudPrey, MouseEvent.CLICK, VampireController.SWITCH_MODE, Constants.GAME_MODE_BARED);
+        Command.bind( hudPrey, MouseEvent.CLICK, VampireController.SWITCH_MODE, VConstants.GAME_MODE_BARED);
         
         var hudHierarchy :SimpleButton = SimpleButton( findSafely("HUDhierarchy") );
         Command.bind( hudHierarchy, MouseEvent.CLICK, VampireController.SHOW_HIERARCHY, _hudMC );
@@ -349,7 +375,7 @@ public class HUD extends SceneObject
         var startX :int = 30;
         var startY :int = 0;
             
-        for each ( var mode :String in Constants.GAME_MODES) {
+        for each ( var mode :String in VConstants.GAME_MODES) {
             var button :SimpleTextButton = new SimpleTextButton( mode );
             button.x = startX;
             button.y = startY;
@@ -413,7 +439,7 @@ public class HUD extends SceneObject
 //        _hud.addChild( _time );
         
         _myName = TextFieldUtil.createField("Me: Testing locally", {mouseEnabled:false, selectable:false, x:20, y:35, width:150});
-        if( !Constants.LOCAL_DEBUG_MODE) {
+        if( !VConstants.LOCAL_DEBUG_MODE) {
             _myName = TextFieldUtil.createField("Me: " + ClientContext.gameCtrl.room.getAvatarInfo( ClientContext.ourPlayerId).name, {mouseEnabled:false, selectable:false, x:20, y:35, width:150});
         }
             
@@ -435,6 +461,15 @@ public class HUD extends SceneObject
         _targetSpriteBloodBondIcon = ClientContext.instantiateMovieClip("HUD", "bond_icon", true);
         _targetSpriteHierarchyIcon = ClientContext.instantiateButton("HUD", "button_hierarchy_no_mouse");
         
+    }
+    
+    public function showFeedBack( msg :String ) :void
+    {
+        trace("Showing text " + msg);
+        _hudMC.addChild( _hudFeedback );
+        _hudFeedback.text = msg;
+        _hudFeedback.visible = true;
+        _hudFeedback.textColor = 0xffffff;
     }
     
     
@@ -466,7 +501,7 @@ public class HUD extends SceneObject
     protected function showBlood( playerId :int ) :void
     {
         if( SharedPlayerStateClient.getMaxBlood( playerId ) > 0) {
-            var scaleY :Number = SharedPlayerStateClient.getMaxBlood( playerId ) / Constants.MAX_BLOOD_FOR_LEVEL(1);
+            var scaleY :Number = SharedPlayerStateClient.getMaxBlood( playerId ) / VConstants.MAX_BLOOD_FOR_LEVEL(1);
             _hudBlood.scaleY = scaleY;
 //            _hudBlood.height = SharedPlayerStateClient.getMaxBlood( playerId );
             _hudBlood.gotoAndStop( int( (SharedPlayerStateClient.getBlood( playerId ) * 100.0) / SharedPlayerStateClient.getMaxBlood( playerId )));
@@ -605,14 +640,14 @@ public class HUD extends SceneObject
             return;
         }
         
-        if(( targetId > 0 && targetLocation != null && targetHotspot != null && targetHotspot.length > 1) || Constants.LOCAL_DEBUG_MODE) {
+        if(( targetId > 0 && targetLocation != null && targetHotspot != null && targetHotspot.length > 1) || VConstants.LOCAL_DEBUG_MODE) {
             _targetSprite.visible = true;
             _target.text = "Target: " + SharedPlayerStateClient.getTargetName( playerId );
             
             
 //            var halfTargetAvatarHeight :Number = targetHotspot*0.5/ClientContext.gameCtrl.local.getRoomBounds()[1];
             var p :Point;
-            if( Constants.LOCAL_DEBUG_MODE ) {
+            if( VConstants.LOCAL_DEBUG_MODE ) {
                 p = new Point( 400, 400);
             }
             else {
@@ -674,14 +709,14 @@ public class HUD extends SceneObject
            //Show hierarchy and bloodbond icons if appropriate
            trace("ClientContext.model.targetPlayerId=" + ClientContext.model.targetPlayerId);
            trace("ClientContext.model.bloodbonded=" + ClientContext.model.bloodbonded);
-           if( Constants.LOCAL_DEBUG_MODE || ClientContext.model.targetPlayerId == ClientContext.model.bloodbonded) {
+           if( VConstants.LOCAL_DEBUG_MODE || ClientContext.model.targetPlayerId == ClientContext.model.bloodbonded) {
                trace("Showing bloodbond icon");
                _targetSprite.addChild( _targetSpriteBloodBondIcon );
                _targetSpriteBloodBondIcon.x = _targetSpriteBlood.x - _targetSpriteBlood.width/2;
                _targetSpriteBloodBondIcon.y = _targetSpriteBlood.y - _targetSpriteBlood.height;
            }
            
-           if( Constants.LOCAL_DEBUG_MODE || ClientContext.model.hierarchy.isPlayerSireOrMinionOfPlayer( targetId, playerId)) {
+           if( VConstants.LOCAL_DEBUG_MODE || ClientContext.model.hierarchy.isPlayerSireOrMinionOfPlayer( targetId, playerId)) {
                _targetSprite.addChild( _targetSpriteHierarchyIcon );
                _targetSpriteHierarchyIcon.x = _targetSpriteBlood.x - _targetSpriteBlood.width/2 + _targetSpriteBlood.width * 2;
                _targetSpriteHierarchyIcon.y = _targetSpriteBlood.y - _targetSpriteBlood.height;
@@ -704,6 +739,11 @@ public class HUD extends SceneObject
                 ClientContext.game.ctx.mainLoop.pushMode( new IntroHelpMode());
             } 
         }
+    }
+    
+    public function get avatarOverlay() :VampireAvatarHUDOverlay
+    {
+        return _targetingOverlay;
     }
 
     protected var _displaySprite :Sprite;
@@ -745,7 +785,7 @@ public class HUD extends SceneObject
     protected var _targetSpriteBloodBondIcon :MovieClip;
     protected var _targetSpriteHierarchyIcon :SimpleButton;
     
-    protected var _targetingOverlay :TargetingOverlayAvatars;
+    protected var _targetingOverlay :VampireAvatarHUDOverlay;
     
     protected var _checkRoomProps2ShowStatsTimer :Timer;//Stupid hack, the first time a player enters a room, the 
     

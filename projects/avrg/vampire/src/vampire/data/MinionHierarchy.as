@@ -28,12 +28,12 @@ public class MinionHierarchy
 //        log.debug(Constants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + ")");
         
         if( playerId == sireId) {
-            log.error(Constants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + "), same!!!");
+            log.error(VConstants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + "), same!!!");
             return;
         }
         
         if( playerId < 1) {
-            log.debug(Constants.DEBUG_MINION + " setPlayerSire(), playerId < 1" );
+            log.debug(VConstants.DEBUG_MINION + " setPlayerSire(), playerId < 1" );
             return;
         }
         
@@ -60,7 +60,7 @@ public class MinionHierarchy
         var sires :HashSet = getAllSiresAndGrandSires( sireId );
         
         if( sires.contains( playerId )) {
-            log.warning(Constants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + "), circle found, removeing all children");
+            log.warning(VConstants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + "), circle found, removeing all children");
             //Break the children 
             player.childrenIds.forEach( function( minionId :int) :void {
                 var child :Node = _playerId2Node.get( minionId ) as Node;
@@ -72,7 +72,7 @@ public class MinionHierarchy
             
             sires = getAllSiresAndGrandSires( sireId );
             if( sires.contains( playerId )) {
-                log.error(Constants.DEBUG_MINION + " DAMMIT, found a loop, removed children, but loop remains WTF, hierarchy=" + toString());
+                log.error(VConstants.DEBUG_MINION + " DAMMIT, found a loop, removed children, but loop remains WTF, hierarchy=" + toString());
             }
             
         }
@@ -169,6 +169,9 @@ public class MinionHierarchy
         
         function addHashData( playerData :HashSet, results :HashMap ) :void
         {
+            if( playerData == null || results == null ) {
+                return;
+            }
             playerData.forEach( function( playerIdForSubTree :int ) :void {
                 if( !results.containsKey( playerIdForSubTree )) {
                     results.put( playerIdForSubTree, [getPlayerName( playerIdForSubTree), getSireId(playerIdForSubTree)]);
@@ -277,8 +280,8 @@ public class MinionHierarchy
 
     public function toStringOld() :String
     {
-        log.debug(Constants.DEBUG_MINION + " toString(), playerIds=" + playerIds);
-        var sb :StringBuilder = new StringBuilder(Constants.DEBUG_MINION + "\n MinionHierarchy, playerIds=" + playerIds);
+        log.debug(VConstants.DEBUG_MINION + " toString(), playerIds=" + playerIds);
+        var sb :StringBuilder = new StringBuilder(VConstants.DEBUG_MINION + "\n MinionHierarchy, playerIds=" + playerIds);
         for each( var playerId :int in playerIds) {
             var player :Node = _playerId2Node.get( playerId ) as Node;
             sb.append("\n");
@@ -389,10 +392,10 @@ public class MinionHierarchy
     {
         if( name != null && name != "") {
             _playerId2Name.put( playerId, name );
-            log.debug(Constants.DEBUG_MINION + " setPlayerName()", "playerId", playerId, "name", name);
+            log.debug(VConstants.DEBUG_MINION + " setPlayerName()", "playerId", playerId, "name", name);
             return true;
         }
-        log.debug(Constants.DEBUG_MINION + " setPlayerName(), FAILED", "playerId", playerId, "name", name);
+        log.debug(VConstants.DEBUG_MINION + " setPlayerName(), FAILED", "playerId", playerId, "name", name);
         return false;
     }
     

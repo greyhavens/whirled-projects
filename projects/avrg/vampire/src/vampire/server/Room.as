@@ -14,8 +14,8 @@ import com.whirled.avrg.RoomSubControlServer;
 import com.whirled.contrib.simplegame.server.ObjectDBThane;
 import com.whirled.contrib.simplegame.server.SimObjectThane;
 
-import vampire.data.Constants;
-import vampire.net.messages.FeedRequestMessage;
+import vampire.data.VConstants;
+import vampire.net.messages.FeedRequestMessage2;
 
 public class Room extends SimObjectThane
     implements Hashable
@@ -37,6 +37,8 @@ public class Room extends SimObjectThane
     {
         return "Room " + _roomId;
     } 
+    
+    
     
     
 
@@ -97,7 +99,7 @@ public class Room extends SimObjectThane
         player.setIntoRoomProps( this );
         
         //Let the avatars know who is who, so they don't spam us with movement updates
-        ctrl.sendSignal( Constants.SIGNAL_PLAYER_IDS, playerIds );
+        ctrl.sendSignal( VConstants.SIGNAL_PLAYER_IDS, playerIds );
 
     }
 
@@ -117,7 +119,7 @@ public class Room extends SimObjectThane
         }
         
         //Let the avatars know who is who, so they don't spam us with movement updates
-        ctrl.sendSignal( Constants.SIGNAL_PLAYER_IDS, playerIds );
+        ctrl.sendSignal( VConstants.SIGNAL_PLAYER_IDS, playerIds );
         
         //Broadcast the players in the room
 //        _ctrl.sendSignal(Constants.ROOM_SIGNAL_ENTITYID_REPONSE, _players.toArray().map( function( p :Player) :int { return p.playerId}));
@@ -161,8 +163,8 @@ public class Room extends SimObjectThane
                 if( !playersMoved.contains( userId ) ) {
                     playersMoved.add( userId );
                     log.info("sending room message "  
-                        + Constants.NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER + " " + data);
-                    _ctrl.sendMessage( Constants.NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER, data);
+                        + VConstants.NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER + " " + data);
+                    _ctrl.sendMessage( VConstants.NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER, data);
                     
                 }
             }
@@ -314,7 +316,7 @@ public class Room extends SimObjectThane
 //            _locationTracker = new LocationTracker( this );
             registerListener(_ctrl, AVRGameRoomEvent.ROOM_UNLOADED, destroySelf);
 //            registerListener(_ctrl, AVRGameRoomEvent.PLAYER_MOVED, handlePlayerMoved);
-            registerListener(_ctrl, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
+//            registerListener(_ctrl, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
             
             _bloodBloomGameStarter = new BloomBloomManager( this );
             _roomDB.addObject( _bloodBloomGameStarter );
@@ -331,7 +333,7 @@ public class Room extends SimObjectThane
         switch( e.name ) {
             
             //IF there is no NonPlayerAvatar for this signal, create one.
-            case Constants.SIGNAL_AVATAR_MOVED:
+            case VConstants.SIGNAL_AVATAR_MOVED:
                 data = e.value as Array;
                 playerId = int(data[0]);
                 if( !ServerContext.vserver.isPlayer( playerId ) ) {
@@ -518,14 +520,14 @@ public class Room extends SimObjectThane
         if( preyIsPlayer ) {
             victim = getPlayer( gameRecord.preyId );
             if( victim.isVampire() ) {
-                victim.damage( Constants.BLOOD_FRACTION_LOST_PER_FEED * victim.maxBlood );
+                victim.damage( VConstants.BLOOD_FRACTION_LOST_PER_FEED * victim.maxBlood );
             }
             else {
-                victim.damage( Constants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED );
+                victim.damage( VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED );
             }
         }
         else {
-            ServerContext.nonPlayersBloodMonitor.nonplayerLosesBlood( gameRecord.preyId, Constants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED );
+            ServerContext.nonPlayersBloodMonitor.nonplayerLosesBlood( gameRecord.preyId, VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED );
         }
         
         for each( var predatorId :int in gameRecord.predators.toArray()) {
@@ -533,12 +535,101 @@ public class Room extends SimObjectThane
             pred.mostRecentVictimId = gameRecord.preyId;
             pred.addBlood( 20 );
         }
+        gameRecord.shutdown();
     }
     
-    public function handleFeedRequest(  e :FeedRequestMessage ) :void
+    
+    protected function awardBloodBloomPoints( points :Number, prey :int, predators :Array ) :void
+    {
+        var bloodIncrement :Number = VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
+        var bloodGained :Number = points;
+        
+        var victimId :int = -1;
+        var victimsMostRecentFeedVictimId :int = -1;
+        
+        var victimBlood :Number = isPlayer( prey ) ? getPlayer( prey ).blood : 
+            ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( prey );
+            
+        var maxBlood :Number = isPlayer( prey ) ? getPlayer( prey ).maxBlood : 
+            ServerContext.nonPlayersBloodMonitor.maxBloodFromNonPlayer( prey );
+            
+        var bloodLost :Number = Math.max( 0, victimBlood - 1);
+        
+        var bloodPerPredator :Number = bloodLost / predators.length;
+        
+        var pointsGained :Number = points * (bloodLost / maxBlood)
+        
+        var preyPlayer :Player = getPlayer( prey );
+        if( preyPlayer != null ) {
+            preyPlayer.damage( bloodLost );
+            preyPlayer.addXP( pointsGained );
+            ServerContext.vserver.awardSiresXpEarned( preyPlayer, pointsGained );
+        }
+        else {
+            ServerContext.nonPlayersBloodMonitor.nonplayerLosesBlood( prey, bloodLost );
+        }
+        
+        
+        for each( var predId :int in predators ) {
+            var predPlayer :Player = getPlayer( predId );
+            if( predPlayer == null) {
+                log.error("Predator " + predId + " awarding points, but doesn't exist");
+            }
+            predPlayer.mostRecentVictimId = prey;
+            predPlayer.addBlood( bloodPerPredator );
+            predPlayer.addXP( pointsGained );
+            ServerContext.vserver.awardSiresXpEarned( predPlayer, pointsGained );
+            
+            
+            if( preyPlayer != null && preyPlayer.mostRecentVictimId == predId) {
+                //Become blood bonds
+                predPlayer.setBloodBonded( prey );
+                preyPlayer.setBloodBonded( predId );
+                
+                log.info("Creating blood bonds between " + predPlayer.name + " and " + preyPlayer.name);
+            }
+            
+            
+            
+//            //If there is not sufficient blood for another feed, break off feeding.
+//            if( victim.blood <= 1) {
+//                setAction( VConstants.GAME_MODE_NOTHING );
+//                victim.setAction( VConstants.GAME_MODE_NOTHING );
+//            }
+                
+        }
+                   
+        
+    }
+    
+    
+    
+    public function handleFeedRequest(  e :FeedRequestMessage2 ) :void
     {
         
-        _bloodBloomGameStarter.requestFeed( e.playerId, e.targetPlayer, e.isAllowingMultiplePredators );
+        var game :BloodBloomGameRecord = _bloodBloomGameStarter.requestFeed( e.playerId, e.targetPlayer, e.isAllowingMultiplePredators );
+        
+        
+        var pred :Player = getPlayer( e.playerId );
+        if( pred == null ) {
+            log.error("handleFeedRequest, pred Player null, no positioning");
+            return;
+        }
+        
+        pred.setTargetLocation( [e.targetX, e.targetY, e.targetZ] );
+        
+        pred.setAction( VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER );
+        pred.ctrl.setAvatarLocation( e.targetX, e.targetY, e.targetZ , 1);
+        
+                        
+                        
+        //Arrange the players in order
+        //For the first predator, move just behind the prey
+//        if( game.predators.size() == 1 ) {
+//            pred.ctrl.setAvatarLocation( e.targetX, e.targetY, e.targetZ , 1);
+//        }
+        
+        
         
 //        var playerIds :Array = playerIds;
 //        if( playerIds.length >= 2 ) {
@@ -554,6 +645,11 @@ public class Room extends SimObjectThane
 //            return;
 //        }
 //        
+
+
+
+
+
 //        
 //        var victimId :int = getClosestVictim( player );
 //        var victimLocation :Array = getLocation( victimId );

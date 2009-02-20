@@ -7,7 +7,7 @@ package vampire.server
     import flash.utils.Dictionary;
     
     import vampire.data.Codes;
-    import vampire.data.Constants;
+    import vampire.data.VConstants;
     
 public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
 {
@@ -30,25 +30,25 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
             return _nonplayerBlood.get( userId ) as Number;
         }
         
-        return Constants.MAX_BLOOD_NONPLAYERS;
+        return VConstants.MAX_BLOOD_NONPLAYERS;
     }
     
     public function maxBloodFromNonPlayer( userId :int) :Number
     {
-        return Constants.MAX_BLOOD_NONPLAYERS;
+        return VConstants.MAX_BLOOD_NONPLAYERS;
     }
     
     public function isNonPlayerCapableOfBeingEaten( userId :int ) :Boolean
     {
         if( _nonplayerBlood.containsKey( userId ) ) {
-            return _nonplayerBlood.get( userId ) >= Constants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
+            return _nonplayerBlood.get( userId ) >= VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
         }
         return true;
     }
     
     public function removeBloodAvailableFromNonPlayer( blood :Number, userId :int) :void
     {
-        var currentBlood :Number = Constants.MAX_BLOOD_NONPLAYERS;
+        var currentBlood :Number = VConstants.MAX_BLOOD_NONPLAYERS;
         
         if( _nonplayerBlood.containsKey( userId )) {
             currentBlood =  _nonplayerBlood.get( userId ) as Number;
@@ -88,7 +88,7 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
             _nonplayerBlood.put( victimId, Math.max( Number(_nonplayerBlood.get(victimId)) - bloodLost, 0));
         }
         else {
-            _nonplayerBlood.put( victimId, Constants.MAX_BLOOD_NONPLAYERS - bloodLost);
+            _nonplayerBlood.put( victimId, VConstants.MAX_BLOOD_NONPLAYERS - bloodLost);
         }
         
     }
@@ -127,9 +127,9 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
         
         for each( var userId :int in keys) {
             var blood :Number = _nonplayerBlood.get( userId );
-            blood += Constants.THRALL_BLOOD_REGENERATION_RATE * dt;
-            blood = Math.max( blood, Constants.MAX_BLOOD_NONPLAYERS);
-            if( blood >= Constants.MAX_BLOOD_NONPLAYERS) {//If they have regained all blood, remove from counter.
+            blood += VConstants.THRALL_BLOOD_REGENERATION_RATE * dt;
+            blood = Math.max( blood, VConstants.MAX_BLOOD_NONPLAYERS);
+            if( blood >= VConstants.MAX_BLOOD_NONPLAYERS) {//If they have regained all blood, remove from counter.
                 _nonplayerBlood.remove( userId );
             }
             else {

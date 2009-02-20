@@ -22,7 +22,7 @@ public class SharedPlayerStateClient
     
     public static function getMaxBlood (playerId :int) :Number
     {
-        return Constants.MAX_BLOOD_FOR_LEVEL( getLevel(playerId) );
+        return VConstants.MAX_BLOOD_FOR_LEVEL( getLevel(playerId) );
     }
     
     public static function getTargetVisible (playerId :int) :Boolean
@@ -125,7 +125,7 @@ public class SharedPlayerStateClient
     
     public static function isVampire(playerId :int) :Boolean
     {
-        return getLevel(playerId) >= Constants.MINIMUM_VAMPIRE_LEVEL;
+        return getLevel(playerId) >= VConstants.MINIMUM_VAMPIRE_LEVEL;
     }
     
     

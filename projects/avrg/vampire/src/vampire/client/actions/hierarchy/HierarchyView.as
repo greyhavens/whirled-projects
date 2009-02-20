@@ -23,7 +23,7 @@ package vampire.client.actions.hierarchy
     import vampire.client.VampireController;
     import vampire.client.events.HierarchyUpdatedEvent;
     import vampire.data.Codes;
-    import vampire.data.Constants;
+    import vampire.data.VConstants;
     import vampire.data.MinionHierarchy;
     import vampire.data.SharedPlayerStateClient;
     
@@ -157,7 +157,7 @@ package vampire.client.actions.hierarchy
             if( _hierarchy != null ) {
                 updateHierarchy(_selectedPlayerIdCenter);
             }
-            else if( Constants.LOCAL_DEBUG_MODE){
+            else if( VConstants.LOCAL_DEBUG_MODE){
                 trace("SHowing test hierarchy");
                 _hierarchy = new MinionHierarchy();
                 _hierarchy.setPlayerSire(1, 2);
@@ -256,7 +256,7 @@ package vampire.client.actions.hierarchy
         
         protected function updateHierarchyEvent( e :HierarchyUpdatedEvent) :void
         {
-            log.debug(Constants.DEBUG_MINION + " updateHierarchyEvent", "e", e);
+            log.debug(VConstants.DEBUG_MINION + " updateHierarchyEvent", "e", e);
             _hierarchy = e.hierarchy;
             if( _hierarchy == null) {
                 log.error("updateHierarchyEvent(), but hierarchy is null :-(");

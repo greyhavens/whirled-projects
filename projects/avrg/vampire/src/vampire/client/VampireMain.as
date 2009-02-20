@@ -1,5 +1,4 @@
 package vampire.client {
-import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
@@ -13,9 +12,8 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
-import vampire.data.AvatarManager;
-import vampire.data.Constants;
-import vampire.net.MessageManager;
+import vampire.data.VConstants;
+import vampire.net.VMessageManager;
 import vampire.server.AVRGAgentLogTarget;
 
 [SWF(width="700", height="500")]
@@ -85,28 +83,24 @@ public class VampireMain extends Sprite
             }
             
         
-            if( !ClientContext.gameCtrl.isConnected() && !Constants.LOCAL_DEBUG_MODE) {
+            if( !ClientContext.gameCtrl.isConnected() && !VConstants.LOCAL_DEBUG_MODE) {
                 trace("Not conected and not test model");
                 return;
             }
             
             
-            ClientContext.msg = new MessageManager( ClientContext.gameCtrl );
+            ClientContext.msg = new VMessageManager( ClientContext.gameCtrl );
             ClientContext.ourPlayerId = ClientContext.gameCtrl.player.getPlayerId();
             
             ClientContext.controller = new VampireController(this);
             
-            ClientContext.model = new GameModel();
-            ClientContext.model.setup();
+            
             
             
             //Push the main game mode
             ClientContext.game.ctx.mainLoop.pushMode( new MainGameMode() );
             
-            //If this player hasn't played before, automatically show the help.
-            if( ClientContext.model.isNewPlayer() ) {
-                ClientContext.game.ctx.mainLoop.pushMode( new IntroHelpMode() );
-            }
+            
             
             ClientContext.game.run();
             
@@ -115,7 +109,7 @@ public class VampireMain extends Sprite
             EventHandlers.registerListener( ClientContext.gameCtrl.player, 
                 MessageReceivedEvent.MESSAGE_RECEIVED, 
                 function( e :MessageReceivedEvent) :void {
-                    if( e.name == Constants.NAMED_EVENT_CHAT) {
+                    if( e.name == VConstants.NAMED_EVENT_CHAT) {
                         ClientContext.gameCtrl.local.feedback( e.value.toString() );
                     }    
                 });

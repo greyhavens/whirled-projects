@@ -2,7 +2,7 @@
 {
     import com.threerings.flash.Vector2;
     
-public class Constants
+public class VConstants
 {
     
     public static const BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME :int = 5;

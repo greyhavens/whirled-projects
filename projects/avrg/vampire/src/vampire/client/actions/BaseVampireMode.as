@@ -14,7 +14,7 @@ import flash.geom.Rectangle;
 import vampire.client.ClientContext;
 import vampire.client.DraggableSprite;
 import vampire.client.VampireController;
-import vampire.data.Constants;
+import vampire.data.VConstants;
 
 
 [RemoteClass(alias="vampire.client.modes.BaseVampireMode")]

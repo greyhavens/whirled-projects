@@ -12,7 +12,7 @@ import flash.events.EventDispatcher;
 import flash.utils.ByteArray;
 
 import vampire.net.messages.BloodBondRequestMessage;
-import vampire.net.messages.FeedRequestMessage;
+import vampire.net.messages.FeedRequestMessage2;
 import vampire.net.messages.RequestActionChangeMessage;
 
 

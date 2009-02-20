@@ -4,7 +4,7 @@ package vampire.server
     import com.threerings.util.HashSet;
     import com.threerings.util.Log;
     
-    import vampire.data.Constants;
+    import vampire.data.VConstants;
     import vampire.feeding.FeedingGameServer;
     
 public class BloodBloomGameRecord
@@ -25,8 +25,8 @@ public class BloodBloomGameRecord
     
     protected function startCountDownTimer() :void
     {
-        _countdownTimeRemaining = Constants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME;
-        _currentCountdownSecond = Constants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME;
+        _countdownTimeRemaining = VConstants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME;
+        _currentCountdownSecond = VConstants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME;
         setCountDownIntoRoomProps();
     }
     
@@ -42,7 +42,7 @@ public class BloodBloomGameRecord
             
             log.debug("setCountDownIntoRoomProps()", "_currentCountdownSecond", _currentCountdownSecond);
             _currentCountdownSecond = flooredCurrentTime;
-            _room.ctrl.sendMessage( Constants.NAMED_EVENT_BLOODBLOOM_COUNTDOWN, toArray() );
+            _room.ctrl.sendMessage( VConstants.NAMED_EVENT_BLOODBLOOM_COUNTDOWN, toArray() );
 //            _room.ctrl.props.set(Codes.ROOM_PROP_BLOODBLOOM_COUNTDOWN, toArray());
         }
     }
@@ -84,10 +84,20 @@ public class BloodBloomGameRecord
             return;
         }
         
+        _elapsedGameTime = 0;
+        
         var gamePreyId :int = _room.isPlayer( _preyId ) ? _preyId : -1;
         
-        _gameServer = FeedingGameServer.create( _room.roomId, _predators.toArray(), gamePreyId, 
-            gameFinishedCallback);
+        var preyBlood :Number = _room.isPlayer( _preyId ) ? _room.getPlayer( _preyId ).blood :
+            ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( _preyId );
+        
+        _gameServer = FeedingGameServer.create( _room.roomId, 
+                                                _predators.toArray(), 
+                                                gamePreyId,
+                                                preyBlood,
+                                                roundFinishedCallback,
+                                                gameFinishedCallback);
+                                                 
         log.debug("starting gameServer", "gameId", _gameServer.gameId ,"roomId", _room.roomId, "_predators", _predators.toArray(), "gamePreyId", gamePreyId);
         
         // send a message with the game ID to each of the players, a
@@ -107,8 +117,25 @@ public class BloodBloomGameRecord
     protected function gameFinishedCallback(...ignored) :void
     {
         log.debug("gameFinishedCallback");
-        log.debug("_gameServer.finalScore=" + _gameServer.finalScore);
-        log.debug("_gameServer.playerIds=" + _gameServer.playerIds);
+        
+        if( _gameServer != null ) {
+            var score :Number = _gameServer.lastRoundScore;
+            log.debug("Score=" + score);
+            
+        }
+        else {
+            log.error("gameFinishedCallback, but gameserver is null, no points!");
+        }
+//        log.debug("_gameServer.finalScore=" + _gameServer.finalScore);
+//        log.debug("_gameServer.playerIds=" + _gameServer.playerIds);
+        shutdown();
+    }
+    
+    protected function roundFinishedCallback(...ignored) :void
+    {
+        log.debug("roundFinishedCallback, for now quit game");
+//        log.debug("_gameServer.finalScore=" + _gameServer.finalScore);
+//        log.debug("_gameServer.playerIds=" + _gameServer.playerIds);
         shutdown();
     }
     
@@ -136,7 +163,9 @@ public class BloodBloomGameRecord
         else {
             _predators.remove( playerId );
             if( _gameServer != null ) {
-                _gameServer.playerLeft( playerId );
+                if(_gameServer.playerLeft( playerId ) ) {
+                    shutdown();
+                }
             }
             if( _predators.size() == 0) {
                 log.info("Shutting down bloodbloom game because pred==0");
@@ -155,6 +184,15 @@ public class BloodBloomGameRecord
             }
             else {
                 setCountDownIntoRoomProps();
+            }
+        }
+        
+        if( _started ) {
+            _elapsedGameTime += dt;
+            
+            if( _elapsedGameTime > vampire.feeding.Constants.GAME_TIME + 10 ) {
+                log.error("Game is still running 10 secs after it should of shutdown.  _shutdown=true");
+                _finished = true;
             }
         }
     }
@@ -195,7 +233,7 @@ public class BloodBloomGameRecord
     public function shutdown() :void
     {
         log.debug("shutdown() " + (_gameServer==null ? "Already shutdown...":""));
-        if( _gameServer != null ) {
+        if( _gameServer != null  && _gameServer.playerIds != null) {
             for each( var gamePlayerId :int in _gameServer.playerIds ) {
                 _gameServer.playerLeft( gamePlayerId );
             }
@@ -224,7 +262,7 @@ public class BloodBloomGameRecord
     {
         return ClassUtil.tinyClassName(this) 
             + " _preyId=" + _preyId
-            + "_predators=" + _predators 
+            + "_predators=" + _predators.toArray()
             + "_primaryPredatorId=" + _primaryPredatorId
             + "_currentCountdownSecond=" + _currentCountdownSecond
             + "_started=" + _started
@@ -245,6 +283,7 @@ public class BloodBloomGameRecord
     protected var _multiplePredators :Boolean;
     protected var _countdownTimeRemaining :Number;
     protected var _currentCountdownSecond :int;
+    protected var _elapsedGameTime :Number;
     
     protected static const log :Log = Log.getLog( BloodBloomGameRecord );
 

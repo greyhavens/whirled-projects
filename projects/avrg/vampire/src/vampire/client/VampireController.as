@@ -2,17 +2,19 @@ package vampire.client
 {
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
+import com.whirled.contrib.avrg.AvatarHUD;
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
 
+import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.actions.BaseVampireMode;
 import vampire.client.actions.hierarchy.HierarchyView;
 import vampire.client.events.ChangeActionEvent;
-import vampire.data.Constants;
 import vampire.data.SharedPlayerStateClient;
+import vampire.data.VConstants;
 import vampire.net.messages.BloodBondRequestMessage;
-import vampire.net.messages.FeedRequestMessage;
+import vampire.net.messages.FeedRequestMessage2;
 import vampire.net.messages.RequestActionChangeMessage;
 import vampire.net.messages.SuccessfulFeedMessage;
 
@@ -48,8 +50,19 @@ public class VampireController extends Controller
         
     public function handleSwitchMode( mode :String ) :void
     {
+        //If we are already baring, toggle us out.
+        if( mode == VConstants.GAME_MODE_BARED && 
+            ClientContext.model.action == VConstants.GAME_MODE_BARED) {
+                
+            ClientContext.gameCtrl.agent.sendMessage( RequestActionChangeMessage.NAME, 
+                new RequestActionChangeMessage( ClientContext.ourPlayerId, 
+                    VConstants.GAME_MODE_NOTHING).toBytes() );    
+        }
+        else {
         
-        ClientContext.gameCtrl.agent.sendMessage( RequestActionChangeMessage.NAME, new RequestActionChangeMessage( ClientContext.ourPlayerId, mode).toBytes() );
+            ClientContext.gameCtrl.agent.sendMessage( RequestActionChangeMessage.NAME, 
+                new RequestActionChangeMessage( ClientContext.ourPlayerId, mode).toBytes() );
+        }
         //Some actions we don't need the agents permission
 //        trace("handleSwitchMode, ClientContext.model.action=" + ClientContext.model.action + ", mode=" + mode);
 //        trace("handleSwitchMode, ClientContext.model.action=" + (ClientContext.model.action == null)); 
@@ -64,7 +77,7 @@ public class VampireController extends Controller
 //            
 //        }
         
-        if( Constants.LOCAL_DEBUG_MODE ) {
+        if( VConstants.LOCAL_DEBUG_MODE ) {
             ClientContext.model.dispatchEvent( new ChangeActionEvent( mode ) );
         }
     }
@@ -74,19 +87,19 @@ public class VampireController extends Controller
     public function handleCloseMode( actionmode :BaseVampireMode) :void
     {
         switch(ClientContext.model.action) {
-            case Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
+            case VConstants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
 //            case Constants.GAME_MODE_BLOODBOND:
-            case Constants.GAME_MODE_NOTHING:
+            case VConstants.GAME_MODE_NOTHING:
             case null:
-                ClientContext.model.dispatchEvent( new ChangeActionEvent( Constants.GAME_MODE_NOTHING ) );
+                ClientContext.model.dispatchEvent( new ChangeActionEvent( VConstants.GAME_MODE_NOTHING ) );
                 break;
             default:
-                ClientContext.gameCtrl.agent.sendMessage( RequestActionChangeMessage.NAME, new RequestActionChangeMessage( ClientContext.ourPlayerId, Constants.GAME_MODE_NOTHING).toBytes() );
+                ClientContext.gameCtrl.agent.sendMessage( RequestActionChangeMessage.NAME, new RequestActionChangeMessage( ClientContext.ourPlayerId, VConstants.GAME_MODE_NOTHING).toBytes() );
             
         }
         
-        if( Constants.LOCAL_DEBUG_MODE ) {
-            ClientContext.model.dispatchEvent( new ChangeActionEvent( Constants.GAME_MODE_NOTHING ) );
+        if( VConstants.LOCAL_DEBUG_MODE ) {
+            ClientContext.model.dispatchEvent( new ChangeActionEvent( VConstants.GAME_MODE_NOTHING ) );
         }
         
         
@@ -95,9 +108,9 @@ public class VampireController extends Controller
     
     public function handleQuit() :void
     {
-        ClientContext.gameCtrl.player.setAvatarState( Constants.GAME_MODE_NOTHING );
+        ClientContext.gameCtrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
         
-        ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_QUIT );
+        ClientContext.gameCtrl.agent.sendMessage( VConstants.NAMED_EVENT_QUIT );
                 
         ClientContext.quit();
     }
@@ -150,15 +163,38 @@ public class VampireController extends Controller
     }
     
 //    public function handleFeedRequest( targetPlayerId :int, targetIsVictim :Boolean) :void
-    public function handleFeedRequest( targetingOverlay :TargetingOverlayAvatars, parentSprite :Sprite) :void
+    public function handleFeedRequest( targetingOverlay :VampireAvatarHUDOverlay, parentSprite :Sprite, hud :HUD) :void
     {
         trace("handle handleFeedRequest");
-        if( parentSprite.contains( targetingOverlay.displayObject )) {
-            parentSprite.removeChild( targetingOverlay.displayObject );
+        
+//        hud.showFeedBack("Feeding");
+        
+        if( ClientContext.model.level >= VConstants.MINIMUM_VAMPIRE_LEVEL ||
+            VConstants.LOCAL_DEBUG_MODE ) {
+                
+            if( targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SELECT_FEED_TARGET ) {
+                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
+            }
+            else {
+                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SELECT_FEED_TARGET );
+            }
+            
         }
         else {
-            parentSprite.addChildAt( targetingOverlay.displayObject, 0 );
+            log.debug("Only vampires can feed.");
         }
+        
+        
+//        
+//        if( parentSprite.contains( targetingOverlay.displayObject )) {
+//            
+//            targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
+//            
+//            parentSprite.removeChild( targetingOverlay.displayObject );
+//        }
+//        else {
+//            parentSprite.addChildAt( targetingOverlay.displayObject, 0 );
+//        }
         
         
         
@@ -186,10 +222,25 @@ public class VampireController extends Controller
     
     public function handleSendFeedRequest( targetId :int, multiPredators :Boolean  ) :void
     {
-        var msg :FeedRequestMessage = new FeedRequestMessage( ClientContext.ourPlayerId, targetId, 
-            multiPredators);
+        var targetLocation :Array;
+        var targetAvatar :AvatarHUD = ClientContext.model.avatarManager.getAvatar( targetId );
+        if( targetAvatar != null ) {
+            targetLocation = targetAvatar.location;
+        }
+        else {
+            log.error("handleSendFeedRequest(target=" + targetId + "), avatar is null so no loc");
+        }
+         
+        var msg :FeedRequestMessage2 = new FeedRequestMessage2( ClientContext.ourPlayerId, targetId, 
+            multiPredators, targetLocation[0], targetLocation[1], targetLocation[2]);
         log.debug(ClientContext.gameCtrl + " handleSendFeedRequest() sending " + msg)
-        ClientContext.gameCtrl.agent.sendMessage( FeedRequestMessage.NAME, msg.toBytes() );        
+        ClientContext.gameCtrl.agent.sendMessage( FeedRequestMessage2.NAME, msg.toBytes() );
+        if( multiPredators ) {
+            ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET, targetId, true );
+        }
+        else {
+            ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
+        }
     }
     
     public function handleFeed() :void
@@ -202,7 +253,7 @@ public class VampireController extends Controller
         var model :GameModel = ClientContext.model;
         if( model.isPlayer( model.targetPlayerId)) {
             //Player victims must be the state "EatMe" 
-            if( SharedPlayerStateClient.getCurrentAction( model.targetPlayerId ) == Constants.GAME_MODE_BARED ) {
+            if( SharedPlayerStateClient.getCurrentAction( model.targetPlayerId ) == VConstants.GAME_MODE_BARED ) {
                 
                 if( SharedPlayerStateClient.isVampire( model.targetPlayerId ) && 
                     SharedPlayerStateClient.getBlood(model.targetPlayerId) <= 1 ) {
@@ -237,7 +288,7 @@ public class VampireController extends Controller
         log.info("makeSire(" + ClientContext.model.targetPlayerId + ")" );
         if( ClientContext.model.targetPlayerId > 0) {
             
-            ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_MAKE_SIRE, ClientContext.model.targetPlayerId );
+            ClientContext.gameCtrl.agent.sendMessage( VConstants.NAMED_EVENT_MAKE_SIRE, ClientContext.model.targetPlayerId );
         }
     }
     
@@ -245,7 +296,7 @@ public class VampireController extends Controller
     {
         log.info("makeMinion(" + ClientContext.model.targetPlayerId + ")" );
         if( ClientContext.model.targetPlayerId > 0) {
-            ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_MAKE_MINION, ClientContext.model.targetPlayerId );
+            ClientContext.gameCtrl.agent.sendMessage( VConstants.NAMED_EVENT_MAKE_MINION, ClientContext.model.targetPlayerId );
         }
     }
     

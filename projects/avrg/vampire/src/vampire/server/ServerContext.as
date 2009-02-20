@@ -3,13 +3,12 @@ package vampire.server
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRServerGameControl;
 
-import vampire.data.AvatarManager;
 import vampire.data.MinionHierarchyServer;
-import vampire.net.MessageManager;
+import vampire.net.VMessageManager;
     
 public class ServerContext
 {
-    public static var msg :MessageManager;
+    public static var msg :VMessageManager;
     public static var ctrl :AVRServerGameControl;
     public static var vserver :VServer;
     public static var minionHierarchy :MinionHierarchyServer;

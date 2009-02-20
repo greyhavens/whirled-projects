@@ -14,7 +14,7 @@ import vampire.client.actions.feed.EatMeMode;
 import vampire.client.actions.feed.FeedMode;
 import vampire.client.actions.fight.FightMode;
 import vampire.client.events.ChangeActionEvent;
-import vampire.data.Constants;
+import vampire.data.VConstants;
 import vampire.feeding.FeedingGameClient;
 
 public class MainGameMode extends AppMode
@@ -34,6 +34,17 @@ public class MainGameMode extends AppMode
     {
         super.setup();
         
+        ClientContext.model = new GameModel();
+        addObject( ClientContext.model );
+        ClientContext.model.setup();
+        
+        //If this player hasn't played before, automatically show the help.
+        if( ClientContext.model.isNewPlayer() ) {
+            ClientContext.game.ctx.mainLoop.pushMode( new IntroHelpMode() );
+        }
+    
+        
+            
         FeedingGameClient.init( modeSprite, ClientContext.gameCtrl );
         
         _events.registerListener(ClientContext.gameCtrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
@@ -41,6 +52,7 @@ public class MainGameMode extends AppMode
         
         _hud = new HUD();
         addObject( _hud, modeSprite );
+        ClientContext.hud = _hud;
         
         _subgameSprite = new Sprite();
         modeSprite.addChild( _subgameSprite );
@@ -50,7 +62,7 @@ public class MainGameMode extends AppMode
         subgame.run();
         subgame.ctx.mainLoop.pushMode( new NothingMode() );
         
-        ClientContext.gameCtrl.player.setAvatarState( Constants.GAME_MODE_NOTHING );
+        ClientContext.gameCtrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
         
         registerListener( ClientContext.model, ChangeActionEvent.CHANGE_ACTION, changeAction ); 
         
@@ -77,11 +89,11 @@ public class MainGameMode extends AppMode
         }
     }
     
-    protected function onGameComplete (completedSuccessfully :Boolean) :void
+    protected function onGameComplete () :void
     {
-        log.info("Feeding complete", "completedSuccessfully", completedSuccessfully);
+        log.info("Feeding complete");//, "completedSuccessfully", completedSuccessfully);
         modeSprite.removeChild(_feedingGameClient);
-        
+        ClientContext.gameCtrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
         _feedingGameClient = null;
     }
     
@@ -119,15 +131,15 @@ public class MainGameMode extends AppMode
 //                     m = new BloodBondMode();
 //                     break;
                  
-             case Constants.GAME_MODE_FEED_FROM_PLAYER:
+             case VConstants.GAME_MODE_FEED_FROM_PLAYER:
                  m = new FeedMode();
                  break;
                    
-             case Constants.GAME_MODE_BARED:
+             case VConstants.GAME_MODE_BARED:
                  m = new EatMeMode();
                  break;
                  
-             case Constants.GAME_MODE_FIGHT:
+             case VConstants.GAME_MODE_FIGHT:
                  m = new FightMode();
                  break;
                      
