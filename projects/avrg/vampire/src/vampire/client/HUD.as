@@ -21,7 +21,6 @@ import flash.events.TimerEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.TextField;
-import flash.utils.Timer;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.events.ClosestPlayerChangedEvent;
@@ -194,8 +193,8 @@ public class HUD extends SceneObject
         }
         else {
             updateOurPlayerState();
-            EventHandlers.unregisterListener( _checkRoomProps2ShowStatsTimer, TimerEvent.TIMER, checkPlayerRoomProps);
-            _checkRoomProps2ShowStatsTimer.stop();
+//            EventHandlers.unregisterListener( _checkRoomProps2ShowStatsTimer, TimerEvent.TIMER, checkPlayerRoomProps);
+//            _checkRoomProps2ShowStatsTimer.stop();
         }
     }
     
@@ -221,7 +220,8 @@ public class HUD extends SceneObject
     {
 //        db.addObject( _targetingOverlay );
         db.addObject( _targetingOverlay, _displaySprite );
-        _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
+//        _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
+        _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
 //        _targetingOverlay.displayObject.visible = false;
     }
     
@@ -253,21 +253,7 @@ public class HUD extends SceneObject
         _hud.addChild( _hudMC );
         
         
-        //Add the mouse over and rollout events.
-        //When the mouse is over the HUD, show the avatar info for all players.
-        //When the mouse rolls out, disable the avatar info
-        registerListener(_hudMC, MouseEvent.ROLL_OVER, function(...ignored) :void {
-            if( _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SELECT_FEED_TARGET && 
-                _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET ) {
-                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ); 
-            }
-        });
         
-        registerListener(_hudMC, MouseEvent.ROLL_OUT, function(...ignored) :void {
-            if( _targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ) {
-                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF ); 
-            }
-        });
         
         
         _hudFeedback = TextField( findSafely("HUDfeedback") );
@@ -359,6 +345,55 @@ public class HUD extends SceneObject
         
         var hudClose :SimpleButton = SimpleButton( findSafely("HUDclose") );
         Command.bind( hudClose, MouseEvent.CLICK, VampireController.QUIT);
+        
+        
+        
+        //Add the mouse over and rollout events.
+        //When the mouse is over the HUD, show the avatar info for all players.
+        //When the mouse rolls out, disable the avatar info
+//        registerListener(_hudMC, MouseEvent.ROLL_OVER, function(...ignored) :void {
+//            if( _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SELECT_FEED_TARGET && 
+//                _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET ) {
+//                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ); 
+//            }
+//        });
+//        
+//        registerListener(_hudMC, MouseEvent.ROLL_OUT, function(...ignored) :void {
+//            if( _targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ) {
+//                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF ); 
+//            }
+//        });
+//        
+        
+        
+        registerListener(hudPrey, MouseEvent.ROLL_OVER, function(...ignored) :void {
+            if( _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SELECT_FEED_TARGET && 
+                _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET ) {
+                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ); 
+            }
+        });
+        
+        registerListener(hudPrey, MouseEvent.ROLL_OUT, function(...ignored) :void {
+            if( _targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ) {
+                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF ); 
+            }
+        });
+        
+        registerListener(hudPredator, MouseEvent.ROLL_OVER, function(...ignored) :void {
+            if( _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SELECT_FEED_TARGET && 
+                _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET ) {
+                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ); 
+            }
+        });
+        
+        registerListener(hudPredator, MouseEvent.ROLL_OUT, function(...ignored) :void {
+            if( _targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ) {
+                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF ); 
+            }
+        });
+        
+        
+        
         
         
         
@@ -463,6 +498,13 @@ public class HUD extends SceneObject
         
     }
     
+    override protected function update(dt:Number):void
+    {
+        _feedbackMessageTimeElapsed += dt;
+        
+//        if( _feedbackMessageTimeElapsed
+    }
+    
     public function showFeedBack( msg :String ) :void
     {
         trace("Showing text " + msg);
@@ -482,6 +524,9 @@ public class HUD extends SceneObject
     
     public function updateOurPlayerState( ...ignored ) :void
     {
+        
+        
+        
         if( !SharedPlayerStateClient.isProps( ClientContext.ourPlayerId )) {
             log.warning("updatePlayerState, but no props found");
             return;
@@ -787,7 +832,10 @@ public class HUD extends SceneObject
     
     protected var _targetingOverlay :VampireAvatarHUDOverlay;
     
-    protected var _checkRoomProps2ShowStatsTimer :Timer;//Stupid hack, the first time a player enters a room, the 
+    protected var _feedbackMessageQueue :Array = new Array();
+    protected var _feedbackMessageTimeElapsed :Number = 0;
+    
+//    protected var _checkRoomProps2ShowStatsTimer :Timer;//Stupid hack, the first time a player enters a room, the 
     
     protected static const log :Log = Log.getLog( HUD );
 }
