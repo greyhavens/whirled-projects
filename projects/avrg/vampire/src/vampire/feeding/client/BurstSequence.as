@@ -1,16 +1,16 @@
 package vampire.feeding.client {
 
-import vampire.feeding.*;
-import vampire.feeding.client.*;
-import vampire.feeding.net.CreateBonusMsg;
-
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
+import flash.display.Sprite;
 import flash.geom.Point;
 import flash.text.TextField;
+
+import vampire.feeding.*;
 
 public class BurstSequence extends SceneObject
 {
@@ -22,11 +22,13 @@ public class BurstSequence extends SceneObject
     public function BurstSequence ()
     {
         _tf = TextBits.createText("");
+        _sprite = SpriteUtil.createSprite();
+        _sprite.addChild(_tf);
     }
 
     override public function get displayObject () :DisplayObject
     {
-        return _tf;
+        return _sprite;
     }
 
     public function addCellBurst (burst :RedBurst) :void
@@ -35,6 +37,10 @@ public class BurstSequence extends SceneObject
         _totalBursts++;
         _totalMultiplier *= burst.multiplier;
         _largestMultiplier = Math.max(_largestMultiplier, burst.multiplier);
+
+        _lastBurstX = burst.x;
+        _lastBurstY = burst.y;
+        _needsRelocate = true;
     }
 
     public function removeCellBurst (burst :RedBurst) :void
@@ -91,9 +97,19 @@ public class BurstSequence extends SceneObject
                 if (_totalMultiplier > 1) {
                     text += " x" + _totalMultiplier;
                 }
+
+                if (_needsRelocate) {
+                    addNamedTask(
+                        "Relocate",
+                        LocationTask.CreateSmooth(_lastBurstX, _lastBurstY, 0.5),
+                        true);
+                }
             }
 
-            TextBits.initTextField(_tf, text, 2, 0, 0x0000ff);
+            TextBits.initTextField(_tf, text, 2, 0, 0xD8F1FC);
+            _tf.x = -_tf.width * 0.5;
+            _tf.y = -_tf.height * 0.5;
+
             _lastCellCount = _bursts.length;
         }
     }
@@ -103,6 +119,11 @@ public class BurstSequence extends SceneObject
     protected var _totalMultiplier :int = 1;
     protected var _totalBursts :int;
     protected var _lastCellCount :int;
+    protected var _lastBurstX :Number = 0;
+    protected var _lastBurstY :Number = 0;
+    protected var _needsRelocate :Boolean;
+
+    protected var _sprite :Sprite;
     protected var _tf :TextField;
 
     protected static const GROUP_NAME :String = "BurstSequence";
