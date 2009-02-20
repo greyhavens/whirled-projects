@@ -6,7 +6,6 @@ package vampire.server {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.HashMap;
-import com.threerings.util.HashSet;
 import com.threerings.util.Hashable;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameRoomEvent;
@@ -14,6 +13,7 @@ import com.whirled.avrg.RoomSubControlServer;
 import com.whirled.contrib.simplegame.server.ObjectDBThane;
 import com.whirled.contrib.simplegame.server.SimObjectThane;
 
+import vampire.data.Codes;
 import vampire.data.VConstants;
 import vampire.net.messages.FeedRequestMessage2;
 
@@ -152,22 +152,29 @@ public class Room extends SimObjectThane
             _roomDB.update( dt );
             _players.forEach( function( playerId :int, p :Player) :void{ p.tick(dt)});
             
+            //Send feedback messages.
+            if( _feedbackMessageQueue.length > 0 ) {
+                _ctrl.props.set( Codes.ROOM_PROP_FEEDBACK, _feedbackMessageQueue.slice() );
+                _feedbackMessageQueue.splice(0);
+            }
+            
+            
 //            _bloodBloomGameStarter.update( dt );
 
             //Send queued avatar movement messages.
-            var playersMoved :HashSet = new HashSet();
-            
-            while( _avatarMovedSignalQueue.length > 0 ) {
-                var data :Array = _avatarMovedSignalQueue.pop() as Array;
-                var userId :int = int(data[0]);
-                if( !playersMoved.contains( userId ) ) {
-                    playersMoved.add( userId );
-                    log.info("sending room message "  
-                        + VConstants.NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER + " " + data);
-                    _ctrl.sendMessage( VConstants.NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER, data);
-                    
-                }
-            }
+//            var playersMoved :HashSet = new HashSet();
+//            
+//            while( _avatarMovedSignalQueue.length > 0 ) {
+//                var data :Array = _avatarMovedSignalQueue.pop() as Array;
+//                var userId :int = int(data[0]);
+//                if( !playersMoved.contains( userId ) ) {
+//                    playersMoved.add( userId );
+//                    log.info("sending room message "  
+//                        + VConstants.NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER + " " + data);
+//                    _ctrl.sendMessage( VConstants.NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER, data);
+//                    
+//                }
+//            }
             
 
         } catch (e :Error) {
@@ -231,6 +238,8 @@ public class Room extends SimObjectThane
     }
     internal function playerUpdated (player :Player) :void
     {
+        //WE don't update on direct changes, we wait for the server update to batch it.
+        return;
         if (_ctrl == null) {
             log.warning("Null room control", "action", "player update",
                         "playerId", player.playerId);
@@ -698,6 +707,11 @@ public class Room extends SimObjectThane
         return _roomDB;
     }
     
+    public function addFeedback( msg :String, playerId :int = 0 ) :void
+    {
+        _feedbackMessageQueue.push( [playerId, msg] );
+    }
+    
 //    public function isPlayerPredatorInBloodBloomGame( playerId :int ) :Boolean
 //    {
 //        for each( var g :BloodBloomGameRecord in _bloodBloomGames) {
@@ -772,6 +786,13 @@ public class Room extends SimObjectThane
     
     //temp signal fix
     protected var _avatarMovedSignalQueue :Array = new Array();
+    
+    /** 
+    * Each value is a array with two values: the message target, and the message itself.  
+    * A target <= 0 is a message for all.
+    * 
+    * */
+    protected var _feedbackMessageQueue :Array = new Array();
 
     // each player's contribution to a ghost's eventual defeat is accumulated here, by player
 //    protected var _stats :HashMap = new HashMap();

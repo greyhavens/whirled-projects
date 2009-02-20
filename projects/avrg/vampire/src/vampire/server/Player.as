@@ -220,6 +220,13 @@ public class Player extends EventHandlerManager
         
     }
     
+    public function addFeedback( msg :String ) :void
+    {
+        if( _room != null ) {
+            _room.addFeedback( msg, playerId );
+        }
+    }
+    
     public function sendChat( msg :String ) :void
     {
         log.debug("Sending CHAT: " + msg);
@@ -433,6 +440,7 @@ public class Player extends EventHandlerManager
         if( isVampire() != vampireState) {
             handleChangeColorScheme( (isVampire() ? VConstants.COLOR_SCHEME_VAMPIRE : VConstants.COLOR_SCHEME_HUMAN) );
         }
+        
         
         
         // always update our avatar state
@@ -1906,6 +1914,8 @@ public class Player extends EventHandlerManager
                 setAction( VConstants.GAME_MODE_NOTHING );
             }
         } 
+        
+        setIntoRoomProps( _room );
     }
     
     public function get mostRecentVictimId() :int
