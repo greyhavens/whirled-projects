@@ -6,12 +6,12 @@ import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 import com.whirled.contrib.simplegame.tasks.SelfDestructTask;
 import com.whirled.contrib.simplegame.tasks.SerialTask;
 import com.whirled.contrib.simplegame.tasks.TimedTask;
-import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
@@ -609,10 +609,17 @@ public class HUD extends SceneObject
 //        }
     }
     
-    public function showFeedBack( msg :String ) :void
+    public function showFeedBack( msg :String, immediate :Boolean = false ) :void
     {
-        _feedbackMessageQueue.push( msg )
+        if( immediate ) {
+            _feedbackMessageQueue.unshift( msg );
+        }
+        else {
+            _feedbackMessageQueue.push( msg );
+        }
     }
+    
+
     
     
     protected function playerUpdated( e :PlayerStateChangedEvent ) :void
