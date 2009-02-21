@@ -201,10 +201,11 @@ package vampire.client.actions.hierarchy
             instructionTextformat.bold = true;
             
             instructionText.setTextFormat( instructionTextformat );
-            instructionText.width = 400;
-            instructionText.height = 60;
-            instructionText.x = -50;//_hierarchyPanel.width/2;
-            instructionText.y = 350 ;
+            instructionText.width = 100;
+            instructionText.height = 80;
+            instructionText.x = 2;//_hierarchyPanel.width/2;
+            instructionText.y = 320 ;
+            instructionText.wordWrap = true;
             _hierarchyPanel.addChild( instructionText );
             
             
@@ -224,6 +225,18 @@ package vampire.client.actions.hierarchy
             _events.registerListener( button_close, MouseEvent.CLICK, function(...ignored) :void {
                 destroySelf();    
             });
+            
+            //Recruit button
+            var recruitButton :SimpleButton = ClientContext.instantiateButton("HUD", "button_invite");
+//            recruitButton.scaleX = _bondIcon.scaleY = 2;
+            recruitButton.x = _hierarchyPanel.width/2 - 5;
+            recruitButton.y = 330;
+            _hierarchyPanel.addChild( recruitButton );
+            registerListener( recruitButton, MouseEvent.CLICK, function(...ignored) :void {
+                log.debug("Showing invite page");
+                ClientContext.ctrl.local.showInvitePage("Join my Coven!", "" + ClientContext.ourPlayerId);
+            });
+            
             
             
             _selectedPlayerIdCenter = ClientContext.ourPlayerId;
@@ -603,6 +616,7 @@ package vampire.client.actions.hierarchy
             droplet.scaleX = below ? 2 : 2.5;
             droplet.scaleX *= left ? 1 : -1;
             droplet.scaleY = below ? 2 : 2.5;
+            
             s.addChild( droplet );
         }
         
