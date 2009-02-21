@@ -44,7 +44,8 @@ class TestGameController extends OneRoomGameRoom
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
     {
-        if (e.name == "TestClientReady") {
+        if (e.name == "Client_Hello" && !ArrayUtil.contains(_waitingPlayers, e.senderId)) {
+            _gameCtrl.getPlayer(e.senderId).sendMessage("Server_Hello");
             _waitingPlayers.push(e.senderId);
              if (_waitingPlayers.length >= NUM_PLAYERS) {
                 startGame();

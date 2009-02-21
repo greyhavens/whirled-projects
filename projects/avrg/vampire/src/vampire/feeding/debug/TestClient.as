@@ -7,6 +7,8 @@ import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.Sprite;
 import flash.events.Event;
+import flash.events.TimerEvent;
+import flash.utils.Timer;
 
 import vampire.feeding.FeedingGameClient;
 
@@ -25,8 +27,17 @@ public class TestClient extends Sprite
 
         // Tell the TestServer we're ready to start receiving messages. Real clients
         // probably won't need to do this - the client will have already started receiving
-        // messages by the time feeding starts.
-        _gameCtrl.agent.sendMessage("TestClientReady");
+        // messages by the time feeding starts. Keep sending the message until we
+        // get a response from the server.
+        _handshakeTimer = new Timer(1000);
+        _events.registerListener(_handshakeTimer, TimerEvent.TIMER, sayHello);
+        _handshakeTimer.start();
+        sayHello();
+    }
+
+    protected function sayHello (...ignored) :void
+    {
+        _gameCtrl.agent.sendMessage("Client_Hello");
     }
 
     protected function onQuit (...ignored) :void
@@ -48,6 +59,13 @@ public class TestClient extends Sprite
                 _curGame = FeedingGameClient.create(gameId, onGameComplete);
                 addChild(_curGame);
             }
+
+        } else if (e.name == "Server_Hello") {
+            if (_handshakeTimer != null) {
+                _events.unregisterListener(_handshakeTimer, TimerEvent.TIMER, sayHello);
+                _handshakeTimer.stop();
+                _handshakeTimer = null;
+            }
         }
     }
 
@@ -64,6 +82,7 @@ public class TestClient extends Sprite
     protected var _gameCtrl :AVRGameControl;
     protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _curGame :FeedingGameClient;
+    protected var _handshakeTimer :Timer;
 
     protected static var log :Log = Log.getLog(TestClient);
 }
