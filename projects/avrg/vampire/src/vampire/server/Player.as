@@ -200,7 +200,7 @@ public class Player extends EventHandlerManager
         }
 
         log.info("Logging in", "playerId", playerId, "blood", blood, "maxBlood",
-                 maxBlood, "level", level, "sire", sire, "minions", minions, "time", new Date(time).toTimeString());
+                 maxBlood, "level", level, "sire", sire, "time", new Date(time).toTimeString());
             
         setTargetVisible(false);//Hide the target first of all.
 //        _closestUserData = null;
@@ -271,7 +271,6 @@ public class Player extends EventHandlerManager
             (room != null ? room.roomId : "null") + ", level=" + level + ", blood=" + blood + "/" + maxBlood + ", bloodbonds=" + bloodbonded
             + ", targetId=" + targetId 
             + ", sire=" + sire
-            + ", minions=" + minions
             + ", xp=" + xp
             + ", time=" + new Date(time).toTimeString() 
             + "]";
@@ -1988,10 +1987,10 @@ public class Player extends EventHandlerManager
         return _bloodbondedName;
     }
     
-    public function get minions () :Array
-    {
-        return _minions.slice();
-    }
+//    public function get minions () :Array
+//    {
+//        return _minions.slice();
+//    }
     
     public function get sire () :int
     {
@@ -2183,7 +2182,7 @@ public class Player extends EventHandlerManager
     protected var _bloodbondedName :String;
     
     protected var _sire :int;
-    protected var _minions :Array;
+//    protected var _minions :Array;
     
     protected var _timePlayerPreviouslyQuit :Number;
 

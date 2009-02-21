@@ -65,17 +65,17 @@ public class MinionHierarchyServer extends MinionHierarchy
         if( player.sire != getSireId( player.playerId) ) {
             return false;
         }
-        var minionsInThisHierarchy :HashSet = getMinionIds( player.playerId );
-        var minionsStoredInPlayerProps :Array = player.minions;
-        if( minionsInThisHierarchy.size() != minionsStoredInPlayerProps.length) {
-            return false;
-        }
-        
-        for each( var minionId :int in minionsStoredInPlayerProps) {
-            if( !minionsInThisHierarchy.contains(minionId)) {
-                return false;
-            }
-        }
+//        var minionsInThisHierarchy :HashSet = getMinionIds( player.playerId );
+//        var minionsStoredInPlayerProps :Array = player.minions;
+//        if( minionsInThisHierarchy.size() != minionsStoredInPlayerProps.length) {
+//            return false;
+//        }
+//        
+//        for each( var minionId :int in minionsStoredInPlayerProps) {
+//            if( !minionsInThisHierarchy.contains(minionId)) {
+//                return false;
+//            }
+//        }
         return true;
     }
     
