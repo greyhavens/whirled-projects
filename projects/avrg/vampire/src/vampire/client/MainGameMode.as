@@ -2,6 +2,7 @@ package vampire.client
 {
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
+import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.Config;
 import com.whirled.contrib.simplegame.SimpleGame;
@@ -47,7 +48,17 @@ public class MainGameMode extends AppMode
     
     
         //If we start moving, and we are in bared mode, change to default mode.
-//        ClientContext.gameCtrl
+        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_MOVED, function( 
+            e :AVRGameRoomEvent) :void {
+                var playerMovedId :int = int( e.value );
+                if( playerMovedId == ClientContext.ourPlayerId) {
+                    if( ClientContext.model.action == VConstants.GAME_MODE_BARED ) {
+                        ClientContext.controller.handleSwitchMode( VConstants.GAME_MODE_NOTHING );
+                        ClientContext.ctrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
+                    }
+                }    
+            });
+        
         
             
         FeedingGameClient.init( modeSprite, ClientContext.ctrl );

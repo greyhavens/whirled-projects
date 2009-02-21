@@ -329,7 +329,7 @@ public class Room extends SimObjectThane
 //            registerListener(_ctrl, AVRGameRoomEvent.PLAYER_MOVED, handlePlayerMoved);
 //            registerListener(_ctrl, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
             
-            _bloodBloomGameManager = new BloomBloomManager( this );
+            _bloodBloomGameManager = new BloodBloomManager( this );
             _roomDB.addObject( _bloodBloomGameManager );
             
         }
@@ -768,7 +768,7 @@ public class Room extends SimObjectThane
     
 //    public var _nonplayers :HashSet = new HashSet();
     
-    public var _bloodBloomGameManager :BloomBloomManager;
+    public var _bloodBloomGameManager :BloodBloomManager;
     
 //    public var _bloodBloomGames :Array = new Array();
     

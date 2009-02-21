@@ -8,9 +8,9 @@ package vampire.server
     
     import vampire.data.VConstants;
     
-public class BloomBloomManager extends SimObjectThane
+public class BloodBloomManager extends SimObjectThane
 {
-    public function BloomBloomManager( room :Room )
+    public function BloodBloomManager( room :Room )
     {
         _room = room;
         
@@ -176,6 +176,6 @@ public class BloomBloomManager extends SimObjectThane
     protected var _games :Array = new Array();
     protected var _bloodBloomIdCounter :int = 0;
     
-    protected static const log :Log = Log.getLog( BloomBloomManager );
+    protected static const log :Log = Log.getLog( BloodBloomManager );
 }
 }
