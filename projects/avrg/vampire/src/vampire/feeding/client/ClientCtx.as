@@ -25,14 +25,29 @@ public class ClientCtx
     public static var roundMgr :GameRoundMgr;
     public static var msgMgr :ClientMsgMgr;
     public static var gameCompleteCallback :Function;
+
+    public static var gameStarted :Boolean;
     public static var noMoreFeeding :Boolean;
+    public static var playerIds :Array;
+    public static var preyId :int;
+    public static var isAiPrey :Boolean;
 
     public static function init () :void
     {
         roundMgr = null;
         msgMgr = null;
         gameCompleteCallback = null;
+
+        gameStarted = false;
         noMoreFeeding = false;
+        playerIds = null;
+        preyId = 0;
+        isAiPrey = false;
+    }
+
+    public static function get isSinglePlayer () :Boolean
+    {
+        return (!isConnected || playerIds.length <= 1);
     }
 
     public static function quit (playerInitiated :Boolean) :void

@@ -70,7 +70,8 @@ class TestGameController extends OneRoomGameRoom
 
     protected function startGame () :void
     {
-        var preyId :int = _waitingPlayers.pop();
+        var preyId :int =
+            (_waitingPlayers.length > 1 ? _waitingPlayers.pop() : Constants.NULL_PLAYER);
         var predators :Array = _waitingPlayers;
         _waitingPlayers = [];
 

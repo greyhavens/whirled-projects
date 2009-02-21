@@ -20,6 +20,8 @@ public class Util
         mgr.addMessageType(NoMoreFeedingMsg);
         mgr.addMessageType(ClientBootedMsg);
         mgr.addMessageType(RoundStartingSoonMsg);
+        mgr.addMessageType(PlayerLeftMsg);
+        mgr.addMessageType(StartGameMsg);
     }
 }
 

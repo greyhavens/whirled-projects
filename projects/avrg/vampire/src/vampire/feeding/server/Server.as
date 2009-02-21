@@ -44,6 +44,7 @@ public class Server extends FeedingGameServer
             _playerIds.push(preyId);
         }
         _preyId = preyId;
+        _preyIsAi = (_preyId == Constants.NULL_PLAYER);
         _preyBlood = preyBlood;
         _roundCompleteCallback = roundCompleteCallback;
         _gameCompleteCallback = gameCompleteCallback;
@@ -75,7 +76,14 @@ public class Server extends FeedingGameServer
             shutdown();
 
         } else {
-            if ((_preyId == 0 || _playerIds.length <= 1) && !_noMoreFeeding) {
+            if (_gameStarted) {
+                // Let all the clients know that somebody has left
+                // (If the game hasn't yet started, the StartGameMsg hasn't been delivered,
+                // and the clients don't know who is in the game yet.)
+                sendMessage(PlayerLeftMsg.create(playerId));
+            }
+
+            if (((_preyId == 0 && !_preyIsAi) || getPredatorIds().length == 0) && !_noMoreFeeding) {
                 // If the prey has left, or all the predators have left, no more feeding
                 // can take place.
                 _noMoreFeeding = true;
@@ -84,7 +92,7 @@ public class Server extends FeedingGameServer
 
             if (_state == STATE_WAITING_FOR_PLAYERS) {
                 ArrayUtil.removeFirst(_playersNeedingCheckin, playerId);
-                startGameIfReady();
+                startRoundIfReady();
 
             } else if (_state == STATE_WAITING_FOR_SCORES) {
                 ArrayUtil.removeFirst(_playersNeedingScoreUpdate, playerId);
@@ -105,7 +113,7 @@ public class Server extends FeedingGameServer
 
     override public function get lastRoundScore () :int
     {
-        if (_noMoreFeeding || _finalScores == null) {
+        if (_finalScores == null) {
             return 0;
 
         } else {
@@ -166,7 +174,7 @@ public class Server extends FeedingGameServer
                 if (!ArrayUtil.removeFirst(_playersNeedingCheckin, e.senderId)) {
                     logBadMessage(e, "unrecognized player, or player already checked in");
                 } else {
-                    startGameIfReady();
+                    startRoundIfReady();
 
                     // When at least one player has checked in, start a timer that will force
                     // the game to start after a maximum amount of time has elapsed, even if
@@ -240,7 +248,7 @@ public class Server extends FeedingGameServer
         log.warning.apply(null, args);
     }
 
-    protected function startGameIfReady () :void
+    protected function startRoundIfReady () :void
     {
         if (_state != STATE_WAITING_FOR_PLAYERS) {
             return;
@@ -273,7 +281,15 @@ public class Server extends FeedingGameServer
 
         _playersNeedingCheckin = [];
 
-        sendMessage(StartRoundMsg.create(_playerIds.slice(), _preyId));
+        // If the game hasn't been started yet, let all the players know what the initial
+        // setup of players is
+        if (!_gameStarted) {
+            sendMessage(StartGameMsg.create(_playerIds.slice(), _preyId));
+            _gameStarted = true;
+        }
+
+        sendMessage(StartRoundMsg.create());
+
         _timerMgr.createTimer(Constants.GAME_TIME * 1000, 1, onTimeOver).start();
     }
 
@@ -335,6 +351,13 @@ public class Server extends FeedingGameServer
         _roomCtrl.sendMessage(e.name, e.value);
     }
 
+    protected function getPredatorIds () :Array
+    {
+        var predators :Array = _playerIds.slice();
+        ArrayUtil.removeFirst(predators, _preyId);
+        return predators;
+    }
+
     protected var _gameId :int;
     protected var _state :int;
     protected var _playerIds :Array;
@@ -349,6 +372,8 @@ public class Server extends FeedingGameServer
     protected var _nameUtil :NameUtil;
     protected var _finalScores :HashMap; // Map<playerId, score>
     protected var _noMoreFeeding :Boolean;
+    protected var _gameStarted :Boolean;
+    protected var _preyIsAi :Boolean;
 
     protected var _playersNeedingCheckin :Array;
     protected var _playersNeedingScoreUpdate :Array;

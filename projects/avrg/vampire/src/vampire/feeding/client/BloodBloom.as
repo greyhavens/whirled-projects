@@ -1,5 +1,6 @@
 package vampire.feeding.client {
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.EventHandlerManager;
@@ -77,9 +78,31 @@ public class BloodBloom extends FeedingGameClient
 
     protected function onMsgReceived (e :ClientMsgEvent) :void
     {
-        if (e.msg is GameEndedMsg || e.msg is ClientBootedMsg) {
+        if (e.msg is StartGameMsg) {
+            if (ClientCtx.gameStarted) {
+                log.warning("Received StartGameMsg after game already started!");
+                return;
+            }
+
+            var startGameMsg :StartGameMsg = e.msg as StartGameMsg;
+            ClientCtx.gameStarted = true;
+            ClientCtx.playerIds = startGameMsg.playerIds;
+            ClientCtx.preyId = startGameMsg.preyId;
+            ClientCtx.isAiPrey = (ClientCtx.preyId == Constants.NULL_PLAYER);
+
+        } else if (e.msg is PlayerLeftMsg) {
+            if (!ClientCtx.gameStarted) {
+                log.warning("Received PlayerLeftMsg before game started!");
+                return;
+            }
+
+            var playerLeftMsg :PlayerLeftMsg = e.msg as PlayerLeftMsg;
+            ArrayUtil.removeFirst(ClientCtx.playerIds, playerLeftMsg.playerId);
+
+        } else if (e.msg is GameEndedMsg || e.msg is ClientBootedMsg) {
             // We were booted from the game, or it ended prematurely for some reason
             ClientCtx.quit(false);
+
         } else if (e.msg is NoMoreFeedingMsg) {
             ClientCtx.noMoreFeeding = true;
         }

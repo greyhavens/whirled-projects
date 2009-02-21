@@ -4,14 +4,18 @@ import com.whirled.contrib.simplegame.net.Message;
 
 import flash.utils.ByteArray;
 
-public class StartRoundMsg
+public class PlayerLeftMsg
     implements Message
 {
-    public static const NAME :String = "StartRound";
+    public static const NAME :String = "PlayerLeft";
 
-    public static function create () :StartRoundMsg
+    public var playerId :int;
+
+    public static function create (playerId :int) :PlayerLeftMsg
     {
-        return new StartRoundMsg();
+        var msg :PlayerLeftMsg = new PlayerLeftMsg();
+        msg.playerId = playerId;
+        return msg;
     }
 
     public function toBytes (ba :ByteArray = null) :ByteArray
@@ -20,11 +24,14 @@ public class StartRoundMsg
             ba = new ByteArray();
         }
 
+        ba.writeInt(playerId);
+
         return ba;
     }
 
     public function fromBytes (ba :ByteArray) :void
     {
+        playerId = ba.readInt();
     }
 
     public function get name () :String
