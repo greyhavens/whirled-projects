@@ -6,6 +6,7 @@ import com.threerings.util.Log;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.RoomSubControlServer;
 import com.whirled.contrib.EventHandlerManager;
+import com.whirled.contrib.ManagedTimer;
 import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.simplegame.net.BasicMessageManager;
 import com.whirled.contrib.simplegame.net.Message;
@@ -87,7 +88,7 @@ public class Server extends FeedingGameServer
 
             } else if (_state == STATE_WAITING_FOR_SCORES) {
                 ArrayUtil.removeFirst(_playersNeedingScoreUpdate, playerId);
-                endGameIfReady();
+                endRoundIfReady();
             }
         }
     }
@@ -104,8 +105,9 @@ public class Server extends FeedingGameServer
 
     override public function get lastRoundScore () :int
     {
-        if (_finalScores == null) {
+        if (_noMoreFeeding || _finalScores == null) {
             return 0;
+
         } else {
             var totalScore :int;
             _finalScores.forEach(
@@ -138,13 +140,18 @@ public class Server extends FeedingGameServer
     {
         if (e.isFromServer() || !_nameUtil.isForGame(e.name)) {
             // don't listen to messages that we've sent, or that aren't for this
-            // paricular game
+            // particular game
             return;
         }
 
         var name :String = _nameUtil.decodeName(e.name);
         var msg :Message = _msgMgr.deserializeMessage(name, e.value);
         if (msg == null) {
+            return;
+        }
+
+        if (!ArrayUtil.contains(_playerIds, e.senderId)) {
+            logBadMessage(e, "unrecognized player (maybe they were just booted?)");
             return;
         }
 
@@ -159,6 +166,15 @@ public class Server extends FeedingGameServer
                 if (!ArrayUtil.removeFirst(_playersNeedingCheckin, e.senderId)) {
                     logBadMessage(e, "unrecognized player, or player already checked in");
                 } else {
+                    // When at least one player has checked in, start a timer that will force
+                    // the game to start after a maximum amount of time has elapsed, even if
+                    // the rest of the players haven't joined yet.
+                    if (_waitForPlayersTimer == null) {
+                        _waitForPlayersTimer = _timerMgr.createTimer(
+                            Constants.WAIT_FOR_PLAYERS_TIMEOUT * 1000, 1, startGameNow);
+                        _waitForPlayersTimer.start();
+                    }
+
                     startGameIfReady();
                 }
             }
@@ -173,7 +189,7 @@ public class Server extends FeedingGameServer
                     logBadMessage(e, "unrecognized player, or player already reported score");
                 } else {
                     _finalScores.put(e.senderId, (msg as RoundScoreMsg).score);
-                    endGameIfReady();
+                    endRoundIfReady();
                 }
             }
             break;
@@ -230,10 +246,34 @@ public class Server extends FeedingGameServer
         }
 
         if (_playersNeedingCheckin.length == 0) {
-            _state = STATE_PLAYING;
-            sendMessage(StartRoundMsg.create(_playerIds.slice(), _preyId));
-            _timerMgr.createTimer(Constants.GAME_TIME * 1000, 1, onTimeOver).start();
+            startGameNow();
         }
+    }
+
+    protected function startGameNow (...ignored) :void
+    {
+        if (_state != STATE_WAITING_FOR_PLAYERS) {
+            return;
+        }
+
+        _state = STATE_PLAYING;
+
+        if (_waitForPlayersTimer != null) {
+            _waitForPlayersTimer.cancel();
+            _waitForPlayersTimer = null;
+        }
+
+        // any players who haven't checked in when the game starts are booted from the game
+        for each (var playerId :int in _playersNeedingCheckin) {
+            log.info("Booting unresponsive player", "playerId", playerId);
+            sendMessage(ClientBootedMsg.create(), playerId);
+            playerLeft(playerId);
+        }
+
+        _playersNeedingCheckin = [];
+
+        sendMessage(StartRoundMsg.create(_playerIds.slice(), _preyId));
+        _timerMgr.createTimer(Constants.GAME_TIME * 1000, 1, onTimeOver).start();
     }
 
     protected function onTimeOver (...ignored) :void
@@ -246,14 +286,14 @@ public class Server extends FeedingGameServer
         }
     }
 
-    protected function endGameIfReady () :void
+    protected function endRoundIfReady () :void
     {
         if (_state != STATE_WAITING_FOR_SCORES) {
             return;
         }
 
         if (_playersNeedingScoreUpdate.length == 0) {
-            _state = STATE_GAME_OVER;
+            _state = STATE_ROUND_OVER;
             // Send the final scores to the clients.
             var preyBloodStart :Number = _preyBlood;
             _preyBlood = _roundCompleteCallback();
@@ -300,6 +340,7 @@ public class Server extends FeedingGameServer
     protected var _roundCompleteCallback :Function;
     protected var _gameCompleteCallback :Function;
     protected var _timerMgr :TimerManager = new TimerManager();
+    protected var _waitForPlayersTimer :ManagedTimer;
     protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _roomCtrl :RoomSubControlServer;
     protected var _nameUtil :NameUtil;
@@ -319,7 +360,7 @@ public class Server extends FeedingGameServer
     protected static const STATE_WAITING_FOR_PLAYERS :int = 0;
     protected static const STATE_PLAYING :int = 1;
     protected static const STATE_WAITING_FOR_SCORES :int = 2;
-    protected static const STATE_GAME_OVER :int = 3;
+    protected static const STATE_ROUND_OVER :int = 3;
 }
 
 }

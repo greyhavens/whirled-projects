@@ -18,6 +18,7 @@ public class Util
         mgr.addMessageType(RoundResultsMsg);
         mgr.addMessageType(ClientQuitMsg);
         mgr.addMessageType(NoMoreFeedingMsg);
+        mgr.addMessageType(ClientBootedMsg);
     }
 }
 

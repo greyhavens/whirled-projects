@@ -10,6 +10,8 @@ public class Constants
 
     public static const GAME_TIME :Number = 60 * 2;
 
+    public static const WAIT_FOR_PLAYERS_TIMEOUT :Number = 90;
+
     public static const PLAYER_PREDATOR :int = 0;
     public static const PLAYER_PREY :int = 1;
 

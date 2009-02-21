@@ -77,8 +77,8 @@ public class BloodBloom extends FeedingGameClient
 
     protected function onMsgReceived (e :ClientMsgEvent) :void
     {
-        if (e.msg is GameEndedMsg) {
-            // if we receive this message, the game has ended prematurely
+        if (e.msg is GameEndedMsg || e.msg is ClientBootedMsg) {
+            // We were booted from the game, or it ended prematurely for some reason
             ClientCtx.quit(false);
         } else if (e.msg is NoMoreFeedingMsg) {
             ClientCtx.noMoreFeeding = true;
