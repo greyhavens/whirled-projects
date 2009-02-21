@@ -132,9 +132,9 @@ public class BloodBloomGameRecord
         _started = true;
     }
     
-    protected function roundFinishedCallback(...ignored) :void
+    protected function gameFinishedCallback(...ignored) :void
     {
-        log.debug("roundFinishedCallback");
+        log.debug("gameFinishedCallback");
         
         if( _gameServer != null ) {
             var score :Number = _gameServer.lastRoundScore;
@@ -148,16 +148,16 @@ public class BloodBloomGameRecord
         }
 //        log.debug("_gameServer.finalScore=" + _gameServer.finalScore);
 //        log.debug("_gameServer.playerIds=" + _gameServer.playerIds);
-//        shutdown();
+        shutdown();
     }
     
-    protected function gameFinishedCallback(...ignored) :void
+    protected function roundFinishedCallback(...ignored) :void
     {
-        log.debug("gameFinishedCallback");
+        log.warning("roundFinishedCallback, nothing implemented yet");
 //        gameFinishedCallback();
 //        log.debug("_gameServer.finalScore=" + _gameServer.finalScore);
 //        log.debug("_gameServer.playerIds=" + _gameServer.playerIds);
-        shutdown();
+//        shutdown();
     }
     
     public function addPredator( playerId :int, preyLocation :Array ) :void
