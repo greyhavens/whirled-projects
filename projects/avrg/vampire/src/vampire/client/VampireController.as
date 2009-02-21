@@ -62,10 +62,11 @@ public class VampireController extends Controller
         if( mode == VConstants.GAME_MODE_BARED && 
             ClientContext.model.action == VConstants.GAME_MODE_BARED) {
         
-            log.debug("  sending to server "+VConstants.GAME_MODE_NOTHING);        
-            ClientContext.gameCtrl.agent.sendMessage( RequestActionChangeMessage.NAME, 
-                new RequestActionChangeMessage( ClientContext.ourPlayerId, 
-                    VConstants.GAME_MODE_NOTHING).toBytes() );    
+            return;
+//            log.debug("  sending to server "+VConstants.GAME_MODE_NOTHING);        
+//            ClientContext.gameCtrl.agent.sendMessage( RequestActionChangeMessage.NAME, 
+//                new RequestActionChangeMessage( ClientContext.ourPlayerId, 
+//                    VConstants.GAME_MODE_NOTHING).toBytes() );    
         }
         else if(mode == VConstants.GAME_MODE_FEED_FROM_NON_PLAYER ||
             mode == VConstants.GAME_MODE_FEED_FROM_PLAYER) {
