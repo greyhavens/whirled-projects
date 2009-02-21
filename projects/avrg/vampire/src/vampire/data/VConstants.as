@@ -5,7 +5,9 @@
 public class VConstants
 {
     
-    public static const BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME :int = 5;
+    public static const TIME_FEEDBACK_MESSAGE_DISPLAY :Number = 3;
+    
+    public static const BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME :int = 10;
     
     public static const NON_PLAYER_TIMEOUT :Number = 20;
     
@@ -35,6 +37,9 @@ public class VConstants
     */
     public static const BLOOD_GAIN_FRACTION_SHARED_WITH_SIRES :Number = 0.1;
     
+    
+    public static const XP_GAIN_FRACTION_SHARED_WITH_SIRES :Number = 0.1;
+    
     /**
     * For every unit of blood gained from feeding, how much experience is gained.
     */
@@ -43,12 +48,12 @@ public class VConstants
     /**
     * Blood regenerated per second.
     */
-    public static const THRALL_BLOOD_REGENERATION_RATE :Number = 0.5;
+    public static const THRALL_BLOOD_REGENERATION_RATE :Number = 0.4;
     
     /**
     * Blood lost per second.
     */
-    public static const VAMPIRE_BLOOD_LOSS_RATE :Number = 0.1;
+    public static const VAMPIRE_BLOOD_LOSS_RATE :Number = 0.3;
     
     
     /**
@@ -84,6 +89,7 @@ public class VConstants
     public static const GAME_MODE_NOTHING :String = "Default";
     public static const GAME_MODE_FEED_FROM_PLAYER :String = "Feeding";
     public static const GAME_MODE_FEED_FROM_NON_PLAYER :String = "FeedingNonPlayer";
+    public static const GAME_MODE_WAITING_FOR_NO_CHATS :String = "WaitingForChats";
     public static const GAME_MODE_MOVING_TO_FEED_ON_PLAYER :String = "MoveToFeeding";
     public static const GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER :String = "MoveToFeedingNonPlayer";
     public static const GAME_MODE_BARED :String = "Bared";
@@ -116,6 +122,8 @@ public class VConstants
     public static const NAMED_EVENT_BLOODBLOOM_COUNTDOWN :String = "BloodbloomCountDown";
     
     public static const NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER :String = "AvatarRoomSignalFromServer";
+    
+    public static const MESSAGE_SHARE_TOKEN :String = "ShareToken";
         
     public static var LOCAL_DEBUG_MODE :Boolean = false;
     

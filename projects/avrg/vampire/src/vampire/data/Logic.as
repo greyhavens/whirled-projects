@@ -50,7 +50,7 @@ public class Logic
         return blood >= bloodLostPerFeed( level ) + 1; 
     }
     
-    public static function levelGivenCurrentXp( xp :int ) :int
+    public static function levelGivenCurrentXp( xp :Number ) :int
     {
         var level :int = 1;
         while( xpNeededForLevel(level + 1) <= xp ) {
@@ -59,10 +59,10 @@ public class Logic
         return level;
 //        return xp/10 + 1; 
     }
-    public static function xpNeededForLevel( level :int ) :int
+    public static function xpNeededForLevel( level :int ) :Number
     {
         level = Math.max(level, 1);
-        var base :int = 10;
+        var base :Number = 10;
         return base * (level - 1) + (level - 1) * (base + 2 * (level - 1));
 //        return (level - 1) * 10; 
     }

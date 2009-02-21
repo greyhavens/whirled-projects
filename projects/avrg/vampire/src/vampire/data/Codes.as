@@ -11,11 +11,12 @@ public class Codes
     }
     
     public static const ROOM_PROP_MINION_HIERARCHY :String = "hierarchy";
-    public static const ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS :String = "hierarchyKeys";
+//    public static const ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS :String = "hierarchyKeys";
 //    public static const ROOM_PROP_PLAYER_ENTITY_IDS :String = "playerEntityIds";
-    public static const ROOM_PROP_NON_PLAYERS :String = "nonPlayers";
+//    public static const ROOM_PROP_NON_PLAYERS :String = "nonPlayers";
     
     public static const ROOM_PROP_BLOODBLOOM_PLAYERS :String = "bloodbloom";
+    public static const ROOM_PROP_FEEDBACK :String = "feedback";
     
     
     
@@ -46,7 +47,7 @@ public class Codes
     /** 
     * List of minions (people you invite into the game).
     */
-    public static const PLAYER_PROP_PREFIX_MINIONS :String = NetConstants.makePersistent("minions");
+//    public static const PLAYER_PROP_PREFIX_MINIONS :String = NetConstants.makePersistent("minions");
     
     /** 
     * The vampire who makes you into a vampire.
@@ -67,7 +68,7 @@ public class Codes
     /** 
     * Closest UserId.  Used for determining your target
     */
-    public static const PLAYER_PROP_PREFIX_CLOSEST_USER_DATA :String = "closestUserData";
+//    public static const PLAYER_PROP_PREFIX_CLOSEST_USER_DATA :String = "closestUserData";
     
     /** 
     * Your current target useId
@@ -106,18 +107,18 @@ public class Codes
     public static const ROOM_PROP_PLAYER_DICT_INDEX_NAME :int = 1;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME :int = 2;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE :int = 3;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_MINIONS :int = 4;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_MINIONS :int = 4;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_SIRE :int = 5;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED :int = 6;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION :int = 7;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_XP :int = 8;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_ID :int = 10;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_LOCATION :int = 11;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME :int = 12;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD :int = 13;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD :int = 14;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME :int = 12;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD :int = 13;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD :int = 14;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT :int = 15;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_DISPLAY_VISIBLE :int = 16;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_DISPLAY_VISIBLE :int = 16;
     
     
 }

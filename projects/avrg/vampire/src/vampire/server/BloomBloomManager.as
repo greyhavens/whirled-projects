@@ -47,7 +47,7 @@ public class BloomBloomManager extends SimObjectThane
         return ++_bloodBloomIdCounter;
     }
     
-    public function requestFeed( predatorId :int, preyId :int, multiplePredators :Boolean ) :BloodBloomGameRecord
+    public function requestFeed( predatorId :int, preyId :int, multiplePredators :Boolean, preyLocation :Array ) :BloodBloomGameRecord
     {
         log.debug("begin requestFeed " + this);
         
@@ -66,12 +66,13 @@ public class BloomBloomManager extends SimObjectThane
         if( _playerId2Game.containsKey( preyId ) ) {
             log.debug(predatorId + " requestFeed, adding to existing game");
             var gameRecord :BloodBloomGameRecord = _playerId2Game.get( preyId ) as BloodBloomGameRecord;
-            gameRecord.addPredator( predatorId );
+            gameRecord.addPredator( predatorId, preyLocation );
+            
             return gameRecord;
         }
         else {
             log.debug(predatorId + " requestFeed, creating a new game");
-            return createNewBloodBloomGameRecord( predatorId, preyId, multiplePredators );
+            return createNewBloodBloomGameRecord( predatorId, preyId, multiplePredators, preyLocation );
         }
     }
     
@@ -101,7 +102,7 @@ public class BloomBloomManager extends SimObjectThane
                 //Set the avatars to the default state after a game.
                 for each( var playerId :int in gameRecord.playerIds) {
                     if( _room.isPlayer( playerId ) ) {
-                        _room.getPlayer( playerId ).setAction( VConstants.GAME_MODE_NOTHING );
+                        _room.getPlayer( playerId ).actionChange( VConstants.GAME_MODE_NOTHING );
                     }
                 }
                 
@@ -123,18 +124,45 @@ public class BloomBloomManager extends SimObjectThane
         }
     }
     
+    public function isPredatorInGame( playerId :int ) :Boolean
+    {
+        if( !_playerId2Game.containsKey( playerId )) {
+            return false;
+        }
+        
+        var game :BloodBloomGameRecord = _playerId2Game.get( playerId ) as BloodBloomGameRecord;
+        return game.isPredator( playerId );
+    }
     
-    protected function createNewBloodBloomGameRecord( predatorId :int, preyId :int, multiplePredators :Boolean ) :BloodBloomGameRecord
+    public function isPreyInGame( playerId :int ) :Boolean
+    {
+        if( !_playerId2Game.containsKey( playerId )) {
+            return false;
+        }
+        
+        var game :BloodBloomGameRecord = _playerId2Game.get( playerId ) as BloodBloomGameRecord;
+        return game.isPrey( playerId );
+    }
+    
+    public function getGame( playerId :int ) :BloodBloomGameRecord 
+    {
+        return _playerId2Game.get( playerId ) as BloodBloomGameRecord;    
+    }
+    
+    
+    protected function createNewBloodBloomGameRecord( predatorId :int, preyId :int, 
+        multiplePredators :Boolean, preyLocation :Array ) :BloodBloomGameRecord
     {
         log.debug("createNewBloodBloomGameRecord ", "predatorId", predatorId, "preyId", preyId, "multiplePredators", multiplePredators);
-        var gameRecord :BloodBloomGameRecord = new BloodBloomGameRecord( _room, nextBloodBloomGameId, predatorId, preyId, multiplePredators);
+        var gameRecord :BloodBloomGameRecord = new BloodBloomGameRecord( _room, 
+            nextBloodBloomGameId, predatorId, preyId, multiplePredators, preyLocation);
         _playerId2Game.put( predatorId, gameRecord );
         _playerId2Game.put( preyId, gameRecord );
         _games.push( gameRecord );
         
-        if( !multiplePredators ) {
-            gameRecord.startGame();
-        }
+//        if( !multiplePredators ) {
+//            gameRecord.startGame();
+//        }
         return gameRecord;
     }
     

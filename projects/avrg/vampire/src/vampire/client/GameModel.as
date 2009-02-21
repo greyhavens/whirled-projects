@@ -381,10 +381,10 @@ public class GameModel extends SimObject//EventDispatcher
         
     }
     
-    public function get minions() :Array
-    {
-        return SharedPlayerStateClient.getMinions( ClientContext.ourPlayerId );
-    }
+//    public function get minions() :Array
+//    {
+//        return SharedPlayerStateClient.getMinions( ClientContext.ourPlayerId );
+//    }
     
     public function get blood() :Number
     {

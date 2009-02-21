@@ -62,9 +62,9 @@ public class HUD extends SceneObject
         
         updateOurPlayerState();
 
-        if( VConstants.LOCAL_DEBUG_MODE) {
-            showTarget( ClientContext.gameCtrl.player.getPlayerId() );
-        }
+//        if( VConstants.LOCAL_DEBUG_MODE) {
+//            showTarget( ClientContext.gameCtrl.player.getPlayerId() );
+//        }
 
           
     }
@@ -116,8 +116,8 @@ public class HUD extends SceneObject
         
         
         switch( e.name ) {
-            case Codes.ROOM_PROP_NON_PLAYERS:
-                break;
+//            case Codes.ROOM_PROP_NON_PLAYERS:
+//                break;
                 
             case Codes.ROOM_PROP_MINION_HIERARCHY:
                 break;
@@ -186,7 +186,7 @@ public class HUD extends SceneObject
                 else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED
                     || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME) {
                     showBloodBonds( ClientContext.ourPlayerId );
-                    showTarget( ClientContext.ourPlayerId );
+//                    showTarget( ClientContext.ourPlayerId );
                 }
                 else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION) {
                     showAction( ClientContext.ourPlayerId );
@@ -194,15 +194,15 @@ public class HUD extends SceneObject
                 else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE) {
                     showTime( ClientContext.ourPlayerId );
                 }
-                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_DISPLAY_VISIBLE
-                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME
-                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_LOCATION
-                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT
-                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD
-                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD
-                ) {
-                    showTarget( ClientContext.ourPlayerId );
-                }
+//                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_DISPLAY_VISIBLE
+//                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME
+//                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_LOCATION
+//                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT
+//                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD
+//                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD
+//                ) {
+//                    showTarget( ClientContext.ourPlayerId );
+//                }
             }
             else {
 //                log.debug("  Failed to update ElementChangedEvent" + e);
@@ -653,7 +653,7 @@ public class HUD extends SceneObject
         showBloodBonds( ClientContext.ourPlayerId );
         showAction( ClientContext.ourPlayerId );
         showTime( ClientContext.ourPlayerId );
-        showTarget( ClientContext.ourPlayerId );
+//        showTarget( ClientContext.ourPlayerId );
         
     }
     
@@ -773,120 +773,120 @@ public class HUD extends SceneObject
     {
         _action.text = "Action: " + SharedPlayerStateClient.getCurrentAction( ClientContext.ourPlayerId );
     }
-    protected function showTarget( playerId :int ) :void
-    {
-        _targetSprite.visible = false;
-        _targetSprite.graphics.clear();
-        
-        if( _targetSpriteHierarchyIcon != null && _targetSprite.contains( _targetSpriteHierarchyIcon)) {
-            _targetSprite.removeChild( _targetSpriteHierarchyIcon);
-        }
-        if( _targetSpriteBloodBondIcon != null && _targetSprite.contains( _targetSpriteBloodBondIcon)) {
-            _targetSprite.removeChild( _targetSpriteBloodBondIcon);
-        }
-        
-        
-        
-        
-        var targetId :int = SharedPlayerStateClient.getTargetPlayer( playerId );
-        var targetLocation :Array = SharedPlayerStateClient.getTargetLocation( playerId );
-        var targetHotspot :Array = SharedPlayerStateClient.getTargetHotspot( playerId );
-        trace("HUD showTarget(), targetId=" + targetId + ", targetLocation=" + targetLocation + ", targetHotspot=" + targetHotspot );
-        
-        _targetSpriteBlood.graphics.clear();
-         _targetSpriteBloodText.text = "";
-        if( !SharedPlayerStateClient.getTargetVisible( playerId )) {
-            return;
-        }
-        
-        if(( targetId > 0 && targetLocation != null && targetHotspot != null && targetHotspot.length > 1) || VConstants.LOCAL_DEBUG_MODE) {
-            _targetSprite.visible = true;
-            _target.text = "Target: " + SharedPlayerStateClient.getTargetName( playerId );
-            
-            
-//            var halfTargetAvatarHeight :Number = targetHotspot*0.5/ClientContext.gameCtrl.local.getRoomBounds()[1];
-            var p :Point;
-            if( VConstants.LOCAL_DEBUG_MODE ) {
-                p = new Point( 400, 400);
-            }
-            else {
-                var targetAvatarHeight :Number = targetHotspot[1]/ClientContext.gameCtrl.local.getRoomBounds()[1];
-                p = ClientContext.gameCtrl.local.locationToPaintable( targetLocation[0], targetAvatarHeight, targetLocation[2]) as Point;
-            }
-//            p.y -= targetHotspot[1];
-            _targetSprite.x = p.x;
-            _targetSprite.y = p.y;
-            
-            _targetSprite.visible = true;
-//            _targetSprite.x = targetHotspot[0];
-//            _targetSprite.y = targetHotspot[1] - 30;
-            
-            //Show the targets blood
-            var targetBlood :Number = SharedPlayerStateClient.getTargetBlood( playerId );
-            var targetMaxBlood :Number = SharedPlayerStateClient.getTargetMaxBlood( playerId );
-            
-//            trace("showTarget() targetBlood=" + targetBlood); 
-//            trace("showTarget() targetMaxBlood=" + targetMaxBlood);
-            
-            if( !isNaN( targetBlood ) && !isNaN( targetMaxBlood ) ) {
-                
-                
-//                var pointForBloodBar :Point = ClientContext.gameCtrl.local.locationToPaintable( targetLocation[0], targetAvatarHeight, targetLocation[2]) as Point;
-//                pointForBloodBar.y = pointForBloodBar.y - 30;//Adjust to be over the player name
-//                _targetSpriteBlood.x = pointForBloodBar.x;
-//                _targetSpriteBlood.y = pointForBloodBar.y;
-//                var bloodColor :int =  0xcc0000;
-//                _targetSpriteBlood.y = -30;
-//                _targetSpriteBlood.graphics.lineStyle(1, bloodColor);
-//                _targetSpriteBlood.graphics.drawRect(-50, -5, 100, 10);
-//                _targetSpriteBlood.graphics.beginFill( bloodColor );
-                
-                _targetSpriteBlood.width = targetMaxBlood;
-                
-                if( targetBlood > 0 && targetMaxBlood > 0) {
-//                    _targetSpriteBlood.graphics.drawRect(-50, -5, (targetBlood * 100.0) / targetMaxBlood, 10);
-                    _targetSpriteBlood.gotoAndStop((targetBlood * 100.0) / targetMaxBlood);
-                }
-//                _targetSpriteBlood.graphics.endFill();
-                
-                var bloodtext :String = "" + targetBlood;
-                if( bloodtext.indexOf(".") >= 0) {
-                    bloodtext = bloodtext.slice(0, bloodtext.indexOf(".") + 3);
-                }
-                _targetSpriteBloodText.text = bloodtext;
-                
-                
-                _targetSprite.graphics.lineStyle(1, 0xffffff);
-                _targetSprite.graphics.drawRect( _targetSpriteBlood.x, _targetSpriteBlood.y, _targetSpriteBlood.width, _targetSpriteBlood.height);
-                
-  
-            }
-            else {
-                _targetSpriteBloodText.text = "";
-            }
-        
-           //Show hierarchy and bloodbond icons if appropriate
-           trace("ClientContext.model.targetPlayerId=" + ClientContext.model.targetPlayerId);
-           trace("ClientContext.model.bloodbonded=" + ClientContext.model.bloodbonded);
-           if( VConstants.LOCAL_DEBUG_MODE || ClientContext.model.targetPlayerId == ClientContext.model.bloodbonded) {
-               trace("Showing bloodbond icon");
-               _targetSprite.addChild( _targetSpriteBloodBondIcon );
-               _targetSpriteBloodBondIcon.x = _targetSpriteBlood.x - _targetSpriteBlood.width/2;
-               _targetSpriteBloodBondIcon.y = _targetSpriteBlood.y - _targetSpriteBlood.height;
-           }
-           
-           if( VConstants.LOCAL_DEBUG_MODE || ClientContext.model.hierarchy.isPlayerSireOrMinionOfPlayer( targetId, playerId)) {
-               _targetSprite.addChild( _targetSpriteHierarchyIcon );
-               _targetSpriteHierarchyIcon.x = _targetSpriteBlood.x - _targetSpriteBlood.width/2 + _targetSpriteBlood.width * 2;
-               _targetSpriteHierarchyIcon.y = _targetSpriteBlood.y - _targetSpriteBlood.height;
-           }
-                
-        }
-        else {
-            log.error("showTarget, but " , "location", targetLocation, "targetHotspot", targetHotspot);
-        }
-        
-    }
+//    protected function showTarget( playerId :int ) :void
+//    {
+//        _targetSprite.visible = false;
+//        _targetSprite.graphics.clear();
+//        
+//        if( _targetSpriteHierarchyIcon != null && _targetSprite.contains( _targetSpriteHierarchyIcon)) {
+//            _targetSprite.removeChild( _targetSpriteHierarchyIcon);
+//        }
+//        if( _targetSpriteBloodBondIcon != null && _targetSprite.contains( _targetSpriteBloodBondIcon)) {
+//            _targetSprite.removeChild( _targetSpriteBloodBondIcon);
+//        }
+//        
+//        
+//        
+//        
+//        var targetId :int = SharedPlayerStateClient.getTargetPlayer( playerId );
+//        var targetLocation :Array = SharedPlayerStateClient.getTargetLocation( playerId );
+//        var targetHotspot :Array = SharedPlayerStateClient.getTargetHotspot( playerId );
+//        trace("HUD showTarget(), targetId=" + targetId + ", targetLocation=" + targetLocation + ", targetHotspot=" + targetHotspot );
+//        
+//        _targetSpriteBlood.graphics.clear();
+//         _targetSpriteBloodText.text = "";
+//        if( !SharedPlayerStateClient.getTargetVisible( playerId )) {
+//            return;
+//        }
+//        
+//        if(( targetId > 0 && targetLocation != null && targetHotspot != null && targetHotspot.length > 1) || VConstants.LOCAL_DEBUG_MODE) {
+//            _targetSprite.visible = true;
+//            _target.text = "Target: " + SharedPlayerStateClient.getTargetName( playerId );
+//            
+//            
+////            var halfTargetAvatarHeight :Number = targetHotspot*0.5/ClientContext.gameCtrl.local.getRoomBounds()[1];
+//            var p :Point;
+//            if( VConstants.LOCAL_DEBUG_MODE ) {
+//                p = new Point( 400, 400);
+//            }
+//            else {
+//                var targetAvatarHeight :Number = targetHotspot[1]/ClientContext.gameCtrl.local.getRoomBounds()[1];
+//                p = ClientContext.gameCtrl.local.locationToPaintable( targetLocation[0], targetAvatarHeight, targetLocation[2]) as Point;
+//            }
+////            p.y -= targetHotspot[1];
+//            _targetSprite.x = p.x;
+//            _targetSprite.y = p.y;
+//            
+//            _targetSprite.visible = true;
+////            _targetSprite.x = targetHotspot[0];
+////            _targetSprite.y = targetHotspot[1] - 30;
+//            
+//            //Show the targets blood
+//            var targetBlood :Number = SharedPlayerStateClient.getTargetBlood( playerId );
+//            var targetMaxBlood :Number = SharedPlayerStateClient.getTargetMaxBlood( playerId );
+//            
+////            trace("showTarget() targetBlood=" + targetBlood); 
+////            trace("showTarget() targetMaxBlood=" + targetMaxBlood);
+//            
+//            if( !isNaN( targetBlood ) && !isNaN( targetMaxBlood ) ) {
+//                
+//                
+////                var pointForBloodBar :Point = ClientContext.gameCtrl.local.locationToPaintable( targetLocation[0], targetAvatarHeight, targetLocation[2]) as Point;
+////                pointForBloodBar.y = pointForBloodBar.y - 30;//Adjust to be over the player name
+////                _targetSpriteBlood.x = pointForBloodBar.x;
+////                _targetSpriteBlood.y = pointForBloodBar.y;
+////                var bloodColor :int =  0xcc0000;
+////                _targetSpriteBlood.y = -30;
+////                _targetSpriteBlood.graphics.lineStyle(1, bloodColor);
+////                _targetSpriteBlood.graphics.drawRect(-50, -5, 100, 10);
+////                _targetSpriteBlood.graphics.beginFill( bloodColor );
+//                
+//                _targetSpriteBlood.width = targetMaxBlood;
+//                
+//                if( targetBlood > 0 && targetMaxBlood > 0) {
+////                    _targetSpriteBlood.graphics.drawRect(-50, -5, (targetBlood * 100.0) / targetMaxBlood, 10);
+//                    _targetSpriteBlood.gotoAndStop((targetBlood * 100.0) / targetMaxBlood);
+//                }
+////                _targetSpriteBlood.graphics.endFill();
+//                
+//                var bloodtext :String = "" + targetBlood;
+//                if( bloodtext.indexOf(".") >= 0) {
+//                    bloodtext = bloodtext.slice(0, bloodtext.indexOf(".") + 3);
+//                }
+//                _targetSpriteBloodText.text = bloodtext;
+//                
+//                
+//                _targetSprite.graphics.lineStyle(1, 0xffffff);
+//                _targetSprite.graphics.drawRect( _targetSpriteBlood.x, _targetSpriteBlood.y, _targetSpriteBlood.width, _targetSpriteBlood.height);
+//                
+//  
+//            }
+//            else {
+//                _targetSpriteBloodText.text = "";
+//            }
+//        
+//           //Show hierarchy and bloodbond icons if appropriate
+//           trace("ClientContext.model.targetPlayerId=" + ClientContext.model.targetPlayerId);
+//           trace("ClientContext.model.bloodbonded=" + ClientContext.model.bloodbonded);
+//           if( VConstants.LOCAL_DEBUG_MODE || ClientContext.model.targetPlayerId == ClientContext.model.bloodbonded) {
+//               trace("Showing bloodbond icon");
+//               _targetSprite.addChild( _targetSpriteBloodBondIcon );
+//               _targetSpriteBloodBondIcon.x = _targetSpriteBlood.x - _targetSpriteBlood.width/2;
+//               _targetSpriteBloodBondIcon.y = _targetSpriteBlood.y - _targetSpriteBlood.height;
+//           }
+//           
+//           if( VConstants.LOCAL_DEBUG_MODE || ClientContext.model.hierarchy.isPlayerSireOrMinionOfPlayer( targetId, playerId)) {
+//               _targetSprite.addChild( _targetSpriteHierarchyIcon );
+//               _targetSpriteHierarchyIcon.x = _targetSpriteBlood.x - _targetSpriteBlood.width/2 + _targetSpriteBlood.width * 2;
+//               _targetSpriteHierarchyIcon.y = _targetSpriteBlood.y - _targetSpriteBlood.height;
+//           }
+//                
+//        }
+//        else {
+//            log.error("showTarget, but " , "location", targetLocation, "targetHotspot", targetHotspot);
+//        }
+//        
+//    }
     
     protected function showTime( playerId :int ) :void
     {

@@ -155,7 +155,7 @@ public class VampireAvatarHUD extends AvatarHUD
     {
         var currentBlood :Number = SharedPlayerStateClient.getBlood( playerId );
         if( isNaN( currentBlood ) ) {
-            currentBlood = 50;
+            currentBlood = 1;
         }
         var maxBlood :Number = VConstants.MAX_BLOOD_NONPLAYERS;
         if( isPlayer ) {
@@ -246,7 +246,23 @@ public class VampireAvatarHUD extends AvatarHUD
         frenzyCountdown.visible = multiplayer;
         frenzyCountdown.gotoAndPlay(1);
         waitingSign.visible = false;
+        
+        _frenzyTimer = frenzyCountdown.visible ? VConstants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME : 0;
+        
         _selected = true;
+    }
+    
+
+    
+    override protected function update( dt :Number ) :void
+    {
+        if( frenzyCountdown.visible ) {
+            if( _frenzyTimer > 0 ) {
+                _frenzyTimer -= dt;
+                _frenzyTimer = Math.max(_frenzyTimer, 0);
+                frenzyCountdown.gotoAndStop( int( _frenzyTimer*100 / VConstants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME ));
+            }
+        }
     }
     
     
@@ -305,6 +321,8 @@ public class VampireAvatarHUD extends AvatarHUD
     protected var _hierarchyIcon :SimpleButton;
     protected var _blood :MovieClip;
     protected var _selected :Boolean = false;
+    
+    protected var _frenzyTimer :Number = 0;
     
     protected var _roomKey :String;
     

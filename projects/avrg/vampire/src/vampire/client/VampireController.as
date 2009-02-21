@@ -11,6 +11,7 @@ import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.actions.BaseVampireMode;
 import vampire.client.actions.hierarchy.HierarchyView;
 import vampire.client.events.ChangeActionEvent;
+import vampire.data.Codes;
 import vampire.data.SharedPlayerStateClient;
 import vampire.data.VConstants;
 import vampire.net.messages.BloodBondRequestMessage;
@@ -50,16 +51,41 @@ public class VampireController extends Controller
         
     public function handleSwitchMode( mode :String ) :void
     {
+        log.debug("handleSwitchMode("+mode+")");
+        
+        //If we want to go to bared mode, disable any previus targeting overlays
+        if( mode == VConstants.GAME_MODE_BARED  ) {
+            ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
+        }
+        
         //If we are already baring, toggle us out.
         if( mode == VConstants.GAME_MODE_BARED && 
             ClientContext.model.action == VConstants.GAME_MODE_BARED) {
-                
+        
+            log.debug("  sending to server "+VConstants.GAME_MODE_NOTHING);        
             ClientContext.gameCtrl.agent.sendMessage( RequestActionChangeMessage.NAME, 
                 new RequestActionChangeMessage( ClientContext.ourPlayerId, 
                     VConstants.GAME_MODE_NOTHING).toBytes() );    
         }
+        else if(mode == VConstants.GAME_MODE_FEED_FROM_NON_PLAYER ||
+            mode == VConstants.GAME_MODE_FEED_FROM_PLAYER) {
+            
+            //If we want to feed on someone, but we are already in bared mode, 
+            //first stop bared mode.
+            if( ClientContext.model.action == VConstants.GAME_MODE_BARED ) {
+                
+                var playerKey :String = Codes.playerRoomPropKey( ClientContext.ourPlayerId );
+                ClientContext.gameCtrl.player.props.setIn( playerKey, 
+                    Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, VConstants.GAME_MODE_NOTHING);
+                    
+                log.debug("  sending to server "+VConstants.GAME_MODE_NOTHING);
+                ClientContext.gameCtrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
+            }
+            
+        }
         else {
         
+            log.debug("  sending to server "+mode);
             ClientContext.gameCtrl.agent.sendMessage( RequestActionChangeMessage.NAME, 
                 new RequestActionChangeMessage( ClientContext.ourPlayerId, mode).toBytes() );
         }
@@ -157,14 +183,33 @@ public class VampireController extends Controller
     public function handleShowIntro() :void
     {
         trace("handleShowIntro()");
-        if( ClientContext.game.ctx.mainLoop.topMode !== new IntroHelpMode() ) {
-            ClientContext.game.ctx.mainLoop.pushMode( new IntroHelpMode());
-        }
+        if( ClientContext.game.ctx.mainLoop.topMode.getObjectNamed(IntroHelpMode.NAME) == null ) {
+            ClientContext.game.ctx.mainLoop.topMode.addObject( new IntroHelpMode(),
+                ClientContext.game.ctx.mainLoop.topMode.modeSprite );  
+        } 
+//        if( ClientContext.game.ctx.mainLoop.topMode !== new IntroHelpMode() ) {
+//            ClientContext.game.ctx.mainLoop.pushMode( new IntroHelpMode());
+//        }
     }
     
 //    public function handleFeedRequest( targetPlayerId :int, targetIsVictim :Boolean) :void
     public function handleFeedRequest( targetingOverlay :VampireAvatarHUDOverlay, parentSprite :Sprite, hud :HUD) :void
     {
+        //If we are alrady in bared mode, first dump us out before any feeding shinannigens
+        if( ClientContext.model.action == VConstants.GAME_MODE_BARED ) {
+            var playerKey :String = Codes.playerRoomPropKey( ClientContext.ourPlayerId );
+            ClientContext.gameCtrl.player.props.setIn( playerKey, 
+                Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, VConstants.GAME_MODE_NOTHING);
+            ClientContext.gameCtrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
+            
+            ClientContext.gameCtrl.agent.sendMessage( RequestActionChangeMessage.NAME, 
+                new RequestActionChangeMessage( ClientContext.ourPlayerId, 
+                    VConstants.GAME_MODE_NOTHING).toBytes() ); 
+            
+            targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );    
+            return;
+        }
+                
         trace("handle handleFeedRequest");
         
 //        hud.showFeedBack("Feeding");
@@ -181,7 +226,9 @@ public class VampireController extends Controller
             
         }
         else {
-            log.debug("Only vampires can feed.");
+            ClientContext.hud.showFeedBack( "Only vampires can feed.  You must be at least level " +
+                VConstants.MINIMUM_VAMPIRE_LEVEL +".  You are level " + ClientContext.model.level, true); 
+//            log.debug("Only vampires can feed.");
         }
         
         

@@ -120,6 +120,13 @@ public class VampireMain extends Sprite
         
         
             EventHandlers.registerListener( ClientContext.gameCtrl.game, MessageReceivedEvent.MESSAGE_RECEIVED, printServerLogToFlashLog);
+            
+            //If there is a share token, send the invitee to the server
+            var inviterId :int = ClientContext.gameCtrl.local.getInviterMemberId();
+            log.info(ClientContext.gameCtrl.player.getPlayerId() + " inviterId=" + inviterId);
+            if( inviterId > 0 ) {
+                ClientContext.gameCtrl.agent.sendMessage( VConstants.MESSAGE_SHARE_TOKEN, inviterId );
+            }
         }
     }
 

@@ -29,9 +29,20 @@ public class VampireAvatarHUDManager extends AvatarHUDManager
         
     }
     
+//    override protected function addedToDB () :void
+//    {
+////        db.addObject( _targetingOverlay );
+//        db.addObject( _targetingOverlay, _displaySprite );
+////        _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
+//        _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
+////        _targetingOverlay.displayObject.visible = false;
+//    }
+    
     override protected function createPlayerAvatar( userId :int ) :AvatarHUD
     {
-        return new VampireAvatarHUD( userId );
+        var av :VampireAvatarHUD = new VampireAvatarHUD( userId );
+        db.addObject( av );
+        return av;
     }
     
     public function getVampireAvatar( playerId :int ) :VampireAvatarHUD

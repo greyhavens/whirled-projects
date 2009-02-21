@@ -9,7 +9,8 @@ package vampire.server
     
 public class BloodBloomGameRecord
 {
-    public function BloodBloomGameRecord( room :Room, gameId :int, predatorId :int, preyId :int, multiplePredators :Boolean)
+    public function BloodBloomGameRecord( room :Room, gameId :int, predatorId :int, preyId :int, 
+        multiplePredators :Boolean, preyLocation :Array)
     {
         _room = room;
         _gameId = gameId;
@@ -17,17 +18,23 @@ public class BloodBloomGameRecord
         _predators.add( _primaryPredatorId );
         _preyId = preyId;
         _multiplePredators = multiplePredators;
+        _preyLocation = preyLocation;
         
         if( _multiplePredators ) {
             startCountDownTimer();
         }
     }
     
-    protected function startCountDownTimer() :void
+    public function startCountDownTimer() :void
     {
         _countdownTimeRemaining = VConstants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME;
         _currentCountdownSecond = VConstants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME;
         setCountDownIntoRoomProps();
+    }
+    
+    public function get isCountDownTimerStarted() :Boolean
+    {
+        return _countdownTimeRemaining > 0;
     }
     
     /**
@@ -66,7 +73,7 @@ public class BloodBloomGameRecord
         var prey :int = int(arr[1]);
         var pred1 :int = int(arr[2]);
         
-        var result :BloodBloomGameRecord = new BloodBloomGameRecord(null, -1, pred1, prey, true );
+        var result :BloodBloomGameRecord = new BloodBloomGameRecord(null, -1, pred1, prey, true, null );
         
         for( var i :int = 3; i < arr.length; i++) {
             result._predators.add( arr[i] );
@@ -139,9 +146,10 @@ public class BloodBloomGameRecord
         shutdown();
     }
     
-    public function addPredator( playerId :int ) :void
+    public function addPredator( playerId :int, preyLocation :Array ) :void
     {
         _predators.add( playerId );
+        _preyLocation = preyLocation;
     }
     
     public function isPredator( playerId :int ) :Boolean
@@ -258,6 +266,16 @@ public class BloodBloomGameRecord
         return _currentCountdownSecond;    
     }
     
+    public function get multiplePredators() :Boolean
+    {
+        return _multiplePredators;    
+    }
+    
+    public function get preyLocation() :Array
+    {
+        return _preyLocation;    
+    }
+    
     public function toString() :String
     {
         return ClassUtil.tinyClassName(this) 
@@ -277,13 +295,14 @@ public class BloodBloomGameRecord
     
     protected var _predators :HashSet = new HashSet();
     protected var _preyId :int;
+    protected var _preyLocation :Array;
     protected var _primaryPredatorId :int;
     protected var _started :Boolean = false;
     protected var _finished :Boolean = false;
     protected var _multiplePredators :Boolean;
-    protected var _countdownTimeRemaining :Number;
+    protected var _countdownTimeRemaining :Number = 0;
     protected var _currentCountdownSecond :int;
-    protected var _elapsedGameTime :Number;
+    protected var _elapsedGameTime :Number = 0;
     
     protected static const log :Log = Log.getLog( BloodBloomGameRecord );
 

@@ -25,10 +25,10 @@ public class SharedPlayerStateClient
         return VConstants.MAX_BLOOD_FOR_LEVEL( getLevel(playerId) );
     }
     
-    public static function getTargetVisible (playerId :int) :Boolean
-    {
-        return Boolean(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_DISPLAY_VISIBLE));
-    }
+//    public static function getTargetVisible (playerId :int) :Boolean
+//    {
+//        return Boolean(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_DISPLAY_VISIBLE));
+//    }
     
     public static function getLevel (playerId :int) :int
     {
@@ -66,25 +66,25 @@ public class SharedPlayerStateClient
         return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_ID) as int;
     }
     
-    public static function getTargetName (playerId :int) :String
-    {
-        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME) as String;
-    }
-    
-    public static function getTargetHotspot (playerId :int) :Array
-    {
-        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT) as Array;
-    }
-    
-    public static function getTargetBlood (playerId :int) :Number
-    {
-        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD) as Number;
-    }
-    
-    public static function getTargetMaxBlood (playerId :int) :Number
-    {
-        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD) as Number;
-    }
+//    public static function getTargetName (playerId :int) :String
+//    {
+//        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME) as String;
+//    }
+//    
+//    public static function getTargetHotspot (playerId :int) :Array
+//    {
+//        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT) as Array;
+//    }
+//    
+//    public static function getTargetBlood (playerId :int) :Number
+//    {
+//        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD) as Number;
+//    }
+//    
+//    public static function getTargetMaxBlood (playerId :int) :Number
+//    {
+//        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD) as Number;
+//    }
     
     public static function getTargetLocation (playerId :int) :Array
     {
@@ -111,10 +111,10 @@ public class SharedPlayerStateClient
         return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE);
     }
     
-    public static function getMinions (playerId :int) :Array
-    {
-        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_MINIONS) as Array;
-    }
+//    public static function getMinions (playerId :int) :Array
+//    {
+//        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_MINIONS) as Array;
+//    }
     
     protected static function playerData (playerId :int, ix :int) :*
     {

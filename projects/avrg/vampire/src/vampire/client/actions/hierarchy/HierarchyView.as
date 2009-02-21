@@ -13,7 +13,10 @@ package vampire.client.actions.hierarchy
     import flash.display.SimpleButton;
     import flash.display.Sprite;
     import flash.events.MouseEvent;
+    import flash.filters.BlurFilter;
+    import flash.filters.DropShadowFilter;
     import flash.geom.Rectangle;
+    import flash.text.AntiAliasType;
     import flash.text.TextField;
     import flash.text.TextFormat;
     import flash.text.TextFormatAlign;
@@ -23,9 +26,9 @@ package vampire.client.actions.hierarchy
     import vampire.client.VampireController;
     import vampire.client.events.HierarchyUpdatedEvent;
     import vampire.data.Codes;
-    import vampire.data.VConstants;
     import vampire.data.MinionHierarchy;
     import vampire.data.SharedPlayerStateClient;
+    import vampire.data.VConstants;
     
     public class HierarchyView extends SceneObject
     {
@@ -96,23 +99,94 @@ package vampire.client.actions.hierarchy
             redoBloodBondText( "Blood Bond mate" ); 
             
             
-            var lineageText :TextField = TextFieldUtil.createField("Lineage");
-            lineageText.selectable = false;
-            lineageText.tabEnabled = false;
-            lineageText.embedFonts = true;
+            
+            
+            
+            var textSprite :Sprite = new Sprite();
+                    
+            var feedbackMessageTextField :TextField = TextFieldUtil.createField("Lineage");
+            feedbackMessageTextField.selectable = false;
+            feedbackMessageTextField.tabEnabled = false;
+            feedbackMessageTextField.embedFonts = true;
+            
             var lineageformat :TextFormat = new TextFormat();
             lineageformat.font = "JuiceEmbedded";
             lineageformat.size = 30;
-            lineageformat.color = 0xff0000;
-            lineageformat.align = TextFormatAlign.CENTER;
+            lineageformat.align = TextFormatAlign.RIGHT;
             lineageformat.bold = true;
-            lineageText.setTextFormat( lineageformat );
-            lineageText.textColor = 0xff0000;
-            lineageText.width = 200;
-            lineageText.height = 60;
-            lineageText.x = 160;//_hierarchyPanel.width/2;
-            lineageText.y = 0 ;
-            _hierarchyPanel.addChild( lineageText );
+            feedbackMessageTextField.setTextFormat( lineageformat );
+            feedbackMessageTextField.textColor = 0xff0000;
+            feedbackMessageTextField.width = 200;
+            feedbackMessageTextField.height = 60;
+            feedbackMessageTextField.x = 100;
+            feedbackMessageTextField.y = 0;
+            feedbackMessageTextField.antiAliasType = AntiAliasType.ADVANCED;
+            
+            var blurred :BlurFilter = new BlurFilter(1.3, 1.3, 1 );
+            var storedBlur :Array = [blurred];
+//                    feedbackMessageTextField.filters = storedBlur;
+            
+            
+            var shadowText :TextField = TextFieldUtil.createField("Lineage");
+            shadowText.selectable = false;
+            shadowText.tabEnabled = false;
+            shadowText.embedFonts = true;
+            
+            shadowText.setTextFormat( lineageformat );
+            shadowText.textColor = 0xff0000;
+            shadowText.width = feedbackMessageTextField.width;
+            shadowText.height = feedbackMessageTextField.height;
+            shadowText.x = feedbackMessageTextField.x;
+            shadowText.y = feedbackMessageTextField.y;
+            shadowText.antiAliasType = AntiAliasType.ADVANCED;
+            
+            var blurredShadow:DropShadowFilter = new DropShadowFilter(0.8, 0, 0x000000, 1.0, 5, 5, 1000 );
+            var storedBlurShadow :Array = [blurredShadow];
+            shadowText.filters = storedBlurShadow;
+            
+            
+            textSprite.addChild( shadowText );
+            textSprite.addChild( feedbackMessageTextField );
+            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+//            var lineageText :TextField = TextFieldUtil.createField("Lineage");
+//            lineageText.selectable = false;
+//            lineageText.tabEnabled = false;
+//            lineageText.embedFonts = true;
+//            var lineageformat :TextFormat = new TextFormat();
+//            lineageformat.font = "JuiceEmbedded";
+//            lineageformat.size = 30;
+//            lineageformat.color = 0xff0000;
+//            lineageformat.align = TextFormatAlign.CENTER;
+//            lineageformat.bold = true;
+//            lineageText.setTextFormat( lineageformat );
+//            lineageText.antiAliasType = AntiAliasType.ADVANCED;
+//            lineageText.textColor = 0xff0000;
+//            lineageText.width = 200;
+//            lineageText.height = 60;
+//            lineageText.x = 160;//_hierarchyPanel.width/2;
+//            lineageText.y = 0 ;
+            
+            _hierarchyPanel.addChild( textSprite );
             
             
             var instructionText :TextField = TextFieldUtil.createField("Click a player (or drop) to re-center the tree.");
@@ -246,7 +320,9 @@ package vampire.client.actions.hierarchy
             _bondText.embedFonts = true;
             var format :TextFormat = getDefaultFormat();
             format.align = TextFormatAlign.LEFT;
+            
             _bondText.setTextFormat( format );
+            _bondText.antiAliasType = AntiAliasType.ADVANCED;
             _bondText.width = 200;
             _bondText.height = 60;
             _bondText.x = _bondIcon.x  + 20;
@@ -578,8 +654,11 @@ package vampire.client.actions.hierarchy
             tf.tabEnabled = false;
             tf.textColor = 0xffffff;
             tf.embedFonts = true;
+            
 //            tf.html = true;
             tf.setTextFormat( getDefaultFormat() );
+            
+            tf.antiAliasType = AntiAliasType.ADVANCED;
             
 //            tf.antiAliasType = AntiAliasType.ADVANCED;
             
@@ -614,7 +693,6 @@ package vampire.client.actions.hierarchy
             format.color = 0xffffff;
             format.align = TextFormatAlign.CENTER;
             format.bold = true;
-            format.kerning = true;
             return format;
         }
         

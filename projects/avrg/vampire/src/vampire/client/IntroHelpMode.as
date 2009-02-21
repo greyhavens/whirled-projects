@@ -4,37 +4,58 @@ import com.threerings.flash.SimpleTextButton;
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Command;
 import com.threerings.util.HashMap;
-import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.objects.SceneObject;
 
 import fakeavrg.PropertyGetSubControlFake;
 
+import flash.display.DisplayObject;
+import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 
 import vampire.avatar.AvatarGameBridge;
 import vampire.data.Codes;
-import vampire.data.VConstants;
 import vampire.data.Logic;
+import vampire.data.VConstants;
 
-public class IntroHelpMode extends AppMode
+public class IntroHelpMode extends SceneObject
 {
     public function IntroHelpMode()
     {
-        super();
+        setup()
     }
     
-    override protected function setup() :void
+    override public function get objectName () :String
     {
-        modeSprite.graphics.beginFill(0xcc0000);
-        modeSprite.graphics.drawRect(100, 100, 400, 200);
-        modeSprite.graphics.endFill();
+        return NAME;
+    }
+    
+    override public function get displayObject():DisplayObject
+    {
+        return modeSprite;
+    }
+    
+//    override 
+    protected function setup() :void
+    {
+//        modeSprite.graphics.beginFill(0xcc0000);
+//        modeSprite.graphics.drawRect(100, 100, 400, 200);
+//        modeSprite.graphics.endFill();
+//        
+//        modeSprite.graphics.lineStyle(0x000000, 1);
         
-        modeSprite.graphics.lineStyle(0x000000, 1);
+        
+        var background :Sprite = new Sprite();
+        background.graphics.beginFill(0xcc0000);
+        background.graphics.drawRect(100, 100, 400, 200);
+        background.graphics.endFill();
+        modeSprite.addChild( background );
         
         var welcometext :TextField = TextFieldUtil.createField("Welcome to Vampire, click to remove", {selectable:false, x:120, y:120, width:200}); 
         modeSprite.addChild( welcometext );
         
-        Command.bind( welcometext, MouseEvent.CLICK, VampireController.HIDE_INTRO );
+//        Command.bind( welcometext, MouseEvent.CLICK, VampireController.HIDE_INTRO );
+        Command.bind( background, MouseEvent.CLICK, destroySelf );
             
             
                
@@ -127,8 +148,16 @@ public class IntroHelpMode extends AppMode
             trace("locations changed=" + ClientContext.gameCtrl.room.getEntityProperty( AvatarGameBridge.ENTITY_PROPERTY_IS_LOCATIONS_CHANGED, ClientContext.playerEntityId) );
             
         });
-        
         modeSprite.addChild( locationsChangedButton );
+        
+        var showInviteButton :SimpleTextButton = new SimpleTextButton( "Show Invites" );
+        showInviteButton.x = locationsChangedButton.x;
+        showInviteButton.y = locationsChangedButton.y + 30;
+        showInviteButton.addEventListener( MouseEvent.CLICK, function(...ignored):void{ 
+            ClientContext.gameCtrl.local.showInvitePage("Join my game!!", "sire=" + ClientContext.ourPlayerId);
+            
+        });
+        modeSprite.addChild( showInviteButton );
     }
         
         
@@ -225,6 +254,7 @@ public class IntroHelpMode extends AppMode
         }
     }
         
-        
+   protected var modeSprite :Sprite = new Sprite(); 
+   public static const NAME :String = "IntroHelp";
 }
 }

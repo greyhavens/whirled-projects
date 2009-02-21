@@ -116,21 +116,21 @@ public class Player extends EventHandlerManager
             log.info("  now", "time", _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
         }
         
-        var minions :Object = _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_MINIONS);
-        if (minions != null) {
-            _minions = minions as Array;
-            if( _minions == null) {
-                log.error("Despite the minions key containing something, it's not an array.  Setting _minions=[]");
-                _minions = [];
-            }
-
-        } else {
-            // bloodbonded should at least be an empty array
-//            log.debug("Repairing player bloodbonded", "playerId", ctrl.getPlayerId());
-            log.debug("   setting _minions=[]");
-            setMinions([]);
-        }
-        log.debug("Getting minions=" + _minions);
+//        var minions :Object = _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_MINIONS);
+//        if (minions != null) {
+//            _minions = minions as Array;
+//            if( _minions == null) {
+//                log.error("Despite the minions key containing something, it's not an array.  Setting _minions=[]");
+//                _minions = [];
+//            }
+//
+//        } else {
+//            // bloodbonded should at least be an empty array
+////            log.debug("Repairing player bloodbonded", "playerId", ctrl.getPlayerId());
+//            log.debug("   setting _minions=[]");
+//            setMinions([]);
+//        }
+//        log.debug("Getting minions=" + _minions);
         
         _sire = int(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_SIRE));
         
@@ -1919,12 +1919,12 @@ public class Player extends EventHandlerManager
         }
     }
     
-    public function setMinions (minions :Array) :void
-    {
-        _minions = minions;
-        // persist it, too
-        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_MINIONS, _minions, true);
-    }
+//    public function setMinions (minions :Array) :void
+//    {
+//        _minions = minions;
+//        // persist it, too
+//        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_MINIONS, _minions, true);
+//    }
     
     public function setSire (sire :int, force :Boolean = false) :void
     {

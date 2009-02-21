@@ -40,7 +40,9 @@ public class MainGameMode extends AppMode
         
         //If this player hasn't played before, automatically show the help.
         if( ClientContext.model.isNewPlayer() ) {
-            ClientContext.game.ctx.mainLoop.pushMode( new IntroHelpMode() );
+            
+            addObject(  new IntroHelpMode(), modeSprite ); 
+//            ClientContext.game.ctx.mainLoop.pushMode( new IntroHelpMode() );
         }
     
         
