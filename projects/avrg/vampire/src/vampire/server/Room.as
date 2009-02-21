@@ -13,8 +13,7 @@ import com.whirled.avrg.RoomSubControlServer;
 import com.whirled.contrib.simplegame.server.ObjectDBThane;
 import com.whirled.contrib.simplegame.server.SimObjectThane;
 
-import flash.utils.setTimeout;
-
+import vampire.Util;
 import vampire.data.Codes;
 import vampire.data.VConstants;
 import vampire.net.messages.FeedRequestMessage2;
@@ -523,30 +522,69 @@ public class Room extends SimObjectThane
         return ServerContext.nonPlayersBloodMonitor.maxBloodFromNonPlayer( userId );
     }
     
-    public function bloodBloomGameOver( gameRecord :BloodBloomGameRecord ) :void
+    public function bloodBloomRoundOver( gameRecord :BloodBloomGameRecord ) :void
     {
-        log.debug("bloodBloomGameOver");
+        log.debug("bloodBloomRoundOver()", "gameRecord", gameRecord);
+        if( gameRecord.gameServer.lastRoundScore == 0 ) {
+            log.debug("score==0 so no blood lost or gained.");
+            return;
+        }
         var preyIsPlayer :Boolean = isPlayer( gameRecord.preyId );
         var victim :Player;
+        var damage :Number;
+        //Handle the prey loss of blood
         if( preyIsPlayer ) {
             victim = getPlayer( gameRecord.preyId );
             if( victim.isVampire() ) {
-                victim.damage( VConstants.BLOOD_FRACTION_LOST_PER_FEED * victim.maxBlood );
+                damage = victim.damage( VConstants.BLOOD_FRACTION_LOST_PER_FEED * victim.maxBlood );
+                addFeedback( "You lost " + Util.formatNumberForFeedback(damage) + " from feeding", victim.playerId);
             }
             else {
-                victim.damage( VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED );
+                damage = victim.damage( VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED );
             }
+            
+            var damageFormatted :String = Util.formatNumberForFeedback(damage);
+            gameRecord.predators.forEach( function( predId :int) :void {
+                var pred :Player = getPlayer( predatorId );
+                
+                addFeedback( victim.name + " lost " + damageFormatted + " from feeding", pred.playerId);
+                
+            });
         }
         else {
             ServerContext.nonPlayersBloodMonitor.nonplayerLosesBlood( gameRecord.preyId, VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED );
         }
         
+        //Predators gain blood from the prey
+        var bloodGainedPerPredator :Number = damage / gameRecord.predators.size();
+        var bloodGainedPerPredatorFormatted :String = Util.formatNumberForFeedback(bloodGainedPerPredator);
+        
         for each( var predatorId :int in gameRecord.predators.toArray()) {
             var pred :Player = getPlayer( predatorId );
             pred.mostRecentVictimId = gameRecord.preyId;
-            pred.addBlood( 20 );
+            pred.addBlood( bloodGainedPerPredator );
+            addFeedback( pred.name + " gained " + bloodGainedPerPredatorFormatted + " from feeding", pred.playerId);
         }
-        gameRecord.shutdown();
+        
+        //Then handle experience.  ATM everyone gets xp=score
+        var xpGained :Number = gameRecord.gameServer.lastRoundScore;
+        var xpFormatted :String = Util.formatNumberForFeedback( xpGained );
+        
+        function awardXP( playerId :int, xp :Number, xpFormatted :String ) :void
+        {
+            var p :Player = getPlayer( playerId );
+            if( p != null ) {
+                p.addXP( xp ); 
+                addFeedback( p.name + " gained " + xpFormatted + " experience from feeding.", p.playerId); 
+                p.ctrl.completeTask( Codes.TASK_ID_FEEDING, xpGained );
+            }
+        }
+        
+        awardXP( gameRecord.preyId, xpGained, xpFormatted);
+        gameRecord.predators.forEach( function( predId :int) :void {
+            awardXP( predId, xpGained, xpFormatted);
+        });
+        
     }
     
     
