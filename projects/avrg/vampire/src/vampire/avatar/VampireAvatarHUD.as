@@ -114,25 +114,58 @@ public class VampireAvatarHUD extends AvatarHUD
     protected function handleElementChanged (e :ElementChangedEvent) :void
     {
         
-        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
-        
-        //Try to only update when necessary
-        if( !isNaN( playerIdUpdated ) ) { 
+        if( e.name == Codes.ROOM_PROP_MINION_HIERARCHY ) {
+            updateInfoHud();
+        }
+        else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
+            updateInfoHud();
+        }
+        else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
+            var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
             //If it's us, update the our HUD
-            if( playerIdUpdated == playerId) {
-                updateInfoHud();
-            }
-            else {
-                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
-                    updateInfoHud();
-                }
+            if( !isNaN( playerIdUpdated ) && playerIdUpdated == playerId) {
+                updateBlood();
             }
         }
-        else {
-            if( e.name == Codes.ROOM_PROP_MINION_HIERARCHY ) {
-                updateInfoHud();
-            }
-        }
+                
+                
+        
+//        //Try to only update when necessary
+//        if( !isNaN( playerIdUpdated ) ) { 
+//            
+//                
+//                
+//                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
+//                    showBlood( ClientContext.ourPlayerId );
+//                }
+//                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
+//                    showXP( ClientContext.ourPlayerId );
+//                    showBlood( ClientContext.ourPlayerId );
+//                }
+////                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL) {
+////                    showLevel( ClientContext.ourPlayerId );
+////                }
+//                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED
+//                    || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME) {
+//                    showBloodBonds( ClientContext.ourPlayerId );
+////                    showTarget( ClientContext.ourPlayerId );
+//                }
+//                
+//                
+//                
+//                updateInfoHud();
+//            }
+//            else {
+//                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
+//                    updateInfoHud();
+//                }
+//            }
+//        }
+//        else {
+//            if( e.name == Codes.ROOM_PROP_MINION_HIERARCHY ) {
+//                updateInfoHud();
+//            }
+//        }
         
     }
     protected function handleMessageReceived( e :MessageReceivedEvent ) :void
@@ -154,7 +187,7 @@ public class VampireAvatarHUD extends AvatarHUD
     
     protected static const BLOOD_BAR_MIN_WIDTH :int = 50;
     
-    protected function updateInfoHud(...ignored) :void
+    protected function updateBlood( ...ignored ) :void
     {
         var currentBlood :Number = SharedPlayerStateClient.getBlood( playerId );
         if( isNaN( currentBlood ) ) {
@@ -164,6 +197,30 @@ public class VampireAvatarHUD extends AvatarHUD
         if( isPlayer ) {
             maxBlood = SharedPlayerStateClient.getMaxBlood( playerId ); 
         }
+        
+        _blood.width = BLOOD_BAR_MIN_WIDTH;
+        _blood.height = 30;
+        
+//        _blood.y = 10;
+        
+        var scaleY :Number = maxBlood / VConstants.MAX_BLOOD_FOR_LEVEL(1);
+//        _blood.scaleY = 50;//scaleY;
+//        trace("blood frame=" + (currentBlood*100/maxBlood));
+        _blood.gotoAndStop(int(currentBlood*100.0/maxBlood) );
+        
+    }
+    protected function updateInfoHud(...ignored) :void
+    {
+        
+        updateBlood();
+//        var currentBlood :Number = SharedPlayerStateClient.getBlood( playerId );
+//        if( isNaN( currentBlood ) ) {
+//            currentBlood = 1;
+//        }
+//        var maxBlood :Number = VConstants.MAX_BLOOD_NONPLAYERS;
+//        if( isPlayer ) {
+//            maxBlood = SharedPlayerStateClient.getMaxBlood( playerId ); 
+//        }
         
 //        trace("updateInfoHud() player=" + playerId + ", currentBlood=" + currentBlood + "/" + maxBlood);
         
@@ -179,15 +236,7 @@ public class VampireAvatarHUD extends AvatarHUD
         _hierarchyIcon.visible = isHierarch;
         _bloodBondIcon.visible = isBloodBond;
         
-        _blood.width = BLOOD_BAR_MIN_WIDTH;
-        _blood.height = 30;
         
-//        _blood.y = 10;
-        
-        var scaleY :Number = maxBlood / VConstants.MAX_BLOOD_FOR_LEVEL(1);
-//        _blood.scaleY = 50;//scaleY;
-//        trace("blood frame=" + (currentBlood*100/maxBlood));
-        _blood.gotoAndStop(int(currentBlood*100.0/maxBlood) );
 //        _blood.gotoAndStop(50);
             
 //        _blood.width = maxBlood;
