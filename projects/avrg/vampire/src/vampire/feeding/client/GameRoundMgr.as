@@ -40,6 +40,7 @@ public class GameRoundMgr
             if (!_ready) {
                 log.warning("Received StartRoundMsg before we were ready!");
             } else {
+                log.info("Received StartRoundMsg. Starting!");
                 var msg :StartRoundMsg = e.msg as StartRoundMsg;
                 startRound();
                 _ready = false;

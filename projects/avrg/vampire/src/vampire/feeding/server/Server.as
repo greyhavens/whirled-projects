@@ -175,7 +175,6 @@ public class Server extends FeedingGameServer
                         _waitForPlayersTimer = _timerMgr.createTimer(
                             Constants.WAIT_FOR_PLAYERS_TIMEOUT * 1000, 1, startGameNow);
                         _waitForPlayersTimer.start();
-                        log.info("Sending RoundStartingSoonMsg");
                         sendMessage(RoundStartingSoonMsg.create());
                     }
                 }
@@ -327,6 +326,8 @@ public class Server extends FeedingGameServer
         } else {
             _gameCtrl.getPlayer(toPlayer).sendMessage(name, val);
         }
+
+        log.info("Sending msg '" + msg.name + "' to " + (toPlayer != 0 ? toPlayer : "ALL"));
     }
 
     protected function resendMessage (e :MessageReceivedEvent) :void
