@@ -13,6 +13,8 @@ import com.whirled.avrg.RoomSubControlServer;
 import com.whirled.contrib.simplegame.server.ObjectDBThane;
 import com.whirled.contrib.simplegame.server.SimObjectThane;
 
+import flash.utils.setTimeout;
+
 import vampire.data.Codes;
 import vampire.data.VConstants;
 import vampire.net.messages.FeedRequestMessage2;
@@ -80,7 +82,7 @@ public class Room extends SimObjectThane
 
     override public function toString () :String
     {
-        return "Room [roomId=" + _roomId + "]";
+        return "Room [roomId=" + _roomId + ", playerIds=" + _players.keys() +"]";
     }
 
     public function playerEntered (player :Player) :void
@@ -327,8 +329,8 @@ public class Room extends SimObjectThane
 //            registerListener(_ctrl, AVRGameRoomEvent.PLAYER_MOVED, handlePlayerMoved);
 //            registerListener(_ctrl, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
             
-            _bloodBloomGameStarter = new BloomBloomManager( this );
-            _roomDB.addObject( _bloodBloomGameStarter );
+            _bloodBloomGameManager = new BloomBloomManager( this );
+            _roomDB.addObject( _bloodBloomGameManager );
             
         }
     }
@@ -496,7 +498,7 @@ public class Room extends SimObjectThane
     
 //    public function getLocation( userId :int ) :Array
 //    {
-//        if( ServerContext.vserver.isPlayerOnline( userId ) ) {
+//        if( ServerContext.vserver.isPlayer( userId ) ) {
 //            return ServerContext.vserver.getPlayer( userId ).location;
 //        }
 //        if( _entityLocations.containsKey( userId )) {
@@ -507,7 +509,7 @@ public class Room extends SimObjectThane
     
     public function getCurrentBlood( userId :int ) :Number
     {
-        if( ServerContext.vserver.isPlayerOnline( userId ) ) {
+        if( ServerContext.vserver.isPlayer( userId ) ) {
             return ServerContext.vserver.getPlayer( userId ).blood;
         }
         return ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( userId );
@@ -515,7 +517,7 @@ public class Room extends SimObjectThane
     
     public function getMaxBlood( userId :int ) :Number
     {
-        if( ServerContext.vserver.isPlayerOnline( userId ) ) {
+        if( ServerContext.vserver.isPlayer( userId ) ) {
             return ServerContext.vserver.getPlayer( userId ).maxBlood;
         }
         return ServerContext.nonPlayersBloodMonitor.maxBloodFromNonPlayer( userId );
@@ -573,6 +575,9 @@ public class Room extends SimObjectThane
             preyPlayer.damage( bloodLost );
             preyPlayer.addXP( pointsGained );
             ServerContext.vserver.awardSiresXpEarned( preyPlayer, pointsGained );
+            
+            addFeedback( "You lost " + bloodLost + " blood!", prey );
+            addFeedback( "You gained " + pointsGained + " experience!", prey );
         }
         else {
             ServerContext.nonPlayersBloodMonitor.nonplayerLosesBlood( prey, bloodLost );
@@ -589,11 +594,17 @@ public class Room extends SimObjectThane
             predPlayer.addXP( pointsGained );
             ServerContext.vserver.awardSiresXpEarned( predPlayer, pointsGained );
             
+            addFeedback( "You gained " + bloodPerPredator + " blood!", prey );
+            addFeedback( "You gained " + pointsGained + " experience!", prey );
+            
             
             if( preyPlayer != null && preyPlayer.mostRecentVictimId == predId) {
                 //Become blood bonds
+                
                 predPlayer.setBloodBonded( prey );
                 preyPlayer.setBloodBonded( predId );
+                addFeedback( predPlayer.name + " is now Bloodbonded to you.", prey );
+                addFeedback( preyPlayer.name + " is now Bloodbonded to you.", predId );
                 
                 log.info("Creating blood bonds between " + predPlayer.name + " and " + preyPlayer.name);
             }
@@ -616,19 +627,7 @@ public class Room extends SimObjectThane
     public function handleFeedRequest(  e :FeedRequestMessage2 ) :void
     {
         
-        var game :BloodBloomGameRecord = _bloodBloomGameStarter.requestFeed( e.playerId, e.targetPlayer, e.isAllowingMultiplePredators );
-        
-        
-        var pred :Player = getPlayer( e.playerId );
-        if( pred == null ) {
-            log.error("handleFeedRequest, pred Player null, no positioning");
-            return;
-        }
-        
-        pred.setTargetLocation( [e.targetX, e.targetY, e.targetZ] );
-        
-        pred.setAction( VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER );
-        pred.ctrl.setAvatarLocation( e.targetX, e.targetY, e.targetZ , 1);
+
         
                         
                         
@@ -769,7 +768,7 @@ public class Room extends SimObjectThane
     
 //    public var _nonplayers :HashSet = new HashSet();
     
-    public var _bloodBloomGameStarter :BloomBloomManager;
+    public var _bloodBloomGameManager :BloomBloomManager;
     
 //    public var _bloodBloomGames :Array = new Array();
     

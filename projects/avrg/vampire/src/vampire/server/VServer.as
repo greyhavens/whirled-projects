@@ -18,6 +18,7 @@ import com.whirled.net.MessageReceivedEvent;
 import flash.utils.getTimer;
 import flash.utils.setInterval;
 
+import vampire.Util;
 import vampire.data.Codes;
 import vampire.data.MinionHierarchyServer;
 import vampire.data.VConstants;
@@ -278,7 +279,7 @@ public class VServer extends ObjectDBThane
         var allsires :HashSet = ServerContext.minionHierarchy.getAllSiresAndGrandSires( player.playerId );
         var bloodForEachSire :Number = bloodShared / allsires.size();
         allsires.forEach( function ( sireId :int) :void {
-            if( isPlayerOnline( sireId )) {
+            if( isPlayer( sireId )) {
                 var sire :Player = getPlayer( sireId );
                 sire.addBlood( bloodForEachSire );
             }
@@ -294,11 +295,11 @@ public class VServer extends ObjectDBThane
         var allsires :HashSet = ServerContext.minionHierarchy.getAllSiresAndGrandSires( player.playerId );
         var xpForEachSire :Number = xp * 0.1 / allsires.size();
         allsires.forEach( function ( sireId :int) :void {
-            if( isPlayerOnline( sireId )) {
+            if( isPlayer( sireId )) {
                 var sire :Player = getPlayer( sireId );
                 sire.addXP( xpForEachSire );
                 
-                sire.addFeedback( "You gained " + xpForEachSire + " experience from minion " + player.name );
+                sire.addFeedback( "You gained " + Util.formatNumberForFeedback(xpForEachSire) + " experience from minion " + player.name );
             }
             else {//Add to offline database
                 ServerContext.ctrl.loadOfflinePlayer(sireId, 
@@ -331,10 +332,10 @@ public class VServer extends ObjectDBThane
 //    }    
     
     
-    public function isPlayerOnline( playerId :int ) :Boolean
-    {
-        return _players.containsKey( playerId );
-    }
+//    public function isPlayer( playerId :int ) :Boolean
+//    {
+//        return _players.containsKey( playerId );
+//    }
     
     public function isPlayer( playerId :int ) :Boolean
     {

@@ -4,6 +4,7 @@ package vampire.data
     import com.threerings.util.HashSet;
     import com.threerings.util.Log;
     import com.threerings.util.StringBuilder;
+    import com.whirled.contrib.simplegame.server.SimObjectThane;
     
     import flash.utils.ByteArray;
     
@@ -21,7 +22,7 @@ package vampire.data
  * 
  * The hierachy is stored as a map of playerid -> [sireid, name]  
  */
-public class MinionHierarchy
+public class MinionHierarchy extends SimObjectThane
 {
     public function setPlayerSire( playerId :int, sireId :int) :void
     {
@@ -296,7 +297,7 @@ public class MinionHierarchy
         
     }
     
-    public function toString() :String
+    override public function toString() :String
     {
         var sb :StringBuilder = new StringBuilder(" MinionHierarchy:");
         for each( var playerId :int in playerIds) {

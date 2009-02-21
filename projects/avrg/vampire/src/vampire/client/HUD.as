@@ -6,12 +6,12 @@ import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 import com.whirled.contrib.simplegame.tasks.SelfDestructTask;
 import com.whirled.contrib.simplegame.tasks.SerialTask;
 import com.whirled.contrib.simplegame.tasks.TimedTask;
+import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
@@ -21,9 +21,11 @@ import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.filters.BlurFilter;
 import flash.filters.DropShadowFilter;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flash.text.AntiAliasType;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
@@ -120,8 +122,8 @@ public class HUD extends SceneObject
             case Codes.ROOM_PROP_MINION_HIERARCHY:
                 break;
                 
-            case Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS:
-                break;
+//            case Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS:
+//                break;
                 
             case Codes.ROOM_PROP_BLOODBLOOM_PLAYERS:
                 break;
@@ -533,7 +535,7 @@ public class HUD extends SceneObject
         if( _feedbackMessageQueue.length > 0 && db != null) {
             _feedbackMessageTimeElapsed += dt;
             
-            if( _feedbackMessageTimeElapsed > VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY ) {
+            if( _feedbackMessageTimeElapsed >= VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY ) {
                 _feedbackMessageTimeElapsed = 0;
                 var feedbackMessage :String = _feedbackMessageQueue.shift() as String;
                 if( feedbackMessage != null ) {
@@ -560,6 +562,11 @@ public class HUD extends SceneObject
                     feedbackMessageTextField.y = _hudFeedback.y + 10;
                     feedbackMessageTextField.multiline = _hudFeedback.multiline;
                     feedbackMessageTextField.wordWrap = true;
+                    feedbackMessageTextField.antiAliasType = AntiAliasType.ADVANCED;
+                    
+                    var blurred :BlurFilter = new BlurFilter(1.3, 1.3, 1 );
+                    var storedBlur :Array = [blurred];
+                    feedbackMessageTextField.filters = storedBlur;
                     
                     
                     var shadowText :TextField = 
@@ -576,6 +583,7 @@ public class HUD extends SceneObject
                     shadowText.y = _hudFeedback.y + 10;
                     shadowText.multiline = _hudFeedback.multiline;
                     shadowText.wordWrap = true;
+                    shadowText.antiAliasType = AntiAliasType.ADVANCED;
                     
                     var blurredShadow:DropShadowFilter = new DropShadowFilter(0.8, 0, 0xffffff, 1.0, 5, 5, 1000 );
                     var storedBlurShadow :Array = [blurredShadow];
@@ -600,13 +608,14 @@ public class HUD extends SceneObject
             }
         }
         
-//        _DEBUGGING_add_feedback_timer += dt;
-//        if( _DEBUGGING_add_feedback_timer > 2 ) {
-//            _DEBUGGING_add_feedback_timer = 0;
-//            
-//            _feedbackMessageQueue.push(generateRandomString(Rand.nextIntRange(50, 100, 0)));
-//            trace("_feedbackMessageQueue=" + _feedbackMessageQueue);
-//        }
+        if( VConstants.LOCAL_DEBUG_MODE ) {
+            _DEBUGGING_add_feedback_timer += dt;
+            if( _DEBUGGING_add_feedback_timer > 2 ) {
+                _DEBUGGING_add_feedback_timer = 0;
+                
+                _feedbackMessageQueue.push(generateRandomString(Rand.nextIntRange(50, 100, 0)));
+            }
+        }
     }
     
     public function showFeedBack( msg :String, immediate :Boolean = false ) :void
@@ -885,9 +894,16 @@ public class HUD extends SceneObject
         _time.text = "Quit last game at: " + date.toLocaleTimeString() + " " + date.toDateString();
         
         if( SharedPlayerStateClient.getTime( ClientContext.ourPlayerId ) == 1 ) {
-            if( ClientContext.game.ctx.mainLoop.topMode !== new IntroHelpMode() ) {
-                ClientContext.game.ctx.mainLoop.pushMode( new IntroHelpMode());
-            } 
+            
+            if( ClientContext.game.ctx.mainLoop.topMode.getObjectNamed(IntroHelpMode.NAME) == null ) {
+                ClientContext.game.ctx.mainLoop.topMode.addObject( new IntroHelpMode(),
+                    ClientContext.game.ctx.mainLoop.topMode.modeSprite );  
+            }
+        
+        
+//            if( ClientContext.game.ctx.mainLoop.topMode !== new IntroHelpMode() ) {
+//                ClientContext.game.ctx.mainLoop.pushMode( new IntroHelpMode());
+//            } 
         }
     }
     
@@ -950,7 +966,7 @@ public class HUD extends SceneObject
     protected var _targetingOverlay :VampireAvatarHUDOverlay;
     
     protected var _feedbackMessageQueue :Array = new Array();
-    protected var _feedbackMessageTimeElapsed :Number = 0;
+    protected var _feedbackMessageTimeElapsed :Number = VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY;
     
     protected var _DEBUGGING_add_feedback_timer :Number = 0;
     

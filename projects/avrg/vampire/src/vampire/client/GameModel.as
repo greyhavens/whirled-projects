@@ -19,10 +19,11 @@ import vampire.avatar.VampireAvatarHUDManager;
 import vampire.client.events.ChangeActionEvent;
 import vampire.client.events.ClosestPlayerChangedEvent;
 import vampire.client.events.HierarchyUpdatedEvent;
+import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.Codes;
-import vampire.data.VConstants;
 import vampire.data.MinionHierarchy;
 import vampire.data.SharedPlayerStateClient;
+import vampire.data.VConstants;
 
 
 /**
@@ -39,25 +40,25 @@ public class GameModel extends SimObject//EventDispatcher
         _agentCtrl = ClientContext.gameCtrl.agent;
         _propsCtrl = ClientContext.gameCtrl.room.props;
 
-        _events.registerListener( _propsCtrl, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged);
-        _events.registerListener( _propsCtrl, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
+        registerListener( _propsCtrl, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged);
+        registerListener( _propsCtrl, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
         
         
         //Update the HUD when the room props come in.
-        _events.registerListener(ClientContext.gameCtrl.player, AVRGamePlayerEvent.ENTERED_ROOM, playerEnteredRoom);
+        registerListener(ClientContext.gameCtrl.player, AVRGamePlayerEvent.ENTERED_ROOM, playerEnteredRoom);
         
         //Update the HUD when the room props come in.
-        _events.registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.AVATAR_CHANGED, 
+        registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.AVATAR_CHANGED, 
             function ( e :AVRGameRoomEvent) :void {
                 trace("GameModel heard " + AVRGameRoomEvent.AVATAR_CHANGED + " " + e);
             });
             
-        _events.registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.PLAYER_MOVED, 
+        registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.PLAYER_MOVED, 
             function ( e :AVRGameRoomEvent) :void {
                 trace("GameModel heard " + AVRGameRoomEvent.PLAYER_MOVED + " " + e);
             });
             
-        _events.registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED, 
+        registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED, 
             function ( e :AVRGameRoomEvent) :void {
                 trace("GameModel heard " + AVRGameRoomEvent.SIGNAL_RECEIVED + " " + e);
             });
@@ -72,6 +73,18 @@ public class GameModel extends SimObject//EventDispatcher
         
         
         _avatarManager = new VampireAvatarHUDManager(ClientContext.gameCtrl);
+        //Let the server know when we arrive at a location, if we are walking to a feed.
+        registerListener( _avatarManager, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED, 
+            function(...ignored) :void {
+                if( action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER ||
+                    action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER ) {
+                        
+                        ClientContext.gameCtrl.agent.sendMessage( 
+                            PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
+                    }
+            });
+            
+        
         
         this.db.addObject( _avatarManager );
         
@@ -177,20 +190,24 @@ public class GameModel extends SimObject//EventDispatcher
     {
         log.debug(VConstants.DEBUG_MINION + " loadHierarchyFromProps()");
         var hierarchy :MinionHierarchy = new MinionHierarchy();
-        var playerIds :Array = ClientContext.gameCtrl.room.props.get( Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS ) as Array;
+//        var playerIds :Array = ClientContext.gameCtrl.room.props.get( Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS ) as Array;
         
 //        log.debug(Constants.DEBUG_MINION + " loadHierarchyFromProps()", "playerIds", playerIds);
             
-        if( playerIds == null) {
-            log.error(VConstants.DEBUG_MINION +  " playerIds=" + playerIds);
-            return hierarchy;
-        }
+//        if( playerIds == null) {
+//            log.error(VConstants.DEBUG_MINION +  " playerIds=" + playerIds);
+//            return hierarchy;
+//        }
         
         var dict :Dictionary = ClientContext.gameCtrl.room.props.get(Codes.ROOM_PROP_MINION_HIERARCHY) as Dictionary;
         
         if( dict != null) {
             
-            for each( var playerId :int in playerIds) {
+            var playerId :int;
+            for (var key:Object in dict) {//Where key==playerId
+            
+                playerId = int(key);
+//            for each( var playerId :int in playerIds) {
                 if( dict[playerId] != null) {
                     var data :Array = dict[playerId] as Array;
                     var playerName :String = data[0]; 
@@ -214,7 +231,7 @@ public class GameModel extends SimObject//EventDispatcher
         //Check if it is non-player properties changed??
         log.debug(VConstants.DEBUG_MINION + " propChanged", "e", e);
         
-        if( e.name == Codes.ROOM_PROP_MINION_HIERARCHY || e.name == Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS) {
+        if( e.name == Codes.ROOM_PROP_MINION_HIERARCHY ) {//|| e.name == Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS) {
             
 //            var playerIds :Array = ClientContext.gameCtrl.room.props.get( Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS ) as Array;
             
@@ -483,6 +500,8 @@ public class GameModel extends SimObject//EventDispatcher
 //    protected var _proximityTimer :Timer;
     
     protected var closestUserId :int;
+    
+    
     
 //    protected var _currentPlayerState :SharedPlayerState;
     
