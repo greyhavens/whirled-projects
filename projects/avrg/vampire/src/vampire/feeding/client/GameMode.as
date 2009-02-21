@@ -57,7 +57,7 @@ public class GameMode extends AppMode
     {
         super.setup();
 
-        setupNetwork();
+        registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
 
         // Setup display layers
         GameCtx.bgLayer = SpriteUtil.createSprite();
@@ -168,13 +168,6 @@ public class GameMode extends AppMode
         }
     }
 
-    protected function setupNetwork () :void
-    {
-        if (ClientCtx.isConnected) {
-            registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
-        }
-    }
-
     protected function onMsgReceived (e :ClientMsgEvent) :void
     {
         if (e.msg is CreateBonusMsg) {
@@ -182,7 +175,7 @@ public class GameMode extends AppMode
 
         } else if (e.msg is RoundOverMsg) {
             // Send our final score to the server. We'll wait for the GameResultsMsg
-            // to display the game over screen.
+            // to display the round over screen.
             ClientCtx.msgMgr.sendMessage(RoundScoreMsg.create(GameCtx.scoreView.bloodCount));
 
         } else if (e.msg is RoundResultsMsg) {

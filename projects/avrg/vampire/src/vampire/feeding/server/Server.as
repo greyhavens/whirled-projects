@@ -166,16 +166,18 @@ public class Server extends FeedingGameServer
                 if (!ArrayUtil.removeFirst(_playersNeedingCheckin, e.senderId)) {
                     logBadMessage(e, "unrecognized player, or player already checked in");
                 } else {
+                    startGameIfReady();
+
                     // When at least one player has checked in, start a timer that will force
                     // the game to start after a maximum amount of time has elapsed, even if
                     // the rest of the players haven't joined yet.
-                    if (_waitForPlayersTimer == null) {
+                    if (_state != STATE_PLAYING && _waitForPlayersTimer == null) {
                         _waitForPlayersTimer = _timerMgr.createTimer(
                             Constants.WAIT_FOR_PLAYERS_TIMEOUT * 1000, 1, startGameNow);
                         _waitForPlayersTimer.start();
+                        log.info("Sending RoundStartingSoonMsg");
+                        sendMessage(RoundStartingSoonMsg.create());
                     }
-
-                    startGameIfReady();
                 }
             }
             break;

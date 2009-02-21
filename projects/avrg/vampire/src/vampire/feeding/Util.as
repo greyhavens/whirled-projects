@@ -19,6 +19,7 @@ public class Util
         mgr.addMessageType(ClientQuitMsg);
         mgr.addMessageType(NoMoreFeedingMsg);
         mgr.addMessageType(ClientBootedMsg);
+        mgr.addMessageType(RoundStartingSoonMsg);
     }
 }
 

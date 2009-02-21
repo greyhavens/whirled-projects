@@ -1,5 +1,6 @@
 package vampire.feeding.client {
 
+import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.tasks.SelfDestructTask;
@@ -12,7 +13,8 @@ import flash.text.TextField;
 
 import mx.effects.easing.Cubic;
 
-import vampire.feeding.net.RoundResultsMsg;
+import vampire.feeding.*;
+import vampire.feeding.net.*;
 
 public class RoundOverMode extends AppMode
 {
@@ -24,6 +26,8 @@ public class RoundOverMode extends AppMode
     override protected function setup () :void
     {
         super.setup();
+
+        registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
 
         var panelMovie :MovieClip = ClientCtx.instantiateMovieClip("blood", "popup_panel");
         panelMovie.x = 200;
@@ -79,7 +83,8 @@ public class RoundOverMode extends AppMode
         var replayBtn :SimpleButton = panelMovie["panel_button"];
         registerOneShotCallback(replayBtn, MouseEvent.CLICK,
             function (...ignored) :void {
-                ClientCtx.roundMgr.reportReadyForNextRound();
+                 ClientCtx.roundMgr.reportReadyForNextRound();
+                 replayBtn.visible = false;
             });
 
         var quitBtn :SimpleButton = panelMovie["button_close"];
@@ -87,9 +92,31 @@ public class RoundOverMode extends AppMode
             function (...ignored) :void {
                 ClientCtx.quit(true);
             });
+
+        // hide the timer
+        _replayTimer = panelMovie["replay_timer"];
+        _replayTimer.visible = false;
     }
 
-    protected var _results :RoundResultsMsg
+    protected function onMsgReceived (e :ClientMsgEvent) :void
+    {
+        if (e.msg is RoundStartingSoonMsg && !_replayTimer.visible) {
+            // animate the timer to indicate that the round will start soon
+            _replayTimer.visible = true;
+            var timerAnimObj :SimObject = new SimObject();
+            timerAnimObj.addTask(new ShowFramesTask(
+                _replayTimer,
+                0,
+                ShowFramesTask.LAST_FRAME,
+                Constants.WAIT_FOR_PLAYERS_TIMEOUT));
+            addObject(timerAnimObj);
+        }
+    }
+
+    protected var _results :RoundResultsMsg;
+    protected var _replayTimer :MovieClip;
+
+    protected static var log :Log = Log.getLog(RoundOverMode);
 }
 
 }
