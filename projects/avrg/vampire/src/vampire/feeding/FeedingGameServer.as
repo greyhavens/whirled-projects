@@ -21,7 +21,7 @@ public class FeedingGameServer
      *
      * @param roodId the room that the feeding is taking place in
      *
-     * @param preyId the occupantId of the player acting as the prey, or -1 if the prey
+     * @param preyId the occupantId of the player acting as the prey, or 0 if the prey
      * is an AI player
      *
      * @param preyBlood the amount of blood the prey currently has, normalized to a value between
