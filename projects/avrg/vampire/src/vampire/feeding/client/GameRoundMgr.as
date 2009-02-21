@@ -23,7 +23,7 @@ public class GameRoundMgr
     {
         if (!ClientCtx.isConnected) {
             // in offline testing mode, just start the game immediately
-            startRound();
+            startRound([ ClientCtx.localPlayerId ], Constants.NULL_PLAYER);
 
         } else {
             if (!_ready) {
@@ -42,15 +42,15 @@ public class GameRoundMgr
             } else {
                 log.info("Received StartRoundMsg. Starting!");
                 var msg :StartRoundMsg = e.msg as StartRoundMsg;
-                startRound();
+                startRound(msg.playerIds, msg.preyId);
                 _ready = false;
             }
         }
     }
 
-    protected function startRound () :void
+    protected function startRound (playerIds :Array, preyId :int) :void
     {
-        ClientCtx.mainLoop.unwindToMode(new GameMode());
+        ClientCtx.mainLoop.unwindToMode(new GameMode(playerIds, preyId));
     }
 
     protected var _ready :Boolean;

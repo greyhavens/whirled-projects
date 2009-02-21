@@ -24,6 +24,9 @@ public class GameCtx
 
     public static var timeLeft :Number;
 
+    public static var playerIds :Array;
+    public static var preyId :int;
+
     public static function init () :void
     {
         gameMode = null;
@@ -37,6 +40,14 @@ public class GameCtx
         uiLayer = null;
 
         timeLeft = Constants.GAME_TIME;
+
+        playerIds = [];
+        preyId = Constants.NULL_PLAYER;
+    }
+
+    public static function get isSinglePlayer () :Boolean
+    {
+        return (playerIds.length <= 1);
     }
 
     // Returns a new Vector, clamped within the bounds of the game

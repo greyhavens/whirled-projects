@@ -22,7 +22,7 @@ import vampire.feeding.net.*;
 
 public class GameMode extends AppMode
 {
-    public function GameMode ()
+    public function GameMode (playerIds :Array, preyId :int)
     {
         GameCtx.init();
         GameCtx.gameMode = this;
@@ -33,7 +33,7 @@ public class GameMode extends AppMode
         ClientCtx.msgMgr.sendMessage(
             CreateBonusMsg.create(ClientCtx.localPlayerId, x, y, multiplier));
 
-        if (ClientCtx.isSinglePlayer) {
+        if (GameCtx.isSinglePlayer) {
             // In single-player games, there's nobody else to volley our multipliers back
             // to us, so we fake it by sending occasionally sending fake multipliers to ourselves
             if (Rand.nextNumber(Rand.STREAM_GAME) < Constants.SP_MULTIPLIER_RETURN_CHANCE) {
@@ -212,7 +212,7 @@ public class GameMode extends AppMode
         cell.x = msg.x;
         cell.y = msg.y;
 
-        if (!ClientCtx.isSinglePlayer) {
+        if (!GameCtx.isSinglePlayer) {
             // show a little animation showing who gave us the multiplier
             var playerName :String = ClientCtx.getPlayerName(msg.playerId);
             var tfName :TextField = TextBits.createText(playerName, 1.4, 0, 0xffffff,

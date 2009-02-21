@@ -48,17 +48,7 @@ public class ClientCtx
 
     public static function get localPlayerId () :int
     {
-        return (isSinglePlayer ? 1 : gameCtrl.player.getPlayerId());
-    }
-
-    public static function get isSinglePlayer () :Boolean
-    {
-        return (!gameCtrl.isConnected());
-    }
-
-    public static function get isMultiplayer () :Boolean
-    {
-        return !isSinglePlayer;
+        return (!isConnected ? 1 : gameCtrl.player.getPlayerId());
     }
 
     public static function get timeNow () :Number
