@@ -20,7 +20,7 @@ import vampire.net.VMessageManager;
  */
 public class ClientContext
 {
-    public static var gameCtrl :AVRGameControl;
+    public static var ctrl :AVRGameControl;
     public static var msg :VMessageManager;
     
     public static var game :SimpleGame;
@@ -38,15 +38,15 @@ public class ClientContext
 
     public static function quit () :void
     {
-        if (gameCtrl.isConnected()) {
-            gameCtrl.player.deactivateGame();
+        if (ctrl.isConnected()) {
+            ctrl.player.deactivateGame();
         }
     }
 
     public static function getScreenBounds () :Rectangle
     {
-        if (gameCtrl.isConnected()) {
-            var bounds :Rectangle = gameCtrl.local.getPaintableArea(true);
+        if (ctrl.isConnected()) {
+            var bounds :Rectangle = ctrl.local.getPaintableArea(true);
             // apparently getPaintableArea can return null...
             return (bounds != null ? bounds : new Rectangle());
         } else {
@@ -56,8 +56,8 @@ public class ClientContext
 
     public static function getPlayerName (playerId :int) :String
     {
-        if (gameCtrl != null && gameCtrl.isConnected() && !VConstants.LOCAL_DEBUG_MODE) {
-            var avatar :AVRGameAvatar = gameCtrl.room.getAvatarInfo(playerId);
+        if (ctrl != null && ctrl.isConnected() && !VConstants.LOCAL_DEBUG_MODE) {
+            var avatar :AVRGameAvatar = ctrl.room.getAvatarInfo(playerId);
             if (null != avatar) {
                 return avatar.name;
             }
@@ -93,11 +93,11 @@ public class ClientContext
     public static function get playerEntityId () :String
     {
         if( _playerEntityId == null ) {
-            for each( var entityId :String in gameCtrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
+            for each( var entityId :String in ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
             
-                var entityUserId :int = int(gameCtrl.room.getEntityProperty( EntityControl.PROP_MEMBER_ID, entityId));
+                var entityUserId :int = int(ctrl.room.getEntityProperty( EntityControl.PROP_MEMBER_ID, entityId));
                 
-                if( entityUserId == gameCtrl.player.getPlayerId() ) {
+                if( entityUserId == ctrl.player.getPlayerId() ) {
                     _playerEntityId = entityId;
                     break;
                 }

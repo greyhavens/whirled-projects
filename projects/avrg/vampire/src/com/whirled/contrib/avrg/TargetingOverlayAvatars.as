@@ -224,7 +224,7 @@ public class TargetingOverlayAvatars extends TargetingOverlay
         if( _ctrl == null || _ctrl.local == null || _ctrl.local.locationToRoom(0, 0, 0) == null ) {
             return; 
         }
-        log.debug(_ctrl.player.getPlayerId() + " Upon redraw" , "valid targets", getValidPlayerIdTargets().toArray());
+//        log.debug(_ctrl.player.getPlayerId() + " Upon redraw" , "valid targets", getValidPlayerIdTargets().toArray());
 //        trace("_ctrl.local.locationToRoom(0, 0.5, 0)=" + _ctrl.local.locationToRoom(0, 0.5, 0));
 //        trace("_ctrl.local.locationToRoom(0, 0.5, 0.8)=" + _ctrl.local.locationToRoom(0, 0.5, 0.8));
 //        trace("_ctrl.local.locationToPaintable(0, 0.5, 0)=" + _ctrl.local.locationToPaintable(0, 0.5, 0));
@@ -238,7 +238,7 @@ public class TargetingOverlayAvatars extends TargetingOverlay
         if( VConstants.LOCAL_DEBUG_MODE ) {
             zScaleFactor = 0.5;
         }
-        trace("zScaleFactor=" + zScaleFactor);
+//        trace("zScaleFactor=" + zScaleFactor);
             
         var stayDirtyDueToIncompeteAvatarInfo :Boolean = false;
         var emptyLocation :Array = [0,0,0];
@@ -250,10 +250,16 @@ public class TargetingOverlayAvatars extends TargetingOverlay
             
             var playerId :int = avatar.playerId;
             
+            //Add the avatar to the db if not yet added.
+            if( avatar.db == null ) {
+                db.addObject( avatar, _paintableOverlay );
+            }
+            
             if( avatar.sprite != null && !_paintableOverlay.contains( avatar.sprite ) ) {
                 _paintableOverlay.addChild( avatar.sprite );
                 stayDirtyDueToIncompeteAvatarInfo = true;
             }
+            
             
 //            
 //            //Make sure we have sprites for all avatars

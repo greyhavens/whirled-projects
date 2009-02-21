@@ -60,7 +60,7 @@ package vampire.client.actions.hierarchy
 //                    trace( font.fontName + " is embedded" );
 //                }
 //            }
-            _sceneObjectSprite = new DraggableSprite(ClientContext.gameCtrl, "HierarchyView");
+            _sceneObjectSprite = new DraggableSprite(ClientContext.ctrl, "HierarchyView");
             _sceneObjectSprite.init( new Rectangle(0, 0, 100, 100), 10, 10, 10, 10);
             _sceneObjectSprite.x = 20;
             _sceneObjectSprite.y = 20;
@@ -282,7 +282,7 @@ package vampire.client.actions.hierarchy
             
             //Add the blood bond stuff
 //            _sceneObjectSprite.addChild( _bloodBondedView );
-            _events.registerListener( ClientContext.gameCtrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+            _events.registerListener( ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
 //            
 //            var addTargetButton :SimpleTextButton = new SimpleTextButton("BloodBond Target");
 //            Command.bind( addTargetButton, MouseEvent.CLICK, VampireController.ADD_BLOODBOND);

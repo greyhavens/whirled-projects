@@ -12,6 +12,7 @@ import com.whirled.contrib.simplegame.SimObject;
 
 import vampire.avatar.AvatarGameBridge;
 import vampire.client.events.AvatarUpdatedEvent;
+import vampire.client.events.PlayerArrivedAtLocationEvent;
 
 
 /**
@@ -80,9 +81,10 @@ public class AvatarHUDManager extends SimObject
     {
         _ctrl = null;
         for each( var p :AvatarHUD in _avatars.values()) {
-            if( p.sprite.parent != null ) {
-                p.sprite.parent.removeChild( p.sprite ); 
-            }
+            removeAvatar( p.playerId );
+//            if( p.sprite.parent != null ) {
+//                p.sprite.parent.removeChild( p.sprite ); 
+//            }
         } 
         _avatars.clear();
         _avatarsUpdatedCallback = null;
@@ -100,6 +102,15 @@ public class AvatarHUDManager extends SimObject
             playerEntityId) ) {
                
            updateLocationDataFromGameAvatar();
+        }
+        
+        
+        //Remove destroyed avatars.
+        for each( var userId :int in _avatars.keys() ) {
+            var avatar :AvatarHUD = _avatars.get( userId ) as AvatarHUD; 
+            if( avatar != null && !avatar.isLiveObject) {
+                _avatars.remove( userId );
+            } 
         }
     }
     
@@ -169,6 +180,16 @@ public class AvatarHUDManager extends SimObject
             }
             playerAvatar = _avatars.get( userId ) as AvatarHUD;
             
+            
+            //Send event when this player arrives at a location
+            //Makes up for missing API functionality
+            if( playerAvatar.playerId == _ctrl.player.getPlayerId() 
+                && location != null 
+                && !ArrayUtil.equals( location, playerAvatar.location)  ) {
+                    dispatchEvent( new PlayerArrivedAtLocationEvent() );
+                }
+                
+            
             playerAvatar.setLocation( location );
             playerAvatar.setHotspot( hotspot );
             
@@ -201,10 +222,10 @@ public class AvatarHUDManager extends SimObject
     public function removeAvatar( userId :int ) :void
     {
         var av :AvatarHUD = _avatars.remove( userId ) as AvatarHUD;
-        av.shutdown();
+        if( av.isLiveObject ) {
+            av.destroySelf();
+        }
     }
-    
-    
     
     
     /**
@@ -555,5 +576,7 @@ public class AvatarHUDManager extends SimObject
     protected var _roomId2Avatars :HashMap = new HashMap();
 //    protected var _nonPlayerUpdatedCallback :Function;
     protected static const log :Log = Log.getLog( AvatarHUDManager );
+    
+    
 }
 }

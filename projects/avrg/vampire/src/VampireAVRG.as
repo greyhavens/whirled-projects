@@ -4,35 +4,44 @@ package {
 import fakeavrg.AVRGameControlFake;
 
 import flash.display.Sprite;
+import flash.utils.Dictionary;
 
 import vampire.client.ClientContext;
 import vampire.client.VampireMain;
 import vampire.data.VConstants;
-import vampire.server.BloomBloomManager;
 import vampire.server.VServer;
 
 [SWF(width="700", height="500")]
 public class VampireAVRG extends Sprite
 {
-//    public static function generateRandomString(newLength:uint = 1, userAlphabet:String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"):String
-//    {
-//        var alphabet:Array = userAlphabet.split("");
-//        var alphabetLength:int = alphabet.length;
-//        var randomLetters:String = "";
-//        for (var i:uint = 0; i < newLength; i++){
-//            randomLetters += alphabet[int(Math.floor(Math.random() * alphabetLength))];
-//        }
-//        return randomLetters;
-//    }
+
     
     public function VampireAVRG()
     {
+        
+//        var d :Dictionary = new Dictionary();
+//        
+//        d[1] = "sdf";
+//        d["test"] = 345345;
+//        d[4.3] = "rwer";
+//        
+//        for each( var o :Object in d) {
+//            trace(o + " : " + d[o] );
+//        }
+//        
+//        for (var key:Object in d)
+//        {
+//            trace(key + " : " + d[key] );
+//        }
+//        
+//        return;
+        
         
 //        var r :BloomBloomStarter = new BloomBloomStarter(null);
 //        var xx :AvatarGameBridge = new AvatarGameBridge( null, null);
         var v :VServer = new VServer();
         VConstants.LOCAL_DEBUG_MODE = true;
-        ClientContext.gameCtrl = new AVRGameControlFake( this );
+        ClientContext.ctrl = new AVRGameControlFake( this );
         addChild( new VampireMain() );
 //        
 //        setupFakeData();

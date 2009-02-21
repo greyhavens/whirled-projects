@@ -76,18 +76,18 @@ public class VampireController extends Controller
             if( ClientContext.model.action == VConstants.GAME_MODE_BARED ) {
                 
                 var playerKey :String = Codes.playerRoomPropKey( ClientContext.ourPlayerId );
-                ClientContext.gameCtrl.player.props.setIn( playerKey, 
+                ClientContext.ctrl.player.props.setIn( playerKey, 
                     Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, VConstants.GAME_MODE_NOTHING);
                     
                 log.debug("  sending to server "+VConstants.GAME_MODE_NOTHING);
-                ClientContext.gameCtrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
+                ClientContext.ctrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
             }
             
         }
         else {
         
             log.debug("  sending to server "+mode);
-            ClientContext.gameCtrl.agent.sendMessage( RequestActionChangeMessage.NAME, 
+            ClientContext.ctrl.agent.sendMessage( RequestActionChangeMessage.NAME, 
                 new RequestActionChangeMessage( ClientContext.ourPlayerId, mode).toBytes() );
         }
         //Some actions we don't need the agents permission
@@ -121,7 +121,7 @@ public class VampireController extends Controller
                 ClientContext.model.dispatchEvent( new ChangeActionEvent( VConstants.GAME_MODE_NOTHING ) );
                 break;
             default:
-                ClientContext.gameCtrl.agent.sendMessage( RequestActionChangeMessage.NAME, new RequestActionChangeMessage( ClientContext.ourPlayerId, VConstants.GAME_MODE_NOTHING).toBytes() );
+                ClientContext.ctrl.agent.sendMessage( RequestActionChangeMessage.NAME, new RequestActionChangeMessage( ClientContext.ourPlayerId, VConstants.GAME_MODE_NOTHING).toBytes() );
             
         }
         
@@ -135,9 +135,9 @@ public class VampireController extends Controller
     
     public function handleQuit() :void
     {
-        ClientContext.gameCtrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
+        ClientContext.ctrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
         
-        ClientContext.gameCtrl.agent.sendMessage( VConstants.NAMED_EVENT_QUIT );
+        ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_QUIT );
                 
         ClientContext.quit();
     }
@@ -167,7 +167,7 @@ public class VampireController extends Controller
         
         log.debug("handleAddBloodBond() request to add " + ClientContext.model.targetPlayerId );
         
-        ClientContext.gameCtrl.agent.sendMessage( 
+        ClientContext.ctrl.agent.sendMessage( 
             BloodBondRequestMessage.NAME, 
             new BloodBondRequestMessage( 
                 ClientContext.ourPlayerId, 
@@ -199,11 +199,11 @@ public class VampireController extends Controller
         //If we are alrady in bared mode, first dump us out before any feeding shinannigens
         if( ClientContext.model.action == VConstants.GAME_MODE_BARED ) {
             var playerKey :String = Codes.playerRoomPropKey( ClientContext.ourPlayerId );
-            ClientContext.gameCtrl.player.props.setIn( playerKey, 
+            ClientContext.ctrl.player.props.setIn( playerKey, 
                 Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, VConstants.GAME_MODE_NOTHING);
-            ClientContext.gameCtrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
+            ClientContext.ctrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
             
-            ClientContext.gameCtrl.agent.sendMessage( RequestActionChangeMessage.NAME, 
+            ClientContext.ctrl.agent.sendMessage( RequestActionChangeMessage.NAME, 
                 new RequestActionChangeMessage( ClientContext.ourPlayerId, 
                     VConstants.GAME_MODE_NOTHING).toBytes() ); 
             
@@ -281,8 +281,8 @@ public class VampireController extends Controller
          
         var msg :FeedRequestMessage2 = new FeedRequestMessage2( ClientContext.ourPlayerId, targetId, 
             multiPredators, targetLocation[0], targetLocation[1], targetLocation[2]);
-        log.debug(ClientContext.gameCtrl + " handleSendFeedRequest() sending " + msg)
-        ClientContext.gameCtrl.agent.sendMessage( FeedRequestMessage2.NAME, msg.toBytes() );
+        log.debug(ClientContext.ctrl + " handleSendFeedRequest() sending " + msg)
+        ClientContext.ctrl.agent.sendMessage( FeedRequestMessage2.NAME, msg.toBytes() );
         if( multiPredators ) {
             ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET, targetId, true );
         }
@@ -336,7 +336,7 @@ public class VampireController extends Controller
         log.info("makeSire(" + ClientContext.model.targetPlayerId + ")" );
         if( ClientContext.model.targetPlayerId > 0) {
             
-            ClientContext.gameCtrl.agent.sendMessage( VConstants.NAMED_EVENT_MAKE_SIRE, ClientContext.model.targetPlayerId );
+            ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_MAKE_SIRE, ClientContext.model.targetPlayerId );
         }
     }
     
@@ -344,7 +344,7 @@ public class VampireController extends Controller
     {
         log.info("makeMinion(" + ClientContext.model.targetPlayerId + ")" );
         if( ClientContext.model.targetPlayerId > 0) {
-            ClientContext.gameCtrl.agent.sendMessage( VConstants.NAMED_EVENT_MAKE_MINION, ClientContext.model.targetPlayerId );
+            ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_MAKE_MINION, ClientContext.model.targetPlayerId );
         }
     }
     

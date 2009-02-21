@@ -11,6 +11,7 @@ package vampire.avatar
     import flash.events.MouseEvent;
     
     import vampire.client.ClientContext;
+    import vampire.client.events.HierarchyUpdatedEvent;
     import vampire.data.Codes;
     import vampire.data.SharedPlayerStateClient;
     import vampire.data.VConstants;
@@ -32,8 +33,10 @@ public class VampireAvatarHUD extends AvatarHUD
         _roomKey = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + _userId;
         
         //Listen for changes in blood levels
-        registerListener(ClientContext.gameCtrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
-        registerListener(ClientContext.gameCtrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
+        registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
+        registerListener(ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
+        
+        registerListener(ClientContext.model, HierarchyUpdatedEvent.HIERARCHY_UPDATED, updateInfoHud);
         
         _hudSprite = new Sprite();
         _sprite.addChild( _hudSprite );
@@ -198,7 +201,7 @@ public class VampireAvatarHUD extends AvatarHUD
     
     override public function get isPlayer() :Boolean
     {
-        return ArrayUtil.contains( ClientContext.gameCtrl.room.getPlayerIds(), playerId );
+        return ArrayUtil.contains( ClientContext.ctrl.room.getPlayerIds(), playerId );
     }
     
     public function setDisplayModeInvisible() :void

@@ -99,7 +99,7 @@ public class IntroHelpMode extends SceneObject
         toVampireButton.x = loseXPButton.x;
         toVampireButton.y = loseXPButton.y + 50;
         toVampireButton.addEventListener( MouseEvent.CLICK, function(...ignored):void { 
-            ClientContext.gameCtrl.agent.sendMessage( 
+            ClientContext.ctrl.agent.sendMessage( 
                 VConstants.SIGNAL_CHANGE_COLOR_SCHEME_REQUEST, 
                 VConstants.COLOR_SCHEME_VAMPIRE ); 
         });
@@ -110,7 +110,7 @@ public class IntroHelpMode extends SceneObject
         toHumanButton.x = loseXPButton.x;
         toHumanButton.y = toVampireButton.y + 30;
         toHumanButton.addEventListener( MouseEvent.CLICK, function(...ignored):void{ 
-            ClientContext.gameCtrl.agent.sendMessage( 
+            ClientContext.ctrl.agent.sendMessage( 
                 VConstants.SIGNAL_CHANGE_COLOR_SCHEME_REQUEST, 
                 VConstants.COLOR_SCHEME_HUMAN ); 
         });
@@ -131,7 +131,7 @@ public class IntroHelpMode extends SceneObject
         locationsButton.x = toHumanButton.x;
         locationsButton.y = toHumanButton.y + 30;
         locationsButton.addEventListener( MouseEvent.CLICK, function(...ignored):void{ 
-            var locations :HashMap  = ClientContext.gameCtrl.room.getEntityProperty( AvatarGameBridge.ENTITY_PROPERTY_AVATAR_LOCATIONS, ClientContext.playerEntityId) as HashMap;
+            var locations :HashMap  = ClientContext.ctrl.room.getEntityProperty( AvatarGameBridge.ENTITY_PROPERTY_AVATAR_LOCATIONS, ClientContext.playerEntityId) as HashMap;
             trace("locations:");
             if( locations != null) {
                 locations.forEach( function( id :int, data :Array) :void {
@@ -145,7 +145,7 @@ public class IntroHelpMode extends SceneObject
         locationsChangedButton.x = locationsButton.x;
         locationsChangedButton.y = locationsButton.y + 30;
         locationsChangedButton.addEventListener( MouseEvent.CLICK, function(...ignored):void{ 
-            trace("locations changed=" + ClientContext.gameCtrl.room.getEntityProperty( AvatarGameBridge.ENTITY_PROPERTY_IS_LOCATIONS_CHANGED, ClientContext.playerEntityId) );
+            trace("locations changed=" + ClientContext.ctrl.room.getEntityProperty( AvatarGameBridge.ENTITY_PROPERTY_IS_LOCATIONS_CHANGED, ClientContext.playerEntityId) );
             
         });
         modeSprite.addChild( locationsChangedButton );
@@ -154,7 +154,7 @@ public class IntroHelpMode extends SceneObject
         showInviteButton.x = locationsChangedButton.x;
         showInviteButton.y = locationsChangedButton.y + 30;
         showInviteButton.addEventListener( MouseEvent.CLICK, function(...ignored):void{ 
-            ClientContext.gameCtrl.local.showInvitePage("Join my game!!", "sire=" + ClientContext.ourPlayerId);
+            ClientContext.ctrl.local.showInvitePage("Join my game!!", "sire=" + ClientContext.ourPlayerId);
             
         });
         modeSprite.addChild( showInviteButton );
@@ -166,10 +166,10 @@ public class IntroHelpMode extends SceneObject
         
     protected function gainBlood( ... ignored ) :void
     {
-        ClientContext.gameCtrl.agent.sendMessage( VConstants.NAMED_EVENT_BLOOD_UP );
+        ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_BLOOD_UP );
         if( VConstants.LOCAL_DEBUG_MODE) {
             
-            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.gameCtrl.room.props);
+            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
             
             var currentBlood :Number = ClientContext.model.blood;
             if( isNaN( currentBlood )) {
@@ -181,11 +181,11 @@ public class IntroHelpMode extends SceneObject
     
     protected function loseBlood( ... ignored ) :void
     {
-        ClientContext.gameCtrl.agent.sendMessage( VConstants.NAMED_EVENT_BLOOD_DOWN );
+        ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_BLOOD_DOWN );
         
         if( VConstants.LOCAL_DEBUG_MODE) {
             
-            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.gameCtrl.room.props);
+            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
             
             var currentBlood :Number = ClientContext.model.blood;
             if( isNaN( currentBlood )) {
@@ -197,11 +197,11 @@ public class IntroHelpMode extends SceneObject
     
     protected function gainLevel( ... ignored ) :void
     {
-        ClientContext.gameCtrl.agent.sendMessage( VConstants.NAMED_EVENT_LEVEL_UP );
+        ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_LEVEL_UP );
         
         if( VConstants.LOCAL_DEBUG_MODE) {
             
-            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.gameCtrl.room.props);
+            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
             
             var currentLevel :Number = ClientContext.model.level;
             
@@ -213,11 +213,11 @@ public class IntroHelpMode extends SceneObject
     
     protected function loseLevel( ... ignored ) :void
     {
-        ClientContext.gameCtrl.agent.sendMessage( VConstants.NAMED_EVENT_LEVEL_DOWN );
+        ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_LEVEL_DOWN );
         
         if( VConstants.LOCAL_DEBUG_MODE) {
             
-            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.gameCtrl.room.props);
+            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
             
             var currentLevel :Number = ClientContext.model.level;
             if( currentLevel > 1) {
@@ -233,7 +233,7 @@ public class IntroHelpMode extends SceneObject
         
         if( VConstants.LOCAL_DEBUG_MODE) {
             
-            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.gameCtrl.room.props);
+            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
             
             var currentXP:int = ClientContext.model.xp;
             
@@ -246,7 +246,7 @@ public class IntroHelpMode extends SceneObject
     {
         if( VConstants.LOCAL_DEBUG_MODE) {
             
-            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.gameCtrl.room.props);
+            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
             
             var currentXP:int = ClientContext.model.xp;
             

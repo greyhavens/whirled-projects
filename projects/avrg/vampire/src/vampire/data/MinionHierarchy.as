@@ -22,6 +22,8 @@ package vampire.data
  * 
  * The hierachy is stored as a map of playerid -> [sireid, name]  
  */
+ 
+
 public class MinionHierarchy extends SimObjectThane
 {
     public function setPlayerSire( playerId :int, sireId :int) :void
@@ -418,6 +420,11 @@ public class MinionHierarchy extends SimObjectThane
     
     public function isPlayerSireOrMinionOfPlayer( queryPlayerId :int, playerId :int) :Boolean
     {
+        if( queryPlayerId == playerId) {
+            log.warning("isPlayerSireOrMinionOfPlayer( " + queryPlayerId + "==" + playerId + ")");
+            return false;
+        }
+        
         return getAllSiresAndGrandSires(playerId).contains(queryPlayerId) ||
             getAllMinionsAndSubminions(playerId).contains( queryPlayerId );
     }

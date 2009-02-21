@@ -45,11 +45,14 @@ public class MainGameMode extends AppMode
 //            ClientContext.game.ctx.mainLoop.pushMode( new IntroHelpMode() );
         }
     
+    
+        //If we start moving, and we are in bared mode, change to default mode.
+//        ClientContext.gameCtrl
         
             
-        FeedingGameClient.init( modeSprite, ClientContext.gameCtrl );
+        FeedingGameClient.init( modeSprite, ClientContext.ctrl );
         
-        _events.registerListener(ClientContext.gameCtrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
+        _events.registerListener(ClientContext.ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessageReceived);
         
         _hud = new HUD();
@@ -64,7 +67,7 @@ public class MainGameMode extends AppMode
         subgame.run();
         subgame.ctx.mainLoop.pushMode( new NothingMode() );
         
-        ClientContext.gameCtrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
+        ClientContext.ctrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
         
         registerListener( ClientContext.model, ChangeActionEvent.CHANGE_ACTION, changeAction ); 
         
@@ -95,7 +98,7 @@ public class MainGameMode extends AppMode
     {
         log.info("Feeding complete");//, "completedSuccessfully", completedSuccessfully);
         modeSprite.removeChild(_feedingGameClient);
-        ClientContext.gameCtrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
+        ClientContext.ctrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
         _feedingGameClient = null;
     }
     

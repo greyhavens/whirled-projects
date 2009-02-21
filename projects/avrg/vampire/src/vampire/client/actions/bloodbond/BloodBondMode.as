@@ -38,7 +38,7 @@ public class BloodBondMode extends BaseVampireMode
         
         modeSprite.addChild( _bloodBondedView );
         
-        EventHandlers.registerListener( ClientContext.gameCtrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+        EventHandlers.registerListener( ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
         
         showBloodBonded( SharedPlayerStateClient.getBloodBonded( ClientContext.ourPlayerId ) );
     }
@@ -59,7 +59,7 @@ public class BloodBondMode extends BaseVampireMode
     
     override protected function destroy() :void
     {
-        EventHandlers.unregisterListener( ClientContext.gameCtrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+        EventHandlers.unregisterListener( ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
     }
     
     
@@ -83,7 +83,7 @@ public class BloodBondMode extends BaseVampireMode
                 log.error("showBloodBonded(), currentBloodBonded[" + i + "]=" + currentBloodBonded[i] );
                 continue;
             }
-            var playerAvater :AVRGameAvatar = ClientContext.gameCtrl.room.getAvatarInfo( playerId );
+            var playerAvater :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo( playerId );
             var buttonLabel :String = "" + playerId;
             if( playerAvater != null && playerAvater.name != null) {
                 buttonLabel = playerAvater.name

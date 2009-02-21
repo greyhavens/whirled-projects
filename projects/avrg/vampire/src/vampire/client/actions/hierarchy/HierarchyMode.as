@@ -89,7 +89,7 @@ public class HierarchyMode extends SceneObject
         modeSprite.addChild( _bloodBondedView );
         
         _events
-        _events.registerListener( ClientContext.gameCtrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+        _events.registerListener( ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
         
         showBloodBonded();
     }
@@ -109,7 +109,7 @@ public class HierarchyMode extends SceneObject
     
     protected function destroy() :void
     {
-        EventHandlers.unregisterListener( ClientContext.gameCtrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+        EventHandlers.unregisterListener( ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
     }
     
     protected function showBloodBonded() :void

@@ -119,7 +119,7 @@ public class SharedPlayerStateClient
     protected static function playerData (playerId :int, ix :int) :*
     {
         var dict :Dictionary =
-            ClientContext.gameCtrl.room.props.get(Codes.playerRoomPropKey(playerId)) as Dictionary;
+            ClientContext.ctrl.room.props.get(Codes.playerRoomPropKey(playerId)) as Dictionary;
         return (dict != null) ? dict[ix] : undefined;
     }
     
@@ -131,7 +131,7 @@ public class SharedPlayerStateClient
     
     public static function isProps( playerId :int ) :Boolean
     {
-        return ClientContext.gameCtrl.room.props.get(Codes.playerRoomPropKey(playerId)) != null;
+        return ClientContext.ctrl.room.props.get(Codes.playerRoomPropKey(playerId)) != null;
     }
     
     public static function parsePlayerIdFromPropertyName (prop :String) :int

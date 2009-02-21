@@ -162,6 +162,7 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
         if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION) {
             dirty();
         }
+        
     }
     
     override protected function getValidPlayerIdTargets() :HashSet

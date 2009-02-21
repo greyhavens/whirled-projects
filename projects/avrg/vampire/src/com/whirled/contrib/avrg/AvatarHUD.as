@@ -4,11 +4,12 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Hashable;
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.EventCollecter;
+import com.whirled.contrib.simplegame.objects.SceneObject;
 
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 
-public class AvatarHUD extends EventCollecter
+public class AvatarHUD extends SceneObject
     implements Hashable
 {
     public function AvatarHUD(userId :int)//,  updateCallback :Function )//roomCtrl :RoomSubControlBase,
@@ -554,13 +555,15 @@ public class AvatarHUD extends EventCollecter
         _isPlayer = p;
     }
     
-    override public function shutdown() :void
-    {
-        super.shutdown();
-        if( _sprite.parent != null ) {
-            _sprite.parent.removeChild( _sprite );
-        }
-    }
+    
+    
+//    public function shutdown() :void
+//    {
+////        super.shutdown();
+//        if( _sprite.parent != null ) {
+//            _sprite.parent.removeChild( _sprite );
+//        }
+//    }
     
     /**
     * Override this
@@ -639,6 +642,12 @@ public class AvatarHUD extends EventCollecter
     {
         return _sprite;
     }
+    
+    override public function get displayObject () :DisplayObject
+    {
+        return _sprite;
+    }
+    
     
     public function setZScaleFactor( f :Number ) :void
     {

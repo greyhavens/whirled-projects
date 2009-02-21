@@ -24,7 +24,7 @@ public class BaseVampireMode extends AppMode
     public function BaseVampireMode()
     {
         super();
-        _modeSprite = new DraggableSprite( ClientContext.gameCtrl, "actionwindow");
+        _modeSprite = new DraggableSprite( ClientContext.ctrl, "actionwindow");
         _modeSprite.y = 60;
         (DraggableSprite(_modeSprite)).init( new Rectangle(0, 0, 100, 100), 10, 10, 10, 10);
 //        this.modeSprite.mouseEnabled = false;

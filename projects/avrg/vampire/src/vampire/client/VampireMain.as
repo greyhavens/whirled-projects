@@ -78,19 +78,19 @@ public class VampireMain extends Sprite
         if (_addedToStage && _resourcesLoaded) {
             
 //            ClientContext.gameCtrl = new AVRGameControl( this );
-            if( ClientContext.gameCtrl == null) {
-                ClientContext.gameCtrl = new AVRGameControl( this );
+            if( ClientContext.ctrl == null) {
+                ClientContext.ctrl = new AVRGameControl( this );
             }
             
         
-            if( !ClientContext.gameCtrl.isConnected() && !VConstants.LOCAL_DEBUG_MODE) {
+            if( !ClientContext.ctrl.isConnected() && !VConstants.LOCAL_DEBUG_MODE) {
                 trace("Not conected and not test model");
                 return;
             }
             
             
-            ClientContext.msg = new VMessageManager( ClientContext.gameCtrl );
-            ClientContext.ourPlayerId = ClientContext.gameCtrl.player.getPlayerId();
+            ClientContext.msg = new VMessageManager( ClientContext.ctrl );
+            ClientContext.ourPlayerId = ClientContext.ctrl.player.getPlayerId();
             
             ClientContext.controller = new VampireController(this);
             
@@ -106,11 +106,11 @@ public class VampireMain extends Sprite
             
             
             //Show chat events
-            EventHandlers.registerListener( ClientContext.gameCtrl.player, 
+            EventHandlers.registerListener( ClientContext.ctrl.player, 
                 MessageReceivedEvent.MESSAGE_RECEIVED, 
                 function( e :MessageReceivedEvent) :void {
                     if( e.name == VConstants.NAMED_EVENT_CHAT) {
-                        ClientContext.gameCtrl.local.feedback( e.value.toString() );
+                        ClientContext.ctrl.local.feedback( e.value.toString() );
                     }    
                 });
             
@@ -119,13 +119,13 @@ public class VampireMain extends Sprite
 //            addChild( new VProbe(ClientContext.gameCtrl) );
         
         
-            EventHandlers.registerListener( ClientContext.gameCtrl.game, MessageReceivedEvent.MESSAGE_RECEIVED, printServerLogToFlashLog);
+            EventHandlers.registerListener( ClientContext.ctrl.game, MessageReceivedEvent.MESSAGE_RECEIVED, printServerLogToFlashLog);
             
             //If there is a share token, send the invitee to the server
-            var inviterId :int = ClientContext.gameCtrl.local.getInviterMemberId();
-            log.info(ClientContext.gameCtrl.player.getPlayerId() + " inviterId=" + inviterId);
+            var inviterId :int = ClientContext.ctrl.local.getInviterMemberId();
+            log.info(ClientContext.ctrl.player.getPlayerId() + " inviterId=" + inviterId);
             if( inviterId > 0 ) {
-                ClientContext.gameCtrl.agent.sendMessage( VConstants.MESSAGE_SHARE_TOKEN, inviterId );
+                ClientContext.ctrl.agent.sendMessage( VConstants.MESSAGE_SHARE_TOKEN, inviterId );
             }
         }
     }
@@ -193,8 +193,8 @@ public class VampireMain extends Sprite
     
     protected function mouseMove( e :MouseEvent ) :void
     {
-        for each (var playerId :int in ClientContext.gameCtrl.room.getPlayerIds()) {
-            var avatar :AVRGameAvatar = ClientContext.gameCtrl.room.getAvatarInfo( playerId );
+        for each (var playerId :int in ClientContext.ctrl.room.getPlayerIds()) {
+            var avatar :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo( playerId );
             if( avatar.bounds.contains( e.localX, e.localY ) ) {
                 trace("mouse over avatar=" + playerId );
                 return; 

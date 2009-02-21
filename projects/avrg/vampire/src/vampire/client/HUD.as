@@ -51,13 +51,13 @@ public class HUD extends SceneObject
         setupUI();
         
         //Listen to events that might cause us to update ourselves
-        registerListener( ClientContext.gameCtrl.player, AVRGamePlayerEvent.ENTERED_ROOM, updateOurPlayerState );
-        registerListener( ClientContext.gameCtrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED, propChanged );
-        registerListener( ClientContext.gameCtrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+        registerListener( ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, updateOurPlayerState );
+        registerListener( ClientContext.ctrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED, propChanged );
+        registerListener( ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
         
 //        registerListener( ClientContext.model, ClosestPlayerChangedEvent.CLOSEST_PLAYER_CHANGED, closestPlayerChanged);
 
-        registerListener( ClientContext.gameCtrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
+        registerListener( ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
 
         
         updateOurPlayerState();
@@ -100,7 +100,7 @@ public class HUD extends SceneObject
     protected function closestPlayerChanged( e :ClosestPlayerChangedEvent ) :void
     {
         if( e.closestPlayerId > 0) {
-            _target.text = "Target: " + ClientContext.gameCtrl.room.getAvatarInfo( e.closestPlayerId ).name;
+            _target.text = "Target: " + ClientContext.ctrl.room.getAvatarInfo( e.closestPlayerId ).name;
         }
         else {
             _target.text = "Target: ";
@@ -260,13 +260,13 @@ public class HUD extends SceneObject
     protected function setupUI() :void
     {
         
-        _hud = new DraggableSprite(ClientContext.gameCtrl, "HUD");
+        _hud = new DraggableSprite(ClientContext.ctrl, "HUD");
         _displaySprite.addChild( _hud );
         _hud.init( new Rectangle(0, 0, 100, 100), 10, 10, 10, 10);
         
         
         //Create the ratgeting overlay
-        _targetingOverlay = new VampireAvatarHUDOverlay( ClientContext.gameCtrl, 
+        _targetingOverlay = new VampireAvatarHUDOverlay( ClientContext.ctrl, 
             ClientContext.model.avatarManager );
         
         
@@ -306,7 +306,7 @@ public class HUD extends SceneObject
 //            _hudMC.x = screen.width - _hudMC.width/2 - 10
 //            _hudMC.y = screen.height - _hudMC.height/2 - 10;
             
-            var bottomRight :Point = ClientContext.gameCtrl.local.locationToPaintable(1.0, 0, 0);
+            var bottomRight :Point = ClientContext.ctrl.local.locationToPaintable(1.0, 0, 0);
             
             _hudMC.x = bottomRight.x - _hudMC.width/2 - 10
             _hudMC.y = bottomRight.y - _hudMC.height/2 - 10;
@@ -506,7 +506,7 @@ public class HUD extends SceneObject
         
         _myName = TextFieldUtil.createField("Me: Testing locally", {mouseEnabled:false, selectable:false, x:20, y:35, width:150});
         if( !VConstants.LOCAL_DEBUG_MODE) {
-            _myName = TextFieldUtil.createField("Me: " + ClientContext.gameCtrl.room.getAvatarInfo( ClientContext.ourPlayerId).name, {mouseEnabled:false, selectable:false, x:20, y:35, width:150});
+            _myName = TextFieldUtil.createField("Me: " + ClientContext.ctrl.room.getAvatarInfo( ClientContext.ourPlayerId).name, {mouseEnabled:false, selectable:false, x:20, y:35, width:150});
         }
             
 //        _hud.addChild( _myName );

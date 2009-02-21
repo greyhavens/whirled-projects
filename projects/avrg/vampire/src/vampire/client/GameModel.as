@@ -30,6 +30,8 @@ import vampire.data.VConstants;
  * The game and subgames interact with the agent code and properties via this class.
  * 
  */
+ 
+[Event(name="Hierarchy Updated", type="vampire.client.events.HierarchyUpdatedEvent")] 
 public class GameModel extends SimObject//EventDispatcher
     //implements Updatable
 {
@@ -37,28 +39,28 @@ public class GameModel extends SimObject//EventDispatcher
     {
 //        _playerStates = new HashMap();
         
-        _agentCtrl = ClientContext.gameCtrl.agent;
-        _propsCtrl = ClientContext.gameCtrl.room.props;
+        _agentCtrl = ClientContext.ctrl.agent;
+        _propsCtrl = ClientContext.ctrl.room.props;
 
         registerListener( _propsCtrl, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged);
         registerListener( _propsCtrl, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
         
         
         //Update the HUD when the room props come in.
-        registerListener(ClientContext.gameCtrl.player, AVRGamePlayerEvent.ENTERED_ROOM, playerEnteredRoom);
+        registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, playerEnteredRoom);
         
         //Update the HUD when the room props come in.
-        registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.AVATAR_CHANGED, 
+        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, 
             function ( e :AVRGameRoomEvent) :void {
                 trace("GameModel heard " + AVRGameRoomEvent.AVATAR_CHANGED + " " + e);
             });
             
-        registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.PLAYER_MOVED, 
+        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_MOVED, 
             function ( e :AVRGameRoomEvent) :void {
                 trace("GameModel heard " + AVRGameRoomEvent.PLAYER_MOVED + " " + e);
             });
             
-        registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED, 
+        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED, 
             function ( e :AVRGameRoomEvent) :void {
                 trace("GameModel heard " + AVRGameRoomEvent.SIGNAL_RECEIVED + " " + e);
             });
@@ -72,14 +74,14 @@ public class GameModel extends SimObject//EventDispatcher
 //        _nonPlayerLocations = new NonPlayerMonitor( ClientContext.gameCtrl.room );
         
         
-        _avatarManager = new VampireAvatarHUDManager(ClientContext.gameCtrl);
+        _avatarManager = new VampireAvatarHUDManager(ClientContext.ctrl);
         //Let the server know when we arrive at a location, if we are walking to a feed.
         registerListener( _avatarManager, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED, 
             function(...ignored) :void {
                 if( action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER ||
                     action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER ) {
                         
-                        ClientContext.gameCtrl.agent.sendMessage( 
+                        ClientContext.ctrl.agent.sendMessage( 
                             PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
                     }
             });
@@ -95,9 +97,9 @@ public class GameModel extends SimObject//EventDispatcher
         }
         
         
-        _events.registerListener( ClientContext.gameCtrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, 
+        _events.registerListener( ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, 
             function(e:MessageReceivedEvent):void{
-                trace(ClientContext.gameCtrl.player.getPlayerId() + ", got " + e);
+                trace(ClientContext.ctrl.player.getPlayerId() + ", got " + e);
             } );
         
         
@@ -132,7 +134,7 @@ public class GameModel extends SimObject//EventDispatcher
 
     protected function checkProximity( ...ignored) :void
     {
-        var av :AVRGameAvatar = ClientContext.gameCtrl.room.getAvatarInfo( ClientContext.ourPlayerId);
+        var av :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo( ClientContext.ourPlayerId);
         if( av == null) {
             return;
         }
@@ -140,11 +142,11 @@ public class GameModel extends SimObject//EventDispatcher
         var closestOtherPlayerId :int = -1;
         var closestOtherPlayerDistance :Number = Number.MAX_VALUE;
         
-        for each( var playerid :int in ClientContext.gameCtrl.room.getPlayerIds()) {
+        for each( var playerid :int in ClientContext.ctrl.room.getPlayerIds()) {
             if( playerid == ClientContext.ourPlayerId) {
                 continue;
             }
-            av = ClientContext.gameCtrl.room.getAvatarInfo( playerid );
+            av = ClientContext.ctrl.room.getAvatarInfo( playerid );
             var otherPlayerPoint :Point = new Point( av.x, av.y );
             var distance :Number = Point.distance( mylocation, otherPlayerPoint);
             if( distance < closestOtherPlayerDistance) {
@@ -199,7 +201,7 @@ public class GameModel extends SimObject//EventDispatcher
 //            return hierarchy;
 //        }
         
-        var dict :Dictionary = ClientContext.gameCtrl.room.props.get(Codes.ROOM_PROP_MINION_HIERARCHY) as Dictionary;
+        var dict :Dictionary = ClientContext.ctrl.room.props.get(Codes.ROOM_PROP_MINION_HIERARCHY) as Dictionary;
         
         if( dict != null) {
             
@@ -346,7 +348,7 @@ public class GameModel extends SimObject//EventDispatcher
     
     public function playerIdsInRoom() :Array
     {
-        return ClientContext.gameCtrl.room.getPlayerIds();
+        return ClientContext.ctrl.room.getPlayerIds();
     }
     
     public function isPlayerInRoom( playerId :int ) :Boolean
@@ -412,7 +414,7 @@ public class GameModel extends SimObject//EventDispatcher
             return "Player Name";  
         }
         else {
-            return ClientContext.gameCtrl.room.getAvatarInfo( ClientContext.ourPlayerId).name;
+            return ClientContext.ctrl.room.getAvatarInfo( ClientContext.ourPlayerId).name;
         }
     }
     
