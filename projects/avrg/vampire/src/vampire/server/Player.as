@@ -202,7 +202,7 @@ public class Player extends EventHandlerManager
         log.info("Logging in", "playerId", playerId, "blood", blood, "maxBlood",
                  maxBlood, "level", level, "sire", sire, "time", new Date(time).toTimeString());
             
-        setTargetVisible(false);//Hide the target first of all.
+//        setTargetVisible(false);//Hide the target first of all.
 //        _closestUserData = null;
         
         updateAvatarState();
@@ -304,7 +304,10 @@ public class Player extends EventHandlerManager
 //        log.info("}}}");
     }
 
-    public function damage (damage :Number) :void
+    /**
+    * Returns actual damage.  If feeding, always have 1 left over.
+    */
+    public function damage (damage :Number, isFeeding :Boolean = true) :Number
     {
 //        log.debug("Damaging player", "playerId", _playerId, "damage", damage, "blood", _blood);
 
@@ -312,8 +315,12 @@ public class Player extends EventHandlerManager
 //        _room.ctrl.sendMessage(Codes.SMSG_PLAYER_ATTACKED, _playerId);
         // play the reel animation for ourselves!
 //        _ctrl.playAvatarAction("Reel");
-
+        
+        var actualDamage :Number = (blood - 1) >= damage ? damage : blood - 1;
+        
         setBlood(blood - damage); // note: setBlood clamps this to [0, maxBlood]
+        
+        return actualDamage;
         
     }
 
@@ -377,15 +384,15 @@ public class Player extends EventHandlerManager
         _blood = blood;
 //        log.debug("Persisting blood in player props");
         // persist it, too
-        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, _blood, true);
-        
-        // always update our avatar state
-        updateAvatarState();
-
-        // and if we're in a room, update the room properties
-        if (_room != null) {
-            _room.playerUpdated(this);
-        }
+//        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, _blood, true);
+//        
+//        // always update our avatar state
+////        updateAvatarState();
+//
+//        // and if we're in a room, update the room properties
+//        if (_room != null) {
+//            _room.playerUpdated(this);
+//        }
     }
     
     protected function setXP (xp :Number, force :Boolean = false) :void
@@ -399,7 +406,7 @@ public class Player extends EventHandlerManager
         
         _xp = xp;
         // persist it, too
-        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_XP, _xp, true);
+//        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_XP, _xp, true);
         
         //If our vampire state changed, send a message to the avatar
         if( isVampire() != vampireState) {
@@ -408,7 +415,7 @@ public class Player extends EventHandlerManager
         
         
         // always update our avatar state
-        updateAvatarState();
+//        updateAvatarState();
 
         // and if we're in a room, update the room properties
         if (_room != null) {
@@ -456,7 +463,7 @@ public class Player extends EventHandlerManager
         }
     }
     
-    protected function setAction (action :String, force :Boolean = false) :void
+    public function setAction (action :String, force :Boolean = false) :void
     {
         // update our runtime state
         if (!force && action == _action) {
@@ -468,12 +475,12 @@ public class Player extends EventHandlerManager
         // Don't bother persisting it
         
         // always update our avatar state
-        updateAvatarState();
+//        updateAvatarState();
 
-        // and if we're in a room, update the room properties
-        if (_room != null) {
-            _room.playerUpdated(this);
-        }
+//        // and if we're in a room, update the room properties
+//        if (_room != null) {
+//            _room.playerUpdated(this);
+//        }
     }
     
     public function setName (name :String, force :Boolean = false) :void
@@ -485,14 +492,14 @@ public class Player extends EventHandlerManager
         _name = name;
         
         // persist it, too
-        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_NAME, _name, true);
-        
-        updateAvatarState();
-        
-        // and if we're in a room, update the room properties
-        if (_room != null) {
-            _room.playerUpdated(this);
-        }
+//        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_NAME, _name, true);
+//        
+////        updateAvatarState();
+//        
+//        // and if we're in a room, update the room properties
+//        if (_room != null) {
+//            _room.playerUpdated(this);
+//        }
     }
 
     public function roomStateChanged () :void
@@ -569,9 +576,9 @@ public class Player extends EventHandlerManager
                 else if( value is FeedRequestMessage2) {
                     handleFeedRequestMessage( FeedRequestMessage2(value) );
                 }
-                else if( value is SuccessfulFeedMessage) {
-                    handleSuccessfulFeedMessage( SuccessfulFeedMessage(value) );
-                }
+//                else if( value is SuccessfulFeedMessage) {
+//                    handleSuccessfulFeedMessage( SuccessfulFeedMessage(value) );
+//                }
                 else {
                     log.debug("Cannot handle IGameMessage ", "player", playerId, "type", value );
                     log.debug("  Classname=" + ClassUtil.getClassName(value) );
@@ -642,128 +649,130 @@ public class Player extends EventHandlerManager
         
         
     }
-    protected function handleSuccessfulFeedMessage( e :SuccessfulFeedMessage ) :void
-    {
-        var bloodIncrement :Number = VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
-        var bloodGained :Number = 0;
-        
-        var victimId :int = -1;
-        var victimsMostRecentFeedVictimId :int = -1;
-        
-        if( e == null) {
-            log.error("handleSuccessfulFeedMessage, but message == null.");
-            return;
-        }
-        
-        if( !isVampire() ) {
-            log.error("handleSuccessfulFeedMessage, but not a vampire ", "SuccessfulFeedMessage", e);
-            return;
-        }
-        
-        if(!(action == VConstants.GAME_MODE_FEED_FROM_PLAYER || action == VConstants.GAME_MODE_FEED_FROM_NON_PLAYER) ) {
-            log.error("handleSuccessfulFeedMessage, but not feeding", "SuccessfulFeedMessage", e);
-            return;
-        }
-        
-        if( e.eatenPlayerId == 0) {
-            log.error("handleSuccessfulFeedMessage, eaten==0.", "SuccessfulFeedMessage", e);
-            return;
-        }
-        
-        //Different result depending if victim is human (playing the game or not), or vampire.
-        if( !room.isPlayer(e.eatenPlayerId)) {//Vampire feeding from a non-player
-            ServerContext.serverLogBroadcast.log("handleSuccessfulFeedMessage " + e);
-            bloodGained = bloodIncrement;
-//            ServerContext.nonPlayersBloodMonitor.playerFeedsFromNonPlayer( this, e.eatenPlayerId, bloodGained);
-                   
-            //Update the room properties that show other players blood         
-            setTargetBlood( ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( e.eatenPlayerId ) );
-            setTargetMaxBlood( VConstants.MAX_BLOOD_NONPLAYERS );
-            ServerContext.serverLogBroadcast.log("  targetblood=" + targetBlood + "/" + targetMaxBlood);
-            
-            victimId = e.eatenPlayerId;
-        }
-        else {
-            
-            var victim :Player = ServerContext.vserver.getPlayer( e.eatenPlayerId );
-            if( victim == null ) {
-                log.error("handleSuccessfulFeedMessage,no victim.", "SuccessfulFeedMessage", e);
-                return;
-            }
-            
-            log.warning("handleSuccessfulFeedMessage " + e);
-            if( victim.isVampire()) {
-                //You can only take blood that they have to give
-                var bloodTakenFromVampire :Number = Logic.bloodLostPerFeed( victim.level);
-                
-                if( victim.blood < bloodTakenFromVampire + 1) {
-                    bloodTakenFromVampire = victim.blood - 1;
-                }
-                victim.damage( bloodTakenFromVampire );
-                bloodGained = Logic.bloodgGainedVampireVampireFeeding( level, victim.level, bloodTakenFromVampire);
-                
-                //If there is not sufficient blood for another feed, break off feeding.
-                if( victim.blood <= 1) {
-                    setAction( VConstants.GAME_MODE_NOTHING );
-                    victim.setAction( VConstants.GAME_MODE_NOTHING );
-                }
-                
-                //Update the room properties that show other players blood         
-                setTargetBlood( victim.blood );
-                setTargetMaxBlood( victim.maxBlood );
-                
-                victimId = victim.playerId;
-                victimsMostRecentFeedVictimId = victim.mostRecentVictimId;
-            }
-            else {//Human thrall.  They get 'blood' too, except it isn't blood.  It's wannabe vampire juice
-//                log.warning(" added joy ");
-
-                var bloodTakenFromThrall :Number = bloodIncrement;
-                if( victim.blood < bloodTakenFromThrall + 1) {
-                    bloodTakenFromThrall = victim.blood - 1;
-                }
-                victim.damage( bloodTakenFromThrall );
-                victim.addXP( VConstants.XP_GAINED_FROM_FEEDING_PER_BLOOD_UNIT * bloodTakenFromThrall);
-                bloodGained = bloodTakenFromThrall;
-                
-                //If there is not sufficient blood for another feed, break off feeding.
-                if( victim.blood <= 1) {
-                    setAction( VConstants.GAME_MODE_NOTHING );
-                    victim.setAction( VConstants.GAME_MODE_NOTHING );
-                }
-                
-                //Update the room properties that show other players blood         
-                setTargetBlood( victim.blood );
-                setTargetMaxBlood( victim.maxBlood );
-                
-                victimId = victim.playerId;
-            }
-            
-        }
-        
-        if( bloodGained > 0) {
-            addBlood( bloodGained );
-            addXP( VConstants.XP_GAINED_FROM_FEEDING_PER_BLOOD_UNIT * bloodGained);
-            
-            _mostRecentVictimId = victimId;
-            
-            if( victimsMostRecentFeedVictimId == playerId && bloodbonded != _mostRecentVictimId) {
-                //Become blood bonds
-                var newBloodBondedPlayer :Player = ServerContext.vserver.getPlayer( _mostRecentVictimId );
-                if( newBloodBondedPlayer != null ){
-                    log.info("Creating blood bonds between " + name + " and " + newBloodBondedPlayer.name);
-                    newBloodBondedPlayer.setBloodBonded( playerId );
-                    setBloodBonded( _mostRecentVictimId );
-                }
-                else {
-                    log.error("WTF, creating blood bond from victim, but the id is bogus, newBloodBondedPlayer=" + newBloodBondedPlayer);
-                }
-            }
-            
-        }
-        ServerContext.serverLogBroadcast.log("  setTargetVisible(true)" );
-        setTargetVisible(true, true);
-    }
+//    protected function handleSuccessfulFeedMessage( e :SuccessfulFeedMessage ) :void
+//    {
+//        var bloodIncrement :Number = VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
+//        var bloodGained :Number = 0;
+//        
+//        var victimId :int = -1;
+//        var victimsMostRecentFeedVictimId :int = -1;
+//        
+//        if( e == null) {
+//            log.error("handleSuccessfulFeedMessage, but message == null.");
+//            return;
+//        }
+//        
+//        if( !isVampire() ) {
+//            log.error("handleSuccessfulFeedMessage, but not a vampire ", "SuccessfulFeedMessage", e);
+//            return;
+//        }
+//        
+//        if(!(action == VConstants.GAME_MODE_FEED_FROM_PLAYER || action == VConstants.GAME_MODE_FEED_FROM_NON_PLAYER) ) {
+//            log.error("handleSuccessfulFeedMessage, but not feeding", "SuccessfulFeedMessage", e);
+//            return;
+//        }
+//        
+//        if( e.eatenPlayerId == 0) {
+//            log.error("handleSuccessfulFeedMessage, eaten==0.", "SuccessfulFeedMessage", e);
+//            return;
+//        }
+//        
+//        //Different result depending if victim is human (playing the game or not), or vampire.
+//        if( !room.isPlayer(e.eatenPlayerId)) {//Vampire feeding from a non-player
+//            ServerContext.serverLogBroadcast.log("handleSuccessfulFeedMessage " + e);
+//            bloodGained = bloodIncrement;
+////            ServerContext.nonPlayersBloodMonitor.playerFeedsFromNonPlayer( this, e.eatenPlayerId, bloodGained);
+//                   
+//            //Update the room properties that show other players blood         
+//            setTargetBlood( ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( e.eatenPlayerId ) );
+//            setTargetMaxBlood( VConstants.MAX_BLOOD_NONPLAYERS );
+//            ServerContext.serverLogBroadcast.log("  targetblood=" + targetBlood + "/" + targetMaxBlood);
+//            
+//            victimId = e.eatenPlayerId;
+//        }
+//        else {
+//            
+//            var victim :Player = ServerContext.vserver.getPlayer( e.eatenPlayerId );
+//            if( victim == null ) {
+//                log.error("handleSuccessfulFeedMessage,no victim.", "SuccessfulFeedMessage", e);
+//                return;
+//            }
+//            
+//            log.warning("handleSuccessfulFeedMessage " + e);
+//            if( victim.isVampire()) {
+//                //You can only take blood that they have to give
+//                var bloodTakenFromVampire :Number = Logic.bloodLostPerFeed( victim.level);
+//                
+//                if( victim.blood < bloodTakenFromVampire + 1) {
+//                    bloodTakenFromVampire = victim.blood - 1;
+//                }
+//                victim.damage( bloodTakenFromVampire );
+//                bloodGained = Logic.bloodgGainedVampireVampireFeeding( level, victim.level, bloodTakenFromVampire);
+//                
+//                //If there is not sufficient blood for another feed, break off feeding.
+//                if( victim.blood <= 1) {
+//                    setAction( VConstants.GAME_MODE_NOTHING );
+//                    victim.setAction( VConstants.GAME_MODE_NOTHING );
+//                }
+//                
+//                //Update the room properties that show other players blood         
+//                setTargetBlood( victim.blood );
+//                setTargetMaxBlood( victim.maxBlood );
+//                
+//                victimId = victim.playerId;
+//                victimsMostRecentFeedVictimId = victim.mostRecentVictimId;
+//            }
+//            else {//Human thrall.  They get 'blood' too, except it isn't blood.  It's wannabe vampire juice
+////                log.warning(" added joy ");
+//
+//                var bloodTakenFromThrall :Number = bloodIncrement;
+//                if( victim.blood < bloodTakenFromThrall + 1) {
+//                    bloodTakenFromThrall = victim.blood - 1;
+//                }
+//                victim.damage( bloodTakenFromThrall );
+//                victim.addXP( VConstants.XP_GAINED_FROM_FEEDING_PER_BLOOD_UNIT * bloodTakenFromThrall);
+//                bloodGained = bloodTakenFromThrall;
+//                
+//                //If there is not sufficient blood for another feed, break off feeding.
+//                if( victim.blood <= 1) {
+//                    setAction( VConstants.GAME_MODE_NOTHING );
+//                    victim.setAction( VConstants.GAME_MODE_NOTHING );
+//                }
+//                
+//                //Update the room properties that show other players blood         
+//                setTargetBlood( victim.blood );
+//                setTargetMaxBlood( victim.maxBlood );
+//                
+//                victimId = victim.playerId;
+//            }
+//            
+//        }
+//        
+//        if( bloodGained > 0) {
+//            addBlood( bloodGained );
+//            addXP( VConstants.XP_GAINED_FROM_FEEDING_PER_BLOOD_UNIT * bloodGained);
+//            
+//            _mostRecentVictimId = victimId;
+//            
+//            if( victimsMostRecentFeedVictimId == playerId && bloodbonded != _mostRecentVictimId) {
+//                //Become blood bonds
+//                var newBloodBondedPlayer :Player = ServerContext.vserver.getPlayer( _mostRecentVictimId );
+//                if( newBloodBondedPlayer != null ){
+//                    log.info("Creating blood bonds between " + name + " and " + newBloodBondedPlayer.name);
+//                    newBloodBondedPlayer.setBloodBonded( playerId );
+//                    setBloodBonded( _mostRecentVictimId );
+//                }
+//                else {
+//                    log.error("WTF, creating blood bond from victim, but the id is bogus, newBloodBondedPlayer=" + newBloodBondedPlayer);
+//                }
+//            }
+//            
+//        }
+//        ServerContext.serverLogBroadcast.log("  setTargetVisible(true)" );
+//        setTargetVisible(true, true);
+//    }
+    
+    
     protected function makeSire(targetPlayerId :int ) :void
     {
         log.info("makeSire(" + targetPlayerId + ")");
@@ -961,6 +970,10 @@ public class Player extends EventHandlerManager
         var degs :Number;
         var game :BloodBloomGameRecord;
         var predLocIndex :int;
+        var newLocation :Array;
+        var targetX :Number;
+        var targetY :Number;
+        var targetZ :Number;
         
         switch( newAction ) {
             case VConstants.GAME_MODE_BARED:
@@ -1015,12 +1028,22 @@ public class Player extends EventHandlerManager
                 
                 //If we are the first predator, we go directly behind the prey
                 //Otherwise, take a a place
-                ctrl.setAvatarLocation( 
-                    targetLocation[0] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][0] * RADIUS,
-                    targetLocation[1] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][1] * RADIUS,
-                    targetLocation[2] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][2] * RADIUS,
-                    degs);
-                setAction( VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER );
+                targetX = targetLocation[0] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][0] * RADIUS; 
+                targetY = targetLocation[1] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][1] * RADIUS; 
+                targetZ = targetLocation[2] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][2] * RADIUS; 
+                
+                    
+                if( targetX == avatar.x &&
+                    targetY == avatar.y &&
+                    targetZ == avatar.z ) { 
+                
+                    setAction( VConstants.GAME_MODE_FEED_FROM_PLAYER );
+                }
+                else {
+                    ctrl.setAvatarLocation( targetX, targetY, targetZ, degs);
+                    setAction( VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER );
+                }
+                
                 
                 break;
                 
@@ -1040,12 +1063,31 @@ public class Player extends EventHandlerManager
                 
                 //If we are the first predator, we go directly behind the prey
                 //Otherwise, take a a place
-                ctrl.setAvatarLocation( 
-                    targetLocation[0] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][0] * RADIUS,
-                    targetLocation[1] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][1] * RADIUS,
-                    targetLocation[2] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][2] * RADIUS,
-                    degs);
-                setAction( VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER);
+                
+                //If we are the first predator, we go directly behind the prey
+                //Otherwise, take a a place
+                targetX = targetLocation[0] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][0] * RADIUS; 
+                targetY = targetLocation[1] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][1] * RADIUS; 
+                targetZ = targetLocation[2] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][2] * RADIUS; 
+                
+                    
+                if( targetX == avatar.x &&
+                    targetY == avatar.y &&
+                    targetZ == avatar.z ) { 
+                
+                    setAction( VConstants.GAME_MODE_FEED_FROM_NON_PLAYER );
+                }
+                else {
+                    ctrl.setAvatarLocation( targetX, targetY, targetZ, degs);
+                    setAction( VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER );
+                    
+                }
+//                ctrl.setAvatarLocation( 
+//                    targetLocation[0] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][0] * RADIUS,
+//                    targetLocation[1] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][1] * RADIUS,
+//                    targetLocation[2] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][2] * RADIUS,
+//                    degs);
+//                setAction( VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER);
 //                angleRadians = new Vector2( victimAvatar.x - avatar.x, victimAvatar.z - avatar.z).angle;
 //                            degs = convertStandardRads2GameDegrees( angleRadians );
 //                            ctrl.setAvatarLocation( victimAvatar.x, victimAvatar.y, victimAvatar.z + 0.01, degs);
@@ -1057,11 +1099,13 @@ public class Player extends EventHandlerManager
                 game = _room._bloodBloomGameManager.getGame( playerId );
                 if( game == null ) {
                     log.error("actionChange(GAME_MODE_FEED_FROM_PLAYER) but no game. We should have already registered.");
+                    log.error("_room._bloodBloomGameManager=" + _room._bloodBloomGameManager);
                     break;
                 }
                 
-                if( game.isPredator( playerId )) {
+                if( !game.isPredator( playerId )) {
                     log.error("actionChange(GAME_MODE_FEED_FROM_PLAYER) but not predator in game. We should have already registered.");
+                    log.error("_room._bloodBloomGameManager=" + _room._bloodBloomGameManager);
                     break;
                 }
                 
@@ -1072,9 +1116,9 @@ public class Player extends EventHandlerManager
                 }
                 else {
                     game.startGame();
+                    setAction( newAction );
                 }
                 
-                setAction( newAction );
                 break;
                 
                 
@@ -1180,31 +1224,31 @@ public class Player extends EventHandlerManager
     }
     
     
-    protected function beginFeeding() :void
-    {
-        log.debug("Begin feeding");
-        if( ServerContext.vserver.isPlayer( targetId ) ) {
-                    
-            var potentialVictim :Player = ServerContext.vserver.getPlayer( targetId );
-            if( potentialVictim != null 
-                && potentialVictim.targetId == playerId 
-                && potentialVictim.action == VConstants.GAME_MODE_BARED) {
-                
-                
-                var victimAvatar :AVRGameAvatar = room.ctrl.getAvatarInfo( targetId );
-                if( victimAvatar != null) {
-                    ctrl.setAvatarLocation( victimAvatar.x, victimAvatar.y, victimAvatar.z + 0.1, victimAvatar.orientation);
-                }
-                        
-                setAction( VConstants.GAME_MODE_FEED_FROM_PLAYER );
-                
-                handleSuccessfulFeedMessage( new SuccessfulFeedMessage(playerId, targetId));
-            }
-        }
-        else {
-            
-        }
-    }
+//    protected function beginFeeding() :void
+//    {
+//        log.debug("Begin feeding");
+//        if( ServerContext.vserver.isPlayer( targetId ) ) {
+//                    
+//            var potentialVictim :Player = ServerContext.vserver.getPlayer( targetId );
+//            if( potentialVictim != null 
+//                && potentialVictim.targetId == playerId 
+//                && potentialVictim.action == VConstants.GAME_MODE_BARED) {
+//                
+//                
+//                var victimAvatar :AVRGameAvatar = room.ctrl.getAvatarInfo( targetId );
+//                if( victimAvatar != null) {
+//                    ctrl.setAvatarLocation( victimAvatar.x, victimAvatar.y, victimAvatar.z + 0.1, victimAvatar.orientation);
+//                }
+//                        
+//                setAction( VConstants.GAME_MODE_FEED_FROM_PLAYER );
+//                
+//                handleSuccessfulFeedMessage( new SuccessfulFeedMessage(playerId, targetId));
+//            }
+//        }
+//        else {
+//            
+//        }
+//    }
     
     
 
@@ -1251,38 +1295,38 @@ public class Player extends EventHandlerManager
         
     }
     
-    public function handleSignalReceived( e :AVRGameRoomEvent ) :void
-    {
-        //Update the target information. Propagate to the client.
-        if( e.name == VConstants.SIGNAL_CLOSEST_ENTITY) {
-            handleSignalClosestEntityChanged( e );
-        }
-        else if( e.name == VConstants.SIGNAL_TARGET_CHATTED) {
-            handleSignalTargetChatted( e );
-        }
-        else if( e.name == VConstants.SIGNAL_PLAYER_ARRIVED_AT_DESTINATION) {
-            if( int(e.value) == playerId) {
-                log.debug("handleSignalArrivedAtDestination()", "e", e);
-                handleSignalArrivedAtDestination();
-            }
-        }
-//        else if( e.name == Constants.SIGNAL_CHANGE_COLOR_SCHEME) {
-//            handleChangeColorScheme( e );
+//    public function handleSignalReceived( e :AVRGameRoomEvent ) :void
+//    {
+//        //Update the target information. Propagate to the client.
+//        if( e.name == VConstants.SIGNAL_CLOSEST_ENTITY) {
+//            handleSignalClosestEntityChanged( e );
 //        }
-    }
-    protected function handleSignalArrivedAtDestination() :void
-    {
-        if( action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER) {
-            beginFeeding();
-        }
-        else if(action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER)
-        {
-            setAction( VConstants.GAME_MODE_FEED_FROM_NON_PLAYER );
-        }
-        else {
-            log.error("WTF handleSignalArrivedAtDestination(), should be action=" + VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER + ", but we're=" + action + ", so no feeding");
-        }
-    }
+//        else if( e.name == VConstants.SIGNAL_TARGET_CHATTED) {
+//            handleSignalTargetChatted( e );
+//        }
+//        else if( e.name == VConstants.SIGNAL_PLAYER_ARRIVED_AT_DESTINATION) {
+//            if( int(e.value) == playerId) {
+//                log.debug("handleSignalArrivedAtDestination()", "e", e);
+//                handleSignalArrivedAtDestination();
+//            }
+//        }
+////        else if( e.name == Constants.SIGNAL_CHANGE_COLOR_SCHEME) {
+////            handleChangeColorScheme( e );
+////        }
+//    }
+//    protected function handleSignalArrivedAtDestination() :void
+//    {
+//        if( action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER) {
+//            beginFeeding();
+//        }
+//        else if(action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER)
+//        {
+//            setAction( VConstants.GAME_MODE_FEED_FROM_NON_PLAYER );
+//        }
+//        else {
+//            log.error("WTF handleSignalArrivedAtDestination(), should be action=" + VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER + ", but we're=" + action + ", so no feeding");
+//        }
+//    }
     
     protected function handleChangeColorScheme( newScheme :String) :void
     {
@@ -1291,84 +1335,84 @@ public class Player extends EventHandlerManager
     
     
     
-    protected function handleSignalClosestEntityChanged( e :AVRGameRoomEvent) :void
-    {
-        var signalArray :Array = e.value as Array;
-        if( signalArray != null && signalArray.length >= 2 && signalArray[0] == playerId) {
-//            log.debug(name + " handleSignalReceived() " + e);
-            
-            var closestUserId :int = int(signalArray[1]);
-            var closestUserName :String = String(signalArray[2]);
-            var closestUserLocation :Array = signalArray[3] as Array;
-            var closestUserHotspot :Array = signalArray[4] as Array;
-            var targetLocation :Array = signalArray[5] as Array;
-            
-//            log.debug( "   closestUserLocation " + closestUserLocation);
-//            log.debug( "   closestUserHotspot " + closestUserHotspot);
-//            log.debug( "   targetLocation " + targetLocation);
-            
-            
-            if( closestUserId > 0 ) {
-                //Only change target if this player is not involved in an action 
-                //that requires maintaining the current target.
-                
-                switch( action ) {
-                    
-                    case VConstants.GAME_MODE_FEED_FROM_PLAYER:
-                    case VConstants.GAME_MODE_FEED_FROM_NON_PLAYER:
-                    case VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER:
-                    case VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER:
-                    case VConstants.GAME_MODE_BARED:
-                        //Update the target data if our target has moved, but don't change 
-                        //our target
-                        if( closestUserId == targetId) {
-                            setTargetLocation( closestUserLocation );
-                            setTargetHotspot( closestUserHotspot );
-                            setTargetName( closestUserName );
-                            setTargetVisible(true, true);
-                            break;
-                        }
-                        else {
-                            //Continue to below
-                        }
-                        
-                    default://Otherwise, change our target
-                        setTargetId( closestUserId );
-                        if( room != null) {
-                            room.ctrl.sendSignal( VConstants.SIGNAL_PLAYER_TARGET, [playerId, targetId]);
-                        }
-                        setTargetLocation( closestUserLocation );
-                        setTargetHotspot( closestUserHotspot );
-                        setTargetName( closestUserName );
-                        
-                        var targetsBlood :Number;
-                        var targetsMaxBlood :Number;
-                        if( room.isPlayer( closestUserId )) {
-                            var targetPlayer :Player = ServerContext.vserver.getPlayer(closestUserId);
-                            if( targetPlayer != null) {
-                                targetsBlood = targetPlayer.blood;
-                                targetsMaxBlood = targetPlayer.maxBlood;
-                            }
-                            else {
-                                log.error("handleSignalReceived(), new target=" + closestUserId + ", should be a player, but player from server is null");
-                            }
-                        }
-                        else {//Target is non-player
-                            targetsBlood = ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( closestUserId );
-                            targetsMaxBlood = VConstants.MAX_BLOOD_NONPLAYERS;
-                        }
-                        
-                        setTargetBlood( targetsBlood );
-                        setTargetMaxBlood( targetsMaxBlood );
-                        setTargetVisible(true, true);
-                        break;
-                }
-            }
-            else {//There is no-one closest.  That means remove the target
-                setTargetVisible(false, true);
-            }
-        }
-    }
+//    protected function handleSignalClosestEntityChanged( e :AVRGameRoomEvent) :void
+//    {
+//        var signalArray :Array = e.value as Array;
+//        if( signalArray != null && signalArray.length >= 2 && signalArray[0] == playerId) {
+////            log.debug(name + " handleSignalReceived() " + e);
+//            
+//            var closestUserId :int = int(signalArray[1]);
+//            var closestUserName :String = String(signalArray[2]);
+//            var closestUserLocation :Array = signalArray[3] as Array;
+//            var closestUserHotspot :Array = signalArray[4] as Array;
+//            var targetLocation :Array = signalArray[5] as Array;
+//            
+////            log.debug( "   closestUserLocation " + closestUserLocation);
+////            log.debug( "   closestUserHotspot " + closestUserHotspot);
+////            log.debug( "   targetLocation " + targetLocation);
+//            
+//            
+//            if( closestUserId > 0 ) {
+//                //Only change target if this player is not involved in an action 
+//                //that requires maintaining the current target.
+//                
+//                switch( action ) {
+//                    
+//                    case VConstants.GAME_MODE_FEED_FROM_PLAYER:
+//                    case VConstants.GAME_MODE_FEED_FROM_NON_PLAYER:
+//                    case VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER:
+//                    case VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER:
+//                    case VConstants.GAME_MODE_BARED:
+//                        //Update the target data if our target has moved, but don't change 
+//                        //our target
+//                        if( closestUserId == targetId) {
+//                            setTargetLocation( closestUserLocation );
+//                            setTargetHotspot( closestUserHotspot );
+//                            setTargetName( closestUserName );
+//                            setTargetVisible(true, true);
+//                            break;
+//                        }
+//                        else {
+//                            //Continue to below
+//                        }
+//                        
+//                    default://Otherwise, change our target
+//                        setTargetId( closestUserId );
+//                        if( room != null) {
+//                            room.ctrl.sendSignal( VConstants.SIGNAL_PLAYER_TARGET, [playerId, targetId]);
+//                        }
+//                        setTargetLocation( closestUserLocation );
+//                        setTargetHotspot( closestUserHotspot );
+//                        setTargetName( closestUserName );
+//                        
+//                        var targetsBlood :Number;
+//                        var targetsMaxBlood :Number;
+//                        if( room.isPlayer( closestUserId )) {
+//                            var targetPlayer :Player = ServerContext.vserver.getPlayer(closestUserId);
+//                            if( targetPlayer != null) {
+//                                targetsBlood = targetPlayer.blood;
+//                                targetsMaxBlood = targetPlayer.maxBlood;
+//                            }
+//                            else {
+//                                log.error("handleSignalReceived(), new target=" + closestUserId + ", should be a player, but player from server is null");
+//                            }
+//                        }
+//                        else {//Target is non-player
+//                            targetsBlood = ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( closestUserId );
+//                            targetsMaxBlood = VConstants.MAX_BLOOD_NONPLAYERS;
+//                        }
+//                        
+//                        setTargetBlood( targetsBlood );
+//                        setTargetMaxBlood( targetsMaxBlood );
+//                        setTargetVisible(true, true);
+//                        break;
+//                }
+//            }
+//            else {//There is no-one closest.  That means remove the target
+//                setTargetVisible(false, true);
+//            }
+//        }
+//    }
     
     protected function changeTargetForHUD( userId :int ) :void
     {
@@ -1403,44 +1447,44 @@ public class Player extends EventHandlerManager
 //        break;
     }
     
-    /**
-    * Checks if we are feeding from a non-player.  If so, every time they make X chats in a 
-    * time interval (1 minute), we get blood, and they lose blood.
-    */
-    protected function handleSignalTargetChatted( e :AVRGameRoomEvent) :void
-    {
-        log.debug("handleSignalTargetChatted, e=" + e);
-        log.debug("playerId=" + playerId);
-        log.debug("targetId=" + targetId);
-        var signalArray :Array = e.value as Array;
-        var fromPlayerId :int = int(signalArray[0]);
-        var playerChattedId :int = int(signalArray[1]);
-        if( action == VConstants.GAME_MODE_FEED_FROM_NON_PLAYER ) {
-            if( targetId == playerChattedId ) {
-                var time :int = getTimer();
-                var aMinuteAgo :int = time - VConstants.CHAT_FEEDING_TIME_INTERVAL_MILLISECS;
-                
-                _chatTimesWithTarget.push( time );
-                
-                _chatTimesWithTarget = _chatTimesWithTarget.filter( function( chattime :int, ...ignored) :Boolean {
-                    return chattime > aMinuteAgo;
-                });
-                
-                if( _chatTimesWithTarget.length >= VConstants.CHAT_FEEDING_MIN_CHATS_PER_TIME_INTERVAL) {
-                    _chatTimesWithTarget.splice(0);
-                    handleSuccessfulFeedMessage( new SuccessfulFeedMessage( playerId, targetId));
-                }
-                
-            }
-            else {
-                log.debug("handleSignalTargetChatted, targetId != fromPlayerId");    
-            }
-        }
-        else {
-            log.debug("handleSignalTargetChatted, action != Constants.GAME_MODE_FEED_FROM_NON_PLAYER");
-        }
-    }
-    
+//    /**
+//    * Checks if we are feeding from a non-player.  If so, every time they make X chats in a 
+//    * time interval (1 minute), we get blood, and they lose blood.
+//    */
+//    protected function handleSignalTargetChatted( e :AVRGameRoomEvent) :void
+//    {
+//        log.debug("handleSignalTargetChatted, e=" + e);
+//        log.debug("playerId=" + playerId);
+//        log.debug("targetId=" + targetId);
+//        var signalArray :Array = e.value as Array;
+//        var fromPlayerId :int = int(signalArray[0]);
+//        var playerChattedId :int = int(signalArray[1]);
+//        if( action == VConstants.GAME_MODE_FEED_FROM_NON_PLAYER ) {
+//            if( targetId == playerChattedId ) {
+//                var time :int = getTimer();
+//                var aMinuteAgo :int = time - VConstants.CHAT_FEEDING_TIME_INTERVAL_MILLISECS;
+//                
+//                _chatTimesWithTarget.push( time );
+//                
+//                _chatTimesWithTarget = _chatTimesWithTarget.filter( function( chattime :int, ...ignored) :Boolean {
+//                    return chattime > aMinuteAgo;
+//                });
+//                
+//                if( _chatTimesWithTarget.length >= VConstants.CHAT_FEEDING_MIN_CHATS_PER_TIME_INTERVAL) {
+//                    _chatTimesWithTarget.splice(0);
+//                    handleSuccessfulFeedMessage( new SuccessfulFeedMessage( playerId, targetId));
+//                }
+//                
+//            }
+//            else {
+//                log.debug("handleSignalTargetChatted, targetId != fromPlayerId");    
+//            }
+//        }
+//        else {
+//            log.debug("handleSignalTargetChatted, action != Constants.GAME_MODE_FEED_FROM_NON_PLAYER");
+//        }
+//    }
+//    
     
     public function isVampire() :Boolean
     {
@@ -1512,7 +1556,7 @@ public class Player extends EventHandlerManager
         return _room;
     }
     
-    protected function updateAvatarState () :void
+    protected function updateAvatarState() :void
     {
         if (_room == null) {
             return;
@@ -1522,6 +1566,8 @@ public class Player extends EventHandlerManager
             if( avatar == null) {
                 return;
             }
+            
+//            log.debug("Updating avatar state", "action", action, "avatar.state", avatar.state);
             
             var newState :String = "Default";
             
@@ -1536,6 +1582,7 @@ public class Player extends EventHandlerManager
             }
             
             if( newState != avatar.state ) {
+//                log.debug("_ctrl.setAvatarState(" + newState + ")");
                 _ctrl.setAvatarState(newState);
             }
         }
@@ -1654,6 +1701,67 @@ public class Player extends EventHandlerManager
     }
     
     
+    /**
+    * Called periodically to set into the permanent props.
+    * 
+    * 
+    */
+    protected function setIntoPlayerProps() :void
+    {
+        //Permanent props 
+        
+        if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOOD) != blood ) {
+            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, blood, true);
+        }
+        
+        if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_NAME) != name ) {
+            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_NAME, name, true);
+        }
+        
+        if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_XP) != xp ) {
+            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_XP, xp, true);
+        }
+        
+        if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE) != time ) {
+            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE, time, true);
+        }
+        
+        if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_SIRE) != sire ) {
+            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_SIRE, sire, true);
+        }
+        
+        if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOODBONDED) != bloodbonded ) {
+            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED, bloodbonded, true);
+            
+            
+            if( _bloodbonded > 0) {//Set the name too
+                var bloodBondedPlayer :Player = ServerContext.vserver.getPlayer( _bloodbonded );
+                if( bloodBondedPlayer != null ) {
+                    _bloodbondedName = bloodBondedPlayer.name;
+                    _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED_NAME, _bloodbondedName, true);
+                }
+                else {
+                    log.error("Major error: setBloodBonded( " + _bloodbonded + "), but no Player, so cannot set name");
+                }
+            }
+            
+            
+            
+        }
+        
+        
+        if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOOD) != blood ) {
+            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, blood, true);
+        }
+        
+        if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOOD) != blood ) {
+            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, blood, true);
+        }
+        
+        
+    }
+    
+    
     
     
     
@@ -1693,19 +1801,19 @@ public class Player extends EventHandlerManager
 //        }
 //    }
     
-    public function setTargetVisible (targetVisible :Boolean, force :Boolean = false) :void
-    {
-        // update our runtime state
-        if (!force && targetVisible == _isTargetVisible) {
-            return;
-        }
-        _isTargetVisible = targetVisible;
-
-        // and if we're in a room, update the room properties
-        if (_room != null) {
-            _room.playerUpdated(this);
-        }
-    }
+//    public function setTargetVisible (targetVisible :Boolean, force :Boolean = false) :void
+//    {
+//        // update our runtime state
+//        if (!force && targetVisible == _isTargetVisible) {
+//            return;
+//        }
+//        _isTargetVisible = targetVisible;
+//
+//        // and if we're in a room, update the room properties
+//        if (_room != null) {
+//            _room.playerUpdated(this);
+//        }
+//    }
     
     
     
@@ -1731,44 +1839,44 @@ public class Player extends EventHandlerManager
 //        }
     }
     
-    public function setTargetName (name :String, force :Boolean = false) :void
-    {
-        // update our runtime state
-        if (!force && name == _targetName) {
-            return;
-        }
-        _targetName = name;
-    }
+//    public function setTargetName (name :String, force :Boolean = false) :void
+//    {
+//        // update our runtime state
+//        if (!force && name == _targetName) {
+//            return;
+//        }
+//        _targetName = name;
+//    }
+//    
+//    public function setTargetHotspot (hotspot :Array, force :Boolean = false) :void
+//    {
+//        // update our runtime state
+//        if (!force && ArrayUtil.equals(_targetHotspot, hotspot)) {
+//            return;
+//        }
+//        _targetHotspot = hotspot;
+//    }
     
-    public function setTargetHotspot (hotspot :Array, force :Boolean = false) :void
-    {
-        // update our runtime state
-        if (!force && ArrayUtil.equals(_targetHotspot, hotspot)) {
-            return;
-        }
-        _targetHotspot = hotspot;
-    }
-    
-    /**
-    * Only changes the (HUD) view of the targets blood, not the actual value.
-    */
-    public function setTargetBlood (targetBlood :Number, force :Boolean = false) :void
-    {
-        // update our runtime state
-        if (!force && _targetBlood == targetBlood) {
-            return;
-        }
-        _targetBlood = targetBlood;
-    }
-    
-    public function setTargetMaxBlood (targetMaxBlood :Number, force :Boolean = false) :void
-    {
-        // update our runtime state
-        if (!force && _targetMaxBlood == targetMaxBlood) {
-            return;
-        }
-        _targetMaxBlood = targetMaxBlood;
-    }
+//    /**
+//    * Only changes the (HUD) view of the targets blood, not the actual value.
+//    */
+//    public function setTargetBlood (targetBlood :Number, force :Boolean = false) :void
+//    {
+//        // update our runtime state
+//        if (!force && _targetBlood == targetBlood) {
+//            return;
+//        }
+//        _targetBlood = targetBlood;
+//    }
+//    
+//    public function setTargetMaxBlood (targetMaxBlood :Number, force :Boolean = false) :void
+//    {
+//        // update our runtime state
+//        if (!force && _targetMaxBlood == targetMaxBlood) {
+//            return;
+//        }
+//        _targetMaxBlood = targetMaxBlood;
+//    }
     
     public function setTargetLocation (location :Array, force :Boolean = false) :void
     {
@@ -1779,35 +1887,35 @@ public class Player extends EventHandlerManager
         _targetLocation = location;
     }
     
-    public function setClosestUserId (id :int) :void
-    {
-        _closestUserId = id;
-//        if (!force && id == _closestUserId) {
-//            return;
-//        }
-//        
-//        updateAvatarState();
-//
-//        // and if we're in a room, update the room properties
-//        if (_room != null) {
-//            _room.playerUpdated(this);
-//        }
-    }
-    public function setClosestUserName (name :String) :void
-    {
-        _closestUserName = name;
-//        // update our runtime state
-//        if (!force && name == _closestUserName) {
-//            return;
-//        }
-//        
-//        updateAvatarState();
-//
-//        // and if we're in a room, update the room properties
-//        if (_room != null) {
-//            _room.playerUpdated(this);
-//        }
-    }
+//    public function setClosestUserId (id :int) :void
+//    {
+//        _closestUserId = id;
+////        if (!force && id == _closestUserId) {
+////            return;
+////        }
+////        
+////        updateAvatarState();
+////
+////        // and if we're in a room, update the room properties
+////        if (_room != null) {
+////            _room.playerUpdated(this);
+////        }
+//    }
+//    public function setClosestUserName (name :String) :void
+//    {
+//        _closestUserName = name;
+////        // update our runtime state
+////        if (!force && name == _closestUserName) {
+////            return;
+////        }
+////        
+////        updateAvatarState();
+////
+////        // and if we're in a room, update the room properties
+////        if (_room != null) {
+////            _room.playerUpdated(this);
+////        }
+//    }
     
 
     
@@ -1848,8 +1956,8 @@ public class Player extends EventHandlerManager
         _timePlayerPreviouslyQuit = time;
 
         // persist it, too
-        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE, _timePlayerPreviouslyQuit, true);
-        log.info("now ", "time", new Date(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
+//        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE, _timePlayerPreviouslyQuit, true);
+//        log.info("now ", "time", new Date(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
     }
     
 //    public function addBloodBond( blondbondedPlayerId :int ) :void
@@ -1899,7 +2007,7 @@ public class Player extends EventHandlerManager
         
         _bloodbonded = bloodbonded;
         // persist it, too
-        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED, _bloodbonded, true);
+//        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED, _bloodbonded, true);
         
         if( _bloodbonded > 0) {//Set the name too
             var bloodBondedPlayer :Player = ServerContext.vserver.getPlayer( _bloodbonded );
@@ -1933,10 +2041,10 @@ public class Player extends EventHandlerManager
         }
         _sire = sire;
 
-        // persist it, too
-        log.debug("setSire", "sire", sire);
-        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_SIRE, _sire, true);
-        log.debug("setSire after ", "sire", _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_SIRE));
+//        // persist it, too
+//        log.debug("setSire", "sire", sire);
+//        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_SIRE, _sire, true);
+//        log.debug("setSire after ", "sire", _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_SIRE));
     }
     
     public function get action () :String
@@ -1965,11 +2073,11 @@ public class Player extends EventHandlerManager
         return _blood;
     }
     
-    public function get isTargetVisible () :Boolean
-    {
-        return _isTargetVisible;
-    }
-    
+//    public function get isTargetVisible () :Boolean
+//    {
+//        return _isTargetVisible;
+//    }
+//    
     
     
     public function get maxBlood () :Number
@@ -2006,37 +2114,37 @@ public class Player extends EventHandlerManager
     {
         return _targetId;
     }
-    public function get targetName() :String
-    {
-        return _targetName;
-    }
-    public function get targetHotspot() :Array
-    {
-        return _targetHotspot;
-    }
+//    public function get targetName() :String
+//    {
+//        return _targetName;
+//    }
+//    public function get targetHotspot() :Array
+//    {
+//        return _targetHotspot;
+//    }
     public function get targetLocation() :Array
     {
         return _targetLocation;
     }
-    public function get targetBlood() :Number
-    {
-        return _targetBlood;
-    }
-    public function get targetMaxBlood() :Number
-    {
-        return _targetMaxBlood;
-    }
-    
-
-    
-    public function get closestUserId() :int
-    {
-        return _closestUserId;
-    }
-    public function get closestUserName() :String
-    {
-        return _closestUserName;
-    }
+//    public function get targetBlood() :Number
+//    {
+//        return _targetBlood;
+//    }
+//    public function get targetMaxBlood() :Number
+//    {
+//        return _targetMaxBlood;
+//    }
+//    
+//
+//    
+//    public function get closestUserId() :int
+//    {
+//        return _closestUserId;
+//    }
+//    public function get closestUserName() :String
+//    {
+//        return _closestUserName;
+//    }
     
     public function get time () :Number
     {
@@ -2054,30 +2162,44 @@ public class Player extends EventHandlerManager
     {
         //Vampires lose blood
         if( isVampire() ) {
-            damage( dt * VConstants.VAMPIRE_BLOOD_LOSS_RATE);
+            if( blood > 1 ) {
+                damage( dt * VConstants.VAMPIRE_BLOOD_LOSS_RATE);
+            }
         }
         //Thralls regenerate blood
         else {
-            addBlood( dt * VConstants.THRALL_BLOOD_REGENERATION_RATE);
+            if( blood < maxBlood ) {
+                addBlood( dt * VConstants.THRALL_BLOOD_REGENERATION_RATE);
+            }
         }
         
+//        if( action == VConstants.GAME_MODE_FEED_FROM_PLAYER) {
+//            if( !(isTargetTargetingMe && targetPlayer.action == VConstants.GAME_MODE_BARED)) {
+//                setAction( VConstants.GAME_MODE_NOTHING );
+//            }
+//        } 
+        
+        updateAvatarState();
+        setIntoRoomProps( _room );
+        setIntoPlayerProps();
+        
         //Update target blood
-        if( targetId > 0 && room != null) {
-            if( !room.isPlayer(targetId)) {//Nom a non-player
-                setTargetBlood( ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( targetId ) );
-                setTargetMaxBlood( VConstants.MAX_BLOOD_NONPLAYERS );
-            }
-            else {
-                var targetPlayer :Player = ServerContext.vserver.getPlayer( targetId );
-                if( targetPlayer != null ) {
-                    setTargetBlood( targetPlayer.blood );
-                    setTargetMaxBlood( targetPlayer.maxBlood );
-                }
-                else {
-                    log.error("tick, null target player, although there shouldn't be");
-                }
-            }       
-        }
+//        if( targetId > 0 && room != null) {
+//            if( !room.isPlayer(targetId)) {//Nom a non-player
+//                setTargetBlood( ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( targetId ) );
+//                setTargetMaxBlood( VConstants.MAX_BLOOD_NONPLAYERS );
+//            }
+//            else {
+//                var targetPlayer :Player = ServerContext.vserver.getPlayer( targetId );
+//                if( targetPlayer != null ) {
+//                    setTargetBlood( targetPlayer.blood );
+//                    setTargetMaxBlood( targetPlayer.maxBlood );
+//                }
+//                else {
+//                    log.error("tick, null target player, although there shouldn't be");
+//                }
+//            }       
+//        }
         
         //Some state checks
 //        if( action == Constants.GAME_MODE_BARED) {
@@ -2086,13 +2208,7 @@ public class Player extends EventHandlerManager
 //            }
 //        } 
 
-        if( action == VConstants.GAME_MODE_FEED_FROM_PLAYER) {
-            if( !(isTargetTargetingMe && targetPlayer.action == VConstants.GAME_MODE_BARED)) {
-                setAction( VConstants.GAME_MODE_NOTHING );
-            }
-        } 
-        
-        setIntoRoomProps( _room );
+
     }
     
     public function get mostRecentVictimId() :int
@@ -2187,18 +2303,18 @@ public class Player extends EventHandlerManager
     protected var _timePlayerPreviouslyQuit :Number;
 
     protected var _targetId :int;
-    protected var _targetName :String;
+//    protected var _targetName :String;
     protected var _targetLocation :Array;
-    protected var _targetHotspot :Array;
-    protected var _targetBlood :Number;
-    protected var _targetMaxBlood :Number;
-    protected var _isTargetVisible :Boolean;//Show the target overlay?
+//    protected var _targetHotspot :Array;
+//    protected var _targetBlood :Number;
+//    protected var _targetMaxBlood :Number;
+//    protected var _isTargetVisible :Boolean;//Show the target overlay?
     
-    protected var _closestUserName :String;
-    protected var _closestUserId :int;
+//    protected var _closestUserName :String;
+//    protected var _closestUserId :int;
     
     
-    protected var _timeSinceLastBloodRegenerate :Number;//In seconds
+//    protected var _timeSinceLastBloodRegenerate :Number;//In seconds
 
     
     protected var _chatTimesWithTarget :Array = [];
