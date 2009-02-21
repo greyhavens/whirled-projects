@@ -12,7 +12,6 @@ import flash.display.Sprite;
 import flash.geom.Point;
 
 import vampire.feeding.*;
-import vampire.feeding.client.SpriteUtil;
 
 public class PlayerCursor extends CollidableObj
 {
@@ -37,7 +36,10 @@ public class PlayerCursor extends CollidableObj
 
     public function set moveTarget (val :Vector2) :void
     {
-        _moveDirection = val.subtract(this.loc).normalizeLocal();
+        var curLoc :Vector2 = this.loc;
+        if (!val.equals(curLoc)) {
+            _moveDirection = val.subtract(curLoc).normalizeLocal();
+        }
     }
 
     override protected function update (dt :Number) :void
