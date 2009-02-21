@@ -3,9 +3,8 @@ package vampire.feeding.client {
 import com.threerings.util.Log;
 import com.whirled.contrib.EventHandlerManager;
 
-import vampire.feeding.net.ClientReadyMsg;
-import vampire.feeding.net.GameEndedMsg;
-import vampire.feeding.net.StartRoundMsg;
+import vampire.feeding.*;
+import vampire.feeding.net.*;
 
 public class GameRoundMgr
 {
@@ -24,7 +23,7 @@ public class GameRoundMgr
     {
         if (!ClientCtx.isConnected) {
             // in offline testing mode, just start the game immediately
-            startRound([ ClientCtx.localPlayerId ], -1);
+            startRound();
 
         } else {
             if (!_ready) {
@@ -42,15 +41,15 @@ public class GameRoundMgr
                 log.warning("Received StartRoundMsg before we were ready!");
             } else {
                 var msg :StartRoundMsg = e.msg as StartRoundMsg;
-                startRound(msg.predatorIds, msg.preyId);
+                startRound();
                 _ready = false;
             }
         }
     }
 
-    protected function startRound (predatorIds :Array, preyId :int) :void
+    protected function startRound () :void
     {
-        ClientCtx.mainLoop.unwindToMode(new GameMode(predatorIds, preyId));
+        ClientCtx.mainLoop.unwindToMode(new GameMode());
     }
 
     protected var _ready :Boolean;

@@ -77,6 +77,8 @@ public class Constants
     public static const SP_MULTIPLIER_RETURN_TIME :NumRange = new NumRange(4, 9, Rand.STREAM_GAME);
 
     public static const DEBRIS_COUNT :int = 12;
+
+    public static const NULL_PLAYER :int = 0;
 }
 
 }

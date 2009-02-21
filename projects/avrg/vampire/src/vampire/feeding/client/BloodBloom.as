@@ -108,11 +108,6 @@ public class BloodBloom extends FeedingGameClient
         }
     }
 
-    protected function startGame (predatorIds :Array, preyId :int) :void
-    {
-        ClientCtx.mainLoop.changeMode(new GameMode(predatorIds, preyId));
-    }
-
     protected static function loadResources () :void
     {
         var rm :ResourceManager = ClientCtx.rsrcs;
@@ -123,6 +118,7 @@ public class BloodBloom extends FeedingGameClient
         rm.queueResourceLoad("sound", "sfx_heartbeat",  { embeddedClass: SOUND_HEARTBEAT });
         rm.queueResourceLoad("sound", "sfx_red_burst",  { embeddedClass: SOUND_RED_BURST });
         rm.queueResourceLoad("sound", "sfx_white_burst", { embeddedClass: SOUND_WHITE_BURST });
+        rm.queueResourceLoad("sound", "sfx_got_blood",  { embeddedClass: SOUND_GOT_BLOOD, volume: 0.35 });
         rm.queueResourceLoad("sound", "mus_music",      { embeddedClass: SOUND_MUSIC, type: "music" });
 
         rm.loadQueuedResources(
@@ -153,6 +149,9 @@ public class BloodBloom extends FeedingGameClient
     protected static const SOUND_RED_BURST :Class;
     [Embed(source="../../../../rsrc/feeding/white_burst.mp3")]
     protected static const SOUND_WHITE_BURST :Class;
+    [Embed(source="../../../../rsrc/feeding/got_blood.mp3")]
+    protected static const SOUND_GOT_BLOOD :Class;
+
     [Embed(source="../../../../rsrc/feeding/music.mp3")]
     protected static const SOUND_MUSIC :Class;
 }

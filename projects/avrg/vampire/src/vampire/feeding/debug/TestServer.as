@@ -56,19 +56,6 @@ class TestGameController extends OneRoomGameRoom
         }
     }
 
-    /*override protected function playerEntered (playerId :int) :void
-    {
-        log.info("Player joined", "playerId", playerId);
-
-        _waitingPlayers.push(playerId);
-        if (_waitingPlayers.length >= NUM_PLAYERS) {
-            startGame();
-        } else {
-            log.info("Waiting for " + String(NUM_PLAYERS - _waitingPlayers.length) +
-                     " more players to start game");
-        }
-    }*/
-
     override protected function playerLeft (playerId :int) :void
     {
         log.info("Player left", "playerId", playerId);

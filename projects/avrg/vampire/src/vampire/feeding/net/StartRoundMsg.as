@@ -9,13 +9,13 @@ public class StartRoundMsg
 {
     public static const NAME :String = "StartGame";
 
-    public var predatorIds :Array = [];
+    public var playerIds :Array = [];
     public var preyId :int;
 
-    public static function create (predatorIds :Array, preyId :int) :StartRoundMsg
+    public static function create (playerIds :Array, preyId :int) :StartRoundMsg
     {
         var msg :StartRoundMsg = new StartRoundMsg();
-        msg.predatorIds = predatorIds.slice();
+        msg.playerIds = playerIds.slice();
         msg.preyId = preyId;
         return msg;
     }
@@ -26,9 +26,9 @@ public class StartRoundMsg
             ba = new ByteArray();
         }
 
-        ba.writeByte(predatorIds.length);
-        for each (var predatorId :int in predatorIds) {
-            ba.writeInt(predatorId);
+        ba.writeByte(playerIds.length);
+        for each (var playerId :int in playerIds) {
+            ba.writeInt(playerId);
         }
 
         ba.writeInt(preyId);
@@ -38,10 +38,10 @@ public class StartRoundMsg
 
     public function fromBytes (ba :ByteArray) :void
     {
-        predatorIds = [];
-        var numPredators :int = ba.readByte();
-        for (var ii :int = 0; ii < numPredators; ++ii) {
-            predatorIds.push(ba.readInt());
+        playerIds = [];
+        var numPlayers :int = ba.readByte();
+        for (var ii :int = 0; ii < numPlayers; ++ii) {
+            playerIds.push(ba.readInt());
         }
 
         preyId = ba.readInt();

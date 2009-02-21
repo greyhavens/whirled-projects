@@ -21,11 +21,9 @@ import vampire.feeding.net.*;
 
 public class GameMode extends AppMode
 {
-    public function GameMode (predatorIds :Array, preyId :int)
+    public function GameMode ()
     {
         GameCtx.init();
-        GameCtx.predatorIds = predatorIds;
-        GameCtx.preyId = preyId;
         GameCtx.gameMode = this;
     }
 
@@ -45,7 +43,8 @@ public class GameMode extends AppMode
                 sendMultiplierObj.addTask(new SerialTask(
                     new TimedTask(Constants.SP_MULTIPLIER_RETURN_TIME.next()),
                     new FunctionTask(function () :void {
-                        onNewMultiplier(CreateBonusMsg.create(0, loc.x, loc.y, multiplier + 1));
+                        onNewMultiplier(CreateBonusMsg.create(
+                            Constants.NULL_PLAYER, loc.x, loc.y, multiplier + 1));
                     }),
                     new SelfDestructTask()));
                 addObject(sendMultiplierObj);

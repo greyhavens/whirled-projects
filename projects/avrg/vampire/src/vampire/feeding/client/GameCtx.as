@@ -22,19 +22,6 @@ public class GameCtx
 
     public static var timeLeft :Number;
 
-    public static var predatorIds :Array;
-    public static var preyId :int;
-
-    public static function get playerIds () :Array
-    {
-        var playerIds :Array = predatorIds.slice();
-        if (preyId >= 0) {
-            playerIds.push(preyId);
-        }
-
-        return playerIds;
-    }
-
     public static function init () :void
     {
         gameMode = null;
@@ -48,9 +35,6 @@ public class GameCtx
         uiLayer = null;
 
         timeLeft = Constants.GAME_TIME;
-
-        predatorIds = [];
-        preyId = -1;
     }
 
     // Returns a new Vector, clamped within the bounds of the game

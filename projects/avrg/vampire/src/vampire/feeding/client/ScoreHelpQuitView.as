@@ -76,6 +76,12 @@ public class ScoreHelpQuitView extends SceneObject
                 }),
             new SelfDestructTask()));
 
+        cellObj.addTask(new SerialTask(
+            new TimedTask(delay + 0.7),
+            new FunctionTask(function () :void {
+                ClientCtx.audio.playSoundNamed("sfx_got_blood")
+            })));
+
         cellObj.addTask(After(delay + 0.9, new AlphaTask(0, 0.1)));
 
         return cellObj;

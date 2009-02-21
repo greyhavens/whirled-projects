@@ -38,7 +38,10 @@ public class Server extends FeedingGameServer
         }
 
         _gameId = _gameIdCounter++;
-        _predatorIds = predatorIds;
+        _playerIds = predatorIds.slice();
+        if (preyId != Constants.NULL_PLAYER) {
+            _playerIds.push(preyId);
+        }
         _preyId = preyId;
         _preyBlood = preyBlood;
         _roundCompleteCallback = roundCompleteCallback;
@@ -60,12 +63,14 @@ public class Server extends FeedingGameServer
     override public function playerLeft (playerId :int) :void
     {
         if (playerId == _preyId) {
-            _preyId = -1;
-        } else {
-            ArrayUtil.removeFirst(_predatorIds, playerId);
+            _preyId = 0;
+            sendMessage(PreyLeftMsg.create());
+
         }
 
-        if (_predatorIds.length == 0 || _preyId == -1) {
+        ArrayUtil.removeFirst(_playerIds, playerId);
+
+        if (_playerIds.length == 0) {
             // If the last predator or prey just left the game, we're done and should shut down
             // prematurely
             shutdown();
@@ -89,12 +94,7 @@ public class Server extends FeedingGameServer
 
     override public function get playerIds () :Array
     {
-        var playerIds :Array = _predatorIds.slice();
-        if (_preyId >= 0) {
-            playerIds.push(_preyId);
-        }
-
-        return playerIds;
+        return _playerIds.slice();
     }
 
     override public function get lastRoundScore () :int
@@ -114,7 +114,7 @@ public class Server extends FeedingGameServer
     protected function waitForPlayers () :void
     {
         _state = STATE_WAITING_FOR_PLAYERS;
-        _playersNeedingCheckin = this.playerIds;
+        _playersNeedingCheckin = _playerIds.slice();
     }
 
     protected function shutdown () :void
@@ -176,7 +176,7 @@ public class Server extends FeedingGameServer
         case CreateBonusMsg.NAME:
             // bonuses are delivered to another randomly-picked player
             var targetPlayerId :int = getAnotherPlayer(e.senderId);
-            if (targetPlayerId != 0) {
+            if (targetPlayerId != Constants.NULL_PLAYER) {
                 sendMessage(msg, targetPlayerId);
             }
             break;
@@ -226,7 +226,7 @@ public class Server extends FeedingGameServer
 
         if (_playersNeedingCheckin.length == 0) {
             _state = STATE_PLAYING;
-            sendMessage(StartRoundMsg.create(_predatorIds, _preyId));
+            sendMessage(StartRoundMsg.create(_playerIds, _preyId));
             _timerMgr.createTimer(Constants.GAME_TIME * 1000, 1, onTimeOver).start();
         }
     }
@@ -235,7 +235,7 @@ public class Server extends FeedingGameServer
     {
         if (_state == STATE_PLAYING) {
             _state = STATE_WAITING_FOR_SCORES;
-            _playersNeedingScoreUpdate = this.playerIds;
+            _playersNeedingScoreUpdate = _playerIds.slice();
             _finalScores = new HashMap();
             sendMessage(RoundOverMsg.create());
         }
@@ -264,7 +264,7 @@ public class Server extends FeedingGameServer
 
         var players :Array = this.playerIds.slice();
         if (players.length <= 1) {
-            return 0;
+            return Constants.NULL_PLAYER;
         }
 
         ArrayUtil.removeFirst(players, playerId);
@@ -289,7 +289,7 @@ public class Server extends FeedingGameServer
 
     protected var _gameId :int;
     protected var _state :int;
-    protected var _predatorIds :Array;
+    protected var _playerIds :Array;
     protected var _preyId :int;
     protected var _preyBlood :Number;
     protected var _roundCompleteCallback :Function;
