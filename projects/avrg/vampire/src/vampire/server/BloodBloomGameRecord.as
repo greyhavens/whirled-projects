@@ -98,6 +98,16 @@ public class BloodBloomGameRecord
         var preyBlood :Number = _room.isPlayer( _preyId ) ? _room.getPlayer( _preyId ).blood :
             ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( _preyId );
         
+        //Start the avatar feeding
+        _predators.forEach( function( predId :int ) :void {
+            var player :Player = ServerContext.vserver.getPlayer( predId );
+            if( player != null ) {
+                
+                player.setAction( (gamePreyId > 0 ? VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER :
+                    VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER) );
+            }
+        });
+        
         _gameServer = FeedingGameServer.create( _room.roomId, 
                                                 _predators.toArray(), 
                                                 gamePreyId,
@@ -111,6 +121,7 @@ public class BloodBloomGameRecord
         ServerContext.ctrl.doBatch(function () :void {
             for each (var playerId :int in playerIds) {
                 if( _room.isPlayer( playerId )) {
+                    log.debug("Sending start game message to client " + playerId + "=StartClient", _gameServer.gameId);
                     _room.getPlayer( playerId ).ctrl.sendMessage("StartClient", _gameServer.gameId);
 //                    ServerContext.ctrl.getPlayer(playerId).sendMessage("StartClient", _gameServer.gameId);
                 }
@@ -121,13 +132,15 @@ public class BloodBloomGameRecord
         _started = true;
     }
     
-    protected function gameFinishedCallback(...ignored) :void
+    protected function roundFinishedCallback(...ignored) :void
     {
-        log.debug("gameFinishedCallback");
+        log.debug("roundFinishedCallback");
         
         if( _gameServer != null ) {
             var score :Number = _gameServer.lastRoundScore;
             log.debug("Score=" + score);
+            
+            _room.bloodBloomRoundOver( this );
             
         }
         else {
@@ -135,12 +148,13 @@ public class BloodBloomGameRecord
         }
 //        log.debug("_gameServer.finalScore=" + _gameServer.finalScore);
 //        log.debug("_gameServer.playerIds=" + _gameServer.playerIds);
-        shutdown();
+//        shutdown();
     }
     
-    protected function roundFinishedCallback(...ignored) :void
+    protected function gameFinishedCallback(...ignored) :void
     {
-        log.debug("roundFinishedCallback, for now quit game");
+        log.debug("gameFinishedCallback");
+//        gameFinishedCallback();
 //        log.debug("_gameServer.finalScore=" + _gameServer.finalScore);
 //        log.debug("_gameServer.playerIds=" + _gameServer.playerIds);
         shutdown();
@@ -154,6 +168,8 @@ public class BloodBloomGameRecord
     
     public function isPredator( playerId :int ) :Boolean
     {
+        log.debug("isPredator(" +  playerId + "), _predators=" + _predators.toArray());
+        log.debug("  returning " + _predators.contains( playerId ));
         return _predators.contains( playerId );
     }
     
@@ -280,11 +296,14 @@ public class BloodBloomGameRecord
     {
         return ClassUtil.tinyClassName(this) 
             + " _preyId=" + _preyId
-            + "_predators=" + _predators.toArray()
-            + "_primaryPredatorId=" + _primaryPredatorId
-            + "_currentCountdownSecond=" + _currentCountdownSecond
-            + "_started=" + _started
-            + "_finished=" + _finished
+            + " _predators=" + _predators.toArray()
+            + " _multiplePredators=" + _multiplePredators
+            + " _primaryPredatorId=" + _primaryPredatorId
+            + " _countdownTimeRemaining=" + _countdownTimeRemaining
+            + " _started=" + _started
+            + " _finished=" + _finished
+            + " _elapsedGameTime=" + _elapsedGameTime
+            + "lastRoundScore=" + (_gameServer != null ? _gameServer.lastRoundScore : 0)
     }
     
     
