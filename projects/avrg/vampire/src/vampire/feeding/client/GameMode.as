@@ -147,8 +147,8 @@ public class GameMode extends AppMode
             addObject(new Debris(), GameCtx.bgLayer);
         }
 
-        if (ClientCtx.preyLeftGame) {
-            onPreyLeftGame(false);
+        if (ClientCtx.noMoreFeeding) {
+            onNoMoreFeeding(false);
         }
     }
 
@@ -188,8 +188,8 @@ public class GameMode extends AppMode
         } else if (e.msg is RoundResultsMsg) {
             onRoundOver(e.msg as RoundResultsMsg);
 
-        } else if (e.msg is PreyLeftMsg) {
-            onPreyLeftGame(true);
+        } else if (e.msg is NoMoreFeedingMsg) {
+            onNoMoreFeeding(true);
         }
     }
 
@@ -294,7 +294,7 @@ public class GameMode extends AppMode
         _sparkles.gotoAndPlay(2);
     }
 
-    protected function onPreyLeftGame (animate :Boolean) :void
+    protected function onNoMoreFeeding (animate :Boolean) :void
     {
         var color :ColorMatrix = new ColorMatrix();
         var greyscale :ColorMatrix = new ColorMatrix().makeGrayscale();

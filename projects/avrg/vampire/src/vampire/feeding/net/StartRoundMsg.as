@@ -15,7 +15,7 @@ public class StartRoundMsg
     public static function create (playerIds :Array, preyId :int) :StartRoundMsg
     {
         var msg :StartRoundMsg = new StartRoundMsg();
-        msg.playerIds = playerIds.slice();
+        msg.playerIds = playerIds;
         msg.preyId = preyId;
         return msg;
     }

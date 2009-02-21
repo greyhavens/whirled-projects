@@ -64,8 +64,6 @@ public class Server extends FeedingGameServer
     {
         if (playerId == _preyId) {
             _preyId = 0;
-            sendMessage(PreyLeftMsg.create());
-
         }
 
         ArrayUtil.removeFirst(_playerIds, playerId);
@@ -76,6 +74,13 @@ public class Server extends FeedingGameServer
             shutdown();
 
         } else {
+            if ((_preyId == 0 || _playerIds.length <= 1) && !_noMoreFeeding) {
+                // If the prey has left, or all the predators have left, no more feeding
+                // can take place.
+                _noMoreFeeding = true;
+                sendMessage(NoMoreFeedingMsg.create());
+            }
+
             if (_state == STATE_WAITING_FOR_PLAYERS) {
                 ArrayUtil.removeFirst(_playersNeedingCheckin, playerId);
                 startGameIfReady();
@@ -226,7 +231,7 @@ public class Server extends FeedingGameServer
 
         if (_playersNeedingCheckin.length == 0) {
             _state = STATE_PLAYING;
-            sendMessage(StartRoundMsg.create(_playerIds, _preyId));
+            sendMessage(StartRoundMsg.create(_playerIds.slice(), _preyId));
             _timerMgr.createTimer(Constants.GAME_TIME * 1000, 1, onTimeOver).start();
         }
     }
@@ -299,6 +304,7 @@ public class Server extends FeedingGameServer
     protected var _roomCtrl :RoomSubControlServer;
     protected var _nameUtil :NameUtil;
     protected var _finalScores :HashMap; // Map<playerId, score>
+    protected var _noMoreFeeding :Boolean;
 
     protected var _playersNeedingCheckin :Array;
     protected var _playersNeedingScoreUpdate :Array;

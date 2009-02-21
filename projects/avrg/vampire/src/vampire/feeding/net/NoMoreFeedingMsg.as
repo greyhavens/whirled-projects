@@ -4,14 +4,14 @@ import com.whirled.contrib.simplegame.net.Message;
 
 import flash.utils.ByteArray;
 
-public class PreyLeftMsg
+public class NoMoreFeedingMsg
     implements Message
 {
     public static const NAME :String = "PreyLeft";
 
-    public static function create () :PreyLeftMsg
+    public static function create () :NoMoreFeedingMsg
     {
-        return new PreyLeftMsg();
+        return new NoMoreFeedingMsg();
     }
 
     public function toBytes (ba :ByteArray = null) :ByteArray

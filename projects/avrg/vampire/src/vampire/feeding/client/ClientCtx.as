@@ -25,14 +25,14 @@ public class ClientCtx
     public static var roundMgr :GameRoundMgr;
     public static var msgMgr :ClientMsgMgr;
     public static var gameCompleteCallback :Function;
-    public static var preyLeftGame :Boolean;
+    public static var noMoreFeeding :Boolean;
 
     public static function init () :void
     {
         roundMgr = null;
         msgMgr = null;
         gameCompleteCallback = null;
-        preyLeftGame = false;
+        noMoreFeeding = false;
     }
 
     public static function quit (playerInitiated :Boolean) :void

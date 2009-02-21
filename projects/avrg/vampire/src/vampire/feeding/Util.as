@@ -17,7 +17,7 @@ public class Util
         mgr.addMessageType(GameEndedMsg);
         mgr.addMessageType(RoundResultsMsg);
         mgr.addMessageType(ClientQuitMsg);
-        mgr.addMessageType(PreyLeftMsg);
+        mgr.addMessageType(NoMoreFeedingMsg);
     }
 }
 
