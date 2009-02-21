@@ -139,5 +139,5 @@ class TestGameController extends OneRoomGameRoom
     protected var _events :EventHandlerManager = new EventHandlerManager();
 
     // the number of players the game will wait for before starting a new game
-    protected static const NUM_PLAYERS :int = 3;
+    protected static const NUM_PLAYERS :int = 2;
 }

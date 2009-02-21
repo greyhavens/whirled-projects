@@ -40,13 +40,13 @@ public class ScoreHelpQuitView extends SceneObject
         super.destroyed();
     }
 
-    public function addBlood (x :Number, y :Number, count :int) :void
+    public function addBlood (x :Number, y :Number, count :int, initialDelay :Number) :void
     {
         _bloodCount += count;
 
         var loc :Point = this.displayObject.globalToLocal(new Point(x, y));
 
-        var delay :Number = 0;
+        var delay :Number = initialDelay;
         for (var cellSize :int = 0; cellSize < CELL_SIZE_VALUES.length; ++cellSize) {
             var cellValue :int = CELL_SIZE_VALUES[cellSize];
             var numCells :int = count / cellValue;

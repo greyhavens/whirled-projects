@@ -8,6 +8,8 @@ import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Bitmap;
 import flash.display.MovieClip;
+import flash.display.Sprite;
+import flash.text.TextField;
 import flash.utils.getTimer;
 
 import vampire.feeding.*;

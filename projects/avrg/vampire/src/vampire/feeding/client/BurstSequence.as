@@ -1,5 +1,6 @@
 package vampire.feeding.client {
 
+import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.objects.SceneObject;
@@ -78,12 +79,20 @@ public class BurstSequence extends SceneObject
         if (!isSequenceAlive) {
             if (this.totalValue > 0) {
                 var loc :Point = this.displayObject.parent.localToGlobal(new Point(this.x, this.y));
-                GameCtx.scoreView.addBlood(loc.x, loc.y, this.totalValue);
+                GameCtx.scoreView.addBlood(loc.x, loc.y, this.totalValue, 0);
             }
 
             if (_totalBursts >= Constants.CREATE_BONUS_BURST_SIZE) {
                 // Send a multiplier to the other players
                 GameCtx.gameMode.sendMultiplier(_largestMultiplier + 1, this.x, this.y);
+
+                // Show an animation of this happening
+                var anim :NewBonusAnimation = new NewBonusAnimation(
+                    NewBonusAnimation.TYPE_SEND,
+                    _largestMultiplier + 1,
+                    new Vector2(this.x, this.y));
+                GameCtx.gameMode.addObject(anim, GameCtx.uiLayer);
+
             }
 
             destroySelf();

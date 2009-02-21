@@ -190,32 +190,45 @@ public class GameMode extends AppMode
     protected function onNewMultiplier (msg :CreateBonusMsg) :void
     {
         if (msg.playerId != ClientCtx.localPlayerId) {
-            var cell :Cell = GameObjects.createCell(Constants.CELL_BONUS, false, msg.multiplier);
-            cell.x = msg.x;
-            cell.y = msg.y;
+            // animate the bonus into the game, and call addMultiplierToBoard
+            // when the anim completes
+            var anim :NewBonusAnimation = new NewBonusAnimation(
+                NewBonusAnimation.TYPE_RECEIVE,
+                msg.multiplier,
+                new Vector2(msg.x, msg.y),
+                function () :void { addMultiplierToBoard(msg); });
 
-            if (!ClientCtx.isSinglePlayer) {
-                // show a little animation showing who gave us the multiplier
-                var playerName :String = ClientCtx.getPlayerName(msg.playerId);
-                var tfName :TextField = TextBits.createText(playerName, 1.4, 0, 0xffffff,
-                                                            "center", TextBits.FONT_GARAMOND);
-                tfName.cacheAsBitmap = true;
-                var sprite :Sprite = SpriteUtil.createSprite();
-                sprite.addChild(tfName);
-                var animName :SimpleSceneObject = new SimpleSceneObject(sprite);
-                var animX :Number = msg.x - (animName.width * 0.5);
-                var animY :Number = msg.y - animName.height;
-                animName.x = animX;
-                animName.y = animY;
-                animName.addTask(new SerialTask(
-                    new TimedTask(1),
-                    new AlphaTask(0, 0.5)));
-                animName.addTask(new SerialTask(
-                    new TimedTask(0.5),
-                    LocationTask.CreateEaseIn(animX, animY - 50, 1),
-                    new SelfDestructTask()));
-                addObject(animName, GameCtx.uiLayer);
-            }
+            addObject(anim, GameCtx.uiLayer);
+        }
+    }
+
+    protected function addMultiplierToBoard (msg :CreateBonusMsg) :void
+    {
+        var cell :Cell = GameObjects.createCell(Constants.CELL_BONUS, false, msg.multiplier);
+        cell.x = msg.x;
+        cell.y = msg.y;
+
+        if (!ClientCtx.isSinglePlayer) {
+            // show a little animation showing who gave us the multiplier
+            var playerName :String = ClientCtx.getPlayerName(msg.playerId);
+            var tfName :TextField = TextBits.createText(playerName, 1.4, 0, 0xffffff,
+                                                        "center", TextBits.FONT_GARAMOND);
+            tfName.cacheAsBitmap = true;
+            var sprite :Sprite = SpriteUtil.createSprite();
+            sprite.addChild(tfName);
+            var animName :SimpleSceneObject = new SimpleSceneObject(sprite);
+            var animX :Number = msg.x - (animName.width * 0.5);
+            var animY :Number = msg.y - animName.height;
+            animName.x = animX;
+            animName.y = animY;
+            animName.addTask(new SerialTask(
+                new TimedTask(1),
+                new AlphaTask(0, 0.5)));
+            animName.addTask(new SerialTask(
+                new TimedTask(0.5),
+                LocationTask.CreateEaseIn(animX, animY - 50, 1),
+                new SelfDestructTask()));
+            addObject(animName, GameCtx.uiLayer);
         }
     }
 

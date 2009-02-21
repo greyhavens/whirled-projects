@@ -19,6 +19,25 @@ public class Cell extends CollidableObj
     public static const STATE_NORMAL :int = 1;
     public static const STATE_PREPARING_TO_EXPLODE :int = 2;
 
+    public static function createCellSprite (cellType :int, multiplier :int) :Sprite
+    {
+        var sprite :Sprite = SpriteUtil.createSprite();
+        var movie :MovieClip =
+            ClientCtx.instantiateMovieClip("blood", CELL_MOVIES[cellType], true, true);
+        sprite.addChild(movie);
+
+        if (cellType == Constants.CELL_BONUS) {
+            var text :String = "x" + multiplier;
+            var tf :TextField =
+                TextBits.createText(text, 1.1, 0, 0, "center", TextBits.FONT_GARAMOND);
+            tf.x = -tf.width * 0.5;
+            tf.y = -tf.height * 0.5;
+            sprite.addChild(tf);
+        }
+
+        return sprite;
+    }
+
     public static function getCellCount (cellType :int = -1) :int
     {
         return GameCtx.gameMode.getObjectRefsInGroup(getGroupName(cellType)).length;
@@ -50,18 +69,8 @@ public class Cell extends CollidableObj
         _state = STATE_NORMAL;
         _needsBirth = beingBorn;
 
-        _sprite = SpriteUtil.createSprite();
-        _movie = ClientCtx.instantiateMovieClip("blood", MOVIE_NAMES[type], true, true);
-        _sprite.addChild(_movie);
-
-        if (type == Constants.CELL_BONUS) {
-            var text :String = "x" + _multiplier;
-            var tf :TextField =
-                TextBits.createText(text, 1.1, 0, 0, "center", TextBits.FONT_GARAMOND);
-            tf.x = -tf.width * 0.5;
-            tf.y = -tf.height * 0.5;
-            _sprite.addChild(tf);
-        }
+        _sprite = createCellSprite(type, multiplier);
+        _movie = MovieClip(_sprite.getChildAt(0));
 
         if (type == Constants.CELL_RED || type == Constants.CELL_BONUS) {
             var rotationTime :Number = (type == Constants.CELL_RED ?
@@ -262,7 +271,7 @@ public class Cell extends CollidableObj
     protected static const RED_ROTATION_TIME :Number = 3;
     protected static const BONUS_ROTATION_TIME :Number = 1.5;
 
-    protected static const MOVIE_NAMES :Array = [ "cell_red", "cell_white", "cell_coop" ];
+    protected static const CELL_MOVIES :Array = [ "cell_red", "cell_white", "cell_coop" ];
 }
 
 }
