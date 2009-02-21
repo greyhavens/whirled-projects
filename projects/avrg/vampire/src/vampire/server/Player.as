@@ -611,10 +611,10 @@ public class Player extends EventHandlerManager
             
             
         if( _room.isPlayer( e.targetPlayer ) ) {
-            actionChange( VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER );
+            actionChange( VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER );
         }
         else {
-            actionChange( VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER );
+            actionChange( VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER );
         }
         
         
