@@ -76,6 +76,8 @@ public class VServer extends ObjectDBThane
         
         ServerContext.minionHierarchy = new MinionHierarchyServer( this );
         
+        addObject( ServerContext.minionHierarchy ); 
+        
         ServerContext.nonPlayersBloodMonitor = new NonPlayerAvatarsBloodMonitor();
         addObject( ServerContext.nonPlayersBloodMonitor ); 
 
