@@ -123,7 +123,7 @@ public class Cell extends CollidableObj
 
         // Hack: put birthed red cells on a different layer, so that they appear under the heart.
         // Pop them up to the cell layer after they're born.
-        GameCtx.bgLayer.addChild(this.displayObject);
+        GameCtx.cellBirthLayer.addChild(this.displayObject);
 
         // fire out of the heart in a random direction
         var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);

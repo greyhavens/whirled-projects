@@ -4,6 +4,7 @@ import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.net.*;
@@ -60,11 +61,15 @@ public class GameMode extends AppMode
 
         // Setup display layers
         GameCtx.bgLayer = SpriteUtil.createSprite();
+        GameCtx.cellBirthLayer = SpriteUtil.createSprite();
+        GameCtx.heartLayer = SpriteUtil.createSprite();
         GameCtx.burstLayer = SpriteUtil.createSprite();
         GameCtx.cellLayer = SpriteUtil.createSprite();
         GameCtx.cursorLayer = SpriteUtil.createSprite();
         GameCtx.uiLayer = SpriteUtil.createSprite(true, true);
         _modeSprite.addChild(GameCtx.bgLayer);
+        _modeSprite.addChild(GameCtx.cellBirthLayer);
+        _modeSprite.addChild(GameCtx.heartLayer);
         _modeSprite.addChild(GameCtx.burstLayer);
         _modeSprite.addChild(GameCtx.cellLayer);
         _modeSprite.addChild(GameCtx.cursorLayer);
@@ -83,7 +88,7 @@ public class GameMode extends AppMode
         var heartMovie :MovieClip = ClientCtx.instantiateMovieClip("blood", "circulatory");
         heartMovie.x = Constants.GAME_CTR.x;
         heartMovie.y = Constants.GAME_CTR.y;
-        GameCtx.bgLayer.addChild(heartMovie);
+        GameCtx.heartLayer.addChild(heartMovie);
 
         _arteries = ArrayUtil.create(2, null);
         _arteries[Constants.ARTERY_TOP] = heartMovie["artery_top"];
@@ -141,6 +146,10 @@ public class GameMode extends AppMode
         for (var ii :int = 0; ii < Constants.DEBRIS_COUNT; ++ii) {
             addObject(new Debris(), GameCtx.bgLayer);
         }
+
+        if (ClientCtx.preyLeftGame) {
+            onPreyLeftGame(false);
+        }
     }
 
     override protected function enter () :void
@@ -178,6 +187,9 @@ public class GameMode extends AppMode
 
         } else if (e.msg is RoundResultsMsg) {
             onRoundOver(e.msg as RoundResultsMsg);
+
+        } else if (e.msg is PreyLeftMsg) {
+            onPreyLeftGame(true);
         }
     }
 
@@ -280,6 +292,26 @@ public class GameMode extends AppMode
         artery.gotoAndPlay(2);
 
         _sparkles.gotoAndPlay(2);
+    }
+
+    protected function onPreyLeftGame (animate :Boolean) :void
+    {
+        var color :ColorMatrix = new ColorMatrix();
+        var greyscale :ColorMatrix = new ColorMatrix().makeGrayscale();
+
+        if (animate) {
+            var animObj :SimObject = new SimObject();
+            animObj.addTask(new SerialTask(
+                new ParallelTask(
+                    new ColorMatrixBlendTask(GameCtx.bgLayer, color, greyscale, 4),
+                    new ColorMatrixBlendTask(GameCtx.heartLayer, color, greyscale, 4)),
+                new SelfDestructTask()));
+            addObject(animObj);
+
+        } else {
+            GameCtx.bgLayer.filters = [ greyscale.createFilter() ];
+            GameCtx.heartLayer.filters = [ greyscale.createFilter() ];
+        }
     }
 
     protected var _playerType :int;

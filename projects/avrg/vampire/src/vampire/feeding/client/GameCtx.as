@@ -15,6 +15,8 @@ public class GameCtx
     public static var scoreView :ScoreHelpQuitView;
 
     public static var bgLayer :Sprite;
+    public static var cellBirthLayer :Sprite;
+    public static var heartLayer :Sprite;
     public static var burstLayer :Sprite;
     public static var cellLayer :Sprite;
     public static var cursorLayer :Sprite;

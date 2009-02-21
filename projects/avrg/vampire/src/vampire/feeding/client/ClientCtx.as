@@ -8,8 +8,6 @@ import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Bitmap;
 import flash.display.MovieClip;
-import flash.display.Sprite;
-import flash.text.TextField;
 import flash.utils.getTimer;
 
 import vampire.feeding.*;
@@ -27,6 +25,15 @@ public class ClientCtx
     public static var roundMgr :GameRoundMgr;
     public static var msgMgr :ClientMsgMgr;
     public static var gameCompleteCallback :Function;
+    public static var preyLeftGame :Boolean;
+
+    public static function init () :void
+    {
+        roundMgr = null;
+        msgMgr = null;
+        gameCompleteCallback = null;
+        preyLeftGame = false;
+    }
 
     public static function quit (playerInitiated :Boolean) :void
     {

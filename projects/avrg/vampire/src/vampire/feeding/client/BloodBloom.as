@@ -43,10 +43,11 @@ public class BloodBloom extends FeedingGameClient
 
     public function BloodBloom (gameId :int, gameCompleteCallback :Function)
     {
-         if (!_inited) {
+        if (!_inited) {
             throw new Error("FeedingGameClient.init has not been called");
         }
 
+        ClientCtx.init();
         ClientCtx.gameCompleteCallback = gameCompleteCallback;
         ClientCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);
         Util.initMessageManager(ClientCtx.msgMgr);
@@ -79,6 +80,8 @@ public class BloodBloom extends FeedingGameClient
         if (e.msg is GameEndedMsg) {
             // if we receive this message, the game has ended prematurely
             ClientCtx.quit(false);
+        } else if (e.msg is PreyLeftMsg) {
+            ClientCtx.preyLeftGame = true;
         }
     }
 
