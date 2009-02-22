@@ -7,7 +7,7 @@ import flash.utils.ByteArray;
 public class NoMoreFeedingMsg
     implements Message
 {
-    public static const NAME :String = "PreyLeft";
+    public static const NAME :String = "NoMoreFeeding";
 
     public static function create () :NoMoreFeedingMsg
     {
