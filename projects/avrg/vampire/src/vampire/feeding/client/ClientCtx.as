@@ -45,6 +45,16 @@ public class ClientCtx
         isAiPrey = false;
     }
 
+    public static function get isPrey () :Boolean
+    {
+        return (localPlayerId == preyId);
+    }
+
+    public static function get isPredator () :Boolean
+    {
+        return (!isPrey);
+    }
+
     public static function get isSinglePlayer () :Boolean
     {
         return (!isConnected || playerIds.length <= 1);

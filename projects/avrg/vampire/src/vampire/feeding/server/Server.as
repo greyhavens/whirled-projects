@@ -261,7 +261,7 @@ public class Server extends FeedingGameServer
 
     protected function startGameNow (...ignored) :void
     {
-        if (_state != STATE_WAITING_FOR_PLAYERS) {
+        if (_state != STATE_WAITING_FOR_PLAYERS || _noMoreFeeding) {
             return;
         }
 

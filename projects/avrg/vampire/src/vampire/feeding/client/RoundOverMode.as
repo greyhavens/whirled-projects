@@ -79,13 +79,20 @@ public class RoundOverMode extends AppMode
         tfTitle.text = "Total Score";
         tfScore.text = String(totalScore);
 
-        // wire up buttons
-        var replayBtn :SimpleButton = panelMovie["panel_button"];
-        registerOneShotCallback(replayBtn, MouseEvent.CLICK,
-            function (...ignored) :void {
-                 ClientCtx.roundMgr.reportReadyForNextRound();
-                 replayBtn.visible = false;
-            });
+        _replayBtn = panelMovie["panel_button"];
+        _feedingOverText = panelMovie["deadgame_text"];
+        if (ClientCtx.noMoreFeeding) {
+            noMoreFeeding();
+
+        } else {
+            _replayBtn.visible = true;
+            _feedingOverText.visible = false;
+            registerOneShotCallback(_replayBtn, MouseEvent.CLICK,
+                function (...ignored) :void {
+                     ClientCtx.roundMgr.reportReadyForNextRound();
+                     _replayBtn.visible = false;
+                });
+        }
 
         var quitBtn :SimpleButton = panelMovie["button_close"];
         registerOneShotCallback(quitBtn, MouseEvent.CLICK,
@@ -110,11 +117,24 @@ public class RoundOverMode extends AppMode
                 ShowFramesTask.LAST_FRAME,
                 Constants.WAIT_FOR_PLAYERS_TIMEOUT));
             addObject(timerAnimObj);
+
+        } else if (e.msg is NoMoreFeedingMsg) {
+            noMoreFeeding();
         }
+    }
+
+    protected function noMoreFeeding () :void
+    {
+        _replayTimer.visible = false;
+        _replayBtn.visible = false;
+        _feedingOverText.visible = true;
+        _feedingOverText.text = (ClientCtx.isPrey ? "You are alone." : "Your prey has escaped!");
     }
 
     protected var _results :RoundResultsMsg;
     protected var _replayTimer :MovieClip;
+    protected var _replayBtn :SimpleButton;
+    protected var _feedingOverText :TextField;
 
     protected static var log :Log = Log.getLog(RoundOverMode);
 }
