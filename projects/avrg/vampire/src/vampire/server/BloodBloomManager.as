@@ -49,16 +49,18 @@ public class BloodBloomManager extends SimObjectThane
     
     public function requestFeed( predatorId :int, preyId :int, multiplePredators :Boolean, preyLocation :Array ) :BloodBloomGameRecord
     {
-        log.debug("begin requestFeed " + this);
+        log.debug("begin requestFeed ", "predatorId", predatorId, "preyId", preyId, 
+            "multiplePredators", multiplePredators, "BloodBloomManager", this);
         
         var currentGame :BloodBloomGameRecord = _playerId2Game.get( predatorId ) as BloodBloomGameRecord;
         if( currentGame != null ) {
             if( currentGame.preyId == preyId ) {
-                log.debug(predatorId + " doing nothing, prey is already in a game I am also in.");        
+                log.debug(predatorId + " doing nothing, prey is already in a game I am also in. Game=" + currentGame);        
             }
             else {
-                log.debug(predatorId + "  I am alrady in a game with a different prey, so leaving that game");
                 currentGame.removePlayer( predatorId );
+                _playerId2Game.remove( predatorId );
+                log.debug(predatorId + "  I am alrady in a game with a different prey, so leaving that game. Game=" + currentGame);
             }
         }
         
@@ -127,11 +129,15 @@ public class BloodBloomManager extends SimObjectThane
     public function isPredatorInGame( playerId :int ) :Boolean
     {
         if( !_playerId2Game.containsKey( playerId )) {
+            log.debug("isPredatorInGame(" + playerId + "), but no key in _playerId2Game, _playerId2Game.keys=" + _playerId2Game.keys());
             return false;
         }
         
         var game :BloodBloomGameRecord = _playerId2Game.get( playerId ) as BloodBloomGameRecord;
-        return game.isPredator( playerId );
+        
+        var isPredator :Boolean = game.isPredator( playerId );
+        log.debug("isPredatorInGame(" + playerId + ") returning " + isPredator);
+        return isPredator;
     }
     
     public function isPreyInGame( playerId :int ) :Boolean
@@ -168,7 +174,11 @@ public class BloodBloomManager extends SimObjectThane
     
     override public function toString() :String
     {
-        return ClassUtil.tinyClassName( this ) + " " + _games.join("\n  ");
+        return ClassUtil.tinyClassName( this ) 
+            + " _games.length=" + _games.length
+            + " _playerId2Game.size()=" + _playerId2Game.size()
+            + " _playerId2Game.keys()=" + _playerId2Game.keys()
+            + "games listed:\n  " + _games.join("\n  ")
     }
     
     protected var _room :Room;

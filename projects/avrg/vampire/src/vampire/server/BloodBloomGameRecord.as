@@ -112,7 +112,7 @@ public class BloodBloomGameRecord
                                                 _predators.toArray(), 
                                                 gamePreyId,
                                                 preyBlood,
-                                                roundFinishedCallback,
+                                                roundCompleteCallback,
                                                 gameFinishedCallback);
                                                  
         log.debug("starting gameServer", "gameId", _gameServer.gameId ,"roomId", _room.roomId, "_predators", _predators.toArray(), "gamePreyId", gamePreyId);
@@ -132,9 +132,8 @@ public class BloodBloomGameRecord
         _started = true;
     }
     
-    protected function gameFinishedCallback(...ignored) :void
+    protected function roundCompleteCallback() :Number 
     {
-        log.debug("gameFinishedCallback");
         
         if( _gameServer != null ) {
             var score :Number = _gameServer.lastRoundScore;
@@ -144,21 +143,24 @@ public class BloodBloomGameRecord
             
         }
         else {
-            log.error("gameFinishedCallback, but gameserver is null, no points!");
+            log.error("roundCompleteCallback, but gameserver is null, no points!");
         }
-//        log.debug("_gameServer.finalScore=" + _gameServer.finalScore);
-//        log.debug("_gameServer.playerIds=" + _gameServer.playerIds);
+        
+        
+        if( _room.isPlayer( _preyId ) ) {
+            return _room.getPlayer( _preyId ).blood;
+        }
+        else {
+            return ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( _preyId );
+        }
+    }
+    
+    protected function gameFinishedCallback(...ignored) :void
+    {
+        log.debug("gameFinishedCallback");
         shutdown();
     }
     
-    protected function roundFinishedCallback(...ignored) :void
-    {
-        log.warning("roundFinishedCallback, nothing implemented yet");
-//        gameFinishedCallback();
-//        log.debug("_gameServer.finalScore=" + _gameServer.finalScore);
-//        log.debug("_gameServer.playerIds=" + _gameServer.playerIds);
-//        shutdown();
-    }
     
     public function addPredator( playerId :int, preyLocation :Array ) :void
     {
@@ -211,14 +213,14 @@ public class BloodBloomGameRecord
             }
         }
         
-        if( _started ) {
-            _elapsedGameTime += dt;
-            
-            if( _elapsedGameTime > vampire.feeding.Constants.GAME_TIME + 10 ) {
-                log.error("Game is still running 10 secs after it should of shutdown.  _shutdown=true");
-                _finished = true;
-            }
-        }
+//        if( _started ) {
+//            _elapsedGameTime += dt;
+//            
+//            if( _elapsedGameTime > vampire.feeding.Constants.GAME_TIME + 10 ) {
+//                log.error("Game is still running 10 secs after it should of shutdown.  _shutdown=true");
+//                _finished = true;
+//            }
+//        }
     }
     
     public function get isStarted() :Boolean
