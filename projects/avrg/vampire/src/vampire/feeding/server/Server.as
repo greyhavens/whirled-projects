@@ -34,9 +34,12 @@ public class Server extends FeedingGameServer
     public function Server (roomId :int, predatorIds :Array, preyId :int, preyBlood :Number,
                             roundCompleteCallback :Function, gameCompleteCallback :Function)
     {
-         if (!_inited) {
+        if (!_inited) {
             throw new Error("FeedingGameServer.init has not been called");
         }
+
+        log.info("New server starting", "roomId", roomId, "predatorIds", predatorIds,
+            "preyId", preyId, "preyBlood", preyBlood);
 
         _gameId = _gameIdCounter++;
         _playerIds = predatorIds.slice();
