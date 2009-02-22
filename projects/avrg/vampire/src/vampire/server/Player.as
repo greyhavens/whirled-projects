@@ -1709,6 +1709,9 @@ public class Player extends EventHandlerManager
     protected function setIntoPlayerProps() :void
     {
         //Permanent props 
+        if( _ctrl == null || _ctrl.props == null || !_ctrl.isConnected() ) {
+            return;
+        }
         
         if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOOD) != blood ) {
             _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, blood, true);
