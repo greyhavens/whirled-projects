@@ -136,9 +136,9 @@ public class LOL extends Sprite
             editableTags = true;
             cleanMode = false;
 
-        } else if (mode == "creator's choice") {
+        } else if (mode == "starter's choice") {
             editableTags = (_ctrl.game.getOccupantIds().length == 1);
-            tagHeader = "Creator's tags";
+            tagHeader = "Starter's tags";
 
         } else {
             tagHeader = "Latest photos";
