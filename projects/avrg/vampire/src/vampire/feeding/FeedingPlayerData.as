@@ -42,6 +42,8 @@ public class FeedingPlayerData
             ba = new ByteArray();
         }
 
+        ba.writeByte(_playerStrain);
+
         for (var strain :int = 0; strain < Constants.NUM_SPECIAL_STRAINS; ++strain) {
             var strainData :Array = getStrainData(strain);
             ba.writeByte(strainData.length);
@@ -57,6 +59,8 @@ public class FeedingPlayerData
     {
         init();
 
+        _playerStrain = ba.readByte();
+
         for (var strain :int = 0; strain < Constants.NUM_SPECIAL_STRAINS; ++strain) {
             var strainData :Array = getStrainData(strain);
             var numPlayers :int = ba.readByte();
@@ -66,6 +70,16 @@ public class FeedingPlayerData
         }
     }
 
+    public function set playerStrain (val :int) :void
+    {
+        _playerStrain = val;
+    }
+
+    public function get playerStrain () :int
+    {
+        return _playerStrain;
+    }
+
     protected function getStrainData (strainType :int) :Array
     {
         return _collectedStrains[strainType];
@@ -73,12 +87,14 @@ public class FeedingPlayerData
 
     protected function init () :void
     {
+        _playerStrain = 0;
         _collectedStrains = [];
         for (var ii :int = 0; ii < Constants.NUM_SPECIAL_STRAINS; ++ii) {
             _collectedStrains.push([]);
         }
     }
 
+    protected var _playerStrain :int;
     protected var _collectedStrains :Array; // Array<Array<playerId>>
 }
 
