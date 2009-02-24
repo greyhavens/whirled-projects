@@ -58,6 +58,7 @@ public class TestClient extends Sprite
             } else {
                 _curGame = FeedingGameClient.create(gameId, onGameComplete);
                 addChild(_curGame);
+                freezeAvatars(true);
             }
 
         } else if (e.name == "Server_Hello") {
@@ -76,8 +77,23 @@ public class TestClient extends Sprite
 
         // In the test client, we just disconnect from the game when it ends.
         _gameCtrl.player.deactivateGame();
+
+        freezeAvatars(false);
     }
 
+    protected function freezeAvatars (freeze :Boolean) :void
+    {
+        for each (var entityId :String in _gameCtrl.room.getEntityIds("avatar")) {
+            var freezeObj :Object = _gameCtrl.room.getEntityProperty("freeze", entityId);
+            if (freezeObj is Function) {
+                try {
+                    (freezeObj as Function).call(null, freeze);
+                } catch (e :Error) {
+                    log.info("freeze() error", "freeze", freeze, "entityId", entityId, e);
+                }
+            }
+        }
+    }
 
     protected var _gameCtrl :AVRGameControl;
     protected var _events :EventHandlerManager = new EventHandlerManager();
