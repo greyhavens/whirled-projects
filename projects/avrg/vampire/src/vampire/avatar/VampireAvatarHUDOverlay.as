@@ -3,12 +3,13 @@ package vampire.avatar
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashSet;
 import com.whirled.avrg.AVRGameControl;
+import com.whirled.contrib.avrg.AvatarHUD;
 import com.whirled.contrib.avrg.TargetingOverlayAvatars;
-import com.whirled.net.ElementChangedEvent;
+import com.whirled.contrib.simplegame.objects.SimpleTimer;
 
 import flash.events.MouseEvent;
 
-import vampire.data.Codes;
+import vampire.client.ClientContext;
 import vampire.data.SharedPlayerStateClient;
 import vampire.data.VConstants;
 
@@ -20,19 +21,71 @@ import vampire.data.VConstants;
  */
 public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 {
-    public function VampireAvatarHUDOverlay(ctrl:AVRGameControl, avatarManager:VampireAvatarHUDManager)
+    
+    protected var p1 :VampireAvatarHUD;
+    
+    public function VampireAvatarHUDOverlay(ctrl:AVRGameControl)
     {
-        super(ctrl, avatarManager);
+        super(ctrl);
         
-        _vampireAvatarManager = avatarManager;
+//        _vampireAvatarManager = avatarManager;
         
-        registerListener( ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged );
         
-        setDisplayMode( DISPLAY_MODE_OFF );
+        setDisplayMode( DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
         
+        if( VConstants.LOCAL_DEBUG_MODE) {
+            p1 = new VampireAvatarHUD(ctrl,  1 );
+            _avatars.put( p1.playerId, p1 );
+            p1.isPlayer = true;
+            p1.setHotspot( [100, 200] );
+            p1.setLocation( [0.6, 0, 0.5], 2 );
+            
+            var p2 :VampireAvatarHUD = new VampireAvatarHUD(ctrl,  2 );
+            _avatars.put( p2.playerId, p2 );
+            p2.isPlayer = true;
+            p2.setHotspot( [100, 200] );
+            p2.setLocation( [0.3, 0, 1.0], 3 );
+            
+            var p3 :VampireAvatarHUD = new VampireAvatarHUD(ctrl,  3 );
+            _avatars.put( p3.playerId, p3 );
+            p3.isPlayer = true;
+            p3.setHotspot( [100, 200] );
+            p3.setLocation( [0.9, 0, 0.7], 3 );
+        }
+//        trace(_avatars.size() );
+        
+        setDisplayMode( DISPLAY_MODE_SHOW_VALID_TARGETS );
 //        registerListener(_paintableOverlay, MouseEvent.CLICK, function(...ignored) :void {
 //            setDisplayMode( DISPLAY_MODE_OFF );    
 //        });
+    }
+    override protected function addedToDB():void
+    {
+        super.addedToDB();
+        if( VConstants.LOCAL_DEBUG_MODE) {
+            
+            for each( var p :AvatarHUD in _avatars.values()) {
+                db.addObject( p, _paintableOverlay );
+            }
+            
+//            db.addObject(new SimpleTimer(10, function (...ignored) :void {
+//                p1.setLocation( [0.6, 0, 0.1], 6 );    
+//            }));
+        }
+    }
+    
+    
+    
+    override protected function createPlayerAvatar( userId :int ) :AvatarHUD
+    {
+        var av :VampireAvatarHUD = new VampireAvatarHUD( _ctrl, userId );
+//        db.addObject( av );
+        return av;
+    }
+    
+    public function getVampireAvatar( playerId :int ) :VampireAvatarHUD
+    {
+        return getAvatar( playerId ) as VampireAvatarHUD;
     }
     
     
@@ -46,7 +99,7 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 //        var validTargetIds :HashSet = getValidPlayerIdTargets();
 //        _multiPred = validTargetIds.size() > 1;
 //        
-//        _avatarManager.avatarMap.forEach( function( playerId :int, avatar :VampireAvatarHUD) :void {
+//        _avatars.forEach( function( playerId :int, avatar :VampireAvatarHUD) :void {
 //            
 //            var s :Sprite = avatar.sprite;
 //            if( !validTargetIds.contains(playerId)) {
@@ -129,7 +182,7 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 //            
 //            _multiPred = validTargetIds.size() > 1;
 //            
-//            _avatarManager.avatarMap.forEach( function( playerId :int, avatar :VampireAvatarHUD) :void {
+//            _avatars.forEach( function( playerId :int, avatar :VampireAvatarHUD) :void {
 //            
 //                var s :Sprite = avatar.sprite;   
 //                if( !validTargetIds.contains(playerId)) {
@@ -157,22 +210,23 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 //        }
     }
     
-    protected function handleElementChanged( e :ElementChangedEvent ) :void
+    
+    protected function getValidPlayerIdTargets() :HashSet
     {
-        if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION) {
-            dirty();
+        
+        if( VConstants.LOCAL_DEBUG_MODE) {
+            var a :HashSet = new HashSet();
+            a.add(1);
+            a.add(2);
+            return a;
         }
         
-    }
-    
-    override protected function getValidPlayerIdTargets() :HashSet
-    {
         var validIds :HashSet = new HashSet();
         
         var playerIds :Array = _ctrl.room.getPlayerIds();
         
         //Add the nonplayers
-        _avatarManager.avatarMap.forEach( function( playerId :int, ...ignored) :void {
+        _avatars.forEach( function( playerId :int, ...ignored) :void {
             if( !ArrayUtil.contains(playerIds, playerId )) {
                 validIds.add( playerId );
             }
@@ -207,24 +261,24 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
             case DISPLAY_MODE_SHOW_INFO_ALL_AVATARS:
                 _displaySprite.addChild( _paintableOverlay );
                 
-                _avatarManager.avatarMap.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
+                _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
                     avatar.setDisplayModeShowInfo();
                 });
                 
                 
                 break;
                 
-            case DISPLAY_MODE_SELECT_FEED_TARGET:
+            case DISPLAY_MODE_SHOW_VALID_TARGETS:
                 _displaySprite.addChild( _paintableOverlay );
                 
-                trace("DISPLAY_MODE_SELECT_FEED_TARGET, validIds=" + validIds);
                 validIds = getValidPlayerIdTargets();
-                
-                _avatarManager.avatarMap.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
+                trace("validIds=" + validIds.toArray());
+                _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
                     if( validIds.contains( avatar.playerId ) ) {
                         avatar.setDisplayModeSelectableForFeed( validIds.size() > 1 );
                     }
                     else {
+                        trace("Invisible " + avatar);
                         avatar.setDisplayModeInvisible();
                     }        
                 });
@@ -232,7 +286,7 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
             case DISPLAY_MODE_SHOW_FEED_TARGET:
                 _displaySprite.addChild( _paintableOverlay );
                 
-                _avatarManager.avatarMap.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
+                _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
                     if( selectedPlayer == avatar.playerId ) {
                         avatar.setSelectedForFeed( multiPredators );
                     }
@@ -251,14 +305,48 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
         }
     }
     
+    override protected function update(dt:Number):void
+    {
+        super.update(dt);
+        
+        //Check for vampire/human colors
+        //Get our vampire level, and compare with the color state of the avatar.
+        _ctrl.room.getPlayerIds().forEach( function( playerId :int, ...ignored) :void {
+           var level :int = SharedPlayerStateClient.getLevel( playerId );
+           
+           var colorScheme :String = (level < VConstants.MINIMUM_VAMPIRE_LEVEL ?
+               VConstants.COLOR_SCHEME_HUMAN : VConstants.COLOR_SCHEME_VAMPIRE);
+           
+           var entityId :String = ClientContext.getPlayerEntityId( playerId );
+           
+           if( entityId == null ) {
+               return;
+           }
+           
+           var currentColorCheme :String = _ctrl.room.getEntityProperty( 
+               AvatarGameBridge.ENTITY_PROPERTY_CURRENT_COLOR_SCHEME, entityId ) as String;
+               
+           if( currentColorCheme == null || colorScheme != currentColorCheme ) {
+               var colorFunction :Function = _ctrl.room.getEntityProperty( 
+               AvatarGameBridge.ENTITY_PROPERTY_CHANGE_COLOR_SCHEME_FUNCTION, entityId ) as Function;
+               if( colorFunction != null ) {
+                   colorFunction( colorScheme );
+               }
+               
+           }
+        });
+        
+        
+    }
+    
     protected var _displayMode :int = 0;
     
     public static const DISPLAY_MODE_OFF :int = 0;
     public static const DISPLAY_MODE_SHOW_INFO_ALL_AVATARS :int = 1;
-    public static const DISPLAY_MODE_SELECT_FEED_TARGET :int = 2;
+    public static const DISPLAY_MODE_SHOW_VALID_TARGETS :int = 2;
     public static const DISPLAY_MODE_SHOW_FEED_TARGET :int = 3;
     
     
-    protected var _vampireAvatarManager :VampireAvatarHUDManager;
+//    protected var _vampireAvatarManager :VampireAvatarHUDManager;
 }
 }

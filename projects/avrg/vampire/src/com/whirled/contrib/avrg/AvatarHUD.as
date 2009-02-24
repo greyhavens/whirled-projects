@@ -4,26 +4,44 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Hashable;
 import com.threerings.util.Log;
+import com.whirled.EntityControl;
+import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.tasks.LocationTask;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.geom.Point;
 
+import vampire.data.VConstants;
+
+/**
+ * The sprite is centered on the top-middle of the avatar hotspot, presumably this will
+ * be close to where you place avatar HUD info.
+ * 
+ * 
+ */
 public class AvatarHUD extends SceneObject
     implements Hashable
 {
-    public function AvatarHUD(userId :int)//,  updateCallback :Function )//roomCtrl :RoomSubControlBase,
+    public function AvatarHUD(ctrl :AVRGameControl, userId :int)//,  updateCallback :Function )//roomCtrl :RoomSubControlBase,
     {
 //        if( roomCtrl == null )
 //        {
 //            throw new Error("Cannot create NonPlayerAvatar without RoomSubControlBase");
 //        }
+
+        if( ctrl == null ) {
+            throw new Error("AVRGameControl cannot be null");
+        }
+        
+        _ctrl = ctrl;
         _isPlayer = true;
         _userId = userId;
 //        _roomCtrl = roomCtrl;
         
         
-        _sprite = new Sprite();
+        _displaySprite = new Sprite();
         
         
 //        frenzyCountdown.y = -30;
@@ -57,6 +75,55 @@ public class AvatarHUD extends SceneObject
 //            log.debug("CLient NonPlayerAvatar new and loaded room props=" + this);
 //            
 //        }
+    }
+    override protected function update(dt:Number) :void
+    {
+        super.update(dt);
+        
+        
+        //We don't need to update every frame.
+        _timeSinceLastUpdate += dt;
+        
+        if( VConstants.LOCAL_DEBUG_MODE) {
+            return;
+        }
+        
+        if( _timeSinceLastUpdate >= UPDATE_INTERVAL_SECONDS) {
+//            trace("updating avatarHUD entityId=" + entityId);
+            _timeSinceLastUpdate = 0;
+            
+            
+//            trace("size=" + _ctrl.room.getEntityProperty( EntityControl.PROP_DIMENSIONS, entityId));
+                
+                
+            var newLocation :Array = _ctrl.room.getEntityProperty( 
+                EntityControl.PROP_LOCATION_LOGICAL, entityId) as Array;
+            
+            if( newLocation == null ) {
+//                trace("newLocation null, not updating");
+                return;
+            }
+            
+            
+            var newHotspot :Array = _ctrl.room.getEntityProperty( 
+                EntityControl.PROP_HOTSPOT, entityId) as Array;
+                
+//            trace("newLocation=" + newLocation);
+//            trace("newHotspot=" + newHotspot);
+                
+//            if( !ArrayUtil.equals( newHotspot, hotspot ) ) {
+                setHotspot( newHotspot );
+//            }
+            
+            if( !ArrayUtil.equals( newLocation, location ) ) {
+                setLocation( newLocation, UPDATE_INTERVAL_SECONDS );
+            }
+            
+            //If we don't yet have a location, make us invisible
+            visible = location != null;
+            
+        }
+        
     }
     
     
@@ -424,67 +491,59 @@ public class AvatarHUD extends SceneObject
 ////        }
 //    }
     
-    public function setHotspot (hotspot :Array, force :Boolean = false) :void
+    public function setHotspot (hotspot :Array) :void
     {
-        // update our runtime state
-        if (!force && ArrayUtil.equals(_hotspot, hotspot) && hotspot != null) {
-            return;
-        }
         _hotspot = hotspot;
-//        _updated = false;
-        
-        drawMouseSelectionGraphics();
-        
-        // and if we're in a room, update the room properties
-//        if (_roomCtrl != null && _roomCtrl is RoomSubControlServer) {
-//            setIntoRoomProps();
-//        }
     }
     
-    public function setLocation (location :Array, force :Boolean = false) :void
+    public function setLocation (location :Array, dt :Number) :void
     {
-        log.debug("setLocation=" + location );
-        // update our runtime state
-        if (!force && ArrayUtil.equals(_location, location) && location != null) {
+        if( ArrayUtil.equals( location, _location )) {
             return;
         }
         _location = location;
-//        _updated = false;
-        // and if we're in a room, update the room properties
-//        if (_roomCtrl != null && _roomCtrl is RoomSubControlServer) {
-//            setIntoRoomProps();
-//        }
+        var newXY :Point = locationToRoomCoords( _ctrl, location, hotspot, _displaySprite );
+        
+        if( newXY == null) {
+            log.debug("setLocation(" + location + ") returns null point");
+            return;
+        }
+        
+
+        
+//        trace("setLocation(" + location + ") = " + newXY);
+//        this.x = newXY.x;
+//        this.y = newXY.y;
+        removeAllTasks();
+        addTask( LocationTask.CreateSmooth( newXY.x, newXY.y, dt ) );
     }
     
     
-    
-//    public function get maxBlood () :Number
-//    {
-//        return Constants.MAX_BLOOD_NONPLAYERS;
-//    }
-//    
-//    public function get blood () :Number
-//    {
-//        return _blood;
-//    }
-    
-//    override protected function destroyed():void
-//    {
-//        //Remove ourselves from the hsahmap record
-//        if( _serverNonPlayerHashMap != null ) {
-//            _serverNonPlayerHashMap.remove( playerId );
-//        }
-//                
-////        if( _roomCtrl != null ) {
-////            if( _roomCtrl is RoomSubControlServer) {
-////                (_roomCtrl as RoomSubControlServer).props.set(_roomKey, null);
-////            }
-////            _roomCtrl = null;
-////        }
-//        _serverNonPlayerHashMap = null;
-//        _updateCallback = null;
-//    }
-    
+    /**
+    * The point is the middle-top of the hotspot.
+    * 
+    */
+    protected static function locationToRoomCoords( ctrl :AVRGameControl, location :Array, hotspot :Array, s :Sprite = null ) :Point
+    {
+        if( location == null 
+            || ctrl == null 
+            || ctrl.local == null 
+            || ctrl.local.locationToRoom(0, 0, 0) == null ) {
+            return null; 
+        }
+        
+        if( hotspot == null || hotspot.length < 2) {
+            hotspot = [0,0];
+        }
+        
+        
+        var heightLogical :Number = hotspot[1]/ctrl.local.getRoomBounds()[1];
+        
+        var screenPosition :Point = ctrl.local.locationToPaintable( location[0], heightLogical, location[2] );
+        
+       return screenPosition; 
+        
+    }
     
     
     public function get playerId() :int
@@ -526,23 +585,6 @@ public class AvatarHUD extends SceneObject
         return _userId;
     }
     
-//    public function get isStale() :Boolean
-//    {
-//        return _isStale;
-//    }
-    
-//    public function get roomCtrl() :RoomSubControlBase
-//    {
-//        return _roomCtrl;
-//    }
-    
-//    public function setServerNonPlayerHashMap( m :HashMap ) :void
-//    {
-//        _serverNonPlayerHashMap = m;
-//        if( m != null ) {
-//            m.put( playerId, this );
-//        }
-//    }
     
     public function get isPlayer() :Boolean
     {
@@ -557,19 +599,21 @@ public class AvatarHUD extends SceneObject
     
     
     
-//    public function shutdown() :void
-//    {
-////        super.shutdown();
-//        if( _sprite.parent != null ) {
-//            _sprite.parent.removeChild( _sprite );
-//        }
-//    }
-    
     /**
     * Override this
     */
     protected function drawMouseSelectionGraphics() :void
     {
+        
+//        _sprite.graphics.clear();
+//        _sprite.graphics.beginFill(0, 0.3);
+//        _sprite.graphics.drawRect( -hotspot[0]/2, -hotspot[1], hotspot[0], hotspot[1]);
+//        _sprite.graphics.endFill();
+//
+//
+//        _sprite.graphics.beginFill(0, 0.3);
+//        _sprite.graphics.drawCircle(0, 0, 10);
+//        _sprite.graphics.endFill();
     }
     
 //    public function setSelectable( s :Boolean ) :void
@@ -602,8 +646,9 @@ public class AvatarHUD extends SceneObject
 //        }
 ////        while( _sprite.numChildren ) { _sprite.removeChildAt(0);}
 //        _sprite.graphics.clear();
-//        _sprite.graphics.beginFill(0, 0);
-//        _sprite.graphics.drawRect( -hotspot[0]/2, -hotspot[1], hotspot[0], hotspot[1]);
+//        _sprite.graphics.beginFill(0, 0.3);
+//        _sprite.graphics.drawCircle(0, 0, 10);
+////        _sprite.graphics.drawRect( -hotspot[0]/2, -hotspot[1], hotspot[0], hotspot[1]);
 //        _sprite.graphics.endFill();
 //        _sprite.graphics.lineStyle(1, 0);
 //        _sprite.graphics.drawRect( -hotspot[0]/2, -hotspot[1], hotspot[0], hotspot[1]);
@@ -640,30 +685,49 @@ public class AvatarHUD extends SceneObject
     
     public function get sprite(): Sprite
     {
-        return _sprite;
+        return _displaySprite;
     }
     
     override public function get displayObject () :DisplayObject
     {
-        return _sprite;
+        return _displaySprite;
     }
     
     
-    public function setZScaleFactor( f :Number ) :void
+//    public function setZScaleFactor( f :Number ) :void
+//    {
+//        _zScaleFactor = f;
+//       
+//       drawMouseSelectionGraphics();
+////        _sprite.addChild( TextFieldUtil.createField("Single Pred.", {scaleX:2, scaleY:2, textColor:0xffffff} )); 
+//       
+//    }
+    
+    public function get entityId () :String
     {
-        _zScaleFactor = f;
-       
-       drawMouseSelectionGraphics();
-//        _sprite.addChild( TextFieldUtil.createField("Single Pred.", {scaleX:2, scaleY:2, textColor:0xffffff} )); 
-       
+        if( _entityId == null ) {
+            for each( var entityId :String in _ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
+            
+                var entityUserId :int = int(_ctrl.room.getEntityProperty( EntityControl.PROP_MEMBER_ID, entityId));
+                
+                if( entityUserId == _userId ) {
+                    _entityId = entityId;
+                    break;
+                }
+                
+            }
+        }
+        
+        return _entityId;
     }
     
-    protected var _sprite :Sprite;
+    protected var _displaySprite :Sprite;
     
     
     
     
     protected var _userId :int;
+    protected var _entityId :String;
 //    protected var _name :String;
 //    protected var _blood :Number;
     protected var _location :Array;
@@ -675,7 +739,8 @@ public class AvatarHUD extends SceneObject
     
     
     
-    protected var _zScaleFactor :Number = 1.0;
+//    protected var _zScaleFactor :Number = 1.0;
+    protected var _ctrl :AVRGameControl;
 //    protected var _roomCtrl :RoomSubControlBase;
 //    protected var _roomCtrlClient :RoomSubControlClient;
     
@@ -687,6 +752,9 @@ public class AvatarHUD extends SceneObject
 //    protected var _updateCallback :Function;
     
 //    public static const GROUP :String = "NonPlayerGroup";
+    protected var _timeSinceLastUpdate :Number = 0;
+    protected static const UPDATE_INTERVAL_SECONDS :Number = 0.1;
+    protected static const EMPTY_LOCATION :Array = [0,0,0];
     protected static const log :Log = Log.getLog( AvatarHUD );
 }
 }

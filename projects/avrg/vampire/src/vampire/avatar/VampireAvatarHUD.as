@@ -1,6 +1,8 @@
 package vampire.avatar
 {
     import com.threerings.util.ArrayUtil;
+    import com.whirled.avrg.AVRGameControl;
+    import com.whirled.contrib.EventHandlerManager;
     import com.whirled.contrib.avrg.AvatarHUD;
     import com.whirled.net.ElementChangedEvent;
     import com.whirled.net.MessageReceivedEvent;
@@ -26,9 +28,9 @@ package vampire.avatar
  */
 public class VampireAvatarHUD extends AvatarHUD
 {
-    public function VampireAvatarHUD(userId:int)
+    public function VampireAvatarHUD( ctrl :AVRGameControl, userId:int)
     {
-        super(userId);
+        super(ctrl, userId);
         
         _roomKey = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + _userId;
         
@@ -39,7 +41,8 @@ public class VampireAvatarHUD extends AvatarHUD
         registerListener(ClientContext.model, HierarchyUpdatedEvent.HIERARCHY_UPDATED, updateInfoHud);
         
         _hudSprite = new Sprite();
-        _sprite.addChild( _hudSprite );
+        _displaySprite.addChild( _hudSprite );
+        _hudSprite.y = -10;
         
 //        var anchorSprite :Sprite = new Sprite();
 //        anchorSprite.graphics.beginFill(0);
@@ -91,8 +94,9 @@ public class VampireAvatarHUD extends AvatarHUD
         frenzyCountdown.addEventListener(MouseEvent.ROLL_OUT, function(...ignored) :void {
             waitingSign.visible = false;    
         });
+        frenzyCountdown.y += 10;
         waitingSign.visible = false;
-        
+        waitingSign.y += 10;
         
         
         //HUD bits and bobs
@@ -109,7 +113,48 @@ public class VampireAvatarHUD extends AvatarHUD
         
         updateInfoHud();
         
+        
+        //Add a selection box
+        _selectionBox = new Sprite();
+        _selectionBox.graphics.beginFill(0, 0.0);
+        _selectionBox.graphics.drawRect(-50, -30, 100, 200);
+        _selectionBox.graphics.endFill();
+        
+        _selectionBox.addEventListener(MouseEvent.ROLL_OUT,selectionBoxMouseOut);
+//        _selectionBox.addEventListener(MouseEvent.MOUSE_OUT,hideFeedButtons);
+        
+        _blood.addEventListener( MouseEvent.ROLL_OVER, bloodMouseOver);
+        _blood.addEventListener( MouseEvent.MOUSE_MOVE, bloodMouseOver);
+//        _blood.addEventListener( MouseEvent.MOUSE_OVER, showFeedButtons);
+        
     }
+    
+    protected function bloodMouseOver( e :MouseEvent ) :void
+    {
+        if( !frenzyCountdown.visible ) {
+            if( !_hudSprite.contains(_selectionBox ) ) {
+                _hudSprite.addChildAt( _selectionBox, 0 );
+            }
+            buttonFeed.visible = true;
+            buttonFrenzy.visible = _multiPlayer;
+        }
+    }
+    
+    protected function selectionBoxMouseOut( e :MouseEvent ) :void
+    {
+        if( e.relatedObject != null ) {
+            return;
+        }
+        trace("Mouse out " + e);
+        if( _selectionBox.parent != null ) {
+            _selectionBox.parent.removeChild( _selectionBox );
+        }
+        buttonFeed.visible = false;
+        buttonFrenzy.visible = false;
+    }
+    
+    
+    
     
     protected function handleElementChanged (e :ElementChangedEvent) :void
     {
@@ -255,9 +300,15 @@ public class VampireAvatarHUD extends AvatarHUD
     
     public function setDisplayModeInvisible() :void
     {
-        if( _sprite.contains( _hudSprite ) ) {
-            _sprite.removeChild( _hudSprite );
+        _hudMouseEvents.freeAllHandlers();
+//        _displaySprite.addChild( _hudSprite );
+        if( _displaySprite.contains( _hudSprite ) ) {
+            _displaySprite.removeChild( _hudSprite );
         }
+        if( _selectionBox.parent != null ) {
+            _selectionBox.parent.removeChild( _selectionBox );
+        }
+        
 //        if( _hudSprite.contains( _target_UI ) ) {
 //            _hudSprite.removeChild( _target_UI );
 //        }
@@ -266,31 +317,36 @@ public class VampireAvatarHUD extends AvatarHUD
     
     public function setDisplayModeSelectableForFeed( multiplayer :Boolean ) :void
     {
-        _sprite.addChild( _hudSprite );
-        
+        _displaySprite.addChild( _hudSprite );
+        _multiPlayer = multiplayer;
 //        _hudSprite.addChild( _target_UI );
-        buttonFeed.visible = true;
-        buttonFrenzy.visible = multiplayer;
-        frenzyCountdown.visible = false;
+        buttonFeed.visible = false;
+        buttonFrenzy.visible = false;
+        frenzyCountdown.visible = frenzyCountdown.visible ? true : false;;
 //        waitingSign.visible = false;
         _selected = false;
     }
     
     public function setDisplayModeShowInfo() :void
     {
-        _sprite.addChild( _hudSprite );
+        _displaySprite.addChild( _hudSprite );
+        
+        if( _selectionBox.parent != null ) {
+            _selectionBox.parent.removeChild( _selectionBox );
+        }
+        _hudMouseEvents.freeAllHandlers();
         
 //        _hudSprite.addChild( _target_UI );   
         buttonFeed.visible = false;
         buttonFrenzy.visible = false;
-        frenzyCountdown.visible = false;
+        frenzyCountdown.visible = frenzyCountdown.visible ? true : false;
         waitingSign.visible = false; 
         _selected = false;
     }
     
     public function setSelectedForFeed( multiplayer :Boolean ) :void
     {
-        _sprite.addChild( _hudSprite );
+        _displaySprite.addChild( _hudSprite );
         
 //        _hudSprite.addChild( _target_UI );
         buttonFeed.visible = false;
@@ -308,11 +364,18 @@ public class VampireAvatarHUD extends AvatarHUD
     
     override protected function update( dt :Number ) :void
     {
+        super.update(dt);
+//        trace("VampireHUD location (" + x + ", " + y + ")"); 
+        //This is not coupled to the server time ATM.  I figure, it's only waiting for other
+        //players and this isn't critical to sync. 
         if( frenzyCountdown.visible ) {
             if( _frenzyTimer > 0 ) {
                 _frenzyTimer -= dt;
                 _frenzyTimer = Math.max(_frenzyTimer, 0);
                 frenzyCountdown.gotoAndStop( int( _frenzyTimer*100 / VConstants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME ));
+            }
+            else {
+                frenzyCountdown.visible = false;
             }
         }
     }
@@ -342,15 +405,16 @@ public class VampireAvatarHUD extends AvatarHUD
         //Draw an invisible box to detect mouse movement/clicks
         
         
-        if( _hudSprite != null && _hotspot != null && hotspot.length >= 2 && !isNaN(_zScaleFactor) 
+        if( _hudSprite != null && _hotspot != null && hotspot.length >= 2// && !isNaN(_zScaleFactor) 
             && !isNaN(hotspot[0]) && !isNaN(hotspot[1]) ) {
-            _hudSprite.y = -_hotspot[1] * _zScaleFactor;
-            _target_UI.y = _hotspot[1]/4;
+//            _hudSprite.y = -_hotspot[1] * _zScaleFactor;
+//            _target_UI.y = _hotspot[1]/4;
             
-//            _hudSprite.graphics.clear();
-//            _hudSprite.graphics.beginFill(0, 0.3);
+            _hudSprite.graphics.clear();
+            _hudSprite.graphics.beginFill(0, 0.3);
+            _hudSprite.graphics.drawCircle(0, 0, 20 );
 //            _hudSprite.graphics.drawRect( -hotspot[0]*_zScaleFactor/2, 0, hotspot[0]*_zScaleFactor, hotspot[1]*_zScaleFactor);
-//            _hudSprite.graphics.endFill();
+            _hudSprite.graphics.endFill();
         }
         
 //        _target_UI.y = hotspot[1] * _zScaleFactor;
@@ -367,16 +431,24 @@ public class VampireAvatarHUD extends AvatarHUD
     }
     
     
+    protected var _hudMouseEvents :EventHandlerManager = new EventHandlerManager();
+    
     protected var _hudSprite :Sprite;
+    protected var _selectionBox :Sprite;
     protected var _target_UI :MovieClip;
     protected var _bloodBondIcon :MovieClip;
     protected var _hierarchyIcon :SimpleButton;
     protected var _blood :MovieClip;
     protected var _selected :Boolean = false;
+    protected var _multiPlayer :Boolean;
     
     protected var _frenzyTimer :Number = 0;
     
     protected var _roomKey :String;
+    
+    
+    public static const STATE_SHOW_INFO :int = 0;
+//    public static const STATE_ :int = 0;
     
     
 }
