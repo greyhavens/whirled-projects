@@ -3,6 +3,7 @@ package vampire.client
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
 import com.whirled.contrib.avrg.AvatarHUD;
+import com.whirled.contrib.simplegame.SimObject;
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
@@ -55,7 +56,7 @@ public class VampireController extends Controller
         
         //If we want to go to bared mode, disable any previus targeting overlays
         if( mode == VConstants.GAME_MODE_BARED  ) {
-            ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
+//            ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
         }
         
         //If we are already baring, toggle us out.
@@ -207,29 +208,27 @@ public class VampireController extends Controller
                 new RequestActionChangeMessage( ClientContext.ourPlayerId, 
                     VConstants.GAME_MODE_NOTHING).toBytes() ); 
             
-            targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );    
+//            targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );    
             return;
         }
                 
         trace("handle handleFeedRequest");
         
-//        hud.showFeedBack("Feeding");
-        
+        //If we are a vampire we can feed, otherwise not.
         if( ClientContext.model.level >= VConstants.MINIMUM_VAMPIRE_LEVEL ||
             VConstants.LOCAL_DEBUG_MODE ) {
                 
-            if( targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SELECT_FEED_TARGET ) {
-                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
-            }
-            else {
-                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SELECT_FEED_TARGET );
-            }
+//            if( targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS ) {
+//                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
+//            }
+//            else {
+//                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS );
+//            }
             
         }
         else {
             ClientContext.hud.showFeedBack( "Only vampires can feed.  You must be at least level " +
                 VConstants.MINIMUM_VAMPIRE_LEVEL +".  You are level " + ClientContext.model.level, true); 
-//            log.debug("Only vampires can feed.");
         }
         
         
@@ -271,7 +270,7 @@ public class VampireController extends Controller
     public function handleSendFeedRequest( targetId :int, multiPredators :Boolean  ) :void
     {
         var targetLocation :Array;
-        var targetAvatar :AvatarHUD = ClientContext.model.avatarManager.getAvatar( targetId );
+        var targetAvatar :AvatarHUD = ClientContext.hud.avatarOverlay.getAvatar( targetId );
         if( targetAvatar != null ) {
             targetLocation = targetAvatar.location;
         }
@@ -350,10 +349,15 @@ public class VampireController extends Controller
     
     public function handleShowHierarchy(_hudMC :MovieClip) :void
     {
-//                    throw new Error("f");
         try {
-            if( ClientContext.game.ctx.mainLoop.topMode.getObjectNamed( HierarchyView.NAME ) == null) {
-                ClientContext.game.ctx.mainLoop.topMode.addObject( new HierarchyView(_hudMC), ClientContext.game.ctx.mainLoop.topMode.modeSprite);
+            var hierarchySceneObject :SimObject = 
+                ClientContext.game.ctx.mainLoop.topMode.getObjectNamed( HierarchyView.NAME ); 
+            if( hierarchySceneObject == null) {
+                ClientContext.game.ctx.mainLoop.topMode.addObject( new HierarchyView(_hudMC), 
+                    ClientContext.game.ctx.mainLoop.topMode.modeSprite);
+            }
+            else {
+                hierarchySceneObject.destroySelf();
             }
         }
         catch( err :Error ) {
