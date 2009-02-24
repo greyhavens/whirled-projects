@@ -27,6 +27,9 @@ public class FeedingGameServer
      * @param preyBlood the amount of blood the prey currently has, normalized to a value between
      * 0 and 1.
      *
+     * @param preyBloodType the blood strain that the prey carries, or -1 if the prey doesn't
+     * have a special blood strain.
+     *
      * @param roundCompleteCallback this function will be called after each successful round
      * of feeding. It must return the new amount of blood the prey has, normalized between
      * 0 and 1.
@@ -45,11 +48,13 @@ public class FeedingGameServer
                                    predatorIds :Array,
                                    preyId :int,
                                    preyBlood :Number,
+                                   preyBloodType :int,
                                    roundCompleteCallback :Function,
                                    gameCompleteCallback :Function) :FeedingGameServer
     {
         return new vampire.feeding.server.Server(roomId, predatorIds, preyId, preyBlood,
-                                                 roundCompleteCallback, gameCompleteCallback);
+                                                 preyBloodType, roundCompleteCallback,
+                                                 gameCompleteCallback);
     }
 
     /**

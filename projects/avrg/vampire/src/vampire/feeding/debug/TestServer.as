@@ -80,6 +80,7 @@ class TestGameController extends OneRoomGameRoom
             predators,
             preyId,
             1.0,    // the amount of blood the prey is starting the feeding with
+            -1,     // prey blood type
             function () :Number {
                 return onRoundComplete(game);
             },

@@ -22,7 +22,7 @@ public class NewBonusAnimation extends SceneObject
     public function NewBonusAnimation (type :int, multiplier :int, loc :Vector2,
         onComplete :Function = null)
     {
-        _sprite = Cell.createCellSprite(Constants.CELL_BONUS, multiplier);
+        _sprite = Cell.createCellSprite(Constants.CELL_MULTIPLIER, multiplier);
         _movie = MovieClip(_sprite.getChildAt(0));
         _movie.gotoAndStop(1);
 

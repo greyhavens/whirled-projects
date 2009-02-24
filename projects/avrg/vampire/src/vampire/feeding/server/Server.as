@@ -32,7 +32,8 @@ public class Server extends FeedingGameServer
     }
 
     public function Server (roomId :int, predatorIds :Array, preyId :int, preyBlood :Number,
-                            roundCompleteCallback :Function, gameCompleteCallback :Function)
+                            preyBloodType :int, roundCompleteCallback :Function,
+                            gameCompleteCallback :Function)
     {
         if (!_inited) {
             throw new Error("FeedingGameServer.init has not been called");
@@ -49,6 +50,7 @@ public class Server extends FeedingGameServer
         _preyId = preyId;
         _preyIsAi = (_preyId == Constants.NULL_PLAYER);
         _preyBlood = preyBlood;
+        _preyBloodType = preyBloodType;
         _roundCompleteCallback = roundCompleteCallback;
         _gameCompleteCallback = gameCompleteCallback;
         _roomCtrl = _gameCtrl.getRoom(roomId);
@@ -287,7 +289,7 @@ public class Server extends FeedingGameServer
         // If the game hasn't been started yet, let all the players know what the initial
         // setup of players is
         if (!_gameStarted) {
-            sendMessage(StartGameMsg.create(_playerIds.slice(), _preyId));
+            sendMessage(StartGameMsg.create(_playerIds.slice(), _preyId, _preyBloodType));
             _gameStarted = true;
         }
 
@@ -366,6 +368,7 @@ public class Server extends FeedingGameServer
     protected var _playerIds :Array;
     protected var _preyId :int;
     protected var _preyBlood :Number;
+    protected var _preyBloodType :int;
     protected var _roundCompleteCallback :Function;
     protected var _gameCompleteCallback :Function;
     protected var _timerMgr :TimerManager = new TimerManager();

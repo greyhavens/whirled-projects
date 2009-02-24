@@ -26,7 +26,7 @@ public class Cell extends CollidableObj
             ClientCtx.instantiateMovieClip("blood", CELL_MOVIES[cellType], true, true);
         sprite.addChild(movie);
 
-        if (cellType == Constants.CELL_BONUS) {
+        if (cellType == Constants.CELL_MULTIPLIER) {
             var text :String = "x" + multiplier;
             var tf :TextField =
                 TextBits.createText(text, 1, 0, 0, "center", TextBits.FONT_GARAMOND);
@@ -73,7 +73,7 @@ public class Cell extends CollidableObj
         _sprite = createCellSprite(type, multiplier);
         _movie = MovieClip(_sprite.getChildAt(0));
 
-        if (type == Constants.CELL_RED || type == Constants.CELL_BONUS) {
+        if (type == Constants.CELL_RED || type == Constants.CELL_MULTIPLIER) {
             var rotationTime :Number = (type == Constants.CELL_RED ?
                 RED_ROTATION_TIME : BONUS_ROTATION_TIME);
             addTask(new SerialTask(

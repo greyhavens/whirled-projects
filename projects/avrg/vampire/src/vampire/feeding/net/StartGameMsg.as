@@ -11,12 +11,14 @@ public class StartGameMsg
 
     public var playerIds :Array = [];
     public var preyId :int;
+    public var preyBloodType :int;
 
-    public static function create (playerIds :Array, preyId :int) :StartGameMsg
+    public static function create (playerIds :Array, preyId :int, preyBloodType :int) :StartGameMsg
     {
         var msg :StartGameMsg = new StartGameMsg();
         msg.playerIds = playerIds;
         msg.preyId = preyId;
+        msg.preyBloodType = preyBloodType;
         return msg;
     }
 
@@ -32,6 +34,7 @@ public class StartGameMsg
         }
 
         ba.writeInt(preyId);
+        ba.writeShort(preyBloodType);
 
         return ba;
     }
@@ -45,6 +48,7 @@ public class StartGameMsg
         }
 
         preyId = ba.readInt();
+        preyBloodType = ba.readShort();
     }
 
     public function get name () :String

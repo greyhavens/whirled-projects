@@ -208,7 +208,7 @@ public class GameMode extends AppMode
 
     protected function addMultiplierToBoard (msg :CreateBonusMsg) :void
     {
-        var cell :Cell = GameObjects.createCell(Constants.CELL_BONUS, false, msg.multiplier);
+        var cell :Cell = GameObjects.createCell(Constants.CELL_MULTIPLIER, false, msg.multiplier);
         cell.x = msg.x;
         cell.y = msg.y;
 
