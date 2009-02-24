@@ -1779,13 +1779,6 @@ public class Player extends EventHandlerManager
             }
             
             
-            if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOOD) != blood ) {
-                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, blood, true);
-            }
-            
-            if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOOD) != blood ) {
-                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, blood, true);
-            }
         
         }
         catch( err :Error) {
