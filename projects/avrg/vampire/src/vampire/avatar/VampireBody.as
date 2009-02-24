@@ -58,6 +58,7 @@ public class VampireBody extends Body
     protected function propertyProvider (key :String) :Object
     {
         if (key == "freeze") {
+            // avoid compiler warning about implicit cast from Function to Object
             return freeze as Object;
         }
 
