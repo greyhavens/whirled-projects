@@ -11,13 +11,11 @@ import com.threerings.util.Hashable;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.EventHandlerManager;
 
 import flash.utils.Dictionary;
-import flash.utils.getTimer;
 
 import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.Codes;
@@ -27,7 +25,6 @@ import vampire.net.IGameMessage;
 import vampire.net.messages.BloodBondRequestMessage;
 import vampire.net.messages.FeedRequestMessage2;
 import vampire.net.messages.RequestActionChangeMessage;
-import vampire.net.messages.SuccessfulFeedMessage;
 
 /**
  * Actions:
@@ -296,7 +293,9 @@ public class Player extends EventHandlerManager
         setSire( ServerContext.minionHierarchy.getSireId( playerId ), true );
 //        log.info("before player shutdown", "time", new Date(_ctrl.props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
         setAction( VConstants.GAME_MODE_NOTHING, true );
-        setIntoRoomProps( room );
+        updateAvatarState();
+        setIntoPlayerProps();
+        setIntoRoomProps();
 //        _ctrl.removeEventListener(AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
 //        _ctrl.removeEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
 //        log.info("end of player shutdown", "time", new Date(_ctrl.props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
@@ -409,18 +408,18 @@ public class Player extends EventHandlerManager
 //        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_XP, _xp, true);
         
         //If our vampire state changed, send a message to the avatar
-        if( isVampire() != vampireState) {
-            handleChangeColorScheme( (isVampire() ? VConstants.COLOR_SCHEME_VAMPIRE : VConstants.COLOR_SCHEME_HUMAN) );
-        }
+//        if( isVampire() != vampireState) {
+//            handleChangeColorScheme( (isVampire() ? VConstants.COLOR_SCHEME_VAMPIRE : VConstants.COLOR_SCHEME_HUMAN) );
+//        }
         
         
         // always update our avatar state
 //        updateAvatarState();
 
         // and if we're in a room, update the room properties
-        if (_room != null) {
-            _room.playerUpdated(this);
-        }
+//        if (_room != null) {
+//            _room.playerUpdated(this);
+//        }
     }
     
     public function addXP( bonus :Number) :void
@@ -447,9 +446,9 @@ public class Player extends EventHandlerManager
         }
         
         //If our vampire state changed, send a message to the avatar
-        if( isVampire() != vampireState) {
-            handleChangeColorScheme( (isVampire() ? VConstants.COLOR_SCHEME_VAMPIRE : VConstants.COLOR_SCHEME_HUMAN) );
-        }
+//        if( isVampire() != vampireState) {
+//            handleChangeColorScheme( (isVampire() ? VConstants.COLOR_SCHEME_VAMPIRE : VConstants.COLOR_SCHEME_HUMAN) );
+//        }
         
 //        addFeedback( "You gained " + bonus + " experience points!" );
         
@@ -463,6 +462,10 @@ public class Player extends EventHandlerManager
         }
     }
     
+    public function setAvatarState (s :String, force :Boolean = false) :void
+    {
+        _avatarState = s;
+    }
     public function setAction (action :String, force :Boolean = false) :void
     {
         // update our runtime state
@@ -540,9 +543,9 @@ public class Player extends EventHandlerManager
                 var now :Number = new Date().time;
                 setTime( now , true);
             }
-            else if( name == VConstants.SIGNAL_CHANGE_COLOR_SCHEME_REQUEST ) {
-                handleChangeColorScheme( value.toString() );
-            }
+//            else if( name == VConstants.SIGNAL_CHANGE_COLOR_SCHEME_REQUEST ) {
+//                handleChangeColorScheme( value.toString() );
+//            }
             else if( name == VConstants.MESSAGE_SHARE_TOKEN ) {
                 var inviterId :int = int( value );
                 log.debug( playerId + " received inviter id=" + inviterId);
@@ -1286,8 +1289,9 @@ public class Player extends EventHandlerManager
             });
             
         //Make sure we are the right color when we enter a room.            
-        handleChangeColorScheme( (isVampire() ? VConstants.COLOR_SCHEME_VAMPIRE : VConstants.COLOR_SCHEME_HUMAN) ); 
-
+//        handleChangeColorScheme( (isVampire() ? VConstants.COLOR_SCHEME_VAMPIRE : VConstants.COLOR_SCHEME_HUMAN) ); 
+//        setIntoRoomProps();
+        
         log.debug(VConstants.DEBUG_MINION + "after _room.playerEntered");
         log.debug(VConstants.DEBUG_MINION + "hierarchy=" + ServerContext.minionHierarchy);
 //        log.info("player" + toString());
@@ -1328,10 +1332,10 @@ public class Player extends EventHandlerManager
 //        }
 //    }
     
-    protected function handleChangeColorScheme( newScheme :String) :void
-    {
-        room.ctrl.sendSignal(VConstants.SIGNAL_CHANGE_COLOR_SCHEME, [playerId, newScheme]);
-    }
+//    protected function handleChangeColorScheme( newScheme :String) :void
+//    {
+//        room.ctrl.sendSignal(VConstants.SIGNAL_CHANGE_COLOR_SCHEME, [playerId, newScheme]);
+//    }
     
     
     
@@ -1562,10 +1566,10 @@ public class Player extends EventHandlerManager
             return;
         }
         else {
-            var avatar :AVRGameAvatar = _room.ctrl.getAvatarInfo( playerId );
-            if( avatar == null) {
-                return;
-            }
+//            var avatar :AVRGameAvatar = _room.ctrl.getAvatarInfo( playerId );
+//            if( avatar == null) {
+//                return;
+//            }
             
 //            log.debug("Updating avatar state", "action", action, "avatar.state", avatar.state);
             
@@ -1581,10 +1585,16 @@ public class Player extends EventHandlerManager
                 newState = VConstants.GAME_MODE_FEED_FROM_PLAYER;
             }
             
-            if( newState != avatar.state ) {
+            if( newState != avatarState ) {
 //                log.debug("_ctrl.setAvatarState(" + newState + ")");
-                _ctrl.setAvatarState(newState);
+                setAvatarState(newState);
             }
+            
+            
+//            if( newState != avatar.state ) {
+////                log.debug("_ctrl.setAvatarState(" + newState + ")");
+//                _ctrl.setAvatarState(newState);
+//            }
         }
     }
     
@@ -1634,44 +1644,59 @@ public class Player extends EventHandlerManager
 //        return state;
 //    }
     
-    public function setIntoRoomProps( room :Room ) :void
+    public function setIntoRoomProps() :void
     {
-        if( room == null || room.ctrl == null) {
-            log.error("setIntoRoomProps() but ", "room", room);
-            return;
-        }
+        try {
             
-        var key :String = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + playerId;
-        
-        var dict :Dictionary = room.ctrl.props.get(key) as Dictionary;
-        if (dict == null) {
-            dict = new Dictionary(); 
+            if( _ctrl == null || !_ctrl.isConnected() ) {
+                log.error("setIntoRoomProps() but ", "_ctrl", _ctrl);
+                return;
+            }
+            
+            if( _room == null || _room.ctrl == null || !_room.ctrl.isConnected()) {
+                log.error("setIntoRoomProps() but ", "room", room);
+                return;
+            }
+                
+            var key :String = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + playerId;
+            
+            var dict :Dictionary = room.ctrl.props.get(key) as Dictionary;
+            if (dict == null) {
+                dict = new Dictionary(); 
+            }
+    
+    //        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL] != level && !isNaN(level)) {
+    //            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL, level);
+    //        }
+            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD] != blood && !isNaN(blood)) {
+                room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD, blood);
+            }
+            
+            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION] != action) {
+                room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, action);
+            }
+            
+            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED] != bloodbonded ) {
+                room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED, bloodbonded);
+            }
+            
+            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME] != bloodbondedName ) {
+                room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME, bloodbondedName);
+            }
+            
+            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE] != time && !isNaN(time)) {
+                room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE, time);
+            }
+            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP] != xp && !isNaN(xp)) {
+                room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, xp);
+            }
+            
+            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE] != avatarState ) {
+                room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE, avatarState);
+            }
         }
-
-//        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL] != level && !isNaN(level)) {
-//            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL, level);
-//        }
-        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD] != blood && !isNaN(blood)) {
-            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD, blood);
-        }
-        
-        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION] != action) {
-            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, action);
-        }
-        
-        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED] != bloodbonded ) {
-            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED, bloodbonded);
-        }
-        
-        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME] != bloodbondedName ) {
-            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME, bloodbondedName);
-        }
-        
-        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE] != time && !isNaN(time)) {
-            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE, time);
-        }
-        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP] != xp && !isNaN(xp)) {
-            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, xp);
+        catch( err :Error) {
+            log.error(err.getStackTrace());
         }
         
         //Target and closest user properties
@@ -1708,57 +1733,63 @@ public class Player extends EventHandlerManager
     */
     protected function setIntoPlayerProps() :void
     {
+        try {
         //Permanent props 
-        if( _ctrl == null || _ctrl.props == null || !_ctrl.isConnected() ) {
-            return;
-        }
-        
-        if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOOD) != blood ) {
-            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, blood, true);
-        }
-        
-        if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_NAME) != name ) {
-            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_NAME, name, true);
-        }
-        
-        if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_XP) != xp ) {
-            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_XP, xp, true);
-        }
-        
-        if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE) != time ) {
-            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE, time, true);
-        }
-        
-        if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_SIRE) != sire ) {
-            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_SIRE, sire, true);
-        }
-        
-        if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOODBONDED) != bloodbonded ) {
-            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED, bloodbonded, true);
+            if( _ctrl == null || _ctrl.props == null || !_ctrl.isConnected() ) {
+                return;
+            }
             
+            if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOOD) != blood ) {
+                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, blood, true);
+            }
             
-            if( _bloodbonded > 0) {//Set the name too
-                var bloodBondedPlayer :Player = ServerContext.vserver.getPlayer( _bloodbonded );
-                if( bloodBondedPlayer != null ) {
-                    _bloodbondedName = bloodBondedPlayer.name;
-                    _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED_NAME, _bloodbondedName, true);
+            if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_NAME) != name ) {
+                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_NAME, name, true);
+            }
+            
+            if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_XP) != xp ) {
+                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_XP, xp, true);
+            }
+            
+            if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE) != time ) {
+                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE, time, true);
+            }
+            
+            if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_SIRE) != sire ) {
+                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_SIRE, sire, true);
+            }
+            
+            if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOODBONDED) != bloodbonded ) {
+                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED, bloodbonded, true);
+                
+                
+                if( _bloodbonded > 0) {//Set the name too
+                    var bloodBondedPlayer :Player = ServerContext.vserver.getPlayer( _bloodbonded );
+                    if( bloodBondedPlayer != null ) {
+                        _bloodbondedName = bloodBondedPlayer.name;
+                        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED_NAME, _bloodbondedName, true);
+                    }
+                    else {
+                        log.error("Major error: setBloodBonded( " + _bloodbonded + "), but no Player, so cannot set name");
+                    }
                 }
-                else {
-                    log.error("Major error: setBloodBonded( " + _bloodbonded + "), but no Player, so cannot set name");
-                }
+                
+                
+                
             }
             
             
+            if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOOD) != blood ) {
+                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, blood, true);
+            }
             
+            if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOOD) != blood ) {
+                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, blood, true);
+            }
+        
         }
-        
-        
-        if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOOD) != blood ) {
-            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, blood, true);
-        }
-        
-        if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOOD) != blood ) {
-            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, blood, true);
+        catch( err :Error) {
+            log.error(err.getStackTrace());
         }
         
         
@@ -2098,6 +2129,11 @@ public class Player extends EventHandlerManager
         return _bloodbondedName;
     }
     
+    public function get avatarState () :String
+    {
+        return _avatarState;
+    }
+    
 //    public function get minions () :Array
 //    {
 //        return _minions.slice();
@@ -2161,7 +2197,7 @@ public class Player extends EventHandlerManager
             room.ctrl.getAvatarInfo( playerId ).z];
     }
     
-    public function tick( dt :Number) :void
+    public function update( dt :Number) :void
     {
         //Vampires lose blood
         if( isVampire() ) {
@@ -2183,7 +2219,7 @@ public class Player extends EventHandlerManager
 //        } 
         
         updateAvatarState();
-        setIntoRoomProps( _room );
+        setIntoRoomProps();
         setIntoPlayerProps();
         
         //Update target blood
@@ -2296,6 +2332,8 @@ public class Player extends EventHandlerManager
     protected var _blood :Number;
     protected var _xp :Number;
     protected var _action :String;
+    
+    protected var _avatarState :String = "Default";
     
     protected var _bloodbonded :int;
     protected var _bloodbondedName :String;
