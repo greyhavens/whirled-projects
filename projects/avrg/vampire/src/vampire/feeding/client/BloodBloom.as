@@ -42,13 +42,15 @@ public class BloodBloom extends FeedingGameClient
         _inited = true;
     }
 
-    public function BloodBloom (gameId :int, gameCompleteCallback :Function)
+    public function BloodBloom (gameId :int, playerData :FeedingPlayerData,
+                                gameCompleteCallback :Function)
     {
         if (!_inited) {
             throw new Error("FeedingGameClient.init has not been called");
         }
 
         ClientCtx.init();
+        ClientCtx.playerData = playerData.clone();
         ClientCtx.gameCompleteCallback = gameCompleteCallback;
         ClientCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);
         Util.initMessageManager(ClientCtx.msgMgr);
@@ -74,6 +76,11 @@ public class BloodBloom extends FeedingGameClient
         }
 
         ClientCtx.mainLoop.run();
+    }
+
+    override public function get playerData () :FeedingPlayerData
+    {
+        return ClientCtx.playerData;
     }
 
     protected function onMsgReceived (e :ClientMsgEvent) :void
@@ -122,7 +129,8 @@ public class BloodBloom extends FeedingGameClient
 
         ClientCtx.msgMgr.shutdown();
         ClientCtx.roundMgr.shutdown();
-        ClientCtx.gameCompleteCallback = null;
+
+        ClientCtx.init(); // release any memory we might be holding onto here
 
         log.info("Quitting BloodBloom");
     }

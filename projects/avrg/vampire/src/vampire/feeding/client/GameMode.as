@@ -9,6 +9,7 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.net.*;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
+import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
@@ -51,6 +52,14 @@ public class GameMode extends AppMode
                 addObject(sendMultiplierObj);
             }
         }
+    }
+
+    public function startSpecialCellTimer (strain :int) :void
+    {
+        addObject(new SimpleTimer(Constants.SPECIAL_CELL_CREATION_TIME.next(),
+            function () :void {
+                GameObjects.createCell(Constants.CELL_SPECIAL, true, strain);
+            }));
     }
 
     override protected function setup () :void
@@ -124,23 +133,6 @@ public class GameMode extends AppMode
 
         GameCtx.cursor = GameObjects.createPlayerCursor();
         registerListener(GameCtx.cursor, GameEvent.WHITE_CELL_DELIVERED, onWhiteCellDelivered);
-
-        /* We're not doing this anymore
-        // keep tabs on everyone else's score
-        var yOffset :Number = 0;
-        for each (var playerId :int in GameCtx.playerIds) {
-            if (playerId != ClientCtx.localPlayerId) {
-                var scoreView :RemotePlayerScoreView = new RemotePlayerScoreView(playerId);
-                scoreView.x = SCORE_VIEWS_LOC.x;
-                scoreView.y = SCORE_VIEWS_LOC.y + yOffset;
-                addObject(scoreView, GameCtx.uiLayer);
-
-                yOffset += scoreView.height + 1;
-            }
-        }
-
-        addObject(new LocalScoreReporter()); // will report our score to everyone else periodically
-        */
 
         // create some non-interactive debris that floats around the heart
         for (var ii :int = 0; ii < Constants.DEBRIS_COUNT; ++ii) {

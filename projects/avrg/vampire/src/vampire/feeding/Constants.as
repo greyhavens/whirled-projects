@@ -37,29 +37,33 @@ public class Constants
     public static const CELL_RED :int = 0;
     public static const CELL_WHITE :int = 1;
     public static const CELL_MULTIPLIER :int = 2;
-    public static const CELL_SPECIAL_STRAIN :int = 3;
+    public static const CELL_SPECIAL :int = 3;
     public static const MAX_CELL_COUNT :Array = [ 60, 8, 999, 1 ];
     public static const BEAT_CELL_BIRTH_COUNT :IntRange = new IntRange(3, 4, Rand.STREAM_GAME);
     public static const CELL_BIRTH_DISTANCE :Array = [
         new NumRange(65, 90, Rand.STREAM_GAME),
         new NumRange(190, 195, Rand.STREAM_GAME),
-        null
+        null,
+        new NumRange(90, 160, Rand.STREAM_GAME),
     ];
-    public static const CELL_RADIUS :Number = 8;
+    public static const CELL_RADIUS :Array = [ 8, 8, 8, 21 ];
     public static const CELL_BIRTH_TIME :Number = 0.5;
 
     public static const BURST_RED :int = 0;
     public static const BURST_WHITE :int = 1;
     public static const BURST_MULTIPLIER :int = 2;
     public static const BURST_BLACK :int = 3;
+    public static const BURST_SPECIAL :int = 4;
 
     public static const WHITE_CELL_CREATION_TIME :NumRange = new NumRange(7, 9, Rand.STREAM_GAME);
     public static const WHITE_CELL_CREATION_COUNT :IntRange = new IntRange(1, 3, Rand.STREAM_GAME);
     public static const WHITE_CELL_NORMAL_TIME :NumRange = new NumRange(5, 8, Rand.STREAM_GAME);
     public static const WHITE_CELL_EXPLODE_TIME :Number = 5;
 
-    public static const SPECIAL_CELL_CREATION_TIME :NumRange = new NumRange(12, 18, Rand.STREAM_GAME);
-    public static const NUM_SPECIAL_STRAINS :int = 8;
+    public static const SPECIAL_CELL_CREATION_TIME :NumRange =
+        new NumRange(12, 18, Rand.STREAM_GAME);
+    public static const NUM_SPECIAL_STRAINS :int = 12;
+    public static const MAX_COLLECTIONS_PER_STRAIN :int = 3;
 
     public static const RED_BURST_RADIUS_MIN :Number = 8;
     public static const RED_BURST_RADIUS_MAX :Number = 40;

@@ -19,15 +19,18 @@ public class Cell extends CollidableObj
     public static const STATE_NORMAL :int = 1;
     public static const STATE_PREPARING_TO_EXPLODE :int = 2;
 
-    public static function createCellSprite (cellType :int, multiplier :int) :Sprite
+    public static function createCellSprite (cellType :int, multiplierOrStrain :int) :Sprite
     {
         var sprite :Sprite = SpriteUtil.createSprite();
-        var movie :MovieClip =
-            ClientCtx.instantiateMovieClip("blood", CELL_MOVIES[cellType], true, true);
+        var movieName :String = (cellType == Constants.CELL_SPECIAL ?
+                                 SPECIAL_STRAIN_MOVIES[multiplierOrStrain] :
+                                 CELL_MOVIES[cellType]);
+        var movie :MovieClip = ClientCtx.instantiateMovieClip("blood", movieName, true, true);
+        movie.gotoAndPlay(1);
         sprite.addChild(movie);
 
         if (cellType == Constants.CELL_MULTIPLIER) {
-            var text :String = "x" + multiplier;
+            var text :String = "x" + multiplierOrStrain;
             var tf :TextField =
                 TextBits.createText(text, 1, 0, 0, "center", TextBits.FONT_GARAMOND);
             tf.scaleX = tf.scaleY = Math.min(movie.width / tf.width, movie.height / tf.height);
@@ -61,16 +64,22 @@ public class Cell extends CollidableObj
         return null;
     }
 
-    public function Cell (type :int, beingBorn :Boolean, multiplier :int)
+    public function Cell (type :int, beingBorn :Boolean, multiplierOrStrain :int)
     {
-        _radius = Constants.CELL_RADIUS;
+        _radius = Constants.CELL_RADIUS[type];
         _type = type;
-        _multiplier = multiplier;
+
+        if (type == Constants.CELL_MULTIPLIER) {
+            _multiplier = multiplierOrStrain;
+        } else if (type == Constants.CELL_SPECIAL) {
+            _specialStrain = multiplierOrStrain;
+        }
+
         _moveCCW = Rand.nextBoolean(Rand.STREAM_GAME);
         _state = STATE_NORMAL;
         _needsBirth = beingBorn;
 
-        _sprite = createCellSprite(type, multiplier);
+        _sprite = createCellSprite(type, multiplierOrStrain);
         _movie = MovieClip(_sprite.getChildAt(0));
 
         if (type == Constants.CELL_RED || type == Constants.CELL_MULTIPLIER) {
@@ -89,6 +98,8 @@ public class Cell extends CollidableObj
                 birthRedCell();
             } else if (type == Constants.CELL_WHITE) {
                 birthWhiteCell();
+            } else if (type == Constants.CELL_SPECIAL) {
+                birthSpecialCell();
             }
 
             // fade in
@@ -169,6 +180,24 @@ public class Cell extends CollidableObj
                 _movie, 1, ShowFramesTask.LAST_FRAME, Constants.WHITE_CELL_EXPLODE_TIME),
             new FunctionTask(function () :void {
                 GameObjects.createWhiteBurst(thisCell);
+            })));
+    }
+
+    protected function birthSpecialCell () :void
+    {
+        _state = STATE_BIRTH;
+
+        // pick a random location anywhere on the board
+        var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
+        var distRange :NumRange = Constants.CELL_BIRTH_DISTANCE[Constants.CELL_SPECIAL];
+        var dist :Number = distRange.next();
+        var loc :Vector2 = Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
+        this.x = loc.x;
+        this.y = loc.y;
+
+        addTask(After(Constants.CELL_BIRTH_TIME,
+            new FunctionTask(function () :void {
+                _state = STATE_NORMAL;
             })));
     }
 
@@ -256,6 +285,7 @@ public class Cell extends CollidableObj
     protected var _type :int;
     protected var _state :int;
     protected var _multiplier :int;
+    protected var _specialStrain :int;
     protected var _moveCCW :Boolean;
     protected var _attachedTo :SimObjectRef = SimObjectRef.Null();
     protected var _needsBirth :Boolean;
@@ -273,6 +303,20 @@ public class Cell extends CollidableObj
     protected static const BONUS_ROTATION_TIME :Number = 1.5;
 
     protected static const CELL_MOVIES :Array = [ "cell_red", "cell_white", "cell_coop" ];
+    protected static const SPECIAL_STRAIN_MOVIES :Array = [
+        "type_01",
+        "type_02",
+        "type_03",
+        "type_04",
+        "type_05",
+        "type_06",
+        "type_07",
+        "type_08",
+        "type_09",
+        "type_10",
+        "type_11",
+        "type_12",
+    ];
 }
 
 }

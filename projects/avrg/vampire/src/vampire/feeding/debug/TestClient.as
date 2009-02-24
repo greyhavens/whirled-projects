@@ -59,7 +59,7 @@ public class TestClient extends Sprite
             } else {
                 _curGame = FeedingGameClient.create(
                     gameId,
-                    ArrayUtil.create(Constants.NUM_SPECIAL_STRAINS, 0),
+                    new FeedingPlayerData(),
                     onGameComplete);
 
                 addChild(_curGame);

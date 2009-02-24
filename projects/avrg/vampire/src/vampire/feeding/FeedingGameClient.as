@@ -25,21 +25,23 @@ public class FeedingGameClient extends Sprite
      * @param collectedBloodStrains an Array of ints representing the number of each special
      * blood strain that the player has collected thus far.
      *
+     * @param playerData
+     *
      * @param gameCompleteCallback this function will be called when feeding has ended.
      * It takes no parameters and returns nothing.
      * function gameCompleteCallback () :void
      */
-    public static function create (gameId :int, collectedBloodStrains :Array,
+    public static function create (gameId :int, playerData :FeedingPlayerData,
                                    gameCompleteCallback :Function) :FeedingGameClient
     {
-        return new BloodBloom(gameId, gameCompleteCallback);
+        return new BloodBloom(gameId, playerData, gameCompleteCallback);
     }
 
     /**
-     * After the game is complete, call this to get the updated set of blood strains that the
-     * player has collected.
+     * After the game is complete, call this to retrieve the player data, which may have been
+     * updated by the game.
      */
-    public function get collectedBloodStrains () :Array
+    public function get playerData () :FeedingPlayerData
     {
         // overridden by subclass
         return null;

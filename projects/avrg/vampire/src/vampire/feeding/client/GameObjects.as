@@ -7,9 +7,10 @@ import vampire.feeding.client.*;
 
 public class GameObjects
 {
-    public static function createCell (type :int, beingBorn :Boolean, multiplier :int = 1) :Cell
+    public static function createCell (type :int, beingBorn :Boolean,
+                                       multiplierOrStrain :int = 1) :Cell
     {
-        var obj :Cell = new Cell(type, beingBorn, multiplier);
+        var obj :Cell = new Cell(type, beingBorn, multiplierOrStrain);
         GameCtx.gameMode.addObject(obj, GameCtx.cellLayer);
 
         return obj;

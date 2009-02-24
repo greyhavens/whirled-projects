@@ -4,7 +4,8 @@ import com.whirled.avrg.AVRGameControl;
 
 import flash.display.Sprite;
 
-import vampire.feeding.client.BloodBloom;
+import vampire.feeding.*;
+import vampire.feeding.client.*;
 import vampire.feeding.server.*;
 
 [SWF(width="1000", height="500", frameRate="30")]
@@ -23,7 +24,7 @@ public class BloodBloomStandalone extends Sprite
         DEBUG_REMOVE_ME();
 
         BloodBloom.init(this, new DisconnectedControl(this));
-        addChild(new BloodBloom(0, function () :void {}));
+        addChild(new BloodBloom(0, new FeedingPlayerData(), function () :void {}));
     }
 }
 
