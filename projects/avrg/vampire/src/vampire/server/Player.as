@@ -601,45 +601,11 @@ public class Player extends EventHandlerManager
                 
                 
             case VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER:
-                
-                game = _room._bloodBloomGameManager.getGame( playerId );
-                if( game == null ) {
-                    log.error("actionChange(GAME_MODE_FEED_FROM_PLAYER) but no game. We should have already registered.");
-                    break;
-                }
-                
-                angleRadians = new Vector2( targetLocation[0] - avatar.x, targetLocation[2] - avatar.z).angle;
-                degs = convertStandardRads2GameDegrees( angleRadians );
-                predLocIndex = MathUtil.clamp(game.predators.size() - 1, 0, 
-                    PREDATOR_LOCATIONS_RELATIVE_TO_PREY.length - 1 ); 
-                
-                //If we are the first predator, we go directly behind the prey
-                //Otherwise, take a a place
-                targetX = targetLocation[0] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][0] * RADIUS; 
-                targetY = targetLocation[1] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][1] * RADIUS; 
-                targetZ = targetLocation[2] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][2] * RADIUS; 
-                
-                    
-                if( targetX == avatar.x &&
-                    targetY == avatar.y &&
-                    targetZ == avatar.z ) { 
-                
-                    setAction( VConstants.GAME_MODE_FEED_FROM_PLAYER );
-                }
-                else {
-                    ctrl.setAvatarLocation( targetX, targetY, targetZ, degs);
-                    setAction( VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER );
-                }
-                
-                
-                break;
-                
-                
             case VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER:
-            
+                
                 game = _room._bloodBloomGameManager.getGame( playerId );
                 if( game == null ) {
-                    log.error("actionChange(GAME_MODE_FEED_FROM_NON_PLAYER) but no game. We should have already registered.");
+                    log.error("actionChange(" + newAction + ") but no game. We should have already registered.");
                     break;
                 }
                 
@@ -650,34 +616,26 @@ public class Player extends EventHandlerManager
                 
                 //If we are the first predator, we go directly behind the prey
                 //Otherwise, take a a place
-                
-                //If we are the first predator, we go directly behind the prey
-                //Otherwise, take a a place
                 targetX = targetLocation[0] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][0] * RADIUS; 
                 targetY = targetLocation[1] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][1] * RADIUS; 
                 targetZ = targetLocation[2] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][2] * RADIUS; 
                 
+                //If the avatar is already at the location, the client will dispatch a 
+                //PlayerArrivedAtLocation event, as the location doesn't change.
                     
-                if( targetX == avatar.x &&
-                    targetY == avatar.y &&
-                    targetZ == avatar.z ) { 
-                
-                    setAction( VConstants.GAME_MODE_FEED_FROM_NON_PLAYER );
-                }
-                else {
+//                if( targetX == avatar.x &&
+//                    targetY == avatar.y &&
+//                    targetZ == avatar.z ) { 
+//                
+//                    setAction( newAction );
+//                }
+//                else {
+                    
+                    setAction( newAction );
                     ctrl.setAvatarLocation( targetX, targetY, targetZ, degs);
-                    setAction( VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER );
-                    
-                }
-//                ctrl.setAvatarLocation( 
-//                    targetLocation[0] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][0] * RADIUS,
-//                    targetLocation[1] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][1] * RADIUS,
-//                    targetLocation[2] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][2] * RADIUS,
-//                    degs);
-//                setAction( VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER);
-//                angleRadians = new Vector2( victimAvatar.x - avatar.x, victimAvatar.z - avatar.z).angle;
-//                            degs = convertStandardRads2GameDegrees( angleRadians );
-//                            ctrl.setAvatarLocation( victimAvatar.x, victimAvatar.y, victimAvatar.z + 0.01, degs);
+//                }
+                
+                
                 break;
                 
             case VConstants.GAME_MODE_FEED_FROM_PLAYER:
@@ -685,13 +643,13 @@ public class Player extends EventHandlerManager
             
                 game = _room._bloodBloomGameManager.getGame( playerId );
                 if( game == null ) {
-                    log.error("actionChange(GAME_MODE_FEED_FROM_PLAYER) but no game. We should have already registered.");
+                    log.error("actionChange(" + newAction + ") but no game. We should have already registered.");
                     log.error("_room._bloodBloomGameManager=" + _room._bloodBloomGameManager);
                     break;
                 }
                 
                 if( !game.isPredator( playerId )) {
-                    log.error("actionChange(GAME_MODE_FEED_FROM_PLAYER) but not predator in game. We should have already registered.");
+                    log.error("actionChange(" + newAction + ") but not predator in game. We should have already registered.");
                     log.error("_room._bloodBloomGameManager=" + _room._bloodBloomGameManager);
                     break;
                 }
