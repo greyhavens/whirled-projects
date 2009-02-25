@@ -156,6 +156,8 @@ public class GameMode extends AppMode
 
     protected function onMsgReceived (e :ClientMsgEvent) :void
     {
+        log.info("onMsgReceived", "name", e.msg.name);
+
         if (e.msg is CreateBonusMsg) {
             onNewMultiplier(e.msg as CreateBonusMsg);
 
