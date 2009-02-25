@@ -144,18 +144,6 @@ public class VConstants
     */
     public static const PLAYER_ID_NON_PLAYER :int = -1;
     
-    public static const ROOM_SIGNAL_ENTITYID_REQUEST :String = "EntityId Request";
-    public static const ROOM_SIGNAL_ENTITYID_REPONSE :String = "EntityId Response";
-    public static const SIGNAL_CLOSEST_ENTITY :String = "Signal: Closest Entity";
-    public static const SIGNAL_PLAYER_TARGET :String = "Signal: Player Target";
-    public static const SIGNAL_PLAYER_IDS :String = "Signal: Player Ids";
-    public static const SIGNAL_AVATAR_MOVED :String = "Signal: Avatar Moved";
-    public static const SIGNAL_NON_PLAYER_LEFT_ROOM :String = "Signal: NonPlayer Left Room";
-    
-    public static const SIGNAL_PLAYER_ARRIVED_AT_DESTINATION :String = "Signal: Player Arrived";
-    public static const SIGNAL_TARGET_CHATTED :String = "Signal: Player Target Said Something";
-    public static const SIGNAL_CHANGE_COLOR_SCHEME :String = "Signal: Change Color Scheme";
-    public static const SIGNAL_CHANGE_COLOR_SCHEME_REQUEST :String = "Signal: Change Color Scheme REQUEST";
     
     public static const FEEDING_AVATAR_OFFSET :Vector2 = new Vector2(15, -5);
     
