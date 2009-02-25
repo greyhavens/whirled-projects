@@ -13,6 +13,7 @@ import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.PropertyGetSubControl;
 
 import flash.geom.Point;
+import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
 import vampire.avatar.AvatarGameBridge;
@@ -23,6 +24,7 @@ import vampire.data.Codes;
 import vampire.data.MinionHierarchy;
 import vampire.data.SharedPlayerStateClient;
 import vampire.data.VConstants;
+import vampire.feeding.PlayerFeedingData;
 
 
 /**
@@ -48,21 +50,21 @@ public class GameModel extends SimObject//EventDispatcher
         //Update the HUD when the room props come in.
         registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, playerEnteredRoom);
         
-        //Update the HUD when the room props come in.
-        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, 
-            function ( e :AVRGameRoomEvent) :void {
-                trace("GameModel heard " + AVRGameRoomEvent.AVATAR_CHANGED + " " + e);
-            });
-            
-        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_MOVED, 
-            function ( e :AVRGameRoomEvent) :void {
-                trace("GameModel heard " + AVRGameRoomEvent.PLAYER_MOVED + " " + e);
-            });
-            
-        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED, 
-            function ( e :AVRGameRoomEvent) :void {
-                trace("GameModel heard " + AVRGameRoomEvent.SIGNAL_RECEIVED + " " + e);
-            });
+//        //Update the HUD when the room props come in.
+//        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, 
+//            function ( e :AVRGameRoomEvent) :void {
+//                trace("GameModel heard " + AVRGameRoomEvent.AVATAR_CHANGED + " " + e);
+//            });
+//            
+//        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_MOVED, 
+//            function ( e :AVRGameRoomEvent) :void {
+//                trace("GameModel heard " + AVRGameRoomEvent.PLAYER_MOVED + " " + e);
+//            });
+//            
+//        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED, 
+//            function ( e :AVRGameRoomEvent) :void {
+//                trace("GameModel heard " + AVRGameRoomEvent.SIGNAL_RECEIVED + " " + e);
+//            });
             
             
         
@@ -234,7 +236,7 @@ public class GameModel extends SimObject//EventDispatcher
     protected function handlePropChanged (e :PropertyChangedEvent) :void
     {
         //Check if it is non-player properties changed??
-        log.debug(VConstants.DEBUG_MINION + " propChanged", "e", e);
+//        log.debug(VConstants.DEBUG_MINION + " propChanged", "e", e);
         
         if( e.name == Codes.ROOM_PROP_MINION_HIERARCHY ) {//|| e.name == Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS) {
             
@@ -246,7 +248,7 @@ public class GameModel extends SimObject//EventDispatcher
 //            }
             
             _hierarchy = loadHierarchyFromProps();
-            log.debug(VConstants.DEBUG_MINION + " HUD updating hierarchy=" + _hierarchy);
+//            log.debug(VConstants.DEBUG_MINION + " HUD updating hierarchy=" + _hierarchy);
             
             dispatchEvent( new HierarchyUpdatedEvent( _hierarchy ) );
         }
@@ -448,13 +450,18 @@ public class GameModel extends SimObject//EventDispatcher
     public function get hierarchy() :MinionHierarchy
     {
         return _hierarchy;
-//        var bytes :ByteArray = _propsCtrl.get( Codes.ROOM_PROP_MINION_HIERARCHY) as ByteArray;
-//        if( bytes != null) {
-//            var m :MinionHierarchy = new MinionHierarchy();
-//            m.fromBytes( bytes );
-//            return m; 
-//        }
-//        return null;
+    }
+    
+    
+    public function get playerFeedingData () :PlayerFeedingData
+    {
+        var pfd :PlayerFeedingData = new PlayerFeedingData();
+        var bytes :ByteArray = _propsCtrl.get(Codes.PLAYER_PROP_FEEDING_DATA) as ByteArray;
+        if (bytes != null) {
+            pfd.fromBytes(bytes);
+        }
+
+        return pfd;
     }
     
     public function printNonPlayers() :void
