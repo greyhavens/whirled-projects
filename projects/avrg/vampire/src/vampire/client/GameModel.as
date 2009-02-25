@@ -456,7 +456,7 @@ public class GameModel extends SimObject//EventDispatcher
     public function get playerFeedingData () :PlayerFeedingData
     {
         var pfd :PlayerFeedingData = new PlayerFeedingData();
-        var bytes :ByteArray = _propsCtrl.get(Codes.PLAYER_PROP_FEEDING_DATA) as ByteArray;
+        var bytes :ByteArray = ClientContext.ctrl.player.props.get(Codes.PLAYER_PROP_FEEDING_DATA) as ByteArray;
         if (bytes != null) {
             pfd.fromBytes(bytes);
         }
