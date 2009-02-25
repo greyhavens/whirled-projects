@@ -97,10 +97,12 @@ public class Room extends SimObjectThane
         var playername :String = _ctrl.getAvatarInfo( player.playerId) != null ? _ctrl.getAvatarInfo( player.playerId).name : "" + player.playerId;
         
         log.info("Setting " + playername + " props into room, player=" + player);
-        player.setIntoRoomProps( this );
+        
+        _players.put( player.playerId, player );
+//        player.setIntoRoomProps();
         
         //Let the avatars know who is who, so they don't spam us with movement updates
-        ctrl.sendSignal( VConstants.SIGNAL_PLAYER_IDS, playerIds );
+//        ctrl.sendSignal( VConstants.SIGNAL_PLAYER_IDS, playerIds );
 
     }
 
@@ -108,7 +110,7 @@ public class Room extends SimObjectThane
     {
 //        _entityLocations.remove( player.playerId );
         
-        if (!_players.remove(player)) {
+        if (!_players.remove(player.playerId)) {
             log.warning("Departing player did not exist in room", "roomId", this.roomId,
                         "playerId", player.playerId);
         }
@@ -120,7 +122,7 @@ public class Room extends SimObjectThane
         }
         
         //Let the avatars know who is who, so they don't spam us with movement updates
-        ctrl.sendSignal( VConstants.SIGNAL_PLAYER_IDS, playerIds );
+//        ctrl.sendSignal( VConstants.SIGNAL_PLAYER_IDS, playerIds );
         
         //Broadcast the players in the room
 //        _ctrl.sendSignal(Constants.ROOM_SIGNAL_ENTITYID_REPONSE, _players.toArray().map( function( p :Player) :int { return p.playerId}));
@@ -151,7 +153,7 @@ public class Room extends SimObjectThane
 
         try {
             _roomDB.update( dt );
-            _players.forEach( function( playerId :int, p :Player) :void{ p.tick(dt)});
+            _players.forEach( function( playerId :int, p :Player) :void{ p.update(dt)});
             
             //Send feedback messages.
             if( _feedbackMessageQueue.length > 0 ) {
@@ -324,7 +326,7 @@ public class Room extends SimObjectThane
 
 //            _nonplayerMonitor = new NonPlayerMonitor( _ctrl );
 //            _locationTracker = new LocationTracker( this );
-            registerListener(_ctrl, AVRGameRoomEvent.ROOM_UNLOADED, destroySelf);
+            registerListener(_ctrl, AVRGameRoomEvent.ROOM_UNLOADED, destroy);
 //            registerListener(_ctrl, AVRGameRoomEvent.PLAYER_MOVED, handlePlayerMoved);
 //            registerListener(_ctrl, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
             
@@ -333,6 +335,11 @@ public class Room extends SimObjectThane
             
         }
     }
+    
+    public function destroy(...ignored):void
+    {
+        destroySelf();
+    } 
     
     protected function handleSignalReceived( e :AVRGameRoomEvent ) :void
     {
@@ -448,7 +455,6 @@ public class Room extends SimObjectThane
 //        _nonplayerMonitor.destroySelf();
         
         _roomDB.shutdown();
-        
         _ctrl = null;
         if (_players.size() != 0) {
             log.warning("Eek! Room unloading with players still here!",
@@ -456,6 +462,7 @@ public class Room extends SimObjectThane
         } else {
             log.debug("Unloaded room", "roomId", roomId);
         }
+        _players.clear();
     }
     
     protected function handlePlayerMoved( e :AVRGameRoomEvent ) :void
@@ -552,7 +559,7 @@ public class Room extends SimObjectThane
             });
         }
         else {
-            ServerContext.nonPlayersBloodMonitor.nonplayerLosesBlood( gameRecord.preyId, VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED );
+            damage = ServerContext.nonPlayersBloodMonitor.nonplayerLosesBlood( gameRecord.preyId, VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED );
         }
         
         //Predators gain blood from the prey
@@ -563,6 +570,7 @@ public class Room extends SimObjectThane
             var pred :Player = getPlayer( predatorId );
             pred.mostRecentVictimId = gameRecord.preyId;
             pred.addBlood( bloodGainedPerPredator );
+            log.debug(predatorId + " gained " + bloodGainedPerPredator);
             addFeedback( pred.name + " gained " + bloodGainedPerPredatorFormatted + " from feeding", pred.playerId);
         }
         
