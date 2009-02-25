@@ -15,11 +15,10 @@ import com.whirled.net.PropertyGetSubControl;
 import flash.geom.Point;
 import flash.utils.Dictionary;
 
-import vampire.avatar.VampireAvatarHUDManager;
+import vampire.avatar.AvatarGameBridge;
 import vampire.client.events.ChangeActionEvent;
 import vampire.client.events.ClosestPlayerChangedEvent;
 import vampire.client.events.HierarchyUpdatedEvent;
-import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.Codes;
 import vampire.data.MinionHierarchy;
 import vampire.data.SharedPlayerStateClient;
@@ -74,21 +73,21 @@ public class GameModel extends SimObject//EventDispatcher
 //        _nonPlayerLocations = new NonPlayerMonitor( ClientContext.gameCtrl.room );
         
         
-        _avatarManager = new VampireAvatarHUDManager(ClientContext.ctrl);
-        //Let the server know when we arrive at a location, if we are walking to a feed.
-        registerListener( _avatarManager, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED, 
-            function(...ignored) :void {
-                if( action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER ||
-                    action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER ) {
-                        
-                        ClientContext.ctrl.agent.sendMessage( 
-                            PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
-                    }
-            });
-            
-        
-        
-        this.db.addObject( _avatarManager );
+//        _avatarManager = new VampireAvatarHUDManager(ClientContext.ctrl);
+//        //Let the server know when we arrive at a location, if we are walking to a feed.
+//        registerListener( _avatarManager, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED, 
+//            function(...ignored) :void {
+//                if( action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER ||
+//                    action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER ) {
+//                        
+//                        ClientContext.ctrl.agent.sendMessage( 
+//                            PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
+//                    }
+//            });
+//            
+//        
+//        
+//        this.db.addObject( _avatarManager );
         
         
         //If the room props are already present, update the HUD now.
@@ -116,20 +115,20 @@ public class GameModel extends SimObject//EventDispatcher
 //        _avatarManager.update( dt );
     }
     
-    /**
-    * The player avatar tells the model who is closest.
-    */
-    protected function handleSignalReceived( e :AVRGameRoomEvent) :void
-    {
-        trace("model.handleSignalReceived(), e=" + e);
-        if( e.name == VConstants.SIGNAL_CLOSEST_ENTITY) {
-            var args :Array = e.value as Array;
-            if( args != null && args.length >= 2 && args[0] == ClientContext.ourPlayerId) {
-                closestUserId = int(args[1]);
-                trace("model.handleSignalReceived(), Closest id=" + closestUserId);
-            }
-        }
-    }
+//    /**
+//    * The player avatar tells the model who is closest.
+//    */
+//    protected function handleSignalReceived( e :AVRGameRoomEvent) :void
+//    {
+//        trace("model.handleSignalReceived(), e=" + e);
+//        if( e.name == VConstants.SIGNAL_CLOSEST_ENTITY) {
+//            var args :Array = e.value as Array;
+//            if( args != null && args.length >= 2 && args[0] == ClientContext.ourPlayerId) {
+//                closestUserId = int(args[1]);
+//                trace("model.handleSignalReceived(), Closest id=" + closestUserId);
+//            }
+//        }
+//    }
 
 
     protected function checkProximity( ...ignored) :void
@@ -162,6 +161,10 @@ public class GameModel extends SimObject//EventDispatcher
     }
     public function playerEnteredRoom( ...ignored ) :void
     {
+        //Reset avatar locations
+        ClientContext.ctrl.room.getEntityProperty( 
+            AvatarGameBridge.ENTITY_PROPERTY_RESET_LOCATIONS, ClientContext.ourEntityId );
+        
         trace(VConstants.DEBUG_MINION + " Player entered room");
         
         if( hierarchy == null) {
@@ -319,24 +322,31 @@ public class GameModel extends SimObject//EventDispatcher
             return;
         }
         
-        //Check if it is non-player properties changed??
-//        log.debug("elementChanged", "e", e);
         //Otherwise check for player updates
         var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
         
-        if( !isNaN( playerIdUpdated ) && playerIdUpdated == ClientContext.ourPlayerId) {
-//            _playerStates.put( playerIdUpdated, SharedPlayerStateServer.fromBytes(ByteArray(e.newValue)) );
-//            log.debug("Updated state=" + _playerStates.get( playerIdUpdated));
-
-//            log.debug("Value in room props=" + ClientContext.gameCtrl.room.props.get(e.name) as Dictionary;)
-//            dispatchEvent( new Event( VampireController.PLAYER_STATE_CHANGED ) );
-//            dispatchEvent( new PlayerStateChangedEvent( playerIdUpdated ) );
+            
+        if( !isNaN( playerIdUpdated )) {
+            
+            //If a state change comes in, inform the avatar
+            if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE) {
+                
+                var entityAvatarId :String = ClientContext.getPlayerEntityId(playerIdUpdated);
+                
+                var setStateFunction :Function = ClientContext.ctrl.room.getEntityProperty( 
+                    AvatarGameBridge.ENTITY_PROPERTY_SETSTATE_FUNCTION, entityAvatarId) as Function;
+                        
+                setStateFunction( e.newValue.toString() );
+               
+            }
             
             
-            //If the action changes on the server, that means the change is forced, so change to that action.
-            if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION) {
-//                log.debug("  Dispatching event=" + ChangeActionEvent.CHANGE_ACTION + " new action=" + e.newValue);
-                dispatchEvent( new ChangeActionEvent( e.newValue.toString() ) );
+            if( playerIdUpdated == ClientContext.ourPlayerId ) {
+                //If the action changes on the server, that means the change is forced, so change to that action.
+                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION) {
+    //                log.debug("  Dispatching event=" + ChangeActionEvent.CHANGE_ACTION + " new action=" + e.newValue);
+                    dispatchEvent( new ChangeActionEvent( e.newValue.toString() ) );
+                }
             }
             
         }
@@ -449,7 +459,7 @@ public class GameModel extends SimObject//EventDispatcher
     
     public function printNonPlayers() :void
     {
-        trace( avatarManager );
+//        trace( avatarManager );
 //        trace("Non Players: (nonplayers=" + nonPlayerManager + ")");
 //        for each( var np :NonPlayerAvatar in nonPlayerManager.values ) {
 //            trace("   " + np );
@@ -484,16 +494,16 @@ public class GameModel extends SimObject//EventDispatcher
 //        
 //    }
     
-    public function get avatarManager() :VampireAvatarHUDManager
-    {
-        return _avatarManager;
-    }
+//    public function get avatarManager() :VampireAvatarHUDManager
+//    {
+//        return _avatarManager;
+//    }
     
     protected var _hierarchy :MinionHierarchy;
     protected var _agentCtrl :AgentSubControl;
     protected var _propsCtrl :PropertyGetSubControl;
     
-    protected var _avatarManager :VampireAvatarHUDManager;
+//    protected var _avatarManager :VampireAvatarHUDManager;
     
 //    protected var _nonplayers :HashMap = new HashMap();
 //    protected var _nonPlayerLocations :NonPlayerMonitor;
