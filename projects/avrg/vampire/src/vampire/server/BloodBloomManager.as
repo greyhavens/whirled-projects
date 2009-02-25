@@ -78,6 +78,13 @@ public class BloodBloomManager extends SimObjectThane
         }
     }
     
+    protected function gameFinishedCallback( record :BloodBloomGameRecord ) :void
+    {
+        for each( var playerId :int in record.playerIds ) {
+            _playerId2Game.remove( playerId );
+        }
+    }
+    
     override protected function update( dt :Number ) :void
     {
         
@@ -122,7 +129,7 @@ public class BloodBloomManager extends SimObjectThane
         if( _playerId2Game.containsKey( playerId ) ) {
             var gameRecord :BloodBloomGameRecord = _playerId2Game.get( playerId ) as BloodBloomGameRecord;
             gameRecord.removePlayer( playerId );
-            removeFinishedGames();
+            _playerId2Game.remove( playerId );
         }
     }
     
@@ -161,7 +168,8 @@ public class BloodBloomManager extends SimObjectThane
     {
         log.debug("createNewBloodBloomGameRecord ", "predatorId", predatorId, "preyId", preyId, "multiplePredators", multiplePredators);
         var gameRecord :BloodBloomGameRecord = new BloodBloomGameRecord( _room, 
-            nextBloodBloomGameId, predatorId, preyId, multiplePredators, preyLocation);
+            nextBloodBloomGameId, predatorId, preyId, multiplePredators, preyLocation, 
+            gameFinishedCallback);
         _playerId2Game.put( predatorId, gameRecord );
         _playerId2Game.put( preyId, gameRecord );
         _games.push( gameRecord );

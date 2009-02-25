@@ -4,16 +4,13 @@ package vampire.server
     import com.threerings.util.HashSet;
     import com.threerings.util.Log;
     
-    import flash.utils.ByteArray;
-    
     import vampire.data.VConstants;
     import vampire.feeding.FeedingGameServer;
-    import vampire.feeding.PlayerFeedingData;
     
 public class BloodBloomGameRecord
 {
     public function BloodBloomGameRecord( room :Room, gameId :int, predatorId :int, preyId :int, 
-        multiplePredators :Boolean, preyLocation :Array)
+        multiplePredators :Boolean, preyLocation :Array, gameFinishesCallback :Function)
     {
         _room = room;
         _gameId = gameId;
@@ -26,6 +23,7 @@ public class BloodBloomGameRecord
         if( _multiplePredators ) {
             startCountDownTimer();
         }
+        _gameFinishedManagerCallback = gameFinishesCallback;
     }
     
     public function startCountDownTimer() :void
@@ -76,7 +74,7 @@ public class BloodBloomGameRecord
         var prey :int = int(arr[1]);
         var pred1 :int = int(arr[2]);
         
-        var result :BloodBloomGameRecord = new BloodBloomGameRecord(null, -1, pred1, prey, true, null );
+        var result :BloodBloomGameRecord = new BloodBloomGameRecord(null, -1, pred1, prey, true, null, null );
         
         for( var i :int = 3; i < arr.length; i++) {
             result._predators.add( arr[i] );
@@ -138,6 +136,19 @@ public class BloodBloomGameRecord
     
     protected function roundCompleteCallback() :Number 
     {
+        log.debug("roundCompleteCallback");
+        if( _room.isPlayer( _preyId ) ) {
+            return _room.getPlayer( _preyId ).blood / _room.getPlayer( _preyId ).maxBlood;
+        }
+        else {
+            return ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( _preyId ) / 
+                ServerContext.nonPlayersBloodMonitor.maxBloodFromNonPlayer(_preyId);
+        }
+    }
+    
+    protected function gameFinishedCallback(...ignored) :void
+    {
+        log.debug("gameFinishedCallback");
         
         if( _gameServer != null ) {
             var score :Number = _gameServer.lastRoundScore;
@@ -151,18 +162,8 @@ public class BloodBloomGameRecord
         }
         
         
-        if( _room.isPlayer( _preyId ) ) {
-            return _room.getPlayer( _preyId ).blood;
-        }
-        else {
-            return ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( _preyId );
-        }
-    }
-    
-    protected function gameFinishedCallback(...ignored) :void
-    {
-        log.debug("gameFinishedCallback");
         shutdown();
+        _gameFinishedManagerCallback(this);
     }
     
     
@@ -332,6 +333,7 @@ public class BloodBloomGameRecord
     protected var _countdownTimeRemaining :Number = 0;
     protected var _currentCountdownSecond :int;
     protected var _elapsedGameTime :Number = 0;
+    protected var _gameFinishedManagerCallback :Function;
     
     protected static const log :Log = Log.getLog( BloodBloomGameRecord );
 
