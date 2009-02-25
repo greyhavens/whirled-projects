@@ -107,18 +107,20 @@ public class Codes
     public static const ROOM_PROP_PLAYER_DICT_INDEX_NAME :int = 1;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME :int = 2;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE :int = 3;
-//    public static const ROOM_PROP_PLAYER_DICT_INDEX_MINIONS :int = 4;
+    public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBLOOM_COUNTDOWN :int = 4;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_SIRE :int = 5;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED :int = 6;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION :int = 7;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_XP :int = 8;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_ID :int = 10;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_LOCATION :int = 11;
-//    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME :int = 12;
+    public static const ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE:int = 12;
 //    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD :int = 13;
 //    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD :int = 14;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT :int = 15;
 //    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_DISPLAY_VISIBLE :int = 16;
+
+    public static const TASK_ID_FEEDING :String = "taskFeeding";
     
     
 }

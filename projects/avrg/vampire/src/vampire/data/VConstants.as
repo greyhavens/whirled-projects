@@ -5,7 +5,7 @@
 public class VConstants
 {
     
-    public static const TIME_FEEDBACK_MESSAGE_DISPLAY :Number = 3;
+    public static const TIME_FEEDBACK_MESSAGE_DISPLAY :Number = 4;
     
     public static const BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME :int = 10;
     
