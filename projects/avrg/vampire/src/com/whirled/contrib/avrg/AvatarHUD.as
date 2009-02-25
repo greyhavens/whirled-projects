@@ -13,6 +13,7 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
 
+import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.VConstants;
 
 /**
@@ -115,9 +116,9 @@ public class AvatarHUD extends SceneObject
                 setHotspot( newHotspot );
 //            }
             
-            if( !ArrayUtil.equals( newLocation, location ) ) {
+//            if( !ArrayUtil.equals( newLocation, location ) ) {
                 setLocation( newLocation, UPDATE_INTERVAL_SECONDS );
-            }
+//            }
             
             //If we don't yet have a location, make us invisible
             visible = location != null;
@@ -498,6 +499,12 @@ public class AvatarHUD extends SceneObject
     
     public function setLocation (location :Array, dt :Number) :void
     {
+        if( location != null && ArrayUtil.equals( location, _location ) ) {
+            //We assume the avatar has arrived.  Send an avatar arrived event.
+            
+            dispatchEvent( new PlayerArrivedAtLocationEvent() );
+        }
+        
         if( ArrayUtil.equals( location, _location )) {
             return;
         }
