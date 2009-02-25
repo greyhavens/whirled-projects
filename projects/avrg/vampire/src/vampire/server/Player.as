@@ -24,6 +24,7 @@ import vampire.net.IGameMessage;
 import vampire.net.messages.BloodBondRequestMessage;
 import vampire.net.messages.FeedRequestMessage2;
 import vampire.net.messages.RequestActionChangeMessage;
+import vampire.net.messages.ShareTokenMessage;
 
 /**
  * Actions:
@@ -408,17 +409,6 @@ public class Player extends EventHandlerManager
                 var now :Number = new Date().time;
                 setTime( now , true);
             }
-//            else if( name == VConstants.SIGNAL_CHANGE_COLOR_SCHEME_REQUEST ) {
-//                handleChangeColorScheme( value.toString() );
-//            }
-            else if( name == VConstants.MESSAGE_SHARE_TOKEN ) {
-                var inviterId :int = int( value );
-                log.debug( playerId + " received inviter id=" + inviterId);
-                if( sire <= 0 ) {
-                    log.info( playerId + " setting sire=" + inviterId); 
-                    setSire( inviterId );  
-                }
-            }
             else if( name == PlayerArrivedAtLocationEvent.PLAYER_ARRIVED ) {
                 
                 log.debug(playerId + " message " + PlayerArrivedAtLocationEvent.PLAYER_ARRIVED);                
@@ -444,9 +434,9 @@ public class Player extends EventHandlerManager
                 else if( value is FeedRequestMessage2) {
                     handleFeedRequestMessage( FeedRequestMessage2(value) );
                 }
-//                else if( value is SuccessfulFeedMessage) {
-//                    handleSuccessfulFeedMessage( SuccessfulFeedMessage(value) );
-//                }
+                else if( value is ShareTokenMessage) {
+                    handleShareTokenMessage( ShareTokenMessage(value) );
+                }
                 else {
                     log.debug("Cannot handle IGameMessage ", "player", playerId, "type", value );
                     log.debug("  Classname=" + ClassUtil.getClassName(value) );
@@ -459,6 +449,18 @@ public class Player extends EventHandlerManager
         
     }
     
+    protected function handleShareTokenMessage( e :ShareTokenMessage ) :void
+    {
+        var inviterId :int = e.inviterId;
+        log.debug( playerId + " received inviter id=" + inviterId);
+        if( sire <= 0 ) {
+            log.info( playerId + " setting sire=" + inviterId); 
+            setSire( inviterId );  
+        }
+        else {
+            log.warning("handleShareTokenMessage, but our sire is already > 0", "e", e );
+        }
+    }
     protected function handleFeedRequestMessage( e :FeedRequestMessage2 ) :void
     {
         if( action == VConstants.GAME_MODE_BARED ) {
