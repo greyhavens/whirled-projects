@@ -1,6 +1,7 @@
 package vampire.client {
 
 
+import com.threerings.util.ArrayUtil;
 import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
@@ -122,6 +123,25 @@ public class ClientContext
         }
         return null;
     }
+    
+    
+    
+    public static function getNonPlayerIds() :Array
+    {
+    
+        var playerIds :Array = ctrl.room.getPlayerIds();
+        var nonPlayerIds :Array = new Array();
+        
+        for each( var entityId :String in ctrl.room.getEntityIds( EntityControl.TYPE_AVATAR) ) {
+            var userId :int = int(ctrl.room.getEntityProperty( EntityControl.PROP_MEMBER_ID, entityId));
+            
+            if( !ArrayUtil.contains( playerIds, userId ) ) {
+                nonPlayerIds.push( userId );
+            }
+        }
+        return nonPlayerIds;
+    }
+    
     
     
 }
