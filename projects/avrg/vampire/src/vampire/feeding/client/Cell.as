@@ -70,11 +70,8 @@ public class Cell extends CollidableObj
         _radius = Constants.CELL_RADIUS[type];
         _type = type;
 
-        if (type == Constants.CELL_MULTIPLIER) {
-            _multiplier = multiplierOrStrain;
-        } else if (type == Constants.CELL_SPECIAL) {
-            _specialStrain = multiplierOrStrain;
-        }
+        _multiplier = (type == Constants.CELL_MULTIPLIER ? multiplierOrStrain : 1);
+        _specialStrain = (type == Constants.CELL_SPECIAL ? multiplierOrStrain : -1);
 
         _moveCCW = Rand.nextBoolean(Rand.STREAM_GAME);
         _state = STATE_NORMAL;
