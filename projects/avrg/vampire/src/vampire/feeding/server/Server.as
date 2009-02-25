@@ -261,6 +261,8 @@ public class Server extends FeedingGameServer
 
         if (_playersNeedingCheckin.length == 0) {
             startGameNow();
+        } else {
+            log.info("Waiting for " + _playersNeedingCheckin.length + " more players to start.");
         }
     }
 
@@ -304,7 +306,7 @@ public class Server extends FeedingGameServer
             _state = STATE_WAITING_FOR_SCORES;
             _playersNeedingScoreUpdate = _playerIds.slice();
             _finalScores = new HashMap();
-            sendMessage(RoundOverMsg.create());
+            sendMessage(GetRoundScores.create());
         }
     }
 
@@ -319,9 +321,13 @@ public class Server extends FeedingGameServer
             // Send the final scores to the clients.
             var preyBloodStart :Number = _preyBlood;
             _preyBlood = _roundCompleteCallback();
-            sendMessage(RoundResultsMsg.create(_finalScores, preyBloodStart, _preyBlood));
+            sendMessage(RoundOverMsg.create(_finalScores, preyBloodStart, _preyBlood));
             // move to the waiting_for_players state
             waitForPlayers();
+
+        } else {
+            log.info("Waiting for " + _playersNeedingScoreUpdate.length +
+                     " more player scores to end the round.");
         }
     }
 

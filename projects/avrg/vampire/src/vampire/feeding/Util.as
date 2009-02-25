@@ -12,10 +12,10 @@ public class Util
         mgr.addMessageType(CurrentScoreMsg);
         mgr.addMessageType(ClientReadyMsg);
         mgr.addMessageType(StartRoundMsg);
-        mgr.addMessageType(RoundOverMsg);
+        mgr.addMessageType(GetRoundScores);
         mgr.addMessageType(RoundScoreMsg);
         mgr.addMessageType(GameEndedMsg);
-        mgr.addMessageType(RoundResultsMsg);
+        mgr.addMessageType(RoundOverMsg);
         mgr.addMessageType(ClientQuitMsg);
         mgr.addMessageType(NoMoreFeedingMsg);
         mgr.addMessageType(ClientBootedMsg);

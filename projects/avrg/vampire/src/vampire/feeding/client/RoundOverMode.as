@@ -18,7 +18,7 @@ import vampire.feeding.net.*;
 
 public class RoundOverMode extends AppMode
 {
-    public function RoundOverMode (results :RoundResultsMsg)
+    public function RoundOverMode (results :RoundOverMsg)
     {
         _results = results;
     }
@@ -131,7 +131,7 @@ public class RoundOverMode extends AppMode
         _feedingOverText.text = (ClientCtx.isPrey ? "You are alone." : "Your prey has escaped!");
     }
 
-    protected var _results :RoundResultsMsg;
+    protected var _results :RoundOverMsg;
     protected var _replayTimer :MovieClip;
     protected var _replayBtn :SimpleButton;
     protected var _feedingOverText :TextField;

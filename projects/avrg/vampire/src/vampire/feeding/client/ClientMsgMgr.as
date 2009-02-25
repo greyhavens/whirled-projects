@@ -1,5 +1,6 @@
 package vampire.feeding.client {
 
+import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.net.*;
@@ -33,6 +34,7 @@ public class ClientMsgMgr extends EventDispatcher
     public function sendMessage (msg :Message) :void
     {
         if (_gameCtrl.isConnected()) {
+            log.info("Sending message", "player", ClientCtx.localPlayerId, "name", msg.name);
             _gameCtrl.agent.sendMessage(_nameUtil.encodeName(msg.name), serializeMsg(msg));
         }
     }
@@ -68,6 +70,8 @@ public class ClientMsgMgr extends EventDispatcher
     protected var _nameUtil :NameUtil;
     protected var _msgMgr :BasicMessageManager = new BasicMessageManager();
     protected var _events :EventHandlerManager = new EventHandlerManager();
+
+    protected const log :Log = Log.getLog(this);
 }
 
 }

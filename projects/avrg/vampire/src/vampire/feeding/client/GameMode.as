@@ -161,20 +161,20 @@ public class GameMode extends AppMode
         if (e.msg is CreateBonusMsg) {
             onNewMultiplier(e.msg as CreateBonusMsg);
 
-        } else if (e.msg is RoundOverMsg) {
+        } else if (e.msg is GetRoundScores) {
             // Send our final score to the server. We'll wait for the GameResultsMsg
             // to display the round over screen.
             ClientCtx.msgMgr.sendMessage(RoundScoreMsg.create(GameCtx.scoreView.bloodCount));
 
-        } else if (e.msg is RoundResultsMsg) {
-            onRoundOver(e.msg as RoundResultsMsg);
+        } else if (e.msg is RoundOverMsg) {
+            onRoundOver(e.msg as RoundOverMsg);
 
         } else if (e.msg is NoMoreFeedingMsg) {
             onNoMoreFeeding(true);
         }
     }
 
-    protected function onRoundOver (results :RoundResultsMsg) :void
+    protected function onRoundOver (results :RoundOverMsg) :void
     {
         ClientCtx.mainLoop.changeMode(new RoundOverMode(results));
     }
@@ -235,7 +235,7 @@ public class GameMode extends AppMode
             for (var ii :int = 0; ii < 10; ++ii) {
                 dummyScores.put(ii + 1, Rand.nextIntRange(50, 500, Rand.STREAM_COSMETIC));
             }
-            onRoundOver(RoundResultsMsg.create(dummyScores, 1, 0.25));
+            onRoundOver(RoundOverMsg.create(dummyScores, 1, 0.25));
             return;
         }
 
