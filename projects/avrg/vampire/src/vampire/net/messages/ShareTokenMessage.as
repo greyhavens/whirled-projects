@@ -10,7 +10,7 @@ package vampire.net.messages
         {
             super(playerId);
             _inviterId = inviterId;
-            _shareToken = token;
+            _shareToken = (token != null ? token : "");
         }
         
         override public function fromBytes (bytes :ByteArray) :void
