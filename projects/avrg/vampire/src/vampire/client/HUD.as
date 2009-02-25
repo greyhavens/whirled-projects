@@ -17,6 +17,7 @@ import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.DisplayObject;
+import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
@@ -32,6 +33,7 @@ import flash.text.TextFormatAlign;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.events.ClosestPlayerChangedEvent;
+import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.Codes;
 import vampire.data.Logic;
 import vampire.data.SharedPlayerStateClient;
@@ -61,6 +63,16 @@ public class HUD extends SceneObject
 
         
         updateOurPlayerState();
+        
+        
+
+            
+        
+        
+        
+        
+        
+        
 
 //        if( VConstants.LOCAL_DEBUG_MODE) {
 //            showTarget( ClientContext.gameCtrl.player.getPlayerId() );
@@ -68,6 +80,7 @@ public class HUD extends SceneObject
 
           
     }
+    
     
     protected function handleMessageReceived( e :MessageReceivedEvent ) :void
     {
@@ -250,9 +263,10 @@ public class HUD extends SceneObject
     override protected function addedToDB () :void
     {
 //        db.addObject( _targetingOverlay );
+        
         db.addObject( _targetingOverlay, _displaySprite );
 //        _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
-        _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
+//        _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
 //        _targetingOverlay.displayObject.visible = false;
     }
     
@@ -266,9 +280,18 @@ public class HUD extends SceneObject
         
         
         //Create the ratgeting overlay
-        _targetingOverlay = new VampireAvatarHUDOverlay( ClientContext.ctrl, 
-            ClientContext.model.avatarManager );
+        _targetingOverlay = new VampireAvatarHUDOverlay( ClientContext.ctrl );
         
+        registerListener( _targetingOverlay, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED, 
+            function(...ignored) :void {
+                if( ClientContext.model.action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER ||
+                    ClientContext.model.action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER ) {
+                        
+                        ClientContext.ctrl.agent.sendMessage( 
+                            PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
+                    }
+            });
+            
         
 //        _displaySprite.addChild( _targetingOverlay.displayObject );
 //            ClientContext.model.avatarManager, function(...ignored) :void {
@@ -395,35 +418,40 @@ public class HUD extends SceneObject
 //            }
 //        });
 //        
-        
-        
-        registerListener(hudPrey, MouseEvent.ROLL_OVER, function(...ignored) :void {
-            if( _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SELECT_FEED_TARGET && 
-                _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET ) {
+
+
+
+
+
+
+        for each( var b :InteractiveObject in [hudPredator, hudPrey] ) {//_hudMC
+            
+            registerListener(b, MouseEvent.ROLL_OVER, function(...ignored) :void {
                 _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ); 
-            }
-        });
-        
-        registerListener(hudPrey, MouseEvent.ROLL_OUT, function(...ignored) :void {
-            if( _targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ) {
-                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF ); 
-            }
-        });
-        
-        registerListener(hudPredator, MouseEvent.ROLL_OVER, function(...ignored) :void {
-            if( _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SELECT_FEED_TARGET && 
-                _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET ) {
-                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ); 
-            }
-        });
-        
-        registerListener(hudPredator, MouseEvent.ROLL_OUT, function(...ignored) :void {
-            if( _targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ) {
-                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF ); 
-            }
-        });
+            });
+            
+            registerListener(b, MouseEvent.ROLL_OUT, function(...ignored) :void {
+                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS ); 
+                
+            });
+            
+        }
         
         
+//        registerListener(hudPredator, MouseEvent.ROLL_OVER, function(...ignored) :void {
+//            if( _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS && 
+//                _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET ) {
+//                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ); 
+//            }
+//        });
+//        
+//        registerListener(hudPredator, MouseEvent.ROLL_OUT, function(...ignored) :void {
+//            if( _targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ) {
+//                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF ); 
+//            }
+//        });
+//        
+//        
         
         
         
@@ -969,6 +997,8 @@ public class HUD extends SceneObject
     protected var _feedbackMessageTimeElapsed :Number = VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY;
     
     protected var _DEBUGGING_add_feedback_timer :Number = 0;
+    
+//    protected var _avatarHUDOverlay :VampireAvatarHUDOverlay;
     
 //    protected var _checkRoomProps2ShowStatsTimer :Timer;//Stupid hack, the first time a player enters a room, the 
     
