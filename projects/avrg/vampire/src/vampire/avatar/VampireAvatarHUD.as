@@ -74,16 +74,24 @@ public class VampireAvatarHUD extends AvatarHUD
         buttonFeed.visible = false;
         
         registerListener(buttonFeed, MouseEvent.CLICK, function (...ignored) :void {
+            if( _feedRequestDelayRemaining > 0 ) {
+                return;
+            }
             ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET);
-            ClientContext.controller.handleSendFeedRequest( playerId, false );    
+            ClientContext.controller.handleSendFeedRequest( playerId, false );
+            _feedRequestDelayRemaining = FEED_REQUEST_DELAY;  
         });
         
 //        buttonFeed.x = -30;
         
         buttonFrenzy.visible = false;
         registerListener(buttonFrenzy, MouseEvent.CLICK, function (...ignored) :void {
+            if( _feedRequestDelayRemaining > 0 ) {
+                return;
+            }
             ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET);
-            ClientContext.controller.handleSendFeedRequest( playerId, true );    
+            ClientContext.controller.handleSendFeedRequest( playerId, true );
+            _feedRequestDelayRemaining = FEED_REQUEST_DELAY;  
         });
 //        buttonFrenzy.x = 30;
         
@@ -366,6 +374,10 @@ public class VampireAvatarHUD extends AvatarHUD
     override protected function update( dt :Number ) :void
     {
         super.update(dt);
+        
+        _feedRequestDelayRemaining -= dt;
+        _feedRequestDelayRemaining = Math.max( _feedRequestDelayRemaining, 0 );
+        
 //        trace("VampireHUD location (" + x + ", " + y + ")"); 
         //This is not coupled to the server time ATM.  I figure, it's only waiting for other
         //players and this isn't critical to sync. 
@@ -447,6 +459,8 @@ public class VampireAvatarHUD extends AvatarHUD
     
     protected var _roomKey :String;
     
+    protected var _feedRequestDelayRemaining :Number = 0;//Prevent two event fired immediately after another
+    protected static const FEED_REQUEST_DELAY :Number = 0.6;
     
     public static const STATE_SHOW_INFO :int = 0;
 //    public static const STATE_ :int = 0;
