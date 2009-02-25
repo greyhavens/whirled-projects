@@ -3,13 +3,16 @@ package vampire.avatar
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashSet;
 import com.whirled.avrg.AVRGameControl;
+import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.avrg.AvatarHUD;
 import com.whirled.contrib.avrg.TargetingOverlayAvatars;
-import com.whirled.contrib.simplegame.objects.SimpleTimer;
+import com.whirled.net.ElementChangedEvent;
 
 import flash.events.MouseEvent;
 
 import vampire.client.ClientContext;
+import vampire.data.Codes;
 import vampire.data.SharedPlayerStateClient;
 import vampire.data.VConstants;
 
@@ -29,6 +32,19 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
         super(ctrl);
         
 //        _vampireAvatarManager = avatarManager;
+        
+        registerListener( _ctrl.room, AVRGameRoomEvent.PLAYER_ENTERED, reapplyDisplayMode);
+        registerListener( _ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, reapplyDisplayMode);
+        
+        //If somebody changes an action, make sure we are updated.
+        registerListener( _ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED,
+            function( e :ElementChangedEvent ) :void {
+                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION ) {
+                    reapplyDisplayMode();
+                }
+            }
+        );
+        
         
         
         setDisplayMode( DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
@@ -59,6 +75,11 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 //            setDisplayMode( DISPLAY_MODE_OFF );    
 //        });
     }
+    
+    protected function reapplyDisplayMode( ...ignored ) :void
+    {
+        setDisplayMode( _displayMode );
+    }
     override protected function addedToDB():void
     {
         super.addedToDB();
@@ -79,7 +100,11 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
     override protected function createPlayerAvatar( userId :int ) :AvatarHUD
     {
         var av :VampireAvatarHUD = new VampireAvatarHUD( _ctrl, userId );
-//        db.addObject( av );
+        
+        if( userId == _ctrl.player.getPlayerId() ) {
+            av.setDisplayModeInvisible();
+        }
+        
         return av;
     }
     
@@ -303,6 +328,12 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
                 _displayMode = DISPLAY_MODE_OFF;
                 
         }
+        
+        var myAvatarHUD :VampireAvatarHUD = getVampireAvatar( _ctrl.player.getPlayerId() );
+        if( myAvatarHUD != null ) {
+            myAvatarHUD.setDisplayModeInvisible();
+        }    
+        
     }
     
     override protected function update(dt:Number):void
