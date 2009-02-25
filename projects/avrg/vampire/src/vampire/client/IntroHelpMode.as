@@ -95,26 +95,6 @@ public class IntroHelpMode extends SceneObject
         loseXPButton.addEventListener( MouseEvent.CLICK, loseXP);
         modeSprite.addChild( loseXPButton );
         
-        var toVampireButton :SimpleTextButton = new SimpleTextButton( "Vampire Colors" );
-        toVampireButton.x = loseXPButton.x;
-        toVampireButton.y = loseXPButton.y + 50;
-        toVampireButton.addEventListener( MouseEvent.CLICK, function(...ignored):void { 
-            ClientContext.ctrl.agent.sendMessage( 
-                VConstants.SIGNAL_CHANGE_COLOR_SCHEME_REQUEST, 
-                VConstants.COLOR_SCHEME_VAMPIRE ); 
-        });
-        
-        modeSprite.addChild( toVampireButton );
-        
-        var toHumanButton :SimpleTextButton = new SimpleTextButton( "Human colors" );
-        toHumanButton.x = loseXPButton.x;
-        toHumanButton.y = toVampireButton.y + 30;
-        toHumanButton.addEventListener( MouseEvent.CLICK, function(...ignored):void{ 
-            ClientContext.ctrl.agent.sendMessage( 
-                VConstants.SIGNAL_CHANGE_COLOR_SCHEME_REQUEST, 
-                VConstants.COLOR_SCHEME_HUMAN ); 
-        });
-        modeSprite.addChild( toHumanButton );
         
 
         
@@ -128,8 +108,8 @@ public class IntroHelpMode extends SceneObject
         
         
         var locationsButton :SimpleTextButton = new SimpleTextButton( "Locations from avatar" );
-        locationsButton.x = toHumanButton.x;
-        locationsButton.y = toHumanButton.y + 30;
+        locationsButton.x = loseXPButton.x;
+        locationsButton.y = loseXPButton.y + 30;
         locationsButton.addEventListener( MouseEvent.CLICK, function(...ignored):void{ 
             var locations :HashMap  = ClientContext.ctrl.room.getEntityProperty( AvatarGameBridge.ENTITY_PROPERTY_AVATAR_LOCATIONS, ClientContext.ourEntityId) as HashMap;
             trace("locations:");
