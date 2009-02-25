@@ -121,9 +121,8 @@ public class VConstants
     public static const NAMED_EVENT_START_BLOOD_BLOOM :String = "StartBloodBloom";
     public static const NAMED_EVENT_BLOODBLOOM_COUNTDOWN :String = "BloodbloomCountDown";
     
-    public static const NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER :String = "AvatarRoomSignalFromServer";
     
-    public static const MESSAGE_SHARE_TOKEN :String = "ShareToken";
+    
         
     public static var LOCAL_DEBUG_MODE :Boolean = false;
     
