@@ -14,6 +14,7 @@ import flash.events.MouseEvent;
 
 import vampire.data.VConstants;
 import vampire.net.VMessageManager;
+import vampire.net.messages.ShareTokenMessage;
 import vampire.server.AVRGAgentLogTarget;
 
 [SWF(width="700", height="500")]
@@ -123,9 +124,12 @@ public class VampireMain extends Sprite
             
             //If there is a share token, send the invitee to the server
             var inviterId :int = ClientContext.ctrl.local.getInviterMemberId();
-            log.info(ClientContext.ctrl.player.getPlayerId() + " inviterId=" + inviterId);
+            var shareToken :String = ClientContext.ctrl.local.getInviteToken();
+            log.info(ClientContext.ctrl.player.getPlayerId() + " inviterId=" + inviterId + ", token=" + shareToken);
             if( inviterId > 0 ) {
-                ClientContext.ctrl.agent.sendMessage( VConstants.MESSAGE_SHARE_TOKEN, inviterId );
+                var msg :ShareTokenMessage = new ShareTokenMessage( ClientContext.ourPlayerId,
+                    inviterId, shareToken );
+                ClientContext.ctrl.agent.sendMessage( msg.name, msg );
             }
         }
     }
