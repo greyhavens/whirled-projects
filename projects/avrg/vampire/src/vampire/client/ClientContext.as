@@ -90,7 +90,7 @@ public class ClientContext
             className);
     }
     
-    public static function get playerEntityId () :String
+    public static function get ourEntityId () :String
     {
         if( _playerEntityId == null ) {
             for each( var entityId :String in ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
@@ -106,6 +106,21 @@ public class ClientContext
         }
         
         return _playerEntityId;
+    }
+    
+    
+    public static function getPlayerEntityId ( playerId :int ) :String
+    {
+        for each( var entityId :String in ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
+        
+            var entityUserId :int = int(ctrl.room.getEntityProperty( EntityControl.PROP_MEMBER_ID, entityId));
+            
+            if( entityUserId == playerId ) {
+                return entityId;
+            }
+            
+        }
+        return null;
     }
     
     
