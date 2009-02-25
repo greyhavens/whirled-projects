@@ -4,8 +4,11 @@ package vampire.server
     import com.threerings.util.HashSet;
     import com.threerings.util.Log;
     
+    import flash.utils.ByteArray;
+    
     import vampire.data.VConstants;
     import vampire.feeding.FeedingGameServer;
+    import vampire.feeding.PlayerFeedingData;
     
 public class BloodBloomGameRecord
 {
@@ -308,6 +311,10 @@ public class BloodBloomGameRecord
             + " _elapsedGameTime=" + _elapsedGameTime
             + "lastRoundScore=" + (_gameServer != null ? _gameServer.lastRoundScore : 0)
     }
+    
+    
+
+    
     
     
     protected var _room :Room;
