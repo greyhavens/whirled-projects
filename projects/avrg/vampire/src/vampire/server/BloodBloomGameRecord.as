@@ -93,7 +93,7 @@ public class BloodBloomGameRecord
         
         _elapsedGameTime = 0;
         
-        var gamePreyId :int = _room.isPlayer( _preyId ) ? _preyId : -1;
+        var gamePreyId :int = _room.isPlayer( _preyId ) ? _preyId : 0;
         
         var preyBlood :Number = _room.isPlayer( _preyId ) ? _room.getPlayer( _preyId ).blood :
             ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( _preyId );
@@ -112,6 +112,7 @@ public class BloodBloomGameRecord
                                                 _predators.toArray(), 
                                                 gamePreyId,
                                                 preyBlood,
+                                                1,
                                                 roundCompleteCallback,
                                                 gameFinishedCallback);
                                                  
