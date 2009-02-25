@@ -14,6 +14,7 @@ import flash.utils.ByteArray;
 import vampire.net.messages.BloodBondRequestMessage;
 import vampire.net.messages.FeedRequestMessage2;
 import vampire.net.messages.RequestActionChangeMessage;
+import vampire.net.messages.ShareTokenMessage;
 import vampire.net.messages.SuccessfulFeedMessage;
 
 
@@ -53,6 +54,7 @@ public class VMessageManager extends EventDispatcher
         addMessageType( RequestActionChangeMessage );
         addMessageType( BloodBondRequestMessage );
         addMessageType( FeedRequestMessage2 );
+        addMessageType( ShareTokenMessage );
         addMessageType( SuccessfulFeedMessage );
         
         
