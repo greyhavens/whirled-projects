@@ -205,36 +205,51 @@ public class Cell extends CollidableObj
 
         var cursor :PlayerCursor = _attachedTo.object as PlayerCursor;
         if (cursor == null) {
-            var curLoc :Vector2 = this.loc;
-
-            // Player avoidance doesn't make this any more fun
-            /*if (_type == Constants.CELL_SPECIAL && _state == STATE_NORMAL) {
-                avoidPlayer();
-            }*/
-
             if (_state == STATE_NORMAL) {
-                // move around the heart
-                var ctrImpulse :Vector2 = (this.movementType == MOVE_OUTWARDS ?
-                    curLoc.subtract(Constants.GAME_CTR) :
-                    Constants.GAME_CTR.subtract(curLoc));
-
-                ctrImpulse.length = 2;
-
-                var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
-                perpImpulse.length = 3.5;
-
-                var impulse :Vector2 = ctrImpulse.add(perpImpulse);
-                impulse.length = SPEED_BASE * dt;
-
-                curLoc.x += impulse.x;
-                curLoc.y += impulse.y;
+                if (_type == Constants.CELL_SPECIAL) {
+                    followPlayer(dt);
+                } else {
+                    orbitHeart(dt);
+                }
             }
-
-            curLoc = GameCtx.clampLoc(curLoc);
-
-            this.x = curLoc.x;
-            this.y = curLoc.y;
         }
+    }
+
+    protected function orbitHeart (dt :Number) :void
+    {
+        // move around the heart
+        var curLoc :Vector2 = this.loc;
+        var ctrImpulse :Vector2 = (this.movementType == MOVE_OUTWARDS ?
+            curLoc.subtract(Constants.GAME_CTR) :
+            Constants.GAME_CTR.subtract(curLoc));
+
+        ctrImpulse.length = 2;
+
+        var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
+        perpImpulse.length = 3.5;
+
+        var impulse :Vector2 = ctrImpulse.add(perpImpulse);
+        impulse.length = SPEED_BASE * dt;
+
+        curLoc.x += impulse.x;
+        curLoc.y += impulse.y;
+
+        curLoc = GameCtx.clampLoc(curLoc);
+
+        this.x = curLoc.x;
+        this.y = curLoc.y;
+    }
+
+    protected function followPlayer (dt :Number) :void
+    {
+        var curLoc :Vector2 = this.loc;
+        var v :Vector2 = GameCtx.cursor.loc.subtract(curLoc);
+        v.length = SPEED_FOLLOW * dt;
+        v.addLocal(curLoc);
+        v = GameCtx.clampLoc(v);
+
+        this.x = v.x;
+        this.y = v.y;
     }
 
     protected function avoidPlayer () :void
@@ -335,7 +350,7 @@ public class Cell extends CollidableObj
     protected var _movie :MovieClip;
 
     protected static const SPEED_BASE :Number = 5;
-    protected static const SPEED_FOLLOW :Number = 7;
+    protected static const SPEED_FOLLOW :Number = 60;
 
     protected static const MOVE_INWARDS :int = 0;
     protected static const MOVE_OUTWARDS :int = 1;

@@ -62,7 +62,7 @@ public class Constants
     public static const WHITE_CELL_EXPLODE_TIME :Number = 5;
 
     public static const SPECIAL_CELL_CREATION_TIME :NumRange =
-        new NumRange(20, 30, Rand.STREAM_GAME);
+        new NumRange(14, 20, Rand.STREAM_GAME);
     public static const NUM_SPECIAL_STRAINS :int = 12;
     public static const MAX_COLLECTIONS_PER_STRAIN :int = 3;
 
