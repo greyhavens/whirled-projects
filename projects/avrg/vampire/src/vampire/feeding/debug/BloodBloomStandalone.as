@@ -25,7 +25,7 @@ public class BloodBloomStandalone extends Sprite
         DEBUG_REMOVE_ME();
 
         BloodBloom.init(this, new DisconnectedControl(this));
-        addChild(new BloodBloom(0, new FeedingPlayerData(), function () :void {}));
+        addChild(new BloodBloom(0, new PlayerFeedingData(), function () :void {}));
         if (Constants.DEBUG_FORCE_SPECIAL_BLOOD_STRAIN) {
             ClientCtx.preyBloodType =
                 Rand.nextIntRange(0, Constants.NUM_SPECIAL_STRAINS, Rand.STREAM_COSMETIC);

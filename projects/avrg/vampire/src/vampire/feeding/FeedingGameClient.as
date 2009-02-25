@@ -31,7 +31,7 @@ public class FeedingGameClient extends Sprite
      * It takes no parameters and returns nothing.
      * function gameCompleteCallback () :void
      */
-    public static function create (gameId :int, playerData :FeedingPlayerData,
+    public static function create (gameId :int, playerData :PlayerFeedingData,
                                    gameCompleteCallback :Function) :FeedingGameClient
     {
         return new BloodBloom(gameId, playerData, gameCompleteCallback);
@@ -41,7 +41,7 @@ public class FeedingGameClient extends Sprite
      * After the game is complete, call this to retrieve the player data, which may have been
      * updated by the game.
      */
-    public function get playerData () :FeedingPlayerData
+    public function get playerData () :PlayerFeedingData
     {
         // overridden by subclass
         return null;

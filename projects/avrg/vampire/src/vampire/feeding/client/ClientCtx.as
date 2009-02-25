@@ -25,7 +25,7 @@ public class ClientCtx
     public static var roundMgr :GameRoundMgr;
     public static var msgMgr :ClientMsgMgr;
     public static var gameCompleteCallback :Function;
-    public static var playerData :FeedingPlayerData;
+    public static var playerData :PlayerFeedingData;
     public static var gameStarted :Boolean;
     public static var noMoreFeeding :Boolean;
     public static var playerIds :Array;

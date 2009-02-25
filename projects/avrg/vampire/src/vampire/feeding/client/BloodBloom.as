@@ -42,7 +42,7 @@ public class BloodBloom extends FeedingGameClient
         _inited = true;
     }
 
-    public function BloodBloom (gameId :int, playerData :FeedingPlayerData,
+    public function BloodBloom (gameId :int, playerData :PlayerFeedingData,
                                 gameCompleteCallback :Function)
     {
         if (!_inited) {
@@ -78,7 +78,7 @@ public class BloodBloom extends FeedingGameClient
         ClientCtx.mainLoop.run();
     }
 
-    override public function get playerData () :FeedingPlayerData
+    override public function get playerData () :PlayerFeedingData
     {
         return ClientCtx.playerData;
     }

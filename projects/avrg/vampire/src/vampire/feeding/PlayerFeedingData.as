@@ -4,9 +4,9 @@ import com.threerings.util.ArrayUtil;
 
 import flash.utils.ByteArray;
 
-public class FeedingPlayerData
+public class PlayerFeedingData
 {
-    public function FeedingPlayerData ()
+    public function PlayerFeedingData ()
     {
         init();
     }
@@ -35,14 +35,14 @@ public class FeedingPlayerData
         return getStrainData(strainType).length;
     }
 
-    public function isEqual (other :FeedingPlayerData) :Boolean
+    public function isEqual (other :PlayerFeedingData) :Boolean
     {
         return (this == other ? true : com.threerings.util.Util.equals(toBytes(), other.toBytes()));
     }
 
-    public function clone () :FeedingPlayerData
+    public function clone () :PlayerFeedingData
     {
-        var theClone :FeedingPlayerData = new FeedingPlayerData();
+        var theClone :PlayerFeedingData = new PlayerFeedingData();
         var bytes :ByteArray = toBytes();
         bytes.position = 0;
         theClone.fromBytes(bytes);
