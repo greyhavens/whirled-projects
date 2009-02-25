@@ -45,6 +45,15 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
             }
         );
         
+        //If an avatar changes state, make sure we are updated.
+        registerListener( _ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED,
+            function( e :ElementChangedEvent ) :void {
+                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE) {
+                    reapplyDisplayMode();
+                }
+            }
+        );
+        
         
         
         setDisplayMode( DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
@@ -297,13 +306,13 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
                 _displaySprite.addChild( _paintableOverlay );
                 
                 validIds = getValidPlayerIdTargets();
-                trace("validIds=" + validIds.toArray());
+//                trace("validIds=" + validIds.toArray());
                 _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
                     if( validIds.contains( avatar.playerId ) ) {
                         avatar.setDisplayModeSelectableForFeed( validIds.size() > 1 );
                     }
                     else {
-                        trace("Invisible " + avatar);
+//                        trace("Invisible " + avatar);
                         avatar.setDisplayModeInvisible();
                     }        
                 });
