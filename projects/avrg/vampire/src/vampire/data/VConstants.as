@@ -28,6 +28,12 @@ public class VConstants
     public static const BLOOD_FRACTION_LOST_PER_FEED :Number = 0.8;
 
     /** 
+    * The fraction of xp gained from feeding that your bloodbond also gets. 
+    */
+    public static const BLOOD_BOND_FEEDING_XP_BONUS :Number = 0.05;
+
+
+    /** 
     * Blood gains are shared with sires.
     * e.g.
     * Blood gained by minion = 50
