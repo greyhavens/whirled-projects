@@ -21,13 +21,13 @@ public class Codes
     
     
         /** Pplayer name.  Needed even when player is offline*/
-    public static const PLAYER_PROP_PREFIX_NAME:String = NetConstants.makePersistent("playerName");
+    public static const PLAYER_PROP_NAME:String = NetConstants.makePersistent("playerName");
     
     /** Current amount of blood*/
-    public static const PLAYER_PROP_PREFIX_BLOOD :String = NetConstants.makePersistent("blood");
+    public static const PLAYER_PROP_BLOOD :String = NetConstants.makePersistent("blood");
     
     /** Current amount of blood*/
-    public static const PLAYER_PROP_PREFIX_XP :String = NetConstants.makePersistent("xp");
+    public static const PLAYER_PROP_XP :String = NetConstants.makePersistent("xp");
     
     /** Max blood for the given level.  This could probably just be computed...? Possibly remove later.*/
 //    public static const PLAYER_PROP_PREFIX_MAXBLOOD :String = NetConstants.makePersistent("maxblood");
@@ -42,7 +42,7 @@ public class Codes
     * In addition, new players have a value == 1.  This allows new players to be detected by
     * the client so e.g. the intro screen can be shown.
     */
-    public static const PLAYER_PROP_PREFIX_LAST_TIME_AWAKE :String = NetConstants.makePersistent("time_last_awake");
+    public static const PLAYER_PROP_LAST_TIME_AWAKE :String = NetConstants.makePersistent("time_last_awake");
     
     /** 
     * List of minions (people you invite into the game).
@@ -52,44 +52,24 @@ public class Codes
     /** 
     * The vampire who makes you into a vampire.
     */
-    public static const PLAYER_PROP_PREFIX_SIRE :String = NetConstants.makePersistent("sire");
+    public static const PLAYER_PROP_SIRE :String = NetConstants.makePersistent("sire");
     
     /** 
     * PlayerId currently bloodbonded to you.  Bloodbonding is romantic with minor game effects.
     */
-    public static const PLAYER_PROP_PREFIX_BLOODBONDED :String = NetConstants.makePersistent("bloodbonded");
+    public static const PLAYER_PROP_BLOODBONDED :String = NetConstants.makePersistent("bloodbonded");
     
     /** 
     * Player name currently bloodbonded to you.  Bloodbonding is romantic with minor game effects.
     */
-    public static const PLAYER_PROP_PREFIX_BLOODBONDED_NAME :String = NetConstants.makePersistent("bloodbondedName");
-    
-    
-    /** 
-    * Closest UserId.  Used for determining your target
-    */
-//    public static const PLAYER_PROP_PREFIX_CLOSEST_USER_DATA :String = "closestUserData";
+    public static const PLAYER_PROP_BLOODBONDED_NAME :String = NetConstants.makePersistent("bloodbondedName");
     
     /** 
-    * Your current target useId
+    * Blood bloom feeding data.
     */
-    public static const PLAYER_PROP_PREFIX_TARGET_USERID :String = "target";
-    
-    /** 
-    * Current player action.
-    */
-//    public static const PLAYER_PROP_PREFIX_ACTION :String = NetConstants.makePersistent("action");
+    public static const PLAYER_PROP_FEEDING_DATA :String = NetConstants.makePersistent("feedingData");
     
     
-    /**
-     * Whether or not this player is taking active part in the game. This property is
-     * persistently stored in that player's property space.
-     */
-//    public static const PROP_IS_PLAYING :String = NetConstants.makePersistent("playing");
-
-
-
-
 
     /**
      * The prefix for the PLAYER dictionary container which summarizes the current state
@@ -115,10 +95,7 @@ public class Codes
     public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_ID :int = 10;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_LOCATION :int = 11;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE:int = 12;
-//    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD :int = 13;
-//    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD :int = 14;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT :int = 15;
-//    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_DISPLAY_VISIBLE :int = 16;
 
     public static const TASK_ID_FEEDING :String = "taskFeeding";
     
