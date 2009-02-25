@@ -6,14 +6,42 @@ package vampire.server
     import com.threerings.util.Log;
     import com.threerings.util.StringBuilder;
     import com.whirled.contrib.simplegame.server.SimObjectThane;
+    import com.whirled.net.MessageReceivedEvent;
     
     import flash.utils.Dictionary;
     
     import vampire.data.Codes;
     import vampire.data.VConstants;
+    import vampire.net.messages.NonPlayerIdsInRoomMessage;
     
 public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
 {
+    
+    public function NonPlayerAvatarsBloodMonitor() 
+    {
+//        registerListener(ServerContext.msg, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage );
+    }
+    
+    protected function handleMessage( e :MessageReceivedEvent ) :void
+    {
+        log.debug("handleMessage ",  "e", e);
+        if( e.name == NonPlayerIdsInRoomMessage.NAME ) {
+            var msg :NonPlayerIdsInRoomMessage = e.value as NonPlayerIdsInRoomMessage;
+            if( msg != null) {
+                if( ServerContext.vserver.getPlayer( msg.playerId ) != null &&
+                    ServerContext.vserver.getPlayer( msg.playerId ).room != null) {
+                        
+                    var roomId :int = ServerContext.vserver.getPlayer( msg.playerId ).room.roomId;
+                    for each( var nonPlayerId :int in msg.nonPlayerIds) {
+                        _nonplayer2RoomId.put( nonPlayerId, roomId );
+                    }
+                        
+                }
+            }
+        }
+        log.debug(toString());
+    }
+    
     /**
      * Returns the name of this object.
      * Two objects in the same db cannot have the same name.
@@ -49,19 +77,19 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
         return true;
     }
     
-    public function removeBloodAvailableFromNonPlayer( blood :Number, userId :int) :void
-    {
-        var currentBlood :Number = VConstants.MAX_BLOOD_NONPLAYERS;
-        
-        if( _nonplayerBlood.containsKey( userId )) {
-            currentBlood =  _nonplayerBlood.get( userId ) as Number;
-        }
-        
-        currentBlood -= blood;
-        currentBlood = Math.max( 0, currentBlood );
-        
-        _nonplayerBlood.put( userId, currentBlood );
-    }
+//    public function damageNonPlayer( blood :Number, userId :int) :void
+//    {
+//        var currentBlood :Number = VConstants.MAX_BLOOD_NONPLAYERS;
+//        
+//        if( _nonplayerBlood.containsKey( userId )) {
+//            currentBlood =  _nonplayerBlood.get( userId ) as Number;
+//        }
+//        
+//        currentBlood -= blood;
+//        currentBlood = Math.max( 0, currentBlood );
+//        
+//        _nonplayerBlood.put( userId, currentBlood );
+//    }
     
 //    public function playerFeedsFromNonPlayer( player :Player, victimId :int, bloodLost :int) :void
 //    {
@@ -85,14 +113,20 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
 //        }
 //    }
     
-    public function nonplayerLosesBlood( victimId :int, damage :int) :Number
+    public function damageNonPlayer( victimId :int, damage :int, roomId :int) :Number
     {
         var currentBlood :Number = _nonplayerBlood.containsKey( victimId ) ? 
             _nonplayerBlood.get(victimId) : VConstants.MAX_BLOOD_NONPLAYERS;
-            
+          
         var bloodLost :Number = currentBlood - 1 >= damage ? damage : currentBlood - 1;
+              
+        log.debug("nonplayerLosesBlood", "victimId", victimId, "damage", damage, 
+            "currentBlood", currentBlood, "bloodLost", bloodLost);
         
         _nonplayerBlood.put( victimId, Math.max( currentBlood - bloodLost, 1));
+        log.debug("Putting " + victimId + "=" + _nonplayerBlood.get( victimId ));
+        
+        _nonplayer2RoomId.put( victimId, roomId );
         
         return bloodLost;
 //        if( _nonplayerBlood.containsKey( victimId )) {

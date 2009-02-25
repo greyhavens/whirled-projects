@@ -13,6 +13,7 @@ import flash.utils.ByteArray;
 
 import vampire.net.messages.BloodBondRequestMessage;
 import vampire.net.messages.FeedRequestMessage2;
+import vampire.net.messages.NonPlayerIdsInRoomMessage;
 import vampire.net.messages.RequestActionChangeMessage;
 import vampire.net.messages.ShareTokenMessage;
 import vampire.net.messages.SuccessfulFeedMessage;
@@ -56,7 +57,7 @@ public class VMessageManager extends EventDispatcher
         addMessageType( FeedRequestMessage2 );
         addMessageType( ShareTokenMessage );
         addMessageType( SuccessfulFeedMessage );
-        
+        addMessageType( NonPlayerIdsInRoomMessage );
         
         
     }
@@ -124,7 +125,7 @@ public class VMessageManager extends EventDispatcher
             if(msg == null) {
                 throw Error("Message Error");
             }
-            log.debug("onMessageReceived(): dispatching message to listeners=" + e.name);
+//            log.debug("onMessageReceived(): dispatching message to listeners=" + e.name);
             dispatchEvent(new MessageReceivedEvent(msg.name, msg, e.senderId));            
         }
         else {

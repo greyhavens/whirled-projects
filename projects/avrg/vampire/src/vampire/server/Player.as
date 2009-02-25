@@ -17,6 +17,7 @@ import com.whirled.contrib.EventHandlerManager;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
+import vampire.Util;
 import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.Codes;
 import vampire.data.Logic;
@@ -24,9 +25,9 @@ import vampire.data.VConstants;
 import vampire.net.IGameMessage;
 import vampire.net.messages.BloodBondRequestMessage;
 import vampire.net.messages.FeedRequestMessage2;
+import vampire.net.messages.NonPlayerIdsInRoomMessage;
 import vampire.net.messages.RequestActionChangeMessage;
 import vampire.net.messages.ShareTokenMessage;
-import vampire.Util;
 
 /**
  * Actions:
@@ -340,8 +341,12 @@ public class Player extends EventHandlerManager
     public function handleMessage (name :String, value :Object) :void
     {
         try{
+            if( value is NonPlayerIdsInRoomMessage ) {
+                return;
+            }
             // handle messages that make (at least some) sense even if we're between rooms
             log.debug("handleMessage() ", "name", name, "value", value);
+            
             if( name == VConstants.NAMED_EVENT_BLOOD_UP ) {
                 addBlood(20 );
             }

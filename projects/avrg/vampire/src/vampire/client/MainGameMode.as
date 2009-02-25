@@ -6,6 +6,7 @@ import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.Config;
 import com.whirled.contrib.simplegame.SimpleGame;
+import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.Sprite;
@@ -17,7 +18,8 @@ import vampire.client.actions.fight.FightMode;
 import vampire.client.events.ChangeActionEvent;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingGameClient;
-import vampire.feeding.FeedingPlayerData;
+import vampire.feeding.PlayerFeedingData;
+import vampire.net.messages.NonPlayerIdsInRoomMessage;
 
 public class MainGameMode extends AppMode
 {
@@ -29,7 +31,18 @@ public class MainGameMode extends AppMode
     override protected function enter() :void
     {
         log.debug("Starting " + ClassUtil.tinyClassName( this ));
+        
+        
 
+    }
+    
+    protected function sendServerNonPlayerIds(...ignored ) :void
+    {
+        var npIds :Array = ClientContext.getNonPlayerIds();
+        var msg :NonPlayerIdsInRoomMessage = new NonPlayerIdsInRoomMessage( 
+            ClientContext.ourPlayerId, npIds );
+//        log.debug("Sending " + msg);
+        ClientContext.ctrl.agent.sendMessage( msg.name, msg.toBytes() );
     }
     
     override protected function setup() :void
@@ -88,6 +101,9 @@ public class MainGameMode extends AppMode
 //        _thaneObjectDBForNonPlayers = new ObjectDBThane();
         
 //        updateNonPlayersIds( ClientContext.gameCtrl.room.props.get( Codes.ROOM_PROP_NON_PLAYERS ) as Array );
+
+        var nonPlayerIdTimer :SimpleTimer = new SimpleTimer(2, sendServerNonPlayerIds, true, "npTimer");
+        addObject( nonPlayerIdTimer );
     }
     
     protected function handleMessageReceived (e :MessageReceivedEvent) :void
@@ -99,19 +115,31 @@ public class MainGameMode extends AppMode
             if (_feedingGameClient != null) {
                 log.warning("Received StartFeeding message while already in game");
             } else {
-                _feedingGameClient = FeedingGameClient.create( gameId, new FeedingPlayerData(), onGameComplete);
+                _playerFeedingDataTemp = ClientContext.model.playerFeedingData;
+                _feedingGameClient = FeedingGameClient.create( gameId, _playerFeedingDataTemp, onGameComplete);
 
                 modeSprite.addChild(_feedingGameClient);
             }
         }
     }
     
+
+
+    
     protected function onGameComplete () :void
     {
-        log.info("Feeding complete");//, "completedSuccessfully", completedSuccessfully);
+        log.info("onGameComplete(), Feeding complete");//, "completedSuccessfully", completedSuccessfully);
         modeSprite.removeChild(_feedingGameClient);
         ClientContext.ctrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
         _feedingGameClient = null;
+        if( _playerFeedingDataTemp != null ) {
+            ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_UPDATE_FEEDING_DATA, 
+                _playerFeedingDataTemp.toBytes() );
+        }
+        else {
+            log.error("onGameComplete(), _playerFeedingDataTemp==null");
+        }
+        
     }
     
 //    override public function update( dt :Number ) :void
@@ -183,6 +211,8 @@ public class MainGameMode extends AppMode
     protected var _hud :HUD;
     
     protected var _feedingGameClient :FeedingGameClient;
+    /**Holds feeding data until game is over and it's sent to the server*/
+    protected var _playerFeedingDataTemp :PlayerFeedingData;
     
 //    protected var _thaneObjectDBForNonPlayers :ObjectDBThane;
     
