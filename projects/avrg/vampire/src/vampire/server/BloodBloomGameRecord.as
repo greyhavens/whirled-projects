@@ -166,10 +166,6 @@ public class BloodBloomGameRecord
     protected function gameFinishedCallback(...ignored) :void
     {
         log.debug("gameFinishedCallback");
-        
-        
-        
-        
         shutdown();
         _gameFinishedManagerCallback(this);
     }

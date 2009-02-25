@@ -164,6 +164,7 @@ public class VServer extends ObjectDBThane
     protected function handleMessage (evt :MessageReceivedEvent) :void
     {
         try {
+//            log.debug("handleMessage", "evt", evt);
             var player :Player = getPlayer(evt.senderId);
             if (player == null) {
                 log.warning("Received message for non-existent player [evt=" + evt + "]");
@@ -243,7 +244,7 @@ public class VServer extends ObjectDBThane
             }
             
             //Make sure the avatar is in the default state when we quit.
-            player.ctrl.setAvatarState( VConstants.GAME_MODE_NOTHING );
+//            player.ctrl.setAvatarState( VConstants.GAME_MODE_NOTHING );
             
             _ctrl.doBatch(function () :void {
                 

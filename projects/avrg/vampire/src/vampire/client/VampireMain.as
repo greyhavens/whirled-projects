@@ -107,14 +107,14 @@ public class VampireMain extends Sprite
             
             
             //Show chat events
-            EventHandlers.registerListener( ClientContext.ctrl.player, 
-                MessageReceivedEvent.MESSAGE_RECEIVED, 
-                function( e :MessageReceivedEvent) :void {
-                    if( e.name == VConstants.NAMED_EVENT_CHAT) {
-                        ClientContext.ctrl.local.feedback( e.value.toString() );
-                    }    
-                });
-            
+//            EventHandlers.registerListener( ClientContext.ctrl.player, 
+//                MessageReceivedEvent.MESSAGE_RECEIVED, 
+//                function( e :MessageReceivedEvent) :void {
+//                    if( e.name == VConstants.NAMED_EVENT_CHAT) {
+//                        ClientContext.ctrl.local.feedback( e.value.toString() );
+//                    }    
+//                });
+//            
            
             
 //            addChild( new VProbe(ClientContext.gameCtrl) );
@@ -208,7 +208,7 @@ public class VampireMain extends Sprite
     
     protected function printServerLogToFlashLog( e :MessageReceivedEvent ) :void
     {
-        if( e.name == AVRGAgentLogTarget.SERVER_LOG) {
+        if( e.name == AVRGAgentLogTarget.SERVER_LOG && ClientContext.ourPlayerId == 23340) {
             trace(e.value);
         }
     }

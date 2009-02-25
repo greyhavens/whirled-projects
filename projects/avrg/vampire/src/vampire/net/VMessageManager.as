@@ -52,12 +52,12 @@ public class VMessageManager extends EventDispatcher
         
         _msgTypes = new HashMap();
         //Move this out of here!  But to where???
-        addMessageType( RequestActionChangeMessage );
         addMessageType( BloodBondRequestMessage );
         addMessageType( FeedRequestMessage2 );
+        addMessageType( NonPlayerIdsInRoomMessage );
+        addMessageType( RequestActionChangeMessage );
         addMessageType( ShareTokenMessage );
         addMessageType( SuccessfulFeedMessage );
-        addMessageType( NonPlayerIdsInRoomMessage );
         
         
     }

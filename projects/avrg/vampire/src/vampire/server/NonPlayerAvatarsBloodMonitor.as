@@ -174,12 +174,21 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
         var keys :Array = _nonplayerBlood.keys();
         
         for each( var userId :int in keys) {
+            
+            
             var blood :Number = _nonplayerBlood.get( userId );
             if( isNaN( blood ) ) {
                 blood = 1;
                 _nonplayerBlood.put( userId, blood);
             }
-            blood += VConstants.THRALL_BLOOD_REGENERATION_RATE * dt;
+            //IfRegenrate if we aren't being eaten.
+            if( !(_nonplayer2RoomId.containsKey( userId ) &&
+                ServerContext.vserver.getRoom( _nonplayer2RoomId.get( userId ) ) != null &&
+                ServerContext.vserver.getRoom( _nonplayer2RoomId.get( userId ) )._bloodBloomGameManager.isPreyInGame( userId ) )) {
+                    
+                    blood += VConstants.THRALL_BLOOD_REGENERATION_RATE * dt;
+                }
+                
             blood = Math.max( blood, 1);
             _nonplayerBlood.put( userId, blood );
             var room :Room = ServerContext.vserver.getRoom( _nonplayer2RoomId.get( userId ) ) as Room;

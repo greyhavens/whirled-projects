@@ -216,7 +216,7 @@ public class Player extends EventHandlerManager
         setAction( VConstants.GAME_MODE_NOTHING );
         updateAvatarState();
         setIntoPlayerProps();
-        setIntoRoomProps();
+//        setIntoRoomProps();
 //        _ctrl.removeEventListener(AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
 //        _ctrl.removeEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
 //        log.info("end of player shutdown", "time", new Date(_ctrl.props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
@@ -345,7 +345,7 @@ public class Player extends EventHandlerManager
                 return;
             }
             // handle messages that make (at least some) sense even if we're between rooms
-            log.debug("handleMessage() ", "name", name, "value", value);
+            log.debug(playerId + " handleMessage() ", "name", name, "value", value);
             
             if( name == VConstants.NAMED_EVENT_BLOOD_UP ) {
                 addBlood(20 );
@@ -863,7 +863,7 @@ public class Player extends EventHandlerManager
     
     protected function updateAvatarState() :void
     {
-        if (_room == null) {
+        if (_room == null || _room.ctrl == null || !_room.ctrl.isConnected()) {
             return;
         }
         else {
@@ -1161,6 +1161,11 @@ public class Player extends EventHandlerManager
     public function get time () :Number
     {
         return _timePlayerPreviouslyQuit;
+    }
+    
+    public function get bloodtype () :int
+    {
+        return _playerId % VConstants.UNIQUE_BLOOD_STRAINS;
     }
     
     public function get location () :Array
