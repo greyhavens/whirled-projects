@@ -288,13 +288,15 @@ public class VServer extends ObjectDBThane
     */
     public function awardSiresXpEarned( player :Player, xp :Number ) :void
     {
+        log.debug("awardSiresXpEarned(" + player.name + ", xp=" + xp);
+        
         var allsires :HashSet = ServerContext.minionHierarchy.getAllSiresAndGrandSires( player.playerId );
         var xpForEachSire :Number = xp * 0.1 / allsires.size();
         allsires.forEach( function ( sireId :int) :void {
             if( isPlayer( sireId )) {
                 var sire :Player = getPlayer( sireId );
                 sire.addXP( xpForEachSire );
-                
+                log.debug("awarding sire " + sire.name + ", xp=" + xpForEachSire);
                 sire.addFeedback( "You gained " + Util.formatNumberForFeedback(xpForEachSire) + " experience from minion " + player.name );
             }
             else {//Add to offline database
@@ -310,6 +312,41 @@ public class VServer extends ObjectDBThane
                     });
             }
         });
+    }
+    
+    /**
+    * When a player gains blood, his sires all share a portion of the gain
+    * 
+    */
+    public function awardBloodBondedXpEarned( player :Player, xp :Number ) :void
+    {
+        log.debug("awardBloodBondedXpEarned(" + player.name + ", xp=" + xp);
+        if( player.bloodbonded <= 0 ) {
+            return;
+        }
+        var bloodBondedPlayer :Player = getPlayer( player.bloodbonded );
+        var xpBonus :Number = xp * VConstants.BLOOD_BOND_FEEDING_XP_BONUS;
+        var xBonusFormatted :String = Util.formatNumberForFeedback(xpBonus);
+        
+        if( bloodBondedPlayer != null ) {
+            bloodBondedPlayer.addXP( xpBonus );
+            bloodBondedPlayer.addFeedback( "You gained " + xBonusFormatted + " experience from your bloodbond " + player.name );
+            log.debug("awarding bloodbond " + bloodBondedPlayer.name + ", xp=" + xpBonus);
+        }
+        else {
+            //Add to offline database
+            ServerContext.ctrl.loadOfflinePlayer(player.bloodbonded, 
+                function (props :OfflinePlayerPropertyControl) :void {
+                    var currentXP :Number = Number(props.get(Codes.PLAYER_PROP_XP));
+                    if( !isNaN(currentXP)) {
+                        props.set(Codes.PLAYER_PROP_XP, currentXP + xpBonus);
+                    }
+                },
+                function (failureCause :Object) :void {
+                    log.warning("Eek! Sending message to offline player failed!", "cause", failureCause);
+                });
+        }
+        
     }
     
 //    public function getNonPlayer( playerId :int, room :Room ) :PlayerAvatar

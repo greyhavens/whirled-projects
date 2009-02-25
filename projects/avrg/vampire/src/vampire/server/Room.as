@@ -439,30 +439,31 @@ public class Room extends SimObjectThane
             return;
         }
         var preyIsPlayer :Boolean = isPlayer( gameRecord.preyId );
-        var victim :Player;
+        var preyPlayer :Player;
         var damage :Number;
         //Handle the prey loss of blood
         if( preyIsPlayer ) {
-            victim = getPlayer( gameRecord.preyId );
-            if( victim.isVampire() ) {
-                damage = victim.damage( VConstants.BLOOD_FRACTION_LOST_PER_FEED * victim.maxBlood );
-                addFeedback( "You lost " + Util.formatNumberForFeedback(damage) + " from feeding", victim.playerId);
+            log.debug("Prey is player");
+            preyPlayer = getPlayer( gameRecord.preyId );
+            if( preyPlayer.isVampire() ) {
+                damage = preyPlayer.damage( VConstants.BLOOD_FRACTION_LOST_PER_FEED * preyPlayer.maxBlood );
+                addFeedback( "You lost " + Util.formatNumberForFeedback(damage) + " from feeding", preyPlayer.playerId);
             }
             else {
-                damage = victim.damage( VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED );
+                damage = preyPlayer.damage( VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED );
             }
             
             var damageFormatted :String = Util.formatNumberForFeedback(damage);
             gameRecord.predators.forEach( function( predId :int) :void {
                 var pred :Player = getPlayer( predatorId );
-                
-                addFeedback( victim.name + " lost " + damageFormatted + " from feeding", pred.playerId);
-                
+                addFeedback( preyPlayer.name + " lost " + damageFormatted + " from feeding", pred.playerId);
             });
         }
         else {
-            damage = ServerContext.nonPlayersBloodMonitor.nonplayerLosesBlood( gameRecord.preyId, VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED );
+            log.debug("Prey is nonplayer");
+            damage = ServerContext.nonPlayersBloodMonitor.damageNonPlayer( gameRecord.preyId, VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED, roomId );
         }
+        log.debug("Prey lost " + damage + " blood");
         
         //Predators gain blood from the prey
         var bloodGainedPerPredator :Number = damage / gameRecord.predators.size();
@@ -474,6 +475,16 @@ public class Room extends SimObjectThane
             pred.addBlood( bloodGainedPerPredator );
             log.debug(predatorId + " gained " + bloodGainedPerPredator);
             addFeedback( pred.name + " gained " + bloodGainedPerPredatorFormatted + " from feeding", pred.playerId);
+            
+            //Check for new bloodbond formation
+            //ATM it's just mutual feeding
+            if( preyIsPlayer && preyPlayer.mostRecentVictimId == predatorId) {
+                preyPlayer.setBloodBonded( predatorId );//This also sets the name
+                pred.setBloodBonded( preyPlayer.playerId );
+                log.debug("Creating new bloodbond=" + pred.name + " + " + preyPlayer.name);
+                addFeedback( "You are now bloodbonded with " + pred.name, preyPlayer.playerId);
+                addFeedback( "You are now bloodbonded with " + preyPlayer.name, pred.playerId);    
+            }
         }
         
         //Then handle experience.  ATM everyone gets xp=score
@@ -486,14 +497,21 @@ public class Room extends SimObjectThane
             if( p != null ) {
                 p.addXP( xp ); 
                 addFeedback( p.name + " gained " + xpFormatted + " experience from feeding.", p.playerId); 
-                p.ctrl.completeTask( Codes.TASK_ID_FEEDING, xpGained );
+                //Add some bonus xp to your blood bond, if they are online
+                ServerContext.vserver.awardBloodBondedXpEarned( p, xp );
+                //Add some bonus xp to your sires
+                ServerContext.vserver.awardSiresXpEarned( p, xp );
+//                p.ctrl.completeTask( Codes.TASK_ID_FEEDING, xpGained );
             }
         }
         
         awardXP( gameRecord.preyId, xpGained, xpFormatted);
+        
         gameRecord.predators.forEach( function( predId :int) :void {
             awardXP( predId, xpGained, xpFormatted);
         });
+        
+        
         
     }
     
@@ -528,7 +546,7 @@ public class Room extends SimObjectThane
             addFeedback( "You gained " + pointsGained + " experience!", prey );
         }
         else {
-            ServerContext.nonPlayersBloodMonitor.nonplayerLosesBlood( prey, bloodLost );
+            ServerContext.nonPlayersBloodMonitor.damageNonPlayer( prey, bloodLost, roomId );
         }
         
         
@@ -656,6 +674,7 @@ public class Room extends SimObjectThane
     
     public function addFeedback( msg :String, playerId :int = 0 ) :void
     {
+        log.debug(playerId + " " + msg);
         _feedbackMessageQueue.push( [playerId, msg] );
     }
     
