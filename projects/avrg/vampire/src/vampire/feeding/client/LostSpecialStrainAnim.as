@@ -11,23 +11,19 @@ import flash.display.Sprite;
 
 import vampire.feeding.*;
 
-public class SpecialBloodAnim
+public class LostSpecialStrainAnim
     extends SceneObject
 {
-    public function SpecialBloodAnim (strain :int, x :int, y :int)
+    public function LostSpecialStrainAnim (strain :int, x :int, y :int)
     {
         _movie = ClientCtx.instantiateMovieClip("blood", MOVIES[strain], true, true);
         _sprite = SpriteUtil.createSprite();
         _sprite.addChild(_movie);
 
         addTask(new SerialTask(
-            new ShowFramesTask(_movie, 2, 8, 0.75),
-            new TimedTask(0.75),
             new ParallelTask(
-                LocationTask.CreateSmooth(DEST_LOC.x, DEST_LOC.y, 1.25),
-                ScaleTask.CreateSmooth(3, 3, 1.25)),
-            new TimedTask(2),
-            new AlphaTask(0, 0.5),
+                ScaleTask.CreateSmooth(0, 0, 0.7),
+                ColorMatrixBlendTask.colorize(_sprite, 0xffffff, 0, 0.3)),
             new SelfDestructTask()));
 
         this.x = x;
@@ -44,12 +40,8 @@ public class SpecialBloodAnim
         SwfResource.releaseMovieClip(_movie);
     }
 
-    protected var _strain :int;
-
     protected var _sprite :Sprite;
     protected var _movie :MovieClip;
-
-    protected static const DEST_LOC :Vector2 = new Vector2(550, 75);
 
     protected static const MOVIES :Array = [
         "type_01",

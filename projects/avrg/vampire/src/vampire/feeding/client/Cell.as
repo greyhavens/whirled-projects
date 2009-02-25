@@ -206,11 +206,7 @@ public class Cell extends CollidableObj
         var cursor :PlayerCursor = _attachedTo.object as PlayerCursor;
         if (cursor == null) {
             if (_state == STATE_NORMAL) {
-                if (_type == Constants.CELL_SPECIAL) {
-                    followPlayer(dt);
-                } else {
-                    orbitHeart(dt);
-                }
+                orbitHeart(dt);
             }
         }
     }

@@ -153,7 +153,7 @@ public class BloodBloom extends FeedingGameClient
         rm.queueResourceLoad("sound", "sfx_heartbeat",  { embeddedClass: SOUND_HEARTBEAT });
         rm.queueResourceLoad("sound", "sfx_red_burst",  { embeddedClass: SOUND_RED_BURST });
         rm.queueResourceLoad("sound", "sfx_white_burst", { embeddedClass: SOUND_WHITE_BURST });
-        rm.queueResourceLoad("sound", "sfx_got_blood",  { embeddedClass: SOUND_GOT_BLOOD, volume: 0.1 });
+        rm.queueResourceLoad("sound", "sfx_got_blood",  { embeddedClass: SOUND_GOT_BLOOD });
         rm.queueResourceLoad("sound", "mus_music",      { embeddedClass: SOUND_MUSIC, type: "music" });
 
         rm.loadQueuedResources(

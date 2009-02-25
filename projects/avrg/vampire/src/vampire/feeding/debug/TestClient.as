@@ -1,9 +1,9 @@
 package vampire.feeding.debug {
 
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.EventHandlerManager;
+import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.Sprite;
@@ -57,10 +57,9 @@ public class TestClient extends Sprite
             if (_curGame != null) {
                 log.warning("Received StartFeeding message while already in game");
             } else {
-                _curGame = FeedingGameClient.create(
-                    gameId,
-                    new PlayerFeedingData(),
-                    onGameComplete);
+                var pfd :PlayerFeedingData = new PlayerFeedingData();
+                pfd.playerStrain = _gameCtrl.player.getPlayerId() % Constants.NUM_SPECIAL_STRAINS;
+                _curGame = FeedingGameClient.create(gameId, pfd, onGameComplete);
 
                 addChild(_curGame);
                 freezeAvatars(true);

@@ -26,6 +26,7 @@ import com.whirled.contrib.avrg.oneroom.OneRoomGameRoom;
 import vampire.feeding.*;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.contrib.EventHandlerManager;
+import com.whirled.contrib.simplegame.util.Rand;
 
 class TestGameController extends OneRoomGameRoom
 {
@@ -79,8 +80,8 @@ class TestGameController extends OneRoomGameRoom
             _roomCtrl.getRoomId(),
             predators,
             preyId,
-            1.0,    // the amount of blood the prey is starting the feeding with
-            -1,     // prey blood type
+            _preyBlood,    // the amount of blood the prey is starting the feeding with
+            preyId % Constants.NUM_SPECIAL_STRAINS,
             function () :Number {
                 return onRoundComplete(game);
             },
@@ -106,7 +107,16 @@ class TestGameController extends OneRoomGameRoom
         log.info("Round ended", "gameId", game.gameId, "score", game.lastRoundScore);
         // return the amount of blood the prey has left. Real games will want to return a real
         // value here, obviously.
-        return 0.5;
+        if (_preyBlood <= 0.1) {
+            _preyBlood = 0;
+        } else {
+            _preyBlood -= Rand.nextNumberRange(
+                0.1,
+                Math.min(0.5, _preyBlood),
+                Rand.STREAM_GAME);
+        }
+
+        return _preyBlood;
     }
 
     protected function onGameComplete (game :FeedingGameServer, successfullyEnded :Boolean) :void
@@ -127,7 +137,8 @@ class TestGameController extends OneRoomGameRoom
     protected var _waitingPlayers :Array = [];
     protected var _playerGameMap :HashMap = new HashMap(); // Map<playerId, FeedingGameServer>
     protected var _events :EventHandlerManager = new EventHandlerManager();
+    protected var _preyBlood :Number = 1;
 
     // the number of players the game will wait for before starting a new game
-    protected static const NUM_PLAYERS :int = 1;
+    protected static const NUM_PLAYERS :int = 2;
 }
