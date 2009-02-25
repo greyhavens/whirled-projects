@@ -337,8 +337,13 @@ public class GameModel extends SimObject//EventDispatcher
                 
                 var setStateFunction :Function = ClientContext.ctrl.room.getEntityProperty( 
                     AvatarGameBridge.ENTITY_PROPERTY_SETSTATE_FUNCTION, entityAvatarId) as Function;
-                        
-                setStateFunction( e.newValue.toString() );
+                     
+                if( setStateFunction != null ) {
+                    setStateFunction( e.newValue.toString() );
+                }
+                else {
+                    log.error("handleElementChanged, setStateFunction==null, crusty avatar??", "e", e );
+                }
                
             }
             
