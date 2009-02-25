@@ -234,13 +234,14 @@ public class VampireAvatarHUD extends AvatarHUD
     
     protected function updateBlood( ...ignored ) :void
     {
-        var currentBlood :Number = SharedPlayerStateClient.getBlood( playerId );
-        if( isNaN( currentBlood ) ) {
-            currentBlood = 1;
-        }
         var maxBlood :Number = VConstants.MAX_BLOOD_NONPLAYERS;
         if( isPlayer ) {
             maxBlood = SharedPlayerStateClient.getMaxBlood( playerId ); 
+        }
+        
+        var currentBlood :Number = SharedPlayerStateClient.getBlood( playerId );
+        if( isNaN( currentBlood ) ) {
+            currentBlood = maxBlood;
         }
         
         _blood.width = BLOOD_BAR_MIN_WIDTH;
