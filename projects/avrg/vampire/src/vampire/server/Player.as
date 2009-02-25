@@ -14,6 +14,7 @@ import com.whirled.avrg.OfflinePlayerPropertyControl;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.EventHandlerManager;
 
+import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
 import vampire.client.events.PlayerArrivedAtLocationEvent;
@@ -25,6 +26,7 @@ import vampire.net.messages.BloodBondRequestMessage;
 import vampire.net.messages.FeedRequestMessage2;
 import vampire.net.messages.RequestActionChangeMessage;
 import vampire.net.messages.ShareTokenMessage;
+import vampire.Util;
 
 /**
  * Actions:
@@ -43,7 +45,6 @@ public class Player extends EventHandlerManager
             log.error("Bad!  Player(null).  What happened to the PlayerSubControlServer?  Expect random failures everywhere.");
             return;
         }
-        log.info("\nPlayer() {{{");
         
         _ctrl = ctrl;
         _playerId = ctrl.getPlayerId();
@@ -56,7 +57,7 @@ public class Player extends EventHandlerManager
         _action = VConstants.GAME_MODE_NOTHING;
         
         //Get experience
-        _xp = Number(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_XP));
+        _xp = Number(_ctrl.props.get(Codes.PLAYER_PROP_XP));
         if( isNaN( _xp )) {
             setXP( 0 );
         }
@@ -64,7 +65,7 @@ public class Player extends EventHandlerManager
         log.debug("Getting xp=" + _xp);
         
         //Get blood
-        _blood = Number(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOOD));
+        _blood = Number(_ctrl.props.get(Codes.PLAYER_PROP_BLOOD));
         if(isNaN( _blood )) {
             // blood should always be set if level is set, but let's play it safe
             log.debug("   setting blood=" + VConstants.MAX_BLOOD_FOR_LEVEL( this.level ));
@@ -74,38 +75,32 @@ public class Player extends EventHandlerManager
         log.debug("Getting blood="+_blood);
         
         //Get bloodbonded data
-        _bloodbonded = int( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOODBONDED));
+        _bloodbonded = int( _ctrl.props.get(Codes.PLAYER_PROP_BLOODBONDED));
         if( _bloodbonded > 0) {
-            _bloodbondedName = _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOODBONDED_NAME) as String;
+            _bloodbondedName = _ctrl.props.get(Codes.PLAYER_PROP_BLOODBONDED_NAME) as String;
         }
         log.debug("Getting bloodbonded=" + _bloodbonded);
         
         //Get last time awake
-        log.debug("Getting ", "time", new Date(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
-        _timePlayerPreviouslyQuit = Number(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
-        if( isNaN( _timePlayerPreviouslyQuit )) {
-            _timePlayerPreviouslyQuit = 0;
+        log.debug("Getting ", "time", new Date(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
+        _timePlayerPreviouslyQuit = Number(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE));
+        if( isNaN( _timePlayerPreviouslyQuit ) || 0) {
+            _timePlayerPreviouslyQuit = 1;//This indicates to the client that it's a first time player
         }
         if( _timePlayerPreviouslyQuit == 0) {
-            log.info("Repairing", "time", _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
+            log.info("Repairing", "time", _ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE));
             var time :Number = new Date().time;
             setTime(time);
-            log.info("  now", "time", _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
+            log.info("  now", "time", _ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE));
         }
         
-        _sire = int(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_SIRE));
+        _sire = int(_ctrl.props.get(Codes.PLAYER_PROP_SIRE));
         
         if( _sire == 0 ) {
             //If we have no sire, the client will check for invite tokens, and send us an 
             _sire = -1;
         }
         log.debug("Getting sire=" + _sire);
-        
-        
-        
-        
-        
-        
         
         
         //For testing purposes testing
@@ -116,26 +111,7 @@ public class Player extends EventHandlerManager
             setTime( 1 )
         }
         
-//        if( !isVampire() ) {//If you are not a vampire, you must be fed upon.
-//            setBlood( 0, true );
-//        }
-        
-        if (level == 0) {
-            log.debug("Player has never player before ", "playerId", ctrl.getPlayerId());
-//            setLevel(1, true);
-            setBloodBonded(0);
-            setBlood( 0 );
-            setXP( 0 );
-            setSire( ServerContext.vserver.getSireFromInvitee( _playerId ) );
-            setTime( 1 );//O means no props loaded, 1 means new player
-            
-        } 
-        
         setAction( VConstants.GAME_MODE_NOTHING );
-        
-
-//        log.debug("Setting blood at 10%, blood=" + maxBlood * 0.1);
-//        setBlood( blood, true);
         
         //If we have previously been awake, reduce our blood proportionally to the time since we last played.
         if( time > 1) {
@@ -151,7 +127,7 @@ public class Player extends EventHandlerManager
             var bloodReduction :Number = VConstants.BLOOD_LOSS_HOURLY_RATE_WHILE_SLEEPING * hoursSinceLastAwake * maxBlood;
             log.debug("bloodReduction=" + bloodReduction);
             bloodReduction = Math.min( bloodReduction, this.blood - 1);
-            sendChat( "Blood lost during sleep: " + bloodReduction);
+            addFeedback( "Blood lost during sleep: " + Util.formatNumberForFeedback(bloodReduction));
             damage( bloodReduction );
             
 //            log.debug("bloodnow=" + bloodnow, "in props", blood);
@@ -164,17 +140,7 @@ public class Player extends EventHandlerManager
         log.info("Logging in", "playerId", playerId, "blood", blood, "maxBlood",
                  maxBlood, "level", level, "sire", sire, "time", new Date(time).toTimeString());
             
-//        setTargetVisible(false);//Hide the target first of all.
-//        _closestUserData = null;
-        
         updateAvatarState();
-        if (_room != null) {
-            _room.playerUpdated(this);
-        }
-        
-        
-        log.debug("end of Player()=" + toString());
-        log.info("end }}}\n");
         
     }
     
@@ -185,12 +151,6 @@ public class Player extends EventHandlerManager
         }
     }
     
-    public function sendChat( msg :String ) :void
-    {
-        log.debug("Sending CHAT: " + msg);
-        _ctrl.sendMessage( VConstants.NAMED_EVENT_CHAT, msg); 
-    }
-
     public function get ctrl () :PlayerSubControlServer
     {
         return _ctrl;
@@ -324,7 +284,7 @@ public class Player extends EventHandlerManager
         // update our runtime state
         _xp += bonus;
         // persist it, too
-        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_XP, _xp, true);
+        _ctrl.props.set(Codes.PLAYER_PROP_XP, _xp, true);
         
         var newLevel :int = Logic.levelGivenCurrentXp( xp );
         //Check if we made a new level
@@ -333,11 +293,11 @@ public class Player extends EventHandlerManager
 //            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LEVEL, _level, true);
             
             _blood = 0.1 * maxBlood;
-            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, _blood, true);
+            _ctrl.props.set(Codes.PLAYER_PROP_BLOOD, _blood, true);
         }
         
         if( newLevel < currentLevel && blood > maxBlood) {
-            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, maxBlood, true);
+            _ctrl.props.set(Codes.PLAYER_PROP_BLOOD, maxBlood, true);
         }
         
         //If our vampire state changed, send a message to the avatar
@@ -421,6 +381,16 @@ public class Player extends EventHandlerManager
                     actionChange( VConstants.GAME_MODE_FEED_FROM_NON_PLAYER );
                 }
                 
+            }
+            else if( name == VConstants.NAMED_EVENT_UPDATE_FEEDING_DATA ) {
+                var bytes :ByteArray = value as ByteArray;
+                if( bytes != null) {
+                    //Not sure if ByteArray comparison is meaningful or efficient
+                    if( _ctrl.props.get( Codes.PLAYER_PROP_FEEDING_DATA ) != bytes ) {
+                        log.debug("Setting new feeding data");
+                        _ctrl.props.set( Codes.PLAYER_PROP_FEEDING_DATA, bytes );
+                    }                
+                }
             }
             
             else if( value is IGameMessage) {
@@ -670,7 +640,7 @@ public class Player extends EventHandlerManager
                 
                 angleRadians = new Vector2( targetLocation[0] - avatar.x, targetLocation[2] - avatar.z).angle;
                 degs = convertStandardRads2GameDegrees( angleRadians );
-                predLocIndex = MathUtil.clamp(game.predators.size() - 1, 1, 
+                predLocIndex = MathUtil.clamp(game.predators.size() - 1, 0, 
                     PREDATOR_LOCATIONS_RELATIVE_TO_PREY.length - 1 ); 
                 
                 //If we are the first predator, we go directly behind the prey
@@ -1034,43 +1004,45 @@ public class Player extends EventHandlerManager
                 return;
             }
             
-            if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOOD) != blood ) {
-                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, blood, true);
+            if( _ctrl.props.get(Codes.PLAYER_PROP_BLOOD) != blood ) {
+                _ctrl.props.set(Codes.PLAYER_PROP_BLOOD, blood, true);
             }
             
-            if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_NAME) != name ) {
-                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_NAME, name, true);
+            if( _ctrl.props.get(Codes.PLAYER_PROP_NAME) != name ) {
+                _ctrl.props.set(Codes.PLAYER_PROP_NAME, name, true);
             }
             
-            if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_XP) != xp ) {
-                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_XP, xp, true);
+            if( _ctrl.props.get(Codes.PLAYER_PROP_XP) != xp ) {
+                _ctrl.props.set(Codes.PLAYER_PROP_XP, xp, true);
             }
             
-            if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE) != time ) {
-                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE, time, true);
+            if( _ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE) != time ) {
+                _ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, time, true);
             }
             
-            if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_SIRE) != sire ) {
-                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_SIRE, sire, true);
+            if( _ctrl.props.get(Codes.PLAYER_PROP_SIRE) != sire ) {
+                _ctrl.props.set(Codes.PLAYER_PROP_SIRE, sire, true);
             }
             
-            if( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOODBONDED) != bloodbonded ) {
-                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED, bloodbonded, true);
+            if( _ctrl.props.get(Codes.PLAYER_PROP_BLOODBONDED) != bloodbonded ) {
+                _ctrl.props.set(Codes.PLAYER_PROP_BLOODBONDED, bloodbonded, true);
                 
                 
                 if( _bloodbonded > 0) {//Set the name too
                     var bloodBondedPlayer :Player = ServerContext.vserver.getPlayer( _bloodbonded );
                     if( bloodBondedPlayer != null ) {
                         _bloodbondedName = bloodBondedPlayer.name;
-                        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED_NAME, _bloodbondedName, true);
+                        _ctrl.props.set(Codes.PLAYER_PROP_BLOODBONDED_NAME, _bloodbondedName, true);
                     }
                     else {
                         log.error("Major error: setBloodBonded( " + _bloodbonded + "), but no Player, so cannot set name");
                     }
                 }
                 
-                
-                
+            }
+            
+            if( _ctrl.props.get(Codes.PLAYER_PROP_SIRE) != sire ) {
+                _ctrl.props.set(Codes.PLAYER_PROP_SIRE, sire, true);
             }
             
             
@@ -1109,7 +1081,7 @@ public class Player extends EventHandlerManager
         }
         _timePlayerPreviouslyQuit = time;
 
-        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE, _timePlayerPreviouslyQuit, true);
+        _ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, _timePlayerPreviouslyQuit, true);
     }
     
     public function setBloodBonded (bloodbonded :int, force :Boolean = false) :void
@@ -1128,7 +1100,7 @@ public class Player extends EventHandlerManager
             else {//Load from database
                 ServerContext.ctrl.loadOfflinePlayer(oldBloodBond, 
                     function (props :OfflinePlayerPropertyControl) :void {
-                        props.set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED, 0);
+                        props.set(Codes.PLAYER_PROP_BLOODBONDED, 0);
                     },
                     function (failureCause :Object) :void {
                         log.warning("Eek! Sending message to offline player failed!", "cause", failureCause); ;
@@ -1145,7 +1117,7 @@ public class Player extends EventHandlerManager
             var bloodBondedPlayer :Player = ServerContext.vserver.getPlayer( _bloodbonded );
             if( bloodBondedPlayer != null ) {
                 _bloodbondedName = bloodBondedPlayer.name;
-                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED_NAME, _bloodbondedName, true);
+                _ctrl.props.set(Codes.PLAYER_PROP_BLOODBONDED_NAME, _bloodbondedName, true);
             }
             else {
                 log.error("Major error: setBloodBonded( " + _bloodbonded + "), but no Player, so cannot set name");
@@ -1335,6 +1307,8 @@ public class Player extends EventHandlerManager
     
 
     
+
+    
     
     protected var _name :String;
     protected var _blood :Number;
@@ -1358,6 +1332,9 @@ public class Player extends EventHandlerManager
     
     /** Records who we eat, and who eats us, for determining blood bond status.*/
     protected var _mostRecentVictimId :int;
+    
+    /** Player data for BloodBloom*/
+//    protected var _feedingData :PlayerFeedingData;
 
 
     protected var _room :Room;
