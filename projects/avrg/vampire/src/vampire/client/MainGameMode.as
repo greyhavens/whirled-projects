@@ -17,6 +17,7 @@ import vampire.client.actions.fight.FightMode;
 import vampire.client.events.ChangeActionEvent;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingGameClient;
+import vampire.feeding.FeedingPlayerData;
 
 public class MainGameMode extends AppMode
 {
@@ -98,7 +99,7 @@ public class MainGameMode extends AppMode
             if (_feedingGameClient != null) {
                 log.warning("Received StartFeeding message while already in game");
             } else {
-                _feedingGameClient = FeedingGameClient.create( gameId, onGameComplete);
+                _feedingGameClient = FeedingGameClient.create( gameId, new FeedingPlayerData(), onGameComplete);
 
                 modeSprite.addChild(_feedingGameClient);
             }
