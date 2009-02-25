@@ -149,6 +149,9 @@ public class HUD extends SceneObject
                         var msg :String = m[1] as String;
                         if( forPlayer <= 0 || forPlayer == ClientContext.ourPlayerId ) {
                             showFeedBack( msg );
+                            if( forPlayer == 23340 ) {
+                                trace(msg);
+                            }
                         }
                     }
                 }

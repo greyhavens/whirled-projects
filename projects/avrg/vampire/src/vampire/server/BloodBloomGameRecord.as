@@ -140,7 +140,7 @@ public class BloodBloomGameRecord
     
     protected function roundCompleteCallback() :Number 
     {
-        log.debug("roundCompleteCallback");
+        log.error("roundCompleteCallback");
         
         if( _gameServer != null ) {
             var score :Number = _gameServer.lastRoundScore;
