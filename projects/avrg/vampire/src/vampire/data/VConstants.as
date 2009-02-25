@@ -5,6 +5,8 @@
 public class VConstants
 {
     
+    public static const UNIQUE_BLOOD_STRAINS :int = 12;
+    
     public static const TIME_FEEDBACK_MESSAGE_DISPLAY :Number = 4;
     
     public static const BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME :int = 10;
@@ -52,14 +54,14 @@ public class VConstants
     public static const XP_GAINED_FROM_FEEDING_PER_BLOOD_UNIT :Number = 1;
     
     /**
-    * Blood regenerated per second.
+    * Blood regenerated per second.  0.05 and maxblood=30 means 10 minutes until replenishment
     */
-    public static const THRALL_BLOOD_REGENERATION_RATE :Number = 0.4;
+    public static const THRALL_BLOOD_REGENERATION_RATE :Number = 0.05;//Blood per second
     
     /**
     * Blood lost per second.
     */
-    public static const VAMPIRE_BLOOD_LOSS_RATE :Number = 0.3;
+    public static const VAMPIRE_BLOOD_LOSS_RATE :Number = 0.1;//Blood per second
     
     
     /**

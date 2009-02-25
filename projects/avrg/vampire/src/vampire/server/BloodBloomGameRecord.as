@@ -91,14 +91,18 @@ public class BloodBloomGameRecord
             log.error("startGame(), but we have already started...WTF?");
             return;
         }
-        
+        _started = true;
         _elapsedGameTime = 0;
         
         var gamePreyId :int = _room.isPlayer( _preyId ) ? _preyId : 0;
         
-        var preyBlood :Number = _room.isPlayer( _preyId ) ? _room.getPlayer( _preyId ).blood :
-            ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( _preyId );
-        
+        var preyBlood :Number = _room.isPlayer( _preyId ) ? 
+            _room.getPlayer( _preyId ).blood / _room.getPlayer( _preyId ).maxBlood
+            :
+            ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( _preyId ) / 
+            ServerContext.nonPlayersBloodMonitor.maxBloodFromNonPlayer( _preyId );
+            
+            
         //Start the avatar feeding
         _predators.forEach( function( predId :int ) :void {
             var player :Player = ServerContext.vserver.getPlayer( predId );
@@ -113,7 +117,7 @@ public class BloodBloomGameRecord
                                                 _predators.toArray(), 
                                                 gamePreyId,
                                                 preyBlood,
-                                                1,
+                                                _preyId % VConstants.UNIQUE_BLOOD_STRAINS,
                                                 roundCompleteCallback,
                                                 gameFinishedCallback);
                                                  
@@ -131,12 +135,25 @@ public class BloodBloomGameRecord
         });
         
         
-        _started = true;
+        
     }
     
     protected function roundCompleteCallback() :Number 
     {
         log.debug("roundCompleteCallback");
+        
+        if( _gameServer != null ) {
+            var score :Number = _gameServer.lastRoundScore;
+            log.debug("Score=" + score);
+            
+            _room.bloodBloomRoundOver( this );
+            
+        }
+        else {
+            log.error("roundCompleteCallback, but gameserver is null, no points!");
+        }
+        
+        
         if( _room.isPlayer( _preyId ) ) {
             return _room.getPlayer( _preyId ).blood / _room.getPlayer( _preyId ).maxBlood;
         }
@@ -150,16 +167,7 @@ public class BloodBloomGameRecord
     {
         log.debug("gameFinishedCallback");
         
-        if( _gameServer != null ) {
-            var score :Number = _gameServer.lastRoundScore;
-            log.debug("Score=" + score);
-            
-            _room.bloodBloomRoundOver( this );
-            
-        }
-        else {
-            log.error("roundCompleteCallback, but gameserver is null, no points!");
-        }
+        
         
         
         shutdown();
