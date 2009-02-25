@@ -9,7 +9,6 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.net.*;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
-import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
@@ -52,14 +51,6 @@ public class GameMode extends AppMode
                 addObject(sendMultiplierObj);
             }
         }
-    }
-
-    public function startSpecialCellTimer () :void
-    {
-        addObject(new SimpleTimer(Constants.SPECIAL_CELL_CREATION_TIME.next(),
-            function () :void {
-                GameObjects.createCell(Constants.CELL_SPECIAL, true, ClientCtx.preyBloodType);
-            }));
     }
 
     override protected function setup () :void
@@ -134,9 +125,8 @@ public class GameMode extends AppMode
         GameCtx.cursor = GameObjects.createPlayerCursor();
         registerListener(GameCtx.cursor, GameEvent.WHITE_CELL_DELIVERED, onWhiteCellDelivered);
 
-        if (this.canCollectPreyStrain || Constants.DEBUG_FORCE_SPECIAL_BLOOD_STRAIN) {
-            startSpecialCellTimer();
-        }
+        // this will handle spawning the special Blood Hunt cells
+        addObject(new SpecialCellSpawner());
 
         // create some non-interactive debris that floats around the heart
         for (var ii :int = 0; ii < Constants.DEBRIS_COUNT; ++ii) {
@@ -146,16 +136,6 @@ public class GameMode extends AppMode
         if (ClientCtx.noMoreFeeding) {
             onNoMoreFeeding(false);
         }
-    }
-
-    protected function get canCollectPreyStrain () :Boolean
-    {
-        // Is there a special blood strain to collect from the prey? Can we collect it?
-        return (!ClientCtx.isPrey &&
-                !ClientCtx.isAiPrey &&
-                ClientCtx.preyBloodType >= 0 &&
-                ClientCtx.playerData.canCollectStrainFromPlayer(ClientCtx.preyBloodType,
-                                                                ClientCtx.preyId));
     }
 
     override protected function enter () :void
@@ -327,4 +307,44 @@ public class GameMode extends AppMode
     protected static const SCORE_VIEWS_LOC :Point = new Point(550, 120);
 }
 
+}
+
+import com.whirled.contrib.simplegame.SimObject;
+
+import vampire.feeding.*;
+import vampire.feeding.client.*;
+
+class SpecialCellSpawner extends SimObject
+{
+    override protected function update (dt :Number) :void
+    {
+        if (!Constants.DEBUG_FORCE_SPECIAL_BLOOD_STRAIN && !this.canCollectPreyStrain) {
+            destroySelf();
+            return;
+        }
+
+        _elapsedTime += dt;
+
+        if (Cell.getCellCount(Constants.CELL_SPECIAL) == 0) {
+            if (_nextSpawnTime < 0) {
+                _nextSpawnTime = _elapsedTime + Constants.SPECIAL_CELL_CREATION_TIME.next();
+            } else if (_elapsedTime >= _nextSpawnTime) {
+                GameObjects.createCell(Constants.CELL_SPECIAL, true, ClientCtx.preyBloodType);
+                _nextSpawnTime = -1;
+            }
+        }
+    }
+
+    protected function get canCollectPreyStrain () :Boolean
+    {
+        // Is there a special blood strain to collect from the prey? Can we collect it?
+        return (!ClientCtx.isPrey &&
+                !ClientCtx.isAiPrey &&
+                ClientCtx.preyBloodType >= 0 &&
+                ClientCtx.playerData.canCollectStrainFromPlayer(ClientCtx.preyBloodType,
+                                                                ClientCtx.preyId));
+    }
+
+    protected var _elapsedTime :Number = 0;
+    protected var _nextSpawnTime :Number = -1;
 }

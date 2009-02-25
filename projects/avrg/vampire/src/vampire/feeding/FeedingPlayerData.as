@@ -35,6 +35,11 @@ public class FeedingPlayerData
         return getStrainData(strainType).length;
     }
 
+    public function isEqual (other :FeedingPlayerData) :Boolean
+    {
+        return (this == other ? true : com.threerings.util.Util.equals(toBytes(), other.toBytes()));
+    }
+
     public function clone () :FeedingPlayerData
     {
         var theClone :FeedingPlayerData = new FeedingPlayerData();
