@@ -131,7 +131,7 @@ public class IntroHelpMode extends SceneObject
         locationsButton.x = toHumanButton.x;
         locationsButton.y = toHumanButton.y + 30;
         locationsButton.addEventListener( MouseEvent.CLICK, function(...ignored):void{ 
-            var locations :HashMap  = ClientContext.ctrl.room.getEntityProperty( AvatarGameBridge.ENTITY_PROPERTY_AVATAR_LOCATIONS, ClientContext.playerEntityId) as HashMap;
+            var locations :HashMap  = ClientContext.ctrl.room.getEntityProperty( AvatarGameBridge.ENTITY_PROPERTY_AVATAR_LOCATIONS, ClientContext.ourEntityId) as HashMap;
             trace("locations:");
             if( locations != null) {
                 locations.forEach( function( id :int, data :Array) :void {
@@ -145,7 +145,7 @@ public class IntroHelpMode extends SceneObject
         locationsChangedButton.x = locationsButton.x;
         locationsChangedButton.y = locationsButton.y + 30;
         locationsChangedButton.addEventListener( MouseEvent.CLICK, function(...ignored):void{ 
-            trace("locations changed=" + ClientContext.ctrl.room.getEntityProperty( AvatarGameBridge.ENTITY_PROPERTY_IS_LOCATIONS_CHANGED, ClientContext.playerEntityId) );
+            trace("locations changed=" + ClientContext.ctrl.room.getEntityProperty( AvatarGameBridge.ENTITY_PROPERTY_IS_LOCATIONS_CHANGED, ClientContext.ourEntityId) );
             
         });
         modeSprite.addChild( locationsChangedButton );
