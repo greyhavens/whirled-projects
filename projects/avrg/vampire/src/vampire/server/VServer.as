@@ -198,7 +198,7 @@ public class VServer extends ObjectDBThane
     
     
     //        log.info("!!!!!Before player created", "player time", _ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
-            log.info("!!!!!Before player created", "player time", new Date(_ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
+            log.info("!!!!!Before player created", "player time", new Date(_ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
     
             var pctrl :PlayerSubControlServer = _ctrl.getPlayer(playerId);
             if (pctrl == null) {
@@ -206,7 +206,7 @@ public class VServer extends ObjectDBThane
             }
     //        
     //        log.info("!!!!!After player created", "player time", _ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
-            log.info("!!!!!AFter player control created", "player time", new Date(_ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
+            log.info("!!!!!AFter player control created", "player time", new Date(_ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
     
             
             var hierarchyChanged :Boolean = false;
@@ -253,17 +253,11 @@ public class VServer extends ObjectDBThane
             log.info("Player quit the game", "player", player);
             
     //        log.info("!!!!!After player quit the game", "player time", _ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
-            log.info("!!!!!After player quit the game", "player time", new Date(_ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
+            log.info("!!!!!After player quit the game", "player time", new Date(_ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
         }
         catch( err :Error ) {
             log.error(err + "\n" + err.getStackTrace());
         }
-    }
-    
-    public function getSireFromInvitee( playerId :int) :int
-    {
-        log.warning("getSireFromInvitee not implemented yet, returning -1")
-        return -1;
     }
     
     public function get rooms() :HashMap
@@ -306,9 +300,9 @@ public class VServer extends ObjectDBThane
             else {//Add to offline database
                 ServerContext.ctrl.loadOfflinePlayer(sireId, 
                     function (props :OfflinePlayerPropertyControl) :void {
-                        var currentXP :Number = Number(props.get(Codes.PLAYER_PROP_PREFIX_XP));
+                        var currentXP :Number = Number(props.get(Codes.PLAYER_PROP_XP));
                         if( !isNaN(currentXP)) {
-                            props.set(Codes.PLAYER_PROP_PREFIX_XP, currentXP + xpForEachSire);
+                            props.set(Codes.PLAYER_PROP_XP, currentXP + xpForEachSire);
                         }
                     },
                     function (failureCause :Object) :void {
