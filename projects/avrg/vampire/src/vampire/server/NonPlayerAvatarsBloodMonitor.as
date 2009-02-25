@@ -180,13 +180,8 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
                 _nonplayerBlood.put( userId, blood);
             }
             blood += VConstants.THRALL_BLOOD_REGENERATION_RATE * dt;
-            blood = Math.max( blood, VConstants.MAX_BLOOD_NONPLAYERS);
-            if( blood >= VConstants.MAX_BLOOD_NONPLAYERS) {//If they have regained all blood, remove from counter.
-                _nonplayerBlood.remove( userId );
-            }
-            else {
-                _nonplayerBlood.put( userId, blood );
-            }
+            blood = Math.max( blood, 1);
+            _nonplayerBlood.put( userId, blood );
             var room :Room = ServerContext.vserver.getRoom( _nonplayer2RoomId.get( userId ) ) as Room;
             if( room != null) {
                 var key :String = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + userId;
@@ -200,6 +195,10 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
                     log.debug("Putting np " + key + " blood=" + blood);
                     room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD, blood);
                 }
+            }
+            
+            if( blood >= VConstants.MAX_BLOOD_NONPLAYERS) {//If they have regained all blood, remove from counter.
+                _nonplayerBlood.remove( userId );
             }
         } 
     }
