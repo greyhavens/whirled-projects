@@ -3,7 +3,6 @@ package vampire.feeding.client {
 import flash.geom.Point;
 
 import vampire.feeding.*;
-import vampire.feeding.client.*;
 
 public class GameObjects
 {
@@ -14,6 +13,15 @@ public class GameObjects
         GameCtx.gameMode.addObject(obj, GameCtx.cellLayer);
 
         return obj;
+    }
+
+    public static function createSpecialBloodAnim (fromCell :Cell) :void
+    {
+        GameCtx.gameMode.addObject(
+            new SpecialBloodAnim(fromCell.specialStrain, fromCell.x, fromCell.y),
+            GameCtx.uiLayer);
+
+        fromCell.destroySelf();
     }
 
     public static function createRedBurst (fromCell :Cell, sequence :BurstSequence = null)

@@ -6,7 +6,8 @@ import com.whirled.contrib.simplegame.util.*;
 public class Constants
 {
     public static const DEBUG_SHOW_STATS :Boolean = false;
-    public static const DEBUG_DISABLE_AUDIO :Boolean = false;
+    public static const DEBUG_DISABLE_AUDIO :Boolean = true;
+    public static const DEBUG_FORCE_SPECIAL_BLOOD_STRAIN :Boolean = true;
 
     public static const GAME_TIME :Number = 60 * 2;
 
@@ -44,7 +45,7 @@ public class Constants
         new NumRange(65, 90, Rand.STREAM_GAME),
         new NumRange(190, 195, Rand.STREAM_GAME),
         null,
-        new NumRange(90, 160, Rand.STREAM_GAME),
+        new NumRange(160, 170, Rand.STREAM_GAME),
     ];
     public static const CELL_RADIUS :Array = [ 8, 8, 8, 21 ];
     public static const CELL_BIRTH_TIME :Number = 0.5;
@@ -61,7 +62,7 @@ public class Constants
     public static const WHITE_CELL_EXPLODE_TIME :Number = 5;
 
     public static const SPECIAL_CELL_CREATION_TIME :NumRange =
-        new NumRange(12, 18, Rand.STREAM_GAME);
+        new NumRange(1, 2, Rand.STREAM_GAME);
     public static const NUM_SPECIAL_STRAINS :int = 12;
     public static const MAX_COLLECTIONS_PER_STRAIN :int = 3;
 

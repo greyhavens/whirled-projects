@@ -30,6 +30,7 @@ public class ClientCtx
     public static var noMoreFeeding :Boolean;
     public static var playerIds :Array;
     public static var preyId :int;
+    public static var preyBloodType :int;
     public static var isAiPrey :Boolean;
 
     public static function init () :void
@@ -42,6 +43,7 @@ public class ClientCtx
         noMoreFeeding = false;
         playerIds = null;
         preyId = 0;
+        preyBloodType = -1;
         isAiPrey = false;
     }
 

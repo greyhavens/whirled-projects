@@ -1,6 +1,7 @@
 package vampire.feeding.debug {
 
 import com.whirled.avrg.AVRGameControl;
+import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Sprite;
 
@@ -25,6 +26,10 @@ public class BloodBloomStandalone extends Sprite
 
         BloodBloom.init(this, new DisconnectedControl(this));
         addChild(new BloodBloom(0, new FeedingPlayerData(), function () :void {}));
+        if (Constants.DEBUG_FORCE_SPECIAL_BLOOD_STRAIN) {
+            ClientCtx.preyBloodType =
+                Rand.nextIntRange(0, Constants.NUM_SPECIAL_STRAINS, Rand.STREAM_COSMETIC);
+        }
     }
 }
 

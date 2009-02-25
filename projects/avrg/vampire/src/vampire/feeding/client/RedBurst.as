@@ -72,7 +72,13 @@ public class RedBurst extends CellBurst
         // We're bursting. When we collide with red cells or RedBursts, we create new WhiteBursts;
         var cell :Cell = Cell.getCellCollision(this);
         if (cell != null && !cell.isWhiteCell && cell.state == Cell.STATE_NORMAL) {
-            GameObjects.createRedBurst(cell, _sequence);
+            if (cell.type == Constants.CELL_SPECIAL) {
+                // harvest the special blood
+                GameObjects.createSpecialBloodAnim(cell);
+                ClientCtx.playerData.collectStrainFromPlayer(cell.specialStrain, ClientCtx.preyId);
+            } else {
+                GameObjects.createRedBurst(cell, _sequence);
+            }
         }
     }
 

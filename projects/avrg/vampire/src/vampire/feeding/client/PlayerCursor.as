@@ -66,6 +66,10 @@ public class PlayerCursor extends CollidableObj
 
                 cell.attachToCursor(this);
 
+            } else if (cell.type == Constants.CELL_SPECIAL) {
+                GameObjects.createWhiteBurst(cell);
+                //GameObjects.createSpecialBloodAnim(cell);
+
             } else {
                 // create a cell burst
                 GameObjects.createRedBurst(cell);

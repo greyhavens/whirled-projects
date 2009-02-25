@@ -34,7 +34,7 @@ public class StartGameMsg
         }
 
         ba.writeInt(preyId);
-        ba.writeShort(preyBloodType);
+        ba.writeByte(preyBloodType);
 
         return ba;
     }
@@ -48,7 +48,7 @@ public class StartGameMsg
         }
 
         preyId = ba.readInt();
-        preyBloodType = ba.readShort();
+        preyBloodType = ba.readByte();
     }
 
     public function get name () :String

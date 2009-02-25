@@ -54,11 +54,11 @@ public class GameMode extends AppMode
         }
     }
 
-    public function startSpecialCellTimer (strain :int) :void
+    public function startSpecialCellTimer () :void
     {
         addObject(new SimpleTimer(Constants.SPECIAL_CELL_CREATION_TIME.next(),
             function () :void {
-                GameObjects.createCell(Constants.CELL_SPECIAL, true, strain);
+                GameObjects.createCell(Constants.CELL_SPECIAL, true, ClientCtx.preyBloodType);
             }));
     }
 
@@ -134,6 +134,10 @@ public class GameMode extends AppMode
         GameCtx.cursor = GameObjects.createPlayerCursor();
         registerListener(GameCtx.cursor, GameEvent.WHITE_CELL_DELIVERED, onWhiteCellDelivered);
 
+        if (this.canCollectPreyStrain || Constants.DEBUG_FORCE_SPECIAL_BLOOD_STRAIN) {
+            startSpecialCellTimer();
+        }
+
         // create some non-interactive debris that floats around the heart
         for (var ii :int = 0; ii < Constants.DEBRIS_COUNT; ++ii) {
             addObject(new Debris(), GameCtx.bgLayer);
@@ -142,6 +146,16 @@ public class GameMode extends AppMode
         if (ClientCtx.noMoreFeeding) {
             onNoMoreFeeding(false);
         }
+    }
+
+    protected function get canCollectPreyStrain () :Boolean
+    {
+        // Is there a special blood strain to collect from the prey? Can we collect it?
+        return (!ClientCtx.isPrey &&
+                !ClientCtx.isAiPrey &&
+                ClientCtx.preyBloodType >= 0 &&
+                ClientCtx.playerData.canCollectStrainFromPlayer(ClientCtx.preyBloodType,
+                                                                ClientCtx.preyId));
     }
 
     override protected function enter () :void

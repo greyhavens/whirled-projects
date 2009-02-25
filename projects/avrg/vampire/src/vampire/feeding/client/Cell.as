@@ -18,6 +18,7 @@ public class Cell extends CollidableObj
     public static const STATE_BIRTH :int = 0;
     public static const STATE_NORMAL :int = 1;
     public static const STATE_PREPARING_TO_EXPLODE :int = 2;
+    public static const STATE_AVOID_PLAYER :int = 3;
 
     public static function createCellSprite (cellType :int, multiplierOrStrain :int) :Sprite
     {
@@ -208,6 +209,12 @@ public class Cell extends CollidableObj
         var cursor :PlayerCursor = _attachedTo.object as PlayerCursor;
         if (cursor == null) {
             var curLoc :Vector2 = this.loc;
+
+            // Player avoidance doesn't make this any more fun
+            /*if (_type == Constants.CELL_SPECIAL && _state == STATE_NORMAL) {
+                avoidPlayer();
+            }*/
+
             if (_state == STATE_NORMAL) {
                 // move around the heart
                 var ctrImpulse :Vector2 = (this.movementType == MOVE_OUTWARDS ?
@@ -230,6 +237,31 @@ public class Cell extends CollidableObj
 
             this.x = curLoc.x;
             this.y = curLoc.y;
+        }
+    }
+
+    protected function avoidPlayer () :void
+    {
+        var curLoc :Vector2 = this.loc;
+        var v :Vector2 = curLoc.subtract(GameCtx.cursor.loc);
+        var dist2 :Number = v.lengthSquared;
+        if (dist2 < (SPECIAL_CELL_MIN_PLAYER_DISTANCE * SPECIAL_CELL_MIN_PLAYER_DISTANCE)) {
+            // Pick a location to run away to
+            var newDist :Number = SPECIAL_CELL_AVOID_PLAYER_DISTANCE.next();
+            v.length = newDist;
+            v.addLocal(curLoc);
+            v = GameCtx.clampLoc(v);
+            var oldState :int = _state;
+
+            // Run!
+            addNamedTask("AvoidPlayer", new SerialTask(
+                LocationTask.CreateEaseOut(v.x, v.y, SPECIAL_CELL_AVOID_PLAYER_TIME),
+                new FunctionTask(function () :void {
+                    _state = oldState;
+                })),
+                true);
+
+            _state = STATE_AVOID_PLAYER;
         }
     }
 
@@ -257,6 +289,11 @@ public class Cell extends CollidableObj
         return _multiplier;
     }
 
+    public function get specialStrain () :int
+    {
+        return _specialStrain;
+    }
+
     public function get isRedCell () :Boolean
     {
         return _type == Constants.CELL_RED;
@@ -274,7 +311,14 @@ public class Cell extends CollidableObj
 
     protected function get movementType () :int
     {
-        return (_type == Constants.CELL_WHITE ? MOVE_INWARDS : MOVE_OUTWARDS);
+        switch (_type) {
+        case Constants.CELL_WHITE:
+        case Constants.CELL_SPECIAL:
+            return MOVE_INWARDS;
+
+        default:
+            return MOVE_OUTWARDS;
+        }
     }
 
     protected static function getGroupName (cellType :int) :String
@@ -301,6 +345,11 @@ public class Cell extends CollidableObj
 
     protected static const RED_ROTATION_TIME :Number = 3;
     protected static const BONUS_ROTATION_TIME :Number = 1.5;
+
+    protected static const SPECIAL_CELL_MIN_PLAYER_DISTANCE :Number = 80;
+    protected static const SPECIAL_CELL_AVOID_PLAYER_DISTANCE :NumRange =
+        new NumRange(90, 100, Rand.STREAM_GAME);
+    protected static const SPECIAL_CELL_AVOID_PLAYER_TIME :Number = 0.5;
 
     protected static const CELL_MOVIES :Array = [ "cell_red", "cell_white", "cell_coop" ];
     protected static const SPECIAL_STRAIN_MOVIES :Array = [

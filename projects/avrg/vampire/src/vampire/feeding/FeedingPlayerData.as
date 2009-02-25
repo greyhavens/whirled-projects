@@ -19,6 +19,12 @@ public class FeedingPlayerData
         }
     }
 
+    public function canCollectStrainFromPlayer (strainType :int, playerId :int) :Boolean
+    {
+        return (getStrainCount(strainType) < Constants.MAX_COLLECTIONS_PER_STRAIN &&
+                !ArrayUtil.contains(getStrainData(strainType), playerId));
+    }
+
     public function hasCollectedStrainFromPlayer (strainType :int, playerId :int) :Boolean
     {
         return ArrayUtil.contains(getStrainData(strainType), playerId);
@@ -32,7 +38,9 @@ public class FeedingPlayerData
     public function clone () :FeedingPlayerData
     {
         var theClone :FeedingPlayerData = new FeedingPlayerData();
-        theClone.fromBytes(toBytes());
+        var bytes :ByteArray = toBytes();
+        bytes.position = 0;
+        theClone.fromBytes(bytes);
         return theClone;
     }
 

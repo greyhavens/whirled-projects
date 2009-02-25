@@ -95,6 +95,7 @@ public class BloodBloom extends FeedingGameClient
             ClientCtx.gameStarted = true;
             ClientCtx.playerIds = startGameMsg.playerIds;
             ClientCtx.preyId = startGameMsg.preyId;
+            ClientCtx.preyBloodType = startGameMsg.preyBloodType;
             ClientCtx.isAiPrey = (ClientCtx.preyId == Constants.NULL_PLAYER);
 
         } else if (e.msg is PlayerLeftMsg) {
