@@ -121,8 +121,8 @@ public class VConstants
     public static const NAMED_EVENT_START_BLOOD_BLOOM :String = "StartBloodBloom";
     public static const NAMED_EVENT_BLOODBLOOM_COUNTDOWN :String = "BloodbloomCountDown";
     
-    
-    
+    /**Upon BB completion, send the FeedingData back to the server for persistance*/
+    public static const NAMED_EVENT_UPDATE_FEEDING_DATA :String = "UpdateFeedingData";
         
     public static var LOCAL_DEBUG_MODE :Boolean = false;
     
