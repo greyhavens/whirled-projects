@@ -1,7 +1,10 @@
 package vampire.server
 {
+    import com.threerings.util.ClassUtil;
     import com.threerings.util.HashMap;
     import com.threerings.util.HashSet;
+    import com.threerings.util.Log;
+    import com.threerings.util.StringBuilder;
     import com.whirled.contrib.simplegame.server.SimObjectThane;
     
     import flash.utils.Dictionary;
@@ -82,14 +85,22 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
 //        }
 //    }
     
-    public function nonplayerLosesBlood( victimId :int, bloodLost :int) :void
+    public function nonplayerLosesBlood( victimId :int, damage :int) :Number
     {
-        if( _nonplayerBlood.containsKey( victimId )) {
-            _nonplayerBlood.put( victimId, Math.max( Number(_nonplayerBlood.get(victimId)) - bloodLost, 0));
-        }
-        else {
-            _nonplayerBlood.put( victimId, VConstants.MAX_BLOOD_NONPLAYERS - bloodLost);
-        }
+        var currentBlood :Number = _nonplayerBlood.containsKey( victimId ) ? 
+            _nonplayerBlood.get(victimId) : VConstants.MAX_BLOOD_NONPLAYERS;
+            
+        var bloodLost :Number = currentBlood - 1 >= damage ? damage : currentBlood - 1;
+        
+        _nonplayerBlood.put( victimId, Math.max( currentBlood - bloodLost, 1));
+        
+        return bloodLost;
+//        if( _nonplayerBlood.containsKey( victimId )) {
+//            _nonplayerBlood.put( victimId, Math.max( Number(_nonplayerBlood.get(victimId)) - bloodLost, 0));
+//        }
+//        else {
+//            _nonplayerBlood.put( victimId, VConstants.MAX_BLOOD_NONPLAYERS - bloodLost);
+//        }
         
     }
     
@@ -122,11 +133,18 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
     
     override protected  function update( dt :Number ) :void
     {
+        if( _nonplayerBlood.keys().length > 0 ) {
+            log.debug("On update " + this.toString());
+        }
         //Allow the non-players to regenerate
         var keys :Array = _nonplayerBlood.keys();
         
         for each( var userId :int in keys) {
             var blood :Number = _nonplayerBlood.get( userId );
+            if( isNaN( blood ) ) {
+                blood = 1;
+                _nonplayerBlood.put( userId, blood);
+            }
             blood += VConstants.THRALL_BLOOD_REGENERATION_RATE * dt;
             blood = Math.max( blood, VConstants.MAX_BLOOD_NONPLAYERS);
             if( blood >= VConstants.MAX_BLOOD_NONPLAYERS) {//If they have regained all blood, remove from counter.
@@ -144,7 +162,8 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
                     dict = new Dictionary(); 
                 }
         
-                if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD] != blood && !isNaN(blood)) {
+                if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD] != blood ) {
+                    log.debug("Putting np " + key + " blood=" + blood);
                     room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD, blood);
                 }
             }
@@ -168,6 +187,14 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
     {
         _nonplayer2RoomId.put( userId, roomId );
     }
+    
+    override public function toString() :String
+    {
+        var sb :StringBuilder = new StringBuilder(ClassUtil.tinyClassName(this));
+        sb.append("\n NP blood: " + _nonplayerBlood.keys() + ":" + _nonplayerBlood.values());
+        sb.append("\n NP rooms: " + _nonplayer2RoomId.keys() + ":" + _nonplayer2RoomId.values());
+        return sb.toString();
+    }
 
     
     //Non-players can only be fed occasionally
@@ -179,6 +206,7 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
     public var _playerIdsThatHavePlayedEver :HashSet = new HashSet();
     
     protected static const NAME :String = "NonAvatarPlayersBloodMonitor";
+    protected static const log :Log = Log.getLog( NonPlayerAvatarsBloodMonitor );
 
 }
 }
