@@ -86,8 +86,8 @@ public class MinionHierarchyServer extends MinionHierarchy
         log.debug(VConstants.DEBUG_MINION + " loadPlayerFromDB(" + playerId + ")...");
         ServerContext.ctrl.loadOfflinePlayer(playerId, 
             function (props :OfflinePlayerPropertyControl) :void {
-                var name :String = String(props.get(Codes.PLAYER_PROP_PREFIX_NAME));
-                var sireId :int = int(props.get(Codes.PLAYER_PROP_PREFIX_SIRE));
+                var name :String = String(props.get(Codes.PLAYER_PROP_NAME));
+                var sireId :int = int(props.get(Codes.PLAYER_PROP_SIRE));
                 log.debug(VConstants.DEBUG_MINION + " loadPlayerFromDB(), props.getUserProps(), name=" + name + ", sire=" + sireId);
                 
                 setPlayerName( playerId, name );
