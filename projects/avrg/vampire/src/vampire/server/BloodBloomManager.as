@@ -68,8 +68,10 @@ public class BloodBloomManager extends SimObjectThane
         if( _playerId2Game.containsKey( preyId ) ) {
             log.debug(predatorId + " requestFeed, adding to existing game");
             var gameRecord :BloodBloomGameRecord = _playerId2Game.get( preyId ) as BloodBloomGameRecord;
-            gameRecord.addPredator( predatorId, preyLocation );
-            _playerId2Game.put( predatorId, gameRecord );
+            if( !gameRecord.isStarted ) {
+                gameRecord.addPredator( predatorId, preyLocation );
+                _playerId2Game.put( predatorId, gameRecord );
+            }
             return gameRecord;
         }
         else {
