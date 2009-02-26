@@ -328,12 +328,12 @@ public class LOL extends Sprite
 
         case SILENT_THEME:
             // make a grayscale filter for the image
-            var T :Number = 1 / 3;
-            _image.filters = [ new ColorMatrixFilter([
-                T, T, T, 0, 0,
-                T, T, T, 0, 0,
-                T, T, T, 0, 0,
-                0, 0, 0, 1, 0]) ];
+//            var T :Number = 1 / 3;
+//            _image.filters = [ new ColorMatrixFilter([
+//                T, T, T, 0, 0,
+//                T, T, T, 0, 0,
+//                T, T, T, 0, 0,
+//                0, 0, 0, 1, 0]) ];
             break;
         }
     }
