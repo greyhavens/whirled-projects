@@ -69,7 +69,7 @@ public class BloodBloomManager extends SimObjectThane
             log.debug(predatorId + " requestFeed, adding to existing game");
             var gameRecord :BloodBloomGameRecord = _playerId2Game.get( preyId ) as BloodBloomGameRecord;
             gameRecord.addPredator( predatorId, preyLocation );
-            
+            _playerId2Game.put( predatorId, gameRecord );
             return gameRecord;
         }
         else {
@@ -159,6 +159,11 @@ public class BloodBloomManager extends SimObjectThane
     
     public function getGame( playerId :int ) :BloodBloomGameRecord 
     {
+        if( !_playerId2Game.containsKey( playerId )) {
+            log.debug("getGame(" + playerId + "), but us=" + toString());
+            return null;
+        }
+        
         return _playerId2Game.get( playerId ) as BloodBloomGameRecord;    
     }
     
@@ -183,10 +188,10 @@ public class BloodBloomManager extends SimObjectThane
     override public function toString() :String
     {
         return ClassUtil.tinyClassName( this ) 
-            + " _games.length=" + _games.length
-            + " _playerId2Game.size()=" + _playerId2Game.size()
-            + " _playerId2Game.keys()=" + _playerId2Game.keys()
-            + "games listed:\n  " + _games.join("\n  ")
+            + "\n _games.length=" + _games.length
+            + "\n _playerId2Game.size()=" + _playerId2Game.size()
+            + "\n _playerId2Game.keys()=" + _playerId2Game.keys()
+            + "\n games listed:\n  " + _games.join("\n  ")
     }
     
     protected var _room :Room;
