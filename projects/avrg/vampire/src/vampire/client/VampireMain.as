@@ -208,8 +208,7 @@ public class VampireMain extends Sprite
     
     protected function printServerLogToFlashLog( e :MessageReceivedEvent ) :void
     {
-        if( e.name == AVRGAgentLogTarget.SERVER_LOG && (ClientContext.ourPlayerId == 23340 ||
-            ClientContext.ourPlayerId == 1769 )) {
+        if( e.name == AVRGAgentLogTarget.SERVER_LOG ) {//&& (ClientContext.ourPlayerId == 23340 ||ClientContext.ourPlayerId == 1769 )
             trace(e.value);
         }
     }
