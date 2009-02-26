@@ -1101,6 +1101,10 @@ public class Player extends EventHandlerManager
     public function setSire (sire :int) :void
     {
         _sire = sire;
+        //Set immediately into props, as it's important and not often set.
+        if( _ctrl.props.get(Codes.PLAYER_PROP_SIRE) != sire ) {
+            _ctrl.props.set(Codes.PLAYER_PROP_SIRE, sire, true);
+        }
     }
     
     public function get action () :String
