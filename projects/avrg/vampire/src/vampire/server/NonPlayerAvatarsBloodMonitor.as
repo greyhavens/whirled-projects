@@ -165,12 +165,9 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
 //        _nonplayer2RoomId.remove( nonplayerId );
     }
     
+    //Allow the non-players to regenerate blood and update room props
     override protected  function update( dt :Number ) :void
     {
-        if( _nonplayerBlood.keys().length > 0 ) {
-            log.debug("On update " + this.toString());
-        }
-        //Allow the non-players to regenerate
         var keys :Array = _nonplayerBlood.keys();
         
         for each( var userId :int in keys) {
@@ -181,7 +178,7 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
                 blood = 1;
                 _nonplayerBlood.put( userId, blood);
             }
-            //IfRegenrate if we aren't being eaten.
+            //Regenerate if we aren't being eaten.
             if( !(_nonplayer2RoomId.containsKey( userId ) &&
                 ServerContext.vserver.getRoom( _nonplayer2RoomId.get( userId ) ) != null &&
                 ServerContext.vserver.getRoom( _nonplayer2RoomId.get( userId ) )._bloodBloomGameManager.isPreyInGame( userId ) )) {
@@ -201,7 +198,6 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
                 }
         
                 if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD] != blood ) {
-                    log.debug("Putting np " + key + " blood=" + blood);
                     room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD, blood);
                 }
             }
