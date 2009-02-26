@@ -499,15 +499,18 @@ public class AvatarHUD extends SceneObject
     
     public function setLocation (location :Array, dt :Number) :void
     {
-        if( location != null && ArrayUtil.equals( location, _location ) ) {
+        if( location != null && _isMoving && ArrayUtil.equals( location, _location ) ) {
             //We assume the avatar has arrived.  Send an avatar arrived event.
-            
             dispatchEvent( new PlayerArrivedAtLocationEvent() );
+            _isMoving = false;
         }
         
         if( ArrayUtil.equals( location, _location )) {
             return;
         }
+        
+        _isMoving = true;
+        
         _location = location;
         var newXY :Point = locationToRoomCoords( _ctrl, location, hotspot, _displaySprite );
         
@@ -741,6 +744,8 @@ public class AvatarHUD extends SceneObject
     protected var _hotspot :Array;
     
     protected var _isPlayer :Boolean;
+    
+    protected var _isMoving :Boolean = false;
     
 //    protected var _updated :Boolean = false;
     
