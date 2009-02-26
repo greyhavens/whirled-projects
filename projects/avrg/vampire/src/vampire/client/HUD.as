@@ -370,6 +370,8 @@ public class HUD extends SceneObject
         _hudBloodBottom = _hudBlood.y ;//+ _hudBlood.height;
         _hudBloodStartHeight = _hudBlood.height;
         
+        _hudType = MovieClip( findSafely("HUDtype") );
+        _hudType.gotoAndStop( int( ClientContext.model.bloodType ) );
         
         
 //        _DEBUG_BLOOD_BAR_OUTLINE = new Sprite();
@@ -401,6 +403,9 @@ public class HUD extends SceneObject
         
         var hudClose :SimpleButton = SimpleButton( findSafely("HUDclose") );
         Command.bind( hudClose, MouseEvent.CLICK, VampireController.QUIT);
+        
+        
+        
         
         
         
@@ -852,6 +857,10 @@ public class HUD extends SceneObject
         _mouseCaptureBloodSprite.y = _hudBlood.y;
         _hudMC.addChild( _mouseCaptureBloodSprite );
         
+        trace("_hudType.y=" + _hudType.y);
+        _hudType.gotoAndStop( int( ClientContext.model.bloodType ) );
+//        _hudType.y = -_hudBlood.height;
+        
 //        _hudBlood.y = _hudBloodBottom - _hudBlood.height;
         
 //        _DEBUG_BLOOD_BAR_OUTLINE.graphics.clear();
@@ -1131,11 +1140,15 @@ public class HUD extends SceneObject
     protected var _hudBloodBottom :int;
     protected var _hudBloodStartHeight :Number;
     
+    protected var _hudType :MovieClip;
+    
     protected var _hudXP :MovieClip;
     protected var _hudXPBottom :int;
     protected var _hudXPStartHeight :Number;
     
     protected var _hudFeedback :TextField;
+    
+    
     
     protected var _mouseOverBloodText :TextField;
     protected var _mouseOverXPText :TextField;
