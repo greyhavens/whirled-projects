@@ -262,7 +262,9 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
         //Add the nonplayers
         _avatars.forEach( function( playerId :int, ...ignored) :void {
             if( !ArrayUtil.contains(playerIds, playerId )) {
-                validIds.add( playerId );
+                if( isNaN(SharedPlayerStateClient.getBlood( playerId )) || SharedPlayerStateClient.getBlood( playerId ) > 1 ) {
+                    validIds.add( playerId );
+                }
             }
         });
         
@@ -274,7 +276,9 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
             }
             
             var action :String = SharedPlayerStateClient.getCurrentAction( playerId );
-            if( action != null && action == VConstants.GAME_MODE_BARED) {
+            if( action != null && action == VConstants.GAME_MODE_BARED 
+                && SharedPlayerStateClient.getBlood( playerId ) > 1 ) {
+                    
                 validIds.add( playerId );
             }
         }
