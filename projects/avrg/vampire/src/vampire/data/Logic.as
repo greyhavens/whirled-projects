@@ -62,8 +62,15 @@ public class Logic
     public static function xpNeededForLevel( level :int ) :Number
     {
         level = Math.max(level, 1);
-        var base :Number = 10;
-        return base * (level - 1) + (level - 1) * (base + 2 * (level - 1));
+        var base :Number = 100;
+        var xp :Number = base;
+        var addition :Number = 50;
+        for( var i :int = 2; i <= level; i++) {
+            xp += (i-1) * addition + base;
+        }
+        return xp;
+//        return base * (level - 1) + (level - 1) * (base + base * (level - 1));
+//        return base * (level - 1) + (level - 1) * (base + base * (level - 1));
 //        return (level - 1) * 10; 
     }
     
