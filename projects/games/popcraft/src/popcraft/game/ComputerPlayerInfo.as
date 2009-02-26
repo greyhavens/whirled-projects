@@ -78,6 +78,11 @@ public class ComputerPlayerInfo extends PlayerInfo
         _heldSpells = spellCounts.slice();
     }
 
+    override public function get isHuman () :Boolean
+    {
+        return false;
+    }
+
     protected var _heldSpells :Array;
     protected var _data :ComputerPlayerData;
     protected var _aiRef :SimObjectRef;

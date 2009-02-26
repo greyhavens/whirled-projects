@@ -293,6 +293,11 @@ public class PlayerInfo extends EventDispatcher
         return (teammate != null && teammate.isAlive && teammate.health >= Constants.MIN_RESURRECT_HEALTH);
     }
 
+    public function get isHuman () :Boolean
+    {
+        return true;
+    }
+
     protected var _playerIndex :int;  // an unsigned integer corresponding to the player's seating position
     protected var _color :uint;
     protected var _teamId :int;

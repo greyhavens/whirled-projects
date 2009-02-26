@@ -151,14 +151,11 @@ public class GameMode extends TransitionMode
     protected function handleOccupantLeft (e :OccupantChangedEvent) :void
     {
         if (e.player) {
-            // did a player leave?
-            var playerInfo :PlayerInfo = ArrayUtil.findIf(GameCtx.playerInfos,
-                function (data :PlayerInfo) :Boolean {
-                    return data.whirledId == e.occupantId;
-                });
-
-            if (null != playerInfo) {
-                playerInfo.leftGame = true;
+            for each (var playerInfo :PlayerInfo in GameCtx.playerInfos) {
+                // if a player's whirled id is 0, they have left the game
+                if (playerInfo.isHuman && playerInfo.whirledId == 0) {
+                    playerInfo.leftGame = true;
+                }
             }
         }
     }
