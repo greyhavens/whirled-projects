@@ -228,14 +228,11 @@ public class GameMode extends AppMode
     {
         GameCtx.timeLeft = Math.max(GameCtx.timeLeft - dt, 0);
 
-        // For testing purposes, end the game manually if we're in standalone mode, and
-        // create some dummy game results
+        // For testing purposes, end the game manually if we're in standalone mode
         if (GameCtx.timeLeft == 0 && !ClientCtx.isConnected) {
-            var dummyScores :HashMap = new HashMap();
-            for (var ii :int = 0; ii < 10; ++ii) {
-                dummyScores.put(ii + 1, Rand.nextIntRange(50, 500, Rand.STREAM_COSMETIC));
-            }
-            onRoundOver(RoundOverMsg.create(dummyScores, 1, 0.25));
+            var scores :HashMap = new HashMap();
+            scores.put(ClientCtx.localPlayerId, GameCtx.scoreView.bloodCount);
+            onRoundOver(RoundOverMsg.create(scores, 1, 0.25));
             return;
         }
 

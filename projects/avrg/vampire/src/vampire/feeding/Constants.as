@@ -9,7 +9,7 @@ public class Constants
     public static const DEBUG_DISABLE_AUDIO :Boolean = false;
     public static const DEBUG_FORCE_SPECIAL_BLOOD_STRAIN :Boolean = false;
 
-    public static const GAME_TIME :Number = 20;//60 * 2;Just for debugging
+    public static const GAME_TIME :Number = 60 * 2;
 
     public static const WAIT_FOR_PLAYERS_TIMEOUT :Number = 60;
 

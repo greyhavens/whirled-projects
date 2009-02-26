@@ -27,6 +27,8 @@ import vampire.feeding.*;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.util.Rand;
+import com.whirled.contrib.TimerManager;
+import com.whirled.contrib.ManagedTimer;
 
 class TestGameController extends OneRoomGameRoom
 {
@@ -40,6 +42,11 @@ class TestGameController extends OneRoomGameRoom
     override public function shutdown () :void
     {
         _events.freeAllHandlers();
+        _events = null;
+
+        _timerMgr.shutdown();
+        _timerMgr = null;
+
         super.shutdown();
     }
 
@@ -48,10 +55,10 @@ class TestGameController extends OneRoomGameRoom
         if (e.name == "Client_Hello" && !ArrayUtil.contains(_waitingPlayers, e.senderId)) {
             _gameCtrl.getPlayer(e.senderId).sendMessage("Server_Hello");
             _waitingPlayers.push(e.senderId);
-             if (_waitingPlayers.length >= NUM_PLAYERS) {
-                startGame();
+             if (_waitingPlayers.length >= MIN_PLAYERS) {
+                startGameIn(START_GAME_DELAY);
             } else {
-                log.info("Waiting for " + String(NUM_PLAYERS - _waitingPlayers.length) +
+                log.info("Waiting for " + String(MIN_PLAYERS - _waitingPlayers.length) +
                          " more players to start game");
             }
         }
@@ -62,6 +69,9 @@ class TestGameController extends OneRoomGameRoom
         log.info("Player left", "playerId", playerId);
 
         ArrayUtil.removeFirst(_waitingPlayers, playerId);
+        if (_waitingPlayers.length < MIN_PLAYERS) {
+            cancelGameTimer();
+        }
 
         var game :FeedingGameServer = _playerGameMap.remove(playerId) as FeedingGameServer;
         if (game != null) {
@@ -69,8 +79,33 @@ class TestGameController extends OneRoomGameRoom
         }
     }
 
+    protected function cancelGameTimer () :void
+    {
+        if (_startGameTimer != null) {
+            _startGameTimer.cancel();
+            _startGameTimer = null;
+        }
+    }
+
+    protected function startGameIn (time :Number) :void
+    {
+        cancelGameTimer();
+        _startGameTimer = _timerMgr.createTimer(time * 1000, 1,
+            function (...ignored) :void {
+                startGame();
+            });
+        _startGameTimer.start();
+
+        log.info("Game will start in " + time + " seconds.");
+    }
+
     protected function startGame () :void
     {
+        if (_waitingPlayers.length == 0) {
+            log.info("Couldn't start game - no waiting players.");
+            return;
+        }
+
         var preyId :int =
             (_waitingPlayers.length > 1 ? _waitingPlayers.pop() : Constants.NULL_PLAYER);
         var predators :Array = _waitingPlayers;
@@ -136,9 +171,12 @@ class TestGameController extends OneRoomGameRoom
 
     protected var _waitingPlayers :Array = [];
     protected var _playerGameMap :HashMap = new HashMap(); // Map<playerId, FeedingGameServer>
-    protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _preyBlood :Number = 1;
+    protected var _startGameTimer :ManagedTimer;
 
-    // the number of players the game will wait for before starting a new game
-    protected static const NUM_PLAYERS :int = 2;
+    protected var _events :EventHandlerManager = new EventHandlerManager();
+    protected var _timerMgr :TimerManager = new TimerManager();
+
+    protected static const MIN_PLAYERS :int = 1;
+    protected static const START_GAME_DELAY :Number = 4;
 }
