@@ -4,7 +4,6 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.AgentSubControl;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.net.ElementChangedEvent;
@@ -410,12 +409,17 @@ public class GameModel extends SimObject//EventDispatcher
         return SharedPlayerStateClient.getBlood( ClientContext.ourPlayerId );
     }
     
+    public function get maxblood() :Number
+    {
+        return SharedPlayerStateClient.getMaxBlood( ClientContext.ourPlayerId );
+    }
+    
     public function get level() :int
     {
         return SharedPlayerStateClient.getLevel( ClientContext.ourPlayerId );
     }
     
-    public function get xp() :int
+    public function get xp() :Number
     {
         return SharedPlayerStateClient.getXP( ClientContext.ourPlayerId );
     }
