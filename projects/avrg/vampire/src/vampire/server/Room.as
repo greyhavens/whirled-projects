@@ -434,6 +434,16 @@ public class Room extends SimObjectThane
     public function bloodBloomRoundOver( gameRecord :BloodBloomGameRecord ) :void
     {
         log.debug("bloodBloomRoundOver()", "gameRecord", gameRecord);
+        
+        if( gameRecord == null ) {
+            log.error("bloodBloomRoundOver gameRecord==null");
+            return;
+        }
+        if( gameRecord.gameServer == null ) {
+            log.error("bloodBloomRoundOver gameRecord.gameServer==null");
+            return;
+        }
+        
         if( gameRecord.gameServer.lastRoundScore == 0 ) {
             log.debug("score==0 so no blood lost or gained.");
             return;
@@ -455,8 +465,13 @@ public class Room extends SimObjectThane
             
             var damageFormatted :String = Util.formatNumberForFeedback(damage);
             gameRecord.predators.forEach( function( predId :int) :void {
-                var pred :Player = getPlayer( predatorId );
-                addFeedback( preyPlayer.name + " lost " + damageFormatted + " from feeding", pred.playerId);
+                var pred :Player = getPlayer( predId );
+                if( pred != null ) {
+                    addFeedback( preyPlayer.name + " lost " + damageFormatted + " from feeding", pred.playerId);
+                }
+                else {
+                    log.error("gameRecord.predators.forEach() " + predId + " gives no player");
+                }
             });
         }
         else {
@@ -471,6 +486,10 @@ public class Room extends SimObjectThane
         
         for each( var predatorId :int in gameRecord.predators.toArray()) {
             var pred :Player = getPlayer( predatorId );
+            if( pred == null ) {
+                log.error("adding blood, but no pred", "predatorId", predatorId);
+                continue;
+            }
             pred.mostRecentVictimId = gameRecord.preyId;
             pred.addBlood( bloodGainedPerPredator );
             log.debug(predatorId + " gained " + bloodGainedPerPredator);
@@ -478,7 +497,7 @@ public class Room extends SimObjectThane
             
             //Check for new bloodbond formation
             //ATM it's just mutual feeding
-            if( preyIsPlayer && preyPlayer.mostRecentVictimId == predatorId) {
+            if( preyIsPlayer && preyPlayer != null && preyPlayer.mostRecentVictimId == predatorId) {
                 preyPlayer.setBloodBonded( predatorId );//This also sets the name
                 pred.setBloodBonded( preyPlayer.playerId );
                 log.debug("Creating new bloodbond=" + pred.name + " + " + preyPlayer.name);
