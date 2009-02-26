@@ -29,8 +29,8 @@ public class Codes
     /** Current amount of blood*/
     public static const PLAYER_PROP_XP :String = NetConstants.makePersistent("xp");
     
-    /** Max blood for the given level.  This could probably just be computed...? Possibly remove later.*/
-//    public static const PLAYER_PROP_PREFIX_MAXBLOOD :String = NetConstants.makePersistent("maxblood");
+    /** Blood type.  Used for bonuses in BloodBloom.*/
+    public static const PLAYER_PROP_BlOOD_TYPE :String = NetConstants.makePersistent("bloodType");
     
     /** Current level.  This controls the max amount of blood*/
 //    public static const PLAYER_PROP_PREFIX_LEVEL :String = NetConstants.makePersistent("level");
@@ -92,12 +92,13 @@ public class Codes
     public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED :int = 6;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION :int = 7;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_XP :int = 8;
+    public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOOD_TYPE :int = 9;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_ID :int = 10;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_LOCATION :int = 11;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE:int = 12;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT :int = 15;
 
-    public static const TASK_ID_FEEDING :String = "taskFeeding";
+//    public static const TASK_ID_FEEDING :String = "taskFeeding";
     
     
 }
