@@ -495,15 +495,39 @@ public class Room extends SimObjectThane
             log.debug(predatorId + " gained " + bloodGainedPerPredator);
             addFeedback( pred.name + " gained " + bloodGainedPerPredatorFormatted + " from feeding", pred.playerId);
             
-            //Check for new bloodbond formation
-            //ATM it's just mutual feeding
             if( preyIsPlayer && preyPlayer != null && preyPlayer.mostRecentVictimId == predatorId) {
+                //Check for new bloodbond formation
+                //ATM it's just mutual feeding
                 preyPlayer.setBloodBonded( predatorId );//This also sets the name
                 pred.setBloodBonded( preyPlayer.playerId );
                 log.debug("Creating new bloodbond=" + pred.name + " + " + preyPlayer.name);
                 addFeedback( "You are now bloodbonded with " + pred.name, preyPlayer.playerId);
-                addFeedback( "You are now bloodbonded with " + preyPlayer.name, pred.playerId);    
+                addFeedback( "You are now bloodbonded with " + preyPlayer.name, pred.playerId);
+                
+                    
+                //Check if the prey was a vampire, and we don't have a sire.  This vampire becomes it.
+                if( pred.sire <= 0 && preyPlayer.isVampire() ) {
+                    pred.makeSire( preyPlayer.playerId );
+                    addFeedback( preyPlayer.name + " has become your sire ", pred.playerId);
+                    
+                    for each( var sireId :int in 
+                        ServerContext.minionHierarchy.getAllSiresAndGrandSires( pred.playerId ).toArray() ) {
+                            
+                        if( ServerContext.vserver.isPlayer( sireId ) 
+                            && ServerContext.vserver.getPlayer( sireId ).room != null) {
+                            
+                            ServerContext.vserver.getPlayer( sireId ).room.addFeedback(    
+                                pred.name + " has become your minion ", sireId); 
+                        }
+                            
+                            
+                    }
+                    
+                    
+                       
+                }
             }
+            
         }
         
         //Then handle experience.  ATM everyone gets xp=score

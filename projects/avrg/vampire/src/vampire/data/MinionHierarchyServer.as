@@ -322,11 +322,15 @@ public class MinionHierarchyServer extends MinionHierarchy
     
     override public function setPlayerSire( playerId :int, sireId :int) :void
     {
+//        if( _vserver.getPlayer( playerId ) != null && _vserver.getPlayer( playerId ).sire > 0 ) {
+//            updatePlayer( _vserver.getPlayer( playerId ).sire );
+//        }
         super.setPlayerSire( playerId, sireId );
         //Update the player props
-        if( _vserver.isPlayer( playerId )) {
-            _vserver.getPlayer( playerId ).setSire( getSireId( playerId ) );
-        }
+//        if( _vserver.isPlayer( playerId )) {
+//            _vserver.getPlayer( playerId ).setSire( getSireId( playerId ) );
+//        }
+//        updatePlayer( playerId );
     }
     
     

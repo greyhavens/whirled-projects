@@ -465,8 +465,12 @@ public class Player extends EventHandlerManager
     }
     
     
-    protected function makeSire(targetPlayerId :int ) :void
+    public function makeSire(targetPlayerId :int ) :void
     {
+        if( sire > 0 && targetPlayerId != sire) {
+            ServerContext.minionHierarchy.updatePlayer( sire );
+        }
+        
         log.info("makeSire(" + targetPlayerId + ")");
         ServerContext.minionHierarchy.setPlayerSire( playerId, targetPlayerId);
         
@@ -1122,6 +1126,11 @@ public class Player extends EventHandlerManager
     public function get blood () :Number
     {
         return _blood;
+    }
+    
+    public function get bloodType () :int
+    {
+        return _playerId % VConstants.UNIQUE_BLOOD_STRAINS;
     }
     
     public function get maxBlood () :Number
