@@ -20,6 +20,7 @@ import flash.utils.setInterval;
 
 import vampire.Util;
 import vampire.data.Codes;
+import vampire.data.Logic;
 import vampire.data.MinionHierarchyServer;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingGameServer;
@@ -296,15 +297,19 @@ public class VServer extends ObjectDBThane
         allsires.forEach( function ( sireId :int) :void {
             if( isPlayer( sireId )) {
                 var sire :Player = getPlayer( sireId );
-                sire.addXP( xpForEachSire );
-                log.debug("awarding sire " + sire.name + ", xp=" + xpForEachSire);
-                sire.addFeedback( "You gained " + Util.formatNumberForFeedback(xpForEachSire) + " experience from minion " + player.name );
+                if( sire.isVampire() ) {
+                    sire.addXP( xpForEachSire );
+                    log.debug("awarding sire " + sire.name + ", xp=" + xpForEachSire);
+                    sire.addFeedback( "You gained " + Util.formatNumberForFeedback(xpForEachSire) + " experience from minion " + player.name );
+                }
             }
             else {//Add to offline database
                 ServerContext.ctrl.loadOfflinePlayer(sireId, 
                     function (props :OfflinePlayerPropertyControl) :void {
                         var currentXP :Number = Number(props.get(Codes.PLAYER_PROP_XP));
-                        if( !isNaN(currentXP)) {
+                        
+                        
+                        if( !isNaN(currentXP) && currentXP >= Logic.xpNeededForLevel( VConstants.MINIMUM_VAMPIRE_LEVEL ) ) {
                             props.set(Codes.PLAYER_PROP_XP, currentXP + xpForEachSire);
                         }
                     },

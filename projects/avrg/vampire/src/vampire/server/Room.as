@@ -539,7 +539,7 @@ public class Room extends SimObjectThane
             var p :Player = getPlayer( playerId );
             if( p != null ) {
                 p.addXP( xp ); 
-                addFeedback( p.name + " gained " + xpFormatted + " experience from feeding.", p.playerId); 
+                addFeedback("You gained " + xpFormatted + " experience from feeding.", p.playerId); 
                 //Add some bonus xp to your blood bond, if they are online
                 ServerContext.vserver.awardBloodBondedXpEarned( p, xp );
                 //Add some bonus xp to your sires
@@ -548,8 +548,17 @@ public class Room extends SimObjectThane
             }
         }
         
-        awardXP( gameRecord.preyId, xpGained, xpFormatted);
-        
+        if( preyIsPlayer && preyPlayer != null) {
+            
+            if( preyPlayer.isVampire() ) {
+                awardXP( gameRecord.preyId, xpGained, xpFormatted);
+            }
+            else {//If we are not a vampire, we don't share our xp 
+                preyPlayer.addXP( xpGained );
+                addFeedback("You gained " + xpFormatted + " experience from feeding.", preyPlayer.playerId);
+            }
+        }
+            
         gameRecord.predators.forEach( function( predId :int) :void {
             awardXP( predId, xpGained, xpFormatted);
         });
