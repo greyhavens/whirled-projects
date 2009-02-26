@@ -73,6 +73,9 @@ public class Player extends EventHandlerManager
             setBlood(VConstants.MAX_BLOOD_FOR_LEVEL( this.level ));
 
         } 
+        if( _blood < 1 ) {
+            setBlood( 1 );
+        }
         log.debug("Getting blood="+_blood);
         
         //Get bloodbonded data
@@ -1194,6 +1197,10 @@ public class Player extends EventHandlerManager
         if( isVampire() ) {
             if( blood > 1 ) {
                 damage( dt * VConstants.VAMPIRE_BLOOD_LOSS_RATE);
+                //But not below 1
+                if( blood < 1 ) {
+                    setBlood( 1 );
+                }
             }
         }
         //Thralls regenerate blood
