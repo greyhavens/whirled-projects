@@ -36,6 +36,11 @@ public class SharedPlayerStateClient
 //        return int(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL));
     }
     
+    public static function getBloodType (playerId :int) :int
+    {
+        return int(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOOD_TYPE));
+    }
+    
     public static function getXP (playerId :int) :Number
     {
         var xp :Number = Number(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP));
