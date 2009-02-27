@@ -75,8 +75,19 @@ public class WorkshopView extends BattlefieldSprite
 
         // player name
         var owningPlayer :PlayerInfo = _unit.owningPlayerInfo;
-        var nameText :TextField = _movie["player_name"];
-        nameText.text = owningPlayer.displayName;
+        var displayName :TextField;
+        var hiddenName :TextField;
+        if (owningPlayer == GameCtx.localPlayerInfo) {
+            displayName = _movie["your_name"];
+            hiddenName = _movie["their_name"];
+        } else {
+            displayName = _movie["their_name"];
+            hiddenName = _movie["your_name"];
+        }
+
+        displayName.text = owningPlayer.playerName;
+        displayName.visible = true;
+        hiddenName.visible = false;
 
         // create "Shout View"
         _shoutView = new ShoutView();

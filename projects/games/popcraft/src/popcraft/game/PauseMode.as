@@ -22,7 +22,7 @@ public class PauseMode extends AppMode
         g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
         g.endFill();
 
-        var bgSprite :Sprite = UIBits.createFrame(250, 200);
+        /*var bgSprite :Sprite = UIBits.createFrame(250, 200);
 
         bgSprite.x = (Constants.SCREEN_SIZE.x * 0.5) - (bgSprite.width * 0.5);
         bgSprite.y = (Constants.SCREEN_SIZE.y * 0.5) - (bgSprite.height * 0.5);
@@ -55,9 +55,45 @@ public class PauseMode extends AppMode
 
         button.x = (bgSprite.width * 0.5) - (button.width * 0.5);
         button.y = 140;
-        bgSprite.addChild(button);
+        bgSprite.addChild(button);*/
+
+        var windowElements :Sprite = new Sprite();
+
+        var tfTitle :TextField = UIBits.createTitleText("Paused");
+        tfTitle.x = -(tfTitle.width * 0.5);
+        tfTitle.y = 0;
+        windowElements.addChild(tfTitle);
+
+        var resumeBtn :SimpleButton = UIBits.createButton("Resume", 2, 240);
+        resumeBtn.x = -(resumeBtn.width * 0.5);
+        resumeBtn.y = windowElements.height + 20;
+        windowElements.addChild(resumeBtn);
+        registerOneShotCallback(resumeBtn, MouseEvent.CLICK,
+            function (...ignored) :void {
+                ClientCtx.mainLoop.popMode();
+            });
+
+        var endBtn :SimpleButton = UIBits.createButton("End Game", 1.5, 240);
+        endBtn.x = -(endBtn.width * 0.5);
+        endBtn.y = windowElements.height + 10;
+        windowElements.addChild(endBtn);
+        registerOneShotCallback(endBtn, MouseEvent.CLICK,
+            function (...ignored) :void {
+                LevelSelectMode.create();
+            });
+
+        var frame :Sprite = UIBits.createFrame(WIDTH, windowElements.height + (V_BORDER * 2));
+        frame.x = (Constants.SCREEN_SIZE.x - WIDTH) * 0.5;
+        frame.y = (Constants.SCREEN_SIZE.y - frame.height) * 0.5;
+        _modeSprite.addChild(frame);
+
+        windowElements.x = Constants.SCREEN_SIZE.x * 0.5;
+        windowElements.y = (Constants.SCREEN_SIZE.y - windowElements.height) * 0.5;
+        _modeSprite.addChild(windowElements);
     }
 
+    protected static const WIDTH :Number = 270;
+    protected static const V_BORDER :Number = 25;
 }
 
 }
