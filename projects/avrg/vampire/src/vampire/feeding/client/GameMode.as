@@ -142,7 +142,7 @@ public class GameMode extends AppMode
     {
         super.enter();
         if (_musicChannel == null) {
-            _musicChannel = ClientCtx.audio.playSoundNamed("mus_music", null, -1);
+            _musicChannel = ClientCtx.audio.playSoundNamed("mus_main_theme", null, -1);
         }
     }
 

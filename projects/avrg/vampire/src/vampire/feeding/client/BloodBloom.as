@@ -150,11 +150,12 @@ public class BloodBloom extends FeedingGameClient
         rm.queueResourceLoad("swf",   "blood",          { embeddedClass: SWF_BLOOD });
         rm.queueResourceLoad("image", "bg",             { embeddedClass: IMG_BG });
 
-        rm.queueResourceLoad("sound", "sfx_heartbeat",  { embeddedClass: SOUND_HEARTBEAT });
-        rm.queueResourceLoad("sound", "sfx_red_burst",  { embeddedClass: SOUND_RED_BURST });
-        rm.queueResourceLoad("sound", "sfx_white_burst", { embeddedClass: SOUND_WHITE_BURST });
-        rm.queueResourceLoad("sound", "sfx_got_blood",  { embeddedClass: SOUND_GOT_BLOOD });
-        rm.queueResourceLoad("sound", "mus_music",      { embeddedClass: SOUND_MUSIC, type: "music" });
+        rm.queueResourceLoad("sound", "sfx_heartbeat",  { embeddedClass: SFX_HEARTBEAT });
+        rm.queueResourceLoad("sound", "sfx_red_burst",  { embeddedClass: SFX_RED_BURST });
+        rm.queueResourceLoad("sound", "sfx_white_burst", { embeddedClass: SFX_WHITE_BURST });
+        rm.queueResourceLoad("sound", "sfx_got_blood",  { embeddedClass: SFX_GOT_BLOOD });
+        rm.queueResourceLoad("sound", "sfx_got_special_strain",  { embeddedClass: SFX_GOT_SPECIAL_STRAIN });
+        rm.queueResourceLoad("sound", "mus_main_theme",      { embeddedClass: MUS_MAIN_THEME, type: "music" });
 
         rm.loadQueuedResources(
             function () :void {
@@ -179,16 +180,18 @@ public class BloodBloom extends FeedingGameClient
     protected static const IMG_BG :Class;
 
     [Embed(source="../../../../rsrc/feeding/heartbeat.mp3")]
-    protected static const SOUND_HEARTBEAT :Class;
+    protected static const SFX_HEARTBEAT :Class;
     [Embed(source="../../../../rsrc/feeding/red_burst.mp3")]
-    protected static const SOUND_RED_BURST :Class;
+    protected static const SFX_RED_BURST :Class;
     [Embed(source="../../../../rsrc/feeding/white_burst.mp3")]
-    protected static const SOUND_WHITE_BURST :Class;
+    protected static const SFX_WHITE_BURST :Class;
     [Embed(source="../../../../rsrc/feeding/got_blood.mp3")]
-    protected static const SOUND_GOT_BLOOD :Class;
+    protected static const SFX_GOT_BLOOD :Class;
+    [Embed(source="../../../../rsrc/feeding/got_special_strain.mp3")]
+    protected static const SFX_GOT_SPECIAL_STRAIN :Class;
 
     [Embed(source="../../../../rsrc/feeding/music.mp3")]
-    protected static const SOUND_MUSIC :Class;
+    protected static const MUS_MAIN_THEME :Class;
 }
 
 }

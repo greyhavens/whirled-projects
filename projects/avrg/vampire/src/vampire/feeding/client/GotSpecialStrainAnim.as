@@ -23,6 +23,7 @@ public class GotSpecialStrainAnim
         addTask(new SerialTask(
             new ShowFramesTask(_movie, 2, 8, 0.75),
             new TimedTask(0.75),
+            new PlaySoundTask("sfx_got_special_strain"),
             new ParallelTask(
                 LocationTask.CreateSmooth(DEST_LOC.x, DEST_LOC.y, 1.25),
                 ScaleTask.CreateSmooth(3, 3, 1.25)),
