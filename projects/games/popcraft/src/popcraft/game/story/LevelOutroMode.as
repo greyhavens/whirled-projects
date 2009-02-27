@@ -95,7 +95,7 @@ public class LevelOutroMode extends AppMode
         var button :SimpleButton;
 
         if (_success && !ClientCtx.levelMgr.isLastLevel) {
-            button = UIBits.createButton("Next Level", 1.5, 150);
+            button = UIBits.createButton("Next Level", 2.5, 210);
             var localThis :LevelOutroMode = this;
             registerOneShotCallback(button, MouseEvent.CLICK,
                 function (...ignored) :void {
@@ -108,7 +108,7 @@ public class LevelOutroMode extends AppMode
                 });
 
         } else if (!_success) {
-            button = UIBits.createButton("Retry", 1.5, 150);
+            button = UIBits.createButton("Retry", 2.5, 210);
             registerOneShotCallback(button, MouseEvent.CLICK,
                 function (...ignored) :void {
                     ClientCtx.levelMgr.playLevel();
@@ -121,14 +121,14 @@ public class LevelOutroMode extends AppMode
             bgSprite.addChild(button);
         }
 
-        button = UIBits.createButton("Main Menu", 1.5, 150);
+        button = UIBits.createButton("Main Menu", 1.5, 210);
         registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
                 LevelSelectMode.create();
             });
 
         button.x = (WIDTH * 0.5) - (button.width * 0.5);
-        button.y = 260;
+        button.y = 270;
         bgSprite.addChild(button);
     }
 
@@ -255,7 +255,7 @@ public class LevelOutroMode extends AppMode
     protected static var log :Log = Log.getLog(LevelOutroMode);
 
     protected static const WIDTH :Number = 280;
-    protected static const HEIGHT :Number = 325;
+    protected static const HEIGHT :Number = 335;
 
 }
 
