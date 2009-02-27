@@ -124,6 +124,7 @@ public class MultiplayerGameOverMode extends AppMode
             _playedSound = true;
         }
     }
+
     protected function updateStats () :void
     {
         var gameArrangement :int = ClientCtx.lobbyConfig.computeTeamArrangement();

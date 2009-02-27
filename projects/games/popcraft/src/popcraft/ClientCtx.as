@@ -42,7 +42,7 @@ public class ClientCtx
 
     public static function get isOnExternalSite () :Boolean
     {
-        return kapi.loaded;
+        return false;//kapi.loaded;
     }
 
     public static function get externalPlayerName () :String
