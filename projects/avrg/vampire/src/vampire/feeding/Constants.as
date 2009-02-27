@@ -42,10 +42,10 @@ public class Constants
     public static const MAX_CELL_COUNT :Array = [ 60, 8, 999, 1 ];
     public static const BEAT_CELL_BIRTH_COUNT :IntRange = new IntRange(3, 4, Rand.STREAM_GAME);
     public static const CELL_BIRTH_DISTANCE :Array = [
-        new NumRange(65, 90, Rand.STREAM_GAME),
-        new NumRange(190, 195, Rand.STREAM_GAME),
-        null,
-        new NumRange(160, 170, Rand.STREAM_GAME),
+        new NumRange(65, 85, Rand.STREAM_GAME),     // Red
+        new NumRange(190, 195, Rand.STREAM_GAME),   // White
+        new NumRange(145, 150, Rand.STREAM_GAME),   // Multiplier
+        new NumRange(160, 170, Rand.STREAM_GAME),   // Special
     ];
     public static const CELL_RADIUS :Array = [ 8, 8, 8, 21 ];
     public static const CELL_BIRTH_TIME :Number = 0.5;

@@ -215,16 +215,19 @@ public class Cell extends CollidableObj
     {
         // move around the heart
         var curLoc :Vector2 = this.loc;
-        var ctrImpulse :Vector2 = (this.movementType == MOVE_OUTWARDS ?
+        var ctrImpulse :Vector2 = (this.orbitMovementType == ORBIT_OUTWARDS ?
             curLoc.subtract(Constants.GAME_CTR) :
             Constants.GAME_CTR.subtract(curLoc));
-
-        ctrImpulse.length = 2;
 
         var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
         perpImpulse.length = 3.5;
 
-        var impulse :Vector2 = ctrImpulse.add(perpImpulse);
+        ctrImpulse.length = 2;
+
+        var impulse :Vector2 = (this.orbitMovementType == ORBIT_NORMAL ?
+                                perpImpulse :
+                                ctrImpulse.add(perpImpulse));
+
         impulse.length = SPEED_BASE * dt;
 
         curLoc.x += impulse.x;
@@ -317,15 +320,18 @@ public class Cell extends CollidableObj
         return true;
     }
 
-    protected function get movementType () :int
+    protected function get orbitMovementType () :int
     {
         switch (_type) {
         case Constants.CELL_WHITE:
         case Constants.CELL_SPECIAL:
-            return MOVE_INWARDS;
+            return ORBIT_INWARDS;
+
+        case Constants.CELL_MULTIPLIER:
+            return ORBIT_NORMAL;
 
         default:
-            return MOVE_OUTWARDS;
+            return ORBIT_OUTWARDS;
         }
     }
 
@@ -348,8 +354,9 @@ public class Cell extends CollidableObj
     protected static const SPEED_BASE :Number = 5;
     protected static const SPEED_FOLLOW :Number = 60;
 
-    protected static const MOVE_INWARDS :int = 0;
-    protected static const MOVE_OUTWARDS :int = 1;
+    protected static const ORBIT_NORMAL :int = 0;
+    protected static const ORBIT_INWARDS :int = 1;
+    protected static const ORBIT_OUTWARDS :int = 2;
 
     protected static const RED_ROTATION_TIME :Number = 3;
     protected static const BONUS_ROTATION_TIME :Number = 1.5;

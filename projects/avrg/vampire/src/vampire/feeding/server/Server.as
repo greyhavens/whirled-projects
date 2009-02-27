@@ -208,7 +208,7 @@ public class Server extends FeedingGameServer
             }
             break;
 
-        case CreateBonusMsg.NAME:
+        case CreateMultiplierMsg.NAME:
             // bonuses are delivered to another randomly-picked player
             var targetPlayerId :int = getAnotherPlayer(e.senderId);
             if (targetPlayerId != Constants.NULL_PLAYER) {

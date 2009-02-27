@@ -8,7 +8,7 @@ public class Util
 {
     public static function initMessageManager (mgr :MessageManager) :void
     {
-        mgr.addMessageType(CreateBonusMsg);
+        mgr.addMessageType(CreateMultiplierMsg);
         mgr.addMessageType(CurrentScoreMsg);
         mgr.addMessageType(ClientReadyMsg);
         mgr.addMessageType(StartRoundMsg);

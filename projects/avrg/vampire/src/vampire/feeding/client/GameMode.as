@@ -31,7 +31,7 @@ public class GameMode extends AppMode
     public function sendMultiplier (multiplier :int, x :int, y :int) :void
     {
         ClientCtx.msgMgr.sendMessage(
-            CreateBonusMsg.create(ClientCtx.localPlayerId, x, y, multiplier));
+            CreateMultiplierMsg.create(ClientCtx.localPlayerId, x, y, multiplier));
 
         if (ClientCtx.isSinglePlayer) {
             // In single-player games, there's nobody else to volley our multipliers back
@@ -44,7 +44,7 @@ public class GameMode extends AppMode
                 sendMultiplierObj.addTask(new SerialTask(
                     new TimedTask(Constants.SP_MULTIPLIER_RETURN_TIME.next()),
                     new FunctionTask(function () :void {
-                        onNewMultiplier(CreateBonusMsg.create(
+                        onCreateMultiplier(CreateMultiplierMsg.create(
                             Constants.NULL_PLAYER, loc.x, loc.y, multiplier + 1));
                     }),
                     new SelfDestructTask()));
@@ -158,8 +158,8 @@ public class GameMode extends AppMode
     {
         log.info("onMsgReceived", "name", e.msg.name);
 
-        if (e.msg is CreateBonusMsg) {
-            onNewMultiplier(e.msg as CreateBonusMsg);
+        if (e.msg is CreateMultiplierMsg) {
+            onCreateMultiplier(e.msg as CreateMultiplierMsg);
 
         } else if (e.msg is GetRoundScores) {
             // Send our final score to the server. We'll wait for the GameResultsMsg
@@ -179,38 +179,48 @@ public class GameMode extends AppMode
         ClientCtx.mainLoop.changeMode(new RoundOverMode(results));
     }
 
-    protected function onNewMultiplier (msg :CreateBonusMsg) :void
+    protected function onCreateMultiplier (msg :CreateMultiplierMsg) :void
     {
         if (msg.playerId != ClientCtx.localPlayerId) {
+            // make sure the cell is spawning far enough way from the heart
+            var loc :Vector2 = new Vector2(msg.x, msg.y);
+            var requiredDist :NumRange = Constants.CELL_BIRTH_DISTANCE[Constants.CELL_MULTIPLIER];
+            var dist :Number = loc.subtract(Constants.GAME_CTR).length;
+            if (dist < requiredDist.min || dist > requiredDist.max) {
+                loc = loc.subtract(Constants.GAME_CTR);
+                loc.length = requiredDist.next();
+                loc.addLocal(Constants.GAME_CTR);
+            }
+
             // animate the bonus into the game, and call addMultiplierToBoard
             // when the anim completes
             var anim :NewBonusAnimation = new NewBonusAnimation(
                 NewBonusAnimation.TYPE_RECEIVE,
                 msg.multiplier,
-                new Vector2(msg.x, msg.y),
-                function () :void { addMultiplierToBoard(msg); });
+                loc,
+                function () :void { addMultiplierToBoard(msg.multiplier, loc, msg.playerId); });
 
             addObject(anim, GameCtx.uiLayer);
         }
     }
 
-    protected function addMultiplierToBoard (msg :CreateBonusMsg) :void
+    protected function addMultiplierToBoard (multiplier :int, loc :Vector2, playerId :int) :void
     {
-        var cell :Cell = GameObjects.createCell(Constants.CELL_MULTIPLIER, false, msg.multiplier);
-        cell.x = msg.x;
-        cell.y = msg.y;
+        var cell :Cell = GameObjects.createCell(Constants.CELL_MULTIPLIER, false, multiplier);
+        cell.x = loc.x;
+        cell.y = loc.y;
 
         if (!ClientCtx.isSinglePlayer) {
             // show a little animation showing who gave us the multiplier
-            var playerName :String = ClientCtx.getPlayerName(msg.playerId);
+            var playerName :String = ClientCtx.getPlayerName(playerId);
             var tfName :TextField = TextBits.createText(playerName, 1.4, 0, 0xffffff,
                                                         "center", TextBits.FONT_GARAMOND);
             tfName.cacheAsBitmap = true;
             var sprite :Sprite = SpriteUtil.createSprite();
             sprite.addChild(tfName);
             var animName :SimpleSceneObject = new SimpleSceneObject(sprite);
-            var animX :Number = msg.x - (animName.width * 0.5);
-            var animY :Number = msg.y - animName.height;
+            var animX :Number = loc.x - (animName.width * 0.5);
+            var animY :Number = loc.y - animName.height;
             animName.x = animX;
             animName.y = animY;
             animName.addTask(new SerialTask(

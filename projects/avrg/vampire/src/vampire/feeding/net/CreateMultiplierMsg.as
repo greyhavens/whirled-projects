@@ -4,19 +4,20 @@ import com.whirled.contrib.simplegame.net.Message;
 
 import flash.utils.ByteArray;
 
-public class CreateBonusMsg
+public class CreateMultiplierMsg
     implements Message
 {
-    public static const NAME :String = "CreateBonus";
+    public static const NAME :String = "CreateMultiplier";
 
     public var playerId :int;
     public var x :int;
     public var y :int;
     public var multiplier :int;
 
-    public static function create (playerId :int, x :int, y :int, multiplier :int) :CreateBonusMsg
+    public static function create (playerId :int, x :int, y :int, multiplier :int)
+        :CreateMultiplierMsg
     {
-        var msg :CreateBonusMsg = new CreateBonusMsg();
+        var msg :CreateMultiplierMsg = new CreateMultiplierMsg();
         msg.playerId = playerId;
         msg.x = x;
         msg.y = y;
