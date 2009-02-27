@@ -178,5 +178,5 @@ class TestGameController extends OneRoomGameRoom
     protected var _timerMgr :TimerManager = new TimerManager();
 
     protected static const MIN_PLAYERS :int = 1;
-    protected static const START_GAME_DELAY :Number = 4;
+    protected static const START_GAME_DELAY :Number = 7;
 }
