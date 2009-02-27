@@ -37,6 +37,29 @@ public class WorkshopView extends BattlefieldSprite
         return GameCtx.gameMode.getObjectNamed(NAME_PREFIX + playerIndex) as WorkshopView;
     }
 
+    public static function setPlayerName (movie :MovieClip, owningPlayer :PlayerInfo) :void
+    {
+        var localName :TextField = movie["your_name"];
+        var friendlyName :TextField = movie["friendly_name"];
+        var enemyName :TextField = movie["enemy_name"];
+        if (owningPlayer == GameCtx.localPlayerInfo) {
+            localName.text = owningPlayer.playerName;
+            localName.visible = true;
+            friendlyName.visible = false;
+            enemyName.visible = false;
+        } else if (owningPlayer.teamId == GameCtx.localPlayerInfo.teamId) {
+            friendlyName.text = owningPlayer.playerName;
+            friendlyName.visible = true;
+            localName.visible = false;
+            enemyName.visible = false;
+        } else {
+            enemyName.text = owningPlayer.playerName;
+            enemyName.visible = true;
+            localName.visible = false;
+            friendlyName.visible = false;
+        }
+    }
+
     public function WorkshopView (unit :WorkshopUnit)
     {
         _unit = unit;
@@ -74,26 +97,7 @@ public class WorkshopView extends BattlefieldSprite
         updateShieldMeters(false);
 
         // player name
-        var owningPlayer :PlayerInfo = _unit.owningPlayerInfo;
-        var localName :TextField = _movie["your_name"];
-        var friendlyName :TextField = _movie["friendly_name"];
-        var enemyName :TextField = _movie["enemy_name"];
-        if (owningPlayer == GameCtx.localPlayerInfo) {
-            localName.text = owningPlayer.playerName;
-            localName.visible = true;
-            friendlyName.visible = false;
-            enemyName.visible = false;
-        } else if (owningPlayer.teamId == GameCtx.localPlayerInfo.teamId) {
-            friendlyName.text = owningPlayer.playerName;
-            friendlyName.visible = true;
-            localName.visible = false;
-            enemyName.visible = false;
-        } else {
-            enemyName.text = owningPlayer.playerName;
-            enemyName.visible = true;
-            localName.visible = false;
-            friendlyName.visible = false;
-        }
+        WorkshopView.setPlayerName(_movie, _unit.owningPlayerInfo);
 
         // create "Shout View"
         _shoutView = new ShoutView();

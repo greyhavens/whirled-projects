@@ -24,9 +24,7 @@ public class DeadWorkshopView extends BattlefieldSprite
         _owningPlayerIndex = unit.owningPlayerIndex;
 
         // player name
-        var owningPlayer :PlayerInfo = unit.owningPlayerInfo;
-        var nameText :TextField = _movie["player_name"];
-        nameText.text = owningPlayer.displayName;
+        WorkshopView.setPlayerName(_movie, unit.owningPlayerInfo);
 
         // swap in the rubble movie for the workshop
         var workshop :MovieClip = _movie["workshop"];
