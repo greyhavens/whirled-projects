@@ -89,7 +89,7 @@ public class MultiplayerGameOverMode extends AppMode
         tfWinners.y = windowElements.height + 10;
         windowElements.addChild(tfWinners);
 
-        var playAgain :SimpleButton = UIBits.createButton("Play Again?", 2);
+        var playAgain :SimpleButton = UIBits.createButton("Play Again?", 2.5, 300);
         playAgain.x = -(playAgain.width * 0.5);
         playAgain.y = windowElements.height + 20;
         windowElements.addChild(playAgain);
@@ -204,7 +204,7 @@ public class MultiplayerGameOverMode extends AppMode
 
     protected var _playedSound :Boolean;
 
-    protected static const WIDTH :Number = 320;
+    protected static const WIDTH :Number = 370;
     protected static const V_BORDER :Number = 20;
 }
 
