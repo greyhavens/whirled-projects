@@ -63,7 +63,7 @@ public class HUD extends SceneObject
         
         
 
-            
+        showBlood( ClientContext.ourPlayerId );  
         
         
         
@@ -187,9 +187,11 @@ public class HUD extends SceneObject
             if( playerIdUpdated == ClientContext.ourPlayerId) {
             
                 if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
+                    trace("Blood changed " + e);
                     showBlood( ClientContext.ourPlayerId );
                 }
                 else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
+                    trace("XP changed " + e);
                     showXP( ClientContext.ourPlayerId );
                     showBlood( ClientContext.ourPlayerId );
                 }
@@ -459,6 +461,7 @@ public class HUD extends SceneObject
                }
            });
            
+           Command.bind( _mouseCaptureBloodSprite, MouseEvent.CLICK, VampireController.SHOW_INTRO, "bloodtype");
            
            _mouseCaptureXPSprite = new Sprite();
            
@@ -857,7 +860,7 @@ public class HUD extends SceneObject
         _mouseCaptureBloodSprite.y = _hudBlood.y;
         _hudMC.addChild( _mouseCaptureBloodSprite );
         
-        trace("_hudType.y=" + _hudType.y);
+//        trace("_hudType.y=" + _hudType.y);
         _hudType.gotoAndStop( int( ClientContext.model.bloodType ) );
 //        _hudType.y = -_hudBlood.height;
         
