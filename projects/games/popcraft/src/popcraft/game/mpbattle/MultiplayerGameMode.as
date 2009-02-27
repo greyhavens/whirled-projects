@@ -133,7 +133,7 @@ public class MultiplayerGameMode extends GameMode
                 playerColor = playerDisplayData.color;
             }
 
-            var displayName :String = ClientCtx.seatingMgr.getPlayerName(playerIndex);
+            var displayName :String = ClientCtx.lobbyConfig.getPlayerDisplayName(playerIndex);
 
             var headshot :DisplayObject;
             var headshotName :String = ClientCtx.lobbyConfig.getPlayerPortraitName(playerIndex);

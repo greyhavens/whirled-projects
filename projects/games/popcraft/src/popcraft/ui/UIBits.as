@@ -102,8 +102,8 @@ public class UIBits
         return sprite;
     }
 
-    public static function initTextField (tf :TextField, text :String, textScale :Number,
-        maxWidth :int, textColor :Number, align :String = TextFormatAlign.CENTER) :void
+    public static function initTextField (tf :TextField, text :String, textScale :Number = 1,
+        maxWidth :int = 0, textColor :Number = 0, align :String = TextFormatAlign.CENTER) :void
     {
         var wordWrap :Boolean = (maxWidth > 0);
 

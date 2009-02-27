@@ -135,6 +135,10 @@ public class MultiplayerLobbyMode extends AppMode
 
             sendServerMsg(LobbyConfig.MSG_SET_PORTRAIT, ClientCtx.savedPlayerBits.favoritePortrait);
             sendServerMsg(LobbyConfig.MSG_SET_COLOR, ClientCtx.savedPlayerBits.favoriteColor);
+
+            if (ClientCtx.isOnExternalSite) {
+                sendServerMsg(LobbyConfig.MSG_SET_EXTERNAL_NAME, ClientCtx.externalPlayerName);
+            }
         });
 
         _initedLocalPlayerData = true;
@@ -440,10 +444,7 @@ class LobbyHeadshotSprite extends SceneObject
         _sprite.addChild(_headshot);
 
         // player name
-        _tfName = UIBits.createText(ClientCtx.seatingMgr.getPlayerName(playerSeat), 1.2);
-        TextFieldUtil.setMaximumTextWidth(_tfName, NAME_MAX_WIDTH);
-        _tfName.x = NAME_OFFSET;
-        _tfName.y = (HEADSHOT_SIZE.y - _tfName.height) * 0.5;
+        _tfName = UIBits.createText("", 1.2);
         _sprite.addChild(_tfName);
 
         _handicapIcon = ClientCtx.instantiateMovieClip("multiplayer_lobby", "handicapped");
@@ -467,6 +468,7 @@ class LobbyHeadshotSprite extends SceneObject
         updateHandicap();
         updatePortrait();
         updateColor();
+        updateName();
     }
 
     protected function onPropChanged (propName :String, playerIndex :int = -1) :void
@@ -483,6 +485,10 @@ class LobbyHeadshotSprite extends SceneObject
 
             case LobbyConfig.PROP_COLORS:
                 updateColor();
+                break;
+
+            case LobbyConfig.PROP_EXTERNAL_NAME:
+                updateName();
                 break;
             }
         }
@@ -512,6 +518,14 @@ class LobbyHeadshotSprite extends SceneObject
             _tfName.background = true;
             _tfName.backgroundColor = color;
         }
+    }
+
+    protected function updateName () :void
+    {
+        UIBits.initTextField(_tfName, ClientCtx.lobbyConfig.getPlayerDisplayName(_playerSeat), 1.2);
+        TextFieldUtil.setMaximumTextWidth(_tfName, NAME_MAX_WIDTH);
+        _tfName.x = NAME_OFFSET;
+        _tfName.y = (HEADSHOT_SIZE.y - _tfName.height) * 0.5;
     }
 
     override public function get displayObject () :DisplayObject

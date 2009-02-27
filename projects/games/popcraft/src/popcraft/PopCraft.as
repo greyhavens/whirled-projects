@@ -3,6 +3,7 @@
 
 package popcraft {
 
+import com.kongregate.as3.client.KongregateAPI;
 import com.threerings.util.KeyboardCodes;
 import com.threerings.util.Log;
 import com.whirled.contrib.EventHandlerManager;
@@ -36,6 +37,9 @@ public class PopCraft extends Sprite
 
     public function PopCraft ()
     {
+        ClientCtx.kapi = new KongregateAPI();
+        addChild(ClientCtx.kapi);
+
         ClientCtx.mainSprite = this;
 
         // setup GameControl

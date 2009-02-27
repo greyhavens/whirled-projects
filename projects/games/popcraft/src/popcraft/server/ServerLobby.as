@@ -28,6 +28,7 @@ public class ServerLobby
                 LobbyConfig.UNASSIGNED_TEAM_ID));
             setProp(LobbyConfig.PROP_HAS_MORBID_INFECTION, ArrayUtil.create(numPlayers, false));
             setProp(LobbyConfig.PROP_HAS_ENDLESS_MODE, ArrayUtil.create(numPlayers, false));
+            setProp(LobbyConfig.PROP_EXTERNAL_NAME, ArrayUtil.create(numPlayers, null));
 
             setProp(LobbyConfig.PROP_INITED, true);
         });
@@ -99,6 +100,10 @@ public class ServerLobby
 
         case LobbyConfig.MSG_SET_ENDLESS_MODE:
             setPropAt(LobbyConfig.PROP_HAS_ENDLESS_MODE, playerSeat, e.value as Boolean);
+            break;
+
+        case LobbyConfig.MSG_SET_EXTERNAL_NAME:
+            setPropAt(LobbyConfig.PROP_EXTERNAL_NAME, playerSeat, e.value as String);
             break;
         }
     }

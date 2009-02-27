@@ -14,6 +14,7 @@ public class LobbyConfig
     public static const PROP_COLORS :String             = "lc_Colors"; // Array<uint>
     public static const PROP_HAS_MORBID_INFECTION :String = "lc_HMI"; // Array<Boolean>
     public static const PROP_HAS_ENDLESS_MODE :String   = "lc_HasEndless"; // Array<Boolean>
+    public static const PROP_EXTERNAL_NAME :String      = "lc_ExternalName"; // Array<String>
 
     // Client->Server messages
     public static const MSG_SET_HANDICAP :String        = "lc_setHandicap"; // Boolean
@@ -22,6 +23,7 @@ public class LobbyConfig
     public static const MSG_SET_COLOR :String           = "lc_setColor"; // uint
     public static const MSG_SET_MORBID_INFECTION :String = "lc_setMI"; // Boolean
     public static const MSG_SET_ENDLESS_MODE :String    = "lc_setEndless"; // Boolean
+    public static const MSG_SET_EXTERNAL_NAME :String    = "lc_setEN"; // Boolean
 
     // Server->Client messages
     public static const MSG_START_GAME :String          = "lc_startGame";
@@ -175,6 +177,16 @@ public class LobbyConfig
                     false);
     }
 
+    public function getPlayerDisplayName (playerIndex :int) :String
+    {
+        var name :String = getExternalName(playerIndex);
+        if (name == null) {
+            name = _seatingMgr.getPlayerName(playerIndex);
+        }
+
+        return name;
+    }
+
     public function getPlayerPortraitName (playerIndex :int) :String
     {
         var portraits :Array = _gameCtrl.net.get(PROP_PORTRAITS) as Array;
@@ -193,6 +205,16 @@ public class LobbyConfig
                 colors[playerIndex] is uint ?
                     colors[playerIndex] :
                     Constants.RANDOM_COLOR);
+    }
+
+    public function getExternalName (playerIndex :int) :String
+    {
+        var names :Array = _gameCtrl.net.get(PROP_EXTERNAL_NAME) as Array;
+        return (names != null &&
+                playerIndex < names.length &&
+                names[playerIndex] is String ?
+                names[playerIndex] :
+                null);
     }
 
     public function get randSeed () :uint
