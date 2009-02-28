@@ -12,7 +12,7 @@ public class Heart extends SceneObject
 {
     public function Heart (heartMovie :MovieClip)
     {
-        _totalBeatTime = Constants.BEAT_TIME_BASE;
+        _totalBeatTime = Constants.BEAT_TIME;
 
         _movie = heartMovie;
     }

@@ -48,7 +48,7 @@ public class PlayerCursor extends CollidableObj
 
         // update location
         var curLoc :Vector2 = this.loc;
-        var moveDist :Number = this.speed * dt;
+        var moveDist :Number = Constants.CURSOR_SPEED * dt;
         curLoc.x += (_moveDirection.x * moveDist);
         curLoc.y += (_moveDirection.y * moveDist);
         curLoc = GameCtx.clampLoc(curLoc);
@@ -132,16 +132,6 @@ public class PlayerCursor extends CollidableObj
         this.y = curLoc.y;
     }
 
-    public function offsetSpeedPenalty (offset :Number) :void
-    {
-        _speedPenalty = Math.max(_speedPenalty + offset, 0);
-    }
-
-    public function offsetSpeedBonus (offset :Number) :void
-    {
-        _speedBonus = Math.max(_speedBonus + offset, 0);
-    }
-
     protected function collideArtery (arteryType :int) :void
     {
         // get rid of cells
@@ -168,20 +158,10 @@ public class PlayerCursor extends CollidableObj
         return true;
     }
 
-    protected function get speed () :Number
-    {
-        return MathUtil.clamp(
-            Constants.CURSOR_SPEED_BASE + _speedBonus - _speedPenalty,
-            Constants.CURSOR_SPEED_MIN,
-            Constants.CURSOR_SPEED_MAX);
-    }
-
     protected var _sprite :Sprite;
     protected var _movie :MovieClip;
 
     protected var _moveDirection :Vector2 = new Vector2();
-    protected var _speedPenalty :Number = 0;
-    protected var _speedBonus :Number = 0;
 
     protected var _attachedWhiteCells :Array = [];
 

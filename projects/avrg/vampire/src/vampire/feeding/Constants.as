@@ -16,9 +16,7 @@ public class Constants
     public static const PLAYER_PREDATOR :int = 0;
     public static const PLAYER_PREY :int = 1;
 
-    public static const CURSOR_SPEED_BASE :Number = 70;
-    public static const CURSOR_SPEED_MIN :Number = 20;
-    public static const CURSOR_SPEED_MAX :Number = 70;
+    public static const CURSOR_SPEED :Number = 70;
     public static const CURSOR_RADIUS :Number = 9;
 
     public static const HEART_RADIUS :Number = 55;
@@ -26,11 +24,7 @@ public class Constants
 
     public static const CREATE_BONUS_BURST_SIZE :int = 3;
 
-    public static const BEAT_TIME_BASE :Number =                    16 / 4;
-    public static const BEAT_TIME_MIN :Number =                     6 / 4;
-    public static const BEAT_TIME_MAX :Number =                     16 / 4;
-    public static const BEAT_TIME_INCREASE_PER_SECOND :Number =     0.2 / 4;
-    public static const BEAT_TIME_DECREASE_PER_DELIVERY :Number =   1.5 / 4;
+    public static const BEAT_TIME :Number = 4;
 
     public static const ARTERY_TOP :int = 0;
     public static const ARTERY_BOTTOM :int = 1;
