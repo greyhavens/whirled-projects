@@ -155,6 +155,7 @@ public class BloodBloom extends FeedingGameClient
         rm.queueResourceLoad("sound", "sfx_white_burst", { embeddedClass: SFX_WHITE_BURST });
         rm.queueResourceLoad("sound", "sfx_got_blood",  { embeddedClass: SFX_GOT_BLOOD });
         rm.queueResourceLoad("sound", "sfx_got_special_strain",  { embeddedClass: SFX_GOT_SPECIAL_STRAIN });
+        rm.queueResourceLoad("sound", "sfx_popped_special_strain",  { embeddedClass: SFX_POPPED_SPECIAL_STRAIN });
         rm.queueResourceLoad("sound", "mus_main_theme",      { embeddedClass: MUS_MAIN_THEME, type: "music" });
 
         rm.loadQueuedResources(
@@ -189,6 +190,8 @@ public class BloodBloom extends FeedingGameClient
     protected static const SFX_GOT_BLOOD :Class;
     [Embed(source="../../../../rsrc/feeding/got_special_strain.mp3")]
     protected static const SFX_GOT_SPECIAL_STRAIN :Class;
+    [Embed(source="../../../../rsrc/feeding/popped_special_strain.mp3")]
+    protected static const SFX_POPPED_SPECIAL_STRAIN :Class;
 
     [Embed(source="../../../../rsrc/feeding/music.mp3")]
     protected static const MUS_MAIN_THEME :Class;
