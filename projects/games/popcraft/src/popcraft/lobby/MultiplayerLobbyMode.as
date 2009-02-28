@@ -135,10 +135,6 @@ public class MultiplayerLobbyMode extends AppMode
 
             sendServerMsg(LobbyConfig.MSG_SET_PORTRAIT, ClientCtx.savedPlayerBits.favoritePortrait);
             sendServerMsg(LobbyConfig.MSG_SET_COLOR, ClientCtx.savedPlayerBits.favoriteColor);
-
-            if (ClientCtx.isOnExternalSite) {
-                sendServerMsg(LobbyConfig.MSG_SET_EXTERNAL_NAME, ClientCtx.externalPlayerName);
-            }
         });
 
         _initedLocalPlayerData = true;
@@ -486,10 +482,6 @@ class LobbyHeadshotSprite extends SceneObject
             case LobbyConfig.PROP_COLORS:
                 updateColor();
                 break;
-
-            case LobbyConfig.PROP_EXTERNAL_NAME:
-                updateName();
-                break;
             }
         }
     }
@@ -522,7 +514,7 @@ class LobbyHeadshotSprite extends SceneObject
 
     protected function updateName () :void
     {
-        UIBits.initTextField(_tfName, ClientCtx.lobbyConfig.getPlayerDisplayName(_playerSeat), 1.2);
+        UIBits.initTextField(_tfName, ClientCtx.seatingMgr.getPlayerName(_playerSeat), 1.2);
         TextFieldUtil.setMaximumTextWidth(_tfName, NAME_MAX_WIDTH);
         _tfName.x = NAME_OFFSET;
         _tfName.y = (HEADSHOT_SIZE.y - _tfName.height) * 0.5;

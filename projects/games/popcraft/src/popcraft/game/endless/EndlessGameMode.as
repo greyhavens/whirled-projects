@@ -416,7 +416,7 @@ public class EndlessGameMode extends GameMode
                 if (color == Constants.RANDOM_COLOR) {
                     color = playerDisplayData.color;
                 }
-                displayName = ClientCtx.lobbyConfig.getPlayerDisplayName(playerIndex);
+                displayName = ClientCtx.seatingMgr.getPlayerName(playerIndex);
                 var headshotName :String = ClientCtx.lobbyConfig.getPlayerPortraitName(playerIndex);
                 if (headshotName == Constants.DEFAULT_PORTRAIT) {
                     headshot = ClientCtx.seatingMgr.getPlayerHeadshot(playerIndex, true);

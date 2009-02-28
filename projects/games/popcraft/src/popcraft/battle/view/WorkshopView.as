@@ -43,17 +43,17 @@ public class WorkshopView extends BattlefieldSprite
         var friendlyName :TextField = movie["friendly_name"];
         var enemyName :TextField = movie["enemy_name"];
         if (owningPlayer == GameCtx.localPlayerInfo) {
-            localName.text = owningPlayer.playerName;
+            localName.text = owningPlayer.displayName;
             localName.visible = true;
             friendlyName.visible = false;
             enemyName.visible = false;
         } else if (owningPlayer.teamId == GameCtx.localPlayerInfo.teamId) {
-            friendlyName.text = owningPlayer.playerName;
+            friendlyName.text = owningPlayer.displayName;
             friendlyName.visible = true;
             localName.visible = false;
             enemyName.visible = false;
         } else {
-            enemyName.text = owningPlayer.playerName;
+            enemyName.text = owningPlayer.displayName;
             enemyName.visible = true;
             localName.visible = false;
             friendlyName.visible = false;

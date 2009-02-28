@@ -1,7 +1,5 @@
 package popcraft {
 
-import com.kongregate.as3.client.KongregateAPI;
-
 import com.whirled.contrib.LevelPackManager;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
@@ -20,8 +18,6 @@ import popcraft.game.story.LevelManager;
 
 public class ClientCtx
 {
-    public static var kapi :KongregateAPI;
-
     public static var mainSprite :PopCraft;
     public static var mainLoop :MainLoop;
     public static var rsrcs :ResourceManager;
@@ -39,16 +35,6 @@ public class ClientCtx
     public static var lobbyConfig :LobbyConfig = new LobbyConfig();
 
     public static var userCookieMgr :UserCookieManager;
-
-    public static function get isOnExternalSite () :Boolean
-    {
-        return false;//kapi.loaded;
-    }
-
-    public static function get externalPlayerName () :String
-    {
-        return (isOnExternalSite ? kapi.user.getName() : null);
-    }
 
     public static function awardTrophy (trophyName :String) :void
     {
