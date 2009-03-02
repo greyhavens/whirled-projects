@@ -95,11 +95,14 @@ package vampire.client.actions.hierarchy
 //            bg.scaleX = bg.scaleY = 1.5;
             
             _bondIcon = ClientContext.instantiateMovieClip("HUD", "bond_icon", true);
+            _bondIcon.mouseEnabled = true;
+            addGlowFilter( _bondIcon );
             _bondIcon.scaleX = _bondIcon.scaleY = 2;
             _bondIcon.x = 25;
             _bondIcon.y = 60;
             _hierarchyPanel.addChild( _bondIcon );
             redoBloodBondText( "Blood Bond mate" ); 
+            Command.bind( _bondIcon, MouseEvent.CLICK, VampireController.SHOW_INTRO, "bloodbond");
             
             
             
@@ -192,24 +195,24 @@ package vampire.client.actions.hierarchy
             _hierarchyPanel.addChild( textSprite );
             
             
-            var instructionText :TextField = TextFieldUtil.createField("Click a player (or drop) to re-center the tree.");
-            instructionText.selectable = false;
-            instructionText.tabEnabled = false;
-//            instructionText.embedFonts = true;
-            var instructionTextformat :TextFormat = new TextFormat();
-//            instructionTextformat.font = "Arial";
-            instructionTextformat.size = 14;
-            instructionTextformat.color = 0xffffff;
-            instructionTextformat.align = TextFormatAlign.CENTER;
-            instructionTextformat.bold = true;
-            
-            instructionText.setTextFormat( instructionTextformat );
-            instructionText.width = 100;
-            instructionText.height = 80;
-            instructionText.x = 2;//_hierarchyPanel.width/2;
-            instructionText.y = 320 ;
-            instructionText.wordWrap = true;
-            _hierarchyPanel.addChild( instructionText );
+//            var instructionText :TextField = TextFieldUtil.createField("Click a player (or drop) to re-center the tree.");
+//            instructionText.selectable = false;
+//            instructionText.tabEnabled = false;
+////            instructionText.embedFonts = true;
+//            var instructionTextformat :TextFormat = new TextFormat();
+////            instructionTextformat.font = "Arial";
+//            instructionTextformat.size = 14;
+//            instructionTextformat.color = 0xffffff;
+//            instructionTextformat.align = TextFormatAlign.CENTER;
+//            instructionTextformat.bold = true;
+//            
+//            instructionText.setTextFormat( instructionTextformat );
+//            instructionText.width = 100;
+//            instructionText.height = 80;
+//            instructionText.x = 2;//_hierarchyPanel.width/2;
+//            instructionText.y = 320 ;
+//            instructionText.wordWrap = true;
+//            _hierarchyPanel.addChild( instructionText );
             
             
             
@@ -220,7 +223,6 @@ package vampire.client.actions.hierarchy
             
             //The close button
             var button_close :SimpleButton = ClientContext.instantiateButton("HUD", "button_close");
-//            var button_close :SimpleButton = ClientContext.instantiateButton("HUD", "button_hierarchy");
             button_close.scaleX = button_close.scaleY = 2.0; 
             _hierarchyPanel.addChild( button_close );
             button_close.x = _popup.width - button_close.width - 10;
@@ -228,6 +230,16 @@ package vampire.client.actions.hierarchy
             _events.registerListener( button_close, MouseEvent.CLICK, function(...ignored) :void {
                 destroySelf();    
             });
+            
+            //Help button.  Shows the intro at the given page
+            var buttonHelp :SimpleButton = ClientContext.instantiateButton("HUD", "button_help");
+            buttonHelp.scaleX = buttonHelp.scaleY = button_close.scaleX; 
+            _hierarchyPanel.addChild( buttonHelp );
+            buttonHelp.x = button_close.x - buttonHelp.width - 5;
+            buttonHelp.y = button_close.y;
+            Command.bind( buttonHelp, MouseEvent.CLICK, VampireController.SHOW_INTRO, "lineage");
+            
+            
             
             //Recruit button
             var recruitButton :SimpleButton = ClientContext.instantiateButton("HUD", "button_invite");
@@ -344,6 +356,13 @@ package vampire.client.actions.hierarchy
             _bondText.x = _bondIcon.x  + 20;
             _bondText.y = _bondIcon.y - 20 ;
             _hierarchyPanel.addChild( _bondText );
+            
+            
+            addGlowFilter( _bondText );
+            Command.bind( _bondText, MouseEvent.CLICK, VampireController.SHOW_INTRO, "bloodbond");
+            
+            
+            
         }
         
         protected function updateHierarchyEvent( e :HierarchyUpdatedEvent) :void
