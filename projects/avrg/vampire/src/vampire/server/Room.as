@@ -15,6 +15,7 @@ import com.whirled.contrib.simplegame.server.SimObjectThane;
 
 import vampire.Util;
 import vampire.data.Codes;
+import vampire.data.Logic;
 import vampire.data.VConstants;
 import vampire.net.messages.FeedRequestMessage2;
 
@@ -357,7 +358,7 @@ public class Room extends SimObjectThane
 //        _nonplayerMonitor.destroySelf();
         
         _roomDB.shutdown();
-        _ctrl = null;
+//        _ctrl = null;
         if (_players.size() != 0) {
             log.warning("Eek! Room unloading with players still here!",
                         "players", _players.values());
@@ -448,6 +449,11 @@ public class Room extends SimObjectThane
             log.debug("score==0 so no blood lost or gained.");
             return;
         }
+        
+        //Update the highest possible score.  We use this to scale the coin payout
+        ServerContext.topBloodBloomScore = Math.max( ServerContext.topBloodBloomScore, 
+            gameRecord.gameServer.lastRoundScore );
+              
         var preyIsPlayer :Boolean = isPlayer( gameRecord.preyId );
         var preyPlayer :Player;
         var damage :Number;
@@ -491,43 +497,77 @@ public class Room extends SimObjectThane
                 continue;
             }
             pred.mostRecentVictimId = gameRecord.preyId;
-            pred.addBlood( bloodGainedPerPredator );
-            log.debug(predatorId + " gained " + bloodGainedPerPredator);
-            addFeedback( pred.name + " gained " + bloodGainedPerPredatorFormatted + " from feeding", pred.playerId);
             
-            if( preyIsPlayer && preyPlayer != null && preyPlayer.mostRecentVictimId == predatorId) {
-                //Check for new bloodbond formation
-                //ATM it's just mutual feeding
-                preyPlayer.setBloodBonded( predatorId );//This also sets the name
-                pred.setBloodBonded( preyPlayer.playerId );
-                log.debug("Creating new bloodbond=" + pred.name + " + " + preyPlayer.name);
-                addFeedback( "You are now bloodbonded with " + pred.name, preyPlayer.playerId);
-                addFeedback( "You are now bloodbonded with " + preyPlayer.name, pred.playerId);
-                
-                    
-                //Check if the prey was a vampire, and we don't have a sire.  This vampire becomes it.
-                if( pred.sire <= 0 && preyPlayer.isVampire() ) {
-                    pred.makeSire( preyPlayer.playerId );
-                    addFeedback( preyPlayer.name + " has become your sire ", pred.playerId);
-                    
-                    for each( var sireId :int in 
-                        ServerContext.minionHierarchy.getAllSiresAndGrandSires( pred.playerId ).toArray() ) {
-                            
-                        if( ServerContext.vserver.isPlayer( sireId ) 
-                            && ServerContext.vserver.getPlayer( sireId ).room != null) {
-                            
-                            ServerContext.vserver.getPlayer( sireId ).room.addFeedback(    
-                                pred.name + " has become your minion ", sireId); 
-                        }
-                            
-                            
-                    }
-                    
-                    
-                       
-                }
+            //The amount of blood gained depends on if the prey is a vampire
+            var bloodGained :Number = bloodGainedPerPredator;
+            if( preyIsPlayer && preyPlayer.isVampire() ) {
+                bloodGained = Logic.bloodgGainedVampireVampireFeeding( pred.level, preyPlayer.level, bloodGained )
             }
             
+            pred.addBlood( bloodGained );
+            log.debug(predatorId + " gained " + bloodGained);
+            addFeedback( pred.name + " gained " + Util.formatNumberForFeedback(bloodGained) + " from feeding", pred.playerId);
+            
+            if( preyIsPlayer && preyPlayer != null ) {
+                
+                //Check for new bloodbond formation
+                //ATM it's just mutual feeding
+                if( preyPlayer.mostRecentVictimId == predatorId ) {
+                    
+                    //Break previous bonds
+                    
+                    
+                    preyPlayer.setBloodBonded( predatorId );//This also sets the name
+                    pred.setBloodBonded( preyPlayer.playerId );
+                    log.debug("Creating new bloodbond=" + pred.name + " + " + preyPlayer.name);
+                    addFeedback( "You are now bloodbonded with " + pred.name, preyPlayer.playerId);
+                    addFeedback( "You are now bloodbonded with " + preyPlayer.name, pred.playerId);
+                }
+                else {
+                    log.debug("No bloodbond creation");
+                }
+                    
+                //Check if the prey was a vampire, and we don't have a sire.  The prey vampire becomes it.
+                if( pred.sire <= 0 && preyPlayer.isVampire() ) {
+                    
+                    if( Util.isProgenitor( preyPlayer.playerId ) || preyPlayer.sire > 0 ) {
+                        pred.makeSire( preyPlayer.playerId );
+                        addFeedback( preyPlayer.name + " has become your sire ", pred.playerId);
+
+                        //Award coins to the sire
+                        preyPlayer.ctrl.completeTask( Codes.TASK_ACQUIRE_MINION_ID, 
+                            Codes.TASK_ACQUIRE_MINION_SCORE );
+                        
+                                                
+                        for each( var sireId :int in 
+                            ServerContext.minionHierarchy.getAllSiresAndGrandSires( pred.playerId ).toArray() ) {
+                                
+                            if( ServerContext.vserver.isPlayer( sireId ) 
+                                && ServerContext.vserver.getPlayer( sireId ).room != null) {
+                                
+                                //Tell the sire she's got children
+                                ServerContext.vserver.getPlayer( sireId ).room.addFeedback(    
+                                    pred.name + " has become your minion ", sireId);
+                                
+                                //Award coins to the sire(s)
+                                preyPlayer.ctrl.completeTask( Codes.TASK_ACQUIRE_MINION_ID, 
+                                    Codes.TASK_ACQUIRE_MINION_SCORE/10 ); 
+                            
+                            }
+                        }
+                    }
+                    else {
+                        addFeedback( preyPlayer.name + " is not part of a lineage.  Feed from a vampire lineage member to join.", pred.playerId);
+                        addFeedback( "You are not part of a lineage, so " + preyPlayer + " cannot join.", preyPlayer.playerId);
+                    }
+                }
+                else {
+                    log.debug("Already have sire, or prey not a vampire, so no sire creation");
+                }
+            }
+            else {
+                log.debug("Prey was not a player");
+            }
         }
         
         //Then handle experience.  ATM everyone gets xp=score
@@ -544,7 +584,8 @@ public class Room extends SimObjectThane
                 ServerContext.vserver.awardBloodBondedXpEarned( p, xp );
                 //Add some bonus xp to your sires
                 ServerContext.vserver.awardSiresXpEarned( p, xp );
-//                p.ctrl.completeTask( Codes.TASK_ID_FEEDING, xpGained );
+                var feedingScore :Number = gameRecord.gameServer.lastRoundScore / ServerContext.topBloodBloomScore
+                p.ctrl.completeTask( Codes.TASK_FEEDING_ID, feedingScore );
             }
         }
         
@@ -563,6 +604,7 @@ public class Room extends SimObjectThane
             awardXP( predId, xpGained, xpFormatted);
         });
         
+
         
         
     }
