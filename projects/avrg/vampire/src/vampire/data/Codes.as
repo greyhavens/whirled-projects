@@ -98,8 +98,12 @@ public class Codes
     public static const ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE:int = 12;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT :int = 15;
 
-//    public static const TASK_ID_FEEDING :String = "taskFeeding";
+    /**Award coins on completion of feeding.*/
+    public static const TASK_FEEDING_ID :String = "taskFeeding";
     
+    /**Award coins on minion acquisition.*/
+    public static const TASK_ACQUIRE_MINION_ID :String = "taskAcquireMinion";
+    public static const TASK_ACQUIRE_MINION_SCORE :Number = 0.9;
     
 }
 }
