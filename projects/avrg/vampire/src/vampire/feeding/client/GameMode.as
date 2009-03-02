@@ -126,7 +126,8 @@ public class GameMode extends AppMode
         registerListener(GameCtx.cursor, GameEvent.WHITE_CELL_DELIVERED, onWhiteCellDelivered);
 
         // this will handle spawning the special Blood Hunt cells
-        addObject(new SpecialCellSpawner());
+        GameCtx.specialCellSpawner = new SpecialCellSpawner();
+        addObject(GameCtx.specialCellSpawner);
 
         // create some non-interactive debris that floats around the heart
         for (var ii :int = 0; ii < Constants.DEBRIS_COUNT; ++ii) {
@@ -136,6 +137,8 @@ public class GameMode extends AppMode
         if (ClientCtx.noMoreFeeding) {
             onNoMoreFeeding(false);
         }
+
+        addObject(new TutorialMgr());
     }
 
     override protected function enter () :void
@@ -316,44 +319,4 @@ public class GameMode extends AppMode
     protected static const SCORE_VIEWS_LOC :Point = new Point(550, 120);
 }
 
-}
-
-import com.whirled.contrib.simplegame.SimObject;
-
-import vampire.feeding.*;
-import vampire.feeding.client.*;
-
-class SpecialCellSpawner extends SimObject
-{
-    override protected function update (dt :Number) :void
-    {
-        if (!Constants.DEBUG_FORCE_SPECIAL_BLOOD_STRAIN && !this.canCollectPreyStrain) {
-            destroySelf();
-            return;
-        }
-
-        _elapsedTime += dt;
-
-        if (Cell.getCellCount(Constants.CELL_SPECIAL) == 0) {
-            if (_nextSpawnTime < 0) {
-                _nextSpawnTime = _elapsedTime + Constants.SPECIAL_CELL_CREATION_TIME.next();
-            } else if (_elapsedTime >= _nextSpawnTime) {
-                GameObjects.createCell(Constants.CELL_SPECIAL, true, ClientCtx.preyBloodType);
-                _nextSpawnTime = -1;
-            }
-        }
-    }
-
-    protected function get canCollectPreyStrain () :Boolean
-    {
-        // Is there a special blood strain to collect from the prey? Can we collect it?
-        return (!ClientCtx.isPrey &&
-                !ClientCtx.isAiPrey &&
-                ClientCtx.preyBloodType >= 0 &&
-                ClientCtx.playerData.canCollectStrainFromPlayer(ClientCtx.preyBloodType,
-                                                                ClientCtx.preyId));
-    }
-
-    protected var _elapsedTime :Number = 0;
-    protected var _nextSpawnTime :Number = -1;
 }

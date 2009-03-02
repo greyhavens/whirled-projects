@@ -35,6 +35,25 @@ public class PlayerFeedingData
         return getStrainData(strainType).length;
     }
 
+    public function getNumTimesPlayedTutorial (tutorialType :int) :int
+    {
+        return (tutorialType >= 0 && tutorialType < _tutorialStatus.length ?
+                _tutorialStatus[tutorialType] : 0);
+    }
+
+    public function incrementNumTimesPlayedTutorial (tutorialType :int) :void
+    {
+        if (tutorialType < 0) {
+            return;
+        }
+
+        while (tutorialType >= _tutorialStatus.length) {
+            _tutorialStatus.push(0);
+        }
+
+        _tutorialStatus[tutorialType] += 1;
+    }
+
     public function isEqual (other :PlayerFeedingData) :Boolean
     {
         return (this == other ? true : com.threerings.util.Util.equals(toBytes(), other.toBytes()));
@@ -65,6 +84,11 @@ public class PlayerFeedingData
             }
         }
 
+        ba.writeByte(_tutorialStatus.length);
+        for each (var numTimesPlayed :int in _tutorialStatus) {
+            ba.writeByte(numTimesPlayed);
+        }
+
         return ba;
     }
 
@@ -80,6 +104,12 @@ public class PlayerFeedingData
             for (var ii :int = 0; ii < numPlayers; ++ii) {
                 strainData.push(ba.readInt());
             }
+        }
+
+        var tutorialStatusSize :int = ba.readByte();
+        for (ii = 0; ii < tutorialStatusSize; ++ii) {
+            var numTimesPlayed :int = ba.readByte();
+            _tutorialStatus.push(numTimesPlayed);
         }
     }
 
@@ -105,10 +135,13 @@ public class PlayerFeedingData
         for (var ii :int = 0; ii < Constants.NUM_SPECIAL_STRAINS; ++ii) {
             _collectedStrains.push([]);
         }
+
+        _tutorialStatus = [];
     }
 
     protected var _playerStrain :int;
     protected var _collectedStrains :Array; // Array<Array<playerId>>
+    protected var _tutorialStatus :Array; // Array<numTimesPlayed>
 }
 
 }

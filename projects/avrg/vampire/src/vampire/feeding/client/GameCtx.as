@@ -13,6 +13,7 @@ public class GameCtx
     public static var heart :Heart;
     public static var cursor :PlayerCursor;
     public static var scoreView :ScoreHelpQuitView;
+    public static var specialCellSpawner :SpecialCellSpawner;
 
     public static var bgLayer :Sprite;
     public static var cellBirthLayer :Sprite;
@@ -30,6 +31,7 @@ public class GameCtx
         heart = null;
         cursor = null;
         scoreView = null;
+        specialCellSpawner = null;
 
         bgLayer = null;
         cellLayer = null;
