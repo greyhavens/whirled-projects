@@ -12,12 +12,7 @@ package vampire.data
 public class Logic
 {
 
-    /**
-     * A vampire feeding from another vampire only gets a small amount of the blood lost.
-     * For vampires of equal level, the feeder only gets this fraction of the blood 
-     * lost from the 'victim'. 
-     */
-    public static const BLOOD_GAIN_FRACTION_FROM_V2V_FEEDING_WHEN_EQUAL_LEVEL :Number = 0.1;
+
     
     
     public static function bloodLostPerFeed( level :int ) :Number
@@ -27,19 +22,19 @@ public class Logic
     
     public static function bloodgGainedVampireVampireFeeding( feederLevel :int, victimLevel :int, bloodLost :Number) :Number
     {
-        //Say feederLevel=5 and victimLevel=10
-//        var bloodLost :Number = bloodLostPerFeed( victimLevel );//=250
-        var bloodGained:Number = bloodLost * BLOOD_GAIN_FRACTION_FROM_V2V_FEEDING_WHEN_EQUAL_LEVEL;//=25
+        var bloodGained:Number = bloodLost * VConstants.BLOOD_GAIN_FRACTION_FROM_V2V_FEEDING_WHEN_EQUAL_LEVEL;//=25
         
-        var levelDifference :int = victimLevel - feederLevel;
+        var levelDifference :Number = victimLevel - feederLevel;
         
+        //Victim is lesser than the predator
         if( levelDifference < 0) {
-            bloodGained /= Math.abs(levelDifference);
+            bloodGained = bloodGained/-(levelDifference - 1);
         }
+        //Victim is greater than the predator
         if( levelDifference > 0) {
             bloodGained *= levelDifference;
             //Don't ever gain more blood than was given.
-            bloodGained = Math.min( bloodGained, bloodLost * BLOOD_GAIN_FRACTION_FROM_V2V_FEEDING_WHEN_EQUAL_LEVEL);
+            bloodGained = Math.min( bloodLost * 0.9, bloodGained);
         }
         
         return bloodGained;    
@@ -63,10 +58,10 @@ public class Logic
     {
         level = Math.max(level, 1);
         var base :Number = 100;
-        var xp :Number = base;
-        var addition :Number = 50;
+        var xp :Number = 0;
+        var addition :Number = 100;
         for( var i :int = 2; i <= level; i++) {
-            xp += (i-1) * addition + base;
+            xp += (i-2) * addition + base;
         }
         return xp;
 //        return base * (level - 1) + (level - 1) * (base + base * (level - 1));
