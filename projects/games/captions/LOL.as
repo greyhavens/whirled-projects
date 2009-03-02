@@ -132,7 +132,7 @@ public class LOL extends Sprite
             starterTags = mode.substring("tags: ".length).split(" ");
 
         } else if (mode == "free-for-all") {
-            tagHeader = "Mode: free-for-all";
+            tagHeader = "Free-for-all";
             editableTags = true;
 
         } else if (mode == "starter's choice") {
