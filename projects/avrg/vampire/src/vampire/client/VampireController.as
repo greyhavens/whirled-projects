@@ -320,10 +320,11 @@ public class VampireController extends Controller
             ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
         }
         
+        //Set the avatar target.  That way, when the avatar arrived at it's destination, it
+        //will set it's orientation the same as the target's orientation.
         var setTargetFunction :Function = ClientContext.ctrl.room.getEntityProperty( 
             AvatarGameBridge.ENTITY_PROPERTY_SETTARGET_FUNCTION, ClientContext.ourEntityId ) as Function;
         if( setTargetFunction != null ) {
-            trace("Setting avatar target=" + targetId);
             setTargetFunction( targetId );
         }
     }
