@@ -3,6 +3,7 @@
 
 package vampire.client {
 
+import com.threerings.flash.MathUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameControlEvent;
@@ -211,37 +212,41 @@ public class DraggableSprite extends Sprite
             // not yet initialized
             return;
         }
-
+        
+        //Make sure we are not outside the room
+        this.x = MathUtil.clamp( this.x, 0, _painted.width);
+        this.y = MathUtil.clamp( this.y, 0, _painted.height);
+        
         switch(_xSnap) {
-        case SNAP_NONE:
-            this.x = _xFix;
-            break;
-        case SNAP_LEFT:
-            this.x = _paintable.left - _bounds.left;
-            break;
-        case SNAP_ROOM_EDGE:
-            this.x = Math.max(0, Math.min(_paintable.right - _bounds.right,
-                                          _painted.right - _bounds.left - _bleed));
-            break;
-        case SNAP_BROWSER_EDGE:
-            this.x = Math.max(0, _paintable.right - _bounds.right);
-            break;
+            case SNAP_NONE:
+                this.x = _xFix;
+                break;
+            case SNAP_LEFT:
+                this.x = _paintable.left - _bounds.left;
+                break;
+            case SNAP_ROOM_EDGE:
+                this.x = Math.max(0, Math.min(_paintable.right - _bounds.right,
+                                              _painted.right - _bounds.left - _bleed));
+                break;
+            case SNAP_BROWSER_EDGE:
+                this.x = Math.max(0, _paintable.right - _bounds.right);
+                break;
         }
 
         switch(_ySnap) {
-        case SNAP_NONE:
-            this.y = _yFix;
-            break;
-        case SNAP_TOP:
-            this.y = _paintable.top - _bounds.top;
-            break;
-        case SNAP_ROOM_EDGE:
-            this.y = Math.max(0, Math.min(_paintable.bottom - _bounds.bottom,
-                                          _painted.bottom - _bounds.top));
-            break;
-        case SNAP_BROWSER_EDGE:
-            this.y = Math.max(0, _paintable.bottom - _bounds.bottom);
-            break;
+            case SNAP_NONE:
+                this.y = _yFix;
+                break;
+            case SNAP_TOP:
+                this.y = _paintable.top - _bounds.top;
+                break;
+            case SNAP_ROOM_EDGE:
+                this.y = Math.max(0, Math.min(_paintable.bottom - _bounds.bottom,
+                                              _painted.bottom - _bounds.top));
+                break;
+            case SNAP_BROWSER_EDGE:
+                this.y = Math.max(0, _paintable.bottom - _bounds.bottom);
+                break;
         }
     }
 
