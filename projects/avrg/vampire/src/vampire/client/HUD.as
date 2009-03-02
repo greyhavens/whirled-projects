@@ -22,7 +22,6 @@ import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.filters.BlurFilter;
-import flash.filters.DropShadowFilter;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.AntiAliasType;
@@ -306,14 +305,14 @@ public class HUD extends SceneObject
         
         _hud.addChild( _hudMC );
         
-        _hudFeedback = TextField( findSafely("HUDfeedback") );
+//        _hudFeedback = TextField( findSafely("HUDfeedback") );
 //        _hudFeedback.visible = true;
 //        _hudFeedback.text = "afsadfafa sdf";
 //        _hudFeedback.embedFonts = true;
 //        _hudFeedback.appendText("sdfsdfsdfsdf");
 //        trace("_hudFeedback=" + _hudFeedback);
         //The _hudFeedback is stealing mouse focus while invisible.  We'll add it when we need to
-        _hudMC.removeChild( _hudFeedback );
+//        _hudMC.removeChild( _hudFeedback );
         
         
         if( VConstants.LOCAL_DEBUG_MODE) {
@@ -390,12 +389,20 @@ public class HUD extends SceneObject
         var hudPredator :SimpleButton = SimpleButton( findSafely("HUDpredator") );
 //        Command.bind( hudPredator, MouseEvent.CLICK, VampireController.SWITCH_MODE, Constants.GAME_MODE_FEED_FROM_PLAYER);
         Command.bind( hudPredator, MouseEvent.CLICK, VampireController.FEED_REQUEST, [_targetingOverlay, _displaySprite, this] );
+        registerListener( hudPredator, MouseEvent.ROLL_OVER, function(...ignored) :void {
+            showFeedBack( "Feed", true); 
+        });
+        
         
         var hudPrey :SimpleButton = SimpleButton( findSafely("HUDprey") );
         Command.bind( hudPrey, MouseEvent.CLICK, VampireController.SWITCH_MODE, VConstants.GAME_MODE_BARED);
+        registerListener( hudPrey, MouseEvent.ROLL_OVER, function(...ignored) :void {
+            showFeedBack( "Bare", true); 
+        });
         
         var hudHierarchy :SimpleButton = SimpleButton( findSafely("HUDhierarchy") );
         Command.bind( hudHierarchy, MouseEvent.CLICK, VampireController.SHOW_HIERARCHY, _hudMC );
+        
         
         var hudHelp :SimpleButton = SimpleButton( findSafely("HUDhelp") );
         Command.bind( hudHelp, MouseEvent.CLICK, VampireController.SHOW_INTRO);
@@ -445,34 +452,53 @@ public class HUD extends SceneObject
 //           });
 //           
             _mouseCaptureBloodSprite = new Sprite();
-            
-           registerListener( _mouseCaptureBloodSprite, MouseEvent.MOUSE_MOVE, function(e:MouseEvent) :void {
-               _mouseCaptureBloodSprite.addChild(_mouseOverBloodText);
-               _mouseOverBloodText.x = e.localX - _mouseOverBloodText.width;
-               _mouseOverBloodText.y = e.localY - _mouseOverBloodText.height - 8;
-           });
            
-           registerListener( _mouseCaptureBloodSprite, MouseEvent.ROLL_OUT, function(e:MouseEvent) :void {
-               if( _mouseOverBloodText != null && _mouseOverBloodText.parent != null ) {
-                   _mouseOverBloodText.parent.removeChild( _mouseOverBloodText );
-               }
+           registerListener( _mouseCaptureBloodSprite, MouseEvent.ROLL_OVER, function(e:MouseEvent) :void {
+               showFeedBack( "Blood " + ClientContext.model.blood + " / " + ClientContext.model.maxblood, true); 
            });
+            
+//           registerListener( _mouseCaptureBloodSprite, MouseEvent.MOUSE_MOVE, function(e:MouseEvent) :void {
+//               
+//               _mouseCaptureBloodSprite.addChild(_mouseOverBloodText);
+//               _mouseOverBloodText.x = e.localX - _mouseOverBloodText.width;
+//               _mouseOverBloodText.y = e.localY - _mouseOverBloodText.height - 8;
+//           });
+           
+//           registerListener( _mouseCaptureBloodSprite, MouseEvent.ROLL_OUT, function(e:MouseEvent) :void {
+//               if( _mouseOverBloodText != null && _mouseOverBloodText.parent != null ) {
+//                   _mouseOverBloodText.parent.removeChild( _mouseOverBloodText );
+//               }
+//           });
            
            Command.bind( _mouseCaptureBloodSprite, MouseEvent.CLICK, VampireController.SHOW_INTRO, "bloodtype");
            
            _mouseCaptureXPSprite = new Sprite();
            
-           registerListener( _mouseCaptureXPSprite, MouseEvent.MOUSE_MOVE, function(e:MouseEvent) :void {
-               _mouseCaptureXPSprite.addChild(_mouseOverXPText);
-               _mouseOverXPText.x = e.localX - _mouseOverXPText.width;
-               _mouseOverXPText.y = e.localY - _mouseOverXPText.height - 8;
+           registerListener( _mouseCaptureXPSprite, MouseEvent.ROLL_OVER, function(...ignored) :void {
+               
+               var xpNeededForCurrentLevel :Number = Logic.xpNeededForLevel(ClientContext.model.level);
+               var xpNeededForNextLevel :Number = Logic.xpNeededForLevel(ClientContext.model.level + 1);
+               var xpGap :Number = xpNeededForNextLevel - xpNeededForCurrentLevel;
+               var ourXPForOurLevel :Number = ClientContext.model.xp - xpNeededForCurrentLevel;
+               
+               var msg :String = "Level " + ClientContext.model.level + "\nExperience " + 
+                    Util.formatNumberForFeedback(ourXPForOurLevel) + " / " + xpGap;
+            
+               showFeedBack( msg , true); 
            });
+           Command.bind( _mouseCaptureXPSprite, MouseEvent.CLICK, VampireController.SHOW_INTRO, "lineage");
            
-           registerListener( _mouseCaptureXPSprite, MouseEvent.ROLL_OUT, function(e:MouseEvent) :void {
-               if( _mouseOverXPText != null && _mouseOverXPText.parent != null ) {
-                   _mouseOverXPText.parent.removeChild( _mouseOverXPText );
-               }
-           });
+//           registerListener( _mouseCaptureXPSprite, MouseEvent.MOUSE_MOVE, function(e:MouseEvent) :void {
+//               _mouseCaptureXPSprite.addChild(_mouseOverXPText);
+//               _mouseOverXPText.x = e.localX - _mouseOverXPText.width;
+//               _mouseOverXPText.y = e.localY - _mouseOverXPText.height - 8;
+//           });
+//           
+//           registerListener( _mouseCaptureXPSprite, MouseEvent.ROLL_OUT, function(e:MouseEvent) :void {
+//               if( _mouseOverXPText != null && _mouseOverXPText.parent != null ) {
+//                   _mouseOverXPText.parent.removeChild( _mouseOverXPText );
+//               }
+//           });
             
             
          
@@ -752,54 +778,77 @@ public class HUD extends SceneObject
             TextFieldUtil.createField(feedbackMessage);
         feedbackMessageTextField.selectable = false;
         feedbackMessageTextField.tabEnabled = false;
-        feedbackMessageTextField.embedFonts = true;
+//        feedbackMessageTextField.embedFonts = true;
+        
         
         var lineageformat :TextFormat = new TextFormat();
-        lineageformat.font = "JuiceEmbedded";
-        lineageformat.size = 24.;
-        lineageformat.color = 0x000000;
-        lineageformat.align = TextFormatAlign.RIGHT;
-        lineageformat.bold = true;
+//        lineageformat.font = "JuiceEmbedded";
+        lineageformat.size = 20;
+        lineageformat.color = 0xffffff;
+        lineageformat.align = TextFormatAlign.LEFT;
+//        lineageformat.bold = true;
         feedbackMessageTextField.setTextFormat( lineageformat );
-        feedbackMessageTextField.textColor = _hudFeedback.textColor;
-        feedbackMessageTextField.width = _hudFeedback.width;
-        feedbackMessageTextField.height = _hudFeedback.height;
-        feedbackMessageTextField.x = _hudFeedback.x - 10;
-        feedbackMessageTextField.y = _hudFeedback.y + 10;
-        feedbackMessageTextField.multiline = _hudFeedback.multiline;
+        feedbackMessageTextField.textColor = 0xffffff;
+        feedbackMessageTextField.width = Math.min( feedbackMessageTextField.textWidth + 10, 300);
+        feedbackMessageTextField.height = 80;
+//        feedbackMessageTextField.x = -350 + feedbackMessageTextField.width
+        feedbackMessageTextField.x =  -feedbackMessageTextField.width - 50;
+        feedbackMessageTextField.y = -20;
+        feedbackMessageTextField.multiline = true;//_hudFeedback.multiline;
         feedbackMessageTextField.wordWrap = true;
         feedbackMessageTextField.antiAliasType = AntiAliasType.ADVANCED;
         
-        var blurred :BlurFilter = new BlurFilter(1.3, 1.3, 1 );
-        var storedBlur :Array = [blurred];
-        feedbackMessageTextField.filters = storedBlur;
+        
+//        var lineageformat :TextFormat = new TextFormat();
+//        lineageformat.font = "JuiceEmbedded";
+//        lineageformat.size = 24.;
+//        lineageformat.color = 0x000000;
+//        lineageformat.align = TextFormatAlign.RIGHT;
+//        lineageformat.bold = true;
+//        feedbackMessageTextField.setTextFormat( lineageformat );
+//        feedbackMessageTextField.textColor = _hudFeedback.textColor;
+//        feedbackMessageTextField.width = _hudFeedback.width;
+//        feedbackMessageTextField.height = _hudFeedback.height;
+//        feedbackMessageTextField.x = _hudFeedback.x - 10;
+//        feedbackMessageTextField.y = _hudFeedback.y + 10;
+//        feedbackMessageTextField.multiline = _hudFeedback.multiline;
+//        feedbackMessageTextField.wordWrap = true;
+//        feedbackMessageTextField.antiAliasType = AntiAliasType.ADVANCED;
+//        
+//        var blurred :BlurFilter = new BlurFilter(1.3, 1.3, 1 );
+//        var storedBlur :Array = [blurred];
+//        feedbackMessageTextField.filters = storedBlur;
         
         
-        var shadowText :TextField = 
-            TextFieldUtil.createField(feedbackMessage);
-        shadowText.selectable = false;
-        shadowText.tabEnabled = false;
-        shadowText.embedFonts = true;
+//        var shadowText :TextField = 
+//            TextFieldUtil.createField(feedbackMessage);
+//        shadowText.selectable = false;
+//        shadowText.tabEnabled = false;
+//        shadowText.embedFonts = true;
+//        
+//        shadowText.setTextFormat( lineageformat );
+//        shadowText.textColor = 0xffffff;
+//        shadowText.width = _hudFeedback.width;
+//        shadowText.height = _hudFeedback.height;
+//        shadowText.x = _hudFeedback.x - 10;
+//        shadowText.y = _hudFeedback.y + 10;
+//        shadowText.multiline = _hudFeedback.multiline;
+//        shadowText.wordWrap = true;
+//        shadowText.antiAliasType = AntiAliasType.ADVANCED;
+//        
+//        var blurredShadow:DropShadowFilter = new DropShadowFilter(0.8, 0, 0xffffff, 1.0, 5, 5, 1000 );
+//        var storedBlurShadow :Array = [blurredShadow];
+//        shadowText.filters = storedBlurShadow;
         
-        shadowText.setTextFormat( lineageformat );
-        shadowText.textColor = 0xffffff;
-        shadowText.width = _hudFeedback.width;
-        shadowText.height = _hudFeedback.height;
-        shadowText.x = _hudFeedback.x - 10;
-        shadowText.y = _hudFeedback.y + 10;
-        shadowText.multiline = _hudFeedback.multiline;
-        shadowText.wordWrap = true;
-        shadowText.antiAliasType = AntiAliasType.ADVANCED;
         
-        var blurredShadow:DropShadowFilter = new DropShadowFilter(0.8, 0, 0xffffff, 1.0, 5, 5, 1000 );
-        var storedBlurShadow :Array = [blurredShadow];
-        shadowText.filters = storedBlurShadow;
-        
-        
-        textSprite.addChild( shadowText );
+//        textSprite.addChild( shadowText );
         textSprite.addChild( feedbackMessageTextField );
         
+        textSprite.graphics.beginFill(0);
+        textSprite.graphics.drawRect( feedbackMessageTextField.x -10, feedbackMessageTextField.y-10, feedbackMessageTextField.width + 20, feedbackMessageTextField.height);
+        textSprite.graphics.endFill();
         
+        textSprite.x -= 30;
         var textSceneObject :SimpleSceneObject = 
             new SimpleSceneObject( textSprite, FEEDBACK_SIMOBJECT_NAME );
             
@@ -1169,7 +1218,7 @@ public class HUD extends SceneObject
     protected var _hudXPBottom :int;
     protected var _hudXPStartHeight :Number;
     
-    protected var _hudFeedback :TextField;
+//    protected var _hudFeedback :TextField;
     
     
     
