@@ -233,7 +233,8 @@ public class TagWidget extends Sprite
 
     /** Tags that can be used to find porny pictures on flickr. */
     protected static const DIRTY_TAGS :Array = [
-        "nude", "naked", "boobs", "tits", "boobies", "ass"
+        "nude", "naked", "boobs", "tits", "boobies", "ass",
+        "cunt", "vagina", "penis", "shit", "xxx", "sex"
     ];
 
     protected var _ctrl :GameControl;

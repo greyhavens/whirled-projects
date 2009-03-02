@@ -122,7 +122,7 @@ public class LOL extends Sprite
         const mode :String = String(config["Game mode"]);
         var tagHeader :String = "Mode: " + mode;
         var editableTags :Boolean = false;
-        var cleanMode :Boolean = true;
+        var cleanMode :Boolean = true; // Shanti and Daniel have coerced me to always do clean
         var starterTags :Array = null;
         if (mode == "standard") {
             starterTags = [ "captionable", "funny", "cute" ];
@@ -131,10 +131,9 @@ public class LOL extends Sprite
             tagHeader = "Tags:";
             starterTags = mode.substring("tags: ".length).split(" ");
 
-        } else if (mode == "naughty free-for-all") {
-            tagHeader = "Mode: naughty";
+        } else if (mode == "free-for-all") {
+            tagHeader = "Mode: free-for-all";
             editableTags = true;
-            cleanMode = false;
 
         } else if (mode == "starter's choice") {
             editableTags = (_ctrl.game.getOccupantIds().length == 1);

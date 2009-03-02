@@ -1,2 +1,2 @@
 <!-- Config file for LOLcaptions -->
-    <choice ident="Game mode" choices="standard,latest photos,naughty free-for-all,starter's choice" start="standard"/>
+    <choice ident="Game mode" choices="standard,latest photos,free-for-all,starter's choice" start="standard"/>
