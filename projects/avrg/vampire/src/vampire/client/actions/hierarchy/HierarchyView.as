@@ -9,12 +9,15 @@ package vampire.client.actions.hierarchy
     import com.whirled.net.ElementChangedEvent;
     
     import flash.display.DisplayObject;
+    import flash.display.InteractiveObject;
     import flash.display.MovieClip;
     import flash.display.SimpleButton;
     import flash.display.Sprite;
     import flash.events.MouseEvent;
     import flash.filters.BlurFilter;
+    import flash.filters.ColorMatrixFilter;
     import flash.filters.DropShadowFilter;
+    import flash.filters.GlowFilter;
     import flash.geom.Rectangle;
     import flash.text.AntiAliasType;
     import flash.text.TextField;
@@ -451,23 +454,28 @@ package vampire.client.actions.hierarchy
                 button_page_left.y = startY + yInc;
                 s.addChild( button_page_left );
                 Command.bind( button_page_left, MouseEvent.CLICK, showPreviousPage);
+                addGlowFilter( button_page_left );
                 //The text
                 var textPageLeft :TextField = getTextFieldCenteredOn( "More", locations[0].x - 10, startY + yInc - 40, true, left);
                 textPageLeft.mouseEnabled = true;
                 s.addChild( textPageLeft );
                 Command.bind( textPageLeft, MouseEvent.CLICK, showPreviousPage);
+                addGlowFilter( textPageLeft );
             }
+            //Show the more sub minions button
             if( startMinionViewIndex + MAX_MINIONS_SHOWN < minionCount ) {
                 var button_page_right :SimpleButton = ClientContext.instantiateButton("HUD", "button_hierarchy_no_mouse");
                 button_page_right.x = locations[locations.length - 1].x + 10;
                 button_page_right.y = startY + yInc;
                 s.addChild( button_page_right );
                 Command.bind( button_page_right, MouseEvent.CLICK, showNextPage);
+                addGlowFilter( button_page_right );
                 //The text
                 var textPageRight :TextField = getTextFieldCenteredOn( "More", locations[locations.length - 1].x + 10, startY + yInc - 40, true, left);
                 textPageRight.mouseEnabled = true;
                 s.addChild( textPageRight );
                 Command.bind( textPageRight, MouseEvent.CLICK, showNextPage);
+                addGlowFilter( textPageRight );
             }
                             
                             
@@ -517,10 +525,13 @@ package vampire.client.actions.hierarchy
 //                            button_hiararchy.mouseEnabled = true;
                             s.addChild( button_hiararchy );
                             Command.bind( button_hiararchy, MouseEvent.CLICK, VampireController.HIERARCHY_CENTER_SELECTED, [minionIds[i], this]);
+                            addGlowFilter( button_hiararchy );
+                            
                             var subminionTextField :TextField = getTextFieldCenteredOn( subminionCount + "", locations[i].x + 4, locations[i].y +1*yInc, true, left);
                             subminionTextField.mouseEnabled = true;
                             s.addChild( subminionTextField );
                             Command.bind( subminionTextField, MouseEvent.CLICK, VampireController.HIERARCHY_CENTER_SELECTED, [minionIds[i], this]);
+                            addGlowFilter( subminionTextField );
                         }
                     }
 //                    drawMinions( s, minionIds[i], locations[i].x, locations[i].y, linkOnly, ++depth, !left);
@@ -539,6 +550,16 @@ package vampire.client.actions.hierarchy
 //                    }
 //                }
 //            }
+        }
+        
+        protected function addGlowFilter( obj : InteractiveObject ) :void
+        {
+            registerListener( obj, MouseEvent.ROLL_OVER, function(...ignored) :void {
+                obj.filters = [_glowFilter];
+            });
+            registerListener( obj, MouseEvent.ROLL_OUT, function(...ignored) :void {
+                obj.filters = [];
+            })
         }
         
         protected function computeMinionLocations( myX :int, myY:int, minions :int) :Array
@@ -595,6 +616,10 @@ package vampire.client.actions.hierarchy
             playerName = playerName.substring(0, MAX_NAME_CHARS);
             
             var tf :TextField = getTextFieldCenteredOn( playerName, centerX, centerY, below, left);
+            
+            addGlowFilter( tf );
+            
+            
 //            var tf :TextField = TextFieldUtil.createField(ClientContext.getPlayerName(playerId), centerX, centerY);
 //                {selectable:false, 
 //                tabEnabled:false, 
@@ -608,6 +633,8 @@ package vampire.client.actions.hierarchy
 //            tf.y = centerY - tf.height / 2;
             s.addChild( tf );
             var droplet :MovieClip = ClientContext.instantiateMovieClip("HUD", "droplet", true);
+            addGlowFilter( droplet );
+            
             droplet.mouseEnabled = true;
             Command.bind( droplet, MouseEvent.CLICK, VampireController.HIERARCHY_CENTER_SELECTED, [playerId, this]);
             droplet.x = centerX;
@@ -622,10 +649,6 @@ package vampire.client.actions.hierarchy
         
         protected function getTextFieldCenteredOn( text :String, centerX :int, centerY :int, below :Boolean, left :Boolean) :TextField
         {
-            
-            
-            
-            
 //            var styleSheet : StyleSheet = new StyleSheet();
 //            styleSheet.parseCSS(
 //                "body {" +
@@ -769,6 +792,12 @@ package vampire.client.actions.hierarchy
         
         protected static const MAX_MINIONS_SHOWN :int = 5;
         protected static const MAX_NAME_CHARS :int = 10;
+        
+        /* See http://www.adobetutorialz.com/articles/1987/1/Color-Matrix */                         
+        protected var myElements_array :Array = [2,0,0,0,-13.5,0,2,0,0,-13.5,0,0,2,0,-13.5,0,0,0,1,0];
+        protected var _myColorMatrix_filter :ColorMatrixFilter = new ColorMatrixFilter(myElements_array);
+        
+        protected var _glowFilter :GlowFilter = new GlowFilter(0xffffff);
 
     } 
 }
