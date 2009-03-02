@@ -8,6 +8,7 @@ import com.whirled.contrib.simplegame.SimObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 
+import vampire.avatar.AvatarGameBridge;
 import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.actions.BaseVampireMode;
 import vampire.client.actions.hierarchy.HierarchyView;
@@ -35,8 +36,9 @@ public class VampireController extends Controller
     public static const REMOVE_BLOODBOND :String = "RemoveBloodBond";
     public static const ADD_BLOODBOND :String = "AddBloodBond";
     
-    public static const HIDE_INTRO :String = "HideIntro";
     public static const SHOW_INTRO :String = "ShowIntro";
+    
+    public static const SHOW_DEBUG :String = "ShowDebug";
     
     public static const SHOW_HIERARCHY :String = "ShowHierarchy";
     
@@ -177,21 +179,49 @@ public class VampireController extends Controller
                 true).toBytes() );
     }
     
-    public function handleHideIntro() :void
+    public function handleShowDebug() :void
     {
-        ClientContext.game.ctx.mainLoop.popMode();
+        try {
+            var hierarchySceneObject :SimObject = 
+                ClientContext.game.ctx.mainLoop.topMode.getObjectNamed( IntroHelpMode.NAME );    
+                
+            if( hierarchySceneObject == null) {
+                ClientContext.game.ctx.mainLoop.topMode.addObject( new IntroHelpMode(), 
+                    ClientContext.game.ctx.mainLoop.topMode.modeSprite);
+            }
+            
+            else {
+                hierarchySceneObject.destroySelf();
+            }
+        }
+        catch( err :Error ) {
+            trace( err.getStackTrace() );
+        }
     }
     
-    public function handleShowIntro() :void
+    
+    public function handleShowIntro( startFrame :String = null) :void
     {
-        trace("handleShowIntro()");
-        if( ClientContext.game.ctx.mainLoop.topMode.getObjectNamed(IntroHelpMode.NAME) == null ) {
-            ClientContext.game.ctx.mainLoop.topMode.addObject( new IntroHelpMode(),
-                ClientContext.game.ctx.mainLoop.topMode.modeSprite );  
-        } 
-//        if( ClientContext.game.ctx.mainLoop.topMode !== new IntroHelpMode() ) {
-//            ClientContext.game.ctx.mainLoop.pushMode( new IntroHelpMode());
-//        }
+        try {
+            var hierarchySceneObject :SimObject = 
+                ClientContext.game.ctx.mainLoop.topMode.getObjectNamed( HelpPopup.NAME ); 
+                
+            if( hierarchySceneObject == null) {
+                ClientContext.game.ctx.mainLoop.topMode.addObject( new HelpPopup(startFrame), 
+                    ClientContext.game.ctx.mainLoop.topMode.modeSprite);
+            }
+            else {
+                if( startFrame == null ) {
+                    hierarchySceneObject.destroySelf();
+                }
+                else {
+                    HelpPopup(hierarchySceneObject).gotoFrame( startFrame );
+                }
+            }
+        }
+        catch( err :Error ) {
+            trace( err.getStackTrace() );
+        }
     }
     
 //    public function handleFeedRequest( targetPlayerId :int, targetIsVictim :Boolean) :void
@@ -218,6 +248,7 @@ public class VampireController extends Controller
         if( ClientContext.model.level >= VConstants.MINIMUM_VAMPIRE_LEVEL ||
             VConstants.LOCAL_DEBUG_MODE ) {
                 
+                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS );
 //            if( targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS ) {
 //                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
 //            }
@@ -287,6 +318,13 @@ public class VampireController extends Controller
         }
         else {
             ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
+        }
+        
+        var setTargetFunction :Function = ClientContext.ctrl.room.getEntityProperty( 
+            AvatarGameBridge.ENTITY_PROPERTY_SETTARGET_FUNCTION, ClientContext.ourEntityId ) as Function;
+        if( setTargetFunction != null ) {
+            trace("Setting avatar target=" + targetId);
+            setTargetFunction( targetId );
         }
     }
     
