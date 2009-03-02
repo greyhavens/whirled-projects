@@ -5,6 +5,7 @@ import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.contrib.simplegame.objects.SceneObjectPlayMovieClipOnce;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 import com.whirled.contrib.simplegame.tasks.SelfDestructTask;
@@ -20,6 +21,7 @@ import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
+import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.filters.BlurFilter;
 import flash.geom.Point;
@@ -189,6 +191,15 @@ public class HUD extends SceneObject
                     showBlood( ClientContext.ourPlayerId );
                 }
                 else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
+                    
+                    if( _currentLevel != ClientContext.model.level ) {
+                        //Animate a level up movieclip
+                        var levelUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce( 
+                            ClientContext.instantiateMovieClip("HUD", "levelup", true) );
+                        db.addObject( levelUp, _hudBlood );                             
+                        _currentLevel = ClientContext.model.level;
+                    }
+                    
                     showXP( ClientContext.ourPlayerId );
                     showBlood( ClientContext.ourPlayerId );
                 }
@@ -1257,6 +1268,9 @@ public class HUD extends SceneObject
 //    protected var _targetSpriteHierarchyIcon :SimpleButton;
     
     protected var _targetingOverlay :VampireAvatarHUDOverlay;
+    
+    /**Used for registering changed level to animate a level up movieclip*/
+    protected var _currentLevel :int = -0;
     
     protected var _feedbackMessageQueue :Array = new Array();
     protected var _feedbackMessageTimeElapsed :Number = VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY;
