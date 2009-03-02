@@ -187,11 +187,9 @@ public class HUD extends SceneObject
             if( playerIdUpdated == ClientContext.ourPlayerId) {
             
                 if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
-                    trace("Blood changed " + e);
                     showBlood( ClientContext.ourPlayerId );
                 }
                 else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
-                    trace("XP changed " + e);
                     showXP( ClientContext.ourPlayerId );
                     showBlood( ClientContext.ourPlayerId );
                 }
@@ -308,10 +306,6 @@ public class HUD extends SceneObject
         
         _hud.addChild( _hudMC );
         
-        
-        
-        
-        
         _hudFeedback = TextField( findSafely("HUDfeedback") );
 //        _hudFeedback.visible = true;
 //        _hudFeedback.text = "afsadfafa sdf";
@@ -371,6 +365,9 @@ public class HUD extends SceneObject
         _hudBlood.gotoAndStop(0);
         _hudBloodBottom = _hudBlood.y ;//+ _hudBlood.height;
         _hudBloodStartHeight = _hudBlood.height;
+        
+        
+        
         
         _hudType = MovieClip( findSafely("HUDtype") );
         _hudType.gotoAndStop( int( ClientContext.model.bloodType ) );
@@ -506,11 +503,20 @@ public class HUD extends SceneObject
         for each( var b :InteractiveObject in [hudPredator, hudPrey] ) {//_hudMC
             
             registerListener(b, MouseEvent.ROLL_OVER, function(...ignored) :void {
+                
+                if( b == hudPredator && _targetingOverlay.displayMode == 
+                    VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS) {
+                        return;
+                }
                 _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ); 
             });
             
             registerListener(b, MouseEvent.ROLL_OUT, function(...ignored) :void {
-                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS ); 
+                if( _targetingOverlay.displayMode != 
+                    VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS ) {
+                        
+                    _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
+                } 
                 
             });
             
@@ -714,74 +720,15 @@ public class HUD extends SceneObject
         if( _feedbackMessageQueue.length > 0 && db != null) {
             _feedbackMessageTimeElapsed += dt;
             
-            if( _feedbackMessageTimeElapsed >= VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY ) {
+            //Don't replace the current message if it's still there, it might have been inserted
+            //due to instant feedback
+            if( _feedbackMessageTimeElapsed >= VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY &&
+                db.getObjectNamed( FEEDBACK_SIMOBJECT_NAME ) == null ) {
                 _feedbackMessageTimeElapsed = 0;
                 var feedbackMessage :String = _feedbackMessageQueue.shift() as String;
+                
                 if( feedbackMessage != null ) {
-                    
-                    var textSprite :Sprite = new Sprite();
-                    
-                    var feedbackMessageTextField :TextField = 
-                        TextFieldUtil.createField(feedbackMessage);
-                    feedbackMessageTextField.selectable = false;
-                    feedbackMessageTextField.tabEnabled = false;
-                    feedbackMessageTextField.embedFonts = true;
-                    
-                    var lineageformat :TextFormat = new TextFormat();
-                    lineageformat.font = "JuiceEmbedded";
-                    lineageformat.size = 24.;
-                    lineageformat.color = 0x000000;
-                    lineageformat.align = TextFormatAlign.RIGHT;
-                    lineageformat.bold = true;
-                    feedbackMessageTextField.setTextFormat( lineageformat );
-                    feedbackMessageTextField.textColor = _hudFeedback.textColor;
-                    feedbackMessageTextField.width = _hudFeedback.width;
-                    feedbackMessageTextField.height = _hudFeedback.height;
-                    feedbackMessageTextField.x = _hudFeedback.x - 10;
-                    feedbackMessageTextField.y = _hudFeedback.y + 10;
-                    feedbackMessageTextField.multiline = _hudFeedback.multiline;
-                    feedbackMessageTextField.wordWrap = true;
-                    feedbackMessageTextField.antiAliasType = AntiAliasType.ADVANCED;
-                    
-                    var blurred :BlurFilter = new BlurFilter(1.3, 1.3, 1 );
-                    var storedBlur :Array = [blurred];
-                    feedbackMessageTextField.filters = storedBlur;
-                    
-                    
-                    var shadowText :TextField = 
-                        TextFieldUtil.createField(feedbackMessage);
-                    shadowText.selectable = false;
-                    shadowText.tabEnabled = false;
-                    shadowText.embedFonts = true;
-                    
-                    shadowText.setTextFormat( lineageformat );
-                    shadowText.textColor = 0xffffff;
-                    shadowText.width = _hudFeedback.width;
-                    shadowText.height = _hudFeedback.height;
-                    shadowText.x = _hudFeedback.x - 10;
-                    shadowText.y = _hudFeedback.y + 10;
-                    shadowText.multiline = _hudFeedback.multiline;
-                    shadowText.wordWrap = true;
-                    shadowText.antiAliasType = AntiAliasType.ADVANCED;
-                    
-                    var blurredShadow:DropShadowFilter = new DropShadowFilter(0.8, 0, 0xffffff, 1.0, 5, 5, 1000 );
-                    var storedBlurShadow :Array = [blurredShadow];
-                    shadowText.filters = storedBlurShadow;
-                    
-                    
-                    textSprite.addChild( shadowText );
-                    textSprite.addChild( feedbackMessageTextField );
-                    
-                    
-                    var textSceneObject :SimpleSceneObject = 
-                        new SimpleSceneObject( textSprite );
-                    db.addObject( textSceneObject, _hudMC);
-                    
-                    var serialTask :SerialTask = new SerialTask();
-                    serialTask.addTask( 
-                        new TimedTask( VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY * 0.9 ));
-                    serialTask.addTask( new SelfDestructTask() );  
-                    textSceneObject.addTask( serialTask );
+                    insertFeedbackSceneObject( feedbackMessage );
                     
                 }
             }
@@ -797,10 +744,83 @@ public class HUD extends SceneObject
         }
     }
     
+    protected function insertFeedbackSceneObject( feedbackMessage :String ) :void
+    {
+        var textSprite :Sprite = new Sprite();
+                    
+        var feedbackMessageTextField :TextField = 
+            TextFieldUtil.createField(feedbackMessage);
+        feedbackMessageTextField.selectable = false;
+        feedbackMessageTextField.tabEnabled = false;
+        feedbackMessageTextField.embedFonts = true;
+        
+        var lineageformat :TextFormat = new TextFormat();
+        lineageformat.font = "JuiceEmbedded";
+        lineageformat.size = 24.;
+        lineageformat.color = 0x000000;
+        lineageformat.align = TextFormatAlign.RIGHT;
+        lineageformat.bold = true;
+        feedbackMessageTextField.setTextFormat( lineageformat );
+        feedbackMessageTextField.textColor = _hudFeedback.textColor;
+        feedbackMessageTextField.width = _hudFeedback.width;
+        feedbackMessageTextField.height = _hudFeedback.height;
+        feedbackMessageTextField.x = _hudFeedback.x - 10;
+        feedbackMessageTextField.y = _hudFeedback.y + 10;
+        feedbackMessageTextField.multiline = _hudFeedback.multiline;
+        feedbackMessageTextField.wordWrap = true;
+        feedbackMessageTextField.antiAliasType = AntiAliasType.ADVANCED;
+        
+        var blurred :BlurFilter = new BlurFilter(1.3, 1.3, 1 );
+        var storedBlur :Array = [blurred];
+        feedbackMessageTextField.filters = storedBlur;
+        
+        
+        var shadowText :TextField = 
+            TextFieldUtil.createField(feedbackMessage);
+        shadowText.selectable = false;
+        shadowText.tabEnabled = false;
+        shadowText.embedFonts = true;
+        
+        shadowText.setTextFormat( lineageformat );
+        shadowText.textColor = 0xffffff;
+        shadowText.width = _hudFeedback.width;
+        shadowText.height = _hudFeedback.height;
+        shadowText.x = _hudFeedback.x - 10;
+        shadowText.y = _hudFeedback.y + 10;
+        shadowText.multiline = _hudFeedback.multiline;
+        shadowText.wordWrap = true;
+        shadowText.antiAliasType = AntiAliasType.ADVANCED;
+        
+        var blurredShadow:DropShadowFilter = new DropShadowFilter(0.8, 0, 0xffffff, 1.0, 5, 5, 1000 );
+        var storedBlurShadow :Array = [blurredShadow];
+        shadowText.filters = storedBlurShadow;
+        
+        
+        textSprite.addChild( shadowText );
+        textSprite.addChild( feedbackMessageTextField );
+        
+        
+        var textSceneObject :SimpleSceneObject = 
+            new SimpleSceneObject( textSprite, FEEDBACK_SIMOBJECT_NAME );
+            
+        //Remove any objects with the same name
+        if( db.getObjectNamed( FEEDBACK_SIMOBJECT_NAME ) != null ) {
+            db.getObjectNamed( FEEDBACK_SIMOBJECT_NAME ).destroySelf();
+        }
+            
+        db.addObject( textSceneObject, _hudMC);
+        
+        var serialTask :SerialTask = new SerialTask();
+        serialTask.addTask( 
+            new TimedTask( VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY * 0.9 ));
+        serialTask.addTask( new SelfDestructTask() );  
+        textSceneObject.addTask( serialTask );
+    }
+    
     public function showFeedBack( msg :String, immediate :Boolean = false ) :void
     {
         if( immediate ) {
-            _feedbackMessageQueue.unshift( msg );
+            insertFeedbackSceneObject( msg );
         }
         else {
             _feedbackMessageQueue.push( msg );
@@ -1191,6 +1211,7 @@ public class HUD extends SceneObject
     
     protected var _feedbackMessageQueue :Array = new Array();
     protected var _feedbackMessageTimeElapsed :Number = VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY;
+    protected static const FEEDBACK_SIMOBJECT_NAME :String = "feedback";
     
     protected var _DEBUGGING_add_feedback_timer :Number = 0;
     
