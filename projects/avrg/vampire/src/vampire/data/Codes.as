@@ -74,6 +74,10 @@ public class Codes
     */
     public static const PLAYER_PROP_MINIONIDS :String = NetConstants.makePersistent("minionIds");
 
+    /**
+    * Number of successful invites.
+    */
+    public static const PLAYER_PROP_INVITES :String = NetConstants.makePersistent("invites");
 
 
     /**
