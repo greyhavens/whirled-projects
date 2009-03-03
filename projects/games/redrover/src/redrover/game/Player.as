@@ -10,25 +10,21 @@ import redrover.data.LevelData;
 
 public class Player extends SimObject
 {
-    public static const STATE_NORMAL :int = 0;
-    public static const STATE_SWITCHINGBOARDS :int = 1;
-    public static const STATE_EATEN :int = 2;
-
     public function Player (playerIndex :int, playerName :String, teamId :int, gridX :int,
         gridY :int, color :uint)
     {
         _playerIndex = playerIndex;
         _playerName = playerName;
         _teamId = teamId;
-        _curBoardId = teamId;
+        _data.curBoardId = teamId;
         _color = color;
-        _state = STATE_NORMAL;
+        _data.state = PlayerData.STATE_NORMAL;
 
         _cellSize = GameContext.levelData.cellSize;
 
         var cell :BoardCell = GameContext.gameMode.getBoard(teamId).getCell(gridX, gridY);
-        _loc.x = cell.ctrPixelX;
-        _loc.y = cell.ctrPixelY;
+        _data.loc.x = cell.ctrPixelX;
+        _data.loc.y = cell.ctrPixelY;
     }
 
     public function eatPlayer (player :Player) :void
@@ -41,7 +37,7 @@ public class Player extends SimObject
         player.beginGetEaten(this);
 
         // we get the other player's gems
-        addGems(player._gems);
+        addGems(player._data.gems);
         player.clearGems();
     }
 
@@ -93,15 +89,15 @@ public class Player extends SimObject
             newLoc = new Vector2(gridX, gridY);
         }
 
-        _loc.x = (newLoc.x + 0.5) * GameContext.levelData.cellSize;
-        _loc.y = (newLoc.y + 0.5) * GameContext.levelData.cellSize;
+        _data.loc.x = (newLoc.x + 0.5) * GameContext.levelData.cellSize;
+        _data.loc.y = (newLoc.y + 0.5) * GameContext.levelData.cellSize;
 
         // we're dazed for a little while
-        _state = STATE_EATEN;
+        _data.state = PlayerData.STATE_EATEN;
         addNamedTask(GOT_EATEN_TASK_NAME,
             After(GameContext.levelData.gotEatenTime,
                 new FunctionTask(function () :void {
-                    _state = STATE_NORMAL;
+                    _data.state = PlayerData.STATE_NORMAL;
                 })));
 
         dispatchEvent(GameEvent.createWasEaten(byPlayer));
@@ -113,7 +109,7 @@ public class Player extends SimObject
             return;
         }
 
-        _state = STATE_SWITCHINGBOARDS;
+        _data.state = PlayerData.STATE_SWITCHINGBOARDS;
         addNamedTask(SWITCH_BOARDS_TASK_NAME,
             After(GameContext.levelData.switchBoardsTime,
                 new FunctionTask(switchBoards)));
@@ -121,14 +117,13 @@ public class Player extends SimObject
 
     public function move (direction :int) :void
     {
-        _nextMoveDirection = direction;
+        _data.nextMoveDirection = direction;
     }
 
     public function addGem (gemType :int) :void
     {
-        if (_gems.length < GameContext.levelData.maxCarriedGems) {
-            _gems.push(gemType);
-            _gemCounts[gemType] += 1;
+        if (_data.gems.length < GameContext.levelData.maxCarriedGems) {
+            _data.gems.push(gemType);
         }
     }
 
@@ -141,16 +136,13 @@ public class Player extends SimObject
 
     public function clearGems () :void
     {
-        _gems = [];
-        for (var ii :int = 0; ii < _gemCounts.length; ++ii) {
-            _gemCounts[ii] = 0;
-        }
+        _data.gems = [];
     }
 
     public function get canSwitchBoards () :Boolean
     {
-        return (_state != STATE_SWITCHINGBOARDS &&
-            (_teamId == _curBoardId || this.numGems >= GameContext.levelData.returnHomeGemsMin));
+        return (_data.state != PlayerData.STATE_SWITCHINGBOARDS &&
+            (_teamId == _data.curBoardId || this.numGems >= GameContext.levelData.returnHomeGemsMin));
     }
 
     public function get playerIndex () :int
@@ -175,17 +167,17 @@ public class Player extends SimObject
 
     public function get curBoardId () :int
     {
-        return _curBoardId;
+        return _data.curBoardId;
     }
 
     public function get curBoard () :Board
     {
-        return GameContext.gameMode.getBoard(_curBoardId);
+        return GameContext.gameMode.getBoard(_data.curBoardId);
     }
 
     public function get isOnOwnBoard () :Boolean
     {
-        return _teamId == _curBoardId;
+        return _teamId == _data.curBoardId;
     }
 
     public function get color () :uint
@@ -195,17 +187,17 @@ public class Player extends SimObject
 
     public function get loc () :Vector2
     {
-        return _loc;
+        return _data.loc;
     }
 
     public function get state () :int
     {
-        return _state;
+        return _data.state;
     }
 
     public function get score () :int
     {
-        return _score;
+        return _data.score;
     }
 
     public function get moveSpeed () :Number
@@ -218,32 +210,32 @@ public class Player extends SimObject
 
     public function get gridX () :int
     {
-        return _loc.x / _cellSize;
+        return _data.loc.x / _cellSize;
     }
 
     public function get gridY () :int
     {
-        return _loc.y / _cellSize;
+        return _data.loc.y / _cellSize;
     }
 
     public function get curBoardCell () :BoardCell
     {
-        return GameContext.getCellAt(_curBoardId, this.gridX, this.gridY);
+        return GameContext.getCellAt(_data.curBoardId, this.gridX, this.gridY);
     }
 
     public function get numGems () :int
     {
-        return _gems.length;
+        return _data.gems.length;
     }
 
     public function get gems () :Array
     {
-        return _gems;
+        return _data.gems;
     }
 
     public function get moveDirection () :int
     {
-        return _moveDirection;
+        return _data.moveDirection;
     }
 
     public function get isMoving () :Boolean
@@ -253,22 +245,22 @@ public class Player extends SimObject
 
     public function get canMove () :Boolean
     {
-        return _state != STATE_SWITCHINGBOARDS && _state != STATE_EATEN;
+        return _data.state != PlayerData.STATE_SWITCHINGBOARDS && _data.state != PlayerData.STATE_EATEN;
     }
 
     public function get isSwitchingBoards () :Boolean
     {
-        return _state == STATE_SWITCHINGBOARDS;
+        return _data.state == PlayerData.STATE_SWITCHINGBOARDS;
     }
 
     public function get isInvincible () :Boolean
     {
-        return this.invincibleTime > 0;
+        return _data.invincibleTime > 0;
     }
 
     public function get invincibleTime () :Number
     {
-        return Number(_invincibleTime.value);
+        return _data.invincibleTime;
     }
 
     public function isGemValidForPickup (gemType :int) :Boolean
@@ -278,15 +270,16 @@ public class Player extends SimObject
         }
 
         // Can't pick up the same gem twice in a row
-        var lastGem :int = _gems[_gems.length - 1];
+        var lastGem :int = _data.gems[_data.gems.length - 1];
         if (lastGem == gemType) {
             return false;
         }
 
         // Can't have 2 more gems of any type than you have gems of the other types
-        var thisGemCount :int = _gemCounts[gemType];
-        for (var otherGemType :int = 0; otherGemType < _gemCounts.length; ++otherGemType) {
-            if (gemType != otherGemType && thisGemCount > _gemCounts[otherGemType]) {
+        var gemCounts :Array = calcGemCounts();
+        var thisGemCount :int = gemCounts[gemType];
+        for (var otherGemType :int = 0; otherGemType < gemCounts.length; ++otherGemType) {
+            if (gemType != otherGemType && thisGemCount > gemCounts[otherGemType]) {
                 return false;
             }
         }
@@ -298,7 +291,7 @@ public class Player extends SimObject
     {
         var multiplier :Number = GameContext.getScoreMultiplier(_teamId);
         var actualPoints :int = basePoints * multiplier;
-        _score += actualPoints;
+        _data.score += actualPoints;
 
         // give a small fraction of points to everyone else on the team
         var teammatePoints :int = actualPoints * GameContext.levelData.teammateScoreMultiplier;
@@ -313,9 +306,19 @@ public class Player extends SimObject
         return actualPoints;
     }
 
+    protected function calcGemCounts () :Array
+    {
+        var gemCounts :Array = ArrayUtil.create(Constants.GEM__LIMIT, 0);
+        for each (var gemType :int in _data.gems) {
+            gemCounts[gemType] += 1;
+        }
+
+        return gemCounts;
+    }
+
     protected function earnTeammatePoints (points :int, fromTeammate :Player) :void
     {
-        _score += points;
+        _data.score += points;
         dispatchEvent(GameEvent.createGotTeammatePoints(points, fromTeammate));
     }
 
@@ -323,8 +326,10 @@ public class Player extends SimObject
     {
         super.update(dt);
 
-        var startX :Number = _loc.x;
-        var startY :Number = _loc.y;
+        var startX :Number = _data.loc.x;
+        var startY :Number = _data.loc.y;
+
+        _data.invincibleTime = Math.max(_data.invincibleTime - dt, 0);
 
         if (this.canMove) {
             handleNextMove(this.moveSpeed * dt);
@@ -343,46 +348,46 @@ public class Player extends SimObject
             }
         }
 
-        _isMoving = (_loc.x != startX || _loc.y != startY);
+        _isMoving = (_data.loc.x != startX || _data.loc.y != startY);
     }
 
     protected function handleNextMove (moveDist :Number) :void
     {
-        if (_nextMoveDirection == -1) {
-            if (_moveDirection >= 0) {
-                handleMoveInDirection(moveDist, _moveDirection);
+        if (_data.nextMoveDirection == -1) {
+            if (_data.moveDirection >= 0) {
+                handleMoveInDirection(moveDist, _data.moveDirection);
             }
 
             return;
         }
 
         var canTurn :Boolean;
-        if (_moveDirection < 0) {
+        if (_data.moveDirection < 0) {
             canTurn = true;
 
         } else {
-            if (Constants.isParallel(_moveDirection, _nextMoveDirection)) {
+            if (Constants.isParallel(_data.moveDirection, _data.nextMoveDirection)) {
                 // we can always switch direction along the same axis
                 canTurn = true;
 
             } else {
-                var prevIsec :Number = getPrevCellIntersection(_moveDirection);
-                var nextIsec :Number = getNextCellIntersection(_moveDirection);
-                var oldX :Number = _loc.x;
-                var oldY :Number = _loc.y;
-                canTurn = tryTurn(moveDist, _nextMoveDirection, prevIsec, nextIsec);
-                moveDist -= (Math.abs(_loc.x - oldX) + Math.abs(_loc.y - oldY));
+                var prevIsec :Number = getPrevCellIntersection(_data.moveDirection);
+                var nextIsec :Number = getNextCellIntersection(_data.moveDirection);
+                var oldX :Number = _data.loc.x;
+                var oldY :Number = _data.loc.y;
+                canTurn = tryTurn(moveDist, _data.nextMoveDirection, prevIsec, nextIsec);
+                moveDist -= (Math.abs(_data.loc.x - oldX) + Math.abs(_data.loc.y - oldY));
             }
         }
 
         if (canTurn) {
-            _moveDirection = _nextMoveDirection;
-            _nextMoveDirection = -1;
+            _data.moveDirection = _data.nextMoveDirection;
+            _data.nextMoveDirection = -1;
 
             handleNextMove(moveDist);
 
-        } else if (_moveDirection != -1 && moveDist > 0) {
-            handleMoveInDirection(moveDist, _moveDirection);
+        } else if (_data.moveDirection != -1 && moveDist > 0) {
+            handleMoveInDirection(moveDist, _data.moveDirection);
         }
     }
 
@@ -390,43 +395,43 @@ public class Player extends SimObject
         nextIsec :Number) :Boolean
     {
         var maxTurnOvershoot :Number = GameContext.levelData.maxTurnOvershoot;
-        var moveDir :Vector2 = Constants.DIRECTION_VECTORS[_moveDirection];
+        var moveDir :Vector2 = Constants.DIRECTION_VECTORS[_data.moveDirection];
         var canTurn :Boolean;
 
         // If we've just overshot our turn, and we're allowed to enter the cell
         // we'd like to turn towards, allow the turn anyway
         if (moveDir.x != 0 &&
-            Math.abs(prevIsec - _loc.x) <= maxTurnOvershoot &&
-            canMoveTowards(prevIsec, _loc.y, turnDirection)) {
+            Math.abs(prevIsec - _data.loc.x) <= maxTurnOvershoot &&
+            canMoveTowards(prevIsec, _data.loc.y, turnDirection)) {
 
-            moveDist -= Math.min(moveDist, Math.abs(prevIsec - _loc.x));
-            _loc.x = prevIsec;
+            moveDist -= Math.min(moveDist, Math.abs(prevIsec - _data.loc.x));
+            _data.loc.x = prevIsec;
             canTurn = true;
 
         } else if (moveDir.y != 0 &&
-                   Math.abs(prevIsec - _loc.y) <= maxTurnOvershoot &&
-                   canMoveTowards(_loc.x, prevIsec, turnDirection)) {
+                   Math.abs(prevIsec - _data.loc.y) <= maxTurnOvershoot &&
+                   canMoveTowards(_data.loc.x, prevIsec, turnDirection)) {
 
-            moveDist -= Math.min(moveDist, Math.abs(prevIsec - _loc.y));
-            _loc.y = prevIsec;
+            moveDist -= Math.min(moveDist, Math.abs(prevIsec - _data.loc.y));
+            _data.loc.y = prevIsec;
             canTurn = true;
 
         } else {
             // Otherwise, allow the turn once we reach our next intersection
             if (moveDir.x != 0 &&
-                Math.abs(nextIsec - _loc.x) <= moveDist &&
-                canMoveTowards(nextIsec, _loc.y, turnDirection)) {
+                Math.abs(nextIsec - _data.loc.x) <= moveDist &&
+                canMoveTowards(nextIsec, _data.loc.y, turnDirection)) {
 
-                moveDist -= Math.abs(nextIsec - _loc.x);
-                _loc.x = nextIsec;
+                moveDist -= Math.abs(nextIsec - _data.loc.x);
+                _data.loc.x = nextIsec;
                 canTurn = true;
 
             } else if (moveDir.y != 0 &&
-                       Math.abs(nextIsec - _loc.y) <= moveDist &&
-                       canMoveTowards(_loc.x, nextIsec, turnDirection)) {
+                       Math.abs(nextIsec - _data.loc.y) <= moveDist &&
+                       canMoveTowards(_data.loc.x, nextIsec, turnDirection)) {
 
-               moveDist -= Math.abs(nextIsec - _loc.y);
-               _loc.y = nextIsec;
+               moveDist -= Math.abs(nextIsec - _data.loc.y);
+               _data.loc.y = nextIsec;
                canTurn = true;
             }
         }
@@ -437,11 +442,11 @@ public class Player extends SimObject
     protected function handleMoveInDirection (dist :Number, direction :int) :Number
     {
         var dir :Vector2 = Constants.DIRECTION_VECTORS[direction];
-        var oldX :Number = _loc.x;
-        var oldY :Number = _loc.y;
-        tryMoveTo(_loc.x + (dir.x * dist), _loc.y + (dir.y * dist));
+        var oldX :Number = _data.loc.x;
+        var oldY :Number = _data.loc.y;
+        tryMoveTo(_data.loc.x + (dir.x * dist), _data.loc.y + (dir.y * dist));
 
-        return dist - (Math.abs(_loc.x - oldX) + Math.abs(_loc.y - oldY));
+        return dist - (Math.abs(_data.loc.x - oldX) + Math.abs(_data.loc.y - oldY));
     }
 
     protected function getNextCellIntersection (moveDirection :int) :Number
@@ -449,13 +454,13 @@ public class Player extends SimObject
         var halfCell :int = _cellSize * 0.5;
         var dir :Vector2 = Constants.DIRECTION_VECTORS[moveDirection];
         if (dir.x > 0) {
-            return (Math.floor((_loc.x + halfCell) / _cellSize) * _cellSize) + halfCell;
+            return (Math.floor((_data.loc.x + halfCell) / _cellSize) * _cellSize) + halfCell;
         } else if (dir.x < 0) {
-            return (Math.floor((_loc.x - halfCell) / _cellSize) * _cellSize) + halfCell;
+            return (Math.floor((_data.loc.x - halfCell) / _cellSize) * _cellSize) + halfCell;
         } else if (dir.y > 0) {
-            return (Math.floor((_loc.y + halfCell) / _cellSize) * _cellSize) + halfCell;
+            return (Math.floor((_data.loc.y + halfCell) / _cellSize) * _cellSize) + halfCell;
         } else {
-            return (Math.floor((_loc.y - halfCell) / _cellSize) * _cellSize) + halfCell;
+            return (Math.floor((_data.loc.y - halfCell) / _cellSize) * _cellSize) + halfCell;
         }
     }
 
@@ -473,7 +478,7 @@ public class Player extends SimObject
     protected function canMoveTowards (fromX :Number, fromY :Number, moveDirection :int) :Boolean
     {
         var nextCell :BoardCell;
-        var board :Board = GameContext.gameMode.getBoard(_curBoardId);
+        var board :Board = GameContext.gameMode.getBoard(_data.curBoardId);
         switch (moveDirection) {
         case Constants.DIR_EAST:
             nextCell = board.getCellAtPixel(fromX + _cellSize, fromY);
@@ -499,94 +504,81 @@ public class Player extends SimObject
     {
         // Tries to move the player to the new location. Clamps the move if a collision occurs.
         // Don't collide into tiles
-        var board :Board = GameContext.gameMode.getBoard(_curBoardId);
+        var board :Board = GameContext.gameMode.getBoard(_data.curBoardId);
         var nextCell :BoardCell;
-        var xOffset :Number = xNew - _loc.x;
-        var yOffset :Number = yNew - _loc.y;
+        var xOffset :Number = xNew - _data.loc.x;
+        var yOffset :Number = yNew - _data.loc.y;
         var halfCell :int = _cellSize * 0.5;
         var gx :int;
         var gy :int;
         if (xOffset > 0) {
-            gx = board.pixelToGrid(_loc.x + xOffset + halfCell + 1);
-            gy = board.pixelToGrid(_loc.y);
+            gx = board.pixelToGrid(_data.loc.x + xOffset + halfCell + 1);
+            gy = board.pixelToGrid(_data.loc.y);
             nextCell = board.getCell(gx, gy);
             if (nextCell == null || nextCell.isObstacle) {
                 xNew = ((gx - 1) * _cellSize) + halfCell;
             }
 
         } else if (xOffset < 0) {
-            gx = board.pixelToGrid(_loc.x + xOffset - halfCell);
-            gy = board.pixelToGrid(_loc.y);
+            gx = board.pixelToGrid(_data.loc.x + xOffset - halfCell);
+            gy = board.pixelToGrid(_data.loc.y);
             nextCell = board.getCell(gx, gy);
             if (nextCell == null || nextCell.isObstacle) {
                 xNew = ((gx + 1) * _cellSize) + halfCell;
             }
 
         } else if (yOffset > 0) {
-            gx = board.pixelToGrid(_loc.x);
-            gy = board.pixelToGrid(_loc.y + yOffset + halfCell + 1);
+            gx = board.pixelToGrid(_data.loc.x);
+            gy = board.pixelToGrid(_data.loc.y + yOffset + halfCell + 1);
             nextCell = board.getCell(gx, gy);
             if (nextCell == null || nextCell.isObstacle) {
                 yNew = ((gy - 1) * _cellSize) + halfCell;
             }
 
         } else if (yOffset < 0) {
-            gx = board.pixelToGrid(_loc.x);
-            gy = board.pixelToGrid(_loc.y + yOffset - halfCell);
+            gx = board.pixelToGrid(_data.loc.x);
+            gy = board.pixelToGrid(_data.loc.y + yOffset - halfCell);
             nextCell = board.getCell(gx, gy);
             if (nextCell == null || nextCell.isObstacle) {
                 yNew = ((gy + 1) * _cellSize) + halfCell;
             }
         }
 
-        _loc.x = xNew;
-        _loc.y = yNew;
+        _data.loc.x = xNew;
+        _data.loc.y = yNew;
     }
 
     protected function redeemGems (cell :BoardCell) :void
     {
         var points :int = earnPoints(GameContext.levelData.gemValues.getValueAt(this.numGems));
-        dispatchEvent(GameEvent.createGemsRedeemed(_gems, cell, points));
+        dispatchEvent(GameEvent.createGemsRedeemed(_data.gems, cell, points));
         clearGems();
     }
 
     protected function switchBoards () :void
     {
-        _state = STATE_NORMAL;
-        _curBoardId = Constants.getOtherTeam(_curBoardId);
+        _data.state = PlayerData.STATE_NORMAL;
+        _data.curBoardId = Constants.getOtherTeam(_data.curBoardId);
         becomeInvincible(GameContext.levelData.switchedBoardsInvincibleTime);
     }
 
     protected function becomeInvincible (time :Number) :void
     {
-        if (time > 0) {
-            _invincibleTime.value = time;
-            addNamedTask(INVINCIBLE_TASK_NAME,
-                new AnimateValueTask(_invincibleTime, 0, time), true);
-        }
+        _data.invincibleTime = Math.max(_data.invincibleTime, time);
     }
 
     protected var _playerIndex :int;
     protected var _playerName :String;
     protected var _teamId :int;
-    protected var _gems :Array = [];
-    protected var _gemCounts :Array = ArrayUtil.create(Constants.GEM__LIMIT, 0);
     protected var _color :uint;
-    protected var _invincibleTime :Object = { value: 0 };
-
-    protected var _state :int;
-    protected var _loc :Vector2 = new Vector2();
-    protected var _curBoardId :int;
-    protected var _moveDirection :int = -1;
-    protected var _score :int;
     protected var _isMoving :Boolean;
-    protected var _nextMoveDirection :int = -1;
+
+    protected var _data :PlayerData = new PlayerData();
 
     protected var _cellSize :int; // we access this value all the time
 
     protected static const SWITCH_BOARDS_TASK_NAME :String = "SwitchBoards";
     protected static const GOT_EATEN_TASK_NAME :String = "GotEaten";
-    protected static const INVINCIBLE_TASK_NAME :String = "Invincible";
 }
 
 }

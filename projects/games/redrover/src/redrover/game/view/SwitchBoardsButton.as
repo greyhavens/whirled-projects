@@ -53,7 +53,7 @@ public class SwitchBoardsButton extends SceneObject
         var player :Player = GameContext.localPlayer;
         var buttonStates :Array = (player.isOnOwnBoard ? _ownBoardStates : _otherBoardStates);
         var curState :DisplayObject;
-        if (player.state == Player.STATE_SWITCHINGBOARDS) {
+        if (player.state == PlayerData.STATE_SWITCHINGBOARDS) {
             curState = buttonStates[SWITCHING];
         } else {
             curState = buttonStates[player.canSwitchBoards ? ACTIVE : INACTIVE];

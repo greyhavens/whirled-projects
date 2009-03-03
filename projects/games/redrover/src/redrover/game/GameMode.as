@@ -242,8 +242,8 @@ public class GameMode extends AppMode
                     playerA.teamId != playerB.teamId &&
                     playerA.gridX == playerB.gridX &&
                     playerA.gridY == playerB.gridY &&
-                    playerA.state != Player.STATE_EATEN &&
-                    playerA.state != Player.STATE_EATEN) {
+                    playerA.state != PlayerData.STATE_EATEN &&
+                    playerA.state != PlayerData.STATE_EATEN) {
 
                     if (playerA.curBoardId == playerA.teamId && !playerB.isInvincible) {
                         playerA.eatPlayer(playerB);
