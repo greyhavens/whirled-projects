@@ -20,9 +20,9 @@ public class Player extends SimObject
         _color = color;
         _data.state = PlayerData.STATE_NORMAL;
 
-        _cellSize = GameContext.levelData.cellSize;
+        _cellSize = GameCtx.levelData.cellSize;
 
-        var cell :BoardCell = GameContext.gameMode.getBoard(teamId).getCell(gridX, gridY);
+        var cell :BoardCell = GameCtx.gameMode.getBoard(teamId).getCell(gridX, gridY);
         _data.loc.x = cell.ctrPixelX;
         _data.loc.y = cell.ctrPixelY;
     }
@@ -31,7 +31,7 @@ public class Player extends SimObject
     {
         // our score increases (*before* the other player gets
         // eaten, so that they don't get a share of the points)
-        var points :int = earnPoints(GameContext.levelData.eatPlayerPoints);
+        var points :int = earnPoints(GameCtx.levelData.eatPlayerPoints);
 
         dispatchEvent(GameEvent.createAtePlayer(player, points));
         player.beginGetEaten(this);
@@ -89,13 +89,13 @@ public class Player extends SimObject
             newLoc = new Vector2(gridX, gridY);
         }
 
-        _data.loc.x = (newLoc.x + 0.5) * GameContext.levelData.cellSize;
-        _data.loc.y = (newLoc.y + 0.5) * GameContext.levelData.cellSize;
+        _data.loc.x = (newLoc.x + 0.5) * GameCtx.levelData.cellSize;
+        _data.loc.y = (newLoc.y + 0.5) * GameCtx.levelData.cellSize;
 
         // we're dazed for a little while
         _data.state = PlayerData.STATE_EATEN;
         addNamedTask(GOT_EATEN_TASK_NAME,
-            After(GameContext.levelData.gotEatenTime,
+            After(GameCtx.levelData.gotEatenTime,
                 new FunctionTask(function () :void {
                     _data.state = PlayerData.STATE_NORMAL;
                 })));
@@ -111,7 +111,7 @@ public class Player extends SimObject
 
         _data.state = PlayerData.STATE_SWITCHINGBOARDS;
         addNamedTask(SWITCH_BOARDS_TASK_NAME,
-            After(GameContext.levelData.switchBoardsTime,
+            After(GameCtx.levelData.switchBoardsTime,
                 new FunctionTask(switchBoards)));
     }
 
@@ -122,7 +122,7 @@ public class Player extends SimObject
 
     public function addGem (gemType :int) :void
     {
-        if (_data.gems.length < GameContext.levelData.maxCarriedGems) {
+        if (_data.gems.length < GameCtx.levelData.maxCarriedGems) {
             _data.gems.push(gemType);
         }
     }
@@ -142,7 +142,7 @@ public class Player extends SimObject
     public function get canSwitchBoards () :Boolean
     {
         return (_data.state != PlayerData.STATE_SWITCHINGBOARDS &&
-            (_teamId == _data.curBoardId || this.numGems >= GameContext.levelData.returnHomeGemsMin));
+            (_teamId == _data.curBoardId || this.numGems >= GameCtx.levelData.returnHomeGemsMin));
     }
 
     public function get playerIndex () :int
@@ -152,7 +152,7 @@ public class Player extends SimObject
 
     public function get isLocalPlayer () :Boolean
     {
-        return _playerIndex == GameContext.localPlayerIndex;
+        return _playerIndex == GameCtx.localPlayerIndex;
     }
 
     public function get playerName () :String
@@ -172,7 +172,7 @@ public class Player extends SimObject
 
     public function get curBoard () :Board
     {
-        return GameContext.gameMode.getBoard(_data.curBoardId);
+        return GameCtx.gameMode.getBoard(_data.curBoardId);
     }
 
     public function get isOnOwnBoard () :Boolean
@@ -202,7 +202,7 @@ public class Player extends SimObject
 
     public function get moveSpeed () :Number
     {
-        var data :LevelData = GameContext.levelData;
+        var data :LevelData = GameCtx.levelData;
         var speedBase :Number =
             (this.isOnOwnBoard ? data.ownBoardSpeedBase : data.otherBoardSpeedBase);
         return speedBase + (this.numGems * data.speedOffsetPerGem);
@@ -220,7 +220,7 @@ public class Player extends SimObject
 
     public function get curBoardCell () :BoardCell
     {
-        return GameContext.getCellAt(_data.curBoardId, this.gridX, this.gridY);
+        return GameCtx.getCellAt(_data.curBoardId, this.gridX, this.gridY);
     }
 
     public function get numGems () :int
@@ -289,14 +289,14 @@ public class Player extends SimObject
 
     public function earnPoints (basePoints :int) :int
     {
-        var multiplier :Number = GameContext.getScoreMultiplier(_teamId);
+        var multiplier :Number = GameCtx.getScoreMultiplier(_teamId);
         var actualPoints :int = basePoints * multiplier;
         _data.score += actualPoints;
 
         // give a small fraction of points to everyone else on the team
-        var teammatePoints :int = actualPoints * GameContext.levelData.teammateScoreMultiplier;
+        var teammatePoints :int = actualPoints * GameCtx.levelData.teammateScoreMultiplier;
         if (teammatePoints != 0) {
-            for each (var player :Player in GameContext.players) {
+            for each (var player :Player in GameCtx.players) {
                 if (player != this && player.teamId == _teamId) {
                     player.earnTeammatePoints(teammatePoints, this);
                 }
@@ -336,7 +336,7 @@ public class Player extends SimObject
 
             var cell :BoardCell = this.curBoardCell;
             // If we're on the other team's board, pickup gems when we enter their cells
-            if (!this.isOnOwnBoard && this.numGems < GameContext.levelData.maxCarriedGems &&
+            if (!this.isOnOwnBoard && this.numGems < GameCtx.levelData.maxCarriedGems &&
                 cell.hasGem && isGemValidForPickup(cell.gemType)) {
                 addGem(cell.takeGem());
                 dispatchEvent(GameEvent.createGemGrabbed());
@@ -394,7 +394,7 @@ public class Player extends SimObject
     protected function tryTurn (moveDist :Number, turnDirection :int, prevIsec :Number,
         nextIsec :Number) :Boolean
     {
-        var maxTurnOvershoot :Number = GameContext.levelData.maxTurnOvershoot;
+        var maxTurnOvershoot :Number = GameCtx.levelData.maxTurnOvershoot;
         var moveDir :Vector2 = Constants.DIRECTION_VECTORS[_data.moveDirection];
         var canTurn :Boolean;
 
@@ -478,7 +478,7 @@ public class Player extends SimObject
     protected function canMoveTowards (fromX :Number, fromY :Number, moveDirection :int) :Boolean
     {
         var nextCell :BoardCell;
-        var board :Board = GameContext.gameMode.getBoard(_data.curBoardId);
+        var board :Board = GameCtx.gameMode.getBoard(_data.curBoardId);
         switch (moveDirection) {
         case Constants.DIR_EAST:
             nextCell = board.getCellAtPixel(fromX + _cellSize, fromY);
@@ -504,7 +504,7 @@ public class Player extends SimObject
     {
         // Tries to move the player to the new location. Clamps the move if a collision occurs.
         // Don't collide into tiles
-        var board :Board = GameContext.gameMode.getBoard(_data.curBoardId);
+        var board :Board = GameCtx.gameMode.getBoard(_data.curBoardId);
         var nextCell :BoardCell;
         var xOffset :Number = xNew - _data.loc.x;
         var yOffset :Number = yNew - _data.loc.y;
@@ -550,7 +550,7 @@ public class Player extends SimObject
 
     protected function redeemGems (cell :BoardCell) :void
     {
-        var points :int = earnPoints(GameContext.levelData.gemValues.getValueAt(this.numGems));
+        var points :int = earnPoints(GameCtx.levelData.gemValues.getValueAt(this.numGems));
         dispatchEvent(GameEvent.createGemsRedeemed(_data.gems, cell, points));
         clearGems();
     }
@@ -559,7 +559,7 @@ public class Player extends SimObject
     {
         _data.state = PlayerData.STATE_NORMAL;
         _data.curBoardId = Constants.getOtherTeam(_data.curBoardId);
-        becomeInvincible(GameContext.levelData.switchedBoardsInvincibleTime);
+        becomeInvincible(GameCtx.levelData.switchedBoardsInvincibleTime);
     }
 
     protected function becomeInvincible (time :Number) :void

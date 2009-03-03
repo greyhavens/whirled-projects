@@ -9,7 +9,7 @@ public class GemSpawner extends SimObject
 {
     public static function getAll () :Array
     {
-        return GameContext.gameMode.getObjectsInGroup(GROUP_NAME);
+        return GameCtx.gameMode.getObjectsInGroup(GROUP_NAME);
     }
 
     public function GemSpawner (board :Board, gemType :int, gridX :int, gridY :int)
@@ -64,7 +64,7 @@ public class GemSpawner extends SimObject
     {
         removeAllTasks();
 
-        var spawnTime :Number = GameContext.levelData.gemSpawnTime.next();
+        var spawnTime :Number = GameCtx.levelData.gemSpawnTime.next();
         addTask(After(spawnTime, new FunctionTask(
             function () :void {
                 createGem();
@@ -76,7 +76,7 @@ public class GemSpawner extends SimObject
 
     protected function createGem () :void
     {
-        GameContext.gameMode.createGem(_board.teamId, _gridX, _gridY, _gemType);
+        GameCtx.gameMode.createGem(_board.teamId, _gridX, _gridY, _gemType);
     }
 
     protected var _board :Board;

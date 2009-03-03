@@ -14,38 +14,38 @@ public class PlayerFactory
 
     public static function initPlayer (player :Player) :PlayerView
     {
-        GameContext.players.push(player);
-        GameContext.winningPlayers.push(player);
-        GameContext.gameMode.addObject(player);
+        GameCtx.players.push(player);
+        GameCtx.winningPlayers.push(player);
+        GameCtx.gameMode.addObject(player);
 
         var view :PlayerView = new PlayerView(player);
-        GameContext.gameMode.addObject(view); // will add itself to the proper display parent
+        GameCtx.gameMode.addObject(view); // will add itself to the proper display parent
 
-        GameContext.gameMode.addObject(new PlayerShadowView(player)); // ditto
+        GameCtx.gameMode.addObject(new PlayerShadowView(player)); // ditto
 
         return view;
     }
 
     public static function createRobot (type :int, initialTeam :int) :Robot
     {
-        var board :Board = GameContext.getBoard(initialTeam);
+        var board :Board = GameCtx.getBoard(initialTeam);
         var startX :int;
         var startY :int;
         for (;;) {
             startX = Rand.nextIntRange(0, board.cols, Rand.STREAM_GAME);
             startY = Rand.nextIntRange(0, board.rows, Rand.STREAM_GAME);
-            if (!GameContext.isCellOccupied(initialTeam, startX, startY)) {
+            if (!GameCtx.isCellOccupied(initialTeam, startX, startY)) {
                 break;
             }
         }
 
         var player :Player = new Player(
-            GameContext.nextPlayerIndex(),
+            GameCtx.nextPlayerIndex(),
             (initialTeam == Constants.TEAM_RED ?
-                GameContext.nextMaleRobotName() : GameContext.nextFemaleRobotName()),
+                GameCtx.nextMaleRobotName() : GameCtx.nextFemaleRobotName()),
             initialTeam,
             startX, startY,
-            GameContext.nextPlayerColor());
+            GameCtx.nextPlayerColor());
 
         initPlayer(player);
 
@@ -61,7 +61,7 @@ public class PlayerFactory
         }
 
         var robot :Robot = new Robot(ai);
-        GameContext.gameMode.addObject(robot);
+        GameCtx.gameMode.addObject(robot);
 
         return robot;
     }

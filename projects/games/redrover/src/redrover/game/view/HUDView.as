@@ -32,7 +32,7 @@ public class HUDView extends SceneObject
         var switchBoardsButton :SwitchBoardsButton = new SwitchBoardsButton();
         switchBoardsButton.x = BUTTON_X;
         switchBoardsButton.y = (size.y - switchBoardsButton.height) * 0.5;
-        GameContext.gameMode.addObject(switchBoardsButton, _sprite);
+        GameCtx.gameMode.addObject(switchBoardsButton, _sprite);
     }
 
     override public function get displayObject () :DisplayObject
@@ -45,7 +45,7 @@ public class HUDView extends SceneObject
         super.update(dt);
 
         // Score
-        var newScore :int = GameContext.localPlayer.score;
+        var newScore :int = GameCtx.localPlayer.score;
         if (newScore != _lastScore) {
             if (_scoreText != null) {
                 _scoreText.parent.removeChild(_scoreText);
@@ -60,13 +60,13 @@ public class HUDView extends SceneObject
         }
 
         // Gem lineup
-        var newGems :int = GameContext.localPlayer.numGems;
+        var newGems :int = GameCtx.localPlayer.numGems;
         if (newGems != _lastGems) {
             while (_gemSprite.numChildren > 0) {
                 _gemSprite.removeChildAt(_gemSprite.numChildren - 1);
             }
 
-            for each (var gemType :int in GameContext.localPlayer.gems) {
+            for each (var gemType :int in GameCtx.localPlayer.gems) {
                 var gem :DisplayObject = GemViewFactory.createGem(25, gemType);
                 gem.x = _gemSprite.width;
                 gem.y = -gem.height * 0.5;
@@ -78,7 +78,7 @@ public class HUDView extends SceneObject
 
         // Team sizes
         for (var teamId :int = 0; teamId < Constants.NUM_TEAMS; ++teamId) {
-            var teamSize :int = GameContext.getTeamSize(teamId);
+            var teamSize :int = GameCtx.getTeamSize(teamId);
             if (teamSize != _lastTeamSizes[teamId]) {
                 var oldTeamText :TextField = _teamTexts[teamId];
                 if (oldTeamText != null) {
@@ -98,15 +98,15 @@ public class HUDView extends SceneObject
         }
 
         // High score
-        var firstPlace :Player = GameContext.winningPlayers[0];
-        var secondPlace :Player = (GameContext.winningPlayers.length > 1 ?
-            GameContext.winningPlayers[1] : null);
+        var firstPlace :Player = GameCtx.winningPlayers[0];
+        var secondPlace :Player = (GameCtx.winningPlayers.length > 1 ?
+            GameCtx.winningPlayers[1] : null);
 
         var firstPlaceScore :int = (firstPlace != null ? firstPlace.score : 0);
         var secondPlaceScore :int = (secondPlace != null ? secondPlace.score : 0);
 
         var highScoreStr :String;
-        var isInLead :Boolean = (firstPlaceScore == GameContext.localPlayer.score);
+        var isInLead :Boolean = (firstPlaceScore == GameCtx.localPlayer.score);
         if (isInLead) {
             if (secondPlace == null || firstPlace.score > secondPlace.score) {
                 highScoreStr = "Winning! (+" + (firstPlaceScore - secondPlaceScore) + ")";
@@ -115,7 +115,7 @@ public class HUDView extends SceneObject
             }
 
         } else {
-            highScoreStr = "Losing! (-" + (firstPlaceScore - GameContext.localPlayer.score) + ")";
+            highScoreStr = "Losing! (-" + (firstPlaceScore - GameCtx.localPlayer.score) + ")";
         }
 
         if (_highScoreText == null || _highScoreText.text != highScoreStr) {
@@ -132,9 +132,9 @@ public class HUDView extends SceneObject
 
         // Game end condition
         var endConditionText :String;
-        switch (GameContext.levelData.endCondition) {
+        switch (GameCtx.levelData.endCondition) {
         case Constants.END_CONDITION_TIMED:
-            var secondsLeft :int = Math.round(GameContext.gameClock.timeLeft);
+            var secondsLeft :int = Math.round(GameCtx.gameClock.timeLeft);
             var min :String = String(Math.floor(secondsLeft / 60));
             var sec :String = String(Math.floor(secondsLeft % 60));
             if (sec.length < 2) {
@@ -144,7 +144,7 @@ public class HUDView extends SceneObject
             break;
 
         case Constants.END_CONDITION_POINTS:
-            endConditionText = "" + firstPlace.score + "/" + int(GameContext.levelData.endValue);
+            endConditionText = "" + firstPlace.score + "/" + int(GameCtx.levelData.endValue);
             break;
         }
 

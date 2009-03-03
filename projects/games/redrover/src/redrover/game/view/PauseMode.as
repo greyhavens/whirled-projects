@@ -60,7 +60,7 @@ public class PauseMode extends AppMode
         var restartButton :SimpleButton = UIBits.createButton("Restart", 1.2, 150);
         registerOneShotCallback(restartButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.mainLoop.unwindToMode(new GameMode(GameContext.levelData));
+                AppContext.mainLoop.unwindToMode(new GameMode(GameCtx.levelData));
             });
         restartButton.x = (bgSprite.width - restartButton.width) * 0.5;
         restartButton.y = helpButton.y - restartButton.height - 5;

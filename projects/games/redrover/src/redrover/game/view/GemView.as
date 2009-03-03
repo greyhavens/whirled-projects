@@ -19,7 +19,7 @@ public class GemView extends SceneObject
         _boardCell = boardCell;
         _teamId = teamId;
 
-        var gem :DisplayObject = GemViewFactory.createGem(GameContext.levelData.cellSize - 12,
+        var gem :DisplayObject = GemViewFactory.createGem(GameCtx.levelData.cellSize - 12,
                                                           gemType);
         gem.x = -gem.width * 0.5;
         gem.y = -gem.height * 0.6;
@@ -39,7 +39,7 @@ public class GemView extends SceneObject
 
     protected function updateView () :void
     {
-        _sprite.alpha = (_teamId == GameContext.localPlayer.teamId ? 0.5 : 1);
+        _sprite.alpha = (_teamId == GameCtx.localPlayer.teamId ? 0.5 : 1);
 
         // all gems scale simultaneously
         if (_gemPulser.isNull) {

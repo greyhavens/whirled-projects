@@ -86,7 +86,7 @@ public class MoveToTask extends AITask
 
 }
 
-import redrover.game.GameContext;
+import redrover.game.GameCtx;
 
 class PendingMove
 {

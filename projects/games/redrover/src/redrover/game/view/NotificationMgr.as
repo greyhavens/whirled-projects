@@ -104,7 +104,7 @@ class Notification extends SceneObject
         var player :Player = Player(_playerRef.object);
 
         // The player's on another board. Don't bother playing.
-        if (player.curBoardId != GameContext.localPlayer.curBoardId) {
+        if (player.curBoardId != GameCtx.localPlayer.curBoardId) {
             return;
         }
 
@@ -132,8 +132,8 @@ class Notification extends SceneObject
 
         var worldLoc :Point = new Point(player.loc.x, player.loc.y);
         // convert world loc to screen loc
-        var teamSprite :Sprite = GameContext.gameMode.getTeamSprite(player.curBoardId);
-        var overlay :Sprite = GameContext.gameMode.overlayLayer;
+        var teamSprite :Sprite = GameCtx.gameMode.getTeamSprite(player.curBoardId);
+        var overlay :Sprite = GameCtx.gameMode.overlayLayer;
         var screenLoc :Point = overlay.globalToLocal(teamSprite.localToGlobal(worldLoc));
         screenLoc.x += _offset.x;
         screenLoc.y += _offset.y;
@@ -150,7 +150,7 @@ class Notification extends SceneObject
         _sprite.y = screenLoc.y;
 
         if (_soundName != null) {
-            GameContext.playGameSound(_soundName);
+            GameCtx.playGameSound(_soundName);
         }
 
         addTask(new SerialTask(
@@ -160,7 +160,7 @@ class Notification extends SceneObject
                 After(moveTime - fadeTime, new AlphaTask(0, fadeTime))),
             new SelfDestructTask()));
 
-        GameContext.gameMode.addObject(this, overlay);
+        GameCtx.gameMode.addObject(this, overlay);
     }
 
     override protected function addedToDB () :void

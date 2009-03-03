@@ -26,7 +26,7 @@ public class SwitchBoardsButton extends SceneObject
         _otherBoardStates = [
             UIBits.createButton("Return Home!", 1.5),
             UIBits.createTextPanel(
-                "" + GameContext.levelData.returnHomeGemsMin +  " gems are required" +
+                "" + GameCtx.levelData.returnHomeGemsMin +  " gems are required" +
                 " to return home.", 1.2, 0, 0x888888),
             UIBits.createTextPanel("Return Home!", 1.5, 0, 0x888888)
         ];
@@ -42,15 +42,15 @@ public class SwitchBoardsButton extends SceneObject
 
     protected function onClicked (...ignored) :void
     {
-        if (GameContext.localPlayer.canSwitchBoards) {
-            GameContext.localPlayer.beginSwitchBoards();
+        if (GameCtx.localPlayer.canSwitchBoards) {
+            GameCtx.localPlayer.beginSwitchBoards();
         }
     }
 
     override protected function update (dt :Number) :void
     {
         // discover which state we should be in
-        var player :Player = GameContext.localPlayer;
+        var player :Player = GameCtx.localPlayer;
         var buttonStates :Array = (player.isOnOwnBoard ? _ownBoardStates : _otherBoardStates);
         var curState :DisplayObject;
         if (player.state == PlayerData.STATE_SWITCHINGBOARDS) {

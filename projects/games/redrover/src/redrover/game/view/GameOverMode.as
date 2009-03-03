@@ -29,12 +29,12 @@ public class GameOverMode extends AppMode
         _modeSprite.addChild(bg);
 
         var scoresText :String = "";
-        for (var ii :int = 0; ii < GameContext.winningPlayers.length; ++ii) {
+        for (var ii :int = 0; ii < GameCtx.winningPlayers.length; ++ii) {
             if (ii > 0) {
                 scoresText += "\n";
             }
 
-            var player :Player = GameContext.winningPlayers[ii];
+            var player :Player = GameCtx.winningPlayers[ii];
             scoresText += String(ii + 1) + ". " + player.playerName + " (" + player.score + ")";
         }
 
@@ -52,7 +52,7 @@ public class GameOverMode extends AppMode
         var tryAgainButton :SimpleButton = UIBits.createButton("Again!", 2);
         this.registerOneShotCallback(tryAgainButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.mainLoop.unwindToMode(new GameMode(GameContext.levelData));
+                AppContext.mainLoop.unwindToMode(new GameMode(GameCtx.levelData));
             });
         tryAgainButton.x = (bg.width - tryAgainButton.width) * 0.5;
         tryAgainButton.y = scorePanel.y + scorePanel.height + 40;

@@ -31,9 +31,9 @@ public class GameMode extends AppMode
     {
         super.setup();
 
-        GameContext.init();
-        GameContext.gameMode = this;
-        GameContext.levelData = _levelData;
+        GameCtx.init();
+        GameCtx.gameMode = this;
+        GameCtx.levelData = _levelData;
 
         setupAudio();
 
@@ -52,42 +52,42 @@ public class GameMode extends AppMode
     {
         super.enter();
 
-        GameContext.sfxControls.pause(false);
-        GameContext.musicControls.pause(false);
-        GameContext.musicControls.volumeTo(1, 0.3);
+        GameCtx.sfxControls.pause(false);
+        GameCtx.musicControls.pause(false);
+        GameCtx.musicControls.volumeTo(1, 0.3);
     }
 
     override protected function exit () :void
     {
-        GameContext.sfxControls.pause(true);
-        GameContext.musicControls.volumeTo(0.2, 0.3);
+        GameCtx.sfxControls.pause(true);
+        GameCtx.musicControls.volumeTo(0.2, 0.3);
 
         super.exit();
     }
 
     protected function setupAudio () :void
     {
-        GameContext.playAudio = true;
+        GameCtx.playAudio = true;
 
-        GameContext.sfxControls = new AudioControls(
+        GameCtx.sfxControls = new AudioControls(
             AppContext.audio.getControlsForSoundType(SoundResource.TYPE_SFX));
-        GameContext.musicControls = new AudioControls(
+        GameCtx.musicControls = new AudioControls(
             AppContext.audio.getControlsForSoundType(SoundResource.TYPE_MUSIC));
 
-        GameContext.sfxControls.retain();
-        GameContext.musicControls.retain();
+        GameCtx.sfxControls.retain();
+        GameCtx.musicControls.retain();
 
-        GameContext.sfxControls.pause(true);
-        GameContext.musicControls.pause(true);
+        GameCtx.sfxControls.pause(true);
+        GameCtx.musicControls.pause(true);
     }
 
     protected function shutdownAudio () :void
     {
-        GameContext.sfxControls.stop(true);
-        GameContext.musicControls.stop(true);
+        GameCtx.sfxControls.stop(true);
+        GameCtx.musicControls.stop(true);
 
-        GameContext.sfxControls.release();
-        GameContext.musicControls.release();
+        GameCtx.sfxControls.release();
+        GameCtx.musicControls.release();
     }
 
     protected function setupLogicObjects () :void
@@ -119,8 +119,8 @@ public class GameMode extends AppMode
         }
 
         if (_levelData.endCondition == Constants.END_CONDITION_TIMED) {
-            GameContext.gameClock = new SimpleTimer(_levelData.endValue);
-            addObject(GameContext.gameClock);
+            GameCtx.gameClock = new SimpleTimer(_levelData.endValue);
+            addObject(GameCtx.gameClock);
         }
     }
 
@@ -150,7 +150,7 @@ public class GameMode extends AppMode
 
         var notificationMgr :NotificationMgr = new NotificationMgr();
         addObject(notificationMgr);
-        GameContext.notificationMgr = notificationMgr;
+        GameCtx.notificationMgr = notificationMgr;
     }
 
     protected function setupPlayers () :void
@@ -162,14 +162,14 @@ public class GameMode extends AppMode
         for (;;) {
             startX = Rand.nextIntRange(0, board.cols, Rand.STREAM_GAME);
             startY = Rand.nextIntRange(0, board.rows, Rand.STREAM_GAME);
-            if (!GameContext.isCellOccupied(0, startX, startY)) {
+            if (!GameCtx.isCellOccupied(0, startX, startY)) {
                 break;
             }
         }
 
-        GameContext.localPlayerIndex = 0;
+        GameCtx.localPlayerIndex = 0;
         PlayerFactory.initPlayer(
-            new Player(0, "You", 0, startX, startY, GameContext.nextPlayerColor()));
+            new Player(0, "You", 0, startX, startY, GameCtx.nextPlayerColor()));
 
         // create ai players
         for (var ii :int = 0; ii < 8; ++ii) {
@@ -182,12 +182,12 @@ public class GameMode extends AppMode
     override public function update (dt :Number) :void
     {
         // update team sizes
-        for (var ii :int = 0; ii < GameContext.teamSizes.length; ++ii) {
-            GameContext.teamSizes[ii] = 0;
+        for (var ii :int = 0; ii < GameCtx.teamSizes.length; ++ii) {
+            GameCtx.teamSizes[ii] = 0;
         }
 
-        for each (var player :Player in GameContext.players) {
-            GameContext.teamSizes[player.teamId] += 1;
+        for each (var player :Player in GameCtx.players) {
+            GameCtx.teamSizes[player.teamId] += 1;
         }
 
         dt = 1 / 30; // TODO - remove this!
@@ -196,7 +196,7 @@ public class GameMode extends AppMode
         handlePlayerCollisions();
 
         // update winners
-        GameContext.winningPlayers.sort(scoreSort);
+        GameCtx.winningPlayers.sort(scoreSort);
 
         // handle game over
         if(checkGameOver()) {
@@ -204,7 +204,7 @@ public class GameMode extends AppMode
         }
 
         // sort the board objects in the currently-visible TeamSprite
-        var curTeamSprite :TeamSprite = _teamSprites[GameContext.localPlayer.curBoardId];
+        var curTeamSprite :TeamSprite = _teamSprites[GameCtx.localPlayer.curBoardId];
         DisplayUtil.sortDisplayChildren(curTeamSprite.playerLayer, displayObjectYSort);
     }
 
@@ -218,13 +218,13 @@ public class GameMode extends AppMode
     {
         switch (_levelData.endCondition) {
         case Constants.END_CONDITION_TIMED:
-            _gameOver = GameContext.gameClock.timeLeft <= 0;
+            _gameOver = GameCtx.gameClock.timeLeft <= 0;
             break;
 
         case Constants.END_CONDITION_POINTS:
             var hiScore :int;
-            var winningPlayer :Player = GameContext.winningPlayers[0];
-            _gameOver = winningPlayer.score >= GameContext.levelData.endValue;
+            var winningPlayer :Player = GameCtx.winningPlayers[0];
+            _gameOver = winningPlayer.score >= GameCtx.levelData.endValue;
             break;
         }
 
@@ -234,10 +234,10 @@ public class GameMode extends AppMode
     protected function handlePlayerCollisions () :void
     {
         // collide the players
-        for (var ii :int = 0; ii < GameContext.players.length; ++ii) {
-            var playerA :Player = GameContext.players[ii];
-            for (var jj :int = ii + 1; jj < GameContext.players.length; ++jj) {
-                var playerB :Player = GameContext.players[jj];
+        for (var ii :int = 0; ii < GameCtx.players.length; ++ii) {
+            var playerA :Player = GameCtx.players[ii];
+            for (var jj :int = ii + 1; jj < GameCtx.players.length; ++jj) {
+                var playerB :Player = GameCtx.players[jj];
                 if (playerA.curBoardId == playerB.curBoardId &&
                     playerA.teamId != playerB.teamId &&
                     playerA.gridX == playerB.gridX &&
@@ -273,23 +273,23 @@ public class GameMode extends AppMode
     {
         switch (keyCode) {
         case KeyboardCodes.SPACE:
-            GameContext.localPlayer.beginSwitchBoards();
+            GameCtx.localPlayer.beginSwitchBoards();
             break;
 
         case KeyboardCodes.LEFT:
-            GameContext.localPlayer.move(Constants.DIR_WEST);
+            GameCtx.localPlayer.move(Constants.DIR_WEST);
             break;
 
         case KeyboardCodes.RIGHT:
-            GameContext.localPlayer.move(Constants.DIR_EAST);
+            GameCtx.localPlayer.move(Constants.DIR_EAST);
             break;
 
         case KeyboardCodes.UP:
-            GameContext.localPlayer.move(Constants.DIR_NORTH);
+            GameCtx.localPlayer.move(Constants.DIR_NORTH);
             break;
 
         case KeyboardCodes.DOWN:
-            GameContext.localPlayer.move(Constants.DIR_SOUTH);
+            GameCtx.localPlayer.move(Constants.DIR_SOUTH);
             break;
 
         case KeyboardCodes.ESCAPE:
@@ -308,11 +308,11 @@ public class GameMode extends AppMode
 
     protected function handleCheat (keyCode :uint) :void
     {
-        var localPlayer :Player = GameContext.localPlayer;
+        var localPlayer :Player = GameCtx.localPlayer;
 
         switch (keyCode) {
         case KeyboardCodes.G:
-            if (localPlayer.numGems < GameContext.levelData.maxCarriedGems) {
+            if (localPlayer.numGems < GameCtx.levelData.maxCarriedGems) {
                 for (var gemType :int = 0; gemType < Constants.GEM__LIMIT; ++gemType) {
                     if (localPlayer.isGemValidForPickup(gemType)) {
                         localPlayer.addGem(gemType);

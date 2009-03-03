@@ -48,22 +48,22 @@ public class BoardCell
 
     public function get pixelX () :int
     {
-        return _gridX * GameContext.levelData.cellSize;
+        return _gridX * GameCtx.levelData.cellSize;
     }
 
     public function get pixelY () :int
     {
-        return _gridY * GameContext.levelData.cellSize;
+        return _gridY * GameCtx.levelData.cellSize;
     }
 
     public function get ctrPixelX() :int
     {
-        return (_gridX + 0.5) * GameContext.levelData.cellSize;
+        return (_gridX + 0.5) * GameCtx.levelData.cellSize;
     }
 
     public function get ctrPixelY () :int
     {
-        return (_gridY + 0.5) * GameContext.levelData.cellSize;
+        return (_gridY + 0.5) * GameCtx.levelData.cellSize;
     }
 
     public function get isObstacle () :Boolean

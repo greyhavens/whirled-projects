@@ -33,7 +33,7 @@ public class GemsRedeemedAnim extends SceneObject
     {
         if (_gems.length > 0) {
             showNextGemAnim();
-        } else if (_player.playerIndex == GameContext.localPlayerIndex) {
+        } else if (_player.playerIndex == GameCtx.localPlayerIndex) {
             // only show the score animation for the local player
             showScoreAnim();
         } else {
@@ -69,7 +69,7 @@ public class GemsRedeemedAnim extends SceneObject
             HAPPINESS[_numGems < HAPPINESS.length ? _numGems : HAPPINESS.length - 1] +
             " (" + (_earnedPoints >= 0 ? "+" : "") + _earnedPoints + ")";
 
-        GameContext.notificationMgr.showNotification(
+        GameCtx.notificationMgr.showNotification(
             _player,
             text,
             new Point(0, -100),

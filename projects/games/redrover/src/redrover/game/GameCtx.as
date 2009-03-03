@@ -9,7 +9,7 @@ import redrover.*;
 import redrover.data.LevelData;
 import redrover.game.view.NotificationMgr;
 
-public class GameContext
+public class GameCtx
 {
     public static var gameMode :GameMode;
     public static var levelData :LevelData;
@@ -94,7 +94,7 @@ public class GameContext
 
     public static function get localPlayer () :Player
     {
-        return players[GameContext.localPlayerIndex];
+        return players[GameCtx.localPlayerIndex];
     }
 
     public static function getBoard (boardId :int) :Board

@@ -31,23 +31,23 @@ public class Camera extends SceneObject
     {
         super.update(dt);
 
-        var data :LevelData = GameContext.levelData;
+        var data :LevelData = GameCtx.levelData;
 
         // When the local player switches boards, update the camera
-        var newBoardId :int = GameContext.localPlayer.curBoardId;
+        var newBoardId :int = GameCtx.localPlayer.curBoardId;
         if (_lastBoardId != newBoardId) {
             if (_curTeamSprite != null) {
                 _sprite.removeChild(_curTeamSprite);
             }
 
-            var newTeamSprite :TeamSprite = GameContext.gameMode.getTeamSprite(newBoardId);
+            var newTeamSprite :TeamSprite = GameCtx.gameMode.getTeamSprite(newBoardId);
             _sprite.addChild(newTeamSprite);
 
             _lastBoardId = newBoardId;
             _curTeamSprite = newTeamSprite;
         }
 
-        var isOnOwnBoard :Boolean = GameContext.localPlayer.isOnOwnBoard;
+        var isOnOwnBoard :Boolean = GameCtx.localPlayer.isOnOwnBoard;
         if (_wasOnOwnBoard != isOnOwnBoard) {
             var targetScale :Number = (isOnOwnBoard ? data.ownBoardZoom : data.otherBoardZoom);
             addNamedTask(ZOOM_TASK_NAME,
@@ -58,9 +58,9 @@ public class Camera extends SceneObject
         }
 
         // Keep the player centered in the view as much as possible
-        var playerLoc :Vector2 = GameContext.localPlayer.loc;
+        var playerLoc :Vector2 = GameCtx.localPlayer.loc;
         var scale :Number = _sprite.scaleX;
-        var board :Board = GameContext.gameMode.getBoard(_lastBoardId);
+        var board :Board = GameCtx.gameMode.getBoard(_lastBoardId);
 
         var camX :Number = (-_width * 0.5 / scale) + (playerLoc.x);
         var camY :Number = (-_height * 0.5 / scale) + (playerLoc.y);

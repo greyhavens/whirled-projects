@@ -31,7 +31,7 @@ public class PlayerView extends SceneObject
         _sprite = SpriteUtil.createSprite();
         _playerAnims = ArrayUtil.create(Constants.NUM_TEAMS, null);
 
-        if (_player == GameContext.localPlayer) {
+        if (_player == GameCtx.localPlayer) {
             var arrow :Bitmap = ImageResource.instantiateBitmap(AppContext.rsrcs, "player_arrow");
             arrow.x = -arrow.width * 0.5;
             arrow.y = -arrow.height;
@@ -56,7 +56,7 @@ public class PlayerView extends SceneObject
         setBoard(_player.curBoardId);
 
         registerListener(player, GameEvent.GEMS_REDEEMED, onGemsRedeemed);
-        if (_player == GameContext.localPlayer) {
+        if (_player == GameCtx.localPlayer) {
             registerListener(player, GameEvent.GOT_TEAMMATE_POINTS, onGotTeammatePoints);
             registerListener(player, GameEvent.GEM_GRABBED, onGemGrabbed);
             registerListener(player, GameEvent.WAS_EATEN, onWasEaten);
@@ -100,7 +100,7 @@ public class PlayerView extends SceneObject
     protected function onGemsRedeemed (e :GameEvent) :void
     {
         // Don't show the animation if it's not on the board we're watching
-        if (_player.curBoardId != GameContext.localPlayer.curBoardId) {
+        if (_player.curBoardId != GameCtx.localPlayer.curBoardId) {
             return;
         }
 
@@ -108,9 +108,9 @@ public class PlayerView extends SceneObject
         var gems :Array = data.gems;
         var points :int = data.points;
         var boardCell :BoardCell = data.boardCell;
-        GameContext.gameMode.addObject(
+        GameCtx.gameMode.addObject(
             new GemsRedeemedAnim(_player, gems, boardCell, points),
-            GameContext.gameMode.getTeamSprite(_player.teamId));
+            GameCtx.gameMode.getTeamSprite(_player.teamId));
     }
 
     protected function onGotTeammatePoints (e :GameEvent) :void
@@ -119,7 +119,7 @@ public class PlayerView extends SceneObject
         var points :int = data.points;
         var fromTeammate :Player = data.fromTeammate;
 
-        GameContext.notificationMgr.showNotification(
+        GameCtx.notificationMgr.showNotification(
             _player,
             (points >= 0 ? "+" : "") + points + " from " + fromTeammate.playerName,
             new Point(0, -80),
@@ -129,7 +129,7 @@ public class PlayerView extends SceneObject
 
     protected function onGemGrabbed (e :GameEvent) :void
     {
-        GameContext.playGameSound("sfx_gem" + Math.min(_player.numGems, NUM_GEM_SOUNDS));
+        GameCtx.playGameSound("sfx_gem" + Math.min(_player.numGems, NUM_GEM_SOUNDS));
     }
 
     protected function onWasEaten (e :GameEvent) :void
@@ -137,7 +137,7 @@ public class PlayerView extends SceneObject
         var data :Object = e.data;
         var eatingPlayer :Player = data.eatingPlayer;
 
-        GameContext.notificationMgr.showNotification(
+        GameCtx.notificationMgr.showNotification(
             _player,
             eatingPlayer.playerName + " captured you!\n" +
             "You now serve the " + Constants.TEAM_LEADER_NAMES[_player.teamId] + ".",
@@ -155,13 +155,13 @@ public class PlayerView extends SceneObject
             (eatenPlayer.numGems > 0 ? "\nand took " + eatenPlayer.numGems + " gems!" : "!") +
             " (" + (points >= 0 ? "+" : "") + points + ")";
 
-        GameContext.notificationMgr.showNotification(
+        GameCtx.notificationMgr.showNotification(
             _player,
             text,
             new Point(0, -80),
             NotificationMgr.MAJOR);
 
-        GameContext.playGameSound("sfx_eat_player");
+        GameCtx.playGameSound("sfx_eat_player");
     }
 
     override protected function update (dt :Number) :void
@@ -174,7 +174,7 @@ public class PlayerView extends SceneObject
         }
 
         // don't bother updating views for players on another board
-        if (_player.curBoardId != GameContext.localPlayer.curBoardId) {
+        if (_player.curBoardId != GameCtx.localPlayer.curBoardId) {
             return;
         }
 
@@ -182,7 +182,7 @@ public class PlayerView extends SceneObject
         if (_player.isSwitchingBoards) {
             if (!hasTasksNamed(SWITCH_BOARDS_ANIM_TASK_NAME)) {
                 addNamedTask(SWITCH_BOARDS_ANIM_TASK_NAME,
-                    new AlphaTask(0, GameContext.levelData.switchBoardsTime),
+                    new AlphaTask(0, GameCtx.levelData.switchBoardsTime),
                     true);
             }
 
@@ -243,7 +243,7 @@ public class PlayerView extends SceneObject
 
     protected function setBoard (boardId :int) :void
     {
-        GameContext.gameMode.getTeamSprite(boardId).playerLayer.addChild(_sprite);
+        GameCtx.gameMode.getTeamSprite(boardId).playerLayer.addChild(_sprite);
         _lastBoardId = boardId;
     }
 

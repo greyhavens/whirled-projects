@@ -12,7 +12,7 @@ public class Board extends SimObject
         _teamId = teamId;
         _cols = cols;
         _rows = rows;
-        _cellSize = GameContext.levelData.cellSize;
+        _cellSize = GameCtx.levelData.cellSize;
         _cellSizeInv = 1 / _cellSize;
 
         var size :int = _cols * _rows;
@@ -22,7 +22,7 @@ public class Board extends SimObject
             var isObstacle :Boolean = (terrainType == Constants.TERRAIN_OBSTACLE);
             var isGemRedemption :Boolean = (terrainType == Constants.TERRAIN_GEMREDEMPTION);
             var moveSpeed :Number = (terrainType == Constants.TERRAIN_SLOW ?
-                GameContext.levelData.slowTerrainSpeedMultiplier : 1);
+                GameCtx.levelData.slowTerrainSpeedMultiplier : 1);
             _cells[ii] = new BoardCell(getX(ii), getY(ii), isObstacle, isGemRedemption, moveSpeed);
         }
     }

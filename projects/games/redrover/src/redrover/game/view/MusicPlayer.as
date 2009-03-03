@@ -11,8 +11,8 @@ public class MusicPlayer extends SimObject
     public function MusicPlayer ()
     {
         // start our music in the paused state
-        _myTeamControls = new AudioControls(GameContext.musicControls).pause(true);
-        _otherTeamControls = new AudioControls(GameContext.musicControls).pause(true);
+        _myTeamControls = new AudioControls(GameCtx.musicControls).pause(true);
+        _otherTeamControls = new AudioControls(GameCtx.musicControls).pause(true);
 
         _myTeamControls.retain();
         _otherTeamControls.retain();
@@ -36,7 +36,7 @@ public class MusicPlayer extends SimObject
     {
         super.update(dt);
 
-        var newControls :AudioControls = (GameContext.localPlayer.isOnOwnBoard ?
+        var newControls :AudioControls = (GameCtx.localPlayer.isOnOwnBoard ?
             _myTeamControls : _otherTeamControls);
 
         if (newControls != _curControls) {

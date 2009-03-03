@@ -28,7 +28,7 @@ public class BoardView extends SceneObject
         var rock :Bitmap = getRock();
         var gemRedemption :Bitmap = getGemRedemption();
 
-        var cellSize :int = GameContext.levelData.cellSize;
+        var cellSize :int = GameCtx.levelData.cellSize;
         var grassScale :Number = cellSize / grass.width;
         var rockScale :Number = (cellSize - 3) / rock.width;
         var grScale :Number = cellSize / gemRedemption.width;

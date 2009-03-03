@@ -18,7 +18,7 @@ public class PlayerShadowView extends SceneObject
         _player = player;
 
         var shadow :Bitmap = ImageResource.instantiateBitmap(AppContext.rsrcs, "player_shadow");
-        var targetSize :Number = GameContext.levelData.cellSize * 0.8;
+        var targetSize :Number = GameCtx.levelData.cellSize * 0.8;
         var scale :Number = Math.min(targetSize / shadow.width, targetSize / shadow.height);
         shadow.scaleX = scale;
         shadow.scaleY = scale;
@@ -40,7 +40,7 @@ public class PlayerShadowView extends SceneObject
         super.update(dt);
 
         // only show enemy team shadows
-        if (_player.teamId == GameContext.localPlayer.teamId) {
+        if (_player.teamId == GameCtx.localPlayer.teamId) {
             this.visible = false;
 
         } else {
@@ -49,7 +49,7 @@ public class PlayerShadowView extends SceneObject
             var curBoardId :int = _player.curBoardId;
             if (curBoardId != _lastBoardId) {
                 var teamSprite :TeamSprite =
-                    GameContext.gameMode.getTeamSprite(Constants.getOtherTeam(curBoardId));
+                    GameCtx.gameMode.getTeamSprite(Constants.getOtherTeam(curBoardId));
                 teamSprite.shadowLayer.addChild(_sprite);
                 _lastBoardId = curBoardId;
             }

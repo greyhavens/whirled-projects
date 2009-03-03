@@ -43,14 +43,14 @@ public class GemHogAI extends AITaskTree
 
             } else {
                 nextTask = new MoveToDistanceMapDestTask(_player,
-                    GameContext.gameMode.getRedemptionMap(_player.curBoardId));
+                    GameCtx.gameMode.getRedemptionMap(_player.curBoardId));
             }
 
         } else {
             // If we're not on our own board and we have enough gems to return home,
             // do so. If we have no gems, pursue the closest gem. Otherwise, pursue the closest
             // gem of the type we need.
-            if (_player.numGems == GameContext.levelData.returnHomeGemsMin) {
+            if (_player.numGems == GameCtx.levelData.returnHomeGemsMin) {
                 _player.beginSwitchBoards();
                 nextTask = new AIDelayUntilTask("CanMove", function () :Boolean {
                     return _player.canMove;
@@ -61,7 +61,7 @@ public class GemHogAI extends AITaskTree
                 for (var gemType :int = 0; gemType < Constants.GEM__LIMIT; ++gemType) {
                     if (_player.isGemValidForPickup(gemType)) {
                         potentialGemMaps.push(
-                            GameContext.gameMode.getGemMap(_player.curBoardId, gemType));
+                            GameCtx.gameMode.getGemMap(_player.curBoardId, gemType));
                     }
                 }
 
