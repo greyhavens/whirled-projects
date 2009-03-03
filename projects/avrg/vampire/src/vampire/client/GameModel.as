@@ -504,70 +504,16 @@ public class GameModel extends SimObject//EventDispatcher
         return pfd;
     }
 
-    public function printNonPlayers() :void
-    {
-//        trace( avatarManager );
-//        trace("Non Players: (nonplayers=" + nonPlayerManager + ")");
-//        for each( var np :NonPlayerAvatar in nonPlayerManager.values ) {
-//            trace("   " + np );
-//        }
-    }
 
-
-
-//    public function get state () :SharedPlayerStateServer
-//    {
-//        return _playerStates.get( ClientContext.ourPlayerId ) as SharedPlayerStateServer;
-//    }
-//
-//    public function get isState () :Boolean
-//    {
-//        return _playerStates.containsKey( ClientContext.ourPlayerId );
-//    }
-//
-//    public function get playerIdsWithStates() :Array
-//    {
-//        return _playerStates.keys();
-//    }
-//
-//    public function getState( playerId :int ) :SharedPlayerStateServer
-//    {
-//        return _playerStates.get( playerId );
-//    }
-
-//
-//    public function get playerIdsInRoom() :Array
-//    {
-//
-//    }
-
-//    public function get avatarManager() :VampireAvatarHUDManager
-//    {
-//        return _avatarManager;
-//    }
 
     protected var _hierarchy :MinionHierarchy;
     protected var _agentCtrl :AgentSubControl;
     protected var _propsCtrl :PropertyGetSubControl;
 
-//    protected var _avatarManager :VampireAvatarHUDManager;
-
-//    protected var _nonplayers :HashMap = new HashMap();
-//    protected var _nonPlayerLocations :NonPlayerMonitor;
-//    protected var _nonPlayers :HashMap = new HashMap();
-
-//    protected var _proximityTimer :Timer;
 
     protected var closestUserId :int;
 
-
-
-//    protected var _currentPlayerState :SharedPlayerState;
-
-//    protected var _playerStates :HashMap;
-
     protected static var log :Log = Log.getLog(GameModel);
 
-//    protected var _events :EventHandlerManager = new EventHandlerManager();
 }
 }
