@@ -347,7 +347,7 @@ public class Server extends FeedingGameServer
     protected function sendMessage (msg :Message, toPlayer :int = 0) :void
     {
         var name :String = _nameUtil.encodeName(msg.name);
-        var val :Object = _msgMgr.serializeMsg(msg);
+        var val :Object = msg.toBytes();
         if (toPlayer == 0) {
             _roomCtrl.sendMessage(name, val);
         } else {
