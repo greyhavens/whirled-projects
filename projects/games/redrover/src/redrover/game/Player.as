@@ -121,42 +121,7 @@ public class Player extends SimObject
 
     public function move (direction :int) :void
     {
-        _scheduledTurns = [ new PlayerMove(direction) ];
-    }
-
-    public function scheduleMoves (moves :Array) :void
-    {
-        _scheduledTurns = moves;
-    }
-
-    public function moveTo (gridX :int, gridY :int) :void
-    {
-        var dx :Number = gridX - this.gridX;
-        var dy :Number = gridY - this.gridY;
-
-        var dirX :int = Constants.getDirection(dx, 0);
-        var dirY :int = Constants.getDirection(0, dy);
-
-        if (dx != 0 && dy == 0) {
-            move(dirX);
-
-        } else if (dx == 0 && dy != 0) {
-            move(dirY);
-
-        } else if (dx != 0 && dy != 0) {
-            if (Math.abs(dx) < Math.abs(dy)) {
-                scheduleMoves([
-                    new PlayerMove(dirX),
-                    new PlayerMove(dirY, gridX, this.gridY)
-                ]);
-
-            } else {
-                scheduleMoves([
-                    new PlayerMove(dirY),
-                    new PlayerMove(dirX, this.gridX, gridY)
-                ]);
-            }
-        }
+        _nextMoveDirection = direction;
     }
 
     public function addGem (gemType :int) :void
@@ -383,8 +348,7 @@ public class Player extends SimObject
 
     protected function handleNextMove (moveDist :Number) :void
     {
-        if (_scheduledTurns.length == 0) {
-            // We have no scheduled moves
+        if (_nextMoveDirection == -1) {
             if (_moveDirection >= 0) {
                 handleMoveInDirection(moveDist, _moveDirection);
             }
@@ -392,50 +356,30 @@ public class Player extends SimObject
             return;
         }
 
-        var turn :PlayerMove = _scheduledTurns[0];
         var canTurn :Boolean;
-
         if (_moveDirection < 0) {
             canTurn = true;
 
         } else {
-            var attemptTurn :Boolean;
-            var prevIsec :Number;
-            var nextIsec :Number;
+            if (Constants.isParallel(_moveDirection, _nextMoveDirection)) {
+                // we can always switch direction along the same axis
+                canTurn = true;
 
-            if (turn.doAsap) {
-                if (Constants.isParallel(_moveDirection, turn.direction)) {
-                    // we can always switch direction along the same axis
-                    canTurn = true;
-                } else {
-                    prevIsec = getPrevCellIntersection(_moveDirection);
-                    nextIsec = getNextCellIntersection(_moveDirection);
-                    attemptTurn = true;
-                }
-
-            } else if (this.gridY == turn.atGridY && Constants.isHoriz(_moveDirection)) {
-                nextIsec = prevIsec = turn.atPixelX;
-                attemptTurn = true;
-
-            } else if (this.gridX == turn.atGridX && Constants.isVert(_moveDirection)) {
-                nextIsec = prevIsec = turn.atPixelY;
-                attemptTurn = true;
-            }
-
-            if (attemptTurn) {
+            } else {
+                var prevIsec :Number = getPrevCellIntersection(_moveDirection);
+                var nextIsec :Number = getNextCellIntersection(_moveDirection);
                 var oldX :Number = _loc.x;
                 var oldY :Number = _loc.y;
-                canTurn = tryTurn(moveDist, turn.direction, prevIsec, nextIsec);
+                canTurn = tryTurn(moveDist, _nextMoveDirection, prevIsec, nextIsec);
                 moveDist -= (Math.abs(_loc.x - oldX) + Math.abs(_loc.y - oldY));
             }
         }
 
         if (canTurn) {
-            _moveDirection = turn.direction;
-            _scheduledTurns.shift();
+            _moveDirection = _nextMoveDirection;
+            _nextMoveDirection = -1;
 
             handleNextMove(moveDist);
-            return;
 
         } else if (_moveDirection != -1 && moveDist > 0) {
             handleMoveInDirection(moveDist, _moveDirection);
@@ -625,17 +569,18 @@ public class Player extends SimObject
     protected var _playerIndex :int;
     protected var _playerName :String;
     protected var _teamId :int;
-    protected var _curBoardId :int;
     protected var _gems :Array = [];
     protected var _gemCounts :Array = ArrayUtil.create(Constants.GEM__LIMIT, 0);
-    protected var _score :int;
-    protected var _moveDirection :int = -1;
-    protected var _scheduledTurns :Array = [];
-    protected var _loc :Vector2 = new Vector2();
-    protected var _state :int;
     protected var _color :uint;
-    protected var _isMoving :Boolean;
     protected var _invincibleTime :Object = { value: 0 };
+
+    protected var _state :int;
+    protected var _loc :Vector2 = new Vector2();
+    protected var _curBoardId :int;
+    protected var _moveDirection :int = -1;
+    protected var _score :int;
+    protected var _isMoving :Boolean;
+    protected var _nextMoveDirection :int = -1;
 
     protected var _cellSize :int; // we access this value all the time
 

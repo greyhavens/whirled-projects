@@ -102,19 +102,20 @@ public class HUDView extends SceneObject
         var secondPlace :Player = (GameContext.winningPlayers.length > 1 ?
             GameContext.winningPlayers[1] : null);
 
+        var firstPlaceScore :int = (firstPlace != null ? firstPlace.score : 0);
+        var secondPlaceScore :int = (secondPlace != null ? secondPlace.score : 0);
+
         var highScoreStr :String;
-        var isInLead :Boolean = (firstPlace.score == GameContext.localPlayer.score);
+        var isInLead :Boolean = (firstPlaceScore == GameContext.localPlayer.score);
         if (isInLead) {
             if (secondPlace == null || firstPlace.score > secondPlace.score) {
-                highScoreStr = "Winning! (+" +
-                    (firstPlace.score - secondPlace.score) + ")";
+                highScoreStr = "Winning! (+" + (firstPlaceScore - secondPlaceScore) + ")";
             } else {
                 highScoreStr = "Tied!";
             }
 
         } else {
-            highScoreStr = "Losing! (-" +
-                (firstPlace.score - GameContext.localPlayer.score) + ")";
+            highScoreStr = "Losing! (-" + (firstPlaceScore - GameContext.localPlayer.score) + ")";
         }
 
         if (_highScoreText == null || _highScoreText.text != highScoreStr) {
