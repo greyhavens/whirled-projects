@@ -38,7 +38,7 @@ public class MinionHierarchyServer extends MinionHierarchy
                 continue;
             }
             var player :Player = _vserver.getPlayer( playerId );
-            if( player.room != null) {
+            if( player != null && player.room != null) {
                 _roomsNeedingUpdate.add( player.room.roomId );
                 _playerIdsNeedingUpdate.splice(i, 1);
                 continue;
