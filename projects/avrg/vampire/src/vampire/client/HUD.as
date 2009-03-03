@@ -398,7 +398,6 @@ public class HUD extends SceneObject
 
 
         var hudPredator :SimpleButton = SimpleButton( findSafely("HUDpredator") );
-//        Command.bind( hudPredator, MouseEvent.CLICK, VampireController.SWITCH_MODE, Constants.GAME_MODE_FEED_FROM_PLAYER);
         Command.bind( hudPredator, MouseEvent.CLICK, VampireController.FEED_REQUEST, [_targetingOverlay, _displaySprite, this] );
         registerListener( hudPredator, MouseEvent.ROLL_OVER, function(...ignored) :void {
             showFeedBack( "Feed", true);
