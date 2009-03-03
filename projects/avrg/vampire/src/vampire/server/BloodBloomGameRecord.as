@@ -4,6 +4,7 @@ package vampire.server
     import com.threerings.util.HashSet;
     import com.threerings.util.Log;
     
+    import vampire.data.Logic;
     import vampire.data.VConstants;
     import vampire.feeding.FeedingGameServer;
     
@@ -112,9 +113,10 @@ public class BloodBloomGameRecord
                     VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER) );
             }
         });
-        
+
         var preyBloodType :int = _room.isPlayer( _preyId ) ? 
-            _room.getPlayer( _preyId ).bloodtype : _preyId % VConstants.UNIQUE_BLOOD_STRAINS;
+            _room.getPlayer( _preyId ).bloodtype :
+            Logic.getPlayerBloodStrain(_preyId);
         
         _gameServer = FeedingGameServer.create( _room.roomId, 
                                                 _predators.toArray(), 

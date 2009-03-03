@@ -11,9 +11,16 @@ package vampire.data
  */    
 public class Logic
 {
+    public static function getPlayerBloodStrain (playerId :int) :int
+    {
+        return playerId % VConstants.UNIQUE_BLOOD_STRAINS;
+    }
 
-
-    
+    public static function getPlayerPreferredBloodStrain (playerId :int) :int
+    {
+        var playerStrain :int = getPlayerBloodStrain(playerId);
+        return (playerStrain < VConstants.UNIQUE_BLOOD_STRAINS - 1 ? playerStrain + 1 : 0);
+    }
     
     public static function bloodLostPerFeed( level :int ) :Number
     {

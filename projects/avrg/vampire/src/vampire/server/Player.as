@@ -1137,7 +1137,7 @@ public class Player extends EventHandlerManager
     
     public function get bloodType () :int
     {
-        return _playerId % VConstants.UNIQUE_BLOOD_STRAINS;
+        return Logic.getPlayerBloodStrain(_playerId);
     }
     
     public function get maxBlood () :Number
@@ -1177,11 +1177,6 @@ public class Player extends EventHandlerManager
     public function get time () :Number
     {
         return _timePlayerPreviouslyQuit;
-    }
-    
-    public function get bloodtype () :int
-    {
-        return _playerId % VConstants.UNIQUE_BLOOD_STRAINS;
     }
     
     public function get location () :Array
