@@ -74,7 +74,8 @@ public class MainGameMode extends AppMode
                 if( playerMovedId == ClientContext.ourPlayerId) {
                     if( ClientContext.model.action == VConstants.GAME_MODE_BARED ) {
                         ClientContext.controller.handleSwitchMode( VConstants.GAME_MODE_NOTHING );
-                        ClientContext.ctrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
+                        trace(ClientContext.ourPlayerId + " setting avatar state from player moved");
+                        ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
                     }
                 }
             });
@@ -137,10 +138,11 @@ public class MainGameMode extends AppMode
         var subgameconfig :Config = new Config();
         subgameconfig.hostSprite = _subgameSprite;
         subgame = new SimpleGame( subgameconfig );
-        subgame.run();
+//        subgame.run();
         subgame.ctx.mainLoop.pushMode( new NothingMode() );
 
-        ClientContext.ctrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
+        trace(ClientContext.ourPlayerId + " setting avatar state from game beginning");
+        ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
 
         registerListener( ClientContext.model, ChangeActionEvent.CHANGE_ACTION, changeAction );
 
@@ -184,9 +186,10 @@ public class MainGameMode extends AppMode
 
     protected function onGameComplete () :void
     {
-        log.info("onGameComplete(), Feeding complete, setting avatar state to default");//, "completedSuccessfully", completedSuccessfully);
+        log.info(ClientContext.ourPlayerId + " onGameComplete(), Feeding complete, setting avatar state to default");//, "completedSuccessfully", completedSuccessfully);
         modeSprite.removeChild(_feedingGameClient);
-        ClientContext.ctrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
+        trace(ClientContext.ourPlayerId + " setting avatar state from game complete");
+        ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
         _feedingGameClient = null;
         if( _playerFeedingDataTemp != null ) {
             ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_UPDATE_FEEDING_DATA,
@@ -226,6 +229,7 @@ public class MainGameMode extends AppMode
 
     protected function changeAction( e :ChangeActionEvent ) :void
     {
+        return;
         var action :String = e.action;
 
         var m :AppMode;
@@ -236,6 +240,7 @@ public class MainGameMode extends AppMode
 //                     break;
 
              case VConstants.GAME_MODE_FEED_FROM_PLAYER:
+             case VConstants.GAME_MODE_FEED_FROM_NON_PLAYER:
                  m = new FeedMode();
                  break;
 

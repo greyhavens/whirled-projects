@@ -83,8 +83,12 @@ public class VampireController extends Controller
                     Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, VConstants.GAME_MODE_NOTHING);
 
                 log.debug("  sending to server "+VConstants.GAME_MODE_NOTHING);
-                ClientContext.ctrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
+                trace(ClientContext.ourPlayerId + " setting avatar state mode switch");
+                ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
             }
+
+            trace(ClientContext.ourPlayerId + " setting avatar state mode switch");
+            ClientContext.model.setAvatarState( VConstants.GAME_MODE_FEED_FROM_PLAYER );
 
         }
         else {
@@ -138,7 +142,8 @@ public class VampireController extends Controller
 
     public function handleQuit() :void
     {
-        ClientContext.ctrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
+        trace(ClientContext.ourPlayerId + " setting avatar state from quit");
+        ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
 
         ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_QUIT );
 
@@ -232,7 +237,9 @@ public class VampireController extends Controller
             var playerKey :String = Codes.playerRoomPropKey( ClientContext.ourPlayerId );
             ClientContext.ctrl.player.props.setIn( playerKey,
                 Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, VConstants.GAME_MODE_NOTHING);
-            ClientContext.ctrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
+
+            trace(ClientContext.ourPlayerId + " setting avatar state from handleFeedRequest");
+            ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
 
             ClientContext.ctrl.agent.sendMessage( RequestActionChangeMessage.NAME,
                 new RequestActionChangeMessage( ClientContext.ourPlayerId,

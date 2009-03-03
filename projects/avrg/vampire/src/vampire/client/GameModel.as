@@ -338,7 +338,7 @@ public class GameModel extends SimObject//EventDispatcher
                     AvatarGameBridge.ENTITY_PROPERTY_SETSTATE_FUNCTION, entityAvatarId) as Function;
 
                 if( setStateFunction != null ) {
-                    log.debug(ClientContext.ourPlayerId + ", action=" + ClientContext.model.action +
+                    log.debug("From room props " + playerIdUpdated + ", action=" + ClientContext.model.action +
                         ", setStateFunction() " + e.newValue.toString());
                     setStateFunction( e.newValue.toString() );
                 }
@@ -475,7 +475,7 @@ public class GameModel extends SimObject//EventDispatcher
 
     public function isVampire() :Boolean
     {
-        return level >= VConstants.MINIMUM_VAMPIRE_LEVEL;
+        return VConstants.LOCAL_DEBUG_MODE || level >= VConstants.MINIMUM_VAMPIRE_LEVEL;
     }
 
     public function get hierarchy() :MinionHierarchy
@@ -511,14 +511,18 @@ public class GameModel extends SimObject//EventDispatcher
         return pfd;
     }
 
+    public function setAvatarState( state :String ) :void
+    {
+        log.debug(ClientContext.ourPlayerId + " setAvatarState", "state", state);
+        ClientContext.ctrl.player.setAvatarState( state );
+    }
 
+    public var currentSelectedTarget :int = 0;
 
     protected var _hierarchy :MinionHierarchy;
     protected var _agentCtrl :AgentSubControl;
     protected var _propsCtrl :PropertyGetSubControl;
 
-
-    protected var closestUserId :int;
 
     protected static var log :Log = Log.getLog(GameModel);
 
