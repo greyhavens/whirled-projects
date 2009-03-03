@@ -2,7 +2,6 @@ package redrover {
 
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.game.GameControl;
 import com.whirled.game.SizeChangedEvent;
@@ -14,10 +13,16 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import redrover.data.*;
+import redrover.server.*;
 
 [SWF(width="700", height="500", frameRate="30")]
 public class RedRover extends Sprite
 {
+    public static function DEBUG_REMOVE_ME () :void
+    {
+        var c :Class = Server;
+    }
+
     public function RedRover ()
     {
         AppContext.mainSprite = this;
