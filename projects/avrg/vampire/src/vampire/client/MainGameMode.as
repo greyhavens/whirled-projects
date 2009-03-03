@@ -17,6 +17,7 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 import vampire.Util;
+import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.actions.NothingMode;
 import vampire.client.actions.feed.EatMeMode;
 import vampire.client.actions.feed.FeedMode;
@@ -194,6 +195,9 @@ public class MainGameMode extends AppMode
         else {
             log.error("onGameComplete(), _playerFeedingDataTemp==null");
         }
+
+        //Reset the overlay
+        ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
 
     }
 
