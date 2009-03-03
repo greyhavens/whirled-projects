@@ -6,11 +6,11 @@ package vampire.client.events
 
     public class HierarchyUpdatedEvent extends Event
     {
-        public function HierarchyUpdatedEvent( h:MinionHierarchy, playerId :int = 0)
+        public function HierarchyUpdatedEvent( h:MinionHierarchy, playerWithNewMinion :int = 0)
         {
             super(HIERARCHY_UPDATED, false, false);
             _hierarchy = h;
-            _playerId = playerId;
+            _playerGainedMinion = playerWithNewMinion;
         }
 
         public function get hierarchy() :MinionHierarchy
@@ -18,13 +18,13 @@ package vampire.client.events
             return _hierarchy;
         }
 
-        public function get playerId() :int
+        public function get playerGainedMinion() :int
         {
-            return _playerId;
+            return _playerGainedMinion;
         }
 
         protected var _hierarchy :MinionHierarchy;
-        protected var _playerId :int;
+        protected var _playerGainedMinion :int;
 
         public static const HIERARCHY_UPDATED :String = "Hierarchy Updated";
 
