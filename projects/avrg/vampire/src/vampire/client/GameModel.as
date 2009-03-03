@@ -338,7 +338,8 @@ public class GameModel extends SimObject//EventDispatcher
                     AvatarGameBridge.ENTITY_PROPERTY_SETSTATE_FUNCTION, entityAvatarId) as Function;
 
                 if( setStateFunction != null ) {
-                    log.debug(ClientContext.ourPlayerId + " setStateFunction() " + e.newValue.toString());
+                    log.debug(ClientContext.ourPlayerId + ", action=" + ClientContext.model.action +
+                        ", setStateFunction() " + e.newValue.toString());
                     setStateFunction( e.newValue.toString() );
                 }
                 else {
@@ -498,7 +499,13 @@ public class GameModel extends SimObject//EventDispatcher
         var bytes :ByteArray = ClientContext.ctrl.player.props.get(Codes.PLAYER_PROP_FEEDING_DATA) as ByteArray;
         if (bytes != null) {
             bytes.position = 0;
-            pfd.fromBytes(bytes);
+            try {
+                pfd.fromBytes(bytes);
+            }
+            catch( err :Error ) {
+                log.error(err.getStackTrace());
+                return new PlayerFeedingData();
+            }
         }
 
         return pfd;
