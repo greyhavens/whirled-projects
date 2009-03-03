@@ -16,6 +16,7 @@ package vampire.avatar
     import vampire.client.ClientContext;
     import vampire.client.events.HierarchyUpdatedEvent;
     import vampire.data.Codes;
+    import vampire.data.Logic;
     import vampire.data.SharedPlayerStateClient;
     import vampire.data.VConstants;
 
@@ -95,10 +96,16 @@ public class VampireAvatarHUD extends AvatarHUD
         _blood = ClientContext.instantiateMovieClip("HUD", "target_blood_meter", false);
         _blood.height = 10;
 
-
+        _preyStrain = ClientContext.instantiateMovieClip("HUD", "prey_strain", true);
+        _preyStrain.scaleX = _preyStrain.scaleY = 2;
         _hudSprite.addChild( _blood );
         _hudSprite.addChild( _hierarchyIcon );
         _hudSprite.addChild( _bloodBondIcon );
+
+
+        if( Logic.getPlayerPreferredBloodStrain( ClientContext.ourPlayerId ) == userId ) {
+            _hudSprite.addChild( _preyStrain );
+        }
 
         updateInfoHud();
 
@@ -212,8 +219,8 @@ public class VampireAvatarHUD extends AvatarHUD
         _bloodBondIcon.visible = isBloodBond;
 
 
-        _hierarchyIcon.x = 10;
-        _bloodBondIcon.x = -10;
+        _hierarchyIcon.x = 16;
+        _bloodBondIcon.x = -16;
 
     }
 
@@ -414,6 +421,7 @@ public class VampireAvatarHUD extends AvatarHUD
     protected var _bloodBondIcon :MovieClip;
     protected var _hierarchyIcon :SimpleButton;
     protected var _blood :MovieClip;
+    protected var _preyStrain :MovieClip;
 
     protected var _roomKey :String;
 
