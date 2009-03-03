@@ -31,7 +31,7 @@ public class LobbyConfig
     public static const MAX_TEAM_SIZE :int = 3;
     public static const UNASSIGNED_TEAM_ID :int = -1;
     public static const ENDLESS_TEAM_ID :int = -2;
-    public static const COUNTDOWN_TIME :Number = 5;
+    public static const COUNTDOWN_TIME :Number = (Constants.DEBUG_ALLOW_CHEATS ? 2 : 5);
 
     public function init (gameCtrl :GameControl, seatingMgr :SeatingManager) :void
     {
