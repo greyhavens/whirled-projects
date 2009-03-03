@@ -77,6 +77,7 @@ public class BloodBloomGameRecord
         var pred1 :int = int(arr[2]);
 
         var result :BloodBloomGameRecord = new BloodBloomGameRecord(null, -1, pred1, prey, true, null, null );
+        result._currentCountdownSecond = time;
 
         for( var i :int = 3; i < arr.length; i++) {
             result._predators.add( arr[i] );
@@ -103,17 +104,6 @@ public class BloodBloomGameRecord
             :
             ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( _preyId ) /
             ServerContext.nonPlayersBloodMonitor.maxBloodFromNonPlayer( _preyId );
-
-
-        //Start the avatar feeding
-        _predators.forEach( function( predId :int ) :void {
-            var player :Player = ServerContext.vserver.getPlayer( predId );
-            if( player != null ) {
-
-                player.setAction( (gamePreyId > 0 ? VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER :
-                    VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER) );
-            }
-        });
 
         var preyBloodType :int = Logic.getPlayerBloodStrain(_preyId);
 
@@ -303,7 +293,9 @@ public class BloodBloomGameRecord
     public function shutdown() :void
     {
         log.debug("shutdown() " + (_gameServer==null ? "Already shutdown...":""));
-        if( _gameServer != null  && _gameServer.playerIds != null) {
+        if( _room != null && _room.ctrl != null && _room.ctrl.isConnected() &&
+            _gameServer != null  && _gameServer.playerIds != null) {
+
             for each( var gamePlayerId :int in _gameServer.playerIds ) {
                 _gameServer.playerLeft( gamePlayerId );
             }
