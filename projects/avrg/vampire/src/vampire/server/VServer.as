@@ -190,9 +190,9 @@ public class VServer extends ObjectDBThane
             var playerId :int = int(evt.value);
 
             //Add to the permanent record of players.
-            if( playerId > 0 ) {
-                _playerIds.add( playerId );
-            }
+//            if( playerId > 0 ) {
+//                _playerIds.add( playerId );
+//            }
 
             if (_players.containsKey(playerId)) {
                 log.warning("Joining player already known", "playerId", playerId);
@@ -440,45 +440,41 @@ public class VServer extends ObjectDBThane
         }
     }
 
-//    public function getNonPlayer( playerId :int, room :Room ) :PlayerAvatar
-//    {
-//        return _avatarManager.getNonPlayer( playerId, room.ctrl );
-////        if( !_nonplayers.containsKey( playerId ) ) {
-////            var np :NonPlayerAvatar = new NonPlayerAvatar(playerId, room.ctrl );
-////            np.setServerNonPlayerHashMap( _nonplayers );
-////            addObject( np );
-////        }
-////        return _nonplayers.get( playerId ) as NonPlayerAvatar;
-//    }
-//    public function isNonPlayer( playerId :int ) :Boolean
-//    {
-//        return _avatarManager.isNonPlayer( playerId );
-//    }
+    /**
+    * Keep track of invites for trophies.
+    *
+    */
+    public function playerInvitedByPlayer( newPlayerId :int, inviterId :int ) :void
+    {
+        var newbie :Player = getPlayer( newPlayerId );
+        if( newbie == null ) {
+            log.error("playerInvitedByPlayer", "newPlayerId", newPlayerId, "inviterId", inviterId);
+            return;
+        }
 
+        if( isPlayer( inviterId )) {
+            var inviter :Player = getPlayer( inviterId );
+            inviter.addToInviteTally();
+            ServerContext.trophies.checkInviteTrophies( inviter );
+        }
+        else {
+            //Add to offline database
+            ServerContext.ctrl.loadOfflinePlayer(inviterId,
+                function (props :OfflinePlayerPropertyControl) :void {
+                    var currentInvites :int = int(props.get(Codes.PLAYER_PROP_INVITES));
+                    props.set(Codes.PLAYER_PROP_INVITES, currentInvites + 1);
+                },
+                function (failureCause :Object) :void {
+                    log.warning("Eek! Sending message to offline player failed!", "cause", failureCause);
+                });
+        }
+    }
 
-//    public function isPlayer( playerId :int ) :Boolean
-//    {
-//        return _players.containsKey( playerId );
-//    }
 
     public function isPlayer( playerId :int ) :Boolean
     {
-        return _playerIds.contains( playerId );
+        return _players.containsKey( playerId );
     }
-
-//    public function get avatarManager() :AvatarManager
-//    {
-//        return _avatarManager;
-//    }
-
-
-
-
-
-
-
-
-
 
 
     protected var _startTime :int;
@@ -488,10 +484,7 @@ public class VServer extends ObjectDBThane
     protected var _rooms :HashMap = new HashMap();
     protected var _players :HashMap = new HashMap();
 
-    protected var _playerIds :HashSet = new HashSet();
-
-//    protected var _avatarManager :AvatarManager = new AvatarManager();
-//    public static var _nonplayers :HashMap = new HashMap();
+//    protected var _playerIds :HashSet = new HashSet();
 
     protected var _stub :ServerStub;
 

@@ -37,6 +37,17 @@ public class Trophies extends EventCollecter
             log.error("handlePlayerGainsMinion", "player", player);
             return;
         }
+
+        checkMinionTrophies( player );
+
+    }
+
+    public function checkMinionTrophies ( player :Player ) :void
+    {
+        if( player == null ) {
+            log.error("checkMinionTrophies", "player", player);
+            return;
+        }
         var minionCount :int = player.minionsIds.length;
 
         log.debug("handlePlayerGainsMinion", "player", player.playerId, "minionCount", minionCount);
@@ -62,6 +73,11 @@ public class Trophies extends EventCollecter
         if( minionCount >= 25 ) {
             doAward(player, TROPHY_RECRUIT_25);
         }
+
+    }
+
+    public function checkInviteTrophies( player :Player ) :void
+    {
 
     }
 

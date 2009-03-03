@@ -34,8 +34,6 @@ import vampire.net.messages.ShareTokenMessage;
 /**
  * Actions:
  *  When baring, your avatar goes into the
- *
- *
  */
 public class Player extends EventHandlerManager
     implements Hashable
@@ -159,6 +157,8 @@ public class Player extends EventHandlerManager
         if( _minionsForTrophies == null ) {
             _minionsForTrophies = new Array();
         }
+
+        _inviteTally = int(_ctrl.props.get(Codes.PLAYER_PROP_INVITES));
 
         updateAvatarState();
 
@@ -424,6 +424,8 @@ public class Player extends EventHandlerManager
                 if( sire <= 0 ) {
                     log.info( playerId + " setting sire=" + inviterId);
                     makeSire( inviterId );
+                    //Tally the successful invites for trophies
+                    ServerContext.vserver.playerInvitedByPlayer( playerId, inviterId );
                 }
                 else {
                     log.warning("handleShareTokenMessage, but our sire is already > 0" );
@@ -629,20 +631,6 @@ public class Player extends EventHandlerManager
                     }
                 }
 
-
-//                if( action == VConstants.GAME_MODE_FEED_FROM_PLAYER) {
-//                    var victim :Player = ServerContext.vserver.getPlayer( targetId );
-//                    if( victim != null && victim.targetId == playerId
-//                        && victim.action == VConstants.GAME_MODE_BARED) {
-//
-//                        victim.setAction( VConstants.GAME_MODE_NOTHING );
-//                        setAction( VConstants.GAME_MODE_NOTHING );
-//                        break;
-//                    }
-//                    setAction( VConstants.GAME_MODE_NOTHING );
-//                    break;
-//                }
-
                 //Otherwise, go into bared mode.  Whay not?
                 setAction( newAction );
                 break;
@@ -650,6 +638,13 @@ public class Player extends EventHandlerManager
 
             case VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER:
             case VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER:
+
+                //Make sure we don't overwrite existing feeding.
+                if( !(action == VConstants.GAME_MODE_FEED_FROM_NON_PLAYER ||
+                    action == VConstants.GAME_MODE_FEED_FROM_PLAYER) ) {
+
+                    setAction( newAction );
+                    }
 
                 game = _room._bloodBloomGameManager.getGame( playerId );
                 if( game == null ) {
@@ -680,7 +675,7 @@ public class Player extends EventHandlerManager
 //                }
 //                else {
 
-                    setAction( newAction );
+
                     updateAvatarState();
                     ctrl.setAvatarLocation( targetX, targetY, targetZ, degs);
 //                }
@@ -704,6 +699,9 @@ public class Player extends EventHandlerManager
                     break;
                 }
 
+                setAction( newAction );
+                updateAvatarState();
+
                 if( game.multiplePredators ) {
                     if( !game.isCountDownTimerStarted ) {
                         game.startCountDownTimer();
@@ -713,8 +711,7 @@ public class Player extends EventHandlerManager
                     game.startGame();
                 }
 
-                setAction( newAction );
-                updateAvatarState();
+
 
                 //Make sure the player is facing the same direction as the prey when they arrive
 
@@ -918,10 +915,10 @@ public class Player extends EventHandlerManager
 
     protected function updateAvatarState() :void
     {
-        if (_room == null || _room.ctrl == null || !_room.ctrl.isConnected()) {
-            return;
-        }
-        else {
+//        if (_room == null || _room.ctrl == null || !_room.ctrl.isConnected()) {
+//            return;
+//        }
+//        else {
 //            var avatar :AVRGameAvatar = _room.ctrl.getAvatarInfo( playerId );
 //            if( avatar == null) {
 //                return;
@@ -942,7 +939,7 @@ public class Player extends EventHandlerManager
             }
 
             if( newState != avatarState ) {
-//                log.debug("_ctrl.setAvatarState(" + newState + ")");
+                log.debug(playerId + " updateAvatarState(" + newState + "), when action=" + action);
                 setAvatarState(newState);
             }
 
@@ -951,7 +948,7 @@ public class Player extends EventHandlerManager
 ////                log.debug("_ctrl.setAvatarState(" + newState + ")");
 //                _ctrl.setAvatarState(newState);
 //            }
-        }
+//        }
     }
 
 
@@ -981,6 +978,7 @@ public class Player extends EventHandlerManager
             }
 
             if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION] != action) {
+                log.debug("Setting " + playerId + " action=" + action + " into room props");
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, action);
             }
 
@@ -1001,6 +999,7 @@ public class Player extends EventHandlerManager
             }
 
             if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE] != avatarState ) {
+                log.debug("Setting " + playerId + " avatar state=" + avatarState + " into room props");
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE, avatarState);
             }
 
@@ -1068,6 +1067,12 @@ public class Player extends EventHandlerManager
             if( _ctrl.props.get(Codes.PLAYER_PROP_MINIONIDS) == null ||
                 !ArrayUtil.equals(_ctrl.props.get(Codes.PLAYER_PROP_MINIONIDS) as Array, _minionsForTrophies )) {
                 _ctrl.props.set(Codes.PLAYER_PROP_MINIONIDS, _minionsForTrophies, true);
+                ServerContext.trophies.checkMinionTrophies( this );
+            }
+
+            if( _ctrl.props.get(Codes.PLAYER_PROP_INVITES) != invites ) {
+                _ctrl.props.set(Codes.PLAYER_PROP_INVITES, invites, true);
+                ServerContext.trophies.checkInviteTrophies( this );
             }
 
 
@@ -1122,6 +1127,11 @@ public class Player extends EventHandlerManager
         _timePlayerPreviouslyQuit = time;
 
         _ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, _timePlayerPreviouslyQuit, true);
+    }
+
+    public function addToInviteTally( addition :int = 1 ) :void
+    {
+        _inviteTally += addition;
     }
 
     public function setBloodBonded (bloodbonded :int, force :Boolean = false) :void
@@ -1234,6 +1244,11 @@ public class Player extends EventHandlerManager
         return _sire;
     }
 
+    public function get invites () :int
+    {
+        return _inviteTally;
+    }
+
     public function get targetId() :int
     {
         return _targetId;
@@ -1247,6 +1262,7 @@ public class Player extends EventHandlerManager
     {
         return _minionsForTrophies;
     }
+
 
     public function get time () :Number
     {
@@ -1386,7 +1402,7 @@ public class Player extends EventHandlerManager
     protected var _targetId :int;
     protected var _targetLocation :Array;
 
-
+    protected var _inviteTally :int;
 
 
 //    protected var _chatTimesWithTarget :Array = [];
