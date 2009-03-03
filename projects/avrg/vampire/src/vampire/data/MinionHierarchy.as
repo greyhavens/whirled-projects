@@ -88,7 +88,7 @@ public class MinionHierarchy extends SimObjectThane
             }
 
         }
-        dispatchEvent( new HierarchyUpdatedEvent( this, sireId ) );
+
 
 
     }
