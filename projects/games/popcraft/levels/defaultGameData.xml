@@ -382,22 +382,22 @@ Lasts for 30 seconds."
 
 		<!-- 2v1v1 settings -->
 		<MultiplayerSettings arrangeType="2v1v1" smallerTeamHandicap="1.4">
-			<MapSettings backgroundName="city">
-				<BaseLocation x="632" y="155" team="0"/>
-				<BaseLocation x="632" y="255" team="0"/>
-				<BaseLocation x="95" y="110" team="1"/>
-				<BaseLocation x="95" y="325" team="2"/>
-				<SpellDropLocation x="340" y="217"/>
+			<MapSettings backgroundName="city" mapScaleY="1.88">
+				<BaseLocation x="632" y="330" team="0"/>
+				<BaseLocation x="632" y="480" team="0"/>
+				<BaseLocation x="95" y="205" team="1"/>
+				<BaseLocation x="95" y="605" team="2"/>
+				<SpellDropLocation x="340" y="405"/>
 			</MapSettings>
 		</MultiplayerSettings>
 
 		<MultiplayerSettings arrangeType="2v1v1" smallerTeamHandicap="1.4">
-			<MapSettings backgroundName="wharf">
-				<BaseLocation x="90" y="155" team="0"/>
-				<BaseLocation x="90" y="255" team="0"/>
-				<BaseLocation x="627" y="110" team="1"/>
-				<BaseLocation x="627" y="305" team="2"/>
-				<SpellDropLocation x="378" y="217"/>
+			<MapSettings backgroundName="wharf" mapScaleY="1.88">
+				<BaseLocation x="90" y="330" team="0"/>
+				<BaseLocation x="90" y="480" team="0"/>
+				<BaseLocation x="610" y="205" team="1"/>
+				<BaseLocation x="610" y="605" team="2"/>
+				<SpellDropLocation x="378" y="405"/>
 			</MapSettings>
 		</MultiplayerSettings>
 
