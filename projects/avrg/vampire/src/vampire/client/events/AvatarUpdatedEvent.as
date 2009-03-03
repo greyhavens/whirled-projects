@@ -11,27 +11,27 @@ package vampire.client.events
             _location = location;
             _hotspot = hotspot;
         }
-        
-        public function get playerId() :int 
+
+        public function get playerId() :int
         {
             return _playerId;
         }
-        public function get location() :Array 
+        public function get location() :Array
         {
             return _location;
         }
-        public function get hotspot() :Array 
+        public function get hotspot() :Array
         {
             return _hotspot;
         }
-        
-        
-        
+
+
+
         protected var _playerId :int;
         protected var _location :Array;
         protected var _hotspot :Array;
-        
+
         public static const LOCATION_CHANGED :String = "Avatar Changed Location";
-        
+
     }
 }

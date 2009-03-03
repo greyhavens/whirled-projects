@@ -20,7 +20,7 @@ import vampire.data.VConstants;
 [RemoteClass(alias="vampire.client.modes.BaseVampireMode")]
 public class BaseVampireMode extends AppMode
 {
-    
+
     public function BaseVampireMode()
     {
         super();
@@ -34,7 +34,7 @@ public class BaseVampireMode extends AppMode
     {
         setupUI();
     }
-    
+
     protected function setupUI() :void
     {
 //        var s :Sprite = new Sprite();
@@ -42,27 +42,27 @@ public class BaseVampireMode extends AppMode
 //        s.graphics.drawRect(0, 0, 200, 200);
 //        s.graphics.endFill();
 //        modeSprite.addChild( s );
-        
+
 //        modeSprite.x = 100;
 //        modeSprite.y = 100;
         modeSprite.graphics.beginFill(0xd0d0e3);
         modeSprite.graphics.drawRect(0, 0, 200, 200);
         modeSprite.graphics.endFill();
         modeSprite.addChild( TextFieldUtil.createField( ClassUtil.shortClassName( this ), {selectable :false}));
-        
+
         var closeButton :SimpleTextButton = new SimpleTextButton( "Close" );
         closeButton.x = modeSprite.width - 50;
         closeButton.y = 0;
 //        _events.registerListener( closeButton, MouseEvent.CLICK, function(...ignored) :void {
-//            ctx.mainLoop.popMode();    
+//            ctx.mainLoop.popMode();
 //        });
         Command.bind( closeButton, MouseEvent.CLICK, VampireController.CLOSE_MODE, this);
 //        Command.bind( closeButton, MouseEvent.CLICK, VampireController.SWITCH_MODE, Constants.GAME_MODE_NOTHING);
         modeSprite.addChild( closeButton );
-        
+
     }
-    
-    
-    
+
+
+
 }
 }

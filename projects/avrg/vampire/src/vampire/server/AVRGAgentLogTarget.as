@@ -30,8 +30,9 @@ package vampire.server
         
         public function log(msg:String):void
         {
-            _messageCache.append("\n\t\t>>>>>SERVER " + msg);
-            _isLogs = true;
+            _ctrl.game.sendMessage( SERVER_LOG, msg );
+//            _messageCache.append("\n\t\t>>>>>SERVER " + msg);
+//            _isLogs = true;
         }
         
         protected var _isLogs :Boolean = false;

@@ -1,13 +1,13 @@
 package vampire.net.messages
 {
     import com.threerings.util.ClassUtil;
-    
+
     import flash.utils.ByteArray;
-    
+
     public class FeedRequestMessage2 extends BaseGameMessage
     {
-        public function FeedRequestMessage2(playerId :int = 0, 
-                                            targetPlayerId :int = 0, 
+        public function FeedRequestMessage2(playerId :int = 0,
+                                            targetPlayerId :int = 0,
                                             allowMultiplePredators :Boolean = false,
                                             targetLocationX :Number = 0,
                                             targetLocationY :Number = 0,
@@ -21,7 +21,7 @@ package vampire.net.messages
             _targetY = targetLocationY;
             _targetZ = targetLocationZ;
         }
-        
+
         override public function fromBytes (bytes :ByteArray) :void
         {
             super.fromBytes(bytes);
@@ -31,7 +31,7 @@ package vampire.net.messages
             _targetY = bytes.readFloat();
             _targetZ = bytes.readFloat();
         }
-        
+
         override public function toBytes (bytes :ByteArray = null) :ByteArray
         {
             var bytes :ByteArray = super.toBytes(bytes);
@@ -42,48 +42,48 @@ package vampire.net.messages
             bytes.writeFloat( _targetZ );
             return bytes;
         }
-        
+
         public function get targetPlayer () :int
         {
-           return _targetPlayerId;     
+           return _targetPlayerId;
         }
-        
+
         public function get isAllowingMultiplePredators () :Boolean
         {
-           return _allowMultiplePredators;     
+           return _allowMultiplePredators;
         }
-        
+
         override public function get name () :String
         {
-           return NAME;     
+           return NAME;
         }
-        
+
         override public function toString() :String
         {
             return ClassUtil.tinyClassName( this ) + ": player=" + _playerId + ", " + (_allowMultiplePredators ? " Allows multiple predators " : " eating alone ") + ", eating " + targetPlayer;
         }
-        
+
         public function get targetX () :Number
         {
-           return _targetX;     
+           return _targetX;
         }
         public function get targetY () :Number
         {
-           return _targetY;     
+           return _targetY;
         }
         public function get targetZ () :Number
         {
-           return _targetZ;     
+           return _targetZ;
         }
-        
-        
+
+
         protected var _targetPlayerId :int;
         protected var _targetX :Number;
         protected var _targetY :Number;
         protected var _targetZ :Number;
         protected var _allowMultiplePredators :Boolean;
-        
-        public static const NAME :String = "Message: Request Feed"; 
-        
+
+        public static const NAME :String = "Message: Request Feed";
+
     }
 }

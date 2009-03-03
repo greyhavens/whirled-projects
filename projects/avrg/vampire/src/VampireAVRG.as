@@ -4,12 +4,13 @@ package {
 import fakeavrg.AVRGameControlFake;
 
 import flash.display.Sprite;
-import flash.utils.Dictionary;
 
 import vampire.client.ClientContext;
 import vampire.client.VampireMain;
+import vampire.data.Logic;
 import vampire.data.VConstants;
 import vampire.server.VServer;
+
 
 [SWF(width="700", height="500")]
 public class VampireAVRG extends Sprite
@@ -19,6 +20,23 @@ public class VampireAVRG extends Sprite
     public function VampireAVRG()
     {
         
+//        for( var i :int = 1; i < 11; i++ ) {
+//            trace("xp for " + i + " = " + Logic.xpNeededForLevel(i));
+//        }
+//        return;
+//        
+
+//        for( var i :int = 1; i < 20; i++ ) {
+//            trace("Level " + i + " eating 100 blood from level 10, blood kept=" + Logic.bloodgGainedVampireVampireFeeding(i, 10, 100));
+//        }
+//        return;
+        
+//        trace( Util.formatNumberForFeedback(1));
+//        trace( Util.formatNumberForFeedback(1.2));
+//        trace( Util.formatNumberForFeedback(1.3453453453));
+//        trace( Util.formatNumberForFeedback(0.45345345));
+//        trace( Util.formatNumberForFeedback(4534.5345));
+//        
 //        var d :Dictionary = new Dictionary();
 //        
 //        d[1] = "sdf";
@@ -39,8 +57,8 @@ public class VampireAVRG extends Sprite
         
 //        var r :BloomBloomStarter = new BloomBloomStarter(null);
 //        var xx :AvatarGameBridge = new AvatarGameBridge( null, null);
-        var v :VServer = new VServer();
         VConstants.LOCAL_DEBUG_MODE = true;
+        var v :VServer = new VServer();
         ClientContext.ctrl = new AVRGameControlFake( this );
         addChild( new VampireMain() );
 //        

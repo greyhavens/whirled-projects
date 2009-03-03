@@ -13,9 +13,9 @@ public class ServerObjectFake extends ServerObject
     override public function get root() :DisplayObject
     {
         return realDisplay.root;
-    } 
+    }
 
     protected var realDisplay :DisplayObject;
-    
+
 }
 }

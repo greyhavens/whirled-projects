@@ -4,10 +4,10 @@ package vampire.client.actions.feed
 
     public class EatMeMode extends BaseVampireMode
     {
-       
+
         override protected function setupUI() :void
         {
-            
+
         }
     }
 }

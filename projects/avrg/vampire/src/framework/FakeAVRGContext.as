@@ -1,7 +1,7 @@
 package framework
 {
     import flash.utils.Dictionary;
-    
+
     public class FakeAVRGContext
     {
         public static var playerId :int = 1;

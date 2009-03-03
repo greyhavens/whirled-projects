@@ -17,30 +17,30 @@ import vampire.net.messages.RequestActionChangeMessage;
 
 
 /**
- * 
- * 
+ *
+ *
  */
 public class MessageManager extends EventDispatcher
 {
     internal static const log :Log = Log.getLog(MessageManager);
-    
+
     protected var _isUsingServerAgent :Boolean;
-    
+
     public function MessageManager ()
     {
-        
-        
-        
-        
+
+
+
+
     }
-    
+
     public function dispatchXXXEvent() :void
     {
-        
+
     }
 
 
-    
+
 }
 
 }

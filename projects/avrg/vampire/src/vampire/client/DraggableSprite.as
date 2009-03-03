@@ -212,11 +212,11 @@ public class DraggableSprite extends Sprite
             // not yet initialized
             return;
         }
-        
+
         //Make sure we are not outside the room
         this.x = MathUtil.clamp( this.x, 0, _painted.width);
         this.y = MathUtil.clamp( this.y, 0, _painted.height);
-        
+
         switch(_xSnap) {
             case SNAP_NONE:
                 this.x = _xFix;

@@ -22,13 +22,13 @@ import vampire.net.messages.SuccessfulFeedMessage;
 public class VMessageManager extends EventDispatcher
 {
     internal static const log :Log = Log.getLog(VMessageManager);
-    
+
     public function VMessageManager (gameCtrl :AbstractControl = null)
     {
-        
+
         _gameCtrl = gameCtrl;
         if( _gameCtrl != null && _gameCtrl.isConnected()) {
-            
+
             if( _gameCtrl is GameControl) {
                 log.info("MessageManager listening to GameControl.");
                 (_gameCtrl as GameControl).net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, onMessageReceived);
@@ -41,7 +41,7 @@ public class VMessageManager extends EventDispatcher
                 log.info("MessageManager listening to AVRGameControl.game.");
                 (_gameCtrl as AVRGameControl).game.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, onMessageReceived);
             }
-            
+
             else {
                 log.error("MessageManager, _gameCtrl neither GameControl, AVRGameControl, nor AVRServerGameControl.  No listeners.");
             }
@@ -49,7 +49,7 @@ public class VMessageManager extends EventDispatcher
         else {
             log.warning("MessageManager is not using any GameControl (or AVRG) type messaging.  Local messages only.");
         }
-        
+
         _msgTypes = new HashMap();
         //Move this out of here!  But to where???
         addMessageType( BloodBondRequestMessage );
@@ -58,8 +58,8 @@ public class VMessageManager extends EventDispatcher
         addMessageType( RequestActionChangeMessage );
         addMessageType( ShareTokenMessage );
         addMessageType( SuccessfulFeedMessage );
-        
-        
+
+
     }
 
     public function addMessageType (messageClass :Class) :void
@@ -71,13 +71,13 @@ public class VMessageManager extends EventDispatcher
 
     public function sendMessage( gameEvent :IGameMessage, toPlayer :int = TO_ALL) :void
     {
-        
+
         log.debug("attempting to send message " + gameEvent);
-        
+
         if (_msgTypes.get(gameEvent.name) == null) {
             log.error("sendMessage(), unknown message type: " + gameEvent);
         }
-        
+
         if( _gameCtrl != null && _gameCtrl.isConnected()) {
             if( _gameCtrl is GameControl) {
                 log.debug("     sending via GameControl, toPlayer=" + toPlayer);
@@ -110,34 +110,34 @@ public class VMessageManager extends EventDispatcher
     }
 
     /**
-    * If we are communicating with a server agent over the internet, messages are 
+    * If we are communicating with a server agent over the internet, messages are
     * converted to ByteArrays to save bandwidth.  If the server is local, we
     * just leave the messages as they are.
-    * 
+    *
     */
     protected function onMessageReceived (e :MessageReceivedEvent) :void
     {
         var msgClass :Class = _msgTypes.get(e.name);
         if (msgClass != null) {
-            
+
             var msg :IGameMessage = new msgClass();
             msg.fromBytes( e.value as ByteArray );
             if(msg == null) {
                 throw Error("Message Error");
             }
 //            log.debug("onMessageReceived(): dispatching message to listeners=" + e.name);
-            dispatchEvent(new MessageReceivedEvent(msg.name, msg, e.senderId));            
+            dispatchEvent(new MessageReceivedEvent(msg.name, msg, e.senderId));
         }
         else {
 //            log.error("onMessageReceived(): unknown message type=" + e.name);
             dispatchEvent(new MessageReceivedEvent(e.name, e.value, e.senderId));
         }
-        
+
     }
 
     protected var _gameCtrl :AbstractControl ;
     protected var _msgTypes :HashMap;
-    
+
     public static const TO_ALL :int = 0;//NetSubControl.TO_ALL;
     public static const TO_SERVER_AGENT :int = int.MIN_VALUE;;//NetSubControl.TO_SERVER_AGENT;
 }

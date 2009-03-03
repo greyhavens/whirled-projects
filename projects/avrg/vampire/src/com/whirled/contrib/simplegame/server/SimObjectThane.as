@@ -2,9 +2,9 @@ package com.whirled.contrib.simplegame.server
 {
     import com.whirled.contrib.simplegame.EventCollecter;
     import com.whirled.contrib.simplegame.ObjectMessage;
-    
+
     import flash.events.IEventDispatcher;
-    
+
 public class SimObjectThane extends EventCollecter
 {
     /**

@@ -7,6 +7,6 @@ package framework
         public function PlayerView()
         {
         }
-        
+
     }
 }

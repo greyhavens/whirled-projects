@@ -10,7 +10,7 @@ public class EventCollecter extends EventDispatcher
     public function EventCollecter()
     {
     }
-    
+
     /**
      * Adds the specified listener to the specified dispatcher for the specified event.
      *
@@ -31,18 +31,18 @@ public class EventCollecter extends EventDispatcher
     {
         _events.unregisterListener(dispatcher, event, listener, useCapture);
     }
-    
+
     public function shutdown() :void
     {
         freeEventHandlers();
-    } 
-    
+    }
+
     protected function freeEventHandlers () :void
     {
         _events.freeAllHandlers();
     }
-    
+
     protected var _events :EventHandlerManager = new EventHandlerManager();
-    
+
 }
 }

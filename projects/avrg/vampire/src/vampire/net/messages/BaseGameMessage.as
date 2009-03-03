@@ -21,12 +21,15 @@ package vampire.net.messages
         
         public function fromBytes (bytes :ByteArray) :void
         {
+//            trace("fromBytes, bytes==null " + (bytes==null));
+//            trace("fromBytes, bytes.length=" + bytes.length);
             bytes.position = 0;
             _playerId = bytes.readInt();
         }
         
         public function toBytes (bytes :ByteArray = null) :ByteArray
         {
+//            trace("toBytes, _playerId=" + _playerId);
             if( bytes == null) {
                 bytes = new ByteArray();
             }

@@ -9,13 +9,13 @@ package vampire.client.events
             super(CLOSEST_PLAYER_CHANGED, false, false);
             _closestPlayerId = newClosestPlayer;
         }
-        
-        public function get closestPlayerId() :int 
+
+        public function get closestPlayerId() :int
         {
-            return _closestPlayerId;    
-        } 
+            return _closestPlayerId;
+        }
         protected var _closestPlayerId :int;
-        
+
         public static const CLOSEST_PLAYER_CHANGED :String = "Closest Player Changed";
     }
 }

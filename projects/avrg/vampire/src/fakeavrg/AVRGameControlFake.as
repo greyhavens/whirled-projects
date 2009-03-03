@@ -44,14 +44,14 @@ public class AVRGameControlFake extends AVRGameControl
         // set up the default hitPointTester
         _local.setHitPointTester(disp.root.hitTestPoint);
     }
-    
+
     /**
     * We are always connected when fake.
     */
     override public function isConnected() :Boolean
     {
         return true;
-    } 
+    }
 
     /**
      * Accesses the client's game sub control.
@@ -138,14 +138,14 @@ public class AVRGameControlFake extends AVRGameControl
     }
 
     /** @private */
-    internal function leftRoom_v1 (scene :int) :void    
+    internal function leftRoom_v1 (scene :int) :void
     {
 //        _player.leftRoom_v1(scene);
 //        _room.leftRoom();
     }
 
     /** @private */
-    internal function enteredRoom_v1 (scene :int) :void    
+    internal function enteredRoom_v1 (scene :int) :void
     {
 //        _player.enteredRoom_v1(scene);
     }

@@ -17,23 +17,23 @@ import vampire.data.VConstants;
 
 /**
  * Paints the individual AvatarHUD elements when e.g. locations change.
- * 
+ *
  */
 public class TargetingOverlayAvatars extends TargetingOverlay
 {
     public function TargetingOverlayAvatars( ctrl :AVRGameControl,  targetClickedCallback:Function = null)
     {
         super([], [], [], targetClickedCallback, null);
-        
+
         _ctrl = ctrl;
-        
+
         _avatars = new HashMap();
-        
+
         registerListener( _ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, checkAvatarsAndUsersMatch);
         registerListener( ctrl.room, AVRGameRoomEvent.PLAYER_ENTERED, checkAvatarsAndUsersMatch );
         registerListener( ctrl.room, AVRGameRoomEvent.PLAYER_LEFT, checkAvatarsAndUsersMatch );
     }
-    
+
     override protected function addedToDB():void
     {
         super.addedToDB();
@@ -41,11 +41,11 @@ public class TargetingOverlayAvatars extends TargetingOverlay
         var avatarCheckTimer :SimpleTimer = new SimpleTimer( 1, checkAvatarsAndUsersMatch, true, "avatarCheck");
         db.addObject( avatarCheckTimer );
     }
-    
+
     override protected function update(dt:Number) :void
     {
         super.update(dt);
-        
+
         //Remove destroyed avatars.
         var isDeadAvatars :Boolean = false;
         _avatars.forEach( function ( userId :int, avatarHUD :AvatarHUD ) :void
@@ -54,49 +54,49 @@ public class TargetingOverlayAvatars extends TargetingOverlay
                isDeadAvatars = true;
            }
         });
-        
+
         if( isDeadAvatars ) {
             for each( var userId :int in _avatars.keys() ) {
-                var avatar :AvatarHUD = _avatars.get( userId ) as AvatarHUD; 
+                var avatar :AvatarHUD = _avatars.get( userId ) as AvatarHUD;
                 if( avatar != null && !avatar.isLiveObject) {
                     _avatars.remove( userId );
-                } 
+                }
             }
         }
     }
-    
 
-    
-    
+
+
+
     override protected function destroyed() :void
     {
         super.destroyed();
         _ctrl = null;
         _avatars.clear();
     }
-    
+
     protected function get playerEntityId () :String
     {
         if( _playerEntityId == null ) {
             for each( var entityId :String in _ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
-            
+
                 var entityUserId :int = int(_ctrl.room.getEntityProperty( EntityControl.PROP_MEMBER_ID, entityId));
-                
+
                 if( entityUserId == _ctrl.player.getPlayerId() ) {
                     _playerEntityId = entityId;
                     break;
                 }
-                
+
             }
         }
-        
+
         return _playerEntityId;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     /**
     * Subclasses can override this.
     */
@@ -104,10 +104,10 @@ public class TargetingOverlayAvatars extends TargetingOverlay
     {
         return new AvatarHUD( _ctrl, userId );
     }
-    
+
     protected function checkAvatarsAndUsersMatch(...ignored) :void
     {
-        
+
         if( VConstants.LOCAL_DEBUG_MODE) {
             return;
         }
@@ -120,16 +120,16 @@ public class TargetingOverlayAvatars extends TargetingOverlay
 //            trace("Creating avatarHUD for " + userId);
             if( !_avatars.containsKey( userId )) {
                 var playerAvatar :AvatarHUD = createPlayerAvatar( userId );
-                registerListener( playerAvatar, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED, 
+                registerListener( playerAvatar, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED,
                     function(...ignored) :void {
-                        dispatchEvent( new PlayerArrivedAtLocationEvent() );    
+                        dispatchEvent( new PlayerArrivedAtLocationEvent() );
                     });
                 db.addObject( playerAvatar, _paintableOverlay );
                 _avatars.put( userId, playerAvatar );
             }
-            
+
         }
-        
+
         //Remove AvatarHUDs of players not in the room anymore
         for each( userId in _avatars.keys()) {
             if( !allUserIds.contains( userId ) ) {
@@ -137,35 +137,35 @@ public class TargetingOverlayAvatars extends TargetingOverlay
                 _avatars.remove( userId );
             }
         }
-        
+
         _avatars.forEach( function( userId :int, avatar :AvatarHUD ) :void {
             var playerId :int = avatar.playerId;
-            
+
             //Add the avatar to the db if not yet added.
             if( avatar.db == null ) {
                 db.addObject( avatar, _paintableOverlay );
             }
-            
+
             if( avatar.sprite != null && !_paintableOverlay.contains( avatar.sprite ) ) {
                 _paintableOverlay.addChild( avatar.sprite );
             }
         });
     }
-    
+
     public function getAvatar( playerId :int ) :AvatarHUD
     {
         return _avatars.get( playerId );
     }
-    
-    
-    
+
+
+
     protected var _ctrl :AVRGameControl;
     protected var _playerEntityId :String;
     protected var _avatars :HashMap;
-    
-    
-    
+
+
+
     protected static const log :Log = Log.getLog( TargetingOverlayAvatars );
-    
+
 }
 }

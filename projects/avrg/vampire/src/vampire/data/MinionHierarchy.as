@@ -31,12 +31,19 @@ public class MinionHierarchy extends SimObjectThane
 //        log.debug(Constants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + ")");
         
         if( playerId == sireId) {
-            log.error(VConstants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + "), same!!!");
+            log.error("setPlayerSire(" + playerId + ", sireId=" + sireId + "), same!!!");
             return;
         }
         
         if( playerId < 1) {
-            log.debug(VConstants.DEBUG_MINION + " setPlayerSire(), playerId < 1" );
+            log.error("setPlayerSire(), playerId < 1",  "playerId", playerId, "sireId", sireId );
+            return;
+        }
+        
+        //Id the sire is our minion, disallow, since that would create a loop.
+        var oldMinions :HashSet = getAllMinionsAndSubminions( playerId );
+        if( oldMinions.contains( sireId ) ) {
+            log.error("setPlayerSire, sire is already a minion. Not changing.",  "playerId", playerId, "sireId", sireId);
             return;
         }
         

@@ -8,8 +8,8 @@ public class PlayerArrivedAtLocationEvent extends Event
     {
         super(PLAYER_ARRIVED, false, false);
     }
-    
+
     public static const PLAYER_ARRIVED :String = "PlayerArrivedAtLocation";
-    
+
 }
 }

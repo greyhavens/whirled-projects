@@ -1,6 +1,6 @@
 package vampire.client.actions.bloodbond
 {
-    
+
 import com.threerings.flash.SimpleTextButton;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
@@ -24,50 +24,50 @@ public class BloodBondMode extends BaseVampireMode
     {
         super();
     }
-    
+
     override protected function setup() :void
     {
         super.setup();
         _bloodBondedView = new Sprite();
-        
+
         var addTargetButton :SimpleTextButton = new SimpleTextButton("BloodBond Target");
         Command.bind( addTargetButton, MouseEvent.CLICK, VampireController.ADD_BLOODBOND);
         modeSprite.addChild( addTargetButton );
         addTargetButton.x = 20;
         addTargetButton.y = 30;
-        
+
         modeSprite.addChild( _bloodBondedView );
-        
+
         EventHandlers.registerListener( ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
-        
+
         showBloodBonded( SharedPlayerStateClient.getBloodBonded( ClientContext.ourPlayerId ) );
     }
-    
-    
+
+
     protected function elementChanged (e :ElementChangedEvent) :void
     {
         var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
-        
+
         if( !isNaN( playerIdUpdated ) && playerIdUpdated == ClientContext.ourPlayerId) {
-            
+
             if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
                 showBloodBonded( e.newValue as Array );
             }
         }
     }
-    
-    
+
+
     override protected function destroy() :void
     {
         EventHandlers.unregisterListener( ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
     }
-    
-    
+
+
     override protected function setupUI() :void
     {
         super.setupUI();
     }
-    
+
     protected function showBloodBonded( currentBloodBonded :Array ) :void
     {
         if( currentBloodBonded == null ) {
@@ -75,7 +75,7 @@ public class BloodBondMode extends BaseVampireMode
             return;
         }
         while( _bloodBondedView.numChildren > 0) { _bloodBondedView.removeChildAt(0);}
-        
+
         var currentY :int = 100;
         for (var i :int = 0; i < currentBloodBonded.length; i += 2) {
             var playerId :int = int( currentBloodBonded[i] );
@@ -97,13 +97,13 @@ public class BloodBondMode extends BaseVampireMode
             currentY += 40;
             _bloodBondedView.addChild( button );
         }
-        
-        
+
+
     }
-    
+
     protected var _bloodBondedView :Sprite;
-    
+
     protected static const log :Log = Log.getLog( BloodBondMode );
-    
+
 }
 }

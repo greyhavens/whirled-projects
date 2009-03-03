@@ -14,7 +14,8 @@ public class ServerContext
     public static var minionHierarchy :MinionHierarchyServer;
     public static var nonPlayersBloodMonitor :NonPlayerAvatarsBloodMonitor = new NonPlayerAvatarsBloodMonitor();
     
-//    public static var avatarManager :AvatarManager = new AvatarManager();
+    /** Highest ever score.  This is used to scale the coin payouts. */
+    public static var topBloodBloomScore :Number = 100;
     
     public static var serverLogBroadcast: AVRGAgentLogTarget;
     

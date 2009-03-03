@@ -103,7 +103,7 @@ public class Codes
     
     /**Award coins on minion acquisition.*/
     public static const TASK_ACQUIRE_MINION_ID :String = "taskAcquireMinion";
-    public static const TASK_ACQUIRE_MINION_SCORE :Number = 0.9;
+    public static const TASK_ACQUIRE_MINION_SCORE :Number = 0.8;
     
 }
 }

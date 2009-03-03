@@ -5,6 +5,13 @@
 public class VConstants
 {
     
+    /**
+     * A vampire feeding from another vampire only gets a small amount of the blood lost.
+     * For vampires of equal level, the feeder only gets this fraction of the blood 
+     * lost from the 'victim'. 
+     */
+    public static const BLOOD_GAIN_FRACTION_FROM_V2V_FEEDING_WHEN_EQUAL_LEVEL :Number = 0.2;
+    
     public static const UNIQUE_BLOOD_STRAINS :int = 12;
     
     public static const TIME_FEEDBACK_MESSAGE_DISPLAY :Number = 4;
@@ -56,12 +63,12 @@ public class VConstants
     /**
     * Blood regenerated per second.  0.05 and maxblood=30 means 10 minutes until replenishment
     */
-    public static const THRALL_BLOOD_REGENERATION_RATE :Number = 0.05;//Blood per second
+    public static const THRALL_BLOOD_REGENERATION_RATE :Number = 0.04;//Blood per second
     
     /**
     * Blood lost per second.
     */
-    public static const VAMPIRE_BLOOD_LOSS_RATE :Number = 0.1;//Blood per second
+    public static const VAMPIRE_BLOOD_LOSS_RATE :Number = 0.025;//Blood per second
     
     
     /**
@@ -128,9 +135,12 @@ public class VConstants
     
     public static const NAMED_EVENT_START_BLOOD_BLOOM :String = "StartBloodBloom";
     public static const NAMED_EVENT_BLOODBLOOM_COUNTDOWN :String = "BloodbloomCountDown";
+    public static const NAMED_EVENT_SHARE_TOKEN :String = "ShareToken";
     
     /**Upon BB completion, send the FeedingData back to the server for persistance*/
     public static const NAMED_EVENT_UPDATE_FEEDING_DATA :String = "UpdateFeedingData";
+    
+    public static const NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING :String = "MovePredAfterFeeding";
         
     public static var LOCAL_DEBUG_MODE :Boolean = false;
     

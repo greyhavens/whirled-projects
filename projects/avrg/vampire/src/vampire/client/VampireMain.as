@@ -14,7 +14,6 @@ import flash.events.MouseEvent;
 
 import vampire.data.VConstants;
 import vampire.net.VMessageManager;
-import vampire.net.messages.ShareTokenMessage;
 import vampire.server.AVRGAgentLogTarget;
 
 [SWF(width="700", height="500")]
@@ -125,11 +124,12 @@ public class VampireMain extends Sprite
             //If there is a share token, send the invitee to the server
             var inviterId :int = ClientContext.ctrl.local.getInviterMemberId();
             var shareToken :String = ClientContext.ctrl.local.getInviteToken();
-            log.info(ClientContext.ctrl.player.getPlayerId() + " inviterId=" + inviterId + ", token=" + shareToken);
+            log.info(ClientContext.ctrl.player.getPlayerId() + "sending  inviterId=" + inviterId + ", token=" + shareToken);
             if( inviterId > 0 ) {
-                var msg :ShareTokenMessage = new ShareTokenMessage( ClientContext.ourPlayerId,
-                    inviterId, shareToken );
-                ClientContext.ctrl.agent.sendMessage( msg.name, msg );
+//                var msg :ShareTokenMessage = new ShareTokenMessage( ClientContext.ourPlayerId,
+//                    inviterId, shareToken );
+//                ClientContext.ctrl.agent.sendMessage( msg.name, msg );
+                ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_SHARE_TOKEN, inviterId );
             }
         }
     }
@@ -208,7 +208,7 @@ public class VampireMain extends Sprite
     
     protected function printServerLogToFlashLog( e :MessageReceivedEvent ) :void
     {
-        if( e.name == AVRGAgentLogTarget.SERVER_LOG ) {//&& (ClientContext.ourPlayerId == 23340 ||ClientContext.ourPlayerId == 1769 )
+        if( e.name == AVRGAgentLogTarget.SERVER_LOG && (ClientContext.ourPlayerId == 23340 || ClientContext.ourPlayerId == 1769) ) {
             trace(e.value);
         }
     }

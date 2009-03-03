@@ -5,6 +5,7 @@ package vampire.server
     import com.threerings.util.HashSet;
     import com.threerings.util.Log;
     import com.threerings.util.StringBuilder;
+    import com.whirled.avrg.AVRGameControlEvent;
     import com.whirled.contrib.simplegame.server.SimObjectThane;
     import com.whirled.net.MessageReceivedEvent;
     
@@ -19,6 +20,19 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
     
     public function NonPlayerAvatarsBloodMonitor() 
     {
+        //When a player starts, we remove them from nonplayers.
+//        trace("VConstants.LOCAL_DEBUG_MODE=" + VConstants.LOCAL_DEBUG_MODE);
+//        trace("ServerContext.=" + (ServerContext == null));
+//        trace("ServerContext.ctrl=" + (ServerContext.ctrl == null));
+        if( ServerContext != null && !VConstants.LOCAL_DEBUG_MODE && ServerContext.ctrl != null ) {
+            registerListener(ServerContext.ctrl.game, AVRGameControlEvent.PLAYER_JOINED_GAME, 
+                function( e:AVRGameControlEvent ) :void {
+                    _playerIdsThatHavePlayedEver.add( int(e.value ) );
+                    _nonplayerBlood.remove( int(e.value ) );
+                    _nonplayer2RoomId.remove( int(e.value ) );
+                });
+        }
+            
 //        registerListener(ServerContext.msg, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage );
     }
     
@@ -57,6 +71,11 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
     */    
     public function bloodAvailableFromNonPlayer( userId :int) :Number
     {
+        //If a player quits the game, they have 0 blood.  Stops cheats.
+        if( _playerIdsThatHavePlayedEver.contains( userId ) ) {
+            return 0;
+        }
+        
         if( _nonplayerBlood.containsKey( userId )) {
             return _nonplayerBlood.get( userId ) as Number;
         }

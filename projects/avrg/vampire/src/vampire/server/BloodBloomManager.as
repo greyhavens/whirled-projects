@@ -72,6 +72,9 @@ public class BloodBloomManager extends SimObjectThane
                 gameRecord.addPredator( predatorId, preyLocation );
                 _playerId2Game.put( predatorId, gameRecord );
             }
+            else {
+                _room.addFeedback("You cannot join a game already in progress.", predatorId);
+            }
             return gameRecord;
         }
         else {

@@ -24,7 +24,7 @@ package vampire.net.messages
         {
             var bytes :ByteArray = super.toBytes(bytes);
             bytes.writeInt( _inviterId );
-            bytes.writeUTF( _shareToken );
+            bytes.writeUTF( (_shareToken == null ? "" : _shareToken) );
             return bytes;
         }
         
