@@ -57,7 +57,6 @@ public class Constants
 
     public static const SPECIAL_CELL_CREATION_TIME :NumRange =
         new NumRange(14, 20, Rand.STREAM_GAME);
-    public static const NUM_SPECIAL_STRAINS :int = 12;
     public static const MAX_COLLECTIONS_PER_STRAIN :int = 3;
 
     public static const RED_BURST_RADIUS_MIN :Number = 8;

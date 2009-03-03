@@ -13,6 +13,7 @@ import flash.text.TextField;
 
 import mx.effects.easing.Cubic;
 
+import vampire.data.Logic;
 import vampire.feeding.*;
 import vampire.feeding.net.*;
 
@@ -103,6 +104,13 @@ public class RoundOverMode extends AppMode
         // hide the timer
         _replayTimer = panelMovie["replay_timer"];
         _replayTimer.visible = false;
+
+        // only show the "bonus" tab if we were feeding on a player
+        // with our preferred blood strain
+        var bonusTab :MovieClip = panelMovie["bonus"];
+        bonusTab.visible =
+            ClientCtx.isPredator &&
+            Logic.getPlayerPreferredBloodStrain(ClientCtx.localPlayerId) == ClientCtx.preyBloodType;
     }
 
     protected function onMsgReceived (e :ClientMsgEvent) :void

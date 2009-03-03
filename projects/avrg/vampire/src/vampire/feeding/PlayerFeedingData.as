@@ -4,6 +4,8 @@ import com.threerings.util.ArrayUtil;
 
 import flash.utils.ByteArray;
 
+import vampire.data.VConstants;
+
 public class PlayerFeedingData
 {
     public function PlayerFeedingData ()
@@ -76,7 +78,7 @@ public class PlayerFeedingData
 
         ba.writeByte(_playerStrain);
 
-        for (var strain :int = 0; strain < Constants.NUM_SPECIAL_STRAINS; ++strain) {
+        for (var strain :int = 0; strain < VConstants.UNIQUE_BLOOD_STRAINS; ++strain) {
             var strainData :Array = getStrainData(strain);
             ba.writeByte(strainData.length);
             for each (var playerId :int in strainData) {
@@ -98,7 +100,7 @@ public class PlayerFeedingData
 
         _playerStrain = ba.readByte();
 
-        for (var strain :int = 0; strain < Constants.NUM_SPECIAL_STRAINS; ++strain) {
+        for (var strain :int = 0; strain < VConstants.UNIQUE_BLOOD_STRAINS; ++strain) {
             var strainData :Array = getStrainData(strain);
             var numPlayers :int = ba.readByte();
             for (var ii :int = 0; ii < numPlayers; ++ii) {
@@ -132,7 +134,7 @@ public class PlayerFeedingData
     {
         _playerStrain = 0;
         _collectedStrains = [];
-        for (var ii :int = 0; ii < Constants.NUM_SPECIAL_STRAINS; ++ii) {
+        for (var ii :int = 0; ii < VConstants.UNIQUE_BLOOD_STRAINS; ++ii) {
             _collectedStrains.push([]);
         }
 

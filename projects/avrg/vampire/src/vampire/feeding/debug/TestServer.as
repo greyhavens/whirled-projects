@@ -29,6 +29,7 @@ import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.ManagedTimer;
+import vampire.data.Logic;
 
 class TestGameController extends OneRoomGameRoom
 {
@@ -116,7 +117,7 @@ class TestGameController extends OneRoomGameRoom
             predators,
             preyId,
             _preyBlood,    // the amount of blood the prey is starting the feeding with
-            preyId % Constants.NUM_SPECIAL_STRAINS,
+            Logic.getPlayerBloodStrain(preyId),
             function () :Number {
                 return onRoundComplete(game);
             },

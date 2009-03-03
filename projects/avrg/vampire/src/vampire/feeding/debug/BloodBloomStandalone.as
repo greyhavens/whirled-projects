@@ -5,6 +5,7 @@ import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Sprite;
 
+import vampire.data.VConstants;
 import vampire.feeding.*;
 import vampire.feeding.client.*;
 import vampire.feeding.server.*;
@@ -28,7 +29,7 @@ public class BloodBloomStandalone extends Sprite
         addChild(new BloodBloom(0, new PlayerFeedingData(), function () :void {}));
         if (Constants.DEBUG_FORCE_SPECIAL_BLOOD_STRAIN) {
             ClientCtx.preyBloodType =
-                Rand.nextIntRange(0, Constants.NUM_SPECIAL_STRAINS, Rand.STREAM_COSMETIC);
+                Rand.nextIntRange(0, VConstants.UNIQUE_BLOOD_STRAINS, Rand.STREAM_COSMETIC);
         }
     }
 }
