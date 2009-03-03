@@ -18,7 +18,6 @@ package vampire.avatar
     import vampire.data.Codes;
     import vampire.data.SharedPlayerStateClient;
     import vampire.data.VConstants;
-    import vampire.server.BloodBloomGameRecord;
 
 
 /**
@@ -79,7 +78,7 @@ public class VampireAvatarHUD extends AvatarHUD
 //            }
             ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET);
             ClientContext.controller.handleSendFeedRequest( playerId, false );
-            _selected = true;
+//            _selected = true;
 //            _feedRequestDelayRemaining = FEED_REQUEST_DELAY;
         });
 
@@ -91,13 +90,16 @@ public class VampireAvatarHUD extends AvatarHUD
 //            }
 //            ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET);
             ClientContext.controller.handleSendFeedRequest( playerId, true );
-            if( !_isFrenzyCountingDown ) {//Only set our time if we are not already counting down
+
+            if( _frenzyDelayRemaining <= 0 ) {
                 _frenzyDelayRemaining = VConstants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME;
             }
-            else {
-                _frenzyDelayRemaining = -1;
-            }
-            _selected = true;
+//            if( !_isFrenzyCountingDown ) {//Only set our time if we are not already counting down
+//            }
+//            else {
+//                _frenzyDelayRemaining = -1;
+//            }
+//            _selected = true;
             if( VConstants.LOCAL_DEBUG_MODE) {
                 _frenzyDelayRemaining = VConstants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME;
                 var t :SimpleTimer = new SimpleTimer(1, function() :void {
@@ -105,7 +107,10 @@ public class VampireAvatarHUD extends AvatarHUD
                 }, true);
                 db.addObject( t );
             }
+            trace("setting _frenzyButtonClicked = true");
+            _frenzyButtonClicked = true;
             buttonFrenzy.visible = false;
+            showFrenzyTimerWithoutButton();
         });
 //        buttonFrenzy.x = 30;
 
@@ -134,6 +139,8 @@ public class VampireAvatarHUD extends AvatarHUD
         _hudSprite.addChild( _bloodBondIcon );
 
         updateInfoHud();
+
+        showNothing();
 
 
         //Add a selection box
@@ -173,7 +180,7 @@ public class VampireAvatarHUD extends AvatarHUD
 
     protected function selectionBoxMouseOut( e :MouseEvent ) :void
     {
-        trace("Mouse out " + e);
+//        trace("Mouse out " + e);
         if( e.relatedObject != null ) {
             return;
         }
@@ -247,36 +254,42 @@ public class VampireAvatarHUD extends AvatarHUD
     protected function handleMessageReceived( e :MessageReceivedEvent ) :void
     {
         if( e.name == VConstants.NAMED_EVENT_BLOODBLOOM_COUNTDOWN) {
-            var bloodbloodRecord :BloodBloomGameRecord = BloodBloomGameRecord.fromArray( e.value as Array );
-            if( bloodbloodRecord != null ) {
-                if( bloodbloodRecord.preyId == playerId ) {
 
+            var bbData :Array = e.value as Array;
+            if( bbData == null) {
+                log.error("handleMessageReceived " + VConstants.NAMED_EVENT_BLOODBLOOM_COUNTDOWN + ", but bloodbloodRecord==null" );
+                return;
+            }
 
+                var currentCountDownSecond :int = bbData[0];
+                var preyId :int = bbData[1];
+                if( preyId == playerId ) {
 
-                    _resetHUDStateDelay += 3;
+//                    trace("handleMessageReceived, bloodbloodRecord=" + bbData);
 
-                    if( bloodbloodRecord.currentCountDownSecond >= 1) {
-                        _isFrenzyCountingDown = true;
-                        if( _frenzyDelayRemaining == -1) {
-                            _frenzyDelayRemaining = bloodbloodRecord.currentCountDownSecond;
+//                    _resetHUDStateDelay = 3;
+
+                    if( currentCountDownSecond >= 1) {
+//                        _isFrenzyCountingDown = true;
+                        if( _frenzyDelayRemaining <= 0) {
+                            _frenzyDelayRemaining = currentCountDownSecond;
                         }
-                        frenzyCountdown.visible = true;
-                        buttonFrenzy.visible = !_selected;
-                        buttonFeed.visible = false;
+                        showFrenzyTimerIfCounting();
+//                        frenzyCountdown.visible = true;
+//                        buttonFrenzy.visible = !_selected;
+//                        buttonFeed.visible = false;
                     }
                     else {
-                        trace(playerId + " resetting");
-                        _isFrenzyCountingDown = false;
-                        frenzyCountdown.visible = false;
-                        buttonFrenzy.visible = false;
-                        buttonFeed.visible = false;
+//                        trace(playerId + " resetting");
+//                        _isFrenzyCountingDown = false;
+                        _frenzyDelayRemaining = 0;
+//                        _resetHUDStateDelay = 0;
+                        showNothing();
+//                        frenzyCountdown.visible = false;
+//                        buttonFrenzy.visible = false;
+//                        buttonFeed.visible = false;
                     }
                 }
-//                    frenzyCountdown.gotoAndStop( int(bloodbloodRecord.currentCountDownSecond * 100 / Constants.GAME_TIME) );
-            }
-            else {
-                log.error("handleMessageReceived " + VConstants.NAMED_EVENT_BLOODBLOOM_COUNTDOWN + ", but bloodbloodRecord==null" );
-            }
         }
     }
 
@@ -352,7 +365,7 @@ public class VampireAvatarHUD extends AvatarHUD
 
     public function setDisplayModeInvisible() :void
     {
-        if( _frenzyDelayRemaining || _isFrenzyCountingDown ) {
+        if( _frenzyDelayRemaining ) {
             showFrenzyTimerWithoutButton()
         }
         else {
@@ -391,7 +404,7 @@ public class VampireAvatarHUD extends AvatarHUD
 
     public function setDisplayModeShowInfo() :void
     {
-        trace(playerId + " setDisplayModeShowInfo, _selected=" + _selected);
+//        trace(playerId + " setDisplayModeShowInfo");//, _selected=" + _selected);
 
         showBloodBarOnly();
         showFrenzyTimerIfCounting();
@@ -408,22 +421,32 @@ public class VampireAvatarHUD extends AvatarHUD
 
     public function setSelectedForFeed( multiplayer :Boolean ) :void
     {
-        trace("setSelectedForFeed");
+//        trace("setSelectedForFeed");
         _displaySprite.addChild( _hudSprite );
 
-//        _hudSprite.addChild( _target_UI );
-        buttonFeed.visible = false;
-        buttonFrenzy.visible = false;
-        _frenzyDelayRemaining = multiplayer ? VConstants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME : 0;
-        frenzyCountdown.visible = _frenzyDelayRemaining > 0 ? true : false;
-        trace("frenzyCountdown.visible=" + frenzyCountdown.visible);
-//        frenzyCountdown.visible = multiplayer;
-        frenzyCountdown.gotoAndPlay(1);
-        waitingSign.visible = false;
+
+        if( multiplayer ) {
+            showFeedButtonOnly();
+        }
+        else {
+            showFeedAndFrenzyButton();
+        }
+
+        showFrenzyTimerIfCounting();
+
+////        _hudSprite.addChild( _target_UI );
+//        buttonFeed.visible = false;
+//        buttonFrenzy.visible = false;
+//        _frenzyDelayRemaining = multiplayer ? VConstants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME : 0;
+//        frenzyCountdown.visible = _frenzyDelayRemaining > 0 ? true : false;
+//        trace("frenzyCountdown.visible=" + frenzyCountdown.visible);
+////        frenzyCountdown.visible = multiplayer;
+//        frenzyCountdown.gotoAndPlay(1);
+//        waitingSign.visible = false;
 
 //        _feedRequestDelayRemaining = frenzyCountdown.visible ? VConstants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME : 0;
 
-        _selected = true;
+//        _selected = true;
     }
 
 
@@ -432,23 +455,30 @@ public class VampireAvatarHUD extends AvatarHUD
     {
         super.update(dt);
 
-        showFrenzyTimerIfCounting();
 
-        if( _resetHUDStateDelay > 0 ) {
-            _resetHUDStateDelay -= dt;
-            _resetHUDStateDelay = Math.max( _resetHUDStateDelay, 0 );
+//        if( _resetHUDStateDelay > 0 ) {
+//            _resetHUDStateDelay -= dt;
+//            _resetHUDStateDelay = Math.max( _resetHUDStateDelay, 0 );
+//
+//            if( _resetHUDStateDelay <= 0 ) {
+//                showBloodBarOnly();
+//                _selected = false;
+//                _isFrenzyCountingDown = false;
+//                _frenzyDelayRemaining = 0;
+//            }
+//        }
 
-            if( _resetHUDStateDelay <= 0 ) {
-                showBloodBarOnly();
-                _selected = false;
-                _isFrenzyCountingDown = false;
-            }
-        }
-
-        if( _frenzyDelayRemaining > 0 ) {
-            trace(playerId + " _frenzyDelayRemaining=" + _frenzyDelayRemaining );
-        }
+//        if( _frenzyDelayRemaining > 0 ) {
+//            trace(playerId + " _frenzyDelayRemaining=" + _frenzyDelayRemaining );
+//        }
+//        if( _frenzyDelayRemaining > 0 && _frenzyDelayRemaining - dt) {
+//            _frenzyButtonClicked = false;
+//        }
         _frenzyDelayRemaining -= dt;
+
+//        if( _frenzyDelayRemaining <= 0) {
+//            _isFrenzyCountingDown = false;
+//        }
         _frenzyDelayRemaining = Math.max( _frenzyDelayRemaining, 0 );
         showFrenzyTimerIfCounting();
 
@@ -511,19 +541,23 @@ public class VampireAvatarHUD extends AvatarHUD
 //        _sprite.graphics.endFill();
     }
 
-    public function get selected() :Boolean
-    {
-        return _selected;
-    }
-
-    public function set selected( s :Boolean) :void
-    {
-        _selected = s;
-        _resetHUDStateDelay = 2;
-    }
+//    public function get selected() :Boolean
+//    {
+//        return _selected;
+//    }
+//
+//    public function set selected( s :Boolean) :void
+//    {
+//        _selected = s;
+////        _resetHUDStateDelay = 2;
+//    }
 
     public function showBloodBarOnly() :void
     {
+        if( playerId == ClientContext.ourPlayerId) {
+            return;
+        }
+
         _displaySprite.addChild( _hudSprite );
         buttonFeed.visible = false;
         buttonFrenzy.visible = false;
@@ -533,14 +567,25 @@ public class VampireAvatarHUD extends AvatarHUD
 
     public function showFeedButtonOnly() :void
     {
+        if( playerId == ClientContext.ourPlayerId) {
+            return;
+        }
+
         _displaySprite.addChild( _hudSprite );
+
+
         buttonFeed.visible = true;
         buttonFrenzy.visible = false;
         frenzyCountdown.visible = false;
     }
     public function showFeedAndFrenzyButton() :void
     {
+        if( playerId == ClientContext.ourPlayerId) {
+            return;
+        }
+
         _displaySprite.addChild( _hudSprite );
+
         buttonFeed.visible = true;
         buttonFrenzy.visible = true;
         frenzyCountdown.visible = false;
@@ -548,7 +593,12 @@ public class VampireAvatarHUD extends AvatarHUD
 
     public function showFrenzyTimerWithoutButton() :void
     {
+        if( playerId == ClientContext.ourPlayerId) {
+            return;
+        }
+
         _displaySprite.addChild( _hudSprite );
+
         buttonFeed.visible = false;
         buttonFrenzy.visible = false;
         frenzyCountdown.visible = true;
@@ -556,7 +606,11 @@ public class VampireAvatarHUD extends AvatarHUD
 
     public function showFrenzyTimerWithButton() :void
     {
+        if( playerId == ClientContext.ourPlayerId) {
+            return;
+        }
         _displaySprite.addChild( _hudSprite );
+
         buttonFeed.visible = false;
         buttonFrenzy.visible = true;
         frenzyCountdown.visible = true;
@@ -564,16 +618,26 @@ public class VampireAvatarHUD extends AvatarHUD
 
     protected function showFrenzyTimerIfCounting() :void
     {
-        if( (_frenzyDelayRemaining > 0 || _isFrenzyCountingDown ) &&
-            ClientContext.model.isVampire() && playerId != ClientContext.ourPlayerId) {
+        if( playerId == ClientContext.ourPlayerId) {
+            return;
+        }
 
+//            trace("_frenzyButtonClicked=" + _frenzyButtonClicked);
+        if( (_frenzyDelayRemaining > 0 ) && ClientContext.model.isVampire()) {
+
+//        trace(playerId + " showFrenzyTimerIfCounting=" + showFrenzyTimerIfCounting);
+//        trace(playerId + " _isFrenzyCountingDown=" + _isFrenzyCountingDown);
             _displaySprite.addChild( _hudSprite );
-            trace(playerId + " showing frenzy timer");
+//            trace(playerId + " showing frenzy timer");
             buttonFeed.visible = false;
-            buttonFrenzy.visible = !_selected;
             frenzyCountdown.visible = true;
+            buttonFrenzy.visible = !_frenzyButtonClicked;
             frenzyCountdown.gotoAndStop( int( 100 - (_frenzyDelayRemaining*100 / VConstants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME) ));
-            _resetHUDStateDelay = 2;
+//            _resetHUDStateDelay = 3;
+        }
+        else {
+            frenzyCountdown.visible = false;
+            _frenzyButtonClicked = false;
         }
     }
 
@@ -596,17 +660,21 @@ public class VampireAvatarHUD extends AvatarHUD
     protected var _bloodBondIcon :MovieClip;
     protected var _hierarchyIcon :SimpleButton;
     protected var _blood :MovieClip;
-    protected var _selected :Boolean = false;
+
+
+
+//    protected var _selected :Boolean = false;
     protected var _multiPlayer :Boolean;
 
 
     protected var _roomKey :String;
 
-    protected var _frenzyDelayRemaining :Number = 0;//Prevent two event fired immediately after another
-    protected var _isFrenzyCountingDown :Boolean = false;
+    protected var _frenzyDelayRemaining :Number = -1;//Prevent two event fired immediately after another
+    protected var _frenzyButtonClicked :Boolean;
+//    protected var _isFrenzyCountingDown :Boolean = false;
 
     /**After this time elapses, reset our state.  */
-    protected var _resetHUDStateDelay :Number = 0;
+//    protected var _resetHUDStateDelay :Number = 0;
 
 
 //    protected static const FEED_REQUEST_DELAY :Number = 0.6;

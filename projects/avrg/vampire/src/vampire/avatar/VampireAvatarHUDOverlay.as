@@ -336,9 +336,9 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 
         switch( mode ) {
             case DISPLAY_MODE_SHOW_INFO_ALL_AVATARS:
-                trace("DISPLAY_MODE_SHOW_INFO_ALL_AVATARS");
+//                trace("DISPLAY_MODE_SHOW_INFO_ALL_AVATARS");
                 _displaySprite.addChild( _paintableOverlay );
-                trace("avatars=" + _avatars.size());
+//                trace("avatars=" + _avatars.size());
                 _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
                     avatar.setDisplayModeShowInfo();
                 });
@@ -346,7 +346,7 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 
                 break;
             case DISPLAY_MODE_SHOW_FEED_TARGET:
-                trace("DISPLAY_MODE_SHOW_FEED_TARGET");
+//                trace("DISPLAY_MODE_SHOW_FEED_TARGET");
                 _displaySprite.addChild( _paintableOverlay );
 
                 if( !ClientContext.model.isVampire() && !VConstants.LOCAL_DEBUG_MODE) {
@@ -355,7 +355,7 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
                 predators = getPotentialPredatorIds();
                 _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
                     if( selectedPlayer == avatar.playerId ) {
-                        avatar.selected = true;
+//                        avatar.selected = true;
                         avatar.setSelectedForFeed( predators.size() > 1 );
                     }
                     else {
@@ -364,7 +364,7 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
                 });
                 break;
             case DISPLAY_MODE_SHOW_VALID_TARGETS:
-                trace("DISPLAY_MODE_SHOW_VALID_TARGETS");
+//                trace("DISPLAY_MODE_SHOW_VALID_TARGETS");
                 _displaySprite.addChild( _paintableOverlay );
 
                 if( !ClientContext.model.isVampire() && !VConstants.LOCAL_DEBUG_MODE) {
@@ -373,7 +373,7 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
                 }
                 validIds = getValidPlayerIdTargets();
                 predators = getPotentialPredatorIds();
-                trace("validIds=" + validIds.toArray());
+//                trace("validIds=" + validIds.toArray());
                 _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
                     if( validIds.contains( avatar.playerId ) ) {
 //                        trace("  selectable " + avatar);
@@ -401,7 +401,7 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 //
             default://Off
 
-                trace("DISPLAY_MODE_OFF");
+//                trace("DISPLAY_MODE_OFF");
                 _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
                     avatar.setDisplayModeInvisible();
                 });
