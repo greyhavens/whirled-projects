@@ -5,6 +5,7 @@ package vampire.server {
 
 import com.threerings.flash.MathUtil;
 import com.threerings.flash.Vector2;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Hashable;
 import com.threerings.util.Log;
@@ -22,6 +23,7 @@ import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.Codes;
 import vampire.data.Logic;
 import vampire.data.VConstants;
+import vampire.feeding.PlayerFeedingData;
 import vampire.net.IGameMessage;
 import vampire.net.messages.BloodBondRequestMessage;
 import vampire.net.messages.FeedRequestMessage2;
@@ -146,7 +148,17 @@ public class Player extends EventHandlerManager
         log.info("Logging in", "playerId", playerId, "blood", blood, "maxBlood",
                  maxBlood, "level", level, "sire", sire, "time", new Date(time).toTimeString());
 
+        //Create feeding data if there is none
+        if( _ctrl.props.get(Codes.PLAYER_PROP_FEEDING_DATA) == null ) {
+            var feedingData :PlayerFeedingData = new PlayerFeedingData();
+            _ctrl.props.set(Codes.PLAYER_PROP_FEEDING_DATA, feedingData.toBytes() );
+        }
 
+        //Load/Create minionIds
+        _minionsForTrophies = _ctrl.props.get(Codes.PLAYER_PROP_MINIONIDS) as Array;
+        if( _minionsForTrophies == null ) {
+            _minionsForTrophies = new Array();
+        }
 
         updateAvatarState();
 
@@ -1053,6 +1065,11 @@ public class Player extends EventHandlerManager
                 _ctrl.props.set(Codes.PLAYER_PROP_SIRE, sire, true);
             }
 
+            if( _ctrl.props.get(Codes.PLAYER_PROP_MINIONIDS) == null ||
+                !ArrayUtil.equals(_ctrl.props.get(Codes.PLAYER_PROP_MINIONIDS) as Array, _minionsForTrophies )) {
+                _ctrl.props.set(Codes.PLAYER_PROP_MINIONIDS, _minionsForTrophies, true);
+            }
+
 
 
         }
@@ -1061,6 +1078,21 @@ public class Player extends EventHandlerManager
         }
 
 
+    }
+
+    public function updateMinions( minions :Array ) :void
+    {
+        if( _minionsForTrophies.length >= 25 ) {
+            return;
+        }
+        for each( var newMinionId :int in minions ) {
+            if( !ArrayUtil.contains( _minionsForTrophies, newMinionId ) ) {
+                _minionsForTrophies.push( newMinionId );
+                if( _minionsForTrophies.length >= 25 ) {
+                    break;
+                }
+            }
+        }
     }
 
     public function setTargetId (id :int) :void
@@ -1211,6 +1243,11 @@ public class Player extends EventHandlerManager
         return _targetLocation;
     }
 
+    public function get minionsIds() :Array
+    {
+        return _minionsForTrophies;
+    }
+
     public function get time () :Number
     {
         return _timePlayerPreviouslyQuit;
@@ -1341,6 +1378,8 @@ public class Player extends EventHandlerManager
     protected var _bloodbondedName :String;
 
     protected var _sire :int;
+    /**Hold max 25 player ids for recording minions for trophies.*/
+    protected var _minionsForTrophies :Array;
 
     protected var _timePlayerPreviouslyQuit :Number;
 
