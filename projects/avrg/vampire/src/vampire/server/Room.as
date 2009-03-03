@@ -356,8 +356,9 @@ public class Room extends SimObjectThane
 //        }
 
 //        _nonplayerMonitor.destroySelf();
-
-        _roomDB.shutdown();
+        if( _roomDB != null ) {
+            _roomDB.shutdown();
+        }
 //        _ctrl = null;
         if (_players.size() != 0) {
             log.warning("Eek! Room unloading with players still here!",
