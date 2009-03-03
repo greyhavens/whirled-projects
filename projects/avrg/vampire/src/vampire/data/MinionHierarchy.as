@@ -90,53 +90,6 @@ public class MinionHierarchy extends SimObjectThane
         }
         dispatchEvent( new HierarchyUpdatedEvent( this, sireId ) );
 
-//        log.debug(" setting as sire=" + sire);
-
-//        log.debug(Constants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + "), hierarchy, before recompute minions=" + toString());
-//        recomputeMinions();
-
-//        log.debug("  end hierarchy=" + this);
-
-
-
-//        var previousSire :Node = player.parent;
-//        if( previousSire != null) {
-//            previousSire.parent = null;
-//        }
-
-
-
-//
-//        if( sire != null ) {
-//            sire.childrenIds.add( player.hashCode() );
-//            if( sire.parent != null && sire.parent == player) {
-//                sire.parent = null;
-//                player.childrenIds.remove( sire.hashCode() );
-//            }
-//        }
-//
-//        if( previousSire != null ) {
-//            previousSire.childrenIds.remove( player.hashCode() );
-//        }
-//
-//        //Testing: for safety, break all minions.
-//        if( getAllSiresAndGrandSires( playerId ).contains( playerId ) ) {
-//            log.error("Circle found, removing all minions");
-//            //Remove all minions
-//            for each( var childId :int in player.childrenIds) {
-//                var child :Node = _playerId2Node.get( childId ) as Node;
-//                if( child != null) {
-//                    child.parent = null;
-//                }
-//            }
-//            player.childrenIds.clear();
-//
-//            if( getAllSiresAndGrandSires( playerId ).contains( playerId ) ) {
-//                log.error("Fuck!! Circle found, removed, but still circle...!!!");
-//            }
-//
-//        }
-//
 
     }
 
