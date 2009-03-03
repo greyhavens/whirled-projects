@@ -76,8 +76,9 @@ public class VServer extends ObjectDBThane
         setInterval(tick, VConstants.SERVER_TICK_UPDATE_MILLISECONDS);
 
         ServerContext.minionHierarchy = new MinionHierarchyServer( this );
-
         addObject( ServerContext.minionHierarchy );
+
+        ServerContext.trophies = new Trophies(this, ServerContext.minionHierarchy);
 
         ServerContext.nonPlayersBloodMonitor = new NonPlayerAvatarsBloodMonitor();
         addObject( ServerContext.nonPlayersBloodMonitor );
