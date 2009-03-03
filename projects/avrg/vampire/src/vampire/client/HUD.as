@@ -379,8 +379,8 @@ public class HUD extends SceneObject
 
 
 
-        _hudType = MovieClip( findSafely("HUDtype") );
-        _hudType.gotoAndStop( int( ClientContext.model.bloodType ) );
+//        _hudType = MovieClip( findSafely("HUDtype") );
+//        _hudType.gotoAndStop( int( ClientContext.model.bloodType ) );
 
 
 //        _DEBUG_BLOOD_BAR_OUTLINE = new Sprite();
@@ -482,7 +482,7 @@ public class HUD extends SceneObject
 //               }
 //           });
 
-           Command.bind( _mouseCaptureBloodSprite, MouseEvent.CLICK, VampireController.SHOW_INTRO, "bloodtype");
+           Command.bind( _mouseCaptureBloodSprite, MouseEvent.CLICK, VampireController.SHOW_INTRO, "blood");
 
            _mouseCaptureXPSprite = new Sprite();
 
@@ -1001,7 +1001,7 @@ public class HUD extends SceneObject
         _hudMC.addChild( _mouseCaptureBloodSprite );
 
 //        trace("_hudType.y=" + _hudType.y);
-        _hudType.gotoAndStop( int( ClientContext.model.bloodType ) );
+//        _hudType.gotoAndStop( int( ClientContext.model.bloodType ) );
 //        _hudType.y = -_hudBlood.height;
 
 //        _hudBlood.y = _hudBloodBottom - _hudBlood.height;
