@@ -16,7 +16,7 @@ public class ServerContext
     public static var trophies :Trophies;
 
     /** Highest ever score.  This is used to scale the coin payouts. */
-    public static var topBloodBloomScore :Number = 100;
+    public static var topBloodBloomScore :Number = 2000;
 
     public static var serverLogBroadcast: AVRGAgentLogTarget;
 
