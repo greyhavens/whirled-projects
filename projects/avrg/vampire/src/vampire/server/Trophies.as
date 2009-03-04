@@ -7,13 +7,13 @@ public class Trophies
     public static const BASIC_AVATAR_MALE :String = "basicAvatarMale";
     public static const BASIC_AVATAR_FEMALE :String = "basicAvatarFemale";
 
-    public static const TROPHY_RECRUIT_1 :String = "recruit1";
-    public static const TROPHY_RECRUIT_2 :String = "recruit2";
-    public static const TROPHY_RECRUIT_3 :String = "recruit3";
-    public static const TROPHY_RECRUIT_4 :String = "recruit4";
-    public static const TROPHY_RECRUIT_5 :String = "recruit5";
-    public static const TROPHY_RECRUIT_10 :String = "recruit10";
-    public static const TROPHY_RECRUIT_25 :String = "recruit25";
+    public static const TROPHY_PATRON_1 :String = "patron1";
+    public static const TROPHY_PATRON_2 :String = "patron2";
+    public static const TROPHY_PATRON_3 :String = "patron3";
+    public static const TROPHY_PATRON_4 :String = "patron4";
+    public static const TROPHY_PATRON_5 :String = "patron5";
+    public static const TROPHY_PATRON_10 :String = "patron10";
+    public static const TROPHY_PATRON_25 :String = "patron25";
 
 
     public static const TROPHY_CASCADE_20 :String = "cascade20";
@@ -51,25 +51,25 @@ public class Trophies
         log.debug("handlePlayerGainsMinion", "player", player.playerId, "minionCount", minionCount);
 
         if( minionCount >= 1 ) {
-            doAward(player, TROPHY_RECRUIT_1);
+            doAward(player, TROPHY_PATRON_1);
         }
         if( minionCount >= 2 ) {
-            doAward(player, TROPHY_RECRUIT_2);
+            doAward(player, TROPHY_PATRON_2);
         }
         if( minionCount >= 3 ) {
-            doAward(player, TROPHY_RECRUIT_3);
+            doAward(player, TROPHY_PATRON_3);
         }
         if( minionCount >= 4 ) {
-            doAward(player, TROPHY_RECRUIT_4);
+            doAward(player, TROPHY_PATRON_4);
         }
         if( minionCount >= 5 ) {
-            doAward(player, TROPHY_RECRUIT_5);
+            doAward(player, TROPHY_PATRON_5);
         }
         if( minionCount >= 10 ) {
-            doAward(player, TROPHY_RECRUIT_10);
+            doAward(player, TROPHY_PATRON_10);
         }
         if( minionCount >= 25 ) {
-            doAward(player, TROPHY_RECRUIT_25);
+            doAward(player, TROPHY_PATRON_25);
         }
 
     }
@@ -85,25 +85,25 @@ public class Trophies
         log.debug("checkInviteTrophies", "player", player.playerId, "inviteCount", inviteCount);
 
 //        if( inviteCount >= 1 ) {
-//            doAward(player, TROPHY_RECRUIT_1);
+//            doAward(player, TROPHY_PATRON_1);
 //        }
 //        if( inviteCount >= 2 ) {
-//            doAward(player, TROPHY_RECRUIT_2);
+//            doAward(player, TROPHY_PATRON_2);
 //        }
 //        if( inviteCount >= 3 ) {
-//            doAward(player, TROPHY_RECRUIT_3);
+//            doAward(player, TROPHY_PATRON_3);
 //        }
 //        if( inviteCount >= 4 ) {
-//            doAward(player, TROPHY_RECRUIT_4);
+//            doAward(player, TROPHY_PATRON_4);
 //        }
 //        if( inviteCount >= 5 ) {
-//            doAward(player, TROPHY_RECRUIT_5);
+//            doAward(player, TROPHY_PATRON_5);
 //        }
 //        if( inviteCount >= 10 ) {
-//            doAward(player, TROPHY_RECRUIT_10);
+//            doAward(player, TROPHY_PATRON_10);
 //        }
 //        if( inviteCount >= 25 ) {
-//            doAward(player, TROPHY_RECRUIT_25);
+//            doAward(player, TROPHY_PATRON_25);
 //        }
     }
 
