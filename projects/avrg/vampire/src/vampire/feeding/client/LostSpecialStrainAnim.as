@@ -23,7 +23,7 @@ public class LostSpecialStrainAnim
             new PlaySoundTask("sfx_popped_special_strain"),
             new ParallelTask(
                 ScaleTask.CreateSmooth(0, 0, 0.7),
-                ColorMatrixBlendTask.colorize(_sprite, 0xffffff, 0, 0.3)),
+                ColorMatrixBlendTask.colorize(0xffffff, 0, 0.3, _sprite)),
             new SelfDestructTask()));
 
         this.x = x;

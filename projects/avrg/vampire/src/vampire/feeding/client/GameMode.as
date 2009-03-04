@@ -294,8 +294,8 @@ public class GameMode extends AppMode
             var animObj :SimObject = new SimObject();
             animObj.addTask(new SerialTask(
                 new ParallelTask(
-                    new ColorMatrixBlendTask(GameCtx.bgLayer, color, greyscale, 4),
-                    new ColorMatrixBlendTask(GameCtx.heartLayer, color, greyscale, 4)),
+                    new ColorMatrixBlendTask(color, greyscale, 4, GameCtx.bgLayer),
+                    new ColorMatrixBlendTask(color, greyscale, 4, GameCtx.heartLayer)),
                 new SelfDestructTask()));
             addObject(animObj);
 
