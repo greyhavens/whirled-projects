@@ -521,6 +521,8 @@ public class GameModel extends SimObject//EventDispatcher
         return targets;
     }
 
+
+
     public function setAvatarState( state :String ) :void
     {
         log.debug(ClientContext.ourPlayerId + " setAvatarState", "state", state);

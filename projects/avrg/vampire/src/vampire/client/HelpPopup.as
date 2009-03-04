@@ -13,6 +13,8 @@ package vampire.client
     import flash.events.MouseEvent;
     import flash.geom.Rectangle;
     import flash.text.TextField;
+    import flash.text.TextFormat;
+    import flash.text.TextFormatAlign;
 
     import vampire.feeding.Constants;
     import vampire.feeding.PlayerFeedingData;
@@ -50,7 +52,7 @@ package vampire.client
 
             //Wire up the buttons
             //On Introduction
-//            updateBloodStrainPage();
+            updateBloodStrainPage();
             _hudHelp.gotoAndStop("intro");
             registerListener( SimpleButton(findSafely("button_tofeedinggame")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
@@ -126,15 +128,34 @@ package vampire.client
                 if( numberAsText.length == 1) {
                     numberAsText = "0" + numberAsText;
                 }
-                var textFieldName :String = "status_" + numberAsText;
+                var textFieldName :String = "indicator_" + numberAsText;
 
 //                var tf :TextField = findSafely(textFieldName) as TextField;
-                var tf :TextField = _hudHelp[textFieldName] as TextField;
+                var tf :MovieClip = _hudHelp[textFieldName] as MovieClip;
                 if( tf == null ) {
                     log.error(textFieldName + " is null");
                     continue;
                 }
-                trace("\n" + tf.name + ", text before=" + tf.text + ", loc=(" + tf.x + ", " + tf.y);
+                trace("\n" + textFieldName);
+                listChildren(tf);
+                TextField(tf["tally"]).text = "asdfsadfdsf";
+                var tally :TextField = TextField(tf["tally"]);
+
+                var replacementTextField :TextField = new TextField();
+                replacementTextField.text = feedingData.getStrainCount( i - 1 ) + " / " + Constants.MAX_COLLECTIONS_PER_STRAIN;
+                replacementTextField.x = tally.x;
+                replacementTextField.y = tally.y;
+                replacementTextField.textColor = 0xffffff;
+
+                var format :TextFormat = new TextFormat();
+                format.size = 16;
+                format.color = 0xffffff;
+                format.align = TextFormatAlign.LEFT;
+                format.bold = true;
+                replacementTextField.setTextFormat( format );
+                tf.addChild( replacementTextField);
+
+//                trace("\n" + tf.name + ", text before=" + tf.text + ", loc=(" + tf.x + ", " + tf.y);
 //                tf.selectable = false;
 //                trace("Setting new text=" + (feedingData.getStrainCount( i - 1 ) + "/" + Constants.MAX_COLLECTIONS_PER_STRAIN));
 //                tf.text = feedingData.getStrainCount( i - 1 ) + "/" + Constants.MAX_COLLECTIONS_PER_STRAIN;
@@ -190,12 +211,12 @@ package vampire.client
 
             }
 
-//            function listChildren( mv :MovieClip ) :void
-//            {
-//                for( var i :int = 0; i < mv.numChildren; i++) {
-//                    trace("Child " + mv.getChildAt(i).name);
-//                }
-//            }
+            function listChildren( mv :DisplayObjectContainer ) :void
+            {
+                for( var i :int = 0; i < mv.numChildren; i++) {
+                    trace("Child " + mv.getChildAt(i).name);
+                }
+            }
 //            listChildren(_hudHelp);
         }
 

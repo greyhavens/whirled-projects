@@ -37,6 +37,7 @@ public class MainGameMode extends AppMode
 
     override protected function enter() :void
     {
+        modeSprite.visible = true;
         log.debug("Starting " + ClassUtil.tinyClassName( this ));
     }
 
@@ -53,6 +54,7 @@ public class MainGameMode extends AppMode
 
     override protected function setup() :void
     {
+        modeSprite.visible = false;
         super.setup();
 
         ClientContext.model = new GameModel();
@@ -74,7 +76,7 @@ public class MainGameMode extends AppMode
                 if( playerMovedId == ClientContext.ourPlayerId) {
                     if( ClientContext.model.action == VConstants.GAME_MODE_BARED ) {
                         ClientContext.controller.handleSwitchMode( VConstants.GAME_MODE_NOTHING );
-                        trace(ClientContext.ourPlayerId + " setting avatar state from player moved");
+//                        trace(ClientContext.ourPlayerId + " setting avatar state from player moved");
                         ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
                     }
                 }
@@ -105,6 +107,10 @@ public class MainGameMode extends AppMode
             e :MessageReceivedEvent) :void {
                 if( e.name == VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING ) {
 
+                    //Humans practising don't need to move.
+                    if( !ClientContext.model.isVampire() ) {
+                        return;
+                    }
 
                     var moveTimer :SimpleTimer = new SimpleTimer( 2.5, function() :void {
 
@@ -173,8 +179,7 @@ public class MainGameMode extends AppMode
             if (_feedingGameClient != null) {
                 log.warning("Received StartFeeding message while already in game");
             } else {
-                _playerFeedingDataTemp = ClientContext.model.playerFeedingData;
-                _feedingGameClient = FeedingGameClient.create( gameId, _playerFeedingDataTemp, onGameComplete);
+                _feedingGameClient = FeedingGameClient.create( gameId, ClientContext.model.playerFeedingData, onGameComplete);
 
                 modeSprite.addChild(_feedingGameClient);
             }
@@ -190,14 +195,14 @@ public class MainGameMode extends AppMode
         modeSprite.removeChild(_feedingGameClient);
         trace(ClientContext.ourPlayerId + " setting avatar state from game complete");
         ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
-        _feedingGameClient = null;
-        if( _playerFeedingDataTemp != null ) {
+        if( _feedingGameClient.playerData != null ) {
             ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_UPDATE_FEEDING_DATA,
-                _playerFeedingDataTemp.toBytes() );
+                _feedingGameClient.playerData.toBytes() );
         }
         else {
-            log.error("onGameComplete(), _playerFeedingDataTemp==null");
+            log.error("onGameComplete(), _feedingGameClient.playerData==null");
         }
+        _feedingGameClient = null;
 
         //Reset the overlay
         ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
@@ -218,6 +223,7 @@ public class MainGameMode extends AppMode
 
     override protected function exit() :void
     {
+        modeSprite.visible = false;
         log.warning("!!! " + ClassUtil.tinyClassName(this) + "exiting.  Is this what we want??");
     }
 
@@ -276,8 +282,8 @@ public class MainGameMode extends AppMode
     protected var _hud :HUD;
 
     protected var _feedingGameClient :FeedingGameClient;
-    /**Holds feeding data until game is over and it's sent to the server*/
-    protected var _playerFeedingDataTemp :PlayerFeedingData;
+//    /**Holds feeding data until game is over and it's sent to the server*/
+//    protected var _playerFeedingDataTemp :PlayerFeedingData;
 
 //    protected var _thaneObjectDBForNonPlayers :ObjectDBThane;
 
