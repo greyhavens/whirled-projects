@@ -181,7 +181,9 @@ public class BloodBloomManager extends SimObjectThane
             nextBloodBloomGameId, predatorId, preyId, multiplePredators, preyLocation,
             gameFinishedCallback);
         _playerId2Game.put( predatorId, gameRecord );
-        _playerId2Game.put( preyId, gameRecord );
+        if( preyId > 0 ) {
+            _playerId2Game.put( preyId, gameRecord );
+        }
         _games.push( gameRecord );
 
         return gameRecord;

@@ -451,6 +451,14 @@ public class Room extends SimObjectThane
             return;
         }
 
+        //Check if it's a human practising
+        if( getPlayer(gameRecord.primaryPredatorId) != null &&
+            !getPlayer(gameRecord.primaryPredatorId).isVampire() ) {
+
+            addFeedback( "Find a vampire to feed for real.", gameRecord.primaryPredatorId);
+            return;
+        }
+
         //Update the highest possible score.  We use this to scale the coin payout
         ServerContext.topBloodBloomScore = Math.max( ServerContext.topBloodBloomScore,
             gameRecord.gameServer.lastRoundScore );
