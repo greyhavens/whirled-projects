@@ -1,14 +1,17 @@
 package vampire.server
 {
+    import com.threerings.util.ArrayUtil;
     import com.threerings.util.ClassUtil;
     import com.threerings.util.HashSet;
     import com.threerings.util.Log;
+    import com.whirled.avrg.AVRGameRoomEvent;
+    import com.whirled.contrib.simplegame.EventCollecter;
 
     import vampire.data.Logic;
     import vampire.data.VConstants;
     import vampire.feeding.FeedingGameServer;
 
-public class BloodBloomGameRecord
+public class BloodBloomGameRecord extends EventCollecter
 {
     public function BloodBloomGameRecord( room :Room, gameId :int, predatorId :int, preyId :int,
         multiplePredators :Boolean, preyLocation :Array, gameFinishesCallback :Function)
@@ -26,6 +29,16 @@ public class BloodBloomGameRecord
         }
         _gameFinishedManagerCallback = gameFinishesCallback;
         _thisBloodBloomRecord = this;
+
+        registerListener(_room.ctrl, AVRGameRoomEvent.PLAYER_LEFT, handlePlayerLeftRoom);
+    }
+
+    protected function handlePlayerLeftRoom( e :AVRGameRoomEvent ) :void
+    {
+        var playerId :int = int(e.value);
+        if( _gameServer != null && ArrayUtil.contains(_gameServer.playerIds, playerId)) {
+            _gameServer.playerLeft( playerId );
+        }
     }
 
     public function startCountDownTimer() :void
@@ -290,8 +303,9 @@ public class BloodBloomGameRecord
         return _gameServer;
     }
 
-    public function shutdown() :void
+    override public function shutdown() :void
     {
+        super.shutdown();
         log.debug("shutdown() " + (_gameServer==null ? "Already shutdown...":""));
         if( _room != null && _room.ctrl != null && _room.ctrl.isConnected() &&
             _gameServer != null  && _gameServer.playerIds != null) {
@@ -330,7 +344,7 @@ public class BloodBloomGameRecord
         return _preyLocation;
     }
 
-    public function toString() :String
+    override public function toString() :String
     {
         return ClassUtil.tinyClassName(this)
             + " _preyId=" + _preyId
