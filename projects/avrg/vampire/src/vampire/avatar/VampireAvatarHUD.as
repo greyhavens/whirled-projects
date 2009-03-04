@@ -31,7 +31,7 @@ public class VampireAvatarHUD extends AvatarHUD
     public function VampireAvatarHUD( ctrl :AVRGameControl, userId:int)
     {
         super(ctrl, userId);
-
+        trace("userId " + userId);
         _roomKey = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + _userId;
 
         //Listen for changes in blood levels
@@ -111,7 +111,7 @@ public class VampireAvatarHUD extends AvatarHUD
 
         showNothing();
 
-
+        buttonFeed.visible = false;
 
     }
 
@@ -121,14 +121,14 @@ public class VampireAvatarHUD extends AvatarHUD
     }
 
 
-    protected function selectionBoxMouseOut( e :MouseEvent ) :void
-    {
-        if( e.relatedObject != null ) {
-            return;
-        }
-        buttonFeed.visible = false;
-        buttonFrenzy.visible = false;
-    }
+//    protected function selectionBoxMouseOut( e :MouseEvent ) :void
+//    {
+//        if( e.relatedObject != null ) {
+//            return;
+//        }
+//        buttonFeed.visible = false;
+//        buttonFrenzy.visible = false;
+//    }
 
 
 
@@ -243,6 +243,7 @@ public class VampireAvatarHUD extends AvatarHUD
     public function setDisplayModeSelectableForFeed( multiplayer :Boolean ) :void
     {
         _displaySprite.addChild( _hudSprite );
+        trace("1");
         buttonFeed.visible = true;
         buttonFrenzy.visible = multiplayer;
     }
@@ -340,7 +341,7 @@ public class VampireAvatarHUD extends AvatarHUD
 
         _displaySprite.addChild( _hudSprite );
 
-
+        trace("2")
         buttonFeed.visible = true;
         buttonFrenzy.visible = false;
         frenzyCountdown.visible = false;
@@ -352,7 +353,7 @@ public class VampireAvatarHUD extends AvatarHUD
         }
 
         _displaySprite.addChild( _hudSprite );
-
+        trace("3")
         buttonFeed.visible = true;
         buttonFrenzy.visible = true;
         frenzyCountdown.visible = false;
