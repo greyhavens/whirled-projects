@@ -13,6 +13,7 @@ import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.geom.Rectangle;
 
+import vampire.avatar.AvatarGameBridge;
 import vampire.data.VConstants;
 import vampire.net.VMessageManager;
 
@@ -142,6 +143,13 @@ public class ClientContext
         return nonPlayerIds;
     }
 
+    public static function get isWearingValidAvatar() :Boolean
+    {
+        var isLegal :Object = ClientContext.ctrl.room.getEntityProperty(
+            AvatarGameBridge.ENTITY_PROPERTY_IS_LEGAL_AVATAR, ClientContext.ourEntityId);
+
+        return isLegal != null && Boolean(isLegal);
+    }
 
 
 }
