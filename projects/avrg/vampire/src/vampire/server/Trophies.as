@@ -15,29 +15,35 @@ public class Trophies
     public static const TROPHY_PATRON_10 :String = "patron10";
     public static const TROPHY_PATRON_25 :String = "patron25";
 
+    // Awarded for creating a cascade of a certain size
+    public static const CASCADE_TROPHIES :Array = [
+        "cascade20",
+        "cascade40",
+        "cascade60",
+    ];
+    public static const CASCADE_REQS :Array = [ 20, 40, 60 ];
 
-    public static const TROPHY_CASCADE_20 :String = "cascade20";
-    public static const TROPHY_CASCADE_40 :String = "cascade40";
-    public static const TROPHY_CASCADE_60 :String = "cascade60";
+    // Awarded for creating a cascade with a certain multiplier value
+    public static const MULTIPLIER_TROPHIES :Array = [
+        "multiplier03",
+        "multiplier10",
+        "multiplier20",
+        "multiplier30",
+    ];
+    public static const MULTIPLIER_REQS :Array = [ 3, 10, 20, 30 ];
 
-    public static const TROPHY_MULTIPLIER_03 :String = "multiplier03";
-    public static const TROPHY_MULTIPLIER_10 :String = "multiplier10";
-    public static const TROPHY_MULTIPLIER_20 :String = "multiplier20";
-    public static const TROPHY_MULTIPLIER_30 :String = "multiplier30";
-
+    // Awarded for collecting special blood strains
     public static const TROPHY_HUNTER_ALL :String = "hunterAll";
-    public static const TROPHY_HUNTER_01 :String = "hunter01";
-    public static const TROPHY_HUNTER_02 :String = "hunter02";
-    public static const TROPHY_HUNTER_03 :String = "hunter03";
-    public static const TROPHY_HUNTER_04 :String = "hunter04";
-    public static const TROPHY_HUNTER_05 :String = "hunter05";
-    public static const TROPHY_HUNTER_06 :String = "hunter06";
-    public static const TROPHY_HUNTER_07 :String = "hunter07";
-    public static const TROPHY_HUNTER_08 :String = "hunter08";
-    public static const TROPHY_HUNTER_09 :String = "hunter09";
-    public static const TROPHY_HUNTER_10 :String = "hunter10";
-    public static const TROPHY_HUNTER_11 :String = "hunter11";
-    public static const TROPHY_HUNTER_12 :String = "hunter12";
+    public static const HUNTER_COLLECTION_REQUIREMENT :int = 3;
+    public static function getHunterTrophyName (bloodStrain :int) :String
+    {
+        var strainString :String = String(bloodStrain);
+        if (strainString.length == 1) {
+            strainString = "0" + strainString;
+        }
+
+        return "hunter" + strainString;
+    }
 
 
     public static function checkMinionTrophies ( player :Player ) :void

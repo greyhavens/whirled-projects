@@ -4,6 +4,7 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRServerGameControl;
+import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.avrg.RoomSubControlServer;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.ManagedTimer;
@@ -224,6 +225,17 @@ public class Server extends FeedingGameServer
 
         case ClientQuitMsg.NAME:
             playerLeft(e.senderId);
+            break;
+
+        case AwardTrophyMsg.NAME:
+            // we trust clients on all trophy award requests
+            var senderCtrl :PlayerSubControlServer = _gameCtrl.getPlayer(e.senderId);
+            if (senderCtrl == null) {
+                logBadMessage(e, "Couldn't get PlayerSubControlServer for player");
+            } else {
+                var trophyMsg :AwardTrophyMsg = msg as AwardTrophyMsg;
+                senderCtrl.awardTrophy(trophyMsg.trophyName);
+            }
             break;
 
         default:

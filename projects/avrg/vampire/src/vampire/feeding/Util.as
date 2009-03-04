@@ -22,6 +22,7 @@ public class Util
         mgr.addMessageType(RoundStartingSoonMsg);
         mgr.addMessageType(PlayerLeftMsg);
         mgr.addMessageType(StartGameMsg);
+        mgr.addMessageType(AwardTrophyMsg);
     }
 }
 

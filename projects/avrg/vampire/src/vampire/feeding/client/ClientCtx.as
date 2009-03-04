@@ -1,5 +1,6 @@
 package vampire.feeding.client {
 
+import com.threerings.util.HashSet;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.MainLoop;
@@ -32,6 +33,7 @@ public class ClientCtx
     public static var preyId :int;
     public static var preyBloodType :int;
     public static var isAiPrey :Boolean;
+    public static var awardedTrophies :HashSet;
 
     public static function init () :void
     {
@@ -45,6 +47,38 @@ public class ClientCtx
         preyId = 0;
         preyBloodType = -1;
         isAiPrey = false;
+        awardedTrophies = new HashSet();
+    }
+
+    public static function awardTrophySequence (trophyNames :Array, valueRequirements :Array,
+                                                value :Number) :void
+    {
+        for (var ii :int = 0; ii < trophyNames.length; ++ii) {
+            if (value >= valueRequirements[ii]) {
+                awardTrophy(trophyNames[ii]);
+            }
+        }
+    }
+
+    public static function awardTrophy (trophyName :String) :void
+    {
+        // Track the trophies we've awarded this feeding session, and don't try
+        // to award them again (this isn't tracked across feeding sessions - should it be?)
+        if (!awardedTrophies.contains(trophyName)) {
+            msgMgr.sendMessage(AwardTrophyMsg.create(trophyName));
+            awardedTrophies.add(trophyName);
+        }
+    }
+
+    public static function hasAwardedTrophies (trophies :Array) :Boolean
+    {
+        for each (var trophy :String in trophies) {
+            if (!awardedTrophies.contains(trophy)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static function get isPrey () :Boolean

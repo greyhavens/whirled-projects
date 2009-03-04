@@ -12,6 +12,7 @@ import flash.geom.Point;
 import flash.text.TextField;
 
 import vampire.feeding.*;
+import vampire.server.Trophies;
 
 public class BurstSequence extends SceneObject
 {
@@ -77,24 +78,7 @@ public class BurstSequence extends SceneObject
             });
 
         if (!isSequenceAlive) {
-            if (this.totalValue > 0) {
-                var loc :Point = this.displayObject.parent.localToGlobal(new Point(this.x, this.y));
-                GameCtx.scoreView.addBlood(loc.x, loc.y, this.totalValue, 0);
-            }
-
-            if (_totalBursts >= Constants.CREATE_BONUS_BURST_SIZE) {
-                // Send a multiplier to the other players
-                GameCtx.gameMode.sendMultiplier(_largestMultiplier + 1, this.x, this.y);
-
-                // Show an animation of this happening
-                var anim :NewBonusAnimation = new NewBonusAnimation(
-                    NewBonusAnimation.TYPE_SEND,
-                    _largestMultiplier + 1,
-                    new Vector2(this.x, this.y));
-                GameCtx.gameMode.addObject(anim, GameCtx.uiLayer);
-
-            }
-
+            deliverPayload();
             destroySelf();
 
         } else if (_lastCellCount != _bursts.length) {
@@ -121,6 +105,37 @@ public class BurstSequence extends SceneObject
 
             _lastCellCount = _bursts.length;
         }
+    }
+
+    protected function deliverPayload () :void
+    {
+        if (this.totalValue > 0) {
+            var loc :Point = this.displayObject.parent.localToGlobal(new Point(this.x, this.y));
+            GameCtx.scoreView.addBlood(loc.x, loc.y, this.totalValue, 0);
+        }
+
+        if (_totalBursts >= Constants.CREATE_BONUS_BURST_SIZE) {
+            // Send a multiplier to the other players
+            GameCtx.gameMode.sendMultiplier(_largestMultiplier + 1, this.x, this.y);
+
+            // Show an animation of this happening
+            var anim :NewBonusAnimation = new NewBonusAnimation(
+                NewBonusAnimation.TYPE_SEND,
+                _largestMultiplier + 1,
+                new Vector2(this.x, this.y));
+            GameCtx.gameMode.addObject(anim, GameCtx.uiLayer);
+        }
+
+        // trophies
+        ClientCtx.awardTrophySequence(
+            Trophies.CASCADE_TROPHIES,
+            Trophies.CASCADE_REQS,
+            _totalBursts);
+
+        ClientCtx.awardTrophySequence(
+            Trophies.MULTIPLIER_TROPHIES,
+            Trophies.MULTIPLIER_REQS,
+            _totalMultiplier);
     }
 
     protected var _bursts :Array = [];

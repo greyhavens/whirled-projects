@@ -3,7 +3,9 @@ package vampire.feeding.client {
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.tasks.*;
 
+import vampire.data.VConstants;
 import vampire.feeding.*;
+import vampire.server.Trophies;
 
 public class RedBurst extends CellBurst
 {
@@ -76,6 +78,27 @@ public class RedBurst extends CellBurst
                 // harvest the special blood
                 GameObjects.createSpecialBloodAnim(cell);
                 ClientCtx.playerData.collectStrainFromPlayer(cell.specialStrain, ClientCtx.preyId);
+
+                // award the HUNTER trophy
+                if (ClientCtx.playerData.getStrainCount(cell.specialStrain) >=
+                    Trophies.HUNTER_COLLECTION_REQUIREMENT) {
+                    ClientCtx.awardTrophy(Trophies.getHunterTrophyName(cell.specialStrain));
+                }
+
+                // award the HUNTER_ALL trophy (for getting the rest of the HUNTER trophies)
+                var hasAllHunterTrophies :Boolean = true;
+                for (var strain :int = 0; strain < VConstants.UNIQUE_BLOOD_STRAINS; ++strain) {
+                    if (ClientCtx.playerData.getStrainCount(strain) <
+                        Trophies.HUNTER_COLLECTION_REQUIREMENT) {
+                        hasAllHunterTrophies = false;
+                        break;
+                    }
+                }
+
+                if (hasAllHunterTrophies) {
+                    ClientCtx.awardTrophy(Trophies.TROPHY_HUNTER_ALL);
+                }
+
             } else {
                 GameObjects.createRedBurst(cell, _sequence);
             }
