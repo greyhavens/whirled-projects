@@ -400,7 +400,12 @@ public class HUD extends SceneObject
         var hudPredator :SimpleButton = SimpleButton( findSafely("HUDpredator") );
         Command.bind( hudPredator, MouseEvent.CLICK, VampireController.FEED_REQUEST, [_targetingOverlay, _displaySprite, this] );
         registerListener( hudPredator, MouseEvent.ROLL_OVER, function(...ignored) :void {
-            showFeedBack( "Feed", true);
+            if( ClientContext.model.isVampire() ) {
+                showFeedBack( "Feed", true);
+            }
+            else {
+                showFeedBack( "Practise feeding.", true);
+            }
         });
 
 
