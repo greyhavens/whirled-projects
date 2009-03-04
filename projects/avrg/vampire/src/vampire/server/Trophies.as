@@ -1,12 +1,8 @@
 package vampire.server
 {
     import com.threerings.util.Log;
-    import com.whirled.contrib.simplegame.EventCollecter;
 
-    import vampire.client.events.HierarchyUpdatedEvent;
-    import vampire.data.MinionHierarchy;
-
-public class Trophies extends EventCollecter
+public class Trophies
 {
     public static const BASIC_AVATAR_MALE :String = "basicAvatarMale";
     public static const BASIC_AVATAR_FEMALE :String = "basicAvatarFemale";
