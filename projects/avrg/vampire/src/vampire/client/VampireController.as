@@ -265,8 +265,10 @@ public class VampireController extends Controller
 
         }
         else {
-            ClientContext.hud.showFeedBack( "Only vampires can feed.  You must be at least level " +
-                VConstants.MINIMUM_VAMPIRE_LEVEL +".  You are level " + ClientContext.model.level, true);
+            var msg :FeedRequestMessage2 = new FeedRequestMessage2( ClientContext.ourPlayerId,
+                -1, false, 0,0,0);
+            log.debug(ClientContext.ctrl + " handleSendFeedRequest() sending " + msg)
+            ClientContext.ctrl.agent.sendMessage( FeedRequestMessage2.NAME, msg.toBytes() );
         }
 
 
