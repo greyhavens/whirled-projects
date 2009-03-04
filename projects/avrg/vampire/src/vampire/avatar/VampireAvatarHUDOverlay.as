@@ -271,6 +271,10 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 
         var validIds :HashSet = new HashSet();
 
+        if( !ClientContext.model.isVampire() ) {
+            return validIds;
+        }
+
         var playerIds :Array = _ctrl.room.getPlayerIds();
 
         var validCHatTargets :Array = ClientContext.model.validNonPlayerTargetsFromChatting;
