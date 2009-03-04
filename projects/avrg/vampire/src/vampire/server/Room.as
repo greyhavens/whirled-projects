@@ -581,8 +581,8 @@ public class Room extends SimObjectThane
             }
         }
 
-        //Then handle experience.  ATM everyone gets xp=score/10
-        var xpGained :Number = gameRecord.gameServer.lastRoundScore / 10;
+        //Then handle experience.  ATM everyone gets xp=score
+        var xpGained :Number = gameRecord.gameServer.lastRoundScore;
         var xpFormatted :String = Util.formatNumberForFeedback( xpGained );
 
         function awardXP( playerId :int, xp :Number, xpFormatted :String ) :void
