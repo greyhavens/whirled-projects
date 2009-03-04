@@ -660,9 +660,9 @@ public class Player extends EventHandlerManager
 
                 //If we are the first predator, we go directly behind the prey
                 //Otherwise, take a a place
-                targetX = targetLocation[0] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][0] * RADIUS;
-                targetY = targetLocation[1] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][1] * RADIUS;
-                targetZ = targetLocation[2] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][2] * RADIUS;
+                targetX = targetLocation[0] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][0] * VConstants.FEEDING_LOGICAL_X_OFFSET;
+                targetY = targetLocation[1] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][1] * VConstants.FEEDING_LOGICAL_X_OFFSET;
+                targetZ = targetLocation[2] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][2] * VConstants.FEEDING_LOGICAL_X_OFFSET;
 
                 //If the avatar is already at the location, the client will dispatch a
                 //PlayerArrivedAtLocation event, as the location doesn't change.
@@ -1420,10 +1420,10 @@ public class Player extends EventHandlerManager
 
 
 
-    protected static const RADIUS :Number = 0.1;
+//    protected static const RADIUS :Number = 0.1;
     protected static const p4 :Number = Math.cos( Math.PI/4);
     protected static const PREDATOR_LOCATIONS_RELATIVE_TO_PREY :Array = [
-        [  0, 0,  0.01], //Behind
+        [  0, 0,  VConstants.FEEDING_LOGICAL_Z_OFFSET], //Behind
         [  1, 0,  0], //Left
         [ -1, 0,  0], //right
         [ p4, 0, p4], //North east
