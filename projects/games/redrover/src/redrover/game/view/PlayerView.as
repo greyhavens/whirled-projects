@@ -16,8 +16,6 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.text.TextField;
 
-import mx.effects.easing.Linear;
-
 import redrover.*;
 import redrover.game.*;
 import redrover.ui.UIBits;
@@ -194,8 +192,10 @@ public class PlayerView extends SceneObject
         if (_player.isInvincible) {
             if (!hasTasksNamed(INVINCIBLE_ANIM_TASK_NAME)) {
                 addNamedTask(INVINCIBLE_ANIM_TASK_NAME,
-                    new TintTask(0xFFFFFF, 1, 0xFFFFFF, 0, _player.invincibleTime,
-                        mx.effects.easing.Linear.easeNone),
+                    new ColorMatrixBlendTask(
+                        new ColorMatrix().tint(0xffffff, 1),
+                        new ColorMatrix().tint(0xffffff, 0),
+                        _player.invincibleTime),
                     true);
             }
 
