@@ -5,10 +5,11 @@ import com.threerings.flash.Vector2;
 public class Constants
 {
     /* Debug options */
-    public static const DEBUG_LOAD_LEVELS_FROM_DISK :Boolean    = true;
     public static const DEBUG_ALLOW_CHEATS :Boolean             = true;
     public static const DEBUG_DISABLE_AUDIO :Boolean            = true;
     public static const DEBUG_SKIP_INSTRUCTIONS :Boolean        = true;
+
+    public static var DEBUG_LOAD_LEVELS_FROM_DISK :Boolean      = false; // RedRover standalone sets to true
 
     public static const SCREEN_SIZE :Vector2 = new Vector2(700, 500);
     public static const SOUND_MASTER_VOLUME :Number = 1.0;

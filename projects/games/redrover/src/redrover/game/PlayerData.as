@@ -1,6 +1,7 @@
 package redrover.game {
 
 import com.threerings.flash.Vector2;
+import com.threerings.util.ArrayUtil;
 
 import flash.utils.ByteArray;
 
@@ -10,7 +11,7 @@ public class PlayerData
     public static const STATE_SWITCHINGBOARDS :int = 1;
     public static const STATE_EATEN :int = 2;
 
-    public var state :int;
+    public var state :int = STATE_NORMAL;
     public var curBoardId :int;
     public var loc :Vector2 = new Vector2();
     public var moveDirection :int = -1;

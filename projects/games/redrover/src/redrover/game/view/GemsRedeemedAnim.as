@@ -33,7 +33,7 @@ public class GemsRedeemedAnim extends SceneObject
     {
         if (_gems.length > 0) {
             showNextGemAnim();
-        } else if (_player.playerIndex == GameCtx.localPlayerIndex) {
+        } else if (_player.playerIdx == ClientCtx.localPlayerIdx) {
             // only show the score animation for the local player
             showScoreAnim();
         } else {

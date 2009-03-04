@@ -13,26 +13,19 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import redrover.data.*;
-import redrover.server.*;
 
-[SWF(width="700", height="500", frameRate="30")]
 public class RedRover extends Sprite
 {
-    public static function DEBUG_REMOVE_ME () :void
-    {
-        var c :Class = Server;
-    }
-
     public function RedRover ()
     {
-        DEBUG_REMOVE_ME();
-
         ClientCtx.mainSprite = this;
 
-        // setup GameControl
+        // initialize ClientCtx
         ClientCtx.gameCtrl = new GameControl(this, false);
-        var isConnected :Boolean = ClientCtx.gameCtrl.isConnected();
         ClientCtx.seatingMgr.init(ClientCtx.gameCtrl);
+        ClientCtx.localPlayerIdx = ClientCtx.seatingMgr.localPlayerSeat;
+
+        var isConnected :Boolean = ClientCtx.gameCtrl.isConnected();
 
         _events.registerListener(this, Event.REMOVED_FROM_STAGE, handleUnload);
 

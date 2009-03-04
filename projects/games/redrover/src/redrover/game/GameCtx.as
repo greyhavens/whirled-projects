@@ -16,7 +16,6 @@ public class GameCtx
 
     public static var players :Array = [];
     public static var teamSizes :Array = ArrayUtil.create(Constants.NUM_TEAMS, 0);
-    public static var localPlayerIndex :int = -1;
     public static var playerColors :Array;
     public static var maleRobotNames :Array;
     public static var femaleRobotNames :Array;
@@ -35,7 +34,6 @@ public class GameCtx
         levelData = null;
         players = [];
         teamSizes = ArrayUtil.create(Constants.NUM_TEAMS, 0);
-        localPlayerIndex = -1;
         playerColors = null;
         maleRobotNames = null;
         femaleRobotNames = null;
@@ -94,7 +92,7 @@ public class GameCtx
 
     public static function get localPlayer () :Player
     {
-        return players[GameCtx.localPlayerIndex];
+        return players[ClientCtx.localPlayerIdx];
     }
 
     public static function getBoard (boardId :int) :Board

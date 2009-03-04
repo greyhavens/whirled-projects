@@ -5,8 +5,21 @@
   <property name="app.name" value="RedRover"/>
   <property name="app.source-dir" value="src"/>
   <property name="app.package-dir" value="redrover"/>
+  <property name="app.enable-server-agent" value="true"/>
+  <property name="app.server-agent" value="Server"/>
+  <property name="app.server-agent-package-dir" value="redrover/server"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
+
+  <target name="copydata">
+    <copy todir="${build.root}/dist/redrover/levels" overwrite="true">
+      <fileset dir="levels">
+        <include name="**/*.xml"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="testpacks" depends="compile, copydata, test"/>
 
 </project>

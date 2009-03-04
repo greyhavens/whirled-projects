@@ -5,20 +5,23 @@ import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
+import flash.utils.ByteArray;
+
 import redrover.*;
 import redrover.data.LevelData;
 
 public class Player extends SimObject
 {
-    public function Player (playerIndex :int, playerName :String, teamId :int, gridX :int,
-        gridY :int, color :uint)
+    public function Player (playerIdx :int, playerName :String, teamId :int, gridX :int,
+        gridY :int, color :uint, locallyControlled :Boolean)
     {
-        _playerIndex = playerIndex;
+        _playerIdx = playerIdx;
         _playerName = playerName;
         _teamId = teamId;
-        _data.curBoardId = teamId;
         _color = color;
-        _data.state = PlayerData.STATE_NORMAL;
+        _locallyControlled = locallyControlled;
+
+        _data.curBoardId = teamId;
 
         _cellSize = GameCtx.levelData.cellSize;
 
@@ -145,9 +148,9 @@ public class Player extends SimObject
             (_teamId == _data.curBoardId || this.numGems >= GameCtx.levelData.returnHomeGemsMin));
     }
 
-    public function get playerIndex () :int
+    public function get playerIdx () :int
     {
-        return _playerIndex;
+        return _playerIdx;
     }
 
     public function get playerName () :String
@@ -256,6 +259,16 @@ public class Player extends SimObject
     public function get invincibleTime () :Number
     {
         return _data.invincibleTime;
+    }
+
+    public function get locallyControlled () :Boolean
+    {
+        return _locallyControlled;
+    }
+
+    public function get dataBytes () :ByteArray
+    {
+        return _data.toBytes();
     }
 
     public function isGemValidForPickup (gemType :int) :Boolean
@@ -562,7 +575,7 @@ public class Player extends SimObject
         _data.invincibleTime = Math.max(_data.invincibleTime, time);
     }
 
-    protected var _playerIndex :int;
+    protected var _playerIdx :int;
     protected var _playerName :String;
     protected var _teamId :int;
     protected var _color :uint;

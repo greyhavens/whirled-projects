@@ -21,6 +21,7 @@ public class ClientCtx
     public static var gameCtrl :GameControl;
     public static var levelMgr :LevelManager = new LevelManager();
     public static var seatingMgr :SeatingManager = new SeatingManager();
+    public static var localPlayerIdx :int;
 
     public static function instantiateMovieClip (rsrcName :String, className :String,
         disableMouseInteraction :Boolean = false, fromCache :Boolean = false) :MovieClip

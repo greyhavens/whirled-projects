@@ -167,16 +167,15 @@ public class GameMode extends AppMode
             }
         }
 
-        GameCtx.localPlayerIndex = 0;
         PlayerFactory.initPlayer(
-            new Player(0, "You", 0, startX, startY, GameCtx.nextPlayerColor()));
+            new Player(0, "You", 0, startX, startY, GameCtx.nextPlayerColor(), true));
 
         // create ai players
-        for (var ii :int = 0; ii < 8; ++ii) {
+        /*for (var ii :int = 0; ii < 8; ++ii) {
             var robotType :int = (ii % 2 ? PlayerFactory.DUMB_ROBOT : PlayerFactory.GEM_HOG_ROBOT);
             var teamId :int = (ii < 4 ? 0 : 1);
             PlayerFactory.createRobot(robotType, teamId);
-        }
+        }*/
     }
 
     override public function update (dt :Number) :void

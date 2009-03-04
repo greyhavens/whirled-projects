@@ -26,7 +26,8 @@ public class PlayerFactory
         return view;
     }
 
-    public static function createRobot (type :int, initialTeam :int) :Robot
+    public static function createRobot (type :int, initialTeam :int, locallyControlled :Boolean)
+        :Robot
     {
         var board :Board = GameCtx.getBoard(initialTeam);
         var startX :int;
@@ -45,7 +46,8 @@ public class PlayerFactory
                 GameCtx.nextMaleRobotName() : GameCtx.nextFemaleRobotName()),
             initialTeam,
             startX, startY,
-            GameCtx.nextPlayerColor());
+            GameCtx.nextPlayerColor(),
+            locallyControlled);
 
         initPlayer(player);
 

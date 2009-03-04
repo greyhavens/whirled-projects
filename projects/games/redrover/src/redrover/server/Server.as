@@ -5,12 +5,18 @@ import com.whirled.ServerObject;
 import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;
 
+import redrover.data.LevelResource;
+
 public class Server extends ServerObject
 {
     public function Server ()
     {
         ServerCtx.gameCtrl = new GameControl(this);
         ServerCtx.seatingMgr.init(ServerCtx.gameCtrl);
+        ServerCtx.rsrcs.registerResourceType("level", LevelResource);
+        ServerCtx.levelPacks.init(ServerCtx.gameCtrl.game.getLevelPacks());
+
+        log.info("Level packs", "packs", ServerCtx.gameCtrl.game.getLevelPacks());
 
         // We don't have anything to do in single-player games
         if (ServerCtx.seatingMgr.numExpectedPlayers < 2) {
