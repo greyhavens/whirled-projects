@@ -73,7 +73,7 @@ public class BoardView extends SceneObject
     protected function getGrass () :Bitmap
     {
         if (_grass == null) {
-            _grass = ImageResource.instantiateBitmap(AppContext.rsrcs, "grass");
+            _grass = ImageResource.instantiateBitmap(ClientCtx.rsrcs, "grass");
         }
 
         _grass.filters = [ new ColorMatrix().colorize(TEAM_COLORS[_board.teamId]).createFilter() ];
@@ -84,7 +84,7 @@ public class BoardView extends SceneObject
     protected function getRock () :Bitmap
     {
         if (_rock == null) {
-            _rock = ImageResource.instantiateBitmap(AppContext.rsrcs, "rock");
+            _rock = ImageResource.instantiateBitmap(ClientCtx.rsrcs, "rock");
         }
 
         return _rock;
@@ -93,7 +93,7 @@ public class BoardView extends SceneObject
     protected function getGemRedemption () :Bitmap
     {
         if (_gemRedemption == null) {
-            _gemRedemption = ImageResource.instantiateBitmap(AppContext.rsrcs, "gem_redemption");
+            _gemRedemption = ImageResource.instantiateBitmap(ClientCtx.rsrcs, "gem_redemption");
         }
 
         return _gemRedemption;

@@ -7,7 +7,7 @@ public class Resources
     public static function loadResources (loadCompleteCallback :Function = null,
         loadErrorCallback :Function = null) :void
     {
-        var rm :ResourceManager = AppContext.rsrcs;
+        var rm :ResourceManager = ClientCtx.rsrcs;
 
         rm.queueResourceLoad("swf", "uiBits",  { embeddedClass: SWF_UIBITS });
         rm.queueResourceLoad("swf", "grunt", { embeddedClass: SWF_GRUNT });

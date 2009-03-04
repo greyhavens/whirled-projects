@@ -12,7 +12,7 @@ public class GemViewFactory
 {
     public static function createGem (width :Number, gemType :int) :DisplayObject
     {
-        var bm :Bitmap = ImageResource.instantiateBitmap(AppContext.rsrcs, "gem");
+        var bm :Bitmap = ImageResource.instantiateBitmap(ClientCtx.rsrcs, "gem");
         if (gemType >= 0) {
             bm.filters = [ new ColorMatrix().colorize(GEM_COLORS[gemType]).createFilter() ];
         }

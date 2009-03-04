@@ -150,11 +150,6 @@ public class Player extends SimObject
         return _playerIndex;
     }
 
-    public function get isLocalPlayer () :Boolean
-    {
-        return _playerIndex == GameCtx.localPlayerIndex;
-    }
-
     public function get playerName () :String
     {
         return _playerName;
@@ -572,6 +567,7 @@ public class Player extends SimObject
     protected var _teamId :int;
     protected var _color :uint;
     protected var _isMoving :Boolean;
+    protected var _locallyControlled :Boolean;
 
     protected var _data :PlayerData = new PlayerData();
 

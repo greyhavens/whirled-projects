@@ -48,7 +48,7 @@ public class InstructionsMode extends AppMode
         _playButton = UIBits.createButton("Play!", 1.5);
         registerListener(_playButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.mainLoop.popMode();
+                ClientCtx.mainLoop.popMode();
             });
         _playButton.x = Constants.SCREEN_SIZE.x - _playButton.width - 10;
         _playButton.y = Constants.SCREEN_SIZE.y - _playButton.height - 10;
@@ -63,7 +63,7 @@ public class InstructionsMode extends AppMode
 
         if (_bitmaps[_index] == null) {
             _bitmaps[_index] =
-                ImageResource.instantiateBitmap(AppContext.rsrcs, IMAGE_NAMES[_index]);
+                ImageResource.instantiateBitmap(ClientCtx.rsrcs, IMAGE_NAMES[_index]);
         }
 
         if (_curPage != null) {

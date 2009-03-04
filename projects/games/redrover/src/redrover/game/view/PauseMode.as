@@ -39,7 +39,7 @@ public class PauseMode extends AppMode
         var resumeButton :SimpleButton = UIBits.createButton("Resume", 1.5, 150);
         registerOneShotCallback(resumeButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.mainLoop.popMode();
+                ClientCtx.mainLoop.popMode();
             });
 
         resumeButton.x = (bgSprite.width - resumeButton.width) * 0.5;
@@ -50,7 +50,7 @@ public class PauseMode extends AppMode
         var helpButton :SimpleButton = UIBits.createButton("Help", 1.5, 150);
         registerListener(helpButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.mainLoop.pushMode(new InstructionsMode());
+                ClientCtx.mainLoop.pushMode(new InstructionsMode());
             });
         helpButton.x = (bgSprite.width - helpButton.width) * 0.5;
         helpButton.y = resumeButton.y - helpButton.height - 5;
@@ -60,7 +60,7 @@ public class PauseMode extends AppMode
         var restartButton :SimpleButton = UIBits.createButton("Restart", 1.2, 150);
         registerOneShotCallback(restartButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.mainLoop.unwindToMode(new GameMode(GameCtx.levelData));
+                ClientCtx.mainLoop.unwindToMode(new GameMode(GameCtx.levelData));
             });
         restartButton.x = (bgSprite.width - restartButton.width) * 0.5;
         restartButton.y = helpButton.y - restartButton.height - 5;

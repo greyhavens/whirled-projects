@@ -70,9 +70,9 @@ public class GameMode extends AppMode
         GameCtx.playAudio = true;
 
         GameCtx.sfxControls = new AudioControls(
-            AppContext.audio.getControlsForSoundType(SoundResource.TYPE_SFX));
+            ClientCtx.audio.getControlsForSoundType(SoundResource.TYPE_SFX));
         GameCtx.musicControls = new AudioControls(
-            AppContext.audio.getControlsForSoundType(SoundResource.TYPE_MUSIC));
+            ClientCtx.audio.getControlsForSoundType(SoundResource.TYPE_MUSIC));
 
         GameCtx.sfxControls.retain();
         GameCtx.musicControls.retain();
@@ -200,7 +200,7 @@ public class GameMode extends AppMode
 
         // handle game over
         if(checkGameOver()) {
-            AppContext.mainLoop.pushMode(new GameOverMode());
+            ClientCtx.mainLoop.pushMode(new GameOverMode());
         }
 
         // sort the board objects in the currently-visible TeamSprite
@@ -294,7 +294,7 @@ public class GameMode extends AppMode
 
         case KeyboardCodes.ESCAPE:
             if (this.canPause) {
-                AppContext.mainLoop.pushMode(new PauseMode());
+                ClientCtx.mainLoop.pushMode(new PauseMode());
             }
             break;
 

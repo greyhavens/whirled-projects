@@ -56,12 +56,6 @@ public class SeatingManager
         return getPlayerOccupantId(_localPlayerSeat);
     }
 
-    public function get isLocalPlayerGuest () :Boolean
-    {
-        // NB: this won't return true until Whirled games are given memberIds
-        return (localPlayerOccupantId < 0);
-    }
-
     public function isPlayerPresent (playerSeat :int) :Boolean
     {
         return _playersPresent[playerSeat];
@@ -100,7 +94,7 @@ public class SeatingManager
         if (_gameCtrl.isConnected()) {
             return _gameCtrl.game.seating.getPlayerIds();
         } else {
-            return [ 0 ];
+            return [ 666 ];
         }
     }
 

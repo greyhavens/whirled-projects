@@ -44,10 +44,10 @@ public class LevelManager
 
     protected function loadLevel (loadParams :Object) :void
     {
-        AppContext.rsrcs.unload(RSRC_CURLEVEL);
-        AppContext.rsrcs.queueResourceLoad(Constants.RESTYPE_LEVEL, RSRC_CURLEVEL,
+        ClientCtx.rsrcs.unload(RSRC_CURLEVEL);
+        ClientCtx.rsrcs.queueResourceLoad(Constants.RESTYPE_LEVEL, RSRC_CURLEVEL,
             loadParams);
-        AppContext.rsrcs.loadQueuedResources(onLevelLoaded, onLoadError);
+        ClientCtx.rsrcs.loadQueuedResources(onLevelLoaded, onLoadError);
     }
 
     public function get numLevels () :int
@@ -57,13 +57,13 @@ public class LevelManager
 
     protected function onLevelLoaded () :void
     {
-        _loadedLevel = LevelResource(AppContext.rsrcs.getResource(RSRC_CURLEVEL)).levelData;
+        _loadedLevel = LevelResource(ClientCtx.rsrcs.getResource(RSRC_CURLEVEL)).levelData;
         startGame();
     }
 
     protected function onLoadError (err :String) :void
     {
-        AppContext.mainLoop.pushMode(new LevelLoadErrorMode(err, _loadedLevelIndex,
+        ClientCtx.mainLoop.pushMode(new LevelLoadErrorMode(err, _loadedLevelIndex,
             _levelReadyCallback));
     }
 
@@ -72,7 +72,7 @@ public class LevelManager
         if (null != _levelReadyCallback) {
             _levelReadyCallback(_loadedLevel);
         } else {
-            AppContext.mainLoop.unwindToMode(new GameMode(_loadedLevel));
+            ClientCtx.mainLoop.unwindToMode(new GameMode(_loadedLevel));
         }
     }
 

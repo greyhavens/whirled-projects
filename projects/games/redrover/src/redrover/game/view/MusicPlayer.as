@@ -17,9 +17,9 @@ public class MusicPlayer extends SimObject
         _myTeamControls.retain();
         _otherTeamControls.retain();
 
-        AppContext.audio.playSoundNamed("mus_pepperland", _myTeamControls,
+        ClientCtx.audio.playSoundNamed("mus_pepperland", _myTeamControls,
             AudioManager.LOOP_FOREVER);
-        AppContext.audio..playSoundNamed("mus_motm", _otherTeamControls,
+        ClientCtx.audio..playSoundNamed("mus_motm", _otherTeamControls,
             AudioManager.LOOP_FOREVER);
     }
 

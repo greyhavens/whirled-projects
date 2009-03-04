@@ -42,7 +42,7 @@ public class LevelLoadErrorMode extends AppMode
         var button :SimpleButton = UIBits.createButton("Back");
         registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.mainLoop.popMode();
+                ClientCtx.mainLoop.popMode();
             });
         button.x = 100;
         button.y = 450;
@@ -51,7 +51,7 @@ public class LevelLoadErrorMode extends AppMode
         button = UIBits.createButton("Retry");
         registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.levelMgr.playLevel(_levelIndex, _levelReadyCallback);
+                ClientCtx.levelMgr.playLevel(_levelIndex, _levelReadyCallback);
             });
         button.x = 50;
         button.y = 450;

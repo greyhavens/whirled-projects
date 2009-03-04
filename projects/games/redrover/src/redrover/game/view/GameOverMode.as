@@ -52,7 +52,7 @@ public class GameOverMode extends AppMode
         var tryAgainButton :SimpleButton = UIBits.createButton("Again!", 2);
         this.registerOneShotCallback(tryAgainButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.mainLoop.unwindToMode(new GameMode(GameCtx.levelData));
+                ClientCtx.mainLoop.unwindToMode(new GameMode(GameCtx.levelData));
             });
         tryAgainButton.x = (bg.width - tryAgainButton.width) * 0.5;
         tryAgainButton.y = scorePanel.y + scorePanel.height + 40;
