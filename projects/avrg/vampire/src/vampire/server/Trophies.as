@@ -76,7 +76,35 @@ public class Trophies
 
     public static function checkInviteTrophies( player :Player ) :void
     {
+        if( player == null ) {
+            log.error("checkInviteTrophies", "player", player);
+            return;
+        }
+        var inviteCount :int = player.invites;
 
+        log.debug("checkInviteTrophies", "player", player.playerId, "inviteCount", inviteCount);
+
+//        if( inviteCount >= 1 ) {
+//            doAward(player, TROPHY_RECRUIT_1);
+//        }
+//        if( inviteCount >= 2 ) {
+//            doAward(player, TROPHY_RECRUIT_2);
+//        }
+//        if( inviteCount >= 3 ) {
+//            doAward(player, TROPHY_RECRUIT_3);
+//        }
+//        if( inviteCount >= 4 ) {
+//            doAward(player, TROPHY_RECRUIT_4);
+//        }
+//        if( inviteCount >= 5 ) {
+//            doAward(player, TROPHY_RECRUIT_5);
+//        }
+//        if( inviteCount >= 10 ) {
+//            doAward(player, TROPHY_RECRUIT_10);
+//        }
+//        if( inviteCount >= 25 ) {
+//            doAward(player, TROPHY_RECRUIT_25);
+//        }
     }
 
 
