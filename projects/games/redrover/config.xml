@@ -1,0 +1,8 @@
+<!-- a config file used when doing standalone testing -->
+<game>
+  <params/>
+  <packs>
+    <!-- Levels -->
+    <level ident="01_level" name="01_level" mediaURL="http://127.0.0.1:8080/redrover/levels/01_level.xml"/>
+  </packs>
+</game>
