@@ -57,8 +57,8 @@ public class GemsRedeemedAnim extends SceneObject
         var targetX1 :int = _cell.ctrPixelX;
         var targetY1 :int = _cell.ctrPixelY;
         addTask(new SerialTask(
-            new AdvancedLocationTask(targetX0, targetY0, 0.2, Linear.easeNone, Circular.easeOut),
-            new AdvancedLocationTask(targetX1, targetY1, 0.2, Linear.easeNone, Circular.easeIn),
+            new ComplexLocationTask(targetX0, targetY0, 0.2, Linear.easeNone, Circular.easeOut),
+            new ComplexLocationTask(targetX1, targetY1, 0.2, Linear.easeNone, Circular.easeIn),
             new FunctionTask(showNextAnim)));
     }
 

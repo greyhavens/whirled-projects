@@ -7,10 +7,10 @@ import com.whirled.contrib.simplegame.components.LocationComponent;
 
 import mx.effects.easing.*;
 
-public class AdvancedLocationTask
+public class ComplexLocationTask
     implements ObjectTask
 {
-    public function AdvancedLocationTask (
+    public function ComplexLocationTask (
         x :Number,
         y :Number,
         time :Number,
@@ -51,7 +51,7 @@ public class AdvancedLocationTask
 
     public function clone () :ObjectTask
     {
-        return new AdvancedLocationTask(_toX, _toY, _totalTime, _xInterpolator, _yInterpolator);
+        return new ComplexLocationTask(_toX, _toY, _totalTime, _xInterpolator, _yInterpolator);
     }
 
     public function receiveMessage (msg :ObjectMessage) :Boolean
