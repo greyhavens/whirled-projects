@@ -57,6 +57,14 @@ public class Player extends EventHandlerManager
         //Start in the default state
         _action = VConstants.GAME_MODE_NOTHING;
 
+
+
+        //Get last time awake
+        log.debug("Getting ", "time", new Date(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
+        _timePlayerPreviouslyQuit = Number(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE));
+
+
+
         //Get experience
         _xp = Number(_ctrl.props.get(Codes.PLAYER_PROP_XP));
         if( isNaN( _xp )) {
@@ -67,10 +75,10 @@ public class Player extends EventHandlerManager
 
         //Get blood
         _blood = Number(_ctrl.props.get(Codes.PLAYER_PROP_BLOOD));
-        if(isNaN( _blood )) {
+        if(_timePlayerPreviouslyQuit == 0) {
             // blood should always be set if level is set, but let's play it safe
-            log.debug("   setting blood=" + VConstants.MAX_BLOOD_FOR_LEVEL( this.level ));
-            setBlood(VConstants.MAX_BLOOD_FOR_LEVEL( this.level ));
+            log.debug("   setting blood=" + VConstants.MAX_BLOOD_FOR_LEVEL( 1));
+            setBlood(VConstants.MAX_BLOOD_FOR_LEVEL( 1 ));
 
         }
         if( _blood < 1 ) {
@@ -87,18 +95,7 @@ public class Player extends EventHandlerManager
         }
         log.debug("Getting bloodbonded=" + _bloodbonded);
 
-        //Get last time awake
-        log.debug("Getting ", "time", new Date(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
-        _timePlayerPreviouslyQuit = Number(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE));
-        if( isNaN( _timePlayerPreviouslyQuit ) || 0) {
-            _timePlayerPreviouslyQuit = 1;//This indicates to the client that it's a first time player
-        }
-        if( _timePlayerPreviouslyQuit == 0) {
-            log.info("Repairing", "time", _ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE));
-            var time :Number = new Date().time;
-            setTime(time);
-            log.info("  now", "time", _ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE));
-        }
+
 
         _sire = int(_ctrl.props.get(Codes.PLAYER_PROP_SIRE));
 
@@ -107,15 +104,6 @@ public class Player extends EventHandlerManager
             _sire = -1;
         }
         log.debug("Getting sire=" + _sire);
-
-
-        //For testing purposes testing
-        if( playerId == 35282) {
-//            setLevel(1, true);
-            setBlood( 0 );
-            setXP( 0 );
-            setTime( 1 )
-        }
 
         setAction( VConstants.GAME_MODE_NOTHING );
 
@@ -431,6 +419,16 @@ public class Player extends EventHandlerManager
                     log.warning("handleShareTokenMessage, but our sire is already > 0" );
                 }
             }
+            else if( name == VConstants.NAMED_MESSAGE_CHOOSE_FEMALE ) {
+                trace(VConstants.NAMED_MESSAGE_CHOOSE_FEMALE + " awarding female");
+                _ctrl.awardPrize( Trophies.BASIC_AVATAR_FEMALE );
+                setTimeToCurrentTime();
+            }
+            else if( name == VConstants.NAMED_MESSAGE_CHOOSE_MALE ) {
+                trace(VConstants.NAMED_MESSAGE_CHOOSE_MALE + " awarding male");
+                _ctrl.awardPrize( Trophies.BASIC_AVATAR_MALE );
+                setTimeToCurrentTime();
+            }
 
             else if( value is IGameMessage) {
 
@@ -458,6 +456,12 @@ public class Player extends EventHandlerManager
 
     }
 
+    protected function setTimeToCurrentTime() :void
+    {
+        var currentTime :Number = new Date().time;
+        setTime( currentTime, true );
+    }
+
     protected function handleShareTokenMessage( e :ShareTokenMessage ) :void
     {
         var inviterId :int = e.inviterId;
@@ -472,34 +476,51 @@ public class Player extends EventHandlerManager
     }
     protected function handleFeedRequestMessage( e :FeedRequestMessage2 ) :void
     {
+        var game :BloodBloomGameRecord;
+
         if( action == VConstants.GAME_MODE_BARED ) {
             setAction( VConstants.GAME_MODE_NOTHING );
         }
 
         if( !isVampire() ) {
-            addFeedback("Only Vampires may feed.");
-            return;
-        }
-
-        //Set info useful for later
-        setTargetId( e.targetPlayer );
-        setTargetLocation( [e.targetX, e.targetY, e.targetZ] );
-
-
-        //Add ourselves to a game.  We'll check this later, when we arrive at our location
-        var game :BloodBloomGameRecord = _room._bloodBloomGameManager.requestFeed(
-            e.playerId,
-            e.targetPlayer,
-            e.isAllowingMultiplePredators,
-            [e.targetX, e.targetY, e.targetZ] );//Prey location
-
-        if( !game.isStarted ) {
-
-            if( _room.isPlayer( e.targetPlayer ) ) {
-                actionChange( VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER );
+            if( e.targetPlayer == -1 ) {
+                //Practise feeding
+                //Add ourselves to a game.  We'll check this later, when we arrive at our location
+                game = _room._bloodBloomGameManager.requestFeed(
+                    e.playerId,
+                    -1,
+                    false,
+                    [0, 0, 0] );//Prey location
+                game.startGame();
             }
             else {
-                actionChange( VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER );
+                addFeedback("Only Vampires may feed.");
+                return;
+            }
+        }
+        else {
+
+            //Set info useful for later
+            setTargetId( e.targetPlayer );
+            setTargetLocation( [e.targetX, e.targetY, e.targetZ] );
+
+
+            //Add ourselves to a game.  We'll check this later, when we arrive at our location
+            game = _room._bloodBloomGameManager.requestFeed(
+                e.playerId,
+                e.targetPlayer,
+                e.isAllowingMultiplePredators,
+                [e.targetX, e.targetY, e.targetZ] );//Prey location
+
+
+            if( !game.isStarted ) {
+
+                if( _room.isPlayer( e.targetPlayer ) ) {
+                    actionChange( VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER );
+                }
+                else {
+                    actionChange( VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER );
+                }
             }
         }
 
