@@ -28,8 +28,8 @@ public class Util
     {
         return playerId == 23340 || //Ragbeard
                playerId == 1769  || //Capital-T-Tim
-               playerId == 12   ||   //Nemo
-               playerId == 1   ;   //debugging
+               playerId == 12     ;  //Nemo
+//               playerId == 1   ;   //debugging
     }
 
 }
