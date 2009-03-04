@@ -8,7 +8,7 @@ public class VConstants
     /**This is like a radius in logical distance units.*/
     public static const FEEDING_LOGICAL_X_OFFSET :Number = 0.1;
     public static const FEEDING_LOGICAL_Z_OFFSET :Number = 0.01;
-    
+
 
     /**
      * A vampire feeding from another vampire only gets a small amount of the blood lost.
@@ -141,6 +141,8 @@ public class VConstants
     public static const NAMED_EVENT_START_BLOOD_BLOOM :String = "StartBloodBloom";
     public static const NAMED_EVENT_BLOODBLOOM_COUNTDOWN :String = "BloodbloomCountDown";
     public static const NAMED_EVENT_SHARE_TOKEN :String = "ShareToken";
+    public static const NAMED_MESSAGE_CHOOSE_FEMALE :String = "ChooseFemale";
+    public static const NAMED_MESSAGE_CHOOSE_MALE :String = "ChooseMale";
 
     /**Upon BB completion, send the FeedingData back to the server for persistance*/
     public static const NAMED_EVENT_UPDATE_FEEDING_DATA :String = "UpdateFeedingData";
@@ -151,7 +153,7 @@ public class VConstants
 
     public static function MAX_BLOOD_FOR_LEVEL( level :int ) :Number
     {
-        return 100 + (level * 10);
+        return 100 + ((level - 1) * 10);
     }
 
     public static const TIME_INTERVAL_PROXIMITY_CHECK :int = 1000;

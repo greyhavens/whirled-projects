@@ -64,9 +64,9 @@ public class Logic
     public static function xpNeededForLevel( level :int ) :Number
     {
         level = Math.max(level, 1);
-        var base :Number = 100;
+        var base :Number = 1000;
         var xp :Number = 0;
-        var addition :Number = 100;
+        var addition :Number = 4000;
         for( var i :int = 2; i <= level; i++) {
             xp += (i-2) * addition + base;
         }
