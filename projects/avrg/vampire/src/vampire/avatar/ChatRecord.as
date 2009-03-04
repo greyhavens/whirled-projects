@@ -39,6 +39,10 @@ public class ChatRecord
 
     public function get validPlayerIds() :Array
     {
+//        trace("validPlayerIds");
+//        trace("_chats.keys()" + _chats.keys());
+//        trace("_chats.values()" + _chats.values());
+
         var talkativePlayerIds :Array = _chats.values();
 
         var validChatTargets :HashSet = new HashSet();
@@ -57,7 +61,7 @@ public class ChatRecord
                 }
         }
 
-        return validChatTargets.toArray();
+        return (validChatTargets.size() > 0 ? validChatTargets.toArray() : []);
     }
 
     protected function countChats( arr :Array, playerId :int ) :int
