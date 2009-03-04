@@ -273,11 +273,16 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 
         var playerIds :Array = _ctrl.room.getPlayerIds();
 
+        var validCHatTargets :Array = ClientContext.model.validNonPlayerTargetsFromChatting;
+
         //Add the nonplayers
         _avatars.forEach( function( playerId :int, ...ignored) :void {
             if( !ArrayUtil.contains(playerIds, playerId )) {
                 if( isNaN(SharedPlayerStateClient.getBlood( playerId )) || SharedPlayerStateClient.getBlood( playerId ) > 1 ) {
-                    validIds.add( playerId );
+                    //Check if they have chatted enough
+                    if( ArrayUtil.contains( validCHatTargets, playerId) ) {
+                        validIds.add( playerId );
+                    }
                 }
             }
         });

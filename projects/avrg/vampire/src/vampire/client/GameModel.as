@@ -436,6 +436,7 @@ public class GameModel extends SimObject//EventDispatcher
     }
 
 
+
     public function get xp() :Number
     {
         return SharedPlayerStateClient.getXP( ClientContext.ourPlayerId );
@@ -509,6 +510,15 @@ public class GameModel extends SimObject//EventDispatcher
         }
 
         return pfd;
+    }
+
+    public function get validNonPlayerTargetsFromChatting() :Array
+    {
+        var targets :Array = ClientContext.ctrl.room.getEntityProperty(
+            AvatarGameBridge.ENTITY_PROPERTY_CHAT_TARGETS, ClientContext.ourEntityId) as Array;
+
+        trace("validNonPlayerTargetsFromChatting targets != null: " + (targets != null));
+        return targets;
     }
 
     public function setAvatarState( state :String ) :void
