@@ -92,7 +92,7 @@ public class VConstants
     * level cap of a non-vampire.  That means vampires start at this level++,
     * because you go up a level when you become a vampire.
     */
-    public static const MAXIMUM_LEVEL_FOR_NON_VAMPIRE :int = 2;
+    public static const MAXIMUM_LEVEL_FOR_NON_VAMPIRE :int = 1;
 
     /**
     * After a vampire awakes (starts the game after some time),
