@@ -202,14 +202,14 @@ public class MinionHierarchyServer extends MinionHierarchy
             if( _vserver.isPlayer( idToUpdate ) ) {
                 var player :Player = _vserver.getPlayer( idToUpdate );
                 //If the player is in a room, update the room
-                if( player != null && player.room != null ) {
-                    updateRoom( player.room.roomId );
-                }
-                //Otherwise, store the player to update at a later time, hopefully then with
-                //an associated room.
-                else {
+//                if( player != null && player.room != null ) {
+//                    updateRoom( player.room.roomId );
+//                }
+//                //Otherwise, store the player to update at a later time, hopefully then with
+//                //an associated room.
+//                else {
                     _playerIdsNeedingUpdate.push( idToUpdate );
-                }
+//                }
             }
             else {
                 log.error("updatePlayer(), but no Player in server", "playerId", idToUpdate);
