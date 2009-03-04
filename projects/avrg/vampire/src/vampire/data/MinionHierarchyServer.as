@@ -13,6 +13,7 @@ package vampire.data
     import vampire.server.Player;
     import vampire.server.Room;
     import vampire.server.ServerContext;
+    import vampire.server.Trophies;
     import vampire.server.VServer;
 
 public class MinionHierarchyServer extends MinionHierarchy
@@ -331,9 +332,9 @@ public class MinionHierarchyServer extends MinionHierarchy
         var sire :Player = _vserver.getPlayer( sireId );
         if( sire != null ) {
             sire.updateMinions( getMinionIds( sireId ).toArray() );
+            Trophies.checkMinionTrophies( sire );
         }
 
-        dispatchEvent( new HierarchyUpdatedEvent( this, sireId ) );
         //Update the player props
 //        if( _vserver.isPlayer( playerId )) {
 //            _vserver.getPlayer( playerId ).setSire( getSireId( playerId ) );

@@ -17,32 +17,8 @@ public class Trophies extends EventCollecter
     public static const TROPHY_RECRUIT_25 :String = "recruit25";
 
 
-    public function Trophies( vserver :VServer, lineage :MinionHierarchy )
-    {
-        registerListener( lineage, HierarchyUpdatedEvent.HIERARCHY_UPDATED, handlePlayerGainsMinion );
-        _vserver = vserver;
-    }
 
-    public function handlePlayerGainsMinion (e :HierarchyUpdatedEvent) :void
-    {
-        var playerGainedMinion :int = e.playerGainedMinion;
-        if( playerGainedMinion <= 0 ) {
-            log.error("handlePlayerGainsMinion", "playerGainedMinion", playerGainedMinion);
-            return;
-        }
-
-        var player :Player = _vserver.getPlayer( playerGainedMinion );
-
-        if( player == null ) {
-            log.error("handlePlayerGainsMinion", "player", player);
-            return;
-        }
-
-        checkMinionTrophies( player );
-
-    }
-
-    public function checkMinionTrophies ( player :Player ) :void
+    public static function checkMinionTrophies ( player :Player ) :void
     {
         if( player == null ) {
             log.error("checkMinionTrophies", "player", player);
@@ -76,7 +52,7 @@ public class Trophies extends EventCollecter
 
     }
 
-    public function checkInviteTrophies( player :Player ) :void
+    public static function checkInviteTrophies( player :Player ) :void
     {
 
     }
@@ -90,7 +66,6 @@ public class Trophies extends EventCollecter
         }
     }
 
-    protected var _vserver :VServer;
     protected static const log :Log = Log.getLog( Trophies );
 }
 }

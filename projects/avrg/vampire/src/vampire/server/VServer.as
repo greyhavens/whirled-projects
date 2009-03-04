@@ -78,7 +78,7 @@ public class VServer extends ObjectDBThane
         ServerContext.minionHierarchy = new MinionHierarchyServer( this );
         addObject( ServerContext.minionHierarchy );
 
-        ServerContext.trophies = new Trophies(this, ServerContext.minionHierarchy);
+//        ServerContext.trophies = new Trophies(this, ServerContext.minionHierarchy);
 
         ServerContext.nonPlayersBloodMonitor = new NonPlayerAvatarsBloodMonitor();
         addObject( ServerContext.nonPlayersBloodMonitor );
@@ -455,7 +455,7 @@ public class VServer extends ObjectDBThane
         if( isPlayer( inviterId )) {
             var inviter :Player = getPlayer( inviterId );
             inviter.addToInviteTally();
-            ServerContext.trophies.checkInviteTrophies( inviter );
+            Trophies.checkInviteTrophies( inviter );
         }
         else {
             //Add to offline database

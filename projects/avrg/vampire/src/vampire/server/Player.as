@@ -1067,12 +1067,12 @@ public class Player extends EventHandlerManager
             if( _ctrl.props.get(Codes.PLAYER_PROP_MINIONIDS) == null ||
                 !ArrayUtil.equals(_ctrl.props.get(Codes.PLAYER_PROP_MINIONIDS) as Array, _minionsForTrophies )) {
                 _ctrl.props.set(Codes.PLAYER_PROP_MINIONIDS, _minionsForTrophies, true);
-                ServerContext.trophies.checkMinionTrophies( this );
+                Trophies.checkMinionTrophies( this );
             }
 
             if( _ctrl.props.get(Codes.PLAYER_PROP_INVITES) != invites ) {
                 _ctrl.props.set(Codes.PLAYER_PROP_INVITES, invites, true);
-                ServerContext.trophies.checkInviteTrophies( this );
+                Trophies.checkInviteTrophies( this );
             }
 
 
