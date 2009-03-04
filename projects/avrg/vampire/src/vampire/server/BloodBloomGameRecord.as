@@ -30,7 +30,9 @@ public class BloodBloomGameRecord extends EventCollecter
         _gameFinishedManagerCallback = gameFinishesCallback;
         _thisBloodBloomRecord = this;
 
-        registerListener(_room.ctrl, AVRGameRoomEvent.PLAYER_LEFT, handlePlayerLeftRoom);
+        if( _room != null && _room.ctrl != null ) {
+            registerListener(_room.ctrl, AVRGameRoomEvent.PLAYER_LEFT, handlePlayerLeftRoom);
+        }
     }
 
     protected function handlePlayerLeftRoom( e :AVRGameRoomEvent ) :void
