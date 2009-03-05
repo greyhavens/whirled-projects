@@ -53,6 +53,22 @@ public class GameMode extends AppMode
         }
     }
 
+    public function deliverWhiteCell (arteryType :int) :void
+    {
+        GameCtx.heart.deliverWhiteCell();
+
+        // show the delivery animation
+        var artery :MovieClip = _arteries[arteryType];
+        artery.gotoAndPlay(2);
+
+        _sparkles.gotoAndPlay(2);
+    }
+
+    public function whiteCellBurst () :void
+    {
+        dispatchEvent(new GameEvent(GameEvent.WHITE_CELL_BURST));
+    }
+
     override protected function setup () :void
     {
         super.setup();
@@ -127,7 +143,6 @@ public class GameMode extends AppMode
         addObject(GameCtx.scoreView, GameCtx.uiLayer);
 
         GameCtx.cursor = GameObjects.createPlayerCursor();
-        registerListener(GameCtx.cursor, GameEvent.WHITE_CELL_DELIVERED, onWhiteCellDelivered);
 
         // this will handle spawning the special Blood Hunt cells
         GameCtx.specialCellSpawner = new SpecialCellSpawner();
@@ -285,18 +300,6 @@ public class GameMode extends AppMode
         for (var ii :int = 0; ii < count; ++ii) {
             GameObjects.createCell(cellType, true);
         }
-    }
-
-    protected function onWhiteCellDelivered (e :GameEvent) :void
-    {
-        GameCtx.heart.deliverWhiteCell();
-
-        // show the delivery animation
-        var arteryType :int = e.data as int;
-        var artery :MovieClip = _arteries[arteryType];
-        artery.gotoAndPlay(2);
-
-        _sparkles.gotoAndPlay(2);
     }
 
     protected function onNoMoreFeeding (animate :Boolean) :void

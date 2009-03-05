@@ -149,7 +149,7 @@ public class PlayerCursor extends CollidableObj
 
         // Deliver a white cell to the heart
         if (hadWhiteCell) {
-            dispatchEvent(new GameEvent(GameEvent.WHITE_CELL_DELIVERED, arteryType));
+            GameCtx.gameMode.deliverWhiteCell(arteryType);
         }
     }
 

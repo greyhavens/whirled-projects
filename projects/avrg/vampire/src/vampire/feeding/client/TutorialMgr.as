@@ -1,6 +1,7 @@
 package vampire.feeding.client {
 
 import com.threerings.flash.Vector2;
+import com.threerings.util.HashSet;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
@@ -15,7 +16,7 @@ public class TutorialMgr extends SimObject
     {
         var delay :Number = 0;
         var sequenceTutorial :Function = function (type :int, after :Number) :void {
-            if (ClientCtx.playerData.getNumTimesPlayedTutorial(type) <= 2) {
+            if (timesShown(type) <= 2) {
                 delay += after;
                 addTask(After(delay, new FunctionTask(function () :void {
                     queueTutorial(type);
@@ -23,19 +24,35 @@ public class TutorialMgr extends SimObject
             }
         }
 
+        // There are two tutorial to play when white cells explode. Play them in order.
+        if (timesShown(Constants.TUT_DRAG_WHITE) <= 2) {
+            _whiteCellTutorials.push(Constants.TUT_DRAG_WHITE);
+        }
+        if (timesShown(Constants.TUT_EXPLODE_WHITE) <= 2) {
+            _whiteCellTutorials.push(Constants.TUT_EXPLODE_WHITE);
+        }
+        if (_whiteCellTutorials.length > 0) {
+            registerListener(GameCtx.gameMode, GameEvent.WHITE_CELL_BURST, onWhiteCellBurst);
+        }
+
         sequenceTutorial(Constants.TUT_RED_CELLS, 3);
         sequenceTutorial(Constants.TUT_CASCADE, 0.5);
-        sequenceTutorial(Constants.TUT_DRAG_WHITE, 20);
-        sequenceTutorial(Constants.TUT_EXPLODE_WHITE, 20);
         sequenceTutorial(Constants.TUT_CREATE_MULTIPLIER, 20);
         sequenceTutorial(Constants.TUT_GET_MULTIPLIER, 20);
 
         registerListener(GameCtx.specialCellSpawner, GameEvent.SPECIAL_CELL_SPAWNED,
             function (e :GameEvent) :void {
-                if (ClientCtx.playerData.getNumTimesPlayedTutorial(Constants.TUT_GET_SPECIAL) <= 2) {
+                if (timesShown(Constants.TUT_GET_SPECIAL) <= 2) {
                     queueTutorial(Constants.TUT_GET_SPECIAL);
                 }
             });
+    }
+
+    protected function onWhiteCellBurst (...ignored) :void
+    {
+        if (++_whiteCellBursts >= 2 && !_playingTutorial && _whiteCellTutorials.length > 0) {
+            queueTutorial(_whiteCellTutorials.shift() as int);
+        }
     }
 
     override protected function update (dt :Number) :void
@@ -47,6 +64,11 @@ public class TutorialMgr extends SimObject
 
     protected function queueTutorial (type :int) :void
     {
+        // Don't show a given tutorial more than once per round
+        if (_tutorialsThisRound.contains(type)) {
+            return;
+        }
+
         _tutorialQueue.push(type);
         if (!_playingTutorial) {
             playNextTutorial();
@@ -71,11 +93,21 @@ public class TutorialMgr extends SimObject
         GameCtx.gameMode.addObject(obj, GameCtx.uiLayer);
 
         ClientCtx.playerData.incrementNumTimesPlayedTutorial(type);
+        _tutorialsThisRound.add(type);
         _playingTutorial = true;
+    }
+
+    protected static function timesShown (tutorialType :int) :int
+    {
+        return ClientCtx.playerData.getNumTimesPlayedTutorial(tutorialType);
     }
 
     protected var _tutorialQueue :Array = [];
     protected var _playingTutorial :Boolean;
+    protected var _whiteCellBursts :int;
+    protected var _tutorialsThisRound :HashSet = new HashSet();
+
+    protected var _whiteCellTutorials :Array = [];
 
     protected static const START :Vector2 = new Vector2(210, -23);
     protected static const END :Vector2 = new Vector2(210, 23);
