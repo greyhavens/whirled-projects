@@ -36,8 +36,8 @@ public class InfoView extends SceneObject
     public function InfoView ()
     {
         _movie = ClientCtx.instantiateMovieClip("blood", "info_panel");
-        var hideBtn :SimpleButton = _movie["button_close"];
-        registerListener(hideBtn, MouseEvent.CLICK,
+        var okBtn :SimpleButton = _movie["button_ok"];
+        registerListener(okBtn, MouseEvent.CLICK,
             function (...ignored) :void {
                 InfoView.hide();
             });
