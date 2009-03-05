@@ -96,6 +96,10 @@ public class GameMode extends AppMode
 
         _sparkles = heartMovie["sparkles"];
 
+        _countdown = heartMovie["countdown"];
+        _countdown.visible = false;
+        _countdown.gotoAndStop(0);
+
         GameCtx.heart = new Heart(heartMovie["heart"]);
         GameCtx.gameMode.addObject(GameCtx.heart);
         registerListener(GameCtx.heart, GameEvent.HEARTBEAT, onHeartbeat);
@@ -241,6 +245,14 @@ public class GameMode extends AppMode
     {
         GameCtx.timeLeft = Math.max(GameCtx.timeLeft - dt, 0);
 
+        if (GameCtx.timeLeft <= 10 && !_countdown.visible) {
+            _countdown.visible = true;
+            // tick the countdown one frame per second
+            var countdownTicker :SimObject = new SimObject();
+            countdownTicker.addTask(new ShowFramesTask(_countdown, 0, -1, GameCtx.timeLeft));
+            addObject(countdownTicker);
+        }
+
         // For testing purposes, end the game manually if we're in standalone mode
         if (GameCtx.timeLeft == 0 && !ClientCtx.isConnected) {
             var scores :HashMap = new HashMap();
@@ -309,6 +321,7 @@ public class GameMode extends AppMode
     protected var _gameOver :Boolean;
     protected var _arteries :Array;
     protected var _sparkles :MovieClip;
+    protected var _countdown :MovieClip;
     protected var _lastMoveTarget :Vector2 = new Vector2();
     protected var _musicChannel :AudioChannel;
 
