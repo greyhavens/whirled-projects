@@ -301,14 +301,16 @@ public class VServer extends ObjectDBThane
             log.debug("no sires");
             return;
         }
-        var xpForEachSire :Number = xp * 0.1 / allsires.size();
-        allsires.forEach( function ( sireId :int) :void {
+
+        var immediateSire :int = ServerContext.minionHierarchy.getSireId( player.playerId );
+
+        function awardXP( sireId :int, awardXP :Number ) :void {
             if( isPlayer( sireId )) {
                 var sire :Player = getPlayer( sireId );
                 if( sire.isVampire() ) {
-                    sire.addXP( xpForEachSire );
-                    log.debug("awarding sire " + sire.name + ", xp=" + xpForEachSire);
-                    sire.addFeedback( "You gained " + Util.formatNumberForFeedback(xpForEachSire) + " experience from minion " + player.name );
+                    sire.addXP( awardXP );
+                    log.debug("awarding sire " + sire.name + ", xp=" + awardXP);
+                    sire.addFeedback( "You gained " + Util.formatNumberForFeedback(awardXP) + " experience from minion " + player.name );
                 }
             }
             else {//Add to offline database
@@ -317,12 +319,20 @@ public class VServer extends ObjectDBThane
                         var currentXP :Number = Number(props.get(Codes.PLAYER_PROP_XP));
 
                         if( !isNaN(currentXP) && currentXP >= Logic.xpNeededForLevel( VConstants.MINIMUM_VAMPIRE_LEVEL ) ) {
-                            props.set(Codes.PLAYER_PROP_XP, currentXP + xpForEachSire);
+                            props.set(Codes.PLAYER_PROP_XP, currentXP + awardXP);
                         }
                     },
                     function (failureCause :Object) :void {
                         log.warning("Eek! Sending message to offline player failed!", "cause", failureCause);
                     });
+            }
+        }
+        allsires.forEach( function ( sireId :int) :void {
+            if( sireId == immediateSire) {
+                awardXP( sireId, xp * 0.1);//Immediate sires get 10%
+            }
+            else {
+                awardXP( sireId, xp * 0.05);//Immediate sires get 10%
             }
         });
     }
