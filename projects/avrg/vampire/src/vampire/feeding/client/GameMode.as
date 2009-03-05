@@ -143,6 +143,8 @@ public class GameMode extends AppMode
         }
 
         addObject(new TutorialMgr());
+
+        ClientCtx.playerData.incrementTimesPlayed();
     }
 
     override protected function enter () :void

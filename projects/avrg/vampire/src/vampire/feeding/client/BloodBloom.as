@@ -139,7 +139,11 @@ public class BloodBloom extends FeedingGameClient
     protected function maybeReportReady () :void
     {
         if (_addedToStage && _resourcesLoaded) {
-            ClientCtx.roundMgr.reportReadyForNextRound();
+            if (ClientCtx.playerData.timesPlayed == 0) {
+                ClientCtx.mainLoop.pushMode(new NewPlayerIntroMode());
+            } else {
+                ClientCtx.roundMgr.reportReadyForNextRound();
+            }
         }
     }
 

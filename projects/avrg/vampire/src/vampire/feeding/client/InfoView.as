@@ -38,13 +38,17 @@ public class InfoView extends SceneObject
         }
     }
 
-    public function InfoView ()
+    public function InfoView (okCallback :Function = null)
     {
+        _okCallback = okCallback;
         _movie = ClientCtx.instantiateMovieClip("blood", "info_panel");
         var okBtn :SimpleButton = _movie["button_ok"];
         registerListener(okBtn, MouseEvent.CLICK,
             function (...ignored) :void {
                 InfoView.hide();
+                if (_okCallback != null) {
+                    _okCallback();
+                }
             });
     }
 
@@ -59,6 +63,7 @@ public class InfoView extends SceneObject
     }
 
     protected var _movie :MovieClip;
+    protected var _okCallback :Function;
 
     protected static const NAME :String = "InfoView";
     protected static const LOC :Vector2 = new Vector2(750, 267);

@@ -25,10 +25,10 @@ public class TutorialMgr extends SimObject
 
         sequenceTutorial(Constants.TUT_RED_CELLS, 3);
         sequenceTutorial(Constants.TUT_CASCADE, 0.5);
-        sequenceTutorial(Constants.TUT_DRAG_WHITE, 10);
-        sequenceTutorial(Constants.TUT_EXPLODE_WHITE, 10);
-        sequenceTutorial(Constants.TUT_CREATE_MULTIPLIER, 15);
-        sequenceTutorial(Constants.TUT_GET_MULTIPLIER, 10);
+        sequenceTutorial(Constants.TUT_DRAG_WHITE, 20);
+        sequenceTutorial(Constants.TUT_EXPLODE_WHITE, 20);
+        sequenceTutorial(Constants.TUT_CREATE_MULTIPLIER, 20);
+        sequenceTutorial(Constants.TUT_GET_MULTIPLIER, 20);
 
         registerListener(GameCtx.specialCellSpawner, GameEvent.SPECIAL_CELL_SPAWNED,
             function (e :GameEvent) :void {
@@ -62,7 +62,7 @@ public class TutorialMgr extends SimObject
         obj.y = START.y;
         obj.addTask(new SerialTask(
             LocationTask.CreateSmooth(END.x, END.y, 1),
-            new TimedTask(2.5),
+            new TimedTask(4),
             LocationTask.CreateSmooth(START.x, START.y, 1),
             new FunctionTask(function () :void {
                 _playingTutorial = false;

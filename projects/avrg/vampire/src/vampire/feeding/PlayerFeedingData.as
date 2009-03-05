@@ -1,6 +1,7 @@
 package vampire.feeding {
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.Log;
 
 import flash.utils.ByteArray;
 
@@ -11,6 +12,16 @@ public class PlayerFeedingData
     public function PlayerFeedingData ()
     {
         init();
+    }
+
+    public function get timesPlayed () :int
+    {
+        return _timesPlayed;
+    }
+
+    public function incrementTimesPlayed () :void
+    {
+        _timesPlayed++;
     }
 
     public function collectStrainFromPlayer (strainType :int, playerId :int) :void
@@ -76,6 +87,8 @@ public class PlayerFeedingData
             ba = new ByteArray();
         }
 
+        ba.writeByte(VERSION);
+        ba.writeInt(_timesPlayed);
         ba.writeByte(_playerStrain);
 
         for (var strain :int = 0; strain < VConstants.UNIQUE_BLOOD_STRAINS; ++strain) {
@@ -98,6 +111,14 @@ public class PlayerFeedingData
     {
         init();
 
+        var version :int = ba.readByte();
+        if (version > VERSION) {
+            log.warning("PlayerFeedingData version is too new", "version", version,
+                        "curVersion", VERSION);
+            return;
+        }
+
+        _timesPlayed = ba.readInt();
         _playerStrain = ba.readByte();
 
         for (var strain :int = 0; strain < VConstants.UNIQUE_BLOOD_STRAINS; ++strain) {
@@ -132,6 +153,7 @@ public class PlayerFeedingData
 
     protected function init () :void
     {
+        _timesPlayed = 0;
         _playerStrain = 0;
         _collectedStrains = [];
         for (var ii :int = 0; ii < VConstants.UNIQUE_BLOOD_STRAINS; ++ii) {
@@ -141,9 +163,14 @@ public class PlayerFeedingData
         _tutorialStatus = [];
     }
 
+    protected var _timesPlayed :int;
     protected var _playerStrain :int;
     protected var _collectedStrains :Array; // Array<Array<playerId>>
     protected var _tutorialStatus :Array; // Array<numTimesPlayed>
+
+    protected static const VERSION :int = 0;
+
+    protected static const log :Log = Log.getLog(PlayerFeedingData);
 }
 
 }
