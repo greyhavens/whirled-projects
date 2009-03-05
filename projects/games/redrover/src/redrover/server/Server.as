@@ -9,8 +9,8 @@ import com.whirled.game.StateChangedEvent;
 
 import flash.utils.ByteArray;
 
-import redrover.util.GameUtil;
 import redrover.data.*;
+import redrover.util.GameUtil;
 
 public class Server extends ServerObject
 {
@@ -22,7 +22,7 @@ public class Server extends ServerObject
         // We don't have anything to do in single-player games
         if (ServerCtx.seatingMgr.numExpectedPlayers < 2) {
             log.info("Singleplayer game. Not starting server.");
-            //return;
+            return;
         }
 
         // load our levels
@@ -70,11 +70,19 @@ public class Server extends ServerObject
             function (e :Error) :void {
                 onLevelPackErr(levelIdx, e);
             });
+
+        _loadingData++;
     }
 
     protected function startGame () :void
     {
-        log.info("Game started");
+        if (this.isLoadingData) {
+            _gameStartPending = true;
+            return;
+        }
+
+        _game = new ServerGame(ServerCtx.levels[0]);
+        _gameStartPending = false;
     }
 
     protected function stopGame () :void
@@ -96,6 +104,7 @@ public class Server extends ServerObject
         }
 
         ServerCtx.levels[levelIdx] = levelData;
+        _loadingData--;
         log.info("Loaded level", "idx", levelIdx);
     }
 
@@ -104,7 +113,14 @@ public class Server extends ServerObject
         log.error("Error loading level", "levelIdx", levelIdx, e);
     }
 
+    protected function get isLoadingData () :Boolean
+    {
+        return _loadingData > 0;
+    }
+
     protected var _loadingData :int;
+    protected var _gameStartPending :Boolean;
+    protected var _game :ServerGame;
 
     protected const log :Log = Log.getLog(this);
 }

@@ -1,5 +1,6 @@
 package redrover.server {
 
+import com.whirled.contrib.simplegame.net.BasicMessageManager;
 import com.whirled.game.GameControl;
 
 import redrover.SeatingManager;

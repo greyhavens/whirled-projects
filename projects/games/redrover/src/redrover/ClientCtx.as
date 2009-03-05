@@ -12,6 +12,8 @@ import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 
+import redrover.net.NetSubControlWrapper;
+
 public class ClientCtx
 {
     public static var mainSprite :Sprite;
@@ -21,6 +23,7 @@ public class ClientCtx
     public static var gameCtrl :GameControl;
     public static var levelMgr :LevelManager = new LevelManager();
     public static var seatingMgr :SeatingManager = new SeatingManager();
+    public static var net :NetSubControlWrapper;
     public static var localPlayerIdx :int;
 
     public static function instantiateMovieClip (rsrcName :String, className :String,

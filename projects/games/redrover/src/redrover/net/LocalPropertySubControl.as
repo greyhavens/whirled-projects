@@ -1,4 +1,4 @@
-package redrover {
+package redrover.net {
 
 import com.threerings.util.HashMap;
 import com.threerings.util.StringUtil;
