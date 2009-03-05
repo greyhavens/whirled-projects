@@ -10,7 +10,7 @@ import vampire.feeding.*;
 import vampire.feeding.client.*;
 import vampire.feeding.server.*;
 
-[SWF(width="1000", height="520", frameRate="30")]
+[SWF(width="1000", height="500", frameRate="30")]
 public class BloodBloomStandalone extends Sprite
 {
     public static function DEBUG_REMOVE_ME () :void

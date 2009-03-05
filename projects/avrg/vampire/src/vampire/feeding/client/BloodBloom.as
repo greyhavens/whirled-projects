@@ -140,8 +140,10 @@ public class BloodBloom extends FeedingGameClient
     {
         if (_addedToStage && _resourcesLoaded) {
             if (ClientCtx.playerData.timesPlayed == 0) {
+                ClientCtx.mainLoop.pushMode(new WaitForOtherPlayersMode());
                 ClientCtx.mainLoop.pushMode(new NewPlayerIntroMode());
             } else {
+                ClientCtx.mainLoop.pushMode(new WaitForOtherPlayersMode());
                 ClientCtx.roundMgr.reportReadyForNextRound();
             }
         }

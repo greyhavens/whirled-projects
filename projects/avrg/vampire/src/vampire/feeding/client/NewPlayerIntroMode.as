@@ -23,7 +23,7 @@ public class NewPlayerIntroMode extends AppMode
         ClientCtx.roundMgr.reportReadyForNextRound();
     }
 
-    protected static const LOC :Point = new Point(10, 10);
+    protected static const LOC :Point = new Point(10, 0);
 }
 
 }

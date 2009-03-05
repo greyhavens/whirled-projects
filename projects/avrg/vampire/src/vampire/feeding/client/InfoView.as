@@ -18,8 +18,8 @@ public class InfoView extends SceneObject
         var view :InfoView = ClientCtx.mainLoop.topMode.getObjectNamed(NAME) as InfoView;
         if (view == null) {
             view = new InfoView();
-            view.x = LOC.x;
-            view.y = LOC.y;
+            view.x = LOC.x + (view.width * 0.5);
+            view.y = LOC.y + (view.height * 0.5);
 
             var parent :Sprite = (ClientCtx.mainLoop.topMode == GameCtx.gameMode ?
                                   GameCtx.uiLayer :
@@ -66,7 +66,7 @@ public class InfoView extends SceneObject
     protected var _okCallback :Function;
 
     protected static const NAME :String = "InfoView";
-    protected static const LOC :Vector2 = new Vector2(750, 267);
+    protected static const LOC :Vector2 = new Vector2(540, 0);
 }
 
 }
