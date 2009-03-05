@@ -101,6 +101,12 @@ public class RoundOverMode extends AppMode
                 ClientCtx.quit(true);
             });
 
+        var infoBtn :SimpleButton = panelMovie["button_info"];
+        registerListener(infoBtn, MouseEvent.CLICK,
+            function (...ignored) :void {
+                InfoView.show();
+            });
+
         // hide the timer
         _replayTimer = panelMovie["replay_timer"];
         _replayTimer.visible = false;

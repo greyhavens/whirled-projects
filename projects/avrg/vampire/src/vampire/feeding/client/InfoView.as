@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.objects.SceneObject;
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
+import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 import vampire.feeding.*;
@@ -14,12 +15,16 @@ public class InfoView extends SceneObject
 {
     public static function show () :void
     {
-        var view :InfoView = GameCtx.gameMode.getObjectNamed(NAME) as InfoView;
+        var view :InfoView = ClientCtx.mainLoop.topMode.getObjectNamed(NAME) as InfoView;
         if (view == null) {
             view = new InfoView();
             view.x = LOC.x;
             view.y = LOC.y;
-            GameCtx.gameMode.addObject(view, GameCtx.uiLayer);
+
+            var parent :Sprite = (ClientCtx.mainLoop.topMode == GameCtx.gameMode ?
+                                  GameCtx.uiLayer :
+                                  ClientCtx.mainLoop.topMode.modeSprite);
+            ClientCtx.mainLoop.topMode.addObject(view, parent);
         }
 
         view.visible = true;
@@ -27,7 +32,7 @@ public class InfoView extends SceneObject
 
     public static function hide () :void
     {
-        var view :InfoView = GameCtx.gameMode.getObjectNamed(NAME) as InfoView;
+        var view :InfoView = ClientCtx.mainLoop.topMode.getObjectNamed(NAME) as InfoView;
         if (view != null) {
             view.visible = false;
         }
