@@ -66,7 +66,8 @@ public class TutorialMgr extends SimObject
             LocationTask.CreateSmooth(START.x, START.y, 1),
             new FunctionTask(function () :void {
                 _playingTutorial = false;
-            })));
+            }),
+            new SelfDestructTask()));
         GameCtx.gameMode.addObject(obj, GameCtx.uiLayer);
 
         ClientCtx.playerData.incrementNumTimesPlayedTutorial(type);
