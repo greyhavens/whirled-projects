@@ -16,6 +16,12 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.utils.Dictionary;
 
+/**
+ * This class is intended for HUD elements for AVRGs that also use Tim's simplegame framework.
+ * The DraggableSceneObject can be dragged around the screen but it won't go outside the paintable
+ * area, and if the screen is resized, it will make sure it's visible.
+ *
+ */
 public class DraggableSceneObject extends SceneObject
 {
     public static const SNAP_NONE :int = 1;
@@ -45,6 +51,9 @@ public class DraggableSceneObject extends SceneObject
         registerListener(_displaySprite, MouseEvent.MOUSE_UP, handleMouseUp);
     }
 
+    /**
+    * Bounds are the bounds of your HUD sprite.
+    */
     public function init (bounds :Rectangle, xSnap :int, xPos :Number,
                              ySnap :int, yPos :Number, bleed :Number = 0) :void
     {
@@ -76,6 +85,7 @@ public class DraggableSceneObject extends SceneObject
 //            return;
 //        }
 
+        trace("mouse down");
         if (_offset == null) {
             registerListener(_displaySprite, Event.ENTER_FRAME, handleFrame);
         }
@@ -256,6 +266,18 @@ public class DraggableSceneObject extends SceneObject
         this.y = MathUtil.clamp( this.y, 0 + this.height/2, _ctrl.local.getPaintableArea().height - this.height/2);
     }
 
+    public function centerOnViewableRoom() :void
+    {
+        //Workaround as roombounds can be bigger than the paintable area
+        if( _ctrl.local.getRoomBounds()[0] > _ctrl.local.getPaintableArea().width) {
+                this.x = _ctrl.local.getPaintableArea().width/2;
+                this.y = _ctrl.local.getPaintableArea().height/2;
+        }
+        else {
+            this.x = _ctrl.local.getRoomBounds()[0]/2;
+            this.y = _ctrl.local.getRoomBounds()[1]/2;
+        }
+    }
     override public function get displayObject () :DisplayObject
     {
         return _displaySprite;
