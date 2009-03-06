@@ -4,6 +4,7 @@ package fakeavrg
     import com.whirled.avrg.LocalSubControl;
 
     import flash.geom.Point;
+    import flash.geom.Rectangle;
 
     import framework.FakeAVRGContext;
 
@@ -33,5 +34,12 @@ package fakeavrg
         {
             return FakeAVRGContext.roomBounds;
         }
+
+        override public function getPaintableArea (full :Boolean = true) :Rectangle
+        {
+            return FakeAVRGContext.paintableArea;
+        }
+
+
     }
 }

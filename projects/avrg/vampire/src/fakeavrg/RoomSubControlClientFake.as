@@ -2,6 +2,7 @@ package fakeavrg
 {
     import com.threerings.util.ArrayUtil;
     import com.whirled.AbstractControl;
+    import com.whirled.avrg.AVRGameAvatar;
     import com.whirled.avrg.RoomSubControlClient;
     import com.whirled.net.PropertyGetSubControl;
 
@@ -55,6 +56,16 @@ package fakeavrg
 
         override protected function setUserProps (o :Object) :void
         {
+        }
+
+        override public function getAvatarInfo( playerId :int ) :AVRGameAvatar
+        {
+            var avatar :AVRGameAvatar = new AVRGameAvatar();
+            avatar.x = 100;
+            avatar.y = 100;
+            avatar.z = 100;
+            return avatar;
+
         }
 
 
