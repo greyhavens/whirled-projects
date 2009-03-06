@@ -10,7 +10,7 @@ import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 import flash.utils.getTimer;
 
-[SWF(width="350", height="100", framerate="30")]
+[SWF(width="400", height="100", framerate="30")]
 public class Framerate extends Sprite
 {
     public function Framerate ()
@@ -21,7 +21,7 @@ public class Framerate extends Sprite
         var g :Graphics = this.graphics;
         g.lineStyle(4, 0);
         g.beginFill(0xffffff);
-        g.drawRect(0, 0, 350, 100);
+        g.drawRect(0, 0, 400, 100);
         g.endFill();
 
         _tf = new TextField();
@@ -51,10 +51,12 @@ public class Framerate extends Sprite
         });
         var avgFps :Number = sumFps / _fpsBuffer.length;
 
-        var text :String = "Avg=" + Math.round(avgFps) +
+        var text :String = "Cur=" + Math.round(fps) +
+                           "\nAvg=" + Math.round(avgFps) +
                            " Min=" + Math.round(minFps) +
                            " Max=" + Math.round(maxFps) +
-                           " Cur=" + Math.round(fps);
+                           " (last " + TIME_WINDOW + "s)";
+
         initTextField(_tf, text, 2, 0, (avgFps <= SLOW_FPS ? 0xff0000 : 0x0000ff));
         _tf.x = (this.width - _tf.width) * 0.5;
         _tf.y = (this.height - _tf.height) * 0.5;
@@ -111,10 +113,11 @@ public class Framerate extends Sprite
     protected var _lastTime :int = -1;
 
     protected var _tf :TextField;
-    protected var _fpsBuffer :TimeBuffer = new TimeBuffer(5000, 1);
+    protected var _fpsBuffer :TimeBuffer = new TimeBuffer(TIME_WINDOW * 1000, 128);
     protected var _events :EventHandlerManager = new EventHandlerManager();
 
     protected static const SLOW_FPS :Number = 15;
+    protected static const TIME_WINDOW :int = 5; // in seconds
 
     protected static const TEXT_WIDTH_PAD :int = 5;
     protected static const TEXT_HEIGHT_PAD :int = 4;

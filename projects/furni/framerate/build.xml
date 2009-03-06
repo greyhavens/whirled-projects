@@ -1,8 +1,8 @@
 <!-- build configuration -->
-<project name="twists" default="compile" basedir=".">
+<project name="framerate" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name" value="Twists"/>
+  <property name="app.name" value="framerate"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>

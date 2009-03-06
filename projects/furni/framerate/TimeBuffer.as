@@ -23,8 +23,8 @@ public class TimeBuffer
     }
 
     /**
-     * Sets the maximum age of items in the buffer. Whenever new items are added, items
-     * older than the maxAge will be removed.
+     * Sets the maximum age of items in the buffer, in milliseconds.
+     * Whenever new items are added, items older than the maxAge will be removed.
      */
     public function set maxAge (val :int) :void
     {
