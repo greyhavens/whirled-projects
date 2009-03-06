@@ -14,6 +14,7 @@ import com.whirled.net.MessageReceivedEvent;
 import flash.events.MouseEvent;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
+import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingGameClient;
 import vampire.net.messages.NonPlayerIdsInRoomMessage;
@@ -128,6 +129,18 @@ public class MainGameMode extends AppMode
         //Create the overlay for individual avatars
         ClientContext.avatarOverlay = new VampireAvatarHUDOverlay( ClientContext.ctrl );
         addObject( ClientContext.avatarOverlay, modeSprite );
+        //And pass to the server player arrival events, if we are moving to feed.
+        //This lets the server know that we have moved into position, and the game can
+        //start.
+        registerListener( ClientContext.avatarOverlay, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED,
+            function(...ignored) :void {
+                if( ClientContext.model.action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER ||
+                    ClientContext.model.action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER ) {
+
+                        ClientContext.ctrl.agent.sendMessage(
+                            PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
+                    }
+            });
 
         _hud = new HUD();
         addObject( _hud, modeSprite );

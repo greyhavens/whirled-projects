@@ -163,8 +163,8 @@ public class GameModel extends SimObject//EventDispatcher
     public function playerEnteredRoom( ...ignored ) :void
     {
         //Reset avatar locations
-        ClientContext.ctrl.room.getEntityProperty(
-            AvatarGameBridge.ENTITY_PROPERTY_RESET_LOCATIONS, ClientContext.ourEntityId );
+//        ClientContext.ctrl.room.getEntityProperty(
+//            AvatarGameBridge.ENTITY_PROPERTY_RESET_LOCATIONS, ClientContext.ourEntityId );
 
         trace(VConstants.DEBUG_MINION + " Player entered room");
 
@@ -471,7 +471,7 @@ public class GameModel extends SimObject//EventDispatcher
 
     public function isNewPlayer() :Boolean
     {
-        return time == 1;
+        return time <= 1;
     }
 
     public function isVampire() :Boolean
