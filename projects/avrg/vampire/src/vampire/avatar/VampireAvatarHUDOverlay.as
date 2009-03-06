@@ -83,7 +83,7 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 
 //        setDisplayMode( DISPLAY_MODE_SHOW_VALID_TARGETS );
 //        registerListener(_paintableOverlay, MouseEvent.CLICK, function(...ignored) :void {
-            setDisplayMode( DISPLAY_MODE_OFF );
+            setDisplayMode( DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
 //        });
     }
 
@@ -435,35 +435,37 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 
         //Check for vampire/human colors
         //Get our vampire level, and compare with the color state of the avatar.
-        _ctrl.room.getPlayerIds().forEach( function( playerId :int, ...ignored) :void {
-           var level :int = SharedPlayerStateClient.getLevel( playerId );
-
-           var colorScheme :String = (level < VConstants.MINIMUM_VAMPIRE_LEVEL ?
-               VConstants.COLOR_SCHEME_HUMAN : VConstants.COLOR_SCHEME_VAMPIRE);
-
-           var entityId :String = ClientContext.getPlayerEntityId( playerId );
-
-           if( entityId == null ) {
-               return;
-           }
-
-           var currentColorCheme :String = _ctrl.room.getEntityProperty(
-               AvatarGameBridge.ENTITY_PROPERTY_CURRENT_COLOR_SCHEME, entityId ) as String;
-
-           if( currentColorCheme == null || colorScheme != currentColorCheme ) {
-               var colorFunction :Function = _ctrl.room.getEntityProperty(
-               AvatarGameBridge.ENTITY_PROPERTY_CHANGE_COLOR_SCHEME_FUNCTION, entityId ) as Function;
-               if( colorFunction != null ) {
-                   colorFunction( colorScheme );
-               }
-
-           }
-        });
+//        _ctrl.room.getPlayerIds().forEach( function( playerId :int, ...ignored) :void {
+//           var level :int = SharedPlayerStateClient.getLevel( playerId );
+//
+//           var colorScheme :String = (level < VConstants.MINIMUM_VAMPIRE_LEVEL ?
+//               VConstants.COLOR_SCHEME_HUMAN : VConstants.COLOR_SCHEME_VAMPIRE);
+//
+//           var entityId :String = ClientContext.getPlayerEntityId( playerId );
+//
+//           if( entityId == null ) {
+//               return;
+//           }
+//
+//           var currentColorCheme :String = _ctrl.room.getEntityProperty(
+//               AvatarGameBridge.ENTITY_PROPERTY_CURRENT_COLOR_SCHEME, entityId ) as String;
+//
+//           if( currentColorCheme == null || colorScheme != currentColorCheme ) {
+//               var colorFunction :Function = _ctrl.room.getEntityProperty(
+//               AvatarGameBridge.ENTITY_PROPERTY_CHANGE_COLOR_SCHEME_FUNCTION, entityId ) as Function;
+//               if( colorFunction != null ) {
+//                   colorFunction( colorScheme );
+//               }
+//
+//           }
+//        });
 
 //        setDisplayMode( _displayMode );
 
 
     }
+
+//    protected function checkVampire
 
     protected var _displayMode :int = 0;
 
@@ -473,6 +475,8 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
     public static const DISPLAY_MODE_SHOW_FEED_TARGET :int = 3;
 
     protected static const UPDATE_DISPLAY_TIMER_NAME :String = "updateVampireHUDTimer";
+
+
 
 
 //    protected var _vampireAvatarManager :VampireAvatarHUDManager;
