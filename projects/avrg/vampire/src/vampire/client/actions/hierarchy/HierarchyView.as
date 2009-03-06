@@ -5,7 +5,7 @@ package vampire.client.actions.hierarchy
     import com.threerings.flash.Vector2;
     import com.threerings.util.Command;
     import com.threerings.util.Log;
-    import com.whirled.contrib.simplegame.objects.SceneObject;
+    import com.whirled.contrib.avrg.DraggableSceneObject;
     import com.whirled.net.ElementChangedEvent;
 
     import flash.display.DisplayObject;
@@ -25,7 +25,6 @@ package vampire.client.actions.hierarchy
     import flash.text.TextFormatAlign;
 
     import vampire.client.ClientContext;
-    import vampire.client.DraggableSprite;
     import vampire.client.VampireController;
     import vampire.client.events.HierarchyUpdatedEvent;
     import vampire.data.Codes;
@@ -33,14 +32,15 @@ package vampire.client.actions.hierarchy
     import vampire.data.SharedPlayerStateClient;
     import vampire.data.VConstants;
 
-    public class HierarchyView extends SceneObject
+    public class HierarchyView extends DraggableSceneObject
     {
         protected static const log :Log = Log.getLog( HierarchyView );
 
 
 
 
-        protected var _sceneObjectSprite :DraggableSprite;
+//        protected var _sceneObjectSprite :DraggableSprite;
+//        protected var _sceneObjectSprite :Sprite;
         protected var _hierarchyPanel :Sprite;
         protected var _hierarchyTree :Sprite;
         protected var _text :TextField;
@@ -55,7 +55,7 @@ package vampire.client.actions.hierarchy
 
         public function HierarchyView(hudMC :MovieClip = null)
         {
-
+            super( ClientContext.ctrl);
 
 //            var embeddedFonts:Array = Font.enumerateFonts(true);
 //            for each( var font :Font in embeddedFonts) {
@@ -63,14 +63,22 @@ package vampire.client.actions.hierarchy
 //                    trace( font.fontName + " is embedded" );
 //                }
 //            }
-            _sceneObjectSprite = new DraggableSprite(ClientContext.ctrl, "HierarchyView");
-            _sceneObjectSprite.init( new Rectangle(0, 0, 100, 100), 10, 10, 10, 10);
-            _sceneObjectSprite.x = 20;
-            _sceneObjectSprite.y = 20;
+//            _sceneObjectSprite = new DraggableSprite(ClientContext.ctrl, "HierarchyView");
+//            _sceneObjectSprite = new Sprite();
+//            _sceneObjectSprite.init( new Rectangle(0, 0, 100, 100), 10, 10, 10, 10);
+//            _sceneObjectSprite.x = 20;
+//            _sceneObjectSprite.y = 20;
+
+//            _sceneObjectSprite.x = 20;
+//            _sceneObjectSprite.y = 20;
+
+
+
+
             _hierarchyPanel = new Sprite();
 //            _hierarchyPanel.x = 200;
 //            _hierarchyPanel.y = 200;
-            _sceneObjectSprite.addChild( _hierarchyPanel );
+            _displaySprite.addChild( _hierarchyPanel );
 
             _hierarchyTree = new Sprite();
 
@@ -80,7 +88,8 @@ package vampire.client.actions.hierarchy
             _popup = ClientContext.instantiateMovieClip("HUD", "popup_hierarchy", true);
             _popup.width = 550;
             _popup.height = 400;
-
+            _popup.x = -_popup.width/2;
+            _popup.y = -_popup.height/2;
 
 //            var bgshape :Shape = popup.getChildAt(0) as Shape;
             _hierarchyPanel.addChild( _popup );
@@ -320,6 +329,20 @@ package vampire.client.actions.hierarchy
 //
             showBloodBonded();
 
+            init( new Rectangle(-_displaySprite.width/2, _displaySprite.height/2, _displaySprite.width, _displaySprite.height), 0, 0, 0, 100);
+            centerOnViewableRoom();
+
+//            if( ClientContext.ctrl.local.getPaintableArea() != null) {
+//                _sceneObjectSprite.x = ClientContext.ctrl.local.getPaintableArea().width/2 - _sceneObjectSprite.width/2;
+//                _sceneObjectSprite.y = ClientContext.ctrl.local.getPaintableArea().height/2 - _sceneObjectSprite.height/2;
+//            }
+//            registerListener( ClientContext.ctrl.local, AVRGameControlEvent.SIZE_CHANGED, function(...ignored) :void {
+//                if( ClientContext.ctrl.local.getPaintableArea() != null) {
+//                    _sceneObjectSprite.x = ClientContext.ctrl.local.getPaintableArea().width/2 - _sceneObjectSprite.width/2;
+//                    _sceneObjectSprite.y = ClientContext.ctrl.local.getPaintableArea().height/2 - _sceneObjectSprite.height/2;
+//                }
+//            });
+
         }
 
         override public function get objectName () :String
@@ -327,10 +350,10 @@ package vampire.client.actions.hierarchy
             return NAME;
         }
 
-        override public function get displayObject () :DisplayObject
-        {
-            return _sceneObjectSprite;
-        }
+//        override public function get displayObject () :DisplayObject
+//        {
+//            return _sceneObjectSprite;
+//        }
 
         /**
         * Using the embedded font disallows dynamically changing the text.
