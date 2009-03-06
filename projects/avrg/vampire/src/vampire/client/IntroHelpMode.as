@@ -107,32 +107,10 @@ public class IntroHelpMode extends SceneObject
         modeSprite.addChild( feedButton );
 
 
-        var locationsButton :SimpleTextButton = new SimpleTextButton( "Locations from avatar" );
-        locationsButton.x = loseXPButton.x;
-        locationsButton.y = loseXPButton.y + 30;
-        locationsButton.addEventListener( MouseEvent.CLICK, function(...ignored):void{
-            var locations :HashMap  = ClientContext.ctrl.room.getEntityProperty( AvatarGameBridge.ENTITY_PROPERTY_AVATAR_LOCATIONS, ClientContext.ourEntityId) as HashMap;
-            trace("locations:");
-            if( locations != null) {
-                locations.forEach( function( id :int, data :Array) :void {
-                    trace( id + "   data=" + data);
-                });
-            }
-        });
-        modeSprite.addChild( locationsButton );
-
-        var locationsChangedButton :SimpleTextButton = new SimpleTextButton( "Locations changed" );
-        locationsChangedButton.x = locationsButton.x;
-        locationsChangedButton.y = locationsButton.y + 30;
-        locationsChangedButton.addEventListener( MouseEvent.CLICK, function(...ignored):void{
-            trace("locations changed=" + ClientContext.ctrl.room.getEntityProperty( AvatarGameBridge.ENTITY_PROPERTY_IS_LOCATIONS_CHANGED, ClientContext.ourEntityId) );
-
-        });
-        modeSprite.addChild( locationsChangedButton );
 
         var showInviteButton :SimpleTextButton = new SimpleTextButton( "Show Invites" );
-        showInviteButton.x = locationsChangedButton.x;
-        showInviteButton.y = locationsChangedButton.y + 30;
+        showInviteButton.x = feedButton.x;
+        showInviteButton.y = feedButton.y + 30;
         showInviteButton.addEventListener( MouseEvent.CLICK, function(...ignored):void{
             ClientContext.ctrl.local.showInvitePage("Join my game!!", "sire=" + ClientContext.ourPlayerId);
 
