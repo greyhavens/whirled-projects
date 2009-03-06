@@ -116,9 +116,14 @@ public class TargetingOverlayAvatars extends TargetingOverlay
         var userId :int;
         for each( var entityId :String in _ctrl.room.getEntityIds( EntityControl.TYPE_AVATAR) ) {
             userId = int(_ctrl.room.getEntityProperty( EntityControl.PROP_MEMBER_ID, entityId));
+
+            if( !isShowingOwnAvatar && userId == _ctrl.player.getPlayerId() ) {
+                continue;
+            }
+
             allUserIds.add( userId );
 //            trace("Creating avatarHUD for " + userId);
-            if( !_avatars.containsKey( userId )) {
+            if( !_avatars.containsKey( userId ) ) {
                 var playerAvatar :AvatarHUD = createPlayerAvatar( userId );
                 registerListener( playerAvatar, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED,
                     function(...ignored) :void {
@@ -162,6 +167,7 @@ public class TargetingOverlayAvatars extends TargetingOverlay
     protected var _ctrl :AVRGameControl;
     protected var _playerEntityId :String;
     protected var _avatars :HashMap;
+    public var isShowingOwnAvatar :Boolean = false;
 
 
 
