@@ -10,17 +10,21 @@ import com.whirled.game.StateChangedEvent;
 import flash.utils.ByteArray;
 
 import redrover.data.*;
+import redrover.net.GameMessageMgr;
+import redrover.net.WhirledBridge;
 import redrover.util.GameUtil;
 
 public class Server extends ServerObject
 {
-    public function Server ()
+    public function Server (offline :Boolean = false)
     {
         ServerCtx.gameCtrl = new GameControl(this);
+        ServerCtx.bridge = new WhirledBridge(true, (offline ? null :ServerCtx.gameCtrl));
+        ServerCtx.msgMgr = new GameMessageMgr(ServerCtx.bridge);
         ServerCtx.seatingMgr.init(ServerCtx.gameCtrl);
 
         // We don't have anything to do in single-player games
-        if (ServerCtx.seatingMgr.numExpectedPlayers < 2) {
+        if (!offline && ServerCtx.seatingMgr.numExpectedPlayers < 2) {
             log.info("Singleplayer game. Not starting server.");
             return;
         }

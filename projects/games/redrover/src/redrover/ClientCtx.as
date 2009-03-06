@@ -12,7 +12,8 @@ import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 
-import redrover.net.NetSubControlWrapper;
+import redrover.net.GameMessageMgr;
+import redrover.net.WhirledBridge;
 
 public class ClientCtx
 {
@@ -20,10 +21,12 @@ public class ClientCtx
     public static var mainLoop :MainLoop;
     public static var rsrcs :ResourceManager;
     public static var audio :AudioManager;
+
     public static var gameCtrl :GameControl;
+    public static var bridge :WhirledBridge;
+    public static var msgMgr :GameMessageMgr;
     public static var levelMgr :LevelManager = new LevelManager();
     public static var seatingMgr :SeatingManager = new SeatingManager();
-    public static var net :NetSubControlWrapper;
     public static var localPlayerIdx :int;
 
     public static function instantiateMovieClip (rsrcName :String, className :String,

@@ -1,24 +1,30 @@
 package redrover.net {
 
-import flash.events.EventDispatcher;
-
 import com.whirled.game.GameControl;
 import com.whirled.game.NetSubControl;
-import com.whirled.net.PropertySubControl;
 import com.whirled.net.MessageSubControl;
+import com.whirled.net.PropertySubControl;
 
-public class NetSubControlWrapper
+import flash.events.EventDispatcher;
+
+public class WhirledBridge
 {
-    public function NetSubControlWrapper (gameCtrl :GameControl, isAgent :Boolean)
+    public static const TO_ALL :int = NetSubControl.TO_ALL;
+    public static const TO_SERVER_AGENT :int = NetSubControl.TO_SERVER_AGENT;
+
+    public function WhirledBridge (isAgent :Boolean, gameCtrl :GameControl = null)
     {
-        _netSubCtrl = gameCtrl.net;
+        if (gameCtrl != null && gameCtrl.isConnected()) {
+            _gameCtrl = gameCtrl;
+        }
+
         _isAgent = isAgent;
 
         if (isConnected()) {
-            _props = _netSubCtrl;
-            _agent = _netSubCtrl.agent;
-            _players = _netSubCtrl.players;
-            _msgReceiver = _netSubCtrl;
+            _props = _gameCtrl.net;
+            _agent = _gameCtrl.net.agent;
+            _players = _gameCtrl.net.players;
+            _msgReceiver = _gameCtrl.net;
 
         } else {
             // If we're offline, setup a bunch of stuff to emulate the message sending
@@ -33,12 +39,29 @@ public class NetSubControlWrapper
                 _offlinePlayerReceiver = new OfflineMessageReceiver();
             }
 
-            var playerId :int = (isAgent ? int.MIN_VALUE : 1);
+            var playerId :int = (isAgent ? DEFAULT_AGENT_ID : DEFAULT_PLAYER_ID);
 
             _props = _offlineProps;
             _agent = new OfflineMessageSender(playerId, _offlineAgentReceiver);
             _players = new OfflineMessageSender(playerId, _offlinePlayerReceiver);
             _msgReceiver = (isAgent ? _offlineAgentReceiver : _offlinePlayerReceiver);
+        }
+    }
+
+    public function sendMessage (messageName :String, value :Object,
+                                 playerId :int = 0 /* TO_ALL */) :void
+    {
+        if (isConnected()) {
+            _gameCtrl.net.sendMessage(messageName, value, playerId);
+
+        } else {
+            if (playerId == TO_ALL || playerId == DEFAULT_PLAYER_ID) {
+                _players.sendMessage(messageName, value);
+            }
+
+            if (playerId == TO_ALL || playerId == DEFAULT_AGENT_ID) {
+                _agent.sendMessage(messageName, value);
+            }
         }
     }
 
@@ -64,11 +87,11 @@ public class NetSubControlWrapper
 
     public function isConnected () :Boolean
     {
-        return (_netSubCtrl.isConnected());
+        return (_gameCtrl != null);
     }
 
     protected var _isAgent :Boolean;
-    protected var _netSubCtrl :NetSubControl;
+    protected var _gameCtrl :GameControl;
 
     protected var _props :PropertySubControl;
     protected var _agent :MessageSubControl;
@@ -78,6 +101,9 @@ public class NetSubControlWrapper
     protected static var _offlineProps :LocalPropertySubControl;
     protected static var _offlineAgentReceiver :OfflineMessageReceiver;
     protected static var _offlinePlayerReceiver :OfflineMessageReceiver;
+
+    protected static const DEFAULT_PLAYER_ID :int = 1;
+    protected static const DEFAULT_AGENT_ID :int = TO_SERVER_AGENT;
 }
 
 }
@@ -87,7 +113,7 @@ import flash.events.EventDispatcher;
 import com.whirled.net.MessageSubControl;
 import com.whirled.net.MessageReceivedEvent;
 
-import redrover.net.NetSubControlWrapper;
+import redrover.net.WhirledBridge;
 
 class OfflineMessageReceiver extends EventDispatcher
 {

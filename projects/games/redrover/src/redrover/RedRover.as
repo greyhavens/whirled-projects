@@ -13,6 +13,8 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import redrover.data.*;
+import redrover.net.GameMessageMgr;
+import redrover.net.WhirledBridge;
 
 public class RedRover extends Sprite
 {
@@ -22,6 +24,8 @@ public class RedRover extends Sprite
 
         // initialize ClientCtx
         ClientCtx.gameCtrl = new GameControl(this, false);
+        ClientCtx.bridge = new WhirledBridge(false, ClientCtx.gameCtrl);
+        ClientCtx.msgMgr = new GameMessageMgr(ClientCtx.bridge);
         ClientCtx.seatingMgr.init(ClientCtx.gameCtrl);
         ClientCtx.localPlayerIdx = ClientCtx.seatingMgr.localPlayerSeat;
 
