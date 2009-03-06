@@ -2,7 +2,7 @@ package vampire.client
 {
     import com.threerings.flash.DisplayUtil;
     import com.threerings.util.Log;
-    import com.whirled.contrib.simplegame.objects.SceneObject;
+    import com.whirled.contrib.avrg.DraggableSceneObject;
 
     import flash.display.DisplayObject;
     import flash.display.DisplayObjectContainer;
@@ -19,27 +19,47 @@ package vampire.client
     import vampire.feeding.Constants;
     import vampire.feeding.PlayerFeedingData;
 
-    public class HelpPopup extends SceneObject
+    public class HelpPopup extends DraggableSceneObject
     {
         public function HelpPopup( startframe :String = "intro")
         {
-            super();
+            super(ClientContext.ctrl);
 
-            _sceneObjectSprite = new DraggableSprite(ClientContext.ctrl, NAME);
-            _sceneObjectSprite.init( new Rectangle(0, 0, 100, 100), 10, 10, 10, 10);
-            _sceneObjectSprite.x = 20;
-            _sceneObjectSprite.y = 20;
+//            _displaySprite.addChild( _bloodTypeOverlay );
+//            _bloodTypeOverlay.graphics.beginFill(1);
+//            _bloodTypeOverlay.graphics.drawCircle(0, 0, 30);
+//            _bloodTypeOverlay.graphics.endFill();
+//
+//            init( new Rectangle(-_displaySprite.width/2, _displaySprite.height/2, _displaySprite.width, _displaySprite.height), 0, 0, 0, 100);
+//
+//            return;
+//            _sceneObjectSprite = new DraggableSprite(ClientContext.ctrl, NAME);
+//            _sceneObjectSprite = new Sprite();
+//            _displaySprite.addChild( _sceneObjectSprite );
+
+//            registerListener( _sceneObjectSprite, MouseEvent.CLICK, function(...ignored) :void {
+//                trace("_sceneObjectSprite clicked");
+//            });
+//            _sceneObjectSprite.init( new Rectangle(0, 0, 100, 100), 10, 10, 10, 10);
+//            _sceneObjectSprite.x = 20;
+//            _sceneObjectSprite.y = 20;
+
+//            _sceneObjectSprite.x = 20;
+//            _sceneObjectSprite.y = 20;
+
+
 
             _hudHelp = ClientContext.instantiateMovieClip("HUD", "popup_help", false);
-//            _hudHelp.addChild( _bloodTypeOverlay );
-            _bloodTypeOverlay.graphics.lineStyle(1);
-            _bloodTypeOverlay.graphics.drawCircle(0, 0, 30);
+            _displaySprite.addChild( _hudHelp );
+            _displaySprite.addChild( _bloodTypeOverlay );
+//            _bloodTypeOverlay.graphics.beginFill(1);
+//            _bloodTypeOverlay.graphics.drawCircle(0, 0, 30);
+//            _bloodTypeOverlay.graphics.endFill();
+//            _hudHelp.x += _hudHelp.width / 2 + 20;
+//            _hudHelp.y += _hudHelp.height / 2 + 20;
+//            _sceneObjectSprite.addChild( _hudHelp );
 
-            _hudHelp.x += _hudHelp.width / 2 + 20;
-            _hudHelp.y += _hudHelp.height / 2 + 20;
-            _sceneObjectSprite.addChild( _hudHelp );
-
-
+            //Debugging
             function listChildren( mv :MovieClip ) :void
             {
                 for( var i :int = 0; i < mv.numChildren; i++) {
@@ -52,41 +72,45 @@ package vampire.client
 
             //Wire up the buttons
             //On Introduction
-            updateBloodStrainPage();
+//            updateBloodStrainPage();
+
+
+
+
             _hudHelp.gotoAndStop("intro");
             registerListener( SimpleButton(findSafely("button_tofeedinggame")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
-                    _previousFrame = _hudHelp.currentFrame;
+                    _frameHistory.push( _hudHelp.currentFrame );
                     _hudHelp.gotoAndStop("feedinggame");
                 });
             registerListener( SimpleButton(findSafely("button_tolineage")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
-                    _previousFrame = _hudHelp.currentFrame;
+                    _frameHistory.push( _hudHelp.currentFrame );
                     _hudHelp.gotoAndStop("lineage");
                 });
             registerListener( SimpleButton(findSafely("button_tovamps")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
-                    _previousFrame = _hudHelp.currentFrame;
+                    _frameHistory.push( _hudHelp.currentFrame );
                     _hudHelp.gotoAndStop("vamps");
                 });
             registerListener( SimpleButton(findSafely("button_tomortals")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
-                    _previousFrame = _hudHelp.currentFrame;
+                    _frameHistory.push( _hudHelp.currentFrame );
                     _hudHelp.gotoAndStop("mortals");
                 });
             registerListener( SimpleButton(findSafely("button_tobloodbond")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
-                    _previousFrame = _hudHelp.currentFrame;
+                    _frameHistory.push( _hudHelp.currentFrame );
                     _hudHelp.gotoAndStop("bloodbond");
                 });
             registerListener( SimpleButton(findSafely("button_tomortals")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
-                    _previousFrame = _hudHelp.currentFrame;
+                    _frameHistory.push( _hudHelp.currentFrame );
                     _hudHelp.gotoAndStop("mortals");
                 });
             registerListener( SimpleButton(findSafely("button_tobloodtype")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
-                    _previousFrame = _hudHelp.currentFrame;
+                    _frameHistory.push( _hudHelp.currentFrame );
                     _hudHelp.gotoAndStop("bloodtype");
                 });
             registerListener( SimpleButton(findSafely("help_close")), MouseEvent.CLICK,
@@ -102,6 +126,9 @@ package vampire.client
             registerListener( SimpleButton(findSafely("help_back")), MouseEvent.CLICK,
                 backButtonPushed);
 
+
+
+
             //Update the strains collected
 
 //            gotoFrame("bloodtype");
@@ -110,6 +137,23 @@ package vampire.client
                 _hudHelp.gotoAndStop(startframe);
             }
 
+
+//            if( ClientContext.ctrl.local.getPaintableArea() != null) {
+//                //Workaround as roombounds can be bigger than the paintable area
+//                if( ClientContext.ctrl.local
+//
+//                this.x = ClientContext.ctrl.local.getRoomBounds()[0]/2;// - _displaySprite.width/2;
+//                this.y = ClientContext.ctrl.local.getRoomBounds().height/2;// - _displaySprite.height/2;
+//            }
+//            registerListener( ClientContext.ctrl.local, AVRGameControlEvent.SIZE_CHANGED, function(...ignored) :void {
+//                if( ClientContext.ctrl.local.getPaintableArea() != null) {
+//                    _sceneObjectSprite.x = ClientContext.ctrl.local.getPaintableArea().width/2 - _sceneObjectSprite.width/2;
+//                    _sceneObjectSprite.y = ClientContext.ctrl.local.getPaintableArea().height/2 - _sceneObjectSprite.height/2;
+//                }
+//            });
+
+            init( new Rectangle(-_displaySprite.width/2, _displaySprite.height/2, _displaySprite.width, _displaySprite.height), 0, 0, 0, 100);
+            centerOnViewableRoom();
         }
 
         protected function updateBloodStrainPage() :void
@@ -136,8 +180,8 @@ package vampire.client
                     log.error(textFieldName + " is null");
                     continue;
                 }
-                trace("\n" + textFieldName);
-                listChildren(tf);
+//                trace("\n" + textFieldName);
+//                listChildren(tf);
                 TextField(tf["tally"]).text = "asdfsadfdsf";
                 var tally :TextField = TextField(tf["tally"]);
 
@@ -239,7 +283,7 @@ package vampire.client
 
         protected function findSafely (name :String) :DisplayObject
         {
-            var o :DisplayObject = DisplayUtil.findInHierarchy(_sceneObjectSprite, name);
+            var o :DisplayObject = DisplayUtil.findInHierarchy(_displaySprite, name);
             if (o == null) {
                 throw new Error("Cannot find object: " + name);
             }
@@ -262,15 +306,16 @@ package vampire.client
 
         protected function backButtonPushed(...ignored) :void
         {
-            var nextFrame :int = _previousFrame;
-            _previousFrame = _hudHelp.currentFrame;
-            _hudHelp.gotoAndStop( nextFrame );
+            if( _frameHistory.length > 0) {
+                var nextFrame :int = _frameHistory.pop();
+                _hudHelp.gotoAndStop( nextFrame );
+            }
         }
 
-        override public function get displayObject () :DisplayObject
-        {
-            return _sceneObjectSprite;
-        }
+//        override public function get displayObject () :DisplayObject
+//        {
+//            return _sceneObjectSprite;
+//        }
 
         override public function get objectName () :String
         {
@@ -278,8 +323,9 @@ package vampire.client
         }
 
         protected var _hudHelp :MovieClip;
-        protected var _sceneObjectSprite :DraggableSprite;
-        protected var _previousFrame :int;
+//        protected var _sceneObjectSprite :DraggableSprite;
+//        protected var _sceneObjectSprite :Sprite;
+        protected var _frameHistory :Array = new Array();
         protected var _bloodTypeOverlay :Sprite = new Sprite();
 
         public static const NAME :String = "HelpPopup";
