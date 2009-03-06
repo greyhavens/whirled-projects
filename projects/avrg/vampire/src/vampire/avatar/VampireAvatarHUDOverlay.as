@@ -31,7 +31,7 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
     public function VampireAvatarHUDOverlay(ctrl:AVRGameControl)
     {
         super(ctrl);
-
+        super.isShowingOwnAvatar = false;
 //        _vampireAvatarManager = avatarManager;
 
         registerListener( _ctrl.room, AVRGameRoomEvent.PLAYER_ENTERED, reapplyDisplayMode);
