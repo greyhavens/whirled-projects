@@ -8,24 +8,14 @@ import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.Config;
-import com.whirled.contrib.simplegame.SimpleGame;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.net.MessageReceivedEvent;
 
-import flash.display.Sprite;
 import flash.events.MouseEvent;
 
-import vampire.Util;
 import vampire.avatar.VampireAvatarHUDOverlay;
-import vampire.client.actions.NothingMode;
-import vampire.client.actions.feed.EatMeMode;
-import vampire.client.actions.feed.FeedMode;
-import vampire.client.actions.fight.FightMode;
-import vampire.client.events.ChangeActionEvent;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingGameClient;
-import vampire.feeding.PlayerFeedingData;
 import vampire.net.messages.NonPlayerIdsInRoomMessage;
 
 public class MainGameMode extends AppMode
@@ -63,10 +53,10 @@ public class MainGameMode extends AppMode
 
         //If this player hasn't played before, automatically show the help.
         if( ClientContext.model.isNewPlayer() ) {
-
-            addObject(  new IntroHelpMode(), modeSprite );
-//            ClientContext.game.ctx.mainLoop.pushMode( new IntroHelpMode() );
+//            addObject(  new HelpPopup(), modeSprite );
         }
+
+        _feedingGameDraggableSprite = new DraggableSprite(ClientContext.ctrl);
 
 
         //If we start moving, and we are in bared mode, change to default mode.
@@ -135,22 +125,26 @@ public class MainGameMode extends AppMode
         _events.registerListener(ClientContext.ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessageReceived);
 
+        //Create the overlay for individual avatars
+        ClientContext.avatarOverlay = new VampireAvatarHUDOverlay( ClientContext.ctrl );
+        addObject( ClientContext.avatarOverlay, modeSprite );
+
         _hud = new HUD();
         addObject( _hud, modeSprite );
         ClientContext.hud = _hud;
 
-        _subgameSprite = new Sprite();
-        modeSprite.addChild( _subgameSprite );
-        var subgameconfig :Config = new Config();
-        subgameconfig.hostSprite = _subgameSprite;
-        subgame = new SimpleGame( subgameconfig );
-//        subgame.run();
-        subgame.ctx.mainLoop.pushMode( new NothingMode() );
+//        _subgameSprite = new Sprite();
+//        modeSprite.addChild( _subgameSprite );
+//        var subgameconfig :Config = new Config();
+//        subgameconfig.hostSprite = _subgameSprite;
+//        subgame = new SimpleGame( subgameconfig );
+////        subgame.run();
+//        subgame.ctx.mainLoop.pushMode( new NothingMode() );
 
         trace(ClientContext.ourPlayerId + " setting avatar state from game beginning");
         ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
 
-        registerListener( ClientContext.model, ChangeActionEvent.CHANGE_ACTION, changeAction );
+//        registerListener( ClientContext.model, ChangeActionEvent.CHANGE_ACTION, changeAction );
 
 //        registerListener( ClientContext.gameCtrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged);
 
@@ -162,12 +156,15 @@ public class MainGameMode extends AppMode
         addObject( nonPlayerIdTimer );
 
 
-        if( VConstants.LOCAL_DEBUG_MODE || vampire.Util.isProgenitor(ClientContext.ourPlayerId) ||
-            (ClientContext.ourPlayerId >= 1 && ClientContext.ourPlayerId <= 3)) {
+//        if( VConstants.LOCAL_DEBUG_MODE || vampire.Util.isProgenitor(ClientContext.ourPlayerId) ||
+//            (ClientContext.ourPlayerId >= 1 && ClientContext.ourPlayerId <= 3)
+//            || ClientContext.getPlayerName( ClientContext.ourPlayerId) == "Ragbeard") {
             var debug :SimpleTextButton = new SimpleTextButton("debug");
             Command.bind( debug, MouseEvent.CLICK, VampireController.SHOW_DEBUG );
             modeSprite.addChild( debug );
-        }
+//        }
+
+
     }
 
     protected function handleMessageReceived (e :MessageReceivedEvent) :void
@@ -205,7 +202,7 @@ public class MainGameMode extends AppMode
         _feedingGameClient = null;
 
         //Reset the overlay
-        ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
+        ClientContext.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
 
     }
 
@@ -229,59 +226,60 @@ public class MainGameMode extends AppMode
 
     override protected function destroy() :void
     {
-        subgame.shutdown();
+//        subgame.shutdown();
 //        _thaneObjectDBForNonPlayers.shutdown();
     }
 
-    protected function changeAction( e :ChangeActionEvent ) :void
-    {
-        return;
-        var action :String = e.action;
+//    protected function changeAction( e :ChangeActionEvent ) :void
+//    {
+//        return;
+//        var action :String = e.action;
+//
+//        var m :AppMode;
+//
+//        switch( action ) {
+////                case Constants.GAME_MODE_BLOODBOND:
+////                     m = new BloodBondMode();
+////                     break;
+//
+//             case VConstants.GAME_MODE_FEED_FROM_PLAYER:
+//             case VConstants.GAME_MODE_FEED_FROM_NON_PLAYER:
+//                 m = new FeedMode();
+//                 break;
+//
+//             case VConstants.GAME_MODE_BARED:
+//                 m = new EatMeMode();
+//                 break;
+//
+//             case VConstants.GAME_MODE_FIGHT:
+//                 m = new FightMode();
+//                 break;
+//
+////                 case Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
+////                     m = new HierarchyMode();
+////                     break;
+//
+//             default:
+//                 m = new NothingMode();
+//        }
+//
+//        log.debug("current mode=" + ClassUtil.getClassName( subgame.ctx.mainLoop.topMode ) );
+//        log.debug("new mode=" + ClassUtil.getClassName( m ) );
+//        if( m !== subgame.ctx.mainLoop.topMode) {
+//            subgame.ctx.mainLoop.unwindToMode( m );
+//        }
+//        else{
+//            log.debug("Not changing mode because the mode is already on top, m=" + m);
+//        }
+//
+//    }
 
-        var m :AppMode;
-
-        switch( action ) {
-//                case Constants.GAME_MODE_BLOODBOND:
-//                     m = new BloodBondMode();
-//                     break;
-
-             case VConstants.GAME_MODE_FEED_FROM_PLAYER:
-             case VConstants.GAME_MODE_FEED_FROM_NON_PLAYER:
-                 m = new FeedMode();
-                 break;
-
-             case VConstants.GAME_MODE_BARED:
-                 m = new EatMeMode();
-                 break;
-
-             case VConstants.GAME_MODE_FIGHT:
-                 m = new FightMode();
-                 break;
-
-//                 case Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
-//                     m = new HierarchyMode();
-//                     break;
-
-             default:
-                 m = new NothingMode();
-        }
-
-        log.debug("current mode=" + ClassUtil.getClassName( subgame.ctx.mainLoop.topMode ) );
-        log.debug("new mode=" + ClassUtil.getClassName( m ) );
-        if( m !== subgame.ctx.mainLoop.topMode) {
-            subgame.ctx.mainLoop.unwindToMode( m );
-        }
-        else{
-            log.debug("Not changing mode because the mode is already on top, m=" + m);
-        }
-
-    }
-
-    protected var subgame :SimpleGame;
-    protected var _subgameSprite :Sprite;
+//    protected var subgame :SimpleGame;
+//    protected var _subgameSprite :Sprite;
     protected var _hud :HUD;
 
     protected var _feedingGameClient :FeedingGameClient;
+    protected var _feedingGameDraggableSprite :DraggableSprite;
 //    /**Holds feeding data until game is over and it's sent to the server*/
 //    protected var _playerFeedingDataTemp :PlayerFeedingData;
 

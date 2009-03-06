@@ -5,14 +5,13 @@ import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.avrg.DraggableSceneObject;
 import com.whirled.contrib.simplegame.objects.SceneObjectPlayMovieClipOnce;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 import com.whirled.contrib.simplegame.tasks.LocationTask;
 import com.whirled.contrib.simplegame.tasks.SelfDestructTask;
 import com.whirled.contrib.simplegame.tasks.SerialTask;
 import com.whirled.contrib.simplegame.tasks.TimedTask;
-import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
@@ -24,7 +23,6 @@ import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.filters.BlurFilter;
-import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.AntiAliasType;
 import flash.text.TextField;
@@ -44,11 +42,12 @@ import vampire.server.BloodBloomGameRecord;
  * The main game HUD, showing e.g. blood, game notifications, and buttons to select the subgame to
  * play.
  */
-public class HUD extends SceneObject
+public class HUD extends DraggableSceneObject
 {
     public function HUD()
     {
-        _displaySprite = new Sprite();
+        super( ClientContext.ctrl, "HUD");
+//        _displaySprite = new Sprite();
 
         setupUI();
 
@@ -65,12 +64,6 @@ public class HUD extends SceneObject
 
 
         showBlood( ClientContext.ourPlayerId );
-
-
-
-
-
-
 
 //        if( VConstants.LOCAL_DEBUG_MODE) {
 //            showTarget( ClientContext.gameCtrl.player.getPlayerId() );
@@ -90,13 +83,14 @@ public class HUD extends SceneObject
 
     override protected function destroyed () :void
     {
+        super.destroyed();
         trace("HUD destroyed");
     }
 
-    override public function get displayObject () :DisplayObject
-    {
-        return _displaySprite;
-    }
+//    override public function get displayObject () :DisplayObject
+//    {
+//        return _displaySprite;
+//    }
 
     override public function get objectName () :String
     {
@@ -272,9 +266,10 @@ public class HUD extends SceneObject
 
     override protected function addedToDB () :void
     {
+        super.addedToDB();
 //        db.addObject( _targetingOverlay );
 
-        db.addObject( _targetingOverlay, _displaySprite );
+//        db.addObject( _targetingOverlay, _displaySprite );
 //        _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
 //        _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
 //        _targetingOverlay.displayObject.visible = false;
@@ -284,15 +279,17 @@ public class HUD extends SceneObject
     protected function setupUI() :void
     {
 
-        _hud = new DraggableSprite(ClientContext.ctrl, "HUD");
+//        _hud = new DraggableSprite(ClientContext.ctrl, "HUD");
+        _hud = new Sprite();
         _displaySprite.addChild( _hud );
-        _hud.init( new Rectangle(0, 0, 100, 100), 10, 10, 10, 10);
+
+
 
 
         //Create the ratgeting overlay
-        _targetingOverlay = new VampireAvatarHUDOverlay( ClientContext.ctrl );
+//        _targetingOverlay = new VampireAvatarHUDOverlay( ClientContext.ctrl );
 
-        registerListener( _targetingOverlay, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED,
+        registerListener( ClientContext.avatarOverlay, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED,
             function(...ignored) :void {
                 if( ClientContext.model.action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER ||
                     ClientContext.model.action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER ) {
@@ -316,6 +313,9 @@ public class HUD extends SceneObject
 
         _hud.addChild( _hudMC );
 
+//        _hud.
+        init( new Rectangle(-_hudMC.width/2, _hudMC.height/2, _hudMC.width, _hudMC.height), 0, 0, 0, 100);
+
 //        _hudFeedback = TextField( findSafely("HUDfeedback") );
 //        _hudFeedback.visible = true;
 //        _hudFeedback.text = "afsadfafa sdf";
@@ -327,32 +327,33 @@ public class HUD extends SceneObject
 
 
         if( VConstants.LOCAL_DEBUG_MODE) {
-            _hudMC.x = 500;
-            _hudMC.y = 400;
+            this.x = 500;
+            this.y = 400;
         }
         else {
-//            var screen :Rectangle = ClientContext.gameCtrl.local.getPaintableArea();
-//            _hudMC.x = screen.width - _hudMC.width/2 - 10
-//            _hudMC.y = screen.height - _hudMC.height/2 - 10;
-
-            var bottomRight :Point = ClientContext.ctrl.local.locationToPaintable(1.0, 0, 0);
-
-            _hudMC.x = bottomRight.x - _hudMC.width/2 - 10
-            _hudMC.y = bottomRight.y - _hudMC.height/2 - 10;
+            this.x = ClientContext.ctrl.local.getPaintableArea().width - (_hudMC.width/2 + 20);
+            this.y = ClientContext.ctrl.local.getPaintableArea().height - (_hudMC.height/2 + 20);
         }
+
+
+//        registerListener( ClientContext.ctrl.local, AVRGameControlEvent.SIZE_CHANGED, function(...ignored) :void {
+//            _hud.x = ClientContext.ctrl.local.getPaintableArea().width - (_hudMC.width/2 + 20);
+//            _hud.y = ClientContext.ctrl.local.getPaintableArea().height - (_hudMC.height/2 + 20);
+//        });
+
 
         _hudMC.mouseChildren = true;
         _hudMC.mouseEnabled = false;
 
         //Hackery to remove the invisible popup textfield stealing mouse focus
-        for( var i :int = 0; i < _hudMC.numChildren; i++) {
-            if( _hudMC.getChildAt(i) is TextField) {
-                TextField(_hudMC.getChildAt(i)).mouseEnabled = false;
-            }
-            else if( _hudMC.getChildAt(i) is MovieClip) {
-                MovieClip(_hudMC.getChildAt(i)).mouseEnabled = true;
-            }
-        }
+//        for( var i :int = 0; i < _hudMC.numChildren; i++) {
+//            if( _hudMC.getChildAt(i) is TextField) {
+//                TextField(_hudMC.getChildAt(i)).mouseEnabled = false;
+//            }
+//            else if( _hudMC.getChildAt(i) is MovieClip) {
+//                MovieClip(_hudMC.getChildAt(i)).mouseEnabled = true;
+//            }
+//        }
 
 //        _hudMC.addEventListener( MouseEvent.MOUSE_MOVE, function(e:MouseEvent):void {
 //            trace("mouse over hud");
@@ -398,7 +399,8 @@ public class HUD extends SceneObject
 
 
         var hudPredator :SimpleButton = SimpleButton( findSafely("HUDpredator") );
-        Command.bind( hudPredator, MouseEvent.CLICK, VampireController.FEED_REQUEST, [_targetingOverlay, _displaySprite, this] );
+        Command.bind( hudPredator, MouseEvent.CLICK, VampireController.FEED_REQUEST,
+            [ClientContext.avatarOverlay, _displaySprite, this] );
         registerListener( hudPredator, MouseEvent.ROLL_OVER, function(...ignored) :void {
             if( ClientContext.model.isVampire() ) {
                 showFeedBack( "Feed", true);
@@ -546,18 +548,18 @@ public class HUD extends SceneObject
 
             registerListener(b, MouseEvent.ROLL_OVER, function(...ignored) :void {
 
-                if( b == hudPredator && _targetingOverlay.displayMode ==
+                if( b == hudPredator && ClientContext.avatarOverlay.displayMode ==
                     VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS) {
                         return;
                 }
-                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
+                ClientContext.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
             });
 
             registerListener(b, MouseEvent.ROLL_OUT, function(...ignored) :void {
-                if( _targetingOverlay.displayMode !=
+                if( ClientContext.avatarOverlay.displayMode !=
                     VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS ) {
 
-                    _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
+                    ClientContext.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
                 }
 
             });
@@ -758,6 +760,7 @@ public class HUD extends SceneObject
 
     override protected function update(dt:Number):void
     {
+        super.update(dt);
         //Show feedback messages in queue, and fade out old messages.
         if( _feedbackMessageQueue.length > 0 && db != null) {
             _feedbackMessageTimeElapsed += dt;
@@ -776,14 +779,14 @@ public class HUD extends SceneObject
             }
         }
 
-        if( VConstants.LOCAL_DEBUG_MODE ) {
-            _DEBUGGING_add_feedback_timer += dt;
-            if( _DEBUGGING_add_feedback_timer > 2 ) {
-                _DEBUGGING_add_feedback_timer = 0;
-
-                _feedbackMessageQueue.push(generateRandomString(Rand.nextIntRange(50, 100, 0)));
-            }
-        }
+//        if( VConstants.LOCAL_DEBUG_MODE ) {
+//            _DEBUGGING_add_feedback_timer += dt;
+//            if( _DEBUGGING_add_feedback_timer > 2 ) {
+//                _DEBUGGING_add_feedback_timer = 0;
+//
+//                _feedbackMessageQueue.push(generateRandomString(Rand.nextIntRange(50, 100, 0)));
+//            }
+//        }
     }
 
     protected function insertFeedbackSceneObject2( feedbackMessage :String ) :void
@@ -1262,10 +1265,10 @@ public class HUD extends SceneObject
 //        }
 //    }
 
-    public function get avatarOverlay() :VampireAvatarHUDOverlay
-    {
-        return _targetingOverlay;
-    }
+//    public function get avatarOverlay() :VampireAvatarHUDOverlay
+//    {
+//        return _targetingOverlay;
+//    }
 
     //Debugging purposes
     protected static function generateRandomString(newLength:uint = 1, userAlphabet:String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"):String
@@ -1279,8 +1282,9 @@ public class HUD extends SceneObject
         return randomLetters;
     }
 
-    protected var _displaySprite :Sprite;
-    protected var _hud :DraggableSprite;
+//    protected var _displaySprite :Sprite;
+//    protected var _hud :DraggableSprite;
+    protected var _hud :Sprite;
     protected var _hudMC :MovieClip;
 
     protected var _hudBlood :MovieClip;
@@ -1331,7 +1335,7 @@ public class HUD extends SceneObject
 //    protected var _targetSpriteBloodBondIcon :MovieClip;
 //    protected var _targetSpriteHierarchyIcon :SimpleButton;
 
-    protected var _targetingOverlay :VampireAvatarHUDOverlay;
+//    protected var _targetingOverlay :VampireAvatarHUDOverlay;
 
     /**Used for registering changed level to animate a level up movieclip*/
     protected var _currentLevel :int = -0;
@@ -1340,7 +1344,7 @@ public class HUD extends SceneObject
     protected var _feedbackMessageTimeElapsed :Number = VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY;
     protected static const FEEDBACK_SIMOBJECT_NAME :String = "feedback";
 
-    protected var _DEBUGGING_add_feedback_timer :Number = 0;
+//    protected var _DEBUGGING_add_feedback_timer :Number = 0;
 
 //    protected var _avatarHUDOverlay :VampireAvatarHUDOverlay;
 

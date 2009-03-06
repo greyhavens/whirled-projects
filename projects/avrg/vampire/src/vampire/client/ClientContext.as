@@ -14,6 +14,7 @@ import flash.display.SimpleButton;
 import flash.geom.Rectangle;
 
 import vampire.avatar.AvatarGameBridge;
+import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.data.VConstants;
 import vampire.net.VMessageManager;
 
@@ -30,6 +31,7 @@ public class ClientContext
 
     public static var model :GameModel;
     public static var hud :HUD;
+    public static var avatarOverlay :VampireAvatarHUDOverlay;
     public static var ourPlayerId :int;
     public static var currentClosestPlayerId :int;
 
