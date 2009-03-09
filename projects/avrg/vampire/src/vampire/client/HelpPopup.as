@@ -16,6 +16,7 @@ package vampire.client
     import flash.text.TextFormat;
     import flash.text.TextFormatAlign;
 
+    import vampire.data.Logic;
     import vampire.feeding.Constants;
     import vampire.feeding.PlayerFeedingData;
 
@@ -25,58 +26,17 @@ package vampire.client
         {
             super(ClientContext.ctrl);
 
-//            _displaySprite.addChild( _bloodTypeOverlay );
-//            _bloodTypeOverlay.graphics.beginFill(1);
-//            _bloodTypeOverlay.graphics.drawCircle(0, 0, 30);
-//            _bloodTypeOverlay.graphics.endFill();
-//
-//            init( new Rectangle(-_displaySprite.width/2, _displaySprite.height/2, _displaySprite.width, _displaySprite.height), 0, 0, 0, 100);
-//
-//            return;
-//            _sceneObjectSprite = new DraggableSprite(ClientContext.ctrl, NAME);
-//            _sceneObjectSprite = new Sprite();
-//            _displaySprite.addChild( _sceneObjectSprite );
-
-//            registerListener( _sceneObjectSprite, MouseEvent.CLICK, function(...ignored) :void {
-//                trace("_sceneObjectSprite clicked");
-//            });
-//            _sceneObjectSprite.init( new Rectangle(0, 0, 100, 100), 10, 10, 10, 10);
-//            _sceneObjectSprite.x = 20;
-//            _sceneObjectSprite.y = 20;
-
-//            _sceneObjectSprite.x = 20;
-//            _sceneObjectSprite.y = 20;
-
-
-
             _hudHelp = ClientContext.instantiateMovieClip("HUD", "popup_help", false);
             _displaySprite.addChild( _hudHelp );
             _displaySprite.addChild( _bloodTypeOverlay );
-//            _bloodTypeOverlay.graphics.beginFill(1);
-//            _bloodTypeOverlay.graphics.drawCircle(0, 0, 30);
-//            _bloodTypeOverlay.graphics.endFill();
-//            _hudHelp.x += _hudHelp.width / 2 + 20;
-//            _hudHelp.y += _hudHelp.height / 2 + 20;
-//            _sceneObjectSprite.addChild( _hudHelp );
 
-            //Debugging
-            function listChildren( mv :MovieClip ) :void
-            {
-                for( var i :int = 0; i < mv.numChildren; i++) {
-                    trace("Child " + mv.getChildAt(i).name);
-                }
-            }
-//            listChildren(_hudHelp);
+            //Make sure the blood strain page shows current data
+            updateBloodStrainPage();
+
 
 
 
             //Wire up the buttons
-            //On Introduction
-//            updateBloodStrainPage();
-
-
-
-
             _hudHelp.gotoAndStop("intro");
             registerListener( SimpleButton(findSafely("button_tofeedinggame")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
@@ -126,31 +86,9 @@ package vampire.client
             registerListener( SimpleButton(findSafely("help_back")), MouseEvent.CLICK,
                 backButtonPushed);
 
-
-
-
-            //Update the strains collected
-
-//            gotoFrame("bloodtype");
-//            updateBloodStrainPage();
             if( startframe != null ) {
                 _hudHelp.gotoAndStop(startframe);
             }
-
-
-//            if( ClientContext.ctrl.local.getPaintableArea() != null) {
-//                //Workaround as roombounds can be bigger than the paintable area
-//                if( ClientContext.ctrl.local
-//
-//                this.x = ClientContext.ctrl.local.getRoomBounds()[0]/2;// - _displaySprite.width/2;
-//                this.y = ClientContext.ctrl.local.getRoomBounds().height/2;// - _displaySprite.height/2;
-//            }
-//            registerListener( ClientContext.ctrl.local, AVRGameControlEvent.SIZE_CHANGED, function(...ignored) :void {
-//                if( ClientContext.ctrl.local.getPaintableArea() != null) {
-//                    _sceneObjectSprite.x = ClientContext.ctrl.local.getPaintableArea().width/2 - _sceneObjectSprite.width/2;
-//                    _sceneObjectSprite.y = ClientContext.ctrl.local.getPaintableArea().height/2 - _sceneObjectSprite.height/2;
-//                }
-//            });
 
             init( new Rectangle(-_displaySprite.width/2, _displaySprite.height/2, _displaySprite.width, _displaySprite.height), 0, 0, 0, 100);
             centerOnViewableRoom();
@@ -158,13 +96,11 @@ package vampire.client
 
         protected function updateBloodStrainPage() :void
         {
-//            _hudHelp.gotoAndStop("bloodtype");
             var feedingData :PlayerFeedingData = ClientContext.model.playerFeedingData;
             if( feedingData == null ) {
                 log.error("updateBloodStrainPage, feedingData == null");
                 return;
             }
-//            _hudHelp.gotoAndStop("intro");
             while(_bloodTypeOverlay.numChildren) { _bloodTypeOverlay.removeChildAt(0);}
 
             for( var i :int = 1; i < 13; i++) {
@@ -174,15 +110,21 @@ package vampire.client
                 }
                 var textFieldName :String = "indicator_" + numberAsText;
 
-//                var tf :TextField = findSafely(textFieldName) as TextField;
                 var tf :MovieClip = _hudHelp[textFieldName] as MovieClip;
                 if( tf == null ) {
                     log.error(textFieldName + " is null");
                     continue;
                 }
-//                trace("\n" + textFieldName);
-//                listChildren(tf);
-                TextField(tf["tally"]).text = "asdfsadfdsf";
+
+                if( Logic.getPlayerBloodStrain( ClientContext.ourPlayerId ) == i) {
+                    tf.gotoAndStop(3);
+                }
+
+                if( Logic.getPlayerPreferredBloodStrain( ClientContext.ourPlayerId ) == i) {
+                    tf.gotoAndStop(2);
+                }
+
+                TextField(tf["tally"]).text = "";
                 var tally :TextField = TextField(tf["tally"]);
 
                 var replacementTextField :TextField = new TextField();
@@ -199,69 +141,20 @@ package vampire.client
                 replacementTextField.setTextFormat( format );
                 tf.addChild( replacementTextField);
 
-//                trace("\n" + tf.name + ", text before=" + tf.text + ", loc=(" + tf.x + ", " + tf.y);
-//                tf.selectable = false;
-//                trace("Setting new text=" + (feedingData.getStrainCount( i - 1 ) + "/" + Constants.MAX_COLLECTIONS_PER_STRAIN));
-//                tf.text = feedingData.getStrainCount( i - 1 ) + "/" + Constants.MAX_COLLECTIONS_PER_STRAIN;
-//                trace(tf.name + ", text after=" + tf.text);
-//                registerListener(tf, MouseEvent.ROLL_OVER, function(...ignored) :void {
-//                   tf.text = "Mouse over"
-//                });
-//                registerListener(tf, MouseEvent.ROLL_OUT, function(...ignored) :void {
-//                   tf.text = "Mouse out"
-//                });
 
-//                var tf2 :TextField = new TextField();
-//                tf2.text = tf.text;
-//                tf2.x = tf.x;
-//                tf2.y = tf.y;
-//                tf2.name = tf.name;
-//                var parent :DisplayObjectContainer = tf.parent;
-//                if( parent == null) {
-//                    trace("parent is null");
-//                }
-//                if( parent.contains( tf ) ) {
-//                    trace("removing from parent " + tf.parent.name);
-//                    parent.removeChild( tf );
-//                }
+                var starsignTextField :TextField = new TextField();
+                starsignTextField.text = BLOOD_STRAIN_NAMES[i - 1];
+                starsignTextField.x = tally.x - 130;
+                starsignTextField.y = tally.y;
 
-                var startX :int = tf.x;
-                var startY :int = tf.y;
-                var strainCount :int = feedingData.getStrainCount( i - 1 );
-
-                var cell :DisplayObject;
-                var j :int;
-                for( j = 0; j < strainCount; j++) {
-                    cell = getFullCellSprite();
-                    cell.x = startX;
-                    cell.y = startY;
-                    _bloodTypeOverlay.addChild( cell );
-                    startX += cell.width + 5;
-//                    trace("drawing full cell for " + tf.name);
-//                    trace(startX + ", " + startY);
-                }
-                for( ; j < Constants.MAX_COLLECTIONS_PER_STRAIN; j++) {
-                    cell = getEmptyCellSprite();
-                    cell.x = startX;
-                    cell.y = startY;
-//                    trace("drawing empty cell for " + tf.name);
-                    _bloodTypeOverlay.addChild( cell );
-                    startX += cell.width + 5;
-//                    trace(startX + ", " + startY);
-                }
-
-
-
-
+                var starSignformat :TextFormat = new TextFormat();
+                starSignformat.size = 16;
+                starSignformat.color = 0xffffff;
+                starSignformat.align = TextFormatAlign.RIGHT;
+                starSignformat.bold = true;
+                starsignTextField.setTextFormat( starSignformat );
+                tf.addChild( starsignTextField);
             }
-
-            function listChildren( mv :DisplayObjectContainer ) :void
-            {
-                for( var i :int = 0; i < mv.numChildren; i++) {
-                    trace("Child " + mv.getChildAt(i).name);
-                }
-            }
-//            listChildren(_hudHelp);
         }
 
         protected function getFullCellSprite() :DisplayObject
@@ -295,7 +188,7 @@ package vampire.client
             _hudHelp.gotoAndStop(frame);
             if( frame == "bloodtype") {
 //                _hudHelp.addChild( _bloodTypeOverlay );
-//                updateBloodStrainPage();
+                updateBloodStrainPage();
             }
             else {
 //                if( _hudHelp.contains( _bloodTypeOverlay ) ) {
@@ -330,6 +223,21 @@ package vampire.client
 
         public static const NAME :String = "HelpPopup";
         protected static const log :Log = Log.getLog( HelpPopup );
+
+        protected static const BLOOD_STRAIN_NAMES :Array = [
+            "Aries",
+            "Taurus",
+            "Gemini",
+            "Cancer",
+            "Leo",
+            "Virgo",
+            "Libra",
+            "Scorpio",
+            "Sagittarius",
+            "Capricorn",
+            "Aquarius",
+            "Pisces"
+        ];
 
     }
 }
