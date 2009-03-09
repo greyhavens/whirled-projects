@@ -63,14 +63,21 @@ public class Logic
     }
     public static function xpNeededForLevel( level :int ) :Number
     {
-        level = Math.max(level, 1);
-        var base :Number = 1000;
-        var xp :Number = 0;
-        var addition :Number = 4000;
-        for( var i :int = 2; i <= level; i++) {
-            xp += (i-2) * addition + base;
+        if( level <= 1 ) {
+            return 0;
         }
-        return xp;
+        //D&D style leveling.
+        var base :Number = 1000;
+        return Math.pow(2, level-2)*base;
+
+//        level = Math.max(level, 1);
+//        var xp :Number = 0;
+//        var base :Number = 100;
+//        var addition :Number = 4000;
+//        for( var i :int = 2; i <= level; i++) {
+//            xp += (i-2) * addition + base;
+//        }
+//        return xp;
 //        return base * (level - 1) + (level - 1) * (base + base * (level - 1));
 //        return base * (level - 1) + (level - 1) * (base + base * (level - 1));
 //        return (level - 1) * 10;
