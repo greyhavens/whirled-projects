@@ -11,6 +11,7 @@ import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
+import flash.filters.GlowFilter;
 import flash.geom.Rectangle;
 
 import vampire.avatar.AvatarGameBridge;
@@ -128,6 +129,11 @@ public class ClientContext
     }
 
 
+    public static function get avatarNumberInRoom() :int
+    {
+        return ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR).length
+    }
+
 
     public static function getNonPlayerIds() :Array
     {
@@ -153,6 +159,12 @@ public class ClientContext
         return isLegal != null && Boolean(isLegal);
     }
 
+
+    /* See http://www.adobetutorialz.com/articles/1987/1/Color-Matrix */
+//    protected static const myElements_array :Array = [2,0,0,0,-13.5,0,2,0,0,-13.5,0,0,2,0,-13.5,0,0,0,1,0];
+//    public static const glowColorMatrixFilter :ColorMatrixFilter = new ColorMatrixFilter(myElements_array);
+
+    public static const glowFilter :GlowFilter = new GlowFilter(0xffffff);
 
 }
 

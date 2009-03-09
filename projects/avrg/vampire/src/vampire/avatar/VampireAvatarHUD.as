@@ -176,7 +176,10 @@ public class VampireAvatarHUD extends AvatarHUD
             //Show feed buttons if we are a player in bared mode, or a non-player
             if( !isPlayer || (action != null && action == VConstants.GAME_MODE_BARED)) {
 
-                if( getPotentialPredatorIds().size() > 1) {
+                //Make sure the frenzy button is only shown if there are more than 2 predators.
+                //This misses the case where there are two preds, and a non player, and the preds
+                //are feeding from each other.
+                if( getPotentialPredatorIds().size() > 1 && ClientContext.avatarNumberInRoom > 2) {
                     showFeedAndFrenzyButton();
                 }
                 else {
