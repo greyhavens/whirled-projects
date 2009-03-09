@@ -9,7 +9,6 @@ package vampire.data
 
     import flash.utils.Dictionary;
 
-    import vampire.client.events.HierarchyUpdatedEvent;
     import vampire.server.Player;
     import vampire.server.Room;
     import vampire.server.ServerContext;
@@ -48,18 +47,23 @@ public class MinionHierarchyServer extends MinionHierarchy
             i++;
         }
 
-
+       var roomsFinishedUpdating :Array = new Array();
 
         _roomsNeedingUpdate.forEach( function( roomId :int ) :void {
 
             var room :Room = _vserver.getRoom( roomId );
             if( room != null && room.ctrl != null ) {
-                updateIntoRoomProps( room );
+                var finished :Boolean = updateIntoRoomProps( room );
+                if( finished ) {
+                    roomsFinishedUpdating.push( roomId );
+                }
             }
         });
 
 
-        _roomsNeedingUpdate.clear();
+        for each( var finishedRoomId :int in roomsFinishedUpdating ) {
+            _roomsNeedingUpdate.remove( finishedRoomId );
+        }
     }
 
     protected function isPlayerDataEqual( player :Player ) :Boolean
@@ -180,9 +184,10 @@ public class MinionHierarchyServer extends MinionHierarchy
     }
 
     /**
-    * Mark this player and all sires and minions for an update.  This updates the lineage
-    * in all rooms with the players.
-    *
+    * Mark this player and all sires and minions for an update.  Note, the update does not occur
+    * in this method, it simply *marks* this player and appropriate links for an update.  The
+    * actual writing to room props occurs in the update method, so that the amount of network
+    * traffic can be controlled.
     */
     public function updatePlayer( playerId :int ) : void
     {
@@ -220,8 +225,9 @@ public class MinionHierarchyServer extends MinionHierarchy
     }
 
 
-    protected function updateIntoRoomProps( room :Room ) :void
+    protected function updateIntoRoomProps( room :Room ) :Boolean
     {
+        var finished :Boolean = true;
         try {
             if( room != null && room.ctrl != null && room.ctrl.isConnected()
                 && room.players != null && room.players.size() > 0 ) {
@@ -260,9 +266,17 @@ public class MinionHierarchyServer extends MinionHierarchy
                     delete roomDict[playerIdToRemove];
                 }
 
+                var updateCount :int = 0;
                 //Update the room props for individual player data
                 playerTree.forEach( function( playerId :int, nameAndSire :Array) :void {
+
+                    if( updateCount >= MAX_LINEAGE_NODES_WRITTEN_TO_A_ROOM_PROPS_PER_UPDATE) {
+                        finished = false;
+                        return;
+                    }
+
                     if ( !ArrayUtil.equals(roomDict[playerId], nameAndSire) ) {
+                        updateCount++;
                         log.debug(VConstants.DEBUG_MINION + "updateIntoRoomProps(), setIn(" +Codes.ROOM_PROP_MINION_HIERARCHY + ", " +playerId + "=" +  nameAndSire + ")");
                         room.ctrl.props.setIn(Codes.ROOM_PROP_MINION_HIERARCHY, playerId, nameAndSire);
                     }
@@ -276,6 +290,7 @@ public class MinionHierarchyServer extends MinionHierarchy
             log.error("Problem in updateIntoRoomProps()", "room", room);
             log.error(err.getStackTrace());
         }
+        return finished;
     }
 
 
@@ -348,6 +363,12 @@ public class MinionHierarchyServer extends MinionHierarchy
     protected var _roomsNeedingUpdate :HashSet = new HashSet();
     protected var _playerIdsNeedingUpdate :Array = new Array();
 
+    /**
+    * The lineage will be very large for some players.  To prevent a massive dump of a large lineage
+    * into room props, the lineage will be incrementally sent.  Each update, a small chunk of the
+    * linage will be sent, without any regard for the order or structure.
+    */
+    protected static const MAX_LINEAGE_NODES_WRITTEN_TO_A_ROOM_PROPS_PER_UPDATE :int = 10;
     protected static const log :Log = Log.getLog( MinionHierarchyServer );
 
 }
