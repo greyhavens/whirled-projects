@@ -5,6 +5,11 @@
 public class VConstants
 {
 
+    /**
+    * If you're not related to the ubervamp
+    */
+    public static const UBER_VAMP_ID :int = 12;//On localhost only.  Create an id for whirled.
+
     /**This is like a radius in logical distance units.*/
     public static const FEEDING_LOGICAL_X_OFFSET :Number = 0.1;
     public static const FEEDING_LOGICAL_Z_OFFSET :Number = 0.01;
