@@ -368,7 +368,7 @@ public class MinionHierarchyServer extends MinionHierarchy
     * into room props, the lineage will be incrementally sent.  Each update, a small chunk of the
     * linage will be sent, without any regard for the order or structure.
     */
-    protected static const MAX_LINEAGE_NODES_WRITTEN_TO_A_ROOM_PROPS_PER_UPDATE :int = 10;
+    protected static const MAX_LINEAGE_NODES_WRITTEN_TO_A_ROOM_PROPS_PER_UPDATE :int = 50;
     protected static const log :Log = Log.getLog( MinionHierarchyServer );
 
 }
