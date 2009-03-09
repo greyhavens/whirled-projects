@@ -6,8 +6,7 @@ package vampire.avatar
     import com.whirled.avrg.AVRGameControl;
     import com.whirled.contrib.EventHandlerManager;
     import com.whirled.contrib.avrg.AvatarHUD;
-    import com.whirled.contrib.simplegame.objects.SceneObject;
-    import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
+    import com.whirled.contrib.simplegame.objects.SceneButton;
     import com.whirled.contrib.simplegame.objects.SimpleTimer;
     import com.whirled.contrib.simplegame.tasks.AlphaTask;
     import com.whirled.contrib.simplegame.tasks.FunctionTask;
@@ -16,6 +15,7 @@ package vampire.avatar
     import com.whirled.net.ElementChangedEvent;
     import com.whirled.net.MessageReceivedEvent;
 
+    import flash.display.DisplayObject;
     import flash.display.InteractiveObject;
     import flash.display.MovieClip;
     import flash.display.SimpleButton;
@@ -23,7 +23,6 @@ package vampire.avatar
     import flash.events.MouseEvent;
     import flash.geom.Point;
 
-    import vampire.Util;
     import vampire.client.ClientContext;
     import vampire.client.VampireController;
     import vampire.client.events.HierarchyUpdatedEvent;
@@ -43,52 +42,80 @@ public class VampireAvatarHUD extends AvatarHUD
     public function VampireAvatarHUD( ctrl :AVRGameControl, userId:int)
     {
         super(ctrl, userId);
-        trace("userId " + userId);
         _roomKey = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + _userId;
 
         //Listen for changes in blood levels
         registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
         registerListener(ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
 
-        registerListener(ClientContext.model, HierarchyUpdatedEvent.HIERARCHY_UPDATED, updateInfoHud);
+        setupUI();
 
+
+    }
+
+
+    protected function setupUI() :void
+    {
+        //Set up common UI elements
         _hudSprite = new Sprite();
         _displaySprite.addChild( _hudSprite );
-//        _hudSprite.y = -10;
+
+        _blood = ClientContext.instantiateMovieClip("HUD", "target_blood_meter", false);
+        _blood.height = 10;
+        _hudSprite.addChild( _blood );
+
+        //Create a mouse over sprite.
+        _mouseOverSprite.graphics.beginFill(0, 0);
+        _mouseOverSprite.graphics.drawRect( -40, -20, 80, 100);
+        _mouseOverSprite.graphics.endFill();
 
 
+        _target_UI = ClientContext.instantiateMovieClip("HUD", "target_UI", false);
+
+        //Set up UI elements depending if we are the players avatar
+        if( playerId == ClientContext.ourPlayerId ) {
+            setupUIYourAvatar();
+        }
+        else {
+            setupUITarget();
+        }
+    }
+
+    protected function setupUITarget() :void
+    {
+        //Detach the bare buttons only used on our own avatar
+        for each( var unusedButton :DisplayObject in [_target_UI.button_bare,
+            _target_UI.button_revert]) {
+
+            unusedButton.parent.removeChild( unusedButton );
+        }
+
+        //Listen for changes in the hierarchy
+        registerListener(ClientContext.model, HierarchyUpdatedEvent.HIERARCHY_UPDATED, updateInfoHud);
+
+        _feedButton = new SceneButton(_target_UI.button_feed);
+        _frenzyButton = new SceneButton(_target_UI.button_frenzy);
 
 
-        _target_UI = ClientContext.instantiateMovieClip("HUD", "target_UI", true);
-        _target_UI.mouseChildren = true;
-        _hudSprite.addChild( _target_UI );
+        _feedButton.alpha = 0;
+        _frenzyButton.alpha = 0;
 
-        _target_UI.setChildIndex(buttonFeed, 0);
-        buttonFeed.alpha = 0;
-        buttonFeed.mouseEnabled = false;
-        buttonFeed.y = FEED_BUTTON_Y;
-        buttonFrenzy.y = buttonFeed.y + 28;
+        //Move both buttons down a notch
+        var yDiffFeedFrenzy :int = _frenzyButton.y - _feedButton.y;
+        _feedButton.y = FEED_BUTTON_Y;
+        _frenzyButton.y = _feedButton.y + yDiffFeedFrenzy;
 
-        _feedObject = new SimpleSceneObject(buttonFeed);
-        _frenzyObject = new SimpleSceneObject(buttonFrenzy);
-        _feedObject.alpha = 0;
-        _frenzyObject.alpha = 0;
-
-
-
-        registerListener(buttonFeed, MouseEvent.CLICK, function (...ignored) :void {
-//            ClientContext.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET);
+        _feedButton.registerButtonListener( MouseEvent.CLICK, function (...ignored) :void {
             ClientContext.controller.handleSendFeedRequest( playerId, false );
             showBloodBarOnly();
             _isMouseOver = false;
-            buttonFeed.alpha = 0;
-            buttonFrenzy.alpha = 0;
+            _feedButton.alpha = 0;
+            _frenzyButton.alpha = 0;
         });
 
-        buttonFrenzy.alpha = 0;
-        registerListener(buttonFrenzy, MouseEvent.CLICK, function (...ignored) :void {
-            buttonFeed.alpha = 0;
-            buttonFrenzy.alpha = 0;
+        _frenzyButton.registerButtonListener( MouseEvent.CLICK, function (...ignored) :void {
+            _feedButton.alpha = 0;
+            _frenzyButton.alpha = 0;
             ClientContext.controller.handleSendFeedRequest( playerId, true );
 
             if( _frenzyDelayRemaining <= 0 ) {
@@ -102,7 +129,7 @@ public class VampireAvatarHUD extends AvatarHUD
                 db.addObject( t );
             }
             _frenzyButtonClicked = true;
-            buttonFrenzy.alpha = 0;
+            _frenzyButton.alpha = 0;
             showFrenzyTimerWithoutButton();
         });
 
@@ -121,67 +148,132 @@ public class VampireAvatarHUD extends AvatarHUD
         //HUD bits and bobs
         _hierarchyIcon = ClientContext.instantiateButton("HUD", "button_hierarchy_no_mouse");
         _hierarchyIcon.mouseEnabled = true;
+        _hierarchyIcon.scaleX = _hierarchyIcon.scaleY = 0.8;
         _bloodBondIcon = ClientContext.instantiateMovieClip("HUD", "bond_icon", false);
-        _blood = ClientContext.instantiateMovieClip("HUD", "target_blood_meter", false);
-        _blood.height = 10;
-
-        //Create a mouse over sprite.
-        _mouseOverSprite.graphics.beginFill(0, 0);
-        _mouseOverSprite.graphics.drawRect( -40, -20, 80, 100);
-        _mouseOverSprite.graphics.endFill();
-
-        //Add a mouse move listener to the blood.  This triggers showing the feed buttons
-        registerListener( _blood, MouseEvent.ROLL_OVER, function(...ignored) :void {
-            _isMouseOver = true;
-            _hudSprite.addChildAt(_mouseOverSprite, 0);
-            if( getPotentialPredatorIds().size() > 1) {
-                showFeedAndFrenzyButton();
-            }
-            else {
-                showFeedButtonOnly();
-            }
-        });
 
         _preyStrain = ClientContext.instantiateMovieClip("HUD", "prey_strain", false);
         _preyStrain.scaleX = _preyStrain.scaleY = 2;
-        _hudSprite.addChild( _blood );
+
+        //Add a mouse move listener to the blood.  This triggers showing the feed buttons
+        var showMenuFunction :Function = function(...ignored) :void {
+            _isMouseOver = true;
+            _hudSprite.addChildAt(_mouseOverSprite, 0);
+
+
+            if( VConstants.LOCAL_DEBUG_MODE ) {
+                showFeedAndFrenzyButton();
+                return;
+            }
+
+            //Only show feed buttons if there is sufficient blood
+            if( SharedPlayerStateClient.getBlood( playerId ) <= 1) {
+                return;
+            }
+
+            var isPlayer :Boolean = ArrayUtil.contains(_ctrl.room.getPlayerIds(), playerId);
+            var action :String = SharedPlayerStateClient.getCurrentAction( playerId );
+
+            //Show feed buttons if we are a player in bared mode, or a non-player
+            if( !isPlayer || (action != null && action == VConstants.GAME_MODE_BARED)) {
+
+                if( getPotentialPredatorIds().size() > 1) {
+                    showFeedAndFrenzyButton();
+                }
+                else {
+                    showFeedButtonOnly();
+                }
+            }
+
+        }
+
+        //Make sure that if any part of the menu is moused over, show the action buttons
+        registerListener( _blood, MouseEvent.ROLL_OVER, showMenuFunction);
+        registerListener( _hierarchyIcon, MouseEvent.ROLL_OVER, showMenuFunction);
+        registerListener( _bloodBondIcon, MouseEvent.ROLL_OVER, showMenuFunction);
+        registerListener( _preyStrain, MouseEvent.ROLL_OVER, showMenuFunction);
+
+
         _hudSprite.addChild( _hierarchyIcon );
         _hudSprite.addChild( _bloodBondIcon );
 
-        //Go to the help page when you click on the icon
-//        addGlowFilter( _hierarchyIcon );
-        addGlowFilter( _bloodBondIcon );
-        addGlowFilter( _preyStrain );
-//        addGlowFilter( _blood );
-
-        Command.bind( _hierarchyIcon, MouseEvent.CLICK, VampireController.SHOW_INTRO, "lineage");
-        Command.bind( _bloodBondIcon, MouseEvent.CLICK, VampireController.SHOW_INTRO, "bloodbond");
-        Command.bind( _preyStrain, MouseEvent.CLICK, VampireController.SHOW_INTRO, "bloodtype");
-        Command.bind( _blood, MouseEvent.CLICK, VampireController.SHOW_INTRO, "feedinggame");
-
-
-
-        if( Logic.getPlayerPreferredBloodStrain( ClientContext.ourPlayerId ) == userId ) {
+        if( Logic.getPlayerPreferredBloodStrain( ClientContext.ourPlayerId ) == playerId ) {
             _hudSprite.addChild( _preyStrain );
             _preyStrain.y -= 15;
         }
 
+        addGlowFilter( _bloodBondIcon );
+        addGlowFilter( _preyStrain );
+
+        //Go to the help page when you click on the icon
+        Command.bind( _hierarchyIcon, MouseEvent.CLICK, VampireController.SHOW_INTRO, "default");
+        Command.bind( _bloodBondIcon, MouseEvent.CLICK, VampireController.SHOW_INTRO, "default");
+        Command.bind( _preyStrain, MouseEvent.CLICK, VampireController.SHOW_INTRO, "bloodtype");
+        Command.bind( _blood, MouseEvent.CLICK, VampireController.SHOW_INTRO, "feedinggame");
+
         updateInfoHud();
 
-        showNothing();
+    }
 
-        buttonFeed.alpha = 0;
+    protected function setupUIYourAvatar() :void
+    {
+
+        //Detach the bare buttons only used on our own avatar
+        for each( var unusedButton :DisplayObject in [_target_UI.button_feed,
+            _target_UI.button_frenzy, _target_UI.frenzy_countdown, _target_UI.waiting_sign]) {
+
+            unusedButton.parent.removeChild( unusedButton );
+        }
 
 
 
+        _bareButton = new SceneButton( _target_UI.button_bare );
+        _unbareButton = new SceneButton( _target_UI.button_revert);
+        _bareButton.mouseEnabled = true;
+        _bareButton.y = FEED_BUTTON_Y;
+        _unbareButton.y = _bareButton.y;
 
+        _bareButton.alpha = 0;
+        _unbareButton.alpha = 0;
+
+
+        _bareButton.registerButtonListener( MouseEvent.CLICK, function (...ignored) :void {
+            _bareButton.alpha = 0;
+            ClientContext.controller.handleSwitchMode(VConstants.GAME_MODE_BARED );
+        });
+
+        _unbareButton.registerButtonListener( MouseEvent.CLICK, function (...ignored) :void {
+            _unbareButton.alpha = 0;
+            _ctrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
+            ClientContext.controller.handleSwitchMode(VConstants.GAME_MODE_NOTHING );
+        });
+
+        //Add a mouse move listener to the blood.  This triggers showing the feed buttons
+
+        var showMenuFunction :Function = function(...ignored) :void {
+            _isMouseOver = true;
+            _hudSprite.addChildAt(_mouseOverSprite, 0);
+
+            if( ClientContext.model.action == VConstants.GAME_MODE_BARED ) {
+                showUnBareButton();
+            }
+            else {
+                showBareButton();
+            }
+
+        }
+
+        //Make sure that if any part of the menu is moused over, show the action buttons
+        registerListener( _blood, MouseEvent.ROLL_OVER, showMenuFunction);
+
+
+        updateBlood();
 
     }
 
     protected function addGlowFilter( obj : InteractiveObject ) :void
     {
         registerListener( obj, MouseEvent.ROLL_OVER, function(...ignored) :void {
-            obj.filters = [Util.glowFilter];
+            obj.filters = [ClientContext.glowFilter];
         });
         registerListener( obj, MouseEvent.ROLL_OUT, function(...ignored) :void {
             obj.filters = [];
@@ -192,18 +284,22 @@ public class VampireAvatarHUD extends AvatarHUD
     {
         super.addedToDB();
 
-        //Wrap buttons as SceneObjects for easy creation of animation effects.
-        _feedObject = new SimpleSceneObject(buttonFeed);
-        _frenzyObject = new SimpleSceneObject(buttonFrenzy);
-
-        db.addObject( _feedObject, _hudSprite );
-        db.addObject( _frenzyObject, _hudSprite );
+        if( ClientContext.ourPlayerId == playerId ) {
+            db.addObject( _bareButton );
+            db.addObject( _unbareButton );
+        }
+        else {
+            db.addObject( _frenzyButton );
+            db.addObject( _feedButton );
+        }
     }
 
     override protected function destroyed():void
     {
-        _feedObject.destroySelf();
-        _frenzyObject.destroySelf();
+        _feedButton.destroySelf();
+        _frenzyButton.destroySelf();
+        _bareButton.destroySelf();
+        _unbareButton.destroySelf();
     }
     protected function decrementTime() :void
     {
@@ -325,7 +421,6 @@ public class VampireAvatarHUD extends AvatarHUD
                 }
                 else {
                     _frenzyDelayRemaining = 0;
-                    showNothing();
                 }
             }
         }
@@ -355,6 +450,10 @@ public class VampireAvatarHUD extends AvatarHUD
     }
     protected function updateInfoHud(...ignored) :void
     {
+        //If it's our avatar HUD, don't show any extra details.
+        if( ClientContext.ourPlayerId == playerId ) {
+            return;
+        }
 
         updateBlood();
 
@@ -381,45 +480,6 @@ public class VampireAvatarHUD extends AvatarHUD
         return ArrayUtil.contains( ClientContext.ctrl.room.getPlayerIds(), playerId );
     }
 
-    public function setDisplayModeInvisible() :void
-    {
-        if( _frenzyDelayRemaining ) {
-            showFrenzyTimerWithoutButton()
-        }
-        else {
-            showNothing();
-        }
-
-    }
-
-    public function setDisplayModeSelectableForFeed( multiplayer :Boolean ) :void
-    {
-        _displaySprite.addChild( _hudSprite );
-//        buttonFeed.visible = true;
-//        buttonFrenzy.visible = multiplayer;
-    }
-
-    public function setDisplayModeShowInfo() :void
-    {
-        showBloodBarOnly();
-        showFrenzyTimerIfCounting();
-    }
-
-    public function setSelectedForFeed( multiplayer :Boolean ) :void
-    {
-        _displaySprite.addChild( _hudSprite );
-
-
-        if( multiplayer ) {
-            showFeedButtonOnly();
-        }
-        else {
-            showFeedAndFrenzyButton();
-        }
-
-        showFrenzyTimerIfCounting();
-
-    }
 
 
 
@@ -444,8 +504,10 @@ public class VampireAvatarHUD extends AvatarHUD
                     var serialTask :SerialTask = new SerialTask();
                     serialTask.addTask( new TimedTask(ANIMATION_TIME));
                     serialTask.addTask( new FunctionTask( function() :void {
-                        animateHideFeedButton();
-                        animateHideFrenzyButton();
+                        animateHideButton(_feedButton);
+                        animateHideButton(_frenzyButton);
+                        animateHideButton(_bareButton);
+                        animateHideButton(_unbareButton);
                     }));
                     serialTask.addTask( new TimedTask(ANIMATION_TIME));
                     serialTask.addTask( new FunctionTask( function() :void {
@@ -455,21 +517,12 @@ public class VampireAvatarHUD extends AvatarHUD
 
 
                 }
-//                showBloodBarOnly();
             }
 
         }
     }
 
 
-    protected function get buttonFeed() :SimpleButton
-    {
-        return _target_UI.button_feed;
-    }
-    protected function get buttonFrenzy() :SimpleButton
-    {
-        return _target_UI.button_frenzy;
-    }
     protected function get frenzyCountdown() :MovieClip
     {
         return _target_UI.frenzy_countdown;
@@ -485,7 +538,6 @@ public class VampireAvatarHUD extends AvatarHUD
         super.drawMouseSelectionGraphics();
         //Draw an invisible box to detect mouse movement/clicks
 
-
         if( _hudSprite != null && _hotspot != null && hotspot.length >= 2// && !isNaN(_zScaleFactor)
             && !isNaN(hotspot[0]) && !isNaN(hotspot[1]) ) {
 
@@ -500,57 +552,41 @@ public class VampireAvatarHUD extends AvatarHUD
 
     public function showBloodBarOnly() :void
     {
-        if( playerId == ClientContext.ourPlayerId) {
+        _displaySprite.addChild( _hudSprite );
+        updateBlood();
+    }
+
+
+    protected function animateShowButton( sceneButton :SceneButton ) :void
+    {
+        _hudSprite.addChild( sceneButton.displayObject);
+        sceneButton.mouseEnabled = true;
+        sceneButton.addTask( AlphaTask.CreateEaseIn(1, ANIMATION_TIME));
+    }
+
+    protected function animateHideButton(sceneButton :SceneButton ) :void
+    {
+        if( sceneButton == null || sceneButton.displayObject == null ||
+            sceneButton.displayObject.parent == null ) {
             return;
         }
 
-        _displaySprite.addChild( _hudSprite );
-        animateHideFeedButton();
-        animateHideFrenzyButton();
-
-//        buttonFeed.visible = false;
-//        buttonFrenzy.visible = false;
-        frenzyCountdown.visible = false;
-
-    }
-
-    protected function animateShowFeedButton() :void
-    {
-        _hudSprite.addChild( _feedObject.displayObject );
-        buttonFeed.mouseEnabled = true;
-        _feedObject.addTask( AlphaTask.CreateEaseIn(1, ANIMATION_TIME));
-    }
-
-    protected function animateShowFrenzyButton() :void
-    {
-        _hudSprite.addChild( _frenzyObject.displayObject );
-        buttonFrenzy.mouseEnabled = true;
-        _frenzyObject.addTask( AlphaTask.CreateEaseIn(1, ANIMATION_TIME));
-    }
-
-    protected function animateHideFeedButton() :void
-    {
         var serialTask :SerialTask = new SerialTask();
         serialTask.addTask( AlphaTask.CreateEaseOut(0, ANIMATION_TIME) );
         serialTask.addTask( new FunctionTask( function() :void {
-            if( _feedObject.displayObject.parent.contains( _feedObject.displayObject)) {
-                _feedObject.displayObject.parent.removeChild( _feedObject.displayObject );
+
+            if( sceneButton.displayObject.parent == null ) {
+                return;
+            }
+
+            if( sceneButton.displayObject.parent.contains( sceneButton.displayObject)) {
+                sceneButton.displayObject.parent.removeChild( sceneButton.displayObject );
             }
         }));
-        _feedObject.addTask( serialTask );
+        sceneButton.addTask( serialTask );
     }
 
-    protected function animateHideFrenzyButton() :void
-    {
-        var serialTask :SerialTask = new SerialTask();
-        serialTask.addTask( AlphaTask.CreateEaseOut(0, ANIMATION_TIME) );
-        serialTask.addTask( new FunctionTask( function() :void {
-            if( _frenzyObject.displayObject.parent.contains( _frenzyObject.displayObject)) {
-                _frenzyObject.displayObject.parent.removeChild( _frenzyObject.displayObject );
-            }
-        }));
-        _frenzyObject.addTask( serialTask );
-    }
+
 
     public function showFeedButtonOnly() :void
     {
@@ -560,11 +596,35 @@ public class VampireAvatarHUD extends AvatarHUD
 
         _displaySprite.addChild( _hudSprite );
 
-        animateShowFeedButton();
-
-//        buttonFrenzy.visible = false;
-//        frenzyCountdown.visible = false;
+        animateShowButton(_feedButton);
+        if( _frenzyButton.displayObject.parent != null &&
+            _frenzyButton.displayObject.parent.contains( _frenzyButton.displayObject)) {
+            _frenzyButton.displayObject.parent.removeChild( _frenzyButton.displayObject );
+        }
     }
+
+    public function showBareButton() :void
+    {
+        if( playerId != ClientContext.ourPlayerId) {
+            return;
+        }
+
+        _displaySprite.addChild( _hudSprite );
+
+        animateShowButton(_bareButton);
+    }
+
+    public function showUnBareButton() :void
+    {
+        if( playerId != ClientContext.ourPlayerId) {
+            return;
+        }
+
+        _displaySprite.addChild( _hudSprite );
+
+        animateShowButton(_unbareButton);
+    }
+
     public function showFeedAndFrenzyButton() :void
     {
         if( playerId == ClientContext.ourPlayerId) {
@@ -572,8 +632,9 @@ public class VampireAvatarHUD extends AvatarHUD
         }
 
         _displaySprite.addChild( _hudSprite );
-        animateShowFeedButton();
-        animateShowFrenzyButton();
+        animateShowButton(_feedButton);
+        animateShowButton(_frenzyButton);
+
         frenzyCountdown.visible = false;
     }
 
@@ -585,8 +646,8 @@ public class VampireAvatarHUD extends AvatarHUD
 
         _displaySprite.addChild( _hudSprite );
 
-        buttonFeed.alpha = 0;
-        buttonFrenzy.alpha = 0;
+        _feedButton.alpha = 0;
+        _frenzyButton.alpha = 0;
         frenzyCountdown.visible = true;
     }
 
@@ -597,8 +658,8 @@ public class VampireAvatarHUD extends AvatarHUD
         }
         _displaySprite.addChild( _hudSprite );
 
-        buttonFeed.alpha = 0;
-        buttonFrenzy.alpha = 1;
+        _feedButton.alpha = 0;
+        _frenzyButton.alpha = 1;
         frenzyCountdown.visible = true;
     }
 
@@ -611,8 +672,8 @@ public class VampireAvatarHUD extends AvatarHUD
         if( (_frenzyDelayRemaining > 0 ) && ClientContext.model.isVampire()) {
 
             _displaySprite.addChild( _hudSprite );
-            buttonFeed.alpha = 0;
-            buttonFrenzy.alpha = _frenzyButtonClicked ? 0 : 1;
+            _feedButton.alpha = 0;
+            _frenzyButton.alpha = _frenzyButtonClicked ? 0 : 1;
             frenzyCountdown.visible = true;
             frenzyCountdown.gotoAndStop( int( 100 - (_frenzyDelayRemaining*100 / VConstants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME) ));
         }
@@ -622,15 +683,6 @@ public class VampireAvatarHUD extends AvatarHUD
         }
     }
 
-    public function showNothing() :void
-    {
-        if( _displaySprite.contains( _hudSprite ) ) {
-            _displaySprite.removeChild( _hudSprite );
-        }
-//        buttonFeed.visible = false;
-//        buttonFrenzy.visible = false;
-//        frenzyCountdown.visible = false;
-    }
 
 
     protected var _hudMouseEvents :EventHandlerManager = new EventHandlerManager();
@@ -644,8 +696,10 @@ public class VampireAvatarHUD extends AvatarHUD
 
     protected var _roomKey :String;
 
-    protected var _feedObject :SceneObject;
-    protected var _frenzyObject :SceneObject;
+    protected var _feedButton :SceneButton;
+    protected var _frenzyButton :SceneButton;
+    protected var _bareButton :SceneButton;
+    protected var _unbareButton :SceneButton;
 
 
     /**
