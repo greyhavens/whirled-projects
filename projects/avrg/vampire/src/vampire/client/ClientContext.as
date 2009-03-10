@@ -11,6 +11,7 @@ import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
+import flash.display.Sprite;
 import flash.filters.GlowFilter;
 import flash.geom.Rectangle;
 
@@ -159,10 +160,21 @@ public class ClientContext
         return isLegal != null && Boolean(isLegal);
     }
 
+    public static function isAdmin( playerId :int ) :Boolean
+    {
+        return playerId == 23340 || //Ragbeard
+               playerId == 1769  || //Capital-T-Tim
+               playerId == 12    || //Nemo
+               playerId == VConstants.UBER_VAMP_ID; //Übervamp
+    }
 
-    /* See http://www.adobetutorialz.com/articles/1987/1/Color-Matrix */
-//    protected static const myElements_array :Array = [2,0,0,0,-13.5,0,2,0,0,-13.5,0,0,2,0,-13.5,0,0,0,1,0];
-//    public static const glowColorMatrixFilter :ColorMatrixFilter = new ColorMatrixFilter(myElements_array);
+    //FOr debugging positions
+    public static function drawDotAtCenter( s :Sprite ) :void
+    {
+        s.graphics.beginFill(0xffffff);
+        s.graphics.drawCircle(0,0,10);
+        s.graphics.endFill();
+    }
 
     public static const glowFilter :GlowFilter = new GlowFilter(0xffffff);
 
