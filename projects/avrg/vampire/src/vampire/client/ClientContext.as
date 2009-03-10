@@ -165,6 +165,8 @@ public class ClientContext
         return playerId == 23340 || //Ragbeard
                playerId == 1769  || //Capital-T-Tim
                playerId == 12    || //Nemo
+               playerId == 1     || //local msoy
+               playerId == 2     || //local msoy
                playerId == VConstants.UBER_VAMP_ID; //Übervamp
     }
 
