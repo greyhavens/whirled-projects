@@ -5,10 +5,12 @@ package vampire.client
     import com.whirled.contrib.avrg.DraggableSceneObject;
 
     import flash.display.DisplayObject;
+    import flash.display.InteractiveObject;
     import flash.display.MovieClip;
     import flash.display.SimpleButton;
     import flash.display.Sprite;
     import flash.events.MouseEvent;
+    import flash.filters.GlowFilter;
     import flash.geom.Rectangle;
     import flash.text.TextField;
     import flash.text.TextFormat;
@@ -98,7 +100,12 @@ package vampire.client
                 function( e :MouseEvent ) :void {
                     ClientContext.ctrl.local.showInvitePage("Join my Coven!", "" + ClientContext.ourPlayerId);
                 });
+            registerListener( MovieClip(findSafely("bond_icon")), MouseEvent.CLICK,
+                function( e :MouseEvent ) :void {
+                    gotoFrame("bloodbond");
+                });
 
+//            addGlowFilter( MovieClip(findSafely("bond_icon")) );
 
             registerListener( SimpleButton(findSafely("help_back")), MouseEvent.CLICK,
                 backButtonPushed);
@@ -112,6 +119,15 @@ package vampire.client
         }
 
 
+        protected function addGlowFilter( obj : InteractiveObject ) :void
+        {
+            registerListener( obj, MouseEvent.ROLL_OVER, function(...ignored) :void {
+                obj.filters = [_glowFilter];
+            });
+            registerListener( obj, MouseEvent.ROLL_OUT, function(...ignored) :void {
+                obj.filters = [];
+            })
+        }
 
         protected function updateBloodStrainPage() :void
         {
@@ -254,7 +270,7 @@ package vampire.client
                 case "default":
 
                     //Center the lineage view on the anchor created for it.
-                    var lineage_center :MovieClip = findSafely( "lineage_center") as MovieClip;
+                    var lineage_center :MovieClip = findSafely("lineage_center") as MovieClip;
                     lineage_center.parent.addChild( _lineageView.displayObject );
                     _lineageView.x = lineage_center.x;
                     _lineageView.y = lineage_center.y - 20;
@@ -273,10 +289,6 @@ package vampire.client
             }
         }
 
-//        override public function get displayObject () :DisplayObject
-//        {
-//            return _sceneObjectSprite;
-//        }
 
         override public function get objectName () :String
         {
@@ -284,8 +296,6 @@ package vampire.client
         }
 
         protected var _hudHelp :MovieClip;
-//        protected var _sceneObjectSprite :DraggableSprite;
-//        protected var _sceneObjectSprite :Sprite;
         protected var _frameHistory :Array = new Array();
         protected var _bloodTypeOverlay :Sprite = new Sprite();
 
@@ -293,6 +303,8 @@ package vampire.client
 
         public static const NAME :String = "HelpPopup";
         protected static const log :Log = Log.getLog( HelpPopup );
+
+        protected var _glowFilter :GlowFilter = new GlowFilter(0xffffff);
 
         protected static const BLOOD_STRAIN_NAMES :Array = [
             "Aries",
