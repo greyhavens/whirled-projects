@@ -34,7 +34,8 @@ public class DraggableSprite extends Sprite
     public function DraggableSprite (ctrl :AVRGameControl, persistId :String = null)
     {
         _ctrl = ctrl;
-        _persistId = persistId;
+        //Don't store the positions for now
+//        _persistId = persistId;
 
         _ctrl.local.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
         _ctrl.player.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM, handleEnteredRoom);
@@ -72,9 +73,9 @@ public class DraggableSprite extends Sprite
 
     protected function handleMouseDown (evt :MouseEvent) :void
     {
-        if (!evt.shiftKey) {
-            return;
-        }
+//        if (!evt.shiftKey) {
+//            return;
+//        }
 
         if (_offset == null) {
             this.addEventListener(Event.ENTER_FRAME, handleFrame);
@@ -109,7 +110,9 @@ public class DraggableSprite extends Sprite
             if (Math.abs(p.x + _bounds.left - _paintable.left) < SNAP_MARGIN) {
                 _xSnap = SNAP_LEFT;
 
+
             } else if (Math.abs(p.x + _bleed + _bounds.left - _painted.right) < SNAP_MARGIN) {
+
                 _xSnap = SNAP_ROOM_EDGE;
 
             } else if (Math.abs(p.x + _bounds.right - _paintable.right) < SNAP_MARGIN) {
@@ -153,6 +156,8 @@ public class DraggableSprite extends Sprite
         }
 
         layout();
+
+//        trace("handleFrame (" + this.x + ", " + this.y + "), bounds=" + _bounds);
     }
 
     protected function handleMouseUp (evt :MouseEvent) :void
@@ -213,9 +218,7 @@ public class DraggableSprite extends Sprite
             return;
         }
 
-        //Make sure we are not outside the room
-        this.x = MathUtil.clamp( this.x, 0, _painted.width);
-        this.y = MathUtil.clamp( this.y, 0, _painted.height);
+
 
         switch(_xSnap) {
             case SNAP_NONE:
@@ -248,7 +251,13 @@ public class DraggableSprite extends Sprite
                 this.y = Math.max(0, _paintable.bottom - _bounds.bottom);
                 break;
         }
+
+        //Make sure we are not outside the paintable area, no matter what.
+        this.x = MathUtil.clamp( this.x, Math.abs(_bounds.left), _ctrl.local.getPaintableArea().width - Math.abs(_bounds.right));
+        this.y = MathUtil.clamp( this.y, 0 + this.height/2, _ctrl.local.getPaintableArea().height - this.height/2);
     }
+
+//    public function shutdown :
 
     protected var _ctrl :AVRGameControl;
 
