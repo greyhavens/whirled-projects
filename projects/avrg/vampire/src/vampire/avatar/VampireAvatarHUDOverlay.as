@@ -31,29 +31,29 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
     public function VampireAvatarHUDOverlay(ctrl:AVRGameControl)
     {
         super(ctrl);
-        super.isShowingOwnAvatar = false;
+        super.isShowingOwnAvatar = true;
 //        _vampireAvatarManager = avatarManager;
 
-        registerListener( _ctrl.room, AVRGameRoomEvent.PLAYER_ENTERED, reapplyDisplayMode);
-        registerListener( _ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, reapplyDisplayMode);
+//        registerListener( _ctrl.room, AVRGameRoomEvent.PLAYER_ENTERED, reapplyDisplayMode);
+//        registerListener( _ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, reapplyDisplayMode);
 
         //If somebody changes an action, make sure we are updated.
-        registerListener( _ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED,
-            function( e :ElementChangedEvent ) :void {
-                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION ) {
-                    reapplyDisplayMode();
-                }
-            }
-        );
+//        registerListener( _ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED,
+//            function( e :ElementChangedEvent ) :void {
+//                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION ) {
+//                    reapplyDisplayMode();
+//                }
+//            }
+//        );
 
         //If an avatar changes state, make sure we are updated.
-        registerListener( _ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED,
-            function( e :ElementChangedEvent ) :void {
-                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE) {
-                    reapplyDisplayMode();
-                }
-            }
-        );
+//        registerListener( _ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED,
+//            function( e :ElementChangedEvent ) :void {
+//                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE) {
+//                    reapplyDisplayMode();
+//                }
+//            }
+//        );
 
 
 
@@ -79,18 +79,26 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
             p3.setHotspot( [100, 200] );
             p3.setLocation( [0.9, 0, 0.7], 3 );
         }
+
+//        _displaySprite.addChild( _paintableOverlay );
+////                trace("avatars=" + _avatars.size());
+//                _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
+//                    avatar.setDisplayModeShowInfo();
+//                });
+
+
 //        trace(_avatars.size() );
 
 //        setDisplayMode( DISPLAY_MODE_SHOW_VALID_TARGETS );
 //        registerListener(_paintableOverlay, MouseEvent.CLICK, function(...ignored) :void {
-            setDisplayMode( DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
+//            setDisplayMode( DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
 //        });
     }
 
-    protected function reapplyDisplayMode( ...ignored ) :void
-    {
-        setDisplayMode( _displayMode );
-    }
+//    protected function reapplyDisplayMode( ...ignored ) :void
+//    {
+//        setDisplayMode( _displayMode );
+//    }
     override protected function addedToDB():void
     {
         super.addedToDB();
@@ -105,8 +113,8 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 //            }));
         }
 
-        var updateDisplayTimer :SimpleTimer = new SimpleTimer(1, reapplyDisplayMode, true,
-            UPDATE_DISPLAY_TIMER_NAME );
+//        var updateDisplayTimer :SimpleTimer = new SimpleTimer(1, reapplyDisplayMode, true,
+//            UPDATE_DISPLAY_TIMER_NAME );
 //        db.addObject( updateDisplayTimer );
     }
 
@@ -123,11 +131,6 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
     override protected function createPlayerAvatar( userId :int ) :AvatarHUD
     {
         var av :VampireAvatarHUD = new VampireAvatarHUD( _ctrl, userId );
-
-        if( userId == _ctrl.player.getPlayerId() ) {
-            av.setDisplayModeInvisible();
-        }
-
         return av;
     }
 
@@ -333,11 +336,11 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 
     }
 
-    public function get displayMode() :int
-    {
-        return _displayMode;
-    }
-    public function setDisplayMode( mode :int, selectedPlayer :int = 0, multiPredators :Boolean = false ) :void
+//    public function get displayMode() :int
+//    {
+//        return _displayMode;
+//    }
+    protected function setDisplayModeOLD( mode :int, selectedPlayer :int = 0, multiPredators :Boolean = false ) :void
     {
         _displayMode = mode;
         var validIds :HashSet;
@@ -349,52 +352,52 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
                 _displaySprite.addChild( _paintableOverlay );
 //                trace("avatars=" + _avatars.size());
                 _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
-                    avatar.setDisplayModeShowInfo();
+//                    avatar.setDisplayModeShowInfo();
                 });
 
 
                 break;
-            case DISPLAY_MODE_SHOW_FEED_TARGET:
-//                trace("DISPLAY_MODE_SHOW_FEED_TARGET");
-                _displaySprite.addChild( _paintableOverlay );
-
-                if( !ClientContext.model.isVampire() && !VConstants.LOCAL_DEBUG_MODE) {
-                    break;
-                }
-                predators = getPotentialPredatorIds();
-                _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
-                    if( selectedPlayer == avatar.playerId ) {
-//                        avatar.selected = true;
-                        avatar.setSelectedForFeed( predators.size() > 1 );
-                    }
-                    else {
-                        avatar.setDisplayModeInvisible();
-                    }
-                });
-                break;
-            case DISPLAY_MODE_SHOW_VALID_TARGETS:
-//                trace("DISPLAY_MODE_SHOW_VALID_TARGETS");
-                _displaySprite.addChild( _paintableOverlay );
-
-                if( !ClientContext.model.isVampire() && !VConstants.LOCAL_DEBUG_MODE) {
-//                    trace("no vampire");
-                    break;
-                }
-                validIds = getValidPlayerIdTargets();
-                predators = getPotentialPredatorIds();
-//                trace("validIds=" + validIds.toArray());
-                _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
-                    if( validIds.contains( avatar.playerId ) ) {
-//                        trace("  selectable " + avatar);
-                        avatar.setDisplayModeSelectableForFeed( predators.size() > 1 );
-                    }
-                    else {
-//                        trace("  Invisible " + avatar);
+//            case DISPLAY_MODE_SHOW_FEED_TARGET:
+////                trace("DISPLAY_MODE_SHOW_FEED_TARGET");
+//                _displaySprite.addChild( _paintableOverlay );
+//
+//                if( !ClientContext.model.isVampire() && !VConstants.LOCAL_DEBUG_MODE) {
+//                    break;
+//                }
+//                predators = getPotentialPredatorIds();
+//                _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
+//                    if( selectedPlayer == avatar.playerId ) {
+////                        avatar.selected = true;
+//                        avatar.setSelectedForFeed( predators.size() > 1 );
+//                    }
+//                    else {
 //                        avatar.setDisplayModeInvisible();
-                        avatar.setDisplayModeShowInfo();
-                    }
-                });
-                break;
+//                    }
+//                });
+//                break;
+//            case DISPLAY_MODE_SHOW_VALID_TARGETS:
+////                trace("DISPLAY_MODE_SHOW_VALID_TARGETS");
+//                _displaySprite.addChild( _paintableOverlay );
+//
+//                if( !ClientContext.model.isVampire() && !VConstants.LOCAL_DEBUG_MODE) {
+////                    trace("no vampire");
+//                    break;
+//                }
+//                validIds = getValidPlayerIdTargets();
+//                predators = getPotentialPredatorIds();
+////                trace("validIds=" + validIds.toArray());
+//                _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
+//                    if( validIds.contains( avatar.playerId ) ) {
+////                        trace("  selectable " + avatar);
+//                        avatar.setDisplayModeSelectableForFeed( predators.size() > 1 );
+//                    }
+//                    else {
+////                        trace("  Invisible " + avatar);
+////                        avatar.setDisplayModeInvisible();
+//                        avatar.setDisplayModeShowInfo();
+//                    }
+//                });
+//                break;
 //            case DISPLAY_MODE_SHOW_FEED_TARGET:
 //                _displaySprite.addChild( _paintableOverlay );
 //
@@ -412,20 +415,20 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 
 //                trace("DISPLAY_MODE_OFF");
                 _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
-                    avatar.setDisplayModeInvisible();
+//                    avatar.setDisplayModeInvisible();
                 });
 
 //                if( _displaySprite.contains( _paintableOverlay ) ) {
 //                    _displaySprite.removeChild( _paintableOverlay );
 //                }
-                _displayMode = DISPLAY_MODE_OFF;
+//                _displayMode = DISPLAY_MODE_OFF;
 
         }
 
-        var myAvatarHUD :VampireAvatarHUD = getVampireAvatar( _ctrl.player.getPlayerId() );
-        if( myAvatarHUD != null ) {
-            myAvatarHUD.setDisplayModeInvisible();
-        }
+//        var myAvatarHUD :VampireAvatarHUD = getVampireAvatar( _ctrl.player.getPlayerId() );
+//        if( myAvatarHUD != null ) {
+//            myAvatarHUD.setDisplayModeInvisible();
+//        }
 
     }
 
@@ -469,10 +472,10 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 
     protected var _displayMode :int = 0;
 
-    public static const DISPLAY_MODE_OFF :int = 0;
+//    public static const DISPLAY_MODE_OFF :int = 0;
     public static const DISPLAY_MODE_SHOW_INFO_ALL_AVATARS :int = 1;
-    public static const DISPLAY_MODE_SHOW_VALID_TARGETS :int = 2;
-    public static const DISPLAY_MODE_SHOW_FEED_TARGET :int = 3;
+//    public static const DISPLAY_MODE_SHOW_VALID_TARGETS :int = 2;
+//    public static const DISPLAY_MODE_SHOW_FEED_TARGET :int = 3;
 
     protected static const UPDATE_DISPLAY_TIMER_NAME :String = "updateVampireHUDTimer";
 

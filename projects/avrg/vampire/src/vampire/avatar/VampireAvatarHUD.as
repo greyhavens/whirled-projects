@@ -63,6 +63,9 @@ public class VampireAvatarHUD extends AvatarHUD
         _blood = ClientContext.instantiateMovieClip("HUD", "target_blood_meter", false);
         _blood.height = 10;
         _hudSprite.addChild( _blood );
+        _bloodMouseDetector = new Sprite();
+        _hudSprite.addChild( _bloodMouseDetector );
+
 
         //Create a mouse over sprite.
         _mouseOverSprite.graphics.beginFill(0, 0);
@@ -128,8 +131,8 @@ public class VampireAvatarHUD extends AvatarHUD
                 }, true);
                 db.addObject( t );
             }
+            trace("frenzy button clicked, _frenzyDelayRemaining=" + _frenzyDelayRemaining);
             _frenzyButtonClicked = true;
-            _frenzyButton.alpha = 0;
             showFrenzyTimerWithoutButton();
         });
 
@@ -194,6 +197,8 @@ public class VampireAvatarHUD extends AvatarHUD
         registerListener( _hierarchyIcon, MouseEvent.ROLL_OVER, showMenuFunction);
         registerListener( _bloodBondIcon, MouseEvent.ROLL_OVER, showMenuFunction);
         registerListener( _preyStrain, MouseEvent.ROLL_OVER, showMenuFunction);
+        registerListener( _bloodMouseDetector, MouseEvent.ROLL_OVER, showMenuFunction);
+        registerListener( _bloodMouseDetector, MouseEvent.MOUSE_MOVE, showMenuFunction);
 
 
         _hudSprite.addChild( _hierarchyIcon );
@@ -241,11 +246,21 @@ public class VampireAvatarHUD extends AvatarHUD
 
         _bareButton.registerButtonListener( MouseEvent.CLICK, function (...ignored) :void {
             _bareButton.alpha = 0;
+            if( _bareButton.button.parent != null ) {
+                _bareButton.button.parent.removeChild( _bareButton.button );
+            }
+            _hudSprite.addChild( _unbareButton.displayObject );
+            _unbareButton.alpha = 1;
             ClientContext.controller.handleSwitchMode(VConstants.GAME_MODE_BARED );
         });
 
         _unbareButton.registerButtonListener( MouseEvent.CLICK, function (...ignored) :void {
             _unbareButton.alpha = 0;
+            if( _unbareButton.button.parent != null ) {
+                _unbareButton.button.parent.removeChild( _unbareButton.button );
+            }
+            _hudSprite.addChild( _bareButton.displayObject );
+            _bareButton.alpha = 1;
             _ctrl.player.setAvatarState( VConstants.GAME_MODE_NOTHING );
             ClientContext.controller.handleSwitchMode(VConstants.GAME_MODE_NOTHING );
         });
@@ -267,7 +282,8 @@ public class VampireAvatarHUD extends AvatarHUD
 
         //Make sure that if any part of the menu is moused over, show the action buttons
         registerListener( _blood, MouseEvent.ROLL_OVER, showMenuFunction);
-
+        registerListener( _bloodMouseDetector, MouseEvent.ROLL_OVER, showMenuFunction);
+        registerListener( _bloodMouseDetector, MouseEvent.MOUSE_MOVE, showMenuFunction);
 
         updateBlood();
 
@@ -299,10 +315,12 @@ public class VampireAvatarHUD extends AvatarHUD
 
     override protected function destroyed():void
     {
-        _feedButton.destroySelf();
-        _frenzyButton.destroySelf();
-        _bareButton.destroySelf();
-        _unbareButton.destroySelf();
+        var allButtons :Array = [_feedButton, _frenzyButton, _bareButton, _unbareButton];
+        for each( var b :SceneButton in allButtons) {
+            if( b != null && b.isLiveObject) {
+                b.destroySelf()
+            }
+        }
     }
     protected function decrementTime() :void
     {
@@ -447,7 +465,12 @@ public class VampireAvatarHUD extends AvatarHUD
         _blood.width = BLOOD_BAR_MIN_WIDTH;
         _blood.height = 15;
 
-        var scaleY :Number = maxBlood / VConstants.MAX_BLOOD_FOR_LEVEL(1);
+        _bloodMouseDetector.graphics.clear();
+        _bloodMouseDetector.graphics.beginFill(0xffffff, 0);
+        _bloodMouseDetector.graphics.drawRect( _blood.x - _blood.width / 2, _blood.y - _blood.height / 2, _blood.width, _blood.height);
+        _bloodMouseDetector.graphics.endFill();
+
+//        var scaleY :Number = maxBlood / VConstants.MAX_BLOOD_FOR_LEVEL(1);
         _blood.gotoAndStop(int(currentBlood*100.0/maxBlood) );
 
     }
@@ -514,7 +537,9 @@ public class VampireAvatarHUD extends AvatarHUD
                     }));
                     serialTask.addTask( new TimedTask(ANIMATION_TIME));
                     serialTask.addTask( new FunctionTask( function() :void {
-                        _hudSprite.removeChild(_mouseOverSprite);
+                        if( _mouseOverSprite.parent != null ) {
+                            _mouseOverSprite.parent.removeChild( _mouseOverSprite );
+                        }
                     }));
                     addTask( serialTask );
 
@@ -649,8 +674,12 @@ public class VampireAvatarHUD extends AvatarHUD
 
         _displaySprite.addChild( _hudSprite );
 
+
         _feedButton.alpha = 0;
         _frenzyButton.alpha = 0;
+
+        _hudSprite.addChild( waitingSign );
+        _hudSprite.addChild( frenzyCountdown );
         frenzyCountdown.visible = true;
     }
 
@@ -671,12 +700,23 @@ public class VampireAvatarHUD extends AvatarHUD
         if( playerId == ClientContext.ourPlayerId) {
             return;
         }
+        if( _frenzyDelayRemaining > 0  && ClientContext.model.isVampire()) {
 
-        if( (_frenzyDelayRemaining > 0 ) && ClientContext.model.isVampire()) {
+            //fix here target UI
 
             _displaySprite.addChild( _hudSprite );
             _feedButton.alpha = 0;
-            _frenzyButton.alpha = _frenzyButtonClicked ? 0 : 1;
+            if( !_frenzyButtonClicked ) {
+                if( _frenzyButton.hasTasks() ) {
+                    _frenzyButton.removeAllTasks();
+                }
+                _hudSprite.addChild( _frenzyButton.displayObject);
+                _frenzyButton.alpha = 1;
+            }
+            else {
+            _frenzyButton.alpha = 0;
+            }
+
             frenzyCountdown.visible = true;
             frenzyCountdown.gotoAndStop( int( 100 - (_frenzyDelayRemaining*100 / VConstants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME) ));
         }
@@ -695,6 +735,7 @@ public class VampireAvatarHUD extends AvatarHUD
     protected var _bloodBondIcon :MovieClip;
     protected var _hierarchyIcon :SimpleButton;
     protected var _blood :MovieClip;
+    protected var _bloodMouseDetector :Sprite;
     protected var _preyStrain :MovieClip;
 
     protected var _roomKey :String;
