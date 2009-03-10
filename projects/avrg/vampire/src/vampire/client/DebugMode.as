@@ -35,87 +35,46 @@ public class DebugMode extends SceneObject
         return modeSprite;
     }
 
-//    override
     protected function setup() :void
     {
-//        modeSprite.graphics.beginFill(0xcc0000);
-//        modeSprite.graphics.drawRect(100, 100, 400, 200);
-//        modeSprite.graphics.endFill();
-//
-//        modeSprite.graphics.lineStyle(0x000000, 1);
-
-
-        var background :Sprite = new Sprite();
-        background.graphics.beginFill(0xcc0000);
-        background.graphics.drawRect(100, 100, 400, 200);
-        background.graphics.endFill();
-        modeSprite.addChild( background );
-
-        var welcometext :TextField = TextFieldUtil.createField("Welcome to Vampire, click to remove", {selectable:false, x:120, y:120, width:200});
-        modeSprite.addChild( welcometext );
-
-//        Command.bind( welcometext, MouseEvent.CLICK, VampireController.HIDE_INTRO );
-        Command.bind( background, MouseEvent.CLICK, destroySelf );
-
 
 
         var getBloodButton :SimpleTextButton = new SimpleTextButton( "+Blood" );
-        getBloodButton.x = 50;
+        getBloodButton.x = 10;
         getBloodButton.y = 50;
         getBloodButton.addEventListener( MouseEvent.CLICK, gainBlood);
         modeSprite.addChild( getBloodButton );
 
         var loseBloodButton :SimpleTextButton = new SimpleTextButton( "-Blood" );
-        loseBloodButton.x = 50;
-        loseBloodButton.y = 80;
+        loseBloodButton.x = getBloodButton.x + 50;
+        loseBloodButton.y = getBloodButton.y;
         loseBloodButton.addEventListener( MouseEvent.CLICK, loseBlood);
         modeSprite.addChild( loseBloodButton );
 
         var addLevelButton :SimpleTextButton = new SimpleTextButton( "+Level" );
-        addLevelButton.x = getBloodButton.x + 100;
-        addLevelButton.y = getBloodButton.y
+        addLevelButton.x = getBloodButton.x;
+        addLevelButton.y = getBloodButton.y + 50;
         addLevelButton.addEventListener( MouseEvent.CLICK, gainLevel);
         modeSprite.addChild( addLevelButton );
 
         var loseLevelButton :SimpleTextButton = new SimpleTextButton( "-Level" );
-        loseLevelButton.x = loseBloodButton.x + 100;
-        loseLevelButton.y = loseBloodButton.y;
+        loseLevelButton.x = addLevelButton.x + 50;
+        loseLevelButton.y = addLevelButton.y;
         loseLevelButton.addEventListener( MouseEvent.CLICK, loseLevel);
         modeSprite.addChild( loseLevelButton );
 
         var addXPButton :SimpleTextButton = new SimpleTextButton( "+XP" );
-        addXPButton.x = loseLevelButton.x;
+        addXPButton.x = getBloodButton.x;
         addXPButton.y = loseLevelButton.y + 50;
         addXPButton.addEventListener( MouseEvent.CLICK, gainXP);
         modeSprite.addChild( addXPButton );
 
         var loseXPButton :SimpleTextButton = new SimpleTextButton( "-XP" );
-        loseXPButton.x = addXPButton.x;
-        loseXPButton.y = addXPButton.y + 30;
+        loseXPButton.x = addXPButton.x + 50;
+        loseXPButton.y = addXPButton.y;
         loseXPButton.addEventListener( MouseEvent.CLICK, loseXP);
         modeSprite.addChild( loseXPButton );
 
-
-
-
-
-
-        var feedButton :SimpleTextButton = new SimpleTextButton( "FEED!!!!" );
-        feedButton.x = 50;
-        feedButton.y = 120;
-        Command.bind( feedButton, MouseEvent.CLICK, VampireController.FEED);
-        modeSprite.addChild( feedButton );
-
-
-
-        var showInviteButton :SimpleTextButton = new SimpleTextButton( "Show Invites" );
-        showInviteButton.x = feedButton.x;
-        showInviteButton.y = feedButton.y + 30;
-        showInviteButton.addEventListener( MouseEvent.CLICK, function(...ignored):void{
-            ClientContext.ctrl.local.showInvitePage("Join my game!!", "sire=" + ClientContext.ourPlayerId);
-
-        });
-        modeSprite.addChild( showInviteButton );
     }
 
 
@@ -162,9 +121,9 @@ public class DebugMode extends SceneObject
             var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
 
             var currentLevel :Number = ClientContext.model.level;
-
+            trace("currentLevel=" + currentLevel);
             var xpNeededForNextLevel :int = Logic.xpNeededForLevel( currentLevel + 1) - ClientContext.model.xp;
-
+            trace("xpNeededForNextLevel=" + xpNeededForNextLevel);
             props.setIn( Codes.playerRoomPropKey( ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, ClientContext.model.xp + xpNeededForNextLevel);
         }
     }
@@ -195,7 +154,7 @@ public class DebugMode extends SceneObject
 
             var currentXP:int = ClientContext.model.xp;
 
-            props.setIn( Codes.playerRoomPropKey( ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, Math.max(0,currentXP + 20));
+            props.setIn( Codes.playerRoomPropKey( ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, Math.max(0,currentXP + 1000));
             trace("Current xp=" + ClientContext.model.xp);
         }
     }
@@ -208,7 +167,7 @@ public class DebugMode extends SceneObject
 
             var currentXP:int = ClientContext.model.xp;
 
-            props.setIn( Codes.playerRoomPropKey( ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, Math.max(0,currentXP - 20));
+            props.setIn( Codes.playerRoomPropKey( ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, Math.max(0,currentXP - 1000));
         }
     }
 

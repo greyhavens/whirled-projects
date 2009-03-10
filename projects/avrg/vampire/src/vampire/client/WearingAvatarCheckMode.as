@@ -1,5 +1,6 @@
 package vampire.client
 {
+    import com.whirled.avrg.AVRGameControlEvent;
     import com.whirled.contrib.simplegame.AppMode;
 
     import flash.display.MovieClip;
@@ -28,9 +29,13 @@ package vampire.client
             });
 
             infoPanel.gotoAndStop(2);
-            infoPanel.x = ClientContext.ctrl.local.getRoomBounds()[0]/2;
-            infoPanel.y = ClientContext.ctrl.local.getRoomBounds()[1]/2;
+            infoPanel.x = ClientContext.ctrl.local.getPaintableArea().width/2;//ClientContext.ctrl.local.getRoomBounds()[0]/2;
+            infoPanel.y = ClientContext.ctrl.local.getPaintableArea().height/2;//ClientContext.ctrl.local.getRoomBounds()[1]/2;
 
+            registerListener( ClientContext.ctrl.local, AVRGameControlEvent.SIZE_CHANGED, function(...ignored) :void {
+                infoPanel.x = ClientContext.ctrl.local.getPaintableArea().width/2;
+                infoPanel.y = ClientContext.ctrl.local.getPaintableArea().height/2;
+            });
 
         }
         override protected function enter():void

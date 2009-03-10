@@ -31,6 +31,9 @@ public class MainGameMode extends AppMode
     {
         modeSprite.visible = true;
         log.debug("Starting " + ClassUtil.tinyClassName( this ));
+
+        var testPopup :PopupMessage = new PopupMessage(ClientContext.ctrl, "sdsdf", ClientContext.hud);
+        addObject( testPopup, modeSprite );
     }
 
     protected function updateNonPlayerIds(...ignored ) :void
@@ -189,13 +192,11 @@ public class MainGameMode extends AppMode
         addObject( nonPlayerIdTimer );
 
 
-//        if( VConstants.LOCAL_DEBUG_MODE || vampire.Util.isProgenitor(ClientContext.ourPlayerId) ||
-//            (ClientContext.ourPlayerId >= 1 && ClientContext.ourPlayerId <= 3)
-//            || ClientContext.getPlayerName( ClientContext.ourPlayerId) == "Ragbeard") {
+        if( ClientContext.isAdmin(ClientContext.ourPlayerId) || VConstants.LOCAL_DEBUG_MODE ) {
             var debug :SimpleTextButton = new SimpleTextButton("debug");
             Command.bind( debug, MouseEvent.CLICK, VampireController.SHOW_DEBUG );
             modeSprite.addChild( debug );
-//        }
+        }
 
 
     }

@@ -12,6 +12,8 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
+import testing.TestMode;
+
 import vampire.data.VConstants;
 import vampire.net.VMessageManager;
 import vampire.server.AVRGAgentLogTarget;
@@ -101,6 +103,7 @@ public class VampireMain extends Sprite
                 ClientContext.game.ctx.mainLoop.pushMode( new MainGameMode() );
             }
             else {
+
 
                 ClientContext.game.ctx.mainLoop.pushMode( new MainGameMode() );
 

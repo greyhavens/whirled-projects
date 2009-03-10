@@ -529,6 +529,8 @@ public class GameModel extends SimObject//EventDispatcher
         ClientContext.ctrl.player.setAvatarState( state );
     }
 
+
+
     public var currentSelectedTarget :int = 0;
 
     protected var _hierarchy :MinionHierarchy;
