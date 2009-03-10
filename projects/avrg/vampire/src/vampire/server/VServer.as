@@ -165,6 +165,7 @@ public class VServer extends ObjectDBThane
     // a message comes in from a player, figure out which Player instance will handle it
     protected function handleMessage (evt :MessageReceivedEvent) :void
     {
+        trace(evt);
         try {
 //            log.debug("handleMessage", "evt", evt);
             var player :Player = getPlayer(evt.senderId);
@@ -299,6 +300,13 @@ public class VServer extends ObjectDBThane
         var allsires :HashSet = ServerContext.minionHierarchy.getAllSiresAndGrandSires( player.playerId );
         if( allsires.size() == 0 ) {
             log.debug("no sires");
+            return;
+        }
+
+        //Check if we are part of the Lineage (with Ubervamp as the grandsire).  Only then
+        //are we allowed to collect minion xp.
+        if( !allsires.contains( VConstants.UBER_VAMP_ID )) {
+            player.addFeedback("You must be part of the Lineage to earn XP from your minions");
             return;
         }
 
