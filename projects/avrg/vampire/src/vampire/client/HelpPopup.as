@@ -5,9 +5,7 @@ package vampire.client
     import com.whirled.contrib.avrg.DraggableSceneObject;
 
     import flash.display.DisplayObject;
-    import flash.display.DisplayObjectContainer;
     import flash.display.MovieClip;
-    import flash.display.Shape;
     import flash.display.SimpleButton;
     import flash.display.Sprite;
     import flash.events.MouseEvent;
@@ -28,56 +26,75 @@ package vampire.client
 
             _hudHelp = ClientContext.instantiateMovieClip("HUD", "popup_help", false);
             _displaySprite.addChild( _hudHelp );
-            _displaySprite.addChild( _bloodTypeOverlay );
 
-            //Make sure the blood strain page shows current data
-            updateBloodStrainPage();
+            _lineageView = new LineageView();
 
+            //Go to the first frame where all the buttons are.  Even though not all buttons are
+            //visible there, obviously, however they need to be instantiated on the first frame
+            //otherwise they cannot be 'found'.
+            _hudHelp.gotoAndStop("intro");
 
+            //Wire up the links on the left panel
+            registerListener( SimpleButton(findSafely("to_default")), MouseEvent.CLICK,
+                function( e :MouseEvent ) :void {
+                    gotoFrame("default");
+                });
+            registerListener( SimpleButton(findSafely("to_bloodtype")), MouseEvent.CLICK,
+                function( e :MouseEvent ) :void {
+                    gotoFrame("bloodtype");
+                });
+            registerListener( SimpleButton(findSafely("menu_tofeedingonvamps")), MouseEvent.CLICK,
+                function( e :MouseEvent ) :void {
+                    gotoFrame("vamps");
+                });
+            registerListener( SimpleButton(findSafely("menu_tofeedinggame")), MouseEvent.CLICK,
+                function( e :MouseEvent ) :void {
+                    gotoFrame("feedinggame");
+                });
+            registerListener( SimpleButton(findSafely("menu_tointro")), MouseEvent.CLICK,
+                function( e :MouseEvent ) :void {
+                    gotoFrame("intro");
+                });
 
 
             //Wire up the buttons
-            _hudHelp.gotoAndStop("intro");
             registerListener( SimpleButton(findSafely("button_tofeedinggame")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
-                    _frameHistory.push( _hudHelp.currentFrame );
-                    _hudHelp.gotoAndStop("feedinggame");
+                    gotoFrame("feedinggame");
                 });
             registerListener( SimpleButton(findSafely("button_tolineage")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
-                    _frameHistory.push( _hudHelp.currentFrame );
-                    _hudHelp.gotoAndStop("lineage");
+                    gotoFrame("lineage");
                 });
             registerListener( SimpleButton(findSafely("button_tovamps")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
-                    _frameHistory.push( _hudHelp.currentFrame );
-                    _hudHelp.gotoAndStop("vamps");
+                    gotoFrame("vamps");
                 });
             registerListener( SimpleButton(findSafely("button_tomortals")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
-                    _frameHistory.push( _hudHelp.currentFrame );
-                    _hudHelp.gotoAndStop("mortals");
+                    gotoFrame("mortals");
                 });
             registerListener( SimpleButton(findSafely("button_tobloodbond")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
-                    _frameHistory.push( _hudHelp.currentFrame );
-                    _hudHelp.gotoAndStop("bloodbond");
+                    gotoFrame("bloodbond");
                 });
             registerListener( SimpleButton(findSafely("button_tomortals")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
-                    _frameHistory.push( _hudHelp.currentFrame );
-                    _hudHelp.gotoAndStop("mortals");
+                    gotoFrame("mortals");
                 });
             registerListener( SimpleButton(findSafely("button_tobloodtype")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
-                    _frameHistory.push( _hudHelp.currentFrame );
-                    _hudHelp.gotoAndStop("bloodtype");
+                    gotoFrame("bloodtype");
+                });
+            registerListener( SimpleButton(findSafely("button_toinstructions")), MouseEvent.CLICK,
+                function( e :MouseEvent ) :void {
+                    gotoFrame("instructions");
                 });
             registerListener( SimpleButton(findSafely("help_close")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
                     destroySelf();
                 });
-            registerListener( SimpleButton(findSafely("button_torecruiting")), MouseEvent.CLICK,
+            registerListener( SimpleButton(findSafely("button_recruit")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
                     ClientContext.ctrl.local.showInvitePage("Join my Coven!", "" + ClientContext.ourPlayerId);
                 });
@@ -86,13 +103,15 @@ package vampire.client
             registerListener( SimpleButton(findSafely("help_back")), MouseEvent.CLICK,
                 backButtonPushed);
 
-            if( startframe != null ) {
-                _hudHelp.gotoAndStop(startframe);
-            }
+
+            gotoFrame(startframe );
+
 
             init( new Rectangle(-_displaySprite.width/2, _displaySprite.height/2, _displaySprite.width, _displaySprite.height), 0, 0, 0, 100);
             centerOnViewableRoom();
         }
+
+
 
         protected function updateBloodStrainPage() :void
         {
@@ -157,22 +176,41 @@ package vampire.client
             }
         }
 
-        protected function getFullCellSprite() :DisplayObject
+        override public function destroySelf():void
         {
-            var s :Shape = new Shape();
-            s.graphics.beginFill(0);
-            s.graphics.drawCircle(0, 0, 10 );
-            s.graphics.endFill();
-            return s;
+            super.destroySelf();
+            if( _lineageView != null && _lineageView.isLiveObject ) {
+                _lineageView.destroySelf();
+
+            }
         }
 
-        protected function getEmptyCellSprite() :DisplayObject
+        override protected function addedToDB():void
         {
-            var s :Shape = new Shape();
-            s.graphics.lineStyle(1);
-            s.graphics.drawCircle(0, 0, 10 );
-            return s;
+
+            db.addObject( _lineageView );
+            if( _hudHelp.currentFrame == 2 ) {
+                _hudHelp.addChild( _lineageView.displayObject );
+            }
         }
+
+
+//        protected function getFullCellSprite() :DisplayObject
+//        {
+//            var s :Shape = new Shape();
+//            s.graphics.beginFill(0);
+//            s.graphics.drawCircle(0, 0, 10 );
+//            s.graphics.endFill();
+//            return s;
+//        }
+//
+//        protected function getEmptyCellSprite() :DisplayObject
+//        {
+//            var s :Shape = new Shape();
+//            s.graphics.lineStyle(1);
+//            s.graphics.drawCircle(0, 0, 10 );
+//            return s;
+//        }
 
         protected function findSafely (name :String) :DisplayObject
         {
@@ -183,17 +221,46 @@ package vampire.client
             return o;
         }
 
+        protected function removeExtraHelpPanels() :void
+        {
+            if( _hudHelp.contains( _bloodTypeOverlay ) ) {
+                _hudHelp.removeChild( _bloodTypeOverlay );
+            }
+
+            if( _hudHelp.contains( _lineageView.displayObject ) ) {
+                _hudHelp.removeChild( _lineageView.displayObject );
+            }
+        }
+
         public function gotoFrame( frame :String ) :void
         {
-            _hudHelp.gotoAndStop(frame);
-            if( frame == "bloodtype") {
-//                _hudHelp.addChild( _bloodTypeOverlay );
-                updateBloodStrainPage();
+            if( frame == null) {
+                frame = "default";
             }
-            else {
-//                if( _hudHelp.contains( _bloodTypeOverlay ) ) {
-//                    _hudHelp.removeChild( _bloodTypeOverlay );
-//                }
+
+            if( _frameHistory.length == 0 || _frameHistory[ _frameHistory.length - 1] != _hudHelp.currentFrame) {
+                _frameHistory.push( _hudHelp.currentFrame );
+            }
+
+            _hudHelp.gotoAndStop(frame);
+
+            removeExtraHelpPanels();
+
+            switch( frame ) {
+                case "bloodtype":
+                    updateBloodStrainPage();
+                    _hudHelp.addChild( _bloodTypeOverlay );
+                    break;
+                case "default":
+
+                    //Center the lineage view on the anchor created for it.
+                    var lineage_center :MovieClip = findSafely( "lineage_center") as MovieClip;
+                    lineage_center.parent.addChild( _lineageView.displayObject );
+                    _lineageView.x = lineage_center.x;
+                    _lineageView.y = lineage_center.y - 20;
+
+                default:
+                    break;
             }
         }
 
@@ -202,6 +269,7 @@ package vampire.client
             if( _frameHistory.length > 0) {
                 var nextFrame :int = _frameHistory.pop();
                 _hudHelp.gotoAndStop( nextFrame );
+                removeExtraHelpPanels();
             }
         }
 
@@ -220,6 +288,8 @@ package vampire.client
 //        protected var _sceneObjectSprite :Sprite;
         protected var _frameHistory :Array = new Array();
         protected var _bloodTypeOverlay :Sprite = new Sprite();
+
+        protected var _lineageView :LineageView;
 
         public static const NAME :String = "HelpPopup";
         protected static const log :Log = Log.getLog( HelpPopup );
