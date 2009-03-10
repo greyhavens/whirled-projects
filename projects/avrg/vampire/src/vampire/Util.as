@@ -1,5 +1,8 @@
 package vampire
 {
+    import vampire.data.VConstants;
+
+
 public class Util
 {
     /**
@@ -26,11 +29,15 @@ public class Util
     */
     public static function isProgenitor( playerId :int ) :Boolean
     {
-        return playerId == 23340 || //Ragbeard
-               playerId == 1769  || //Capital-T-Tim
-               playerId == 12     ;  //Nemo
+        return playerId == VConstants.UBER_VAMP_ID;
+//         || //Ragbeard
+//               playerId == 1769  || //Capital-T-Tim
+//               playerId == 12     ;  //Nemo
 //               playerId == 1   ;   //debugging
     }
+
+
+
 
 }
 }
