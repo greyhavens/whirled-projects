@@ -84,6 +84,37 @@ public class VampireAvatarHUD extends AvatarHUD
         }
     }
 
+    protected function glowBloodBarIfValidTarget() :void
+    {
+        var validTarget :Boolean = false;
+        if( isPlayer ) {
+            if( SharedPlayerStateClient.getCurrentAction( playerId ) == VConstants.GAME_MODE_BARED
+                && SharedPlayerStateClient.getBlood( playerId ) > 1) {
+
+                validTarget = true;
+            }
+        }
+        else {
+            var targets :Array = _ctrl.room.getEntityProperty(
+                AvatarGameBridge.ENTITY_PROPERTY_CHAT_TARGETS, ClientContext.ourEntityId) as Array;
+
+            if( targets != null && ArrayUtil.contains( targets, playerId )
+                && SharedPlayerStateClient.getBlood( playerId ) > 1) {
+
+                validTarget = true;
+            }
+        }
+
+        if( validTarget || VConstants.LOCAL_DEBUG_MODE ) {
+            _blood.filters = [ClientContext.glowFilter];
+        }
+        else {
+            _blood.filters = [];
+        }
+    }
+
+
+
     protected function setupUITarget() :void
     {
         //Detach the bare buttons only used on our own avatar
@@ -218,6 +249,12 @@ public class VampireAvatarHUD extends AvatarHUD
         Command.bind( _preyStrain, MouseEvent.CLICK, VampireController.SHOW_INTRO, "bloodtype");
         Command.bind( _blood, MouseEvent.CLICK, VampireController.SHOW_INTRO, "feedinggame");
 
+
+        //Add a glow if we are a valid target
+        _glowTimer = new SimpleTimer(1, glowBloodBarIfValidTarget, true);
+
+
+
         updateInfoHud();
 
     }
@@ -310,6 +347,8 @@ public class VampireAvatarHUD extends AvatarHUD
         else {
             db.addObject( _frenzyButton );
             db.addObject( _feedButton );
+
+            db.addObject( _glowTimer );
         }
     }
 
@@ -321,6 +360,11 @@ public class VampireAvatarHUD extends AvatarHUD
                 b.destroySelf()
             }
         }
+
+        if( _glowTimer != null && _glowTimer.isLiveObject) {
+            _glowTimer.destroySelf()
+        }
+
     }
     protected function decrementTime() :void
     {
@@ -756,6 +800,7 @@ public class VampireAvatarHUD extends AvatarHUD
     protected var _frenzyDelayRemaining :Number = -1;
     protected var _frenzyButtonClicked :Boolean;
 
+    protected var _glowTimer :SimpleTimer;
     protected static const BLOOD_BAR_MIN_WIDTH :int = 50;
     protected static const FEED_BUTTON_Y :int = 22;
     protected static const ANIMATION_TIME :Number = 0.3;
