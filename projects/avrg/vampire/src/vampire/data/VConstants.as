@@ -97,7 +97,7 @@ public class VConstants
     * level cap of a non-vampire.  That means vampires start at this level++,
     * because you go up a level when you become a vampire.
     */
-    public static const MAXIMUM_LEVEL_FOR_NON_VAMPIRE :int = 1;
+//    public static const MAXIMUM_LEVEL_FOR_NON_VAMPIRE :int = 1;
 
     /**
     * After a vampire awakes (starts the game after some time),
@@ -106,10 +106,12 @@ public class VConstants
     */
     public static const MINMUM_BLOOD_AFTER_SLEEPING :int = 5;
 
-    public static function get MINIMUM_VAMPIRE_LEVEL() :int
-    {
-        return MAXIMUM_LEVEL_FOR_NON_VAMPIRE + 1;
-    }
+
+    public static const MINIMUM_VAMPIRE_LEVEL :int = 1;
+//    public static function get MINIMUM_VAMPIRE_LEVEL() :int
+//    {
+//        return MAXIMUM_LEVEL_FOR_NON_VAMPIRE + 1;
+//    }
 
     public static const GAME_MODE_NOTHING :String = "Default";
     public static const GAME_MODE_FEED_FROM_PLAYER :String = "Feeding";
