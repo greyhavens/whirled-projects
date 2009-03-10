@@ -68,17 +68,17 @@ public class Logic
         }
         //D&D style leveling.
         var base :Number = 1000;
-        return Math.pow(2, level-2)*base;
+//        return Math.pow(2, level-2)*base;
 
 //        level = Math.max(level, 1);
-//        var xp :Number = 0;
+        var xp :Number = 0;
 //        var base :Number = 100;
-//        var addition :Number = 4000;
-//        for( var i :int = 2; i <= level; i++) {
-//            xp += (i-2) * addition + base;
-//        }
-//        return xp;
-//        return base * (level - 1) + (level - 1) * (base + base * (level - 1));
+        var addition :Number = 2000;
+        for( var i :int = 2; i <= level; i++) {
+            xp += (i-2) * addition + base;
+        }
+        return xp;
+//        return base * level + (level - 1) * ( addition * (level - 1));
 //        return base * (level - 1) + (level - 1) * (base + base * (level - 1));
 //        return (level - 1) * 10;
     }
