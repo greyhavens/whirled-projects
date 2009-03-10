@@ -11,7 +11,6 @@ import flash.display.Sprite;
 import vampire.avatar.AvatarGameBridge;
 import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.actions.BaseVampireMode;
-import vampire.client.actions.hierarchy.HierarchyView;
 import vampire.client.events.ChangeActionEvent;
 import vampire.data.Codes;
 import vampire.data.SharedPlayerStateClient;
@@ -65,11 +64,13 @@ public class VampireController extends Controller
         if( mode == VConstants.GAME_MODE_BARED &&
             ClientContext.model.action == VConstants.GAME_MODE_BARED) {
 
-            return;
+//            return;
 //            log.debug("  sending to server "+VConstants.GAME_MODE_NOTHING);
-//            ClientContext.gameCtrl.agent.sendMessage( RequestActionChangeMessage.NAME,
-//                new RequestActionChangeMessage( ClientContext.ourPlayerId,
-//                    VConstants.GAME_MODE_NOTHING).toBytes() );
+            ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
+
+            ClientContext.ctrl.agent.sendMessage( RequestActionChangeMessage.NAME,
+                new RequestActionChangeMessage( ClientContext.ourPlayerId,
+                    VConstants.GAME_MODE_NOTHING).toBytes() );
         }
         else if(mode == VConstants.GAME_MODE_FEED_FROM_NON_PLAYER ||
             mode == VConstants.GAME_MODE_FEED_FROM_PLAYER) {
@@ -188,10 +189,10 @@ public class VampireController extends Controller
     {
         try {
             var hierarchySceneObject :SimObject =
-                ClientContext.game.ctx.mainLoop.topMode.getObjectNamed( IntroHelpMode.NAME );
+                ClientContext.game.ctx.mainLoop.topMode.getObjectNamed( DebugMode.NAME );
 
             if( hierarchySceneObject == null) {
-                ClientContext.game.ctx.mainLoop.topMode.addObject( new IntroHelpMode(),
+                ClientContext.game.ctx.mainLoop.topMode.addObject( new DebugMode(),
                     ClientContext.game.ctx.mainLoop.topMode.modeSprite);
             }
 
@@ -255,7 +256,7 @@ public class VampireController extends Controller
         if( ClientContext.model.level >= VConstants.MINIMUM_VAMPIRE_LEVEL ||
             VConstants.LOCAL_DEBUG_MODE ) {
 
-                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS );
+//                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS );
 //            if( targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS ) {
 //                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
 //            }
@@ -310,7 +311,7 @@ public class VampireController extends Controller
     public function handleSendFeedRequest( targetId :int, multiPredators :Boolean  ) :void
     {
         var targetLocation :Array;
-        var targetAvatar :AvatarHUD = ClientContext.hud.avatarOverlay.getAvatar( targetId );
+        var targetAvatar :AvatarHUD = ClientContext.avatarOverlay.getAvatar( targetId );
         if( targetAvatar != null ) {
             targetLocation = targetAvatar.location;
         }
@@ -322,12 +323,12 @@ public class VampireController extends Controller
             multiPredators, targetLocation[0], targetLocation[1], targetLocation[2]);
         log.debug(ClientContext.ctrl + " handleSendFeedRequest() sending " + msg)
         ClientContext.ctrl.agent.sendMessage( FeedRequestMessage2.NAME, msg.toBytes() );
-        if( multiPredators ) {
-            ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET, targetId, true );
-        }
-        else {
-            ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
-        }
+//        if( multiPredators ) {
+//            ClientContext.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET, targetId, true );
+//        }
+//        else {
+//            ClientContext.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
+//        }
 
         //Set the avatar target.  That way, when the avatar arrived at it's destination, it
         //will set it's orientation the same as the target's orientation.
@@ -371,7 +372,7 @@ public class VampireController extends Controller
 
     }
 
-    public function handleHierarchyCenterSelected(playerId :int, hierarchyView :HierarchyView) :void
+    public function handleHierarchyCenterSelected(playerId :int, hierarchyView :LineageView) :void
     {
         if( hierarchyView._hierarchy == null || hierarchyView._hierarchy.getMinionCount( playerId ) == 0) {
             return;
@@ -399,20 +400,32 @@ public class VampireController extends Controller
     public function handleShowHierarchy(_hudMC :MovieClip) :void
     {
         try {
-            var hierarchySceneObject :SimObject =
-                ClientContext.game.ctx.mainLoop.topMode.getObjectNamed( HierarchyView.NAME );
-            if( hierarchySceneObject == null) {
-                ClientContext.game.ctx.mainLoop.topMode.addObject( new HierarchyView(_hudMC),
-                    ClientContext.game.ctx.mainLoop.topMode.modeSprite);
-            }
-            else {
-                hierarchySceneObject.destroySelf();
-            }
+                ClientContext.controller.handleShowIntro("default");
+//            var hierarchySceneObject :SimObject =
+//                ClientContext.game.ctx.mainLoop.topMode.getObjectNamed( LineageView.NAME );
+//            if( hierarchySceneObject == null) {
+//
+////                ClientContext.game.ctx.mainLoop.topMode.addObject( new LineageView(_hudMC),
+////                    ClientContext.game.ctx.mainLoop.topMode.modeSprite);
+//            }
+//            else {
+//                hierarchySceneObject.destroySelf();
+//            }
         }
         catch( err :Error ) {
             trace( err.getStackTrace() );
         }
     }
+
+
+    public function handleShowPopupMessage( msg :String ) :void
+    {
+
+
+
+    }
+
+
 
 
     protected static const log :Log = Log.getLog( VampireController );
