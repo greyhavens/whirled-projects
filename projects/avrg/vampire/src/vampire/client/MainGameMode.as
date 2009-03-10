@@ -2,6 +2,7 @@ package vampire.client
 {
 import com.threerings.flash.MathUtil;
 import com.threerings.flash.SimpleTextButton;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
@@ -32,13 +33,24 @@ public class MainGameMode extends AppMode
         log.debug("Starting " + ClassUtil.tinyClassName( this ));
     }
 
-    protected function sendServerNonPlayerIds(...ignored ) :void
+    protected function updateNonPlayerIds(...ignored ) :void
     {
+        if( _currentNonPlayerIds == null ) {
+            _currentNonPlayerIds = new Array();
+        }
+
         var npIds :Array = ClientContext.getNonPlayerIds();
-        var msg :NonPlayerIdsInRoomMessage = new NonPlayerIdsInRoomMessage(
-            ClientContext.ourPlayerId, npIds );
-//        log.debug("Sending " + msg);
-        ClientContext.ctrl.agent.sendMessage( msg.name, msg.toBytes() );
+        npIds.sort();
+
+        if( !ArrayUtil.equals( _currentNonPlayerIds, npIds ) ) {
+            var msg :NonPlayerIdsInRoomMessage = new NonPlayerIdsInRoomMessage(
+                ClientContext.ourPlayerId, npIds );
+    //        log.debug("Sending " + msg);
+            ClientContext.ctrl.agent.sendMessage( msg.name, msg.toBytes() );
+            _currentNonPlayerIds = npIds;
+        }
+
+
 
 //        trace( ClientContext.ourPlayerId + " our inviter=" + ClientContext.ctrl.local.getInviterMemberId());
     }
@@ -77,6 +89,7 @@ public class MainGameMode extends AppMode
         registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, function(
             e :AVRGameRoomEvent) :void {
                 var playerMovedId :int = int( e.value );
+                trace("avatar changed, playerId="+playerMovedId);
 
                 //We are only allowed to change our own avatar.
                 if( playerMovedId != ClientContext.ourPlayerId ) {
@@ -85,8 +98,12 @@ public class MainGameMode extends AppMode
 
                 //Do as if we have pushed the 'Bared" button.
                 var avatar :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo( playerMovedId );
+                trace("avatar state="+avatar.state);
+                trace("ClientContext.model.action="+ClientContext.model.action);
                 if( avatar != null) {
-                    if( avatar.state == VConstants.GAME_MODE_BARED ) {
+                    //If we change our avatar to bared, but we are not in the bared state.
+                    if( avatar.state == VConstants.GAME_MODE_BARED &&
+                        ClientContext.model.action != VConstants.GAME_MODE_BARED) {
                         ClientContext.controller.handleSwitchMode( VConstants.GAME_MODE_BARED );
                     }
                 }
@@ -118,6 +135,8 @@ public class MainGameMode extends AppMode
                 }
 
             });
+
+        //If the game server says no more feeding, leave predator action
 
 
 
@@ -165,7 +184,8 @@ public class MainGameMode extends AppMode
 
 //        updateNonPlayersIds( ClientContext.gameCtrl.room.props.get( Codes.ROOM_PROP_NON_PLAYERS ) as Array );
 
-        var nonPlayerIdTimer :SimpleTimer = new SimpleTimer(2, sendServerNonPlayerIds, true, "npTimer");
+        //Every X seconds, check the non-player ids, updating the server if changed.
+        var nonPlayerIdTimer :SimpleTimer = new SimpleTimer(3, updateNonPlayerIds, true, "npTimer");
         addObject( nonPlayerIdTimer );
 
 
@@ -215,7 +235,7 @@ public class MainGameMode extends AppMode
         _feedingGameClient = null;
 
         //Reset the overlay
-        ClientContext.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
+//        ClientContext.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
 
     }
 
@@ -293,6 +313,8 @@ public class MainGameMode extends AppMode
 
     protected var _feedingGameClient :FeedingGameClient;
     protected var _feedingGameDraggableSprite :DraggableSprite;
+
+    protected var _currentNonPlayerIds :Array;
 //    /**Holds feeding data until game is over and it's sent to the server*/
 //    protected var _playerFeedingDataTemp :PlayerFeedingData;
 
