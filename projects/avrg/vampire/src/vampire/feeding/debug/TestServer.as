@@ -123,7 +123,8 @@ class TestGameController extends OneRoomGameRoom
             },
             function () :void {
                 onGameComplete(game, true);
-            });
+            },
+            onPlayerLeft);
 
 
         // send a message with the game ID to each of the players, and store the
@@ -138,6 +139,10 @@ class TestGameController extends OneRoomGameRoom
         log.info("Starting game", "gameId", game.gameId, "players", game.playerIds);
     }
 
+    protected function onPlayerLeft (playerId :int) :void
+    {
+        log.info("Player left", "playerId", playerId);
+    }
     protected function onRoundComplete (game :FeedingGameServer) :Number
     {
         log.info("Round ended", "gameId", game.gameId, "score", game.lastRoundScore);

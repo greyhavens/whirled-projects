@@ -34,7 +34,7 @@ public class Server extends FeedingGameServer
 
     public function Server (roomId :int, predatorIds :Array, preyId :int, preyBlood :Number,
                             preyBloodType :int, roundCompleteCallback :Function,
-                            gameCompleteCallback :Function)
+                            gameCompleteCallback :Function, playerLeftCallback :Function)
     {
         if (!_inited) {
             throw new Error("FeedingGameServer.init has not been called");
@@ -54,6 +54,8 @@ public class Server extends FeedingGameServer
         _preyBloodType = preyBloodType;
         _roundCompleteCallback = roundCompleteCallback;
         _gameCompleteCallback = gameCompleteCallback;
+        _gameCompleteCallback = gameCompleteCallback;
+        _playerLeftCallback = playerLeftCallback;
         _roomCtrl = _gameCtrl.getRoom(roomId);
         _nameUtil = new NameUtil(_gameId);
 
@@ -104,6 +106,10 @@ public class Server extends FeedingGameServer
                 ArrayUtil.removeFirst(_playersNeedingScoreUpdate, playerId);
                 endRoundIfReady();
             }
+        }
+
+        if( _playerLeftCallback != null) {
+            _playerLeftCallback(playerId);
         }
     }
 
@@ -358,6 +364,10 @@ public class Server extends FeedingGameServer
 
     protected function sendMessage (msg :Message, toPlayer :int = 0) :void
     {
+        if( !_roomCtrl.isConnected() ) {
+            log.info("Not sending msg (not connected) '" + msg.name + "' to " + (toPlayer != 0 ? toPlayer : "ALL"));
+            return;
+        }
         var name :String = _nameUtil.encodeName(msg.name);
         var val :Object = msg.toBytes();
         if (toPlayer == 0) {
@@ -389,6 +399,7 @@ public class Server extends FeedingGameServer
     protected var _preyBloodType :int;
     protected var _roundCompleteCallback :Function;
     protected var _gameCompleteCallback :Function;
+    protected var _playerLeftCallback :Function;
     protected var _timerMgr :TimerManager = new TimerManager();
     protected var _waitForPlayersTimer :ManagedTimer;
     protected var _events :EventHandlerManager = new EventHandlerManager();

@@ -50,11 +50,12 @@ public class FeedingGameServer
                                    preyBlood :Number,
                                    preyBloodType :int,
                                    roundCompleteCallback :Function,
-                                   gameCompleteCallback :Function) :FeedingGameServer
+                                   gameCompleteCallback :Function,
+                                   playerLeftCallback :Function) :FeedingGameServer
     {
         return new vampire.feeding.server.Server(roomId, predatorIds, preyId, preyBlood,
                                                  preyBloodType, roundCompleteCallback,
-                                                 gameCompleteCallback);
+                                                 gameCompleteCallback, playerLeftCallback);
     }
 
     /**
