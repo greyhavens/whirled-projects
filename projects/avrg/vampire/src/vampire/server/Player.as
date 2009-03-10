@@ -480,6 +480,7 @@ public class Player extends EventHandlerManager
 
         if( action == VConstants.GAME_MODE_BARED ) {
             setAction( VConstants.GAME_MODE_NOTHING );
+            return;
         }
 
         if( !isVampire() ) {
@@ -790,9 +791,9 @@ public class Player extends EventHandlerManager
             case VConstants.GAME_MODE_FIGHT:
             default:
                 setAction( VConstants.GAME_MODE_NOTHING );
-                if( isTargetTargetingMe && targetPlayer.action == VConstants.GAME_MODE_BARED) {
-                    targetPlayer.setAction( VConstants.GAME_MODE_NOTHING );
-                }
+//                if( isTargetTargetingMe && targetPlayer.action == VConstants.GAME_MODE_BARED) {
+//                    targetPlayer.setAction( VConstants.GAME_MODE_NOTHING );
+//                }
 
 
         }
@@ -887,7 +888,8 @@ public class Player extends EventHandlerManager
 
     public function isVampire() :Boolean
     {
-        return level >= VConstants.MINIMUM_VAMPIRE_LEVEL;
+        return true;
+//        return level >= VConstants.MINIMUM_VAMPIRE_LEVEL;
     }
 
     protected function leftRoom (evt :AVRGamePlayerEvent) :void
