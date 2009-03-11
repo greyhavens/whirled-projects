@@ -1,10 +1,12 @@
 package vampire.client
 {
     import com.threerings.flash.DisplayUtil;
+    import com.threerings.util.HashMap;
     import com.threerings.util.Log;
     import com.whirled.contrib.avrg.DraggableSceneObject;
 
     import flash.display.DisplayObject;
+    import flash.display.FrameLabel;
     import flash.display.InteractiveObject;
     import flash.display.MovieClip;
     import flash.display.SimpleButton;
@@ -100,12 +102,17 @@ package vampire.client
                 function( e :MouseEvent ) :void {
                     ClientContext.ctrl.local.showInvitePage("Join my Coven!", "" + ClientContext.ourPlayerId);
                 });
-            registerListener( MovieClip(findSafely("bond_icon")), MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
-                    gotoFrame("bloodbond");
-                });
+//            registerListener( MovieClip(findSafely("bond_icon")), MouseEvent.CLICK,
+//                function( e :MouseEvent ) :void {
+//                    gotoFrame("bloodbond");
+//                });
 
-//            addGlowFilter( MovieClip(findSafely("bond_icon")) );
+
+
+            //Test glow filter strangeness
+
+
+//            addGlowFilterMod( MovieClip(findSafely("bond_icon")) );
 
             registerListener( SimpleButton(findSafely("help_back")), MouseEvent.CLICK,
                 backButtonPushed);
@@ -127,6 +134,35 @@ package vampire.client
             registerListener( obj, MouseEvent.ROLL_OUT, function(...ignored) :void {
                 obj.filters = [];
             })
+        }
+
+        protected function addGlowFilterMod( obj : InteractiveObject ) :void
+        {
+            var addGlow :Function = function(...ignored) :void {
+                obj.filters = [_glowFilter];
+            };
+
+            var removeGlow :Function = function(...ignored) :void {
+                obj.filters = [];
+            };
+
+
+            var removeRollOutEvents :Function = function(...ignored) :void {
+                obj.filters = [];
+                unregisterListener( obj, MouseEvent.ROLL_OVER, addGlow);
+                unregisterListener( obj, MouseEvent.ROLL_OUT, removeGlow);
+                unregisterListener( obj, MouseEvent.CLICK, removeEventsOnClick);
+            };
+
+            var removeEventsOnClick :Function = function(...ignored) :void {
+                removeRollOutEvents();
+                obj.parent.removeChild( obj );
+            };
+
+            registerListener( obj, MouseEvent.ROLL_OVER, addGlow);
+            registerListener( obj, MouseEvent.ROLL_OUT, removeGlow);
+            registerListener( obj, MouseEvent.CLICK, removeEventsOnClick);
+
         }
 
         protected function updateBloodStrainPage() :void
@@ -248,16 +284,15 @@ package vampire.client
             }
         }
 
-        public function gotoFrame( frame :String ) :void
+        public function gotoFrame( frame :String, addFrameToHistory :Boolean = true ) :void
         {
             if( frame == null) {
                 frame = "default";
             }
 
-            if( _frameHistory.length == 0 || _frameHistory[ _frameHistory.length - 1] != _hudHelp.currentFrame) {
-                _frameHistory.push( _hudHelp.currentFrame );
+            if( addFrameToHistory && (_frameHistory.length == 0 || _frameHistory[ _frameHistory.length - 1] != _hudHelp.currentLabel)) {
+                _frameHistory.push( _hudHelp.currentLabel );
             }
-
             _hudHelp.gotoAndStop(frame);
 
             removeExtraHelpPanels();
@@ -275,6 +310,23 @@ package vampire.client
                     _lineageView.x = lineage_center.x;
                     _lineageView.y = lineage_center.y - 20;
 
+                    var bloodbondIcon :MovieClip = ClientContext.instantiateMovieClip("HUD", "bond_icon", false);
+
+                    registerListener( bloodbondIcon, MouseEvent.CLICK,
+                        function( e :MouseEvent ) :void {
+                            if( bloodbondIcon.parent != null ) {
+                                bloodbondIcon.parent.removeChild( bloodbondIcon );
+                            }
+                            gotoFrame("bloodbond");
+                        });
+
+                    addGlowFilter( bloodbondIcon );
+                    bloodbondIcon.scaleX = bloodbondIcon.scaleY = 2;
+                    bloodbondIcon.x = MovieClip(findSafely("bond_icon")).x - bloodbondIcon.width/2;
+                    bloodbondIcon.y = MovieClip(findSafely("bond_icon")).y;
+                    MovieClip(findSafely("bond_icon")).visible = false;
+                    _lineageView.sprite.addChild( bloodbondIcon );
+
                 default:
                     break;
             }
@@ -283,9 +335,8 @@ package vampire.client
         protected function backButtonPushed(...ignored) :void
         {
             if( _frameHistory.length > 0) {
-                var nextFrame :int = _frameHistory.pop();
-                _hudHelp.gotoAndStop( nextFrame );
-                removeExtraHelpPanels();
+                var previousFrame :String = _frameHistory.pop();
+                gotoFrame( previousFrame, false);
             }
         }
 
@@ -305,6 +356,7 @@ package vampire.client
         protected static const log :Log = Log.getLog( HelpPopup );
 
         protected var _glowFilter :GlowFilter = new GlowFilter(0xffffff);
+
 
         protected static const BLOOD_STRAIN_NAMES :Array = [
             "Aries",
