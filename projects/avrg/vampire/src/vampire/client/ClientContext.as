@@ -98,7 +98,7 @@ public class ClientContext
 
     public static function get ourEntityId () :String
     {
-//        if( _playerEntityId == null ) {
+        if( _playerEntityId == null ) {
             for each( var entityId :String in ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
 
                 var entityUserId :int = int(ctrl.room.getEntityProperty( EntityControl.PROP_MEMBER_ID, entityId));
@@ -109,9 +109,14 @@ public class ClientContext
                 }
 
             }
-//        }
+        }
 
         return _playerEntityId;
+    }
+
+    public static function clearOurEntityId () :void
+    {
+        _playerEntityId = null;
     }
 
 

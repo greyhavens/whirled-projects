@@ -4,6 +4,7 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.AgentSubControl;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.net.ElementChangedEvent;
@@ -49,11 +50,11 @@ public class GameModel extends SimObject//EventDispatcher
         //Update the HUD when the room props come in.
         registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, playerEnteredRoom);
 
-//        //Update the HUD when the room props come in.
-//        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED,
-//            function ( e :AVRGameRoomEvent) :void {
-//                trace("GameModel heard " + AVRGameRoomEvent.AVATAR_CHANGED + " " + e);
-//            });
+        //Reset the entityId if something about the avatar changes
+        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED,
+            function ( e :AVRGameRoomEvent) :void {
+                ClientContext.clearOurEntityId();
+            });
 //
 //        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_MOVED,
 //            function ( e :AVRGameRoomEvent) :void {
