@@ -39,6 +39,7 @@ public class BloodBloomGameRecord extends EventCollecter
     {
         var playerId :int = int(e.value);
         if( _gameServer != null && ArrayUtil.contains(_gameServer.playerIds, playerId)) {
+            log.debug("handlePlayerLeftRoom", "playerId", playerId);
             _gameServer.playerLeft( playerId );
         }
     }
