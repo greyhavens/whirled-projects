@@ -95,11 +95,8 @@ public class VampireAvatarHUD extends AvatarHUD
             }
         }
         else {
-            var targets :Array = _ctrl.room.getEntityProperty(
-                AvatarGameBridge.ENTITY_PROPERTY_CHAT_TARGETS, ClientContext.ourEntityId) as Array;
 
-            if( targets != null && ArrayUtil.contains( targets, playerId )
-                && SharedPlayerStateClient.getBlood( playerId ) > 1) {
+            if( isChattedEnoughForTargeting && SharedPlayerStateClient.getBlood( playerId ) > 1) {
 
                 validTarget = true;
             }
@@ -111,6 +108,19 @@ public class VampireAvatarHUD extends AvatarHUD
         else {
             _blood.filters = [];
         }
+    }
+
+    protected function get isChattedEnoughForTargeting() :Boolean
+    {
+        var targets :Array = _ctrl.room.getEntityProperty(
+                AvatarGameBridge.ENTITY_PROPERTY_CHAT_TARGETS, ClientContext.ourEntityId) as Array;
+
+        if( targets != null && ArrayUtil.contains( targets, playerId ) ){
+
+            return true;
+        }
+
+        return false;
     }
 
 
@@ -191,16 +201,17 @@ public class VampireAvatarHUD extends AvatarHUD
         //Add a mouse move listener to the blood.  This triggers showing the feed buttons
         var showMenuFunction :Function = function(...ignored) :void {
             _isMouseOver = true;
-            _hudSprite.addChildAt(_mouseOverSprite, 0);
+
 
 
             if( VConstants.LOCAL_DEBUG_MODE ) {
+                _hudSprite.addChildAt(_mouseOverSprite, 0);
                 showFeedAndFrenzyButton();
                 return;
             }
 
             //Only show feed buttons if there is sufficient blood
-            if( SharedPlayerStateClient.getBlood( playerId ) <= 1) {
+            if( !isChattedEnoughForTargeting || SharedPlayerStateClient.getBlood( playerId ) <= 1) {
                 return;
             }
 
@@ -210,6 +221,7 @@ public class VampireAvatarHUD extends AvatarHUD
             //Show feed buttons if we are a player in bared mode, or a non-player
             if( !isPlayer || (action != null && action == VConstants.GAME_MODE_BARED)) {
 
+                _hudSprite.addChildAt(_mouseOverSprite, 0);
                 //Make sure the frenzy button is only shown if there are more than 2 predators.
                 //This misses the case where there are two preds, and a non player, and the preds
                 //are feeding from each other.
