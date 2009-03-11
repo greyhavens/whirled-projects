@@ -102,17 +102,6 @@ package vampire.client
                 function( e :MouseEvent ) :void {
                     ClientContext.ctrl.local.showInvitePage("Join my Coven!", "" + ClientContext.ourPlayerId);
                 });
-//            registerListener( MovieClip(findSafely("bond_icon")), MouseEvent.CLICK,
-//                function( e :MouseEvent ) :void {
-//                    gotoFrame("bloodbond");
-//                });
-
-
-
-            //Test glow filter strangeness
-
-
-//            addGlowFilterMod( MovieClip(findSafely("bond_icon")) );
 
             registerListener( SimpleButton(findSafely("help_back")), MouseEvent.CLICK,
                 backButtonPushed);
@@ -136,34 +125,6 @@ package vampire.client
             })
         }
 
-        protected function addGlowFilterMod( obj : InteractiveObject ) :void
-        {
-            var addGlow :Function = function(...ignored) :void {
-                obj.filters = [_glowFilter];
-            };
-
-            var removeGlow :Function = function(...ignored) :void {
-                obj.filters = [];
-            };
-
-
-            var removeRollOutEvents :Function = function(...ignored) :void {
-                obj.filters = [];
-                unregisterListener( obj, MouseEvent.ROLL_OVER, addGlow);
-                unregisterListener( obj, MouseEvent.ROLL_OUT, removeGlow);
-                unregisterListener( obj, MouseEvent.CLICK, removeEventsOnClick);
-            };
-
-            var removeEventsOnClick :Function = function(...ignored) :void {
-                removeRollOutEvents();
-                obj.parent.removeChild( obj );
-            };
-
-            registerListener( obj, MouseEvent.ROLL_OVER, addGlow);
-            registerListener( obj, MouseEvent.ROLL_OUT, removeGlow);
-            registerListener( obj, MouseEvent.CLICK, removeEventsOnClick);
-
-        }
 
         protected function updateBloodStrainPage() :void
         {
