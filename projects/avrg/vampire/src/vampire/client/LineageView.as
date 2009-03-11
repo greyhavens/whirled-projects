@@ -79,6 +79,11 @@ package vampire.client
             return _displaySprite;
         }
 
+        public function get sprite () :Sprite
+        {
+            return _displaySprite;
+        }
+
 
         protected function updateHierarchyEvent( e :HierarchyUpdatedEvent) :void
         {
