@@ -98,6 +98,66 @@ public class NewBody
         appearanceChanged(null);
     }
 
+    /**
+     * Switches to a new state, using a transition animation if possible.
+     */
+    public function switchToState (state :String) :void
+    {
+        const stateScene :MovieList = getMovie("state_" + state);
+        if (stateScene == null) {
+            return; // ignore it
+        }
+
+        log.info("I'm transitioning to '" + state + "'.");
+        // transtion from our current state to the new state
+        queueTransitions(_state, state);
+        // update our internal state variable
+        _state = state;
+        // queue our new standing animation
+        queueMovie(stateScene);
+    }
+
+    /**
+     * Triggers an action animation, using transition animations if possible.
+     */
+    public function triggerAction (action :String) :void
+    {
+        const actionScene :MovieList = getMovie("action_" + action);
+        if (actionScene == null) {
+            return; // ignore it
+        }
+
+        log.info("I'm triggering action '" + action + "'.");
+        // transition from our current state to the action
+        queueTransitions(_state, action);
+        // play the action animation
+        queueMovie(actionScene);
+        // then transition back to our current state
+        queueTransitions(action, _state);
+        // and queue our standing animation
+        queueMovie(getMovie("state_" + _state));
+    }
+
+    /**
+     * Returns true if we're currently transitioning between states.
+     */
+    public function inTransition () :Boolean
+    {
+        return (_movieQueue.length > 0);
+    }
+
+    /**
+     * Cleans up after our NewBody, unregistering listeners, etc. Your subclass
+     * should also stop any timers, or do anything else needed.
+     */
+    public function shutdown () :void
+    {
+        _media.removeEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
+        _media.removeEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
+        // this may already be unregistered, but this won't hurt
+        _media.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+    }
+
     protected function getMovieName (movie :MovieClip) :String
     {
         return ClassUtil.getClassName(movie);
@@ -173,66 +233,6 @@ public class NewBody
     }
 
     /**
-     * Switches to a new state, using a transition animation if possible.
-     */
-    public function switchToState (state :String) :void
-    {
-        const stateScene :MovieList = getMovie("state_" + state);
-        if (stateScene == null) {
-            return; // ignore it
-        }
-
-        log.info("I'm transitioning to '" + state + "'.");
-        // transtion from our current state to the new state
-        queueTransitions(_state, state);
-        // update our internal state variable
-        _state = state;
-        // queue our new standing animation
-        queueMovie(stateScene);
-    }
-
-    /**
-     * Triggers an action animation, using transition animations if possible.
-     */
-    public function triggerAction (action :String) :void
-    {
-        const actionScene :MovieList = getMovie("action_" + action);
-        if (actionScene == null) {
-            return; // ignore it
-        }
-
-        log.info("I'm triggering action '" + action + "'.");
-        // transition from our current state to the action
-        queueTransitions(_state, action);
-        // play the action animation
-        queueMovie(actionScene);
-        // then transition back to our current state
-        queueTransitions(action, _state);
-        // and queue our standing animation
-        queueMovie(getMovie("state_" + _state));
-    }
-
-    /**
-     * Returns true if we're currently transitioning between states.
-     */
-    public function inTransition () :Boolean
-    {
-        return (_movieQueue.length > 0);
-    }
-
-    /**
-     * Cleans up after our NewBody, unregistering listeners, etc. Your subclass
-     * should also stop any timers, or do anything else needed.
-     */
-    public function shutdown () :void
-    {
-        _media.removeEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
-        _media.removeEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
-        // this may already be unregistered, but this won't hurt
-        _media.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
-    }
-
-    /**
      * Handles the _media being added or removed from the stage.
      */
     protected function handleAddRemove (event :Event) :void
@@ -305,6 +305,7 @@ public class NewBody
         } else if (_ctrl.isSleeping()) {
             mode = "sleeping";
         }
+
         if (_mode == mode) {
             return;
         }
@@ -317,13 +318,21 @@ public class NewBody
             // if we're transitioning to standing, try a fromMODE movie if we have one
             transition = getMovie("state_" + _state + "_from" + _mode);
         }
+
         var key :String = "state_" + _state + ((mode != "") ? ("_" + mode) : "");
         if (transition != null) {
             queueMovie(transition, true);
             queueMovie(getMovie(key), false);
+
+        } else if (mode == "walking" && getMovie(key) == null) {
+            // If we're transitioning to a walking state, and we don't have an animation
+            // for this walking state, force the Default_walking animation
+            queueMovie(getMovie("state_Default_walking"), true);
+
         } else {
             queueMovie(getMovie(key), true);
         }
+
         _mode = mode;
     }
 
@@ -358,10 +367,7 @@ public class NewBody
             _movieQueue.length = 0;
             _playing = movieList;
             _playing.update();
-            // The below line was originally in here, but apparently everything works without
-            // it and it fixes flickering in a remixed avatar.
-            //_media.gotoAndPlay(1, _playing.current.name);
-            _movieQueue.push(movieList); // and this line is added instead
+            _movieQueue.push(movieList);
 
         } else {
             log.info("Queueing " + movieList.name + ".");

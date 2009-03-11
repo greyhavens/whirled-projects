@@ -176,7 +176,8 @@ public class VampireBody extends NewBody
         return child;
     }
 
-    protected static function selectFrame (movie :MovieClip, childPath :Array, frameNumber :int) :void
+    protected static function selectFrame (movie :MovieClip, childPath :Array,
+                                           frameNumber :int) :void
     {
         var child :MovieClip = findChild(movie, childPath);
         if (child != null) {
