@@ -28,7 +28,7 @@ import vampire.net.VMessageManager;
 
 public class VServer extends ObjectDBThane
 {
-    public static const FRAMES_PER_SECOND :int = 30;
+//    public static const FRAMES_PER_SECOND :int = 30;
 
     public static var log :Log = Log.getLog(VServer);
 
@@ -73,7 +73,7 @@ public class VServer extends ObjectDBThane
 
         _startTime = getTimer();
         _lastTickTime = _startTime;
-        setInterval(tick, VConstants.SERVER_TICK_UPDATE_MILLISECONDS);
+        setInterval(tick, SERVER_TICK_UPDATE_MILLISECONDS);
 
         ServerContext.minionHierarchy = new MinionHierarchyServer( this );
         addObject( ServerContext.minionHierarchy );
@@ -99,8 +99,16 @@ public class VServer extends ObjectDBThane
         }
         var room :Room = _rooms.get(roomId);
         if (room == null) {
-            _rooms.put(roomId, room = new Room(roomId));
-            addObject( room );
+
+
+            try {
+                room = new Room(roomId);
+                _rooms.put(roomId, room );
+                addObject( room );
+            }
+            catch(err :Error ) {
+                log.error("Attempted to get a room with no players.  Throws error.  Use isRoom()");
+            }
         }
         return room;
     }
@@ -120,6 +128,17 @@ public class VServer extends ObjectDBThane
 //
 //    }
 
+
+    protected function removeStaleRooms() :void
+    {
+        for each( var roomId :int in _rooms.keys()) {
+            var room :Room = _rooms.get( roomId ) as Room;
+            if( room == null || room.isStale ) {
+                log.debug("Removed room from VServer " + roomId);
+                _rooms.remove( roomId );
+            }
+        }
+    }
     protected function tick () :void
     {
         var time :int = getTimer();
@@ -135,6 +154,8 @@ public class VServer extends ObjectDBThane
 
 //        ServerContext.minionHierarchy.tick();
 //        _avatarManager.update( dT_seconds );
+
+        removeStaleRooms();
 
         _ctrl.doBatch(function () :void {
 
@@ -506,6 +527,7 @@ public class VServer extends ObjectDBThane
 
     protected var _stub :ServerStub;
 
+    public static const SERVER_TICK_UPDATE_MILLISECONDS :int = 400;
 
 }
 }

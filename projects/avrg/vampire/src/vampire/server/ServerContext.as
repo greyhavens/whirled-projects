@@ -12,7 +12,7 @@ public class ServerContext
     public static var ctrl :AVRServerGameControl;
     public static var vserver :VServer;
     public static var minionHierarchy :MinionHierarchyServer;
-    public static var nonPlayersBloodMonitor :NonPlayerAvatarsBloodMonitor = new NonPlayerAvatarsBloodMonitor();
+    public static var nonPlayersBloodMonitor :NonPlayerAvatarsBloodMonitor;
     public static var trophies :Trophies;
 
     /** Highest ever score.  This is used to scale the coin payouts. */

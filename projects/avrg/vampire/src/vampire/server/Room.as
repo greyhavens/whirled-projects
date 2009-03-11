@@ -41,7 +41,10 @@ public class Room extends SimObjectThane
     }
 
 
-
+    public function get isStale() :Boolean
+    {
+        return !isLiveObject || isShutdown || _ctrl == null || !_ctrl.isConnected();
+    }
 
 
     public function get ctrl () :RoomSubControlServer
@@ -184,7 +187,7 @@ public class Room extends SimObjectThane
         } catch (e :Error) {
             log.error("Tick error", e);
 
-            _errorCount ++;
+            _errorCount++;
             if (isShutdown) {
                 log.info("Giving up on room tick() due to error overflow", "roomId", this.roomId);
                 return;
@@ -367,6 +370,7 @@ public class Room extends SimObjectThane
             log.debug("Unloaded room", "roomId", roomId);
         }
         _players.clear();
+        _ctrl = null;
     }
 
     protected function handlePlayerMoved( e :AVRGameRoomEvent ) :void

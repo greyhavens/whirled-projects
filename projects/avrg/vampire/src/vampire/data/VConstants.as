@@ -165,7 +165,7 @@ public class VConstants
 
     public static const TIME_INTERVAL_PROXIMITY_CHECK :int = 1000;
 
-    public static const SERVER_TICK_UPDATE_MILLISECONDS :int = 300;
+
 
     public static const DEBUG_MINION :String = "miniondebug ";
 
