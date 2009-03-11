@@ -8,11 +8,14 @@ import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameRoomEvent;
+import com.whirled.contrib.avrg.DraggableSceneObject;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.net.MessageReceivedEvent;
 
+import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.geom.Rectangle;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.events.PlayerArrivedAtLocationEvent;
@@ -45,9 +48,11 @@ public class MainGameMode extends AppMode
         var npIds :Array = ClientContext.getNonPlayerIds();
         npIds.sort();
 
+        var roomId :int = ClientContext.ctrl.room.getRoomId();
+
         if( !ArrayUtil.equals( _currentNonPlayerIds, npIds ) ) {
             var msg :NonPlayerIdsInRoomMessage = new NonPlayerIdsInRoomMessage(
-                ClientContext.ourPlayerId, npIds );
+                ClientContext.ourPlayerId, npIds, roomId );
     //        log.debug("Sending " + msg);
             ClientContext.ctrl.agent.sendMessage( msg.name, msg.toBytes() );
             _currentNonPlayerIds = npIds;
@@ -72,8 +77,8 @@ public class MainGameMode extends AppMode
 //            addObject(  new HelpPopup(), modeSprite );
         }
 
-        _feedingGameDraggableSprite = new DraggableSprite(ClientContext.ctrl);
-
+        _feedingGameDraggableSprite = new DraggableSceneObject(ClientContext.ctrl);
+        modeSprite.addChild( _feedingGameDraggableSprite.displayObject );
 
         //If we start moving, and we are in bared mode, change to default mode.
         registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_MOVED, function(
@@ -212,7 +217,11 @@ public class MainGameMode extends AppMode
             } else {
                 _feedingGameClient = FeedingGameClient.create( gameId, ClientContext.model.playerFeedingData, onGameComplete);
 
-                modeSprite.addChild(_feedingGameClient);
+                Sprite(_feedingGameDraggableSprite.displayObject).addChild( _feedingGameClient );
+                _feedingGameClient.mouseEnabled = true;
+                _feedingGameClient.mouseChildren = true;
+                _feedingGameDraggableSprite.init(new Rectangle(0,0,0,0), 0,0,0,0);
+//                modeSprite.addChild(_feedingGameClient);
             }
         }
     }
@@ -223,7 +232,12 @@ public class MainGameMode extends AppMode
     protected function onGameComplete () :void
     {
         log.info(ClientContext.ourPlayerId + " onGameComplete(), Feeding complete, setting avatar state to default");//, "completedSuccessfully", completedSuccessfully);
-        modeSprite.removeChild(_feedingGameClient);
+
+        if( Sprite(_feedingGameDraggableSprite.displayObject).contains( _feedingGameClient ) ){
+            Sprite(_feedingGameDraggableSprite.displayObject).removeChild( _feedingGameClient )
+        }
+
+//        modeSprite.removeChild(_feedingGameClient);
         trace(ClientContext.ourPlayerId + " setting avatar state from game complete");
         ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
         if( _feedingGameClient.playerData != null ) {
@@ -313,7 +327,7 @@ public class MainGameMode extends AppMode
     protected var _hud :HUD;
 
     protected var _feedingGameClient :FeedingGameClient;
-    protected var _feedingGameDraggableSprite :DraggableSprite;
+    protected var _feedingGameDraggableSprite :DraggableSceneObject;
 
     protected var _currentNonPlayerIds :Array;
 //    /**Holds feeding data until game is over and it's sent to the server*/

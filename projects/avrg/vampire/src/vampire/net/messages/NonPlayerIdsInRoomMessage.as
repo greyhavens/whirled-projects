@@ -6,16 +6,20 @@ package vampire.net.messages
 
     public class NonPlayerIdsInRoomMessage extends BaseGameMessage
     {
-        public function NonPlayerIdsInRoomMessage(playerId:int = 0, nonPlayerIds :Array = null)
+        public function NonPlayerIdsInRoomMessage(playerId:int = 0, nonPlayerIds :Array = null, roomId :int = 0)
         {
             super(playerId);
             _npIds = nonPlayerIds != null ? nonPlayerIds : new Array();
+            _roomId = roomId;
         }
 
 
         override public function fromBytes (bytes :ByteArray) :void
         {
             super.fromBytes(bytes);
+
+            _roomId = bytes.readInt();
+
             _npIds = new Array();
 
             var count :int = bytes.readInt();
@@ -30,6 +34,8 @@ package vampire.net.messages
         {
             var bytes :ByteArray = super.toBytes(bytes);
 
+            bytes.writeInt( _roomId );
+
             bytes.writeInt( _npIds.length );
 
             for each( var id :int in _npIds ) {
@@ -43,6 +49,11 @@ package vampire.net.messages
            return _npIds;
         }
 
+        public function get roomId () :int
+        {
+           return _roomId;
+        }
+
         override public function get name () :String
         {
            return NAME;
@@ -50,10 +61,11 @@ package vampire.net.messages
 
         override public function toString() :String
         {
-            return ClassUtil.tinyClassName( this ) + ": player=" + _playerId + ", ids=" + _npIds;
+            return ClassUtil.tinyClassName( this ) + ": player=" + _playerId + ", ids=" + _npIds + ", room=" + _roomId;
         }
 
         protected var _npIds :Array;
+        protected var _roomId :int;
 
         public static const NAME :String = "Message: Non-Player Ids";
 
