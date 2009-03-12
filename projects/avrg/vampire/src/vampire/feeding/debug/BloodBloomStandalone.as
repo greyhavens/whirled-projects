@@ -5,6 +5,7 @@ import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Sprite;
 
+import vampire.avatar.VampireBody;
 import vampire.data.VConstants;
 import vampire.feeding.*;
 import vampire.feeding.client.*;
@@ -19,6 +20,7 @@ public class BloodBloomStandalone extends Sprite
         c = vampire.feeding.server.Server;
         c = vampire.feeding.debug.TestClient;
         c = vampire.feeding.debug.TestServer;
+        c = vampire.avatar.VampireBody;
     }
 
     public function BloodBloomStandalone ()
