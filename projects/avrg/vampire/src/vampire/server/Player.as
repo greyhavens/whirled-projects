@@ -5,7 +5,6 @@ package vampire.server {
 
 import com.threerings.flash.MathUtil;
 import com.threerings.flash.Vector2;
-import com.threerings.presents.dobj.SetListener;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Hashable;
@@ -299,9 +298,20 @@ public class Player extends EventHandlerManager
 
         _xp = Math.min( _xp, Logic.maxXPGivenXPAndInvites(_xp, invites));
 
-         if( newLevel > currentLevel) {
+        if( newLevel > currentLevel) {
             _blood = Math.min( _blood, 0.1 * maxBlood);
         }
+
+        var levelWithMaxInvites :int = Logic.levelGivenCurrentXpAndInvites( xp, 100000 );
+        if( levelWithMaxInvites > newLevel ) {
+            var invitesNeededForNextLevel :int = Logic.invitesNeededForLevel( newLevel + 1 );
+            invitesNeededForNextLevel = Math.max(0, invitesNeededForNextLevel - invites );
+            addFeedback("You've reached level " + newLevel + ", but your Lineage isn't diverse "
+            + "enough to handle your growing power.  Recruit " + invitesNeededForNextLevel +
+            " new players from outside Whirled to support your new potency.");
+        }
+
+        //"
 
 
 
@@ -1353,14 +1363,19 @@ public class Player extends EventHandlerManager
 
     }
 
-    public function get mostRecentVictimId() :int
+    public function get mostRecentVictimIds() :Array
     {
-        return _mostRecentVictimId;
+        return _mostRecentVictimIds;
     }
 
-    public function set mostRecentVictimId( id :int ) :void
+    public function addMostRecentVictimIds( id :int ) :void
     {
-        _mostRecentVictimId = id;
+        _mostRecentVictimIds.push( id );
+    }
+
+    public function clearVictimIds() :void
+    {
+        _mostRecentVictimIds.splice(0);
     }
 
     public function isVictim() :Boolean
@@ -1453,7 +1468,7 @@ public class Player extends EventHandlerManager
 //    protected var _chatTimesWithTarget :Array = [];
 
     /** Records who we eat, and who eats us, for determining blood bond status.*/
-    protected var _mostRecentVictimId :int;
+    protected var _mostRecentVictimIds :Array = new Array();
 
     /** Player data for BloodBloom*/
 //    protected var _feedingData :PlayerFeedingData;
