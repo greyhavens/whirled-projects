@@ -12,8 +12,7 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
-import testing.TestMode;
-
+import vampire.data.SharedPlayerStateClient;
 import vampire.data.VConstants;
 import vampire.net.VMessageManager;
 import vampire.server.AVRGAgentLogTarget;
@@ -139,7 +138,8 @@ public class VampireMain extends Sprite
             var inviterId :int = ClientContext.ctrl.local.getInviterMemberId();
             var shareToken :String = ClientContext.ctrl.local.getInviteToken();
             log.info(ClientContext.ctrl.player.getPlayerId() + "sending  inviterId=" + inviterId + ", token=" + shareToken);
-            if( inviterId > 0 ) {
+            //If we don't have a sire, and we are invited, send our invite token
+            if( inviterId != 0 && SharedPlayerStateClient.getSire(ClientContext.ourPlayerId) == 0) {
 //                var msg :ShareTokenMessage = new ShareTokenMessage( ClientContext.ourPlayerId,
 //                    inviterId, shareToken );
 //                ClientContext.ctrl.agent.sendMessage( msg.name, msg );

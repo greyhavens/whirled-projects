@@ -481,6 +481,9 @@ public class VServer extends ObjectDBThane
 
     /**
     * Keep track of invites for trophies.
+    * NB this does *not* check if the invited player already has a sire, it is assumed that
+    * this check has already been made, and this function is called only after the first
+    * time the sire is newly set.
     *
     */
     public function playerInvitedByPlayer( newPlayerId :int, inviterId :int ) :void

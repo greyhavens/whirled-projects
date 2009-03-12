@@ -35,8 +35,8 @@ public class MainGameMode extends AppMode
         modeSprite.visible = true;
         log.debug("Starting " + ClassUtil.tinyClassName( this ));
 
-        var testPopup :PopupMessage = new PopupMessage(ClientContext.ctrl, "sdsdf", ClientContext.hud);
-        addObject( testPopup, modeSprite );
+//        var testPopup :PopupMessage = new PopupMessage(ClientContext.ctrl, "sdsdf", ClientContext.hud);
+//        addObject( testPopup, modeSprite );
     }
 
     protected function updateNonPlayerIds(...ignored ) :void

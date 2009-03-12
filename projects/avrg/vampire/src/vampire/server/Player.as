@@ -100,10 +100,6 @@ public class Player extends EventHandlerManager
 
         _sire = int(_ctrl.props.get(Codes.PLAYER_PROP_SIRE));
 
-        if( _sire == 0 ) {
-            //If we have no sire, the client will check for invite tokens, and send us an
-            _sire = -1;
-        }
         log.debug("Getting sire=" + _sire);
 
         setAction( VConstants.GAME_MODE_NOTHING );
@@ -428,14 +424,14 @@ public class Player extends EventHandlerManager
             else if( name == VConstants.NAMED_EVENT_SHARE_TOKEN ) {
                 var inviterId :int = int( value );
                 log.debug( playerId + " received inviter id=" + inviterId);
-                if( sire <= 0 ) {
+                if( sire == 0 ) {
                     log.info( playerId + " setting sire=" + inviterId);
                     makeSire( inviterId );
                     //Tally the successful invites for trophies
                     ServerContext.vserver.playerInvitedByPlayer( playerId, inviterId );
                 }
                 else {
-                    log.warning("handleShareTokenMessage, but our sire is already > 0" );
+                    log.warning("handleShareTokenMessage, but our sire is already != 0" );
                 }
             }
             else if( name == VConstants.NAMED_MESSAGE_CHOOSE_FEMALE ) {
@@ -485,12 +481,12 @@ public class Player extends EventHandlerManager
     {
         var inviterId :int = e.inviterId;
         log.debug( playerId + " received inviter id=" + inviterId);
-        if( sire <= 0 ) {
+        if( sire != 0 ) {
             log.info( playerId + " setting sire=" + inviterId);
             setSire( inviterId );
         }
         else {
-            log.warning("handleShareTokenMessage, but our sire is already > 0", "e", e );
+            log.warning("handleShareTokenMessage, but our sire != 0", "e", e );
         }
     }
     protected function handleFeedRequestMessage( e :FeedRequestMessage2 ) :void

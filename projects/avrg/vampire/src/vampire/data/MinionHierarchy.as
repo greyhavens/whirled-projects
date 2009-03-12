@@ -8,8 +8,6 @@ package vampire.data
 
     import flash.utils.ByteArray;
 
-    import vampire.client.events.HierarchyUpdatedEvent;
-
 
 
 /**
@@ -390,6 +388,15 @@ public class MinionHierarchy extends SimObjectThane
 
         return getAllSiresAndGrandSires(playerId).contains(queryPlayerId) ||
             getAllMinionsAndSubminions(playerId).contains( queryPlayerId );
+    }
+
+    public function isMinionOf( maybeMinion :int, maybeSire :int ) :Boolean
+    {
+        var sire :Node = _playerId2Node.get( maybeSire ) as Node;
+        if( sire != null) {
+            return sire.childrenIds.contains(maybeMinion);
+        }
+        return false;
     }
 
 
