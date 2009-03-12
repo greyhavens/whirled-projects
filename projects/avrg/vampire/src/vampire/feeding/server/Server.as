@@ -54,7 +54,6 @@ public class Server extends FeedingGameServer
         _preyBloodType = preyBloodType;
         _roundCompleteCallback = roundCompleteCallback;
         _gameCompleteCallback = gameCompleteCallback;
-        _gameCompleteCallback = gameCompleteCallback;
         _playerLeftCallback = playerLeftCallback;
         _roomCtrl = _gameCtrl.getRoom(roomId);
         _nameUtil = new NameUtil(_gameId);
