@@ -518,7 +518,7 @@ public class VampireAvatarHUD extends AvatarHUD
             currentBlood = maxBlood;
         }
 
-        _blood.width = BLOOD_BAR_MIN_WIDTH;
+        _blood.width = maxBlood/2;//BLOOD_BAR_MIN_WIDTH;
         _blood.height = 15;
 
         _bloodMouseDetector.graphics.clear();
@@ -815,7 +815,7 @@ public class VampireAvatarHUD extends AvatarHUD
     protected var _glowTimer :SimpleTimer;
     protected static const BLOOD_BAR_MIN_WIDTH :int = 50;
     protected static const FEED_BUTTON_Y :int = 22;
-    protected static const ANIMATION_TIME :Number = 0.3;
+    protected static const ANIMATION_TIME :Number = 0.2;
 
 }
 }
