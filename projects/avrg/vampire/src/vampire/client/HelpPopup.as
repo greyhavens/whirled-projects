@@ -376,23 +376,28 @@ package vampire.client
                     }
                     else {
                         //Check if we need to show the sires link
-                        if( ClientContext.model.lineage.getSireId( ClientContext.ourPlayerId ) == 0) {
+                        if( ClientContext.model.lineage.getSireId( ClientContext.ourPlayerId ) == 0
+                            && ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) == 0) {
                             _getSiresButton.mouseEnabled = true;
                             _getSiresButton.visible = true;
-                        }
-                        else {
-                            _getSiresButton.mouseEnabled = false;
-                            _getSiresButton.visible = false;
-                        }
-                        //Check if we need to show the minions link
-                        if( ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) == 0) {
                             _getMinionsButton.mouseEnabled = true;
                             _getMinionsButton.visible = true;
                         }
                         else {
+                            _getSiresButton.mouseEnabled = false;
+                            _getSiresButton.visible = false;
                             _getMinionsButton.mouseEnabled = false;
                             _getMinionsButton.visible = false;
                         }
+                        //Check if we need to show the minions link
+//                        if( ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) == 0) {
+//                            _getMinionsButton.mouseEnabled = true;
+//                            _getMinionsButton.visible = true;
+//                        }
+//                        else {
+//                            _getMinionsButton.mouseEnabled = false;
+//                            _getMinionsButton.visible = false;
+//                        }
                     }
 
                 default:
