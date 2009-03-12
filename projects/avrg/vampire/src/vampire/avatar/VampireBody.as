@@ -1,4 +1,4 @@
-package vampire.avatar {
+﻿package vampire.avatar {
 
 import com.threerings.util.HashMap;
 import com.whirled.AvatarControl;
@@ -130,6 +130,8 @@ public class VampireBody extends NewBody
         for each (var movie :MovieClip in getAllMovies()) {
             // Shirt
             selectFrame(movie, [ "torso", "shirt" ], config.shirtNumber);
+            selectFrame(movie, [ "neck", "shirt" ], config.shirtNumber);
+            selectFrame(movie, [ "hips", "shirt" ], config.shirtNumber);
             selectFrame(movie, [ "breasts", "shirt" ], config.shirtNumber);
             selectFrame(movie, [ "breasts", "breasts" ], config.shirtNumber);
             selectFrame(movie, [ "bicepL", "shirt" ], config.shirtNumber);
