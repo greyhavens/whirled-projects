@@ -1,6 +1,6 @@
 package vampire.data
 {
-    import vampire.server.Player;
+    import com.threerings.flash.MathUtil;
 
 
 /**
@@ -76,8 +76,8 @@ public class Logic
             level++;
         }
 
-        return level;
-//        return xp/10 + 1;
+        //Cap the level for now
+        return MathUtil.clamp(level, 1, VConstants.MAXIMUM_VAMPIRE_LEVEL);
     }
     public static function xpNeededForLevel( level :int ) :Number
     {
@@ -105,10 +105,8 @@ public class Logic
     * [level, minimum number of invites]
     */
     public static const LEVEL_INVITE_CAPS :Array = [
-        [3, 3],
-        [5, 25],
-        [7, 50],
-        [9, 100],
+        [5, 1],
+        [10, 2]
     ]
 
 }

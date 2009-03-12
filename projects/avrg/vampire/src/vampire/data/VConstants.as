@@ -108,6 +108,9 @@ public class VConstants
 
 
     public static const MINIMUM_VAMPIRE_LEVEL :int = 1;
+
+    /**We cap the max level for now.*/
+    public static const MAXIMUM_VAMPIRE_LEVEL :int = 10;
 //    public static function get MINIMUM_VAMPIRE_LEVEL() :int
 //    {
 //        return MAXIMUM_LEVEL_FOR_NON_VAMPIRE + 1;
