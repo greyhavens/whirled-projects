@@ -18,7 +18,9 @@ import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
+import vampire.client.events.HierarchyUpdatedEvent;
 import vampire.client.events.PlayerArrivedAtLocationEvent;
+import vampire.data.MinionHierarchy;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingGameClient;
 import vampire.net.messages.NonPlayerIdsInRoomMessage;
@@ -71,6 +73,27 @@ public class MainGameMode extends AppMode
         ClientContext.model = new GameModel();
         addObject( ClientContext.model );
         ClientContext.model.setup();
+
+        if( VConstants.LOCAL_DEBUG_MODE) {
+
+            var lineage :MinionHierarchy = new MinionHierarchy();
+//                lineage.setPlayerSire(1, 2);
+                lineage.setPlayerSire(3, 1);
+//                lineage.setPlayerSire(4, 1);
+//                lineage.setPlayerSire(5, 1);
+//                lineage.setPlayerSire(6, 5);
+//                lineage.setPlayerSire(7, 6);
+//                lineage.setPlayerSire(8, 6);
+//                lineage.setPlayerSire(9, 1);
+//                lineage.setPlayerSire(10, 1);
+//                lineage.setPlayerSire(11, 1);
+//                lineage.setPlayerSire(12, 1);
+//                lineage.setPlayerSire(13, 1);
+//                lineage.setPlayerSire(14, 1);
+            var msg :HierarchyUpdatedEvent = new HierarchyUpdatedEvent(lineage, ClientContext.ourPlayerId);
+            ClientContext.model.lineage = lineage;
+            ClientContext.model.dispatchEvent( msg );
+        }
 
         //If this player hasn't played before, automatically show the help.
         if( ClientContext.model.isNewPlayer() ) {
@@ -193,7 +216,7 @@ public class MainGameMode extends AppMode
 //        updateNonPlayersIds( ClientContext.gameCtrl.room.props.get( Codes.ROOM_PROP_NON_PLAYERS ) as Array );
 
         //Every X seconds, check the non-player ids, updating the server if changed.
-        var nonPlayerIdTimer :SimpleTimer = new SimpleTimer(3, updateNonPlayerIds, true, "npTimer");
+        var nonPlayerIdTimer :SimpleTimer = new SimpleTimer(2, updateNonPlayerIds, true, "npTimer");
         addObject( nonPlayerIdTimer );
 
 

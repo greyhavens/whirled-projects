@@ -630,8 +630,8 @@ public class Room extends SimObjectThane
         var bloodIncrement :Number = VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
         var bloodGained :Number = points;
 
-        var victimId :int = -1;
-        var victimsMostRecentFeedVictimId :int = -1;
+//        var victimId :int = -1;
+//        var victimsMostRecentFeedVictimId :int = -1;
 
         var victimBlood :Number = isPlayer( prey ) ? getPlayer( prey ).blood :
             ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( prey );

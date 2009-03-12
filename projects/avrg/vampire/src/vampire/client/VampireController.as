@@ -267,7 +267,7 @@ public class VampireController extends Controller
         }
         else {
             var msg :FeedRequestMessage2 = new FeedRequestMessage2( ClientContext.ourPlayerId,
-                -1, false, 0,0,0);
+                0, false, 0,0,0);
             log.debug(ClientContext.ctrl + " handleSendFeedRequest() sending " + msg)
             ClientContext.ctrl.agent.sendMessage( FeedRequestMessage2.NAME, msg.toBytes() );
         }

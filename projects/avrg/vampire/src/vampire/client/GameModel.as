@@ -169,7 +169,7 @@ public class GameModel extends SimObject//EventDispatcher
 
         trace(VConstants.DEBUG_MINION + " Player entered room");
 
-        if( hierarchy == null) {
+        if( lineage == null) {
 
             _hierarchy = loadHierarchyFromProps();
             trace(VConstants.DEBUG_MINION + " loadHierarchyFromProps()=" + _hierarchy);
@@ -427,6 +427,11 @@ public class GameModel extends SimObject//EventDispatcher
         return SharedPlayerStateClient.getLevel( ClientContext.ourPlayerId );
     }
 
+    public function get invites() :int
+    {
+        return SharedPlayerStateClient.getInvites( ClientContext.ourPlayerId );
+    }
+
     public function get location() :Array
     {
         var avatar :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo( ClientContext.ourPlayerId );
@@ -480,9 +485,15 @@ public class GameModel extends SimObject//EventDispatcher
         return VConstants.LOCAL_DEBUG_MODE || level >= VConstants.MINIMUM_VAMPIRE_LEVEL;
     }
 
-    public function get hierarchy() :MinionHierarchy
+    public function get lineage() :MinionHierarchy
     {
         return _hierarchy;
+    }
+
+    //For debugging
+    public function set lineage(h :MinionHierarchy) :void
+    {
+        _hierarchy = h;
     }
 
 

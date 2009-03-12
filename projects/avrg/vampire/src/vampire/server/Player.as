@@ -82,6 +82,8 @@ public class Player extends EventHandlerManager
             setBlood(VConstants.MAX_BLOOD_FOR_LEVEL( 1 ));
 
         }
+
+        //In the current game, we don't let you die.
         if( _blood < 1 ) {
             setBlood( 1 );
         }
@@ -499,7 +501,7 @@ public class Player extends EventHandlerManager
         }
 
         if( !isVampire() ) {
-            if( e.targetPlayer == -1 ) {
+            if( e.targetPlayer == 0 ) {
                 //Practise feeding
                 //Add ourselves to a game.  We'll check this later, when we arrive at our location
                 game = _room._bloodBloomGameManager.requestFeed(
@@ -524,7 +526,7 @@ public class Player extends EventHandlerManager
             //Add ourselves to a game.  We'll check this later, when we arrive at our location
             game = _room._bloodBloomGameManager.requestFeed(
                 e.playerId,
-                e.targetPlayer,
+                (e.targetPlayer != 0 ? e.targetPlayer : -1),//BB used -1 as the AI player
                 e.isAllowingMultiplePredators,
                 [e.targetX, e.targetY, e.targetZ] );//Prey location
 
@@ -844,7 +846,7 @@ public class Player extends EventHandlerManager
     protected function get targetOfTargetPlayer() :int
     {
         if( !isTargetPlayer ) {
-            return -1;
+            return 0;
         }
         return targetPlayer.targetId;
     }
@@ -1159,7 +1161,7 @@ public class Player extends EventHandlerManager
         _targetLocation = location;
     }
 
-    public function setTime (time :Number, force :Boolean = false) :void
+    protected function setTime (time :Number, force :Boolean = false) :void
     {
         log.info("setTime()", "time", new Date(time).toTimeString());
 
@@ -1187,10 +1189,10 @@ public class Player extends EventHandlerManager
         var oldBloodBond :int = _bloodbonded;
         _bloodbonded = bloodbonded;
 
-        if( oldBloodBond > 0) {//Remove the blood bond from the other player.
+        if( oldBloodBond != 0) {//Remove the blood bond from the other player.
             if( ServerContext.vserver.isPlayer( oldBloodBond )) {
                 var oldPartner :Player = ServerContext.vserver.getPlayer( oldBloodBond );
-                oldPartner.setBloodBonded( -1 );
+                oldPartner.setBloodBonded( 0 );
             }
             else {//Load from database
                 ServerContext.ctrl.loadOfflinePlayer(oldBloodBond,
@@ -1207,7 +1209,7 @@ public class Player extends EventHandlerManager
         }
 
 
-        if( _bloodbonded > 0) {//Set the name too
+        if( _bloodbonded != 0) {//Set the name too
             var bloodBondedPlayer :Player = ServerContext.vserver.getPlayer( _bloodbonded );
             if( bloodBondedPlayer != null ) {
                 _bloodbondedName = bloodBondedPlayer.name;
@@ -1222,9 +1224,9 @@ public class Player extends EventHandlerManager
         }
 
         // and if we're in a room, update the room properties
-        if (_room != null) {
-            _room.playerUpdated(this);
-        }
+//        if (_room != null) {
+//            _room.playerUpdated(this);
+//        }
     }
 
 

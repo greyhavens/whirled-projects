@@ -179,7 +179,7 @@ public class MinionHierarchy extends SimObjectThane
         if( player != null && player.parent != null) {
             return player.parent.hashCode();
         }
-        return -1;
+        return 0;
     }
 
     public function getMinionIds( playerId :int) :HashSet
