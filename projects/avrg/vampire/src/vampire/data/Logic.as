@@ -66,18 +66,36 @@ public class Logic
             var levelCap :int = levelAndInviteMin[0];
             var minInvites :int = levelAndInviteMin[1];
             if( invites < minInvites) {
+                maxLevelFromInvites = levelCap - 1;
                 break;
             }
             maxLevelFromInvites = levelCap;
         }
 
         var level :int = 1;
-        while( xpNeededForLevel(level + 1) <= xp  && level <= maxLevelFromInvites) {
+        while( xpNeededForLevel(level + 1) <= xp  && level < maxLevelFromInvites) {
             level++;
         }
 
         //Cap the level for now
         return MathUtil.clamp(level, 1, VConstants.MAXIMUM_VAMPIRE_LEVEL);
+    }
+
+    public static function invitesNeededForLevel( level :int ) :int
+    {
+        var invites :int = 0;
+        for each( var levelAndInviteMin :Array in LEVEL_INVITE_CAPS) {
+            var levelCap :int = levelAndInviteMin[0];
+            var minInvites :int = levelAndInviteMin[1];
+
+            if( level >= levelCap) {
+                invites = minInvites;
+            }
+            else {
+                break;
+            }
+        }
+        return invites;
     }
     public static function xpNeededForLevel( level :int ) :Number
     {
