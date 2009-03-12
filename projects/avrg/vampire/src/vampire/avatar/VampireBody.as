@@ -341,10 +341,11 @@ class ConfigPanel extends Sprite
         _showConfigCallback = showConfigCallback;
         _closePanelCallback = closePanelCallback;
 
+        var skintones :Array = [ 0xDEEFF5, 0xD0DFFD, 0xC2EDD3, 0xE1C2ED, 0xC7B4EB, 0xCCCCCC ];
         var randomize :SimpleButton = new SimpleTextButton("Randomize");
         randomize.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
-                _config.skinColor = rand(0xff000000, 0xffffffff);
+                _config.skinColor = randPick(skintones);
                 _config.hairColor = rand(0xff000000, 0xffffffff);
                 _config.shirtColor = rand(0xff000000, 0xffffffff);
                 _config.pantsColor = rand(0xff000000, 0xffffffff);
@@ -386,6 +387,11 @@ class ConfigPanel extends Sprite
     protected function configUpdated () :void
     {
         _showConfigCallback(_config);
+    }
+
+    protected function randPick (arr :Array) :*
+    {
+        return (arr.length == 0 ? undefined : arr[rand(0, arr.length - 1)]);
     }
 
     protected function rand (lo :uint, hi :uint) :uint
