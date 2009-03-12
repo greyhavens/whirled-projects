@@ -342,7 +342,9 @@ public class Room extends SimObjectThane
 
     public function destroy(...ignored):void
     {
-        destroySelf();
+        if( isLiveObject ) {
+            destroySelf();
+        }
     }
 
 
