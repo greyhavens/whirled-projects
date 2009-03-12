@@ -2,12 +2,14 @@ package vampire.avatar {
 
 import com.threerings.util.HashMap;
 import com.whirled.AvatarControl;
+import com.whirled.ControlEvent;
 import com.whirled.DataPack;
 import com.whirled.contrib.ColorMatrix;
 
 import flash.display.MovieClip;
 import flash.filters.BitmapFilter;
 import flash.filters.ColorMatrixFilter;
+import flash.utils.ByteArray;
 
 public class VampireBody extends NewBody
 {
@@ -24,142 +26,194 @@ public class VampireBody extends NewBody
         _skintones.put("dark", 0xC7B4EB);
         _skintones.put("darker", 0xCCCCCC);
 
-        DataPack.load(_ctrl.getDefaultDataPack(), onDataPackLoaded);
+        // Remix-based configuration
+        //DataPack.load(_ctrl.getDefaultDataPack(), onDataPackLoaded);
+
+        // Entity memory-based configuration
+        loadConfig();
+        if (_ctrl.hasControl()) {
+            showConfigPanel();
+        }
+        _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED,
+            function (e :ControlEvent) :void {
+                if (e.name == MEMORY_CONFIG) {
+                    loadConfig();
+                }
+            });
+    }
+
+    protected function showConfigPanel () :void
+    {
+        var panel :ConfigPanel = new ConfigPanel(
+            _curConfig,
+            function (previewConfig :VampatarConfig) :void {
+                applyConfig(previewConfig);
+            },
+            function (newConfig :VampatarConfig) :void {
+                if (newConfig != null) {
+                    _curConfig = newConfig;
+                    saveConfig(newConfig);
+                    applyConfig(newConfig);
+                } else {
+                    applyConfig(_curConfig);
+                }
+                _ctrl.clearPopup();
+            });
+
+        _ctrl.showPopup("Configure!", panel, panel.width, panel.height);
+    }
+
+    protected function loadConfig () :void
+    {
+        var config :VampatarConfig = new VampatarConfig();
+        var bytes :ByteArray = _ctrl.getMemory(MEMORY_CONFIG) as ByteArray;
+        if (bytes != null) {
+            try {
+                bytes.position = 0;
+                config.fromBytes(bytes);
+            } catch (e :Error) {
+                log.warning("Error loading VampatarConfig", e);
+            }
+        }
+
+        _curConfig = config;
+        applyConfig(_curConfig);
+    }
+
+    protected function saveConfig (config :VampatarConfig) :void
+    {
+        _ctrl.setMemory(MEMORY_CONFIG, config.toBytes(),
+            function (success :Boolean) :void {
+                if (!success) {
+                    log.warning("Failed to save VampatarConfig!");
+                }
+            });
     }
 
     protected function onDataPackLoaded (result :Object) :void
     {
+        var config :VampatarConfig = new VampatarConfig();
+
         if (!(result is DataPack)) {
             log.warning("Unexpected DataPack data", "result", result);
 
         } else {
-            var cm :ColorMatrix = new ColorMatrix();
-            cm.colorize(result.getColor("SkinColor"));
-            _skinFilter = cm.createFilter();
-            cm.reset().colorize(result.getColor("HairColor"));
-            _hairFilter = cm.createFilter();
-            cm.reset().colorize(result.getColor("ShirtColor"));
-            _shirtFilter = cm.createFilter();
-            cm.reset().colorize(result.getColor("PantsColor"));
-            _pantsFilter = cm.createFilter();
-            cm.reset().colorize(result.getColor("ShoesColor"));
-            _shoesFilter = cm.createFilter();
+            var pack :DataPack = result as DataPack;
 
-            _shirtNumber = (result as DataPack).getInt("Shirt");
-            _hairNumber = (result as DataPack).getInt("Hair");
-            _shoesNumber = (result as DataPack).getInt("Shoes");
-
-            log.info("Got pack",
-                     "shirtNumber", _shirtNumber,
-                     "hairNumber", _hairNumber,
-                     "shoesNumber", _shoesNumber);
-
-            var skinSelection :String = (result as DataPack).getString("SkinColorChooser");
+            var skinSelection :String = pack.getString("SkinColorChooser");
             if (_skintones.containsKey(skinSelection)) {
-                _skinColorVampire = _skintones.get(skinSelection);
-                cm.reset().colorize(_skinColorVampire);
-                _skinFilter = cm.createFilter();
-
+                config.skinColor = _skintones.get(skinSelection);
             } else {
-                log.info("Couldn't get skinSelection", "val", skinSelection);
+                config.skinColor = pack.getColor("SkinColor");
             }
+
+            config.hairColor = pack.getColor("HairColor");
+            config.shirtColor = pack.getColor("ShirtColor");
+            config.pantsColor = pack.getColor("PantsColor");
+            config.shoesColor = pack.getColor("ShoesColor");
+            config.shirtNumber = pack.getInt("Shirt");
+            config.hairNumber = pack.getInt("Hair");
+            config.shoesNumber = pack.getInt("Shoes");
         }
 
-        // apply the configuration to each registered movie in the Vampatar
-        for each (var movie :MovieClip in getAllMovies()) {
-            applyConfiguration(movie);
-        }
+        applyConfig(config);
     }
 
-    protected function applyConfiguration (movie :MovieClip) :void
+    protected function applyConfig (config :VampatarConfig) :void
     {
-        selectFrame(movie, [ "torso", "shirt" ], _shirtNumber);
-        selectFrame(movie, [ "breasts", "shirt" ], _shirtNumber);
-        selectFrame(movie, [ "breasts", "breasts" ], _shirtNumber);
-        selectFrame(movie, [ "bicepL", "shirt" ], _shirtNumber);
-        selectFrame(movie, [ "bicepR", "shirt" ], _shirtNumber);
-        selectFrame(movie, [ "bicepL", "bicepL" ], _shirtNumber);
-        selectFrame(movie, [ "bicepR", "bicepR" ], _shirtNumber);
-        selectFrame(movie, [ "forearmL", "shirt" ], _shirtNumber);
-        selectFrame(movie, [ "forearmR", "shirt" ], _shirtNumber);
-        selectFrame(movie, [ "forearmL", "forearmL" ], _shirtNumber);
-        selectFrame(movie, [ "forearmR", "forearmR" ], _shirtNumber);
-        selectFrame(movie, [ "handL", "shirt" ], _shirtNumber);
-        selectFrame(movie, [ "handR", "shirt" ], _shirtNumber);
-        selectFrame(movie, [ "handL", "handL" ], _shirtNumber);
-        selectFrame(movie, [ "handR", "handR" ], _shirtNumber);
+        var skinFilter :ColorMatrixFilter = createColorFilter(config.skinColor);
+        var hairFilter :ColorMatrixFilter = createColorFilter(config.hairColor);
+        var shirtFilter :ColorMatrixFilter = createColorFilter(config.shirtColor);
+        var pantsFilter :ColorMatrixFilter = createColorFilter(config.pantsColor);
+        var shoesFilter :ColorMatrixFilter = createColorFilter(config.shoesColor);
 
-        selectFrame(movie, [ "head", "scalp", "scalp" ], _hairNumber);
-        selectFrame(movie, [ "bangs", "bangs" ], _hairNumber);
-        selectFrame(movie, [ "hairL", "hairL" ], _hairNumber);
-        selectFrame(movie, [ "hairR", "hairR" ], _hairNumber);
-        selectFrame(movie, [ "hair", "hair" ], _hairNumber);
-        selectFrame(movie, [ "hairTips", "hairTips" ], _hairNumber);
+        for each (var movie :MovieClip in getAllMovies()) {
+            // Shirt
+            selectFrame(movie, [ "torso", "shirt" ], config.shirtNumber);
+            selectFrame(movie, [ "breasts", "shirt" ], config.shirtNumber);
+            selectFrame(movie, [ "breasts", "breasts" ], config.shirtNumber);
+            selectFrame(movie, [ "bicepL", "shirt" ], config.shirtNumber);
+            selectFrame(movie, [ "bicepR", "shirt" ], config.shirtNumber);
+            selectFrame(movie, [ "bicepL", "bicepL" ], config.shirtNumber);
+            selectFrame(movie, [ "bicepR", "bicepR" ], config.shirtNumber);
+            selectFrame(movie, [ "forearmL", "shirt" ], config.shirtNumber);
+            selectFrame(movie, [ "forearmR", "shirt" ], config.shirtNumber);
+            selectFrame(movie, [ "forearmL", "forearmL" ], config.shirtNumber);
+            selectFrame(movie, [ "forearmR", "forearmR" ], config.shirtNumber);
+            selectFrame(movie, [ "handL", "shirt" ], config.shirtNumber);
+            selectFrame(movie, [ "handR", "shirt" ], config.shirtNumber);
+            selectFrame(movie, [ "handL", "handL" ], config.shirtNumber);
+            selectFrame(movie, [ "handR", "handR" ], config.shirtNumber);
 
-        selectFrame(movie, [ "footL", "shoes" ], _shoesNumber);
-        selectFrame(movie, [ "footR", "shoes" ], _shoesNumber);
-        selectFrame(movie, [ "footL", "foot" ], _shoesNumber);
-        selectFrame(movie, [ "footR", "foot" ], _shoesNumber);
-        selectFrame(movie, [ "calfL", "shoes" ], _shoesNumber);
-        selectFrame(movie, [ "calfR", "shoes" ], _shoesNumber);
+            // Hair
+            selectFrame(movie, [ "head", "scalp", "scalp" ], config.hairNumber);
+            selectFrame(movie, [ "bangs", "bangs" ], config.hairNumber);
+            selectFrame(movie, [ "hairL", "hairL" ], config.hairNumber);
+            selectFrame(movie, [ "hairR", "hairR" ], config.hairNumber);
+            selectFrame(movie, [ "hair", "hair" ], config.hairNumber);
+            selectFrame(movie, [ "hairTips", "hairTips" ], config.hairNumber);
 
-        if (_skinFilter) {
-            applyFilter(movie, [ "head", "head" ], _skinFilter);
-            applyFilter(movie, [ "head", "ear" ], _skinFilter);
-            applyFilter(movie, [ "neck", "neck" ], _skinFilter);
-            applyFilter(movie, [ "bicepL", "bicepL" ], _skinFilter);
-            applyFilter(movie, [ "bicepR", "bicepR" ], _skinFilter);
-            applyFilter(movie, [ "forearmL", "forearmL" ], _skinFilter);
-            applyFilter(movie, [ "forearmR", "forearmR" ], _skinFilter);
-            applyFilter(movie, [ "handL", "handL" ], _skinFilter);
-            applyFilter(movie, [ "handR", "handR" ], _skinFilter);
-            applyFilter(movie, [ "breasts", "breasts" ], _skinFilter);
-            applyFilter(movie, [ "torso", "torso" ], _skinFilter);
-            applyFilter(movie, [ "hips", "hips" ], _skinFilter);
-            applyFilter(movie, [ "calfL", "calfL" ], _skinFilter);
-            applyFilter(movie, [ "calfR", "calfR" ], _skinFilter);
-            applyFilter(movie, [ "footL", "foot" ], _skinFilter);
-            applyFilter(movie, [ "footR", "foot" ], _skinFilter);
-        }
+            // Shoes
+            selectFrame(movie, [ "footL", "shoes" ], config.shoesNumber);
+            selectFrame(movie, [ "footR", "shoes" ], config.shoesNumber);
+            selectFrame(movie, [ "footL", "foot" ], config.shoesNumber);
+            selectFrame(movie, [ "footR", "foot" ], config.shoesNumber);
+            selectFrame(movie, [ "calfL", "shoes" ], config.shoesNumber);
+            selectFrame(movie, [ "calfR", "shoes" ], config.shoesNumber);
 
-        if (_hairFilter) {
-            applyFilter(movie, [ "head", "scalp", "scalp", ], _hairFilter);
-            applyFilter(movie, [ "head", "eyebrows", ], _hairFilter);
-            applyFilter(movie, [ "hairTips", "hairTips", ], _hairFilter);
-            applyFilter(movie, [ "bangs", "bangs", ], _hairFilter);
-            applyFilter(movie, [ "hairL", "hairL", ], _hairFilter);
-            applyFilter(movie, [ "hairR", "hairR", ], _hairFilter);
-            applyFilter(movie, [ "hair", "hair", ], _hairFilter);
-        }
+            // Skin color
+            applyFilter(movie, [ "head", "head" ], skinFilter);
+            applyFilter(movie, [ "head", "ear" ], skinFilter);
+            applyFilter(movie, [ "neck", "neck" ], skinFilter);
+            applyFilter(movie, [ "bicepL", "bicepL" ], skinFilter);
+            applyFilter(movie, [ "bicepR", "bicepR" ], skinFilter);
+            applyFilter(movie, [ "forearmL", "forearmL" ], skinFilter);
+            applyFilter(movie, [ "forearmR", "forearmR" ], skinFilter);
+            applyFilter(movie, [ "handL", "handL" ], skinFilter);
+            applyFilter(movie, [ "handR", "handR" ], skinFilter);
+            applyFilter(movie, [ "breasts", "breasts" ], skinFilter);
+            applyFilter(movie, [ "torso", "torso" ], skinFilter);
+            applyFilter(movie, [ "hips", "hips" ], skinFilter);
+            applyFilter(movie, [ "calfL", "calfL" ], skinFilter);
+            applyFilter(movie, [ "calfR", "calfR" ], skinFilter);
+            applyFilter(movie, [ "footL", "foot" ], skinFilter);
+            applyFilter(movie, [ "footR", "foot" ], skinFilter);
 
-        if (_shirtFilter) {
-            applyFilter(movie, [ "neck", "shirt", ], _shirtFilter);
-            applyFilter(movie, [ "bicepL", "shirt", ], _shirtFilter);
-            applyFilter(movie, [ "bicepR", "shirt", ], _shirtFilter);
-            applyFilter(movie, [ "forearmL", "shirt", ], _shirtFilter);
-            applyFilter(movie, [ "forearmR", "shirt", ], _shirtFilter);
-            applyFilter(movie, [ "handL", "shirt", ], _shirtFilter);
-            applyFilter(movie, [ "handR", "shirt", ], _shirtFilter);
-            applyFilter(movie, [ "breasts", "shirt", ], _shirtFilter);
-            applyFilter(movie, [ "torso", "shirt", ], _shirtFilter);
-            applyFilter(movie, [ "hips", "shirt", ], _shirtFilter);
-        }
+            // Hair color
+            applyFilter(movie, [ "head", "scalp", "scalp", ], hairFilter);
+            applyFilter(movie, [ "head", "eyebrows", ], hairFilter);
+            applyFilter(movie, [ "hairTips", "hairTips", ], hairFilter);
+            applyFilter(movie, [ "bangs", "bangs", ], hairFilter);
+            applyFilter(movie, [ "hairL", "hairL", ], hairFilter);
+            applyFilter(movie, [ "hairR", "hairR", ], hairFilter);
+            applyFilter(movie, [ "hair", "hair", ], hairFilter);
 
-        if (_pantsFilter) {
-            applyFilter(movie, [ "hips", "pants", ], _pantsFilter);
-            applyFilter(movie, [ "thighL", "pants", ], _pantsFilter);
-            applyFilter(movie, [ "thighR", "pants", ], _pantsFilter);
-            applyFilter(movie, [ "calfL", "pants", ], _pantsFilter);
-            applyFilter(movie, [ "calfR", "pants", ], _pantsFilter);
-            applyFilter(movie, [ "footL", "pants", ], _pantsFilter);
-            applyFilter(movie, [ "footR", "pants", ], _pantsFilter);
-        }
+            // Shirt color
+            applyFilter(movie, [ "neck", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "bicepL", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "bicepR", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "forearmL", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "forearmR", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "handL", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "handR", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "breasts", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "torso", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "hips", "shirt", ], shirtFilter);
 
-        if (_shoesFilter) {
-            applyFilter(movie, [ "calfL", "shoes", ], _shoesFilter);
-            applyFilter(movie, [ "calfR", "shoes", ], _shoesFilter);
-            applyFilter(movie, [ "footL", "shoes", ], _shoesFilter);
-            applyFilter(movie, [ "footR", "shoes", ], _shoesFilter);
+            // Pants color
+            applyFilter(movie, [ "hips", "pants", ], pantsFilter);
+            applyFilter(movie, [ "thighL", "pants", ], pantsFilter);
+            applyFilter(movie, [ "thighR", "pants", ], pantsFilter);
+            applyFilter(movie, [ "calfL", "pants", ], pantsFilter);
+            applyFilter(movie, [ "calfR", "pants", ], pantsFilter);
+            applyFilter(movie, [ "footL", "pants", ], pantsFilter);
+            applyFilter(movie, [ "footR", "pants", ], pantsFilter);
+
+            // Shoes color
+            applyFilter(movie, [ "calfL", "shoes", ], shoesFilter);
+            applyFilter(movie, [ "calfR", "shoes", ], shoesFilter);
+            applyFilter(movie, [ "footL", "shoes", ], shoesFilter);
+            applyFilter(movie, [ "footR", "shoes", ], shoesFilter);
         }
     }
 
@@ -194,16 +248,153 @@ public class VampireBody extends NewBody
         }
     }
 
-    protected var _skinColorVampire :int;
-    protected var _shirtNumber:int = 1;
-    protected var _hairNumber:int = 2;
-    protected var _shoesNumber:int = 2;
-    protected var _skinFilter:ColorMatrixFilter;
-    protected var _hairFilter:ColorMatrixFilter;
-    protected var _shirtFilter:ColorMatrixFilter;
-    protected var _pantsFilter:ColorMatrixFilter;
-    protected var _shoesFilter:ColorMatrixFilter;
+    protected static function createColorFilter (color :uint) :ColorMatrixFilter
+    {
+        return new ColorMatrix().colorize(color).createFilter();
+    }
+
     protected var _skintones :HashMap;
+    protected var _curConfig :VampatarConfig;
+
+    protected static const MEMORY_CONFIG :String = "VampatarConfig";
 }
 
+}
+
+import com.whirled.AvatarControl;
+import flash.utils.ByteArray;
+import flash.display.Sprite;
+import flash.display.Graphics;
+import flash.display.SimpleButton;
+import com.threerings.flash.SimpleTextButton;
+import flash.events.MouseEvent;
+import com.threerings.util.Random;
+
+class VampatarConfig
+{
+    public var skinColor :uint = 0xD0DFFD;
+    public var hairColor :uint = 0x220000;
+    public var shirtColor :uint = 0x222222;
+    public var pantsColor :uint = 0x203030;
+    public var shoesColor :uint = 0x000008;
+    public var shirtNumber :int = 1;
+    public var hairNumber :int = 2;
+    public var shoesNumber :int = 3;
+
+    public function clone () :VampatarConfig
+    {
+        var theClone :VampatarConfig = new VampatarConfig();
+        var bytes :ByteArray = toBytes();
+        bytes.position = 0;
+        theClone.fromBytes(bytes);
+        return theClone;
+    }
+
+    public function toBytes (ba :ByteArray = null) :ByteArray
+    {
+        if (ba == null) {
+            ba = new ByteArray();
+        }
+
+        ba.writeByte(VERSION);
+
+        ba.writeUnsignedInt(skinColor);
+        ba.writeUnsignedInt(hairColor);
+        ba.writeUnsignedInt(shirtColor);
+        ba.writeUnsignedInt(pantsColor);
+        ba.writeUnsignedInt(shoesColor);
+        ba.writeByte(shirtNumber);
+        ba.writeByte(hairNumber);
+        ba.writeByte(shoesNumber);
+
+        return ba;
+    }
+
+    public function fromBytes (ba :ByteArray) :void
+    {
+        var version :int = ba.readByte();
+        if (version > VERSION) {
+            throw new Error("Version too high. Expected " + VERSION + ", got " + version);
+        }
+
+        skinColor = ba.readUnsignedInt();
+        hairColor = ba.readUnsignedInt();
+        shirtColor = ba.readUnsignedInt();
+        pantsColor = ba.readUnsignedInt();
+        shoesColor = ba.readUnsignedInt();
+        shirtNumber = ba.readByte();
+        hairNumber = ba.readByte();
+        shoesNumber = ba.readByte();
+    }
+
+    protected static const VERSION :int = 0;
+}
+
+class ConfigPanel extends Sprite
+{
+    public function ConfigPanel (config :VampatarConfig,
+                                 showConfigCallback :Function,
+                                 closePanelCallback :Function) :void
+    {
+        _originalConfig = config;
+        _config = config.clone();
+        _showConfigCallback = showConfigCallback;
+        _closePanelCallback = closePanelCallback;
+
+        var randomize :SimpleButton = new SimpleTextButton("Randomize");
+        randomize.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                _config.skinColor = rand(0xff000000, 0xffffffff);
+                _config.hairColor = rand(0xff000000, 0xffffffff);
+                _config.shirtColor = rand(0xff000000, 0xffffffff);
+                _config.pantsColor = rand(0xff000000, 0xffffffff);
+                _config.shoesColor = rand(0xff000000, 0xffffffff);
+                _config.shirtNumber = rand(1, 3);
+                _config.hairNumber = rand(1, 4);
+                _config.shoesNumber = rand(1, 3);
+                configUpdated();
+            });
+        randomize.y = this.height;
+        addChild(randomize);
+
+        var reset :SimpleButton = new SimpleTextButton("Reset");
+        reset.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                _config = _originalConfig.clone();
+                configUpdated();
+            });
+        reset.y = this.height + 5;
+        addChild(reset);
+
+        var cancel :SimpleButton = new SimpleTextButton("Cancel");
+        cancel.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                _closePanelCallback(null);
+            });
+        cancel.y = this.height + 10;
+        addChild(cancel);
+
+        var ok :SimpleButton = new SimpleTextButton("OK");
+        ok.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                _closePanelCallback(_config);
+            });
+        ok.y = this.height + 5;
+        addChild(ok);
+    }
+
+    protected function configUpdated () :void
+    {
+        _showConfigCallback(_config);
+    }
+
+    protected function rand (lo :uint, hi :uint) :uint
+    {
+        return lo + (Math.random() * (hi - lo + 1));
+    }
+
+    protected var _originalConfig :VampatarConfig;
+    protected var _config :VampatarConfig;
+    protected var _showConfigCallback :Function;
+    protected var _closePanelCallback :Function;
 }
