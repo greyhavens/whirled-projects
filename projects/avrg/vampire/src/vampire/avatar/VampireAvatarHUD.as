@@ -211,7 +211,7 @@ public class VampireAvatarHUD extends AvatarHUD
             }
 
             //Only show feed buttons if there is sufficient blood
-            if( !isChattedEnoughForTargeting || SharedPlayerStateClient.getBlood( playerId ) <= 1) {
+            if( (!isPlayer && !isChattedEnoughForTargeting) || SharedPlayerStateClient.getBlood( playerId ) <= 1) {
                 return;
             }
 
@@ -540,8 +540,8 @@ public class VampireAvatarHUD extends AvatarHUD
         updateBlood();
 
         var isHierarch :Boolean = VConstants.LOCAL_DEBUG_MODE
-            || (ClientContext.model.hierarchy != null &&
-                ClientContext.model.hierarchy.isPlayerSireOrMinionOfPlayer( playerId,
+            || (ClientContext.model.lineage != null &&
+                ClientContext.model.lineage.isPlayerSireOrMinionOfPlayer( playerId,
                 ClientContext.ourPlayerId ));
 
 
