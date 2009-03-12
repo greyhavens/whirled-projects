@@ -487,7 +487,7 @@ public class Room extends SimObjectThane
         log.debug("Prey lost " + bloodGained + " blood");
 
         //You get half the blood lost
-        bloodGained + 0.5 * bloodGained;
+        bloodGained = 0.5 * bloodGained;
 
         //Predators gain blood from the prey, divvied up
         var bloodGainedPerPredator :Number = bloodGained / gameRecord.predators.size();
@@ -539,8 +539,9 @@ public class Room extends SimObjectThane
                         }
                     }
                     else {
-                        addFeedback( preyPlayer.name + " is not part of a lineage.  Feed from a vampire lineage member to join.", pred.playerId);
-                        addFeedback( "You are not part of a lineage, so " + preyPlayer + " cannot join.", preyPlayer.playerId);
+                        addFeedback( preyPlayer.name + " is not part of the Lineage.  Feed from a vampire lineage member to join.", pred.playerId);
+                        addFeedback( "You are not part of the Lineage, so " + preyPlayer.name + " cannot become your minion. "
+                            + " Feed on a member of the Lineage to join.", preyPlayer.playerId);
                     }
                 }
                 else {
@@ -572,7 +573,7 @@ public class Room extends SimObjectThane
                 ServerContext.vserver.awardBloodBondedXpEarned( p, xp );
                 //Add some bonus xp to your sires
                 ServerContext.vserver.awardSiresXpEarned( p, xp );
-                var feedingScore :Number = gameRecord.gameServer.lastRoundScore / ServerContext.topBloodBloomScore
+                var feedingScore :Number = gameRecord.gameServer.lastRoundScore * 0.6 / ServerContext.topBloodBloomScore
                 p.ctrl.completeTask( Codes.TASK_FEEDING_ID, feedingScore );
             }
         }
