@@ -32,13 +32,13 @@ public class SharedPlayerStateClient
 
     public static function getLevel (playerId :int) :int
     {
-        return Logic.levelGivenCurrentXp( getXP( playerId ));
+        return Logic.levelGivenCurrentXpAndInvites( getXP( playerId ), getInvites(playerId));
 //        return int(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL));
     }
 
     public static function getBloodType (playerId :int) :int
     {
-        return int(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOOD_TYPE));
+        return Logic.getPlayerBloodStrain( playerId );
     }
 
     public static function getXP (playerId :int) :Number
@@ -48,6 +48,11 @@ public class SharedPlayerStateClient
             return 0;
         }
         return xp;
+    }
+
+    public static function getInvites (playerId :int) :int
+    {
+        return int(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES));
     }
 
     public static function getBloodBonded (playerId :int) :int

@@ -101,7 +101,7 @@ public class Codes
     public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED :int = 6;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION :int = 7;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_XP :int = 8;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOOD_TYPE :int = 9;
+    public static const ROOM_PROP_PLAYER_DICT_INDEX_INVITES :int = 9;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_ID :int = 10;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_LOCATION :int = 11;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE:int = 12;

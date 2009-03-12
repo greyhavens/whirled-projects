@@ -516,7 +516,7 @@ public class HUD extends DraggableSceneObject
         lineageformat.align = TextFormatAlign.LEFT;
 //        lineageformat.bold = true;
         lineageformat.color = 0xffffff;
-        _bloodText.width = 140;
+        _bloodText.width = 80;
         _bloodText.height = 20;
         _bloodText.setTextFormat( lineageformat );
         _bloodText.antiAliasType = AntiAliasType.ADVANCED;
@@ -812,6 +812,9 @@ public class HUD extends DraggableSceneObject
         var maxBlood :Number = SharedPlayerStateClient.getMaxBlood( playerId );
         var blood :Number = MathUtil.clamp( SharedPlayerStateClient.getBlood( playerId ),
             0, maxBlood);
+        if( isNaN(blood)) {
+            blood = 0;
+        }
 //        trace("blood=" + blood + " / " + maxBlood);
 
         var borderWidth :int = 3;
@@ -856,8 +859,9 @@ public class HUD extends DraggableSceneObject
 //            0, maxBlood);
 
         var xp :int = ClientContext.model.xp;
+        var invites :int = ClientContext.model.invites;
 
-        var level :int = Logic.levelGivenCurrentXp( xp );
+        var level :int = Logic.levelGivenCurrentXpAndInvites( xp, invites );
 
         var xpNeededForNextLevel :int = Logic.xpNeededForLevel( level + 1);
         var xpNeededForLevel :int = Logic.xpNeededForLevel( level );

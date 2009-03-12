@@ -5,6 +5,7 @@ package vampire.server {
 
 import com.threerings.flash.MathUtil;
 import com.threerings.flash.Vector2;
+import com.threerings.presents.dobj.SetListener;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Hashable;
@@ -285,30 +286,44 @@ public class Player extends EventHandlerManager
     protected function setXP (xp :Number) :void
     {
         _xp = xp;
+        _xp = Math.min( _xp, Logic.maxXPGivenXPAndInvites(_xp, invites));
     }
+
 
     public function addXP( bonus :Number) :void
     {
-        var currentLevel :int = Logic.levelGivenCurrentXp( xp );
-        var vampireState :Boolean = isVampire();
-        // update our runtime state
+        var currentLevel :int = Logic.levelGivenCurrentXpAndInvites( xp, invites );
+
+
         _xp += bonus;
+        var newLevel :int = Logic.levelGivenCurrentXpAndInvites( xp, invites );
+//        var maxXpForCurrentLevel :int = Logic.xpNeededForLevel( newLevel + 1 );
+
+        _xp = Math.min( _xp, Logic.maxXPGivenXPAndInvites(_xp, invites));
+
+         if( newLevel > currentLevel) {
+            _blood = Math.min( _blood, 0.1 * maxBlood);
+        }
+
+
+
+        // update our runtime state
         // persist it, too
-        _ctrl.props.set(Codes.PLAYER_PROP_XP, _xp, true);
+//        _ctrl.props.set(Codes.PLAYER_PROP_XP, _xp, true);
 
-        var newLevel :int = Logic.levelGivenCurrentXp( xp );
+//        var newLevel :int = Logic.levelGivenCurrentXpAndInvites( xp );
         //Check if we made a new level
-        if( newLevel > currentLevel) {
-//            _level = Logic.levelGivenCurrentXp( _xp );
-//            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LEVEL, _level, true);
+//        if( newLevel > currentLevel) {
+////            _level = Logic.levelGivenCurrentXp( _xp );
+////            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LEVEL, _level, true);
+//
+//            _blood = 0.1 * maxBlood;
+////            _ctrl.props.set(Codes.PLAYER_PROP_BLOOD, _blood, true);
+//        }
 
-            _blood = 0.1 * maxBlood;
-            _ctrl.props.set(Codes.PLAYER_PROP_BLOOD, _blood, true);
-        }
-
-        if( newLevel < currentLevel && blood > maxBlood) {
-            _ctrl.props.set(Codes.PLAYER_PROP_BLOOD, maxBlood, true);
-        }
+//        if( newLevel < currentLevel && blood > maxBlood) {
+////            _ctrl.props.set(Codes.PLAYER_PROP_BLOOD, maxBlood, true);
+//        }
 
         //If our vampire state changed, send a message to the avatar
 //        if( isVampire() != vampireState) {
@@ -319,12 +334,12 @@ public class Player extends EventHandlerManager
 
 
         // always update our avatar state
-        updateAvatarState();
+//        updateAvatarState();
 
         // and if we're in a room, update the room properties
-        if (_room != null) {
-            _room.playerUpdated(this);
-        }
+//        if (_room != null) {
+//            _room.playerUpdated(this);
+//        }
     }
 
     public function setAvatarState (s :String, force :Boolean = false) :void
@@ -361,14 +376,18 @@ public class Player extends EventHandlerManager
             }
             else if( name == VConstants.NAMED_EVENT_BLOOD_DOWN ) {
                 damage( 20 );
-    //            setBlood( blood - 20 );
             }
             else if( name == VConstants.NAMED_EVENT_LEVEL_UP ) {
                 increaseLevel();
             }
             else if( name == VConstants.NAMED_EVENT_LEVEL_DOWN ) {
                 decreaseLevel();
-    //            setBlood( blood - 20 );
+            }
+            else if( name == VConstants.NAMED_EVENT_ADD_INVITE ) {
+                _inviteTally++;
+            }
+            else if( name == VConstants.NAMED_EVENT_LOSE_INVITE ) {
+                _inviteTally = Math.max(0, _inviteTally--);
             }
             else if( name == VConstants.NAMED_EVENT_FEED ) {
                 feed(int(value));
@@ -1021,6 +1040,11 @@ public class Player extends EventHandlerManager
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, xp);
             }
 
+            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES] != invites) {
+                log.debug("Setting " + playerId + " invites=" + invites + " into room props");
+                room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES, invites);
+            }
+
             if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE] != avatarState ) {
                 log.debug("Setting " + playerId + " avatar state=" + avatarState + " into room props");
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE, avatarState);
@@ -1229,7 +1253,7 @@ public class Player extends EventHandlerManager
 
     public function get level () :int
     {
-        return Logic.levelGivenCurrentXp( xp );
+        return Logic.levelGivenCurrentXpAndInvites( xp );
     }
 
     public function get xp () :Number

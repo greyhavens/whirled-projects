@@ -139,6 +139,8 @@ public class VConstants
     public static const NAMED_EVENT_BLOOD_DOWN :String = "BloodDown";//Only for testing purposes
     public static const NAMED_EVENT_LEVEL_UP :String = "LevelUp";//Only for testing purposes
     public static const NAMED_EVENT_LEVEL_DOWN :String = "LevelDown";//Only for testing purposes
+    public static const NAMED_EVENT_ADD_INVITE :String = "AddInvite";//Only for testing purposes
+    public static const NAMED_EVENT_LOSE_INVITE :String = "LoseInvite";//Only for testing purposes
     public static const NAMED_EVENT_FEED :String = "Feed";//Only for testing purposes
     public static const NAMED_EVENT_MAKE_SIRE :String = "MakeSire";//Only for testing purposes
     public static const NAMED_EVENT_MAKE_MINION :String = "MakeMinion";//Only for testing purposes

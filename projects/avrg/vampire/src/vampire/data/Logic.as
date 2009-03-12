@@ -52,12 +52,30 @@ public class Logic
         return blood >= bloodLostPerFeed( level ) + 1;
     }
 
-    public static function levelGivenCurrentXp( xp :Number ) :int
+    public static function maxXPGivenXPAndInvites( xp :Number, invites :int) :Number
     {
+        var newLevel :int = Logic.levelGivenCurrentXpAndInvites( xp, invites );
+        var maxXpForCurrentLevel :int = Logic.xpNeededForLevel( newLevel + 1 );
+
+        return maxXpForCurrentLevel;
+    }
+    public static function levelGivenCurrentXpAndInvites( xp :Number, invites :int = 0 ) :int
+    {
+        var maxLevelFromInvites :int = 1;
+        for each( var levelAndInviteMin :Array in LEVEL_INVITE_CAPS) {
+            var levelCap :int = levelAndInviteMin[0];
+            var minInvites :int = levelAndInviteMin[1];
+            if( invites < minInvites) {
+                break;
+            }
+            maxLevelFromInvites = levelCap;
+        }
+
         var level :int = 1;
-        while( xpNeededForLevel(level + 1) <= xp ) {
+        while( xpNeededForLevel(level + 1) <= xp  && level <= maxLevelFromInvites) {
             level++;
         }
+
         return level;
 //        return xp/10 + 1;
     }
@@ -82,6 +100,16 @@ public class Logic
 //        return base * (level - 1) + (level - 1) * (base + base * (level - 1));
 //        return (level - 1) * 10;
     }
+
+    /**
+    * [level, minimum number of invites]
+    */
+    public static const LEVEL_INVITE_CAPS :Array = [
+        [3, 3],
+        [5, 25],
+        [7, 50],
+        [9, 100],
+    ]
 
 }
 }
