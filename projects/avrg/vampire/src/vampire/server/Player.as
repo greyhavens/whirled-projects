@@ -308,7 +308,8 @@ public class Player extends EventHandlerManager
             invitesNeededForNextLevel = Math.max(0, invitesNeededForNextLevel - invites );
             addFeedback("You've reached level " + newLevel + ", but your Lineage isn't diverse "
             + "enough to handle your growing power.  Recruit " + invitesNeededForNextLevel +
-            " new players from outside Whirled to support your new potency.");
+            " new player" + (invitesNeededForNextLevel > 1 ? "s":"")
+            + " from outside Whirled to support your new potency.");
         }
 
         //"
@@ -384,6 +385,13 @@ public class Player extends EventHandlerManager
             }
             else if( name == VConstants.NAMED_EVENT_BLOOD_DOWN ) {
                 damage( 20 );
+            }
+
+            if( name == VConstants.NAMED_EVENT_ADD_XP ) {
+                addXP( 500 );
+            }
+            else if( name == VConstants.NAMED_EVENT_LOSE_XP ) {
+                addXP( -500 );
             }
             else if( name == VConstants.NAMED_EVENT_LEVEL_UP ) {
                 increaseLevel();
