@@ -19,10 +19,12 @@ package vampire.client
     import flash.text.TextFormat;
     import flash.text.TextFormatAlign;
 
+    import vampire.Util;
     import vampire.client.events.HierarchyUpdatedEvent;
     import vampire.data.Codes;
     import vampire.data.Logic;
     import vampire.data.SharedPlayerStateClient;
+    import vampire.data.VConstants;
     import vampire.feeding.Constants;
     import vampire.feeding.PlayerFeedingData;
 
@@ -113,7 +115,7 @@ package vampire.client
             _bondTextAnchor = findSafely("text_bloodbond") as TextField;
             _bloodbondIconAnchor = findSafely("bond_icon");
             registerListener( ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
-
+            _infoTextAnchor = findSafely("text_blood") as TextField;
 
             _getSiresButton = findSafely("link_tovamps") as SimpleButton;
             _getMinionsButton = findSafely("link_tolineage") as SimpleButton;
@@ -134,6 +136,14 @@ package vampire.client
             registerListener(ClientContext.model, HierarchyUpdatedEvent.HIERARCHY_UPDATED,
                 function(...ignored) :void {
                     if( _hudHelp.currentLabel == "default" ) {
+                        gotoFrame("default");
+                    }
+                });
+
+            //Listen for changes to the blood or xp or bloodbonded
+            registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED,
+                function(e :ElementChangedEvent) :void {
+                    if( e.name == ClientContext.ourRoomKey && _hudHelp.currentLabel == "default") {
                         gotoFrame("default");
                     }
                 });
@@ -299,6 +309,12 @@ package vampire.client
 
                 _bondText.parent.removeChild( _bondText );
             }
+
+            if( _infoText != null && _infoText.parent != null) {
+                _infoText.parent.removeChild( _infoText );
+            }
+
+
         }
 
         public function gotoFrame( frame :String, addFrameToHistory :Boolean = true ) :void
@@ -346,6 +362,9 @@ package vampire.client
 
                     //Actually show your blondbond, if you have one
                     showBloodBonded();
+
+                    //Show the top info text
+                    createInfoText();
 
                     //Add the extra help bits for sires and minion recruiting, if relevant
                     //First, if there's no Lineage yet, jsut add the links
@@ -448,6 +467,51 @@ package vampire.client
             return format;
         }
 
+        protected function createInfoText() :void
+        {
+            if( _infoText != null && _infoText.parent != null) {
+                _infoText.parent.removeChild( _infoText );
+            }
+
+            var xpNeededForCurrentLevel :Number = Logic.xpNeededForLevel(ClientContext.model.level);
+            var xpNeededForNextLevel :Number = Logic.xpNeededForLevel(ClientContext.model.level + 1);
+            var xpGap :Number = xpNeededForNextLevel - xpNeededForCurrentLevel;
+            var ourXPForOurLevel :Number = ClientContext.model.xp - xpNeededForCurrentLevel;
+
+            _infoText = new TextField();
+            var level :int = ClientContext.model.level;
+
+
+            var inviteText :String = level >= VConstants.MAXIMUM_VAMPIRE_LEVEL ? "Max Level" :
+                "Invites needed for next level: " + ClientContext.model.invites + "/" +
+                    Logic.invitesNeededForLevel( level + 1 );
+
+            _infoText.text =
+                "Blood: " + ClientContext.model.blood + "/" + ClientContext.model.maxblood
+                + "       Level: " + level
+                + "    Experience: " + Util.formatNumberForFeedback(ourXPForOurLevel) + " / " + xpGap + "\n"
+                + inviteText
+                + ""
+                ;
+//                "/" + ClientContext.model.
+            _infoText.selectable = false;
+            _infoText.tabEnabled = false;
+            _infoText.multiline = true;
+            _infoText.textColor = 0xffffff;
+            _infoText.embedFonts = true;
+            var format :TextFormat = getJuiceFormat();
+            format.align = TextFormatAlign.CENTER;
+            format.size = 20;
+            _infoText.setTextFormat( format );
+
+            _infoText.antiAliasType = AntiAliasType.ADVANCED;
+            _infoText.width = 450;
+            _infoText.height = 60;
+            _infoText.x = _infoTextAnchor.x;
+            _infoText.y = _infoTextAnchor.y - 3;
+            _infoTextAnchor.parent.addChild( _infoText );
+        }
+
 
         protected var _hudHelp :MovieClip;
         protected var _frameHistory :Array = new Array();
@@ -456,6 +520,8 @@ package vampire.client
 
         protected var _bondTextAnchor :TextField;
         protected var _bloodbondIconAnchor :DisplayObject;
+        protected var _infoTextAnchor :TextField;
+        protected var _infoText :TextField;
 
         protected var _lineageView :LineageView;
         protected var _getSiresButton :SimpleButton;
