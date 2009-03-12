@@ -469,40 +469,26 @@ public class Room extends SimObjectThane
 
         var preyIsPlayer :Boolean = isPlayer( gameRecord.preyId );
         var preyPlayer :Player;
-        var damage :Number;
+        var bloodGained :Number;
         //Handle the prey loss of blood
         if( preyIsPlayer ) {
             log.debug("Prey is player");
             preyPlayer = getPlayer( gameRecord.preyId );
-            if( preyPlayer.isVampire() ) {
-                damage = preyPlayer.damage( VConstants.BLOOD_FRACTION_LOST_PER_FEED * preyPlayer.maxBlood );
-                //The bloodbonded also loses a fraction
-                ServerContext.vserver.awardBloodBondedBloodEarned( preyPlayer, -damage);
-                addFeedback( "You lost " + Util.formatNumberForFeedback(damage) + " from feeding", preyPlayer.playerId);
-            }
-            else {
-                damage = preyPlayer.damage( VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED );
-            }
-
-            var damageFormatted :String = Util.formatNumberForFeedback(damage);
-            gameRecord.predators.forEach( function( predId :int) :void {
-                var pred :Player = getPlayer( predId );
-                if( pred != null ) {
-                    addFeedback( preyPlayer.name + " lost " + damageFormatted + " from feeding", pred.playerId);
-                }
-                else {
-                    log.error("gameRecord.predators.forEach() " + predId + " gives no player");
-                }
-            });
+            bloodGained =  Math.abs(preyPlayer.damage( VConstants.BLOOD_FRACTION_LOST_PER_FEED * preyPlayer.maxBlood ));
+            ServerContext.vserver.awardBloodBondedBloodEarned( preyPlayer, bloodGained);
+            addFeedback( "You lost " + Util.formatNumberForFeedback(bloodGained) + " from feeding", preyPlayer.playerId);
         }
         else {
             log.debug("Prey is nonplayer");
-            damage = ServerContext.nonPlayersBloodMonitor.damageNonPlayer( gameRecord.preyId, VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED, roomId );
+            bloodGained = Math.abs(ServerContext.nonPlayersBloodMonitor.damageNonPlayer( gameRecord.preyId, VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED, roomId ));
         }
-        log.debug("Prey lost " + damage + " blood");
+        log.debug("Prey lost " + bloodGained + " blood");
 
-        //Predators gain blood from the prey
-        var bloodGainedPerPredator :Number = damage / gameRecord.predators.size();
+        //You get half the blood lost
+        bloodGained + 0.5 * bloodGained;
+
+        //Predators gain blood from the prey, divvied up
+        var bloodGainedPerPredator :Number = bloodGained / gameRecord.predators.size();
         var bloodGainedPerPredatorFormatted :String = Util.formatNumberForFeedback(bloodGainedPerPredator);
 
         for each( var predatorId :int in gameRecord.predators.toArray()) {
@@ -511,36 +497,15 @@ public class Room extends SimObjectThane
                 log.error("adding blood, but no pred", "predatorId", predatorId);
                 continue;
             }
-            pred.mostRecentVictimId = gameRecord.preyId;
+            pred.addMostRecentVictimIds( gameRecord.preyId );
 
-            //The amount of blood gained depends on if the prey is a vampire
-            var bloodGained :Number = bloodGainedPerPredator;
-            if( preyIsPlayer && preyPlayer.isVampire() ) {
-                bloodGained = Logic.bloodgGainedVampireVampireFeeding( pred.level, preyPlayer.level, bloodGained )
-            }
-
-            pred.addBlood( bloodGained );
+            pred.addBlood( bloodGainedPerPredator );
             //The bloodbonded also gains a fraction
-            ServerContext.vserver.awardBloodBondedBloodEarned( pred, bloodGained);
-            log.debug(predatorId + " gained " + bloodGained);
-            addFeedback( pred.name + " gained " + Util.formatNumberForFeedback(bloodGained) + " from feeding", pred.playerId);
+            ServerContext.vserver.awardBloodBondedBloodEarned( pred, bloodGainedPerPredator);
+            log.debug(predatorId + " gained " + bloodGainedPerPredatorFormatted);
+            addFeedback( "You gained " + bloodGainedPerPredatorFormatted + " from feeding", pred.playerId);
 
             if( preyIsPlayer && preyPlayer != null ) {
-
-                //Check for new bloodbond formation
-                //ATM it's just mutual feeding
-                if( preyPlayer.mostRecentVictimId == predatorId ) {
-
-                    //Break previous bonds
-                    preyPlayer.setBloodBonded( predatorId );//This also sets the name
-                    pred.setBloodBonded( preyPlayer.playerId );
-                    log.debug("Creating new bloodbond=" + pred.name + " + " + preyPlayer.name);
-                    addFeedback( "You are now bloodbonded with " + pred.name, preyPlayer.playerId);
-                    addFeedback( "You are now bloodbonded with " + preyPlayer.name, pred.playerId);
-                }
-                else {
-                    log.debug("No bloodbond creation");
-                }
 
                 //Check if the prey was a vampire, and we don't have a sire.  The prey vampire becomes it.
                 if( pred.sire <= 0 && preyPlayer.isVampire() ) {
@@ -585,6 +550,12 @@ public class Room extends SimObjectThane
             }
         }
 
+
+        //Check for blood bonds
+        if( preyIsPlayer ) {
+            ServerContext.vserver.checkBloodBondFormation( gameRecord.preyId, gameRecord.predators.toArray());
+        }
+
         //Then handle experience.  ATM everyone gets xp=score
         var xpGained :Number = gameRecord.gameServer.lastRoundScore;
         var xpFormatted :String = Util.formatNumberForFeedback( xpGained );
@@ -625,77 +596,77 @@ public class Room extends SimObjectThane
     }
 
 
-    protected function awardBloodBloomPoints( points :Number, prey :int, predators :Array ) :void
-    {
-        var bloodIncrement :Number = VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
-        var bloodGained :Number = points;
-
-//        var victimId :int = -1;
-//        var victimsMostRecentFeedVictimId :int = -1;
-
-        var victimBlood :Number = isPlayer( prey ) ? getPlayer( prey ).blood :
-            ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( prey );
-
-        var maxBlood :Number = isPlayer( prey ) ? getPlayer( prey ).maxBlood :
-            ServerContext.nonPlayersBloodMonitor.maxBloodFromNonPlayer( prey );
-
-        var bloodLost :Number = Math.max( 0, victimBlood - 1);
-
-        var bloodPerPredator :Number = bloodLost / predators.length;
-
-        var pointsGained :Number = points * (bloodLost / maxBlood)
-
-        var preyPlayer :Player = getPlayer( prey );
-        if( preyPlayer != null ) {
-            preyPlayer.damage( bloodLost );
-            preyPlayer.addXP( pointsGained );
-            ServerContext.vserver.awardSiresXpEarned( preyPlayer, pointsGained );
-
-            addFeedback( "You lost " + bloodLost + " blood!", prey );
-            addFeedback( "You gained " + pointsGained + " experience!", prey );
-        }
-        else {
-            ServerContext.nonPlayersBloodMonitor.damageNonPlayer( prey, bloodLost, roomId );
-        }
-
-
-        for each( var predId :int in predators ) {
-            var predPlayer :Player = getPlayer( predId );
-            if( predPlayer == null) {
-                log.error("Predator " + predId + " awarding points, but doesn't exist");
-            }
-            predPlayer.mostRecentVictimId = prey;
-            predPlayer.addBlood( bloodPerPredator );
-            predPlayer.addXP( pointsGained );
-            ServerContext.vserver.awardSiresXpEarned( predPlayer, pointsGained );
-
-            addFeedback( "You gained " + bloodPerPredator + " blood!", prey );
-            addFeedback( "You gained " + pointsGained + " experience!", prey );
-
-
-            if( preyPlayer != null && preyPlayer.mostRecentVictimId == predId) {
-                //Become blood bonds
-
-                predPlayer.setBloodBonded( prey );
-                preyPlayer.setBloodBonded( predId );
-                addFeedback( predPlayer.name + " is now Bloodbonded to you.", prey );
-                addFeedback( preyPlayer.name + " is now Bloodbonded to you.", predId );
-
-                log.info("Creating blood bonds between " + predPlayer.name + " and " + preyPlayer.name);
-            }
-
-
-
-//            //If there is not sufficient blood for another feed, break off feeding.
-//            if( victim.blood <= 1) {
-//                setAction( VConstants.GAME_MODE_NOTHING );
-//                victim.setAction( VConstants.GAME_MODE_NOTHING );
+//    protected function awardBloodBloomPoints( points :Number, prey :int, predators :Array ) :void
+//    {
+//        var bloodIncrement :Number = VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
+//        var bloodGained :Number = points;
+//
+////        var victimId :int = -1;
+////        var victimsMostRecentFeedVictimId :int = -1;
+//
+//        var victimBlood :Number = isPlayer( prey ) ? getPlayer( prey ).blood :
+//            ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( prey );
+//
+//        var maxBlood :Number = isPlayer( prey ) ? getPlayer( prey ).maxBlood :
+//            ServerContext.nonPlayersBloodMonitor.maxBloodFromNonPlayer( prey );
+//
+//        var bloodLost :Number = Math.max( 0, victimBlood - 1);
+//
+//        var bloodPerPredator :Number = bloodLost / predators.length;
+//
+//        var pointsGained :Number = points * (bloodLost / maxBlood)
+//
+//        var preyPlayer :Player = getPlayer( prey );
+//        if( preyPlayer != null ) {
+//            preyPlayer.damage( bloodLost );
+//            preyPlayer.addXP( pointsGained );
+//            ServerContext.vserver.awardSiresXpEarned( preyPlayer, pointsGained );
+//
+//            addFeedback( "You lost " + bloodLost + " blood!", prey );
+//            addFeedback( "You gained " + pointsGained + " experience!", prey );
+//        }
+//        else {
+//            ServerContext.nonPlayersBloodMonitor.damageNonPlayer( prey, bloodLost, roomId );
+//        }
+//
+//
+//        for each( var predId :int in predators ) {
+//            var predPlayer :Player = getPlayer( predId );
+//            if( predPlayer == null) {
+//                log.error("Predator " + predId + " awarding points, but doesn't exist");
 //            }
-
-        }
-
-
-    }
+//            predPlayer.mostRecentVictimIds = prey;
+//            predPlayer.addBlood( bloodPerPredator );
+//            predPlayer.addXP( pointsGained );
+//            ServerContext.vserver.awardSiresXpEarned( predPlayer, pointsGained );
+//
+//            addFeedback( "You gained " + bloodPerPredator + " blood!", prey );
+//            addFeedback( "You gained " + pointsGained + " experience!", prey );
+//
+//
+//            if( preyPlayer != null && preyPlayer.mostRecentVictimIds == predId) {
+//                //Become blood bonds
+//
+//                predPlayer.setBloodBonded( prey );
+//                preyPlayer.setBloodBonded( predId );
+//                addFeedback( predPlayer.name + " is now Bloodbonded to you.", prey );
+//                addFeedback( preyPlayer.name + " is now Bloodbonded to you.", predId );
+//
+//                log.info("Creating blood bonds between " + predPlayer.name + " and " + preyPlayer.name);
+//            }
+//
+//
+//
+////            //If there is not sufficient blood for another feed, break off feeding.
+////            if( victim.blood <= 1) {
+////                setAction( VConstants.GAME_MODE_NOTHING );
+////                victim.setAction( VConstants.GAME_MODE_NOTHING );
+////            }
+//
+//        }
+//
+//
+//    }
 
 
 
