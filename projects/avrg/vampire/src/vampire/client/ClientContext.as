@@ -17,6 +17,7 @@ import flash.geom.Rectangle;
 
 import vampire.avatar.AvatarGameBridge;
 import vampire.avatar.VampireAvatarHUDOverlay;
+import vampire.data.Codes;
 import vampire.data.VConstants;
 import vampire.net.VMessageManager;
 
@@ -41,6 +42,7 @@ public class ClientContext
 
 
     protected static var _playerEntityId :String;
+    protected static var _playerRoomKey :String;
 
     public static function quit () :void
     {
@@ -113,6 +115,16 @@ public class ClientContext
 
         return _playerEntityId;
     }
+
+    public static function get ourRoomKey () :String
+    {
+        if( _playerRoomKey == null ) {
+            _playerRoomKey = Codes.playerRoomPropKey( ClientContext.ourPlayerId );
+        }
+
+        return _playerRoomKey;
+    }
+
 
     public static function clearOurEntityId () :void
     {
