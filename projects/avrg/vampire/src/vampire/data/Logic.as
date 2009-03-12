@@ -27,25 +27,25 @@ public class Logic
         return VConstants.BLOOD_FRACTION_LOST_PER_FEED * VConstants.MAX_BLOOD_FOR_LEVEL( level );
     }
 
-    public static function bloodgGainedVampireVampireFeeding( feederLevel :int, victimLevel :int, bloodLost :Number) :Number
-    {
-        var bloodGained:Number = bloodLost * VConstants.BLOOD_GAIN_FRACTION_FROM_V2V_FEEDING_WHEN_EQUAL_LEVEL;//=25
-
-        var levelDifference :Number = victimLevel - feederLevel;
-
-        //Victim is lesser than the predator
-        if( levelDifference < 0) {
-            bloodGained = bloodGained/-(levelDifference - 1);
-        }
-        //Victim is greater than the predator
-        if( levelDifference > 0) {
-            bloodGained *= levelDifference;
-            //Don't ever gain more blood than was given.
-            bloodGained = Math.min( bloodLost * 0.9, bloodGained);
-        }
-
-        return bloodGained;
-    }
+//    public static function bloodgGainedVampireVampireFeeding( feederLevel :int, victimLevel :int, bloodLost :Number) :Number
+//    {
+//        var bloodGained:Number = bloodLost * VConstants.BLOOD_GAIN_FRACTION_FROM_V2V_FEEDING_WHEN_EQUAL_LEVEL;//=25
+//
+//        var levelDifference :Number = victimLevel - feederLevel;
+//
+//        //Victim is lesser than the predator
+//        if( levelDifference < 0) {
+//            bloodGained = bloodGained/-(levelDifference - 1);
+//        }
+//        //Victim is greater than the predator
+//        if( levelDifference > 0) {
+//            bloodGained *= levelDifference;
+//            //Don't ever gain more blood than was given.
+//            bloodGained = Math.min( bloodLost * 0.9, bloodGained);
+//        }
+//
+//        return bloodGained;
+//    }
 
     public static function isVampireCapableOfBeingEatenByOtherVampires( level :int, blood :Number) :Boolean
     {
