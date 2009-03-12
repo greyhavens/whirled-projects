@@ -201,7 +201,7 @@ public class VampireAvatarHUD extends AvatarHUD
         //Add a mouse move listener to the blood.  This triggers showing the feed buttons
         var showMenuFunction :Function = function(...ignored) :void {
             _isMouseOver = true;
-
+            trace("mouse over function");
 
 
             if( VConstants.LOCAL_DEBUG_MODE ) {
@@ -209,15 +209,20 @@ public class VampireAvatarHUD extends AvatarHUD
                 showFeedAndFrenzyButton();
                 return;
             }
+            var isPlayer :Boolean = ArrayUtil.contains(_ctrl.room.getPlayerIds(), playerId);
 
             //Only show feed buttons if there is sufficient blood
             if( (!isPlayer && !isChattedEnoughForTargeting) || SharedPlayerStateClient.getBlood( playerId ) <= 1) {
+                trace(" doing nothing because:");
+                trace("   isPlayer=" + isPlayer);
+                trace("   isChattedEnoughForTargeting=" + isChattedEnoughForTargeting);
+                trace("   SharedPlayerStateClient.getBlood( " + playerId + " ) <= 1)=" + (SharedPlayerStateClient.getBlood( playerId ) <= 1));
+                trace("   SharedPlayerStateClient.getBlood( " + playerId + " )=" + SharedPlayerStateClient.getBlood( playerId ));
                 return;
             }
 
-            var isPlayer :Boolean = ArrayUtil.contains(_ctrl.room.getPlayerIds(), playerId);
-            var action :String = SharedPlayerStateClient.getCurrentAction( playerId );
 
+            var action :String = SharedPlayerStateClient.getCurrentAction( playerId );
             //Show feed buttons if we are a player in bared mode, or a non-player
             if( !isPlayer || (action != null && action == VConstants.GAME_MODE_BARED)) {
 
@@ -231,6 +236,10 @@ public class VampireAvatarHUD extends AvatarHUD
                 else {
                     showFeedButtonOnly();
                 }
+            }
+            else {
+                trace(" more doing nothing because:");
+                trace("   action=" + action);
             }
 
         }
@@ -514,7 +523,7 @@ public class VampireAvatarHUD extends AvatarHUD
         }
 
         var currentBlood :Number = SharedPlayerStateClient.getBlood( playerId );
-        if( isNaN( currentBlood ) ) {
+        if( isNaN( currentBlood ) || currentBlood == 0) {
             currentBlood = maxBlood;
         }
 

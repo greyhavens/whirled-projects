@@ -81,11 +81,11 @@ public class DraggableSceneObject extends SceneObject
 
     protected function handleMouseDown (evt :MouseEvent) :void
     {
+        //No need to hold the shift key down while dragging.  Too confusing.
 //        if (!evt.shiftKey) {
 //            return;
 //        }
 
-        trace("mouse down");
         if (_offset == null) {
             registerListener(_displaySprite, Event.ENTER_FRAME, handleFrame);
         }
@@ -262,8 +262,10 @@ public class DraggableSceneObject extends SceneObject
         }
 
         //Make sure we are not outside the paintable area, no matter what.
-        this.x = MathUtil.clamp( this.x, Math.abs(_bounds.left), _ctrl.local.getPaintableArea().width - Math.abs(_bounds.right));
-        this.y = MathUtil.clamp( this.y, 0 + this.height/2, _ctrl.local.getPaintableArea().height - this.height/2);
+        if( _ctrl.isConnected() && _ctrl.local.getPaintableArea() != null && _bounds != null) {
+            this.x = MathUtil.clamp( this.x, Math.abs(_bounds.left), _ctrl.local.getPaintableArea().width - Math.abs(_bounds.right));
+            this.y = MathUtil.clamp( this.y, 0 + this.height/2, _ctrl.local.getPaintableArea().height - this.height/2);
+        }
     }
 
     public function centerOnViewableRoom() :void

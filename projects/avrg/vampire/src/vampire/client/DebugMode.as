@@ -169,7 +169,7 @@ public class DebugMode extends DraggableSceneObject
 
     protected function gainXP( ... ignored ) :void
     {
-
+        ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_ADD_XP );
         if( VConstants.LOCAL_DEBUG_MODE) {
             trace("gainXP");
             var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
@@ -188,6 +188,7 @@ public class DebugMode extends DraggableSceneObject
 
     protected function loseXP( ... ignored ) :void
     {
+        ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_LOSE_XP );
         if( VConstants.LOCAL_DEBUG_MODE) {
 
             var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);

@@ -505,7 +505,7 @@ public class Room extends SimObjectThane
             //The bloodbonded also gains a fraction
             ServerContext.vserver.awardBloodBondedBloodEarned( pred, bloodGainedPerPredator);
             log.debug(predatorId + " gained " + bloodGainedPerPredatorFormatted);
-            addFeedback( "You gained " + bloodGainedPerPredatorFormatted + " from feeding", pred.playerId);
+            addFeedback( "You gained " + bloodGainedPerPredatorFormatted + " blood!", pred.playerId);
 
             if( preyIsPlayer && preyPlayer != null ) {
 
@@ -567,7 +567,7 @@ public class Room extends SimObjectThane
             var p :Player = getPlayer( playerId );
             if( p != null ) {
                 p.addXP( xp );
-                addFeedback("You gained " + xpFormatted + " experience from feeding.", p.playerId);
+                addFeedback("You gained " + xpFormatted + " experience!", p.playerId);
                 //Add some bonus xp to your blood bond, if they are online
                 ServerContext.vserver.awardBloodBondedXpEarned( p, xp );
                 //Add some bonus xp to your sires

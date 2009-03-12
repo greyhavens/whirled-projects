@@ -42,7 +42,6 @@ public class TargetingOverlay extends SceneObject
         _paintableOverlay.mouseEnabled = false;
         _displaySprite.addChild( _paintableOverlay );
 
-        _paintableOverlay.addChild( TextFieldUtil.createField("TargetingOverlay", {x:10, y:10, selectable:false}));
 
         _targetClickedCallback = targetClickedCallback;
         _mouseOverCallback = mouseOverTarget;

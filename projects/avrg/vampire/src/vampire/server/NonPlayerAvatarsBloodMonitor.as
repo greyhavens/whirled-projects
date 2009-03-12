@@ -41,7 +41,11 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
                 var roomId :int = msg.roomId;
                 for each( var nonPlayerId :int in msg.nonPlayerIds) {
                     _nonplayer2RoomId.put( nonPlayerId, roomId );
+                    if( !_nonplayerBlood.containsKey(nonPlayerId)) {
+                        _nonplayerBlood.put(nonPlayerId, maxBloodFromNonPlayer(nonPlayerId))
+                    }
                     log.debug("Non player assigned to room=" + roomId);
+                    log.debug("players recorded=" + _playerIdsThatHavePlayedEver.toArray());
                 }
             }
         }
@@ -149,21 +153,21 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
 
     }
 
-    protected function setIntoRoomProperties( room :Room ) :void
-    {
-        var data :Array = new Array();
-//        room.nonPlayerAvatarIds.forEach( function( nonplayerId :int) :void {
-//            if( _nonplayerBlood.containsKey( nonplayerId )) {
-//                data.put( nonplayerId);
-//                data.put( _nonplayerBlood.get(nonplayerId));
-//            }
-//        });
-
-//        if( !ArrayUtil.equals(room.ctrl.props.get( Codes.ROOM_PROP_BLOOD_NON_PLAYERS ), data)) {
-//            room.ctrl.props.get( Codes.ROOM_PROP_BLOOD_NON_PLAYERS, data);
-//        }
-
-    }
+//    protected function setIntoRoomProperties( room :Room ) :void
+//    {
+//        var data :Array = new Array();
+////        room.nonPlayerAvatarIds.forEach( function( nonplayerId :int) :void {
+////            if( _nonplayerBlood.containsKey( nonplayerId )) {
+////                data.put( nonplayerId);
+////                data.put( _nonplayerBlood.get(nonplayerId));
+////            }
+////        });
+//
+////        if( !ArrayUtil.equals(room.ctrl.props.get( Codes.ROOM_PROP_BLOOD_NON_PLAYERS ), data)) {
+////            room.ctrl.props.get( Codes.ROOM_PROP_BLOOD_NON_PLAYERS, data);
+////        }
+//
+//    }
 
 
     protected function removeNonPlayerFromAllRooms( nonplayerId :int ) :void
@@ -179,16 +183,21 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
     //Allow the non-players to regenerate blood and update room props
     override protected  function update( dt :Number ) :void
     {
+        _bloodUpdateTime += dt;
+        if( _bloodUpdateTime < UPDATE_BLOOD_INTERVAL) {
+            return;
+        }
+        _bloodUpdateTime = 0;
+
         var keys :Array = _nonplayerBlood.keys();
         var userId :int;
         var roomId :int;
         for each( userId in keys) {
 
-
-            //Update the blood befor etrying to put it in a room.
+            //Update the blood before trying to put it in a room.
             var blood :Number = _nonplayerBlood.get( userId );
             if( isNaN( blood ) ) {
-                blood = 1;
+                blood = maxBloodFromNonPlayer(userId);
                 _nonplayerBlood.put( userId, blood);
             }
 
@@ -269,6 +278,10 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
 
     //We use this too keep players and non-players seperate, even if a player quits.
     public var _playerIdsThatHavePlayedEver :HashSet = new HashSet();
+
+
+    protected var _bloodUpdateTime :Number = 0;
+    protected static const UPDATE_BLOOD_INTERVAL :Number = 3;
 
     protected static const NAME :String = "NonAvatarPlayersBloodMonitor";
     protected static const log :Log = Log.getLog( NonPlayerAvatarsBloodMonitor );

@@ -20,7 +20,7 @@ public class VConstants
      * For vampires of equal level, the feeder only gets this fraction of the blood
      * lost from the 'victim'.
      */
-    public static const BLOOD_GAIN_FRACTION_FROM_V2V_FEEDING_WHEN_EQUAL_LEVEL :Number = 0.2;
+    public static const BLOOD_GAIN_FRACTION_FROM_V2V_FEEDING_WHEN_EQUAL_LEVEL :Number = 0.5;
 
     public static const UNIQUE_BLOOD_STRAINS :int = 12;
 
@@ -44,7 +44,7 @@ public class VConstants
     * When a vampire is fed upon, it loses this fraction of total blood.
     * This is only really used to create bloodbonds.
     */
-    public static const BLOOD_FRACTION_LOST_PER_FEED :Number = 0.8;
+    public static const BLOOD_FRACTION_LOST_PER_FEED :Number = 0.25;
 
     /**
     * The fraction of xp gained from feeding that your bloodbond also gets.
@@ -84,12 +84,12 @@ public class VConstants
     /**
     * Max blood non-players
     */
-    public static const MAX_BLOOD_NONPLAYERS :Number = 30;
+    public static const MAX_BLOOD_NONPLAYERS :Number = 80;
 
     /**
     * B
     */
-    public static const BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED :Number = 20;
+    public static const BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED :Number = 30;
 
 
     /**
@@ -142,6 +142,8 @@ public class VConstants
     public static const NAMED_EVENT_BLOOD_DOWN :String = "BloodDown";//Only for testing purposes
     public static const NAMED_EVENT_LEVEL_UP :String = "LevelUp";//Only for testing purposes
     public static const NAMED_EVENT_LEVEL_DOWN :String = "LevelDown";//Only for testing purposes
+    public static const NAMED_EVENT_ADD_XP :String = "AddXP";//Only for testing purposes
+    public static const NAMED_EVENT_LOSE_XP :String = "LoseXP";//Only for testing purposes
     public static const NAMED_EVENT_ADD_INVITE :String = "AddInvite";//Only for testing purposes
     public static const NAMED_EVENT_LOSE_INVITE :String = "LoseInvite";//Only for testing purposes
     public static const NAMED_EVENT_FEED :String = "Feed";//Only for testing purposes
@@ -178,7 +180,7 @@ public class VConstants
     * If the vampire 'feeds' on non-players, this is the player Id to use.
     *
     */
-    public static const PLAYER_ID_NON_PLAYER :int = -1;
+    public static const PLAYER_ID_NON_PLAYER :int = 0;
 
 
     public static const FEEDING_AVATAR_OFFSET :Vector2 = new Vector2(15, -5);

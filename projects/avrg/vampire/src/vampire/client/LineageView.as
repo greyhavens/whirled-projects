@@ -35,7 +35,7 @@ package vampire.client
 
 
             _selectedPlayerIdCenter = ClientContext.ourPlayerId;
-            _hierarchy = ClientContext.model.hierarchy;
+            _hierarchy = ClientContext.model.lineage;
             if( _hierarchy != null ) {
                 updateHierarchy(_selectedPlayerIdCenter);
             }
@@ -79,7 +79,7 @@ package vampire.client
             return _displaySprite;
         }
 
-        public function get sprite () :Sprite
+        public function get displaySprite () :Sprite
         {
             return _displaySprite;
         }
@@ -99,7 +99,7 @@ package vampire.client
         {
             if( _hierarchy == null) {
                 _hierarchy = new MinionHierarchy();
-                _hierarchy.setPlayerSire( playerIdToCenter, -1);
+                _hierarchy.setPlayerSire( playerIdToCenter, 0);
             }
 
             //If we change the player to center, revert to page 0;

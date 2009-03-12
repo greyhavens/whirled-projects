@@ -106,6 +106,7 @@ public class Player extends EventHandlerManager
         setAction( VConstants.GAME_MODE_NOTHING );
 
         //If we have previously been awake, reduce our blood proportionally to the time since we last played.
+        log.debug("Getting time=" + time);
         if( time > 1) {
             var date :Date = new Date();
             var now :Number = date.time;
@@ -276,7 +277,7 @@ public class Player extends EventHandlerManager
 
     public function setBlood (blood :Number) :void
     {
-        blood = MathUtil.clamp(blood, 0, maxBlood);
+        blood = MathUtil.clamp(blood, 1, maxBlood);
         _blood = blood;
     }
 
@@ -293,6 +294,7 @@ public class Player extends EventHandlerManager
 
 
         _xp += bonus;
+        _xp = Math.max( _xp, 0);
         var newLevel :int = Logic.levelGivenCurrentXpAndInvites( xp, invites );
 //        var maxXpForCurrentLevel :int = Logic.xpNeededForLevel( newLevel + 1 );
 
@@ -1344,21 +1346,25 @@ public class Player extends EventHandlerManager
     //This update comes from the server and only occurs a few times per second.
     public function update( dt :Number) :void
     {
-        //Vampires lose blood
-        if( isVampire() ) {
-            if( blood > 1 ) {
-                damage( dt * VConstants.VAMPIRE_BLOOD_LOSS_RATE);
-                //But not below 1
-                if( blood < 1 ) {
-                    setBlood( 1 );
+        _bloodUpdateTime += dt;
+        if( _bloodUpdateTime >= UPDATE_BLOOD_INTERVAL ) {
+            //Vampires lose blood
+            if( isVampire() ) {
+                if( blood > 1 ) {
+                    damage( dt * VConstants.VAMPIRE_BLOOD_LOSS_RATE);
+                    //But not below 1
+                    if( blood < 1 ) {
+                        setBlood( 1 );
+                    }
                 }
             }
-        }
-        //Thralls regenerate blood
-        else {
-            if( blood < maxBlood ) {
-                addBlood( dt * VConstants.THRALL_BLOOD_REGENERATION_RATE);
+            //Thralls regenerate blood
+            else {
+                if( blood < maxBlood ) {
+                    addBlood( dt * VConstants.THRALL_BLOOD_REGENERATION_RATE);
+                }
             }
+            _bloodUpdateTime = 0;
         }
 
         //Change the avatar state depending on our current action
@@ -1508,6 +1514,8 @@ public class Player extends EventHandlerManager
         [  6, 0,  0]
     ];
 
+    protected var _bloodUpdateTime :Number = 0;
+    protected static const UPDATE_BLOOD_INTERVAL :Number = 3;
     protected static const log :Log = Log.getLog( Player );
 //    protected var _minions
 }

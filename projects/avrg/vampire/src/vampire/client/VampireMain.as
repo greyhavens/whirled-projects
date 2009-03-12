@@ -161,7 +161,7 @@ public class VampireMain extends Sprite
 
     protected function handleAdded (event :Event) :void
     {
-        log.info("Added to stage: Initializing...");
+//        log.info("Added to stage: Initializing...");
         _addedToStage = true;
         maybeStartGame();
     }
@@ -174,22 +174,6 @@ public class VampireMain extends Sprite
         EventHandlers.freeAllHandlers();
     }
 
-    protected function leftRoom (e :Event) :void
-    {
-        log.debug("leftRoom");
-//        ClientContext.quit();
-    }
-
-    protected function mouseMove( e :MouseEvent ) :void
-    {
-        for each (var playerId :int in ClientContext.ctrl.room.getPlayerIds()) {
-            var avatar :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo( playerId );
-            if( avatar.bounds.contains( e.localX, e.localY ) ) {
-                trace("mouse over avatar=" + playerId );
-                return;
-            }
-        }
-    }
 
     protected function printServerLogToFlashLog( e :MessageReceivedEvent ) :void
     {

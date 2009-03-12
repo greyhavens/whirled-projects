@@ -1,5 +1,6 @@
 package vampire.data
 {
+    import com.threerings.util.ArrayUtil;
     import com.threerings.util.Log;
     import com.threerings.util.StringUtil;
 
@@ -17,7 +18,21 @@ public class SharedPlayerStateClient
 
     public static function getBlood (playerId :int) :Number
     {
-        return Number(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD));
+        var blood :Number = Number(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD));
+        if( !isNaN(blood) && blood >= 1 ) {
+            return blood;
+        }
+        //Check if we are a non player.  They might not have any blood value set in the room props yet
+        //If not, then they have max blood.
+        if( !isPlayer( playerId )) {
+            return VConstants.MAX_BLOOD_NONPLAYERS;
+        }
+        return blood;
+    }
+
+    public static function isPlayer( playerId :int ) :Boolean
+    {
+        return ArrayUtil.contains( ClientContext.ctrl.room.getPlayerIds(), playerId );
     }
 
     public static function getMaxBlood (playerId :int) :Number
@@ -25,15 +40,9 @@ public class SharedPlayerStateClient
         return VConstants.MAX_BLOOD_FOR_LEVEL( getLevel(playerId) );
     }
 
-//    public static function getTargetVisible (playerId :int) :Boolean
-//    {
-//        return Boolean(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_DISPLAY_VISIBLE));
-//    }
-
     public static function getLevel (playerId :int) :int
     {
-        return Logic.levelGivenCurrentXpAndInvites( getXP( playerId ), getInvites(playerId));
-//        return int(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL));
+        return Math.max(1, Logic.levelGivenCurrentXpAndInvites( getXP( playerId ), getInvites(playerId)));
     }
 
     public static function getBloodType (playerId :int) :int

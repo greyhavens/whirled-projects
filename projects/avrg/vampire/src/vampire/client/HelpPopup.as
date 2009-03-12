@@ -133,20 +133,20 @@ package vampire.client
 
 
             //Listen for changes to the Lineage.  We will need to redraw the Lineage view.
-            registerListener(ClientContext.model, HierarchyUpdatedEvent.HIERARCHY_UPDATED,
-                function(...ignored) :void {
-                    if( _hudHelp.currentLabel == "default" ) {
-                        gotoFrame("default");
-                    }
-                });
+//            registerListener(ClientContext.model, HierarchyUpdatedEvent.HIERARCHY_UPDATED,
+//                function(...ignored) :void {
+//                    if( _hudHelp.currentLabel == "default" ) {
+//                        gotoFrame("default");
+//                    }
+//                });
 
             //Listen for changes to the blood or xp or bloodbonded
-            registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED,
-                function(e :ElementChangedEvent) :void {
-                    if( e.name == ClientContext.ourRoomKey && _hudHelp.currentLabel == "default") {
-                        gotoFrame("default");
-                    }
-                });
+//            registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED,
+//                function(e :ElementChangedEvent) :void {
+//                    if( e.name == ClientContext.ourRoomKey && _hudHelp.currentLabel == "default") {
+//                        gotoFrame("default");
+//                    }
+//                });
 
             init( new Rectangle(-_displaySprite.width/2, _displaySprite.height/2, _displaySprite.width, _displaySprite.height), 0, 0, 0, 100);
             centerOnViewableRoom();
@@ -477,17 +477,18 @@ package vampire.client
             var xpNeededForNextLevel :Number = Logic.xpNeededForLevel(ClientContext.model.level + 1);
             var xpGap :Number = xpNeededForNextLevel - xpNeededForCurrentLevel;
             var ourXPForOurLevel :Number = ClientContext.model.xp - xpNeededForCurrentLevel;
-
+            ourXPForOurLevel = Math.max(ourXPForOurLevel, 0);
             _infoText = new TextField();
             var level :int = ClientContext.model.level;
 
 
             var inviteText :String = level >= VConstants.MAXIMUM_VAMPIRE_LEVEL ? "Max Level" :
-                "Invites needed for next level: " + ClientContext.model.invites + "/" +
+                "Your Recruits/Recruits needed for next level: " + ClientContext.model.invites + "/" +
                     Logic.invitesNeededForLevel( level + 1 );
 
             _infoText.text =
-                "Blood: " + ClientContext.model.blood + "/" + ClientContext.model.maxblood
+                "Blood: " + Util.formatNumberForFeedback(ClientContext.model.blood) + "/"
+                + ClientContext.model.maxblood
                 + "       Level: " + level
                 + "    Experience: " + Util.formatNumberForFeedback(ourXPForOurLevel) + " / " + xpGap + "\n"
                 + inviteText

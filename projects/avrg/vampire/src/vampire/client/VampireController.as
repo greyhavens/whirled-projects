@@ -145,6 +145,7 @@ public class VampireController extends Controller
     {
         trace(ClientContext.ourPlayerId + " setting avatar state from quit");
         ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
+        ClientContext.ctrl.player.props.set( Codes.PLAYER_PROP_LAST_TIME_AWAKE, new Date().time );
 
         ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_QUIT );
 

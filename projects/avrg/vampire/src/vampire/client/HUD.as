@@ -118,7 +118,7 @@ public class HUD extends DraggableSceneObject
         //Check if it is non-player properties changed??
         //Otherwise check for player updates
         var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
-
+        var levelUp :SceneObjectPlayMovieClipOnce;
 
         if( !isNaN( playerIdUpdated ) ) {
             //If it's us, update the player HUD
@@ -143,7 +143,7 @@ public class HUD extends DraggableSceneObject
 
                     if( _currentLevel < ClientContext.model.level) {
                         //Animate a level up movieclip
-                        var levelUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+                        levelUp = new SceneObjectPlayMovieClipOnce(
                             ClientContext.instantiateMovieClip("HUD", "levelup", true) );
                         levelUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
                         levelUp.y = _hudBlood.y;
@@ -157,7 +157,7 @@ public class HUD extends DraggableSceneObject
 
                     if( _currentLevel < ClientContext.model.level) {
                         //Animate a level up movieclip
-                        var levelUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+                        levelUp = new SceneObjectPlayMovieClipOnce(
                             ClientContext.instantiateMovieClip("HUD", "levelup", true) );
                         levelUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
                         levelUp.y = _hudBlood.y;
@@ -209,7 +209,7 @@ public class HUD extends DraggableSceneObject
         init( new Rectangle(-_hudMC.width/2, _hudMC.height/2, _hudMC.width, _hudMC.height), 0, 0, 0, 100);
 
 
-        this.x = _hudMC.width + 40;
+        this.x = _hudMC.width + 40 + 180;
         this.y = _hudMC.height;
 
         _hudMC.mouseChildren = true;
@@ -219,15 +219,12 @@ public class HUD extends DraggableSceneObject
         //Store the x as the x anchor for the blood and xp bars.
         _hudCapStartX = _hudCap.x;
 
-        _hudBlood = new Sprite();//MovieClip( findSafely("HUDblood") );
+        _hudBlood = new Sprite();
         _hudCap.parent.addChild( _hudBlood );
         _hudBlood.x = _hudCap.x - _hudCap.width/2;
         _hudBlood.y = _hudCap.y - (_hudCap.height/2 + 1);
-//        _hudBlood.gotoAndStop(0);
-//        _hudBloodBottom = _hudBlood.y;
-//        _hudBloodStartHeight = _hudBlood.height;
 
-        _hudXP = new Sprite();//MovieClip( findSafely("HUDxp") );
+        _hudXP = new Sprite();
         _hudCap.parent.addChild( _hudXP );
         _hudXP.x = _hudBlood.x;
         _hudXP.y = _hudCap.y;
@@ -237,12 +234,6 @@ public class HUD extends DraggableSceneObject
         _bloodXPMouseOverSprite.y = _hudBlood.y;
         _hudCap.parent.addChildAt(_bloodXPMouseOverSprite, _hudCap.parent.numChildren - 3 );
 
-//        _hudXP.gotoAndStop(0);
-//        _hudXPBottom = _hudXP.y;
-//        _hudXPStartHeight = _hudXP.height;
-
-
-
         var hudHelp :SimpleButton = SimpleButton( findSafely("button_menu") );
         Command.bind( hudHelp, MouseEvent.CLICK, VampireController.SHOW_INTRO);
 
@@ -251,260 +242,6 @@ public class HUD extends DraggableSceneObject
 
 
 
-
-
-
-        //Create the mouseover blood and level effects
-
-
-
-
-//            _mouseOverText = TextFieldUtil.createField("sdfdsfdsffs");
-//            _mouseOverText.selectable = false;
-//            _mouseOverText.tabEnabled = false;
-////            _mouseOverText.embedFonts = true;
-//            _mouseOverText.mouseEnabled = false;
-//
-//            var lineageformat :TextFormat = new TextFormat();
-//            lineageformat.font = "JuiceEmbedded";
-//            lineageformat.size = 20;
-//            lineageformat.align = TextFormatAlign.RIGHT;
-//            lineageformat.bold = true;
-////            _mouseOverText.setTextFormat( lineageformat );
-//            _mouseOverText.textColor = 0;
-//            _mouseOverText.width = 40;
-//            _mouseOverText.height = 30;
-////            _mouseOverText.x = 100;
-////            _mouseOverText.y = 0;
-//            _mouseOverText.antiAliasType = AntiAliasType.ADVANCED;
-//
-//            var blurred :BlurFilter = new BlurFilter(1.3, 1.3, 1 );
-//            var storedBlur :Array = [blurred];
-//                    feedbackMessageTextField.filters = storedBlur;
-
-//           _mouseCaptureBloodSprite.addChild(_mouseOverText);
-//           registerListener( _hudBlood, MouseEvent.ROLL_OVER, function(e:MouseEvent) :void {
-//               _hudBlood.addChild(_mouseOverText);
-//               _mouseOverText.x = e.localX;
-//               _mouseOverText.y = e.localY;
-//               _mouseOverText.text = "" + ClientContext.model.blood;
-//           });
-//
-//            _mouseCaptureBloodSprite = new Sprite();
-
-//           registerListener( _mouseCaptureBloodSprite, MouseEvent.ROLL_OVER, function(e:MouseEvent) :void {
-//               showFeedBack( "Blood " + Util.formatNumberForFeedback(ClientContext.model.blood) +
-//                   " / " + ClientContext.model.maxblood, true);
-//           });
-
-//           registerListener( _mouseCaptureBloodSprite, MouseEvent.MOUSE_MOVE, function(e:MouseEvent) :void {
-//
-//               _mouseCaptureBloodSprite.addChild(_mouseOverBloodText);
-//               _mouseOverBloodText.x = e.localX - _mouseOverBloodText.width;
-//               _mouseOverBloodText.y = e.localY - _mouseOverBloodText.height - 8;
-//           });
-
-//           registerListener( _mouseCaptureBloodSprite, MouseEvent.ROLL_OUT, function(e:MouseEvent) :void {
-//               if( _mouseOverBloodText != null && _mouseOverBloodText.parent != null ) {
-//                   _mouseOverBloodText.parent.removeChild( _mouseOverBloodText );
-//               }
-//           });
-
-//           Command.bind( _mouseCaptureBloodSprite, MouseEvent.CLICK, VampireController.SHOW_INTRO, "blood");
-
-//           _mouseCaptureXPSprite = new Sprite();
-
-//           registerListener( _mouseCaptureXPSprite, MouseEvent.ROLL_OVER, function(...ignored) :void {
-//
-//               var xpNeededForCurrentLevel :Number = Logic.xpNeededForLevel(ClientContext.model.level);
-//               var xpNeededForNextLevel :Number = Logic.xpNeededForLevel(ClientContext.model.level + 1);
-//               var xpGap :Number = xpNeededForNextLevel - xpNeededForCurrentLevel;
-//               var ourXPForOurLevel :Number = ClientContext.model.xp - xpNeededForCurrentLevel;
-//
-//               var msg :String = "Level " + ClientContext.model.level + ", Experience " +
-//                    Util.formatNumberForFeedback(ourXPForOurLevel) + " / " + xpGap;
-//
-//               showFeedBack( msg , true);
-//           });
-//           Command.bind( _mouseCaptureXPSprite, MouseEvent.CLICK, VampireController.SHOW_INTRO, "lineage");
-
-//           registerListener( _mouseCaptureXPSprite, MouseEvent.MOUSE_MOVE, function(e:MouseEvent) :void {
-//               _mouseCaptureXPSprite.addChild(_mouseOverXPText);
-//               _mouseOverXPText.x = e.localX - _mouseOverXPText.width;
-//               _mouseOverXPText.y = e.localY - _mouseOverXPText.height - 8;
-//           });
-//
-//           registerListener( _mouseCaptureXPSprite, MouseEvent.ROLL_OUT, function(e:MouseEvent) :void {
-//               if( _mouseOverXPText != null && _mouseOverXPText.parent != null ) {
-//                   _mouseOverXPText.parent.removeChild( _mouseOverXPText );
-//               }
-//           });
-
-
-
-
-
-        //Add the mouse over and rollout events.
-        //When the mouse is over the HUD, show the avatar info for all players.
-        //When the mouse rolls out, disable the avatar info
-//        registerListener(_hudMC, MouseEvent.ROLL_OVER, function(...ignored) :void {
-//            if( _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SELECT_FEED_TARGET &&
-//                _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET ) {
-//                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
-//            }
-//        });
-//
-//        registerListener(_hudMC, MouseEvent.ROLL_OUT, function(...ignored) :void {
-//            if( _targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ) {
-//                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
-//            }
-//        });
-//
-
-
-
-
-
-
-//        for each( var b :InteractiveObject in [hudPredator, hudPrey] ) {//_hudMC
-//
-//            registerListener(b, MouseEvent.ROLL_OVER, function(...ignored) :void {
-//
-//                if( b == hudPredator && ClientContext.avatarOverlay.displayMode ==
-//                    VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS) {
-//                        return;
-//                }
-//                ClientContext.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
-//            });
-//
-//            registerListener(b, MouseEvent.ROLL_OUT, function(...ignored) :void {
-//                if( ClientContext.avatarOverlay.displayMode !=
-//                    VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS ) {
-//
-//                    ClientContext.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
-//                }
-//
-//            });
-//
-//        }
-
-
-//        registerListener(hudPredator, MouseEvent.ROLL_OVER, function(...ignored) :void {
-//            if( _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS &&
-//                _targetingOverlay.displayMode != VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_FEED_TARGET ) {
-//                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
-//            }
-//        });
-//
-//        registerListener(hudPredator, MouseEvent.ROLL_OUT, function(...ignored) :void {
-//            if( _targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS ) {
-//                _targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
-//            }
-//        });
-//
-//
-
-
-
-
-
-
-
-
-
-//        _hud.graphics.beginFill(0xffffff);
-//        _hud.graphics.drawRect(0, 0, 600, 50);
-//        _hud.graphics.drawRect(290, 50, 260, 100);
-//        _hud.graphics.endFill();
-
-//        var startX :int = 30;
-//        var startY :int = 0;
-//
-//        for each ( var mode :String in VConstants.GAME_MODES) {
-//            var button :SimpleTextButton = new SimpleTextButton( mode );
-//            button.x = startX;
-//            button.y = startY;
-//            startX += 85;
-////            Command.bind( button, MouseEvent.CLICK, VampireController.SWITCH_MODE, mode);
-////            _hud.addChild( button );
-//        }
-
-
-        //Help Button
-//        var help :SimpleTextButton = new SimpleTextButton( "Help" );
-//        help.x = startX;
-//        help.y = startY;
-//        startX += 90;
-//        Command.bind( help, MouseEvent.CLICK, VampireController.SHOW_INTRO);
-//        _hud.addChild( help );
-
-        //Show blood as a horizontal bar
-//        _blood = new Sprite();
-////        _hud.addChild( _blood );
-//        _blood.x = 180;
-//        _blood.y = 35;
-//
-//        _bloodText = TextFieldUtil.createField("", {mouseEnabled:false, selectable:false});
-//        _bloodText.x = 50;
-//        _blood.addChild( _bloodText );
-
-        //Show xp as a horizontal bar
-//        _xp = new Sprite();
-////        _hud.addChild( _xp );
-//        _xp.x = 320;
-//        _xp.y = 35;
-//
-//        _xpText = TextFieldUtil.createField("", {mouseEnabled:false, selectable:false});
-//        _xpText.x = 50;
-//        _xp.addChild( _xpText );
-
-
-        //Quit button
-//        var quitButton :SimpleTextButton = new SimpleTextButton( "Quit" );
-//        quitButton.x = startX;
-//        button.y = startY;
-//        startX += 90;
-//        Command.bind( quitButton, MouseEvent.CLICK, VampireController.QUIT);
-//        _hud.addChild( quitButton );
-
-
-//        _action = TextFieldUtil.createField("Action: ", {mouseEnabled:false, selectable:false, x:300, y:45});
-////        _hud.addChild( _action );
-//
-//        _level = TextFieldUtil.createField("Level: ", {mouseEnabled:false, selectable:false, x:300, y:65});
-////        _hud.addChild( _level );
-//
-//        _target = TextFieldUtil.createField("Target: ", {mouseEnabled:false, selectable:false, x:300, y:85, width:400});
-////        _hud.addChild( _target );
-//
-//        _bloodbonds = TextFieldUtil.createField("Bloodbonds: ", {mouseEnabled:false, selectable:false, x:300, y:105, width:300});
-////        _hud.addChild( _bloodbonds );
-//
-//        _time = TextFieldUtil.createField("Time: ", {mouseEnabled:false, selectable:false, x:300, y:125, width:450});
-////        _hud.addChild( _time );
-//
-//        _myName = TextFieldUtil.createField("Me: Testing locally", {mouseEnabled:false, selectable:false, x:20, y:35, width:150});
-//        if( !VConstants.LOCAL_DEBUG_MODE) {
-//            _myName = TextFieldUtil.createField("Me: " + ClientContext.ctrl.room.getAvatarInfo( ClientContext.ourPlayerId).name, {mouseEnabled:false, selectable:false, x:20, y:35, width:150});
-//        }
-
-//        _hud.addChild( _myName );
-
-        //The target overlay
-//        _targetSprite = new Sprite();
-//        _displaySprite.addChild( _targetSprite );
-////        _targetSprite.graphics.lineStyle(4, 0xcc0000);
-////        _targetSprite.graphics.drawCircle(0, 0, 20);
-//        _targetSprite.visible = false;
-//
-//        _targetSpriteBlood = ClientContext.instantiateMovieClip("HUD", "target_blood_meter", true);
-//        _targetSprite.addChild( _targetSpriteBlood );
-//
-//        _targetSpriteBloodText = TextFieldUtil.createField("", {mouseEnabled:false, selectable:false});
-//        _targetSpriteBlood.addChild( _targetSpriteBloodText );
-//
-//        _targetSpriteBloodBondIcon = ClientContext.instantiateMovieClip("HUD", "bond_icon", true);
-//        _targetSpriteHierarchyIcon = ClientContext.instantiateButton("HUD", "button_hierarchy_no_mouse");
 
     }
 

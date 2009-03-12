@@ -159,17 +159,20 @@ public class VServer extends ObjectDBThane
 
         _ctrl.doBatch(function () :void {
 
+            _rooms.forEach( function( roomId :int, room :Room) :void {
+
+                for each( var globalMessage :String in _globalFeedback) {
+                    room.addFeedback( globalMessage, 0);
+                }
+            });
+
+
             update( dT_seconds );
 
-//            _rooms.forEach(function (roomId :int, room :Room) :void {
-//                try {
-//                    room.tick(dT_seconds);
-//
-//                } catch (error :Error) {
-//                    log.warning("Error in room.tick()", "roomId", roomId, error);
-//                }
-//            });
         });
+
+        _globalFeedback.splice(0);
+
 
 
 //        //Remove stale non-players.
@@ -512,6 +515,52 @@ public class VServer extends ObjectDBThane
         }
     }
 
+    public function checkBloodBondFormation( preyId :int, predatorIds :Array) :void
+    {
+        if( !isPlayer( preyId )) {
+            return;
+        }
+
+        var prey :Player = getPlayer( preyId );
+        //At the moment, it's 2 alternate feedings each
+        //I.e. Player 1 eats Player 2, 2 eats 1, 1 eats 2, 2 eats 1.
+        var minfeedings :int = 2;
+        var preyVictims :Array = prey.mostRecentVictimIds;
+
+        if( preyVictims.length < minfeedings) {
+            return;
+        }
+        for each(var predId :int in predatorIds) {
+
+            if( !isPlayer( predId)) {
+                log.error("checkBloodBondFormation, no pred for id=" + predId );
+                continue;
+            }
+            var predator :Player = getPlayer( predId );
+            var predVictims :Array = predator.mostRecentVictimIds;
+            if( predVictims.length < minfeedings) {
+                continue;
+            }
+            predator.addFeedback("Your most recent victims=" + predVictims);
+
+            if( preyVictims[preyVictims.length - 1] == predator.playerId &&
+                preyVictims[preyVictims.length - 2] == predator.playerId &&
+                predVictims[predVictims.length - 1] == prey.playerId &&
+                predVictims[predVictims.length - 2] == prey.playerId){
+
+
+                //Break previous bonds
+                prey.setBloodBonded( predator.playerId );//This also sets the name
+                predator.setBloodBonded( prey.playerId );
+                log.debug("Creating new bloodbond=" + predator.name + " + " + prey.name);
+                prey.addFeedback( "You are now bloodbonded with " + predator.name);
+                predator.addFeedback( "You are now bloodbonded with " + prey.name);
+                _globalFeedback.push(prey.name + " is now bloodbonded with " + predator.name);
+                break;
+            }
+        }
+    }
+
 
     public function isPlayer( playerId :int ) :Boolean
     {
@@ -525,6 +574,8 @@ public class VServer extends ObjectDBThane
     protected var _ctrl :AVRServerGameControl;
     protected var _rooms :HashMap = new HashMap();
     protected var _players :HashMap = new HashMap();
+
+    protected var _globalFeedback :Array = new Array();
 
 //    protected var _playerIds :HashSet = new HashSet();
 
