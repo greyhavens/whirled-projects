@@ -1,12 +1,12 @@
 package vampire.client
 {
     import com.threerings.flash.DisplayUtil;
-    import com.threerings.util.HashMap;
+    import com.threerings.flash.TextFieldUtil;
     import com.threerings.util.Log;
     import com.whirled.contrib.avrg.DraggableSceneObject;
+    import com.whirled.net.ElementChangedEvent;
 
     import flash.display.DisplayObject;
-    import flash.display.FrameLabel;
     import flash.display.InteractiveObject;
     import flash.display.MovieClip;
     import flash.display.SimpleButton;
@@ -14,11 +14,15 @@ package vampire.client
     import flash.events.MouseEvent;
     import flash.filters.GlowFilter;
     import flash.geom.Rectangle;
+    import flash.text.AntiAliasType;
     import flash.text.TextField;
     import flash.text.TextFormat;
     import flash.text.TextFormatAlign;
 
+    import vampire.client.events.HierarchyUpdatedEvent;
+    import vampire.data.Codes;
     import vampire.data.Logic;
+    import vampire.data.SharedPlayerStateClient;
     import vampire.feeding.Constants;
     import vampire.feeding.PlayerFeedingData;
 
@@ -106,12 +110,58 @@ package vampire.client
             registerListener( SimpleButton(findSafely("help_back")), MouseEvent.CLICK,
                 backButtonPushed);
 
+            _bondTextAnchor = findSafely("text_bloodbond") as TextField;
+            _bloodbondIconAnchor = findSafely("bond_icon");
+            registerListener( ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+
+
+            _getSiresButton = findSafely("link_tovamps") as SimpleButton;
+            _getMinionsButton = findSafely("link_tolineage") as SimpleButton;
+
+            registerListener( _getSiresButton, MouseEvent.CLICK,
+                function( e :MouseEvent ) :void {
+                    gotoFrame("vamps");
+                });
+            registerListener( _getMinionsButton, MouseEvent.CLICK,
+                function( e :MouseEvent ) :void {
+                    gotoFrame("lineage");
+                });
 
             gotoFrame(startframe );
 
 
+            //Listen for changes to the Lineage.  We will need to redraw the Lineage view.
+            registerListener(ClientContext.model, HierarchyUpdatedEvent.HIERARCHY_UPDATED,
+                function(...ignored) :void {
+                    if( _hudHelp.currentLabel == "default" ) {
+                        gotoFrame("default");
+                    }
+                });
+
             init( new Rectangle(-_displaySprite.width/2, _displaySprite.height/2, _displaySprite.width, _displaySprite.height), 0, 0, 0, 100);
             centerOnViewableRoom();
+        }
+
+
+        protected function elementChanged (e :ElementChangedEvent) :void
+        {
+            var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
+
+            if( playerIdUpdated == ClientContext.ourPlayerId) {
+
+                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED
+                    || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME) {
+                    showBloodBonded();
+                }
+            }
+        }
+
+        protected function showBloodBonded() :void
+        {
+            if( ClientContext.model.bloodbonded <= 0 ) {
+                return;
+            }
+            redoBloodBondText(ClientContext.model.bloodbondedName);
         }
 
 
@@ -243,6 +293,12 @@ package vampire.client
             if( _hudHelp.contains( _lineageView.displayObject ) ) {
                 _hudHelp.removeChild( _lineageView.displayObject );
             }
+
+            if( _bondText != null && _bondText.parent != null
+                && _bondText.parent.contains(_bondText)) {
+
+                _bondText.parent.removeChild( _bondText );
+            }
         }
 
         public function gotoFrame( frame :String, addFrameToHistory :Boolean = true ) :void
@@ -269,8 +325,9 @@ package vampire.client
                     var lineage_center :MovieClip = findSafely("lineage_center") as MovieClip;
                     lineage_center.parent.addChild( _lineageView.displayObject );
                     _lineageView.x = lineage_center.x;
-                    _lineageView.y = lineage_center.y - 20;
+                    _lineageView.y = lineage_center.y;// - 20;
 
+                    //Add the clickable, glowable bloodbond icon
                     var bloodbondIcon :MovieClip = ClientContext.instantiateMovieClip("HUD", "bond_icon", false);
 
                     registerListener( bloodbondIcon, MouseEvent.CLICK,
@@ -283,10 +340,41 @@ package vampire.client
 
                     addGlowFilter( bloodbondIcon );
                     bloodbondIcon.scaleX = bloodbondIcon.scaleY = 2;
-                    bloodbondIcon.x = MovieClip(findSafely("bond_icon")).x - bloodbondIcon.width/2;
-                    bloodbondIcon.y = MovieClip(findSafely("bond_icon")).y;
-                    MovieClip(findSafely("bond_icon")).visible = false;
-                    _lineageView.sprite.addChild( bloodbondIcon );
+                    bloodbondIcon.x = _bloodbondIconAnchor.x - bloodbondIcon.width/2;
+                    bloodbondIcon.y = _bloodbondIconAnchor.y;
+                    _lineageView.displaySprite.addChild( bloodbondIcon );
+
+                    //Actually show your blondbond, if you have one
+                    showBloodBonded();
+
+                    //Add the extra help bits for sires and minion recruiting, if relevant
+                    //First, if there's no Lineage yet, jsut add the links
+                    if( ClientContext.model.lineage == null ) {
+                        _getSiresButton.mouseEnabled = true;
+                        _getSiresButton.visible = true;
+                        _getMinionsButton.mouseEnabled = true;
+                        _getMinionsButton.visible = true;
+                    }
+                    else {
+                        //Check if we need to show the sires link
+                        if( ClientContext.model.lineage.getSireId( ClientContext.ourPlayerId ) == 0) {
+                            _getSiresButton.mouseEnabled = true;
+                            _getSiresButton.visible = true;
+                        }
+                        else {
+                            _getSiresButton.mouseEnabled = false;
+                            _getSiresButton.visible = false;
+                        }
+                        //Check if we need to show the minions link
+                        if( ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) == 0) {
+                            _getMinionsButton.mouseEnabled = true;
+                            _getMinionsButton.visible = true;
+                        }
+                        else {
+                            _getMinionsButton.mouseEnabled = false;
+                            _getMinionsButton.visible = false;
+                        }
+                    }
 
                 default:
                     break;
@@ -307,11 +395,71 @@ package vampire.client
             return NAME;
         }
 
+
+        /**
+        * Using the embedded font disallows dynamically changing the text.
+        */
+        protected function redoBloodBondText( bloodbondName :String ) :void
+        {
+            if( bloodbondName == null || bloodbondName == "") {
+                bloodbondName = "No bloodbond yet.";
+            }
+            if( _bondText != null && _bondText.parent != null
+                && _bondText.parent.contains(_bondText)) {
+
+                _bondText.parent.removeChild( _bondText );
+            }
+
+            _bondText = TextFieldUtil.createField(bloodbondName);
+            _bondText.selectable = false;
+            _bondText.tabEnabled = false;
+            _bondText.textColor = 0xffffff;
+            _bondText.embedFonts = true;
+            var format :TextFormat = getJuiceFormat();
+            format.align = TextFormatAlign.LEFT;
+            _bondText.setTextFormat( format );
+
+            _bondText.antiAliasType = AntiAliasType.ADVANCED;
+            _bondText.width = 200;
+            _bondText.height = 60;
+            _bondText.x = _bondTextAnchor.x;
+            _bondText.y = _bondTextAnchor.y - 3;
+            _bondTextAnchor.parent.addChild( _bondText );
+
+
+            addGlowFilter( _bondText );
+            var bondTextClick :Function = function(...ignored) :void {
+                unregisterListener(_bondText, MouseEvent.CLICK, bondTextClick);
+                _bondText.parent.removeChild( _bondText );
+                gotoFrame("bloodbond");
+            }
+            registerListener( _bondText, MouseEvent.CLICK, bondTextClick );
+
+        }
+
+        protected function getJuiceFormat () :TextFormat
+        {
+            var format :TextFormat = new TextFormat();
+            format.font = "JuiceEmbedded";
+            format.size = 26;
+            format.color = 0xffffff;
+            format.align = TextFormatAlign.CENTER;
+            format.bold = true;
+            return format;
+        }
+
+
         protected var _hudHelp :MovieClip;
         protected var _frameHistory :Array = new Array();
         protected var _bloodTypeOverlay :Sprite = new Sprite();
+        protected var _bondText :TextField;
+
+        protected var _bondTextAnchor :TextField;
+        protected var _bloodbondIconAnchor :DisplayObject;
 
         protected var _lineageView :LineageView;
+        protected var _getSiresButton :SimpleButton;
+        protected var _getMinionsButton :SimpleButton;
 
         public static const NAME :String = "HelpPopup";
         protected static const log :Log = Log.getLog( HelpPopup );
