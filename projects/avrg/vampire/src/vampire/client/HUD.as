@@ -130,7 +130,7 @@ public class HUD extends DraggableSceneObject
                         //Animate a blood bonus movieclip
                         var bloodUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
                             ClientContext.instantiateMovieClip("HUD", "levelup", true) );
-                        bloodUp.x = _hudBlood.x;
+                        bloodUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
                         bloodUp.y = _hudBlood.y;
                         db.addObject( bloodUp, _hudBlood.parent );
                     }
@@ -145,14 +145,27 @@ public class HUD extends DraggableSceneObject
                         //Animate a level up movieclip
                         var levelUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
                             ClientContext.instantiateMovieClip("HUD", "levelup", true) );
-                        levelUp.x = _hudBlood.x;
+                        levelUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
                         levelUp.y = _hudBlood.y;
                         db.addObject( levelUp, _hudBlood.parent );
                     }
                     _currentLevel = ClientContext.model.level;
 
                     showXP( ClientContext.ourPlayerId );
-                    showBlood( ClientContext.ourPlayerId );
+                }
+                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES) {
+
+                    if( _currentLevel < ClientContext.model.level) {
+                        //Animate a level up movieclip
+                        var levelUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+                            ClientContext.instantiateMovieClip("HUD", "levelup", true) );
+                        levelUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
+                        levelUp.y = _hudBlood.y;
+                        db.addObject( levelUp, _hudBlood.parent );
+                    }
+                    _currentLevel = ClientContext.model.level;
+
+                    showXP( ClientContext.ourPlayerId );
                 }
             }
         }
