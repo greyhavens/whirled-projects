@@ -13,8 +13,8 @@ import flash.utils.ByteArray;
 
 public class VampireBody extends NewBody
 {
-    public function VampireBody (ctrl :AvatarControl, media :MovieClip, width :int,
-                                 height :int = -1)
+    public function VampireBody (ctrl :AvatarControl, media :MovieClip, isConfigurable :Boolean,
+                                 width :int, height :int = -1)
     {
         super(ctrl, media, width, height);
 
@@ -31,9 +31,11 @@ public class VampireBody extends NewBody
 
         // Entity memory-based configuration
         loadConfig();
-        if (_ctrl.hasControl()) {
-            showConfigPanel();
+        if (isConfigurable && _ctrl.hasControl()) {
+            _ctrl.registerCustomConfig(createConfigPanel);
+
         }
+
         _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED,
             function (e :ControlEvent) :void {
                 if (e.name == MEMORY_CONFIG) {
@@ -42,25 +44,15 @@ public class VampireBody extends NewBody
             });
     }
 
-    protected function showConfigPanel () :void
+    protected function createConfigPanel () :VampatarConfigPanel
     {
-        var panel :VampatarConfigPanel = new VampatarConfigPanel(
+        return new VampatarConfigPanel(
             _curConfig,
-            function (previewConfig :VampatarConfig) :void {
-                applyConfig(previewConfig);
-            },
             function (newConfig :VampatarConfig) :void {
-                if (newConfig != null) {
-                    _curConfig = newConfig;
-                    saveConfig(newConfig);
-                    applyConfig(newConfig);
-                } else {
-                    applyConfig(_curConfig);
-                }
-                _ctrl.clearPopup();
+                _curConfig = newConfig;
+                saveConfig(newConfig);
+                applyConfig(newConfig);
             });
-
-        _ctrl.showPopup("Configure!", panel, panel.width, panel.height);
     }
 
     protected function loadConfig () :void
