@@ -18,7 +18,7 @@ import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
-import vampire.client.events.HierarchyUpdatedEvent;
+import vampire.client.events.LineageUpdatedEvent;
 import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.Lineage;
 import vampire.data.VConstants;
@@ -36,6 +36,15 @@ public class MainGameMode extends AppMode
     {
         modeSprite.visible = true;
         log.debug("Starting " + ClassUtil.tinyClassName( this ));
+
+        //Add intro panel if we're a new player
+        if( ClientContext.isNewPlayer) {
+            ClientContext.controller.handleShowIntro("intro");
+            ClientContext.isNewPlayer = false;
+        }
+        else {
+            trace("We're NOT a new player");
+        }
 
 //        var testPopup :PopupMessage = new PopupMessage(ClientContext.ctrl, "sdsdf", ClientContext.hud);
 //        addObject( testPopup, modeSprite );
@@ -90,7 +99,7 @@ public class MainGameMode extends AppMode
                 lineage.setPlayerSire(12, 1);
                 lineage.setPlayerSire(13, 1);
                 lineage.setPlayerSire(14, 1);
-            var msg :HierarchyUpdatedEvent = new HierarchyUpdatedEvent(lineage, ClientContext.ourPlayerId);
+            var msg :LineageUpdatedEvent = new LineageUpdatedEvent(lineage, ClientContext.ourPlayerId);
             ClientContext.model.lineage = lineage;
             ClientContext.model.dispatchEvent( msg );
         }
@@ -100,8 +109,8 @@ public class MainGameMode extends AppMode
 //            addObject(  new HelpPopup(), modeSprite );
         }
 
-        _feedingGameDraggableSprite = new DraggableSceneObject(ClientContext.ctrl);
-        modeSprite.addChild( _feedingGameDraggableSprite.displayObject );
+//        _feedingGameDraggableSprite = new DraggableSceneObject(ClientContext.ctrl);
+//        modeSprite.addChild( _feedingGameDraggableSprite.displayObject );
 
         //If we start moving, and we are in bared mode, change to default mode.
         registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_MOVED, function(
@@ -120,7 +129,7 @@ public class MainGameMode extends AppMode
         registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, function(
             e :AVRGameRoomEvent) :void {
                 var playerMovedId :int = int( e.value );
-                trace("avatar changed, playerId="+playerMovedId);
+//                trace("avatar changed, playerId="+playerMovedId);
 
                 //We are only allowed to change our own avatar.
                 if( playerMovedId != ClientContext.ourPlayerId ) {
@@ -129,8 +138,8 @@ public class MainGameMode extends AppMode
 
                 //Do as if we have pushed the 'Bared" button.
                 var avatar :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo( playerMovedId );
-                trace("avatar state="+avatar.state);
-                trace("ClientContext.model.action="+ClientContext.model.action);
+//                trace("avatar state="+avatar.state);
+//                trace("ClientContext.model.action="+ClientContext.model.action);
                 if( avatar != null) {
                     //If we change our avatar to bared, but we are not in the bared state.
                     if( avatar.state == VConstants.GAME_MODE_BARED &&
@@ -220,6 +229,10 @@ public class MainGameMode extends AppMode
         addObject( nonPlayerIdTimer );
 
 
+
+
+
+        //Add a debug panel for admins
         if( ClientContext.isAdmin(ClientContext.ourPlayerId) || VConstants.LOCAL_DEBUG_MODE ) {
             var debug :SimpleTextButton = new SimpleTextButton("debug");
             Command.bind( debug, MouseEvent.CLICK, VampireController.SHOW_DEBUG );
@@ -240,11 +253,11 @@ public class MainGameMode extends AppMode
             } else {
                 _feedingGameClient = FeedingGameClient.create( gameId, ClientContext.model.playerFeedingData, onGameComplete);
 
-                Sprite(_feedingGameDraggableSprite.displayObject).addChild( _feedingGameClient );
-                _feedingGameClient.mouseEnabled = true;
-                _feedingGameClient.mouseChildren = true;
-                _feedingGameDraggableSprite.init(new Rectangle(0,0,0,0), 0,0,0,0);
-//                modeSprite.addChild(_feedingGameClient);
+//                Sprite(_feedingGameDraggableSprite.displayObject).addChild( _feedingGameClient );
+//                _feedingGameClient.mouseEnabled = true;
+//                _feedingGameClient.mouseChildren = true;
+//                _feedingGameDraggableSprite.init(new Rectangle(0,0,0,0), 0,0,0,0);
+                modeSprite.addChild(_feedingGameClient);
             }
         }
     }
@@ -256,8 +269,8 @@ public class MainGameMode extends AppMode
     {
         log.info(ClientContext.ourPlayerId + " onGameComplete(), Feeding complete, setting avatar state to default");//, "completedSuccessfully", completedSuccessfully);
 
-        if( Sprite(_feedingGameDraggableSprite.displayObject).contains( _feedingGameClient ) ){
-            Sprite(_feedingGameDraggableSprite.displayObject).removeChild( _feedingGameClient )
+        if( _feedingGameClient.parent != null ){
+            _feedingGameClient.parent.removeChild( _feedingGameClient )
         }
 
 //        modeSprite.removeChild(_feedingGameClient);
@@ -351,7 +364,7 @@ public class MainGameMode extends AppMode
     protected var _hud :HUD;
 
     protected var _feedingGameClient :FeedingGameClient;
-    protected var _feedingGameDraggableSprite :DraggableSceneObject;
+//    protected var _feedingGameDraggableSprite :DraggableSceneObject;
 
     protected var _currentNonPlayerIds :Array;
 //    /**Holds feeding data until game is over and it's sent to the server*/

@@ -40,6 +40,8 @@ public class ClientContext
 
     public static var controller :VampireController;
 
+    public static var isNewPlayer :Boolean = false;
+
 
     protected static var _playerEntityId :String;
     protected static var _playerRoomKey :String;

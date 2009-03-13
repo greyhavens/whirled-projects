@@ -29,7 +29,8 @@ package vampire.client
             drag.displaySprite.addChild( infoPanel );
             drag.init( new Rectangle(0,0,100, 100), 0, 0, 0, 0);
 
-            modeSprite.addChild( drag.displayObject );
+            modeSprite.addChild( drag.displaySprite );
+            drag.centerOnViewableRoom();
 
             registerListener( infoPanel["choose_female"], MouseEvent.CLICK, function(...ignored) :void {
                 ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_MESSAGE_CHOOSE_FEMALE);
@@ -50,13 +51,13 @@ package vampire.client
 //            infoPanel.x = infoPanel.width/2 + 20;//ClientContext.ctrl.local.getRoomBounds()[0]/2;
 //            infoPanel.y = infoPanel.height/2 + 20;;//ClientContext.ctrl.local.getRoomBounds()[1]/2;
 
-            infoPanel.x = ClientContext.ctrl.local.getPaintableArea().width/2;
-            infoPanel.y = ClientContext.ctrl.local.getPaintableArea().height/2;
+//            drag.x = ClientContext.ctrl.local.getPaintableArea().width/2;
+//            drag.y = ClientContext.ctrl.local.getPaintableArea().height/2;
 
-            registerListener( ClientContext.ctrl.local, AVRGameControlEvent.SIZE_CHANGED, function(...ignored) :void {
-                infoPanel.x = ClientContext.ctrl.local.getPaintableArea().width/2;
-                infoPanel.y = ClientContext.ctrl.local.getPaintableArea().height/2;
-            });
+//            registerListener( ClientContext.ctrl.local, AVRGameControlEvent.SIZE_CHANGED, function(...ignored) :void {
+//                infoPanel.x = ClientContext.ctrl.local.getPaintableArea().width/2;
+//                infoPanel.y = ClientContext.ctrl.local.getPaintableArea().height/2;
+//            });
         }
         override protected function enter():void
         {
@@ -65,6 +66,7 @@ package vampire.client
                 ClientContext.game.ctx.mainLoop.popMode();
             }
             else {
+                ClientContext.isNewPlayer = true;
                 modeSprite.visible = true;
             }
         }

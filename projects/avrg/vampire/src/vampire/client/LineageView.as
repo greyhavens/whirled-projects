@@ -19,7 +19,7 @@ package vampire.client
     import flash.text.TextFormat;
     import flash.text.TextFormatAlign;
 
-    import vampire.client.events.HierarchyUpdatedEvent;
+    import vampire.client.events.LineageUpdatedEvent;
     import vampire.data.Lineage;
     import vampire.data.VConstants;
 
@@ -58,7 +58,7 @@ package vampire.client
                 updateHierarchy(3);
             }
 
-            _events.registerListener(ClientContext.model, HierarchyUpdatedEvent.HIERARCHY_UPDATED, updateHierarchyEvent);
+            _events.registerListener(ClientContext.model, LineageUpdatedEvent.LINEAGE_UPDATED, updateHierarchyEvent);
 
 
         }
@@ -85,10 +85,10 @@ package vampire.client
         }
 
 
-        protected function updateHierarchyEvent( e :HierarchyUpdatedEvent) :void
+        protected function updateHierarchyEvent( e :LineageUpdatedEvent) :void
         {
             log.debug(VConstants.DEBUG_MINION + " updateHierarchyEvent", "e", e);
-            _hierarchy = e.hierarchy;
+            _hierarchy = e.lineage;
             if( _hierarchy == null) {
                 log.error("updateHierarchyEvent(), but hierarchy is null :-(");
             }

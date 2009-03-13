@@ -19,7 +19,7 @@ import flash.utils.Dictionary;
 import vampire.avatar.AvatarGameBridge;
 import vampire.client.events.ChangeActionEvent;
 import vampire.client.events.ClosestPlayerChangedEvent;
-import vampire.client.events.HierarchyUpdatedEvent;
+import vampire.client.events.LineageUpdatedEvent;
 import vampire.data.Codes;
 import vampire.data.Lineage;
 import vampire.data.SharedPlayerStateClient;
@@ -32,7 +32,7 @@ import vampire.feeding.PlayerFeedingData;
  *
  */
 
-[Event(name="Hierarchy Updated", type="vampire.client.events.HierarchyUpdatedEvent")]
+[Event(name="Hierarchy Updated", type="vampire.client.events.LineageUpdatedEvent")]
 public class GameModel extends SimObject//EventDispatcher
     //implements Updatable
 {
@@ -173,7 +173,7 @@ public class GameModel extends SimObject//EventDispatcher
 
             _hierarchy = loadHierarchyFromProps();
             trace(VConstants.DEBUG_MINION + " loadHierarchyFromProps()=" + _hierarchy);
-            dispatchEvent( new HierarchyUpdatedEvent( _hierarchy ) );
+            dispatchEvent( new LineageUpdatedEvent( _hierarchy ) );
 
 //            var bytes :ByteArray = ClientContext.gameCtrl.room.props.get( Codes.ROOM_PROP_MINION_HIERARCHY ) as ByteArray;
 //            if( bytes != null) {
@@ -250,7 +250,7 @@ public class GameModel extends SimObject//EventDispatcher
             _hierarchy = loadHierarchyFromProps();
 //            log.debug(VConstants.DEBUG_MINION + " HUD updating hierarchy=" + _hierarchy);
 
-            dispatchEvent( new HierarchyUpdatedEvent( _hierarchy ) );
+            dispatchEvent( new LineageUpdatedEvent( _hierarchy ) );
         }
 //        else if( e.name == Codes.ROOM_PROP_NON_PLAYERS ) {
 //            updateNonPlayersIds();
@@ -320,7 +320,7 @@ public class GameModel extends SimObject//EventDispatcher
             _hierarchy = loadHierarchyFromProps();
 //            log.debug(Constants.DEBUG_MINION + " elementChanged", "e", e, "_hierarchy", _hierarchy);
 
-            dispatchEvent( new HierarchyUpdatedEvent( _hierarchy ) );
+            dispatchEvent( new LineageUpdatedEvent( _hierarchy ) );
             return;
         }
 

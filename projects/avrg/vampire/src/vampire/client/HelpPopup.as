@@ -20,7 +20,7 @@ package vampire.client
     import flash.text.TextFormatAlign;
 
     import vampire.Util;
-    import vampire.client.events.HierarchyUpdatedEvent;
+    import vampire.client.events.LineageUpdatedEvent;
     import vampire.data.Codes;
     import vampire.data.Logic;
     import vampire.data.SharedPlayerStateClient;

@@ -7,7 +7,10 @@ import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.avrg.DraggableSceneObject;
+import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.objects.SceneObjectPlayMovieClipOnce;
+import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
+import com.whirled.contrib.simplegame.tasks.AlphaTask;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
@@ -52,6 +55,10 @@ public class HUD extends DraggableSceneObject
         updateOurPlayerState();
     }
 
+    override protected function addedToDB() :void
+    {
+        db.addObject(_bloodXPMouseOverSceneObject );
+    }
 
     protected function handleMessageReceived( e :MessageReceivedEvent ) :void
     {
@@ -63,6 +70,7 @@ public class HUD extends DraggableSceneObject
     override protected function destroyed () :void
     {
         super.destroyed();
+        _bloodXPMouseOverSceneObject.destroySelf();
     }
 
     override public function get objectName () :String
@@ -203,8 +211,21 @@ public class HUD extends DraggableSceneObject
                     }
 
                 }
+
+                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_SIRE) {
+                    if( e.newValue != 0) {
+                        var lineageMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+                                ClientContext.instantiateMovieClip("HUD", "lineage_feedback", true) );
+                        lineageMovie.x = _hudBlood.x + ClientContext.model.maxblood/2;
+                        lineageMovie.y = _hudBlood.y;
+                        db.addObject( lineageMovie, _displaySprite );
+                    }
+                }
+
             }
         }
+
+
         else {
             log.error("isNaN( " + playerIdUpdated + " ), failed to update ElementChangedEvent" + e);
         }
@@ -265,10 +286,30 @@ public class HUD extends DraggableSceneObject
         _hudXP.x = _hudBlood.x;
         _hudXP.y = _hudCap.y;
 
-        _bloodXPMouseOverSprite = new Sprite();
-        _bloodXPMouseOverSprite.x = _hudBlood.x;
-        _bloodXPMouseOverSprite.y = _hudBlood.y;
-        _hudCap.parent.addChildAt(_bloodXPMouseOverSprite, _hudCap.parent.numChildren - 3 );
+        var bloodXPMouseOverSprite :Sprite = new Sprite();
+        _bloodXPMouseOverSceneObject = new SimpleSceneObject( bloodXPMouseOverSprite, "MouseOverBloood" );
+        _bloodXPMouseOverSceneObject.x = _hudBlood.x;
+        _bloodXPMouseOverSceneObject.y = _hudBlood.y;
+        _bloodXPMouseOverSceneObject.alpha = 0;
+
+        registerListener( bloodXPMouseOverSprite, MouseEvent.ROLL_OVER, function(...ignored) :void {
+//            trace("in");
+            _bloodXPMouseOverSceneObject.addTask( AlphaTask.CreateEaseIn(1, 0.3));
+        });
+        registerListener( bloodXPMouseOverSprite, MouseEvent.ROLL_OUT, function(...ignored) :void {
+//            trace("out");
+            _bloodXPMouseOverSceneObject.addTask( AlphaTask.CreateEaseIn(0, 0.3));
+        });
+
+//        var textField :TextField = TextFieldUtil.createField("asfdasdf");
+//        bloodXPMouseOverSprite.addChild( textField );
+
+//        var test :Sprite = new Sprite();
+//        ClientContext.drawDotAtCenter(test);
+//        bloodXPMouseOverSprite.addChild( test );
+
+
+        _hudCap.parent.addChild(bloodXPMouseOverSprite );
 
         var hudHelp :SimpleButton = SimpleButton( findSafely("button_menu") );
         Command.bind( hudHelp, MouseEvent.CLICK, VampireController.SHOW_INTRO);
@@ -288,27 +329,34 @@ public class HUD extends DraggableSceneObject
             _bloodText.parent.removeChild( _bloodText );
         }
 
-        _bloodText = TextFieldUtil.createField( Util.formatNumberForFeedback(ClientContext.model.blood) + " / " +
-        ClientContext.model.maxblood);
+//        if( _bloodText == null ) {
+            _bloodText = new TextField();//TextFieldUtil.createField(
 
-        _bloodText.selectable = false;
-        _bloodText.tabEnabled = false;
-//        _bloodText.embedFonts = true;
-        _bloodText.mouseEnabled = false;
+            _bloodText.selectable = false;
+            _bloodText.tabEnabled = false;
+//            _bloodText.embedFonts = true;
+            _bloodText.mouseEnabled = false;
+            var lineageformat :TextFormat = new TextFormat();
+    //        lineageformat.font = "JuiceEmbedded";
+//            lineageformat.size = 14;
+//            lineageformat.align = TextFormatAlign.LEFT;
+    //        lineageformat.bold = true;
+            _bloodText.textColor = 0xffffff;
+            _bloodText.width = 80;
+            _bloodText.height = 20;
+//            _bloodText.setTextFormat( lineageformat );
 
-        var lineageformat :TextFormat = new TextFormat();
-//        lineageformat.font = "JuiceEmbedded";
-        lineageformat.size = 14;
-        lineageformat.align = TextFormatAlign.LEFT;
-//        lineageformat.bold = true;
-        lineageformat.color = 0xffffff;
-        _bloodText.width = 80;
-        _bloodText.height = 20;
-        _bloodText.setTextFormat( lineageformat );
-        _bloodText.antiAliasType = AntiAliasType.ADVANCED;
+            Sprite(_bloodXPMouseOverSceneObject.displayObject).addChild( _bloodText );
+//        }
+
+            _bloodText.text =
+                Util.formatNumberForFeedback(ClientContext.model.blood) + " / " +
+                ClientContext.model.maxblood;
+
+//        _bloodText.antiAliasType = AntiAliasType.ADVANCED;
 
 
-        _hudBlood.addChild( _bloodText );
+//        _bloodText.alpha = 0;
         _bloodText.x = ClientContext.model.maxblood/2 - _bloodText.getLineMetrics(0).width/2;
         _bloodText.y = _hudBlood.height/2 - _bloodText.getLineMetrics(0).height/2;
 
@@ -346,12 +394,12 @@ public class HUD extends DraggableSceneObject
             _xpText.antiAliasType = AntiAliasType.ADVANCED;
             _xpText.setTextFormat( lineageformat );
 
-
-        _hudXP.addChild( _xpText );
+        Sprite(_bloodXPMouseOverSceneObject.displayObject).addChild( _xpText );
+//        Sprite(_bloodXPMouseOverSceneObject.displayObject).addChild( _xpText );
 
 
         _xpText.x = ClientContext.model.maxblood/2 - _xpText.getLineMetrics(0).width/2;
-        _xpText.y = _hudXP.height/2 - _xpText.getLineMetrics(0).height/2;
+        _xpText.y = _hudCap.height / 2 + _hudXP.height/2 - _xpText.getLineMetrics(0).height/2;
 
 //        _xpText.addEventListener( MouseEvent.ROLL_OUT
 
@@ -627,10 +675,11 @@ public class HUD extends DraggableSceneObject
         _hudCap.x = _hudBlood.x + maxBlood + borderWidth*2 + 5;
 
         //Draw the mouseover sprite
-        _bloodXPMouseOverSprite.graphics.clear();
-        _bloodXPMouseOverSprite.graphics.beginFill(0, 0);
-        _bloodXPMouseOverSprite.graphics.drawRect(0, 0, maxBlood, _hudCap.height - 3);
-        _bloodXPMouseOverSprite.graphics.endFill();
+        var bloodXPMouseOverSprite :Sprite = _bloodXPMouseOverSceneObject.displayObject as Sprite;
+        bloodXPMouseOverSprite.graphics.clear();
+        bloodXPMouseOverSprite.graphics.beginFill(0, 0);
+        bloodXPMouseOverSprite.graphics.drawRect(0, 0, maxBlood, _hudCap.height - 3);
+        bloodXPMouseOverSprite.graphics.endFill();
 
         createBloodText();
     }
@@ -695,7 +744,9 @@ public class HUD extends DraggableSceneObject
 
     protected var _hudBlood :Sprite;
     protected var _hudXP :Sprite;
-    protected var _bloodXPMouseOverSprite :Sprite;
+//    protected var _bloodXPMouseOverSprite :Sprite;
+    protected var _bloodXPMouseOverSceneObject :SceneObject;
+
 
     //Used for anchoring the bars.
     protected var _hudCapStartX :int;
