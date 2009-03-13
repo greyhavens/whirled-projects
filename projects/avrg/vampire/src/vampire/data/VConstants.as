@@ -8,7 +8,7 @@ public class VConstants
     /**
     * If you're not related to the ubervamp
     */
-    public static const UBER_VAMP_ID :int = 12;
+    public static const UBER_VAMP_ID :int = 1877;
     //ubervamp localhost == 12
     //ubervamp dev.whirled == 1877
 
@@ -35,6 +35,7 @@ public class VConstants
     public static const CHAT_FEEDING_MIN_CHATS_PER_TIME_INTERVAL :int = 3;
 
     public static const CHAT_FEEDING_TIME_INTERVAL_MILLISECS :int = 60000;//A minute
+
 
 
     /**

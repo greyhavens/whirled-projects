@@ -61,6 +61,9 @@ public class Logic
     }
     public static function levelGivenCurrentXpAndInvites( xp :Number, invites :int = 0 ) :int
     {
+        if( isNaN(xp )) {
+            return 0;
+        }
         var maxLevelFromInvites :int = 1;
         for each( var levelAndInviteMin :Array in LEVEL_INVITE_CAPS) {
             var levelCap :int = levelAndInviteMin[0];
