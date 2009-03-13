@@ -252,6 +252,7 @@ import com.whirled.contrib.platformer.piece.Rect;
 import flash.geom.Rectangle;
 import flash.geom.Matrix;
 import flash.display.Bitmap;
+import com.whirled.contrib.ColorMatrix;
 
 function getClass (name :String) :Class
 {
@@ -281,7 +282,7 @@ class MyColorPicker extends Sprite
 
     public function MyColorPicker (type :int, button :MovieClip, onColorSelected :Function)
     {
-        //_button = button;
+        _button = button;
         _type = type;
         _onColorSelected = onColorSelected;
 
@@ -326,6 +327,7 @@ class MyColorPicker extends Sprite
     public function selectColor (color :uint) :void
     {
         setSwatchColor(color);
+        _button.filters = [ new ColorMatrix().colorize(color).createFilter() ];
         _onColorSelected(color);
     }
 
@@ -352,7 +354,7 @@ class MyColorPicker extends Sprite
         return bd;
     }
 
-    //protected var _button :SimpleButton;
+    protected var _button :MovieClip;
     protected var _type :int;
     protected var _onColorSelected :Function;
     protected var _palette :MovieClip;
