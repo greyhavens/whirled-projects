@@ -6,13 +6,12 @@ import com.threerings.util.Hashable;
 import com.threerings.util.Log;
 import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameControl;
+import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.tasks.LocationTask;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
-import flash.geom.Rectangle;
 
 import vampire.client.ClientContext;
 import vampire.client.events.PlayerArrivedAtLocationEvent;
@@ -41,13 +40,12 @@ public class AvatarHUD extends SceneObject
         _ctrl = ctrl;
         _isPlayer = true;
         _userId = userId;
-//        _roomCtrl = roomCtrl;
 
 
         _displaySprite = new Sprite();
 
+        registerListener( _ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, resetEntityId);
 
-//        frenzyCountdown.y = -30;
 
 
 
@@ -78,6 +76,11 @@ public class AvatarHUD extends SceneObject
 //            log.debug("CLient NonPlayerAvatar new and loaded room props=" + this);
 //
 //        }
+    }
+
+    protected function resetEntityId(...ignored) :void
+    {
+        _entityId = null;
     }
     override protected function update(dt:Number) :void
     {
@@ -749,6 +752,8 @@ public class AvatarHUD extends SceneObject
 
     public function get entityId () :String
     {
+        resetEntityId();
+
         if( _entityId == null ) {
             for each( var entityId :String in _ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
 
