@@ -1,6 +1,7 @@
 package vampire.feeding {
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 
 import flash.utils.ByteArray;
@@ -161,6 +162,11 @@ public class PlayerFeedingData
         }
 
         _tutorialStatus = [];
+    }
+
+    public function toString() :String
+    {
+        return ClassUtil.shortClassName(this) + " _collectedStrains=" + _collectedStrains;
     }
 
     protected var _timesPlayed :int;
