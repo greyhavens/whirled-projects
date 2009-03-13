@@ -1,5 +1,7 @@
 package com.whirled.contrib.simplegame.objects
 {
+    import com.threerings.util.ClassUtil;
+
     import flash.display.MovieClip;
     import flash.events.Event;
 
@@ -8,6 +10,9 @@ package com.whirled.contrib.simplegame.objects
         public function SceneObjectPlayMovieClipOnce(mc :MovieClip, name :String = null)
         {
             super(mc, name);
+            if( mc == null) {
+                throw new Error(ClassUtil.tinyClassName(this) + " movieclip is null");
+            }
             _mc = mc;
             _mc.gotoAndStop(1);
             registerListener( _mc, Event.ENTER_FRAME, handleEnterFrame);
