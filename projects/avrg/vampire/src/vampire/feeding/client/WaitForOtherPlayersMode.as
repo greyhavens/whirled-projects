@@ -3,9 +3,7 @@ package vampire.feeding.client {
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 
-import flash.display.Graphics;
-import flash.display.Sprite;
-import flash.text.TextField;
+import flash.display.MovieClip;
 
 public class WaitForOtherPlayersMode extends AppMode
 {
@@ -18,20 +16,10 @@ public class WaitForOtherPlayersMode extends AppMode
 
     protected function displayAlert () :void
     {
-        var tf :TextField =
-            TextBits.createText("Waiting for new players to read the directions", 2, 0, 0xffffff);
-
-        var bg :Sprite = new Sprite();
-        var g :Graphics = bg.graphics;
-        g.beginFill(0);
-        g.drawRect(0, 0, tf.width + 50, tf.height + 50);
-        g.endFill();
-
-        tf.x = (bg.width - tf.width) * 0.5;
-        tf.y = (bg.height - tf.height) * 0.5;
-        bg.addChild(tf);
-
-        _modeSprite.addChild(bg);
+        var movie :MovieClip = ClientCtx.instantiateMovieClip("blood", "waiting_panel");
+        movie.x = 170;
+        movie.y = 80;
+        _modeSprite.addChild(movie);
     }
 
     protected static const DELAY :Number = 1.5;
