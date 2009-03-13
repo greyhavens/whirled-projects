@@ -3,7 +3,7 @@ package vampire.server
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRServerGameControl;
 
-import vampire.data.MinionHierarchyServer;
+import vampire.data.LineageServer;
 import vampire.net.VMessageManager;
 
 public class ServerContext
@@ -11,12 +11,13 @@ public class ServerContext
     public static var msg :VMessageManager;
     public static var ctrl :AVRServerGameControl;
     public static var vserver :VServer;
-    public static var lineage :MinionHierarchyServer;
+    public static var lineage :LineageServer;
     public static var nonPlayersBloodMonitor :NonPlayerAvatarsBloodMonitor;
     public static var trophies :Trophies;
+    public static var time :Number;
 
     /** Highest ever score.  This is used to scale the coin payouts. */
-    public static var topBloodBloomScore :Number = 2000;
+    public static var topBloodBloomScore :Number = 200;
 
     public static var serverLogBroadcast: AVRGAgentLogTarget;
 
