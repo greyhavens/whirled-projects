@@ -65,7 +65,7 @@ public class Player extends EventHandlerManager
 
         //Debugging
         //WhirledDev, 1734==Dion, 1735==Ragbears's Evil Twin
-        if( _playerId == 1735 ) {
+        if( _playerId == 1 ) {
             setTime(0);
         }
 
@@ -1402,9 +1402,20 @@ public class Player extends EventHandlerManager
 
     }
 
+    public function addFeedingRecord( prey :int, predator :int ) :void
+    {
+//        _feedingRecord.push([ prey, predator]);
+//        if( _feedingRecord.length > VConstants.b
+    }
+
     public function get mostRecentVictimIds() :Array
     {
         return _mostRecentVictimIds;
+    }
+
+    public function get fedingREcord() :Array
+    {
+        return _feedingRecord;
     }
 
     public function addMostRecentVictimIds( id :int ) :void
@@ -1514,6 +1525,8 @@ public class Player extends EventHandlerManager
     protected var _room :Room;
     protected var _ctrl :PlayerSubControlServer;
     protected var _playerId :int;
+
+    protected var _feedingRecord :Array = new Array();
 
 
 

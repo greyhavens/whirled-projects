@@ -12,6 +12,7 @@ import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.avrg.probe.ServerStub;
+import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.server.ObjectDBThane;
 import com.whirled.net.MessageReceivedEvent;
 
@@ -21,7 +22,7 @@ import flash.utils.setInterval;
 import vampire.Util;
 import vampire.data.Codes;
 import vampire.data.Logic;
-import vampire.data.MinionHierarchyServer;
+import vampire.data.LineageServer;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingGameServer;
 import vampire.net.VMessageManager;
@@ -75,7 +76,7 @@ public class VServer extends ObjectDBThane
         _lastTickTime = _startTime;
         setInterval(tick, SERVER_TICK_UPDATE_MILLISECONDS);
 
-        ServerContext.lineage = new MinionHierarchyServer( this );
+        ServerContext.lineage = new LineageServer( this );
         addObject( ServerContext.lineage );
 
 //        ServerContext.trophies = new Trophies(this, ServerContext.minionHierarchy);
@@ -86,8 +87,29 @@ public class VServer extends ObjectDBThane
         //Tim's bloodbond game server
         FeedingGameServer.init( _ctrl );
 
-//        _stub = new ServerStub(_ctrl);
+//        _stub = new ServerStub(_ctrl);\
+
+        //Update the players time
+//        var playerTimeUpdater :SimpleTimer = new SimpleTimer(UPDATE_PLAYER_TIME,
+//            updatePlayersCurrentTime, true);
+//        addObject( playerTimeUpdater );
+
     }
+
+//    /**
+//    * Update the current time of all the players.  THis is handled seperately because it's not
+//    * critical and only occurs every couple of seconds.
+//    */
+//    protected function updatePlayersCurrentTime(...ignored) :void
+//    {
+//        _players.forEach( function( playerId :int, player :Player) :void {
+//            //Update the players time, unless they are a new player (time==0)
+//            if( player.time != 0) {
+//                player.setTime( ServerContext.time );
+//            }
+//        });
+//
+//    }
 
 
 
@@ -146,45 +168,30 @@ public class VServer extends ObjectDBThane
         _lastTickTime = time;
         var dT_seconds :Number = dT / 1000.0;
 
-//        var frame :int = dT * (FRAMES_PER_SECOND / 1000);
-//        var second :int = dT / 1000;
+        //Store the current (enough) time so all the player objects don't have to create another.
+        ServerContext.time = new Date().time;
 
-        //Update the non-players blood levels.
-//        ServerContext.nonPlayers.tick( dT_seconds );
-
-//        ServerContext.minionHierarchy.tick();
-//        _avatarManager.update( dT_seconds );
-
+        //We don't want ot be updating stale rooms
         removeStaleRooms();
 
-        _ctrl.doBatch(function () :void {
-
-            _rooms.forEach( function( roomId :int, room :Room) :void {
+        //Add the global messages to each room
+        _rooms.forEach( function( roomId :int, room :Room) :void {
 
                 for each( var globalMessage :String in _globalFeedback) {
                     room.addFeedback( globalMessage, 0);
                 }
             });
-
-
-            update( dT_seconds );
-
-        });
-
+        //Then empty the global message queue
         _globalFeedback.splice(0);
 
-
-
-//        //Remove stale non-players.
-//        for each(var np :NonPlayerAvatar in getObjectsInGroup(NonPlayerAvatar.GROUP)) {
-//            if( np.isStale ) {
-//                np.destroySelf();
-//                _nonplayers.remove( np.playerId );
-//            }
-//        }
-
+        //Batch up the updates, so all the network traffic is sent as one lump
+        _ctrl.doBatch(function () :void {
+            update(dT_seconds);
+        });
 
     }
+
+
 
     // a message comes in from a player, figure out which Player instance will handle it
     protected function handleMessage (evt :MessageReceivedEvent) :void
@@ -523,6 +530,7 @@ public class VServer extends ObjectDBThane
 
         var prey :Player = getPlayer( preyId );
         //At the moment, it's 2 alternate feedings each
+        //EXCEPT the alternate is not checked
         //I.e. Player 1 eats Player 2, 2 eats 1, 1 eats 2, 2 eats 1.
         var minfeedings :int = 2;
         var preyVictims :Array = prey.mostRecentVictimIds;
@@ -585,6 +593,9 @@ public class VServer extends ObjectDBThane
     protected var _stub :ServerStub;
 
     public static const SERVER_TICK_UPDATE_MILLISECONDS :int = 400;
+
+
+//    public static const UPDATE_PLAYER_TIME :Number = 5;//Every 5 seconds
 
 }
 }

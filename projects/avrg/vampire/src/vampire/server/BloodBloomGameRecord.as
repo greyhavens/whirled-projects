@@ -163,11 +163,8 @@ public class BloodBloomGameRecord extends EventCollecter
 
         if( _room != null && _room.getPlayer( primaryPredatorId ) != null ) {
             var primaryPred :Player = _room.getPlayer( primaryPredatorId );
-            //Only move if we are a vampire.  Practising humans don't need to move
-            if( primaryPred.isVampire() ) {
                 primaryPred.ctrl.sendMessage( VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING );
                 _primaryPredMoved = true;
-            }
         }
 
     }
@@ -211,17 +208,8 @@ public class BloodBloomGameRecord extends EventCollecter
             //The prey steps away from the predator, if the predator
             if( !_primaryPredMoved && _room != null && _room.getPlayer( primaryPredatorId ) != null ) {
                 var primaryPred :Player = _room.getPlayer( primaryPredatorId );
-                //Only move if we are a vampire.  Practising humans don't need to move
-                if( primaryPred.isVampire() ) {
-                    primaryPred.ctrl.sendMessage( VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING );
-                }
+                primaryPred.ctrl.sendMessage( VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING );
             }
-//            else {
-//                log.warning("gameFinishedCallback, not sending pred a move signal, ",
-//                "_room", _room,
-//                "primaryPred", primaryPred );
-//            }
-
 
             log.debug("gameFinishedCallback");
             shutdown();

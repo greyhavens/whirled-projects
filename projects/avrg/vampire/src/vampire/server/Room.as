@@ -569,7 +569,7 @@ public class Room extends SimObjectThane
                 ServerContext.vserver.awardBloodBondedXpEarned( p, xp );
                 //Add some bonus xp to your sires
                 ServerContext.vserver.awardSiresXpEarned( p, xp );
-                var feedingScore :Number = gameRecord.gameServer.lastRoundScore * 0.6 / ServerContext.topBloodBloomScore
+                var feedingScore :Number = gameRecord.gameServer.lastRoundScore / ServerContext.topBloodBloomScore
                 p.ctrl.completeTask( Codes.TASK_FEEDING_ID, feedingScore );
             }
         }
@@ -593,138 +593,6 @@ public class Room extends SimObjectThane
 
 
     }
-
-
-//    protected function awardBloodBloomPoints( points :Number, prey :int, predators :Array ) :void
-//    {
-//        var bloodIncrement :Number = VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
-//        var bloodGained :Number = points;
-//
-////        var victimId :int = -1;
-////        var victimsMostRecentFeedVictimId :int = -1;
-//
-//        var victimBlood :Number = isPlayer( prey ) ? getPlayer( prey ).blood :
-//            ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( prey );
-//
-//        var maxBlood :Number = isPlayer( prey ) ? getPlayer( prey ).maxBlood :
-//            ServerContext.nonPlayersBloodMonitor.maxBloodFromNonPlayer( prey );
-//
-//        var bloodLost :Number = Math.max( 0, victimBlood - 1);
-//
-//        var bloodPerPredator :Number = bloodLost / predators.length;
-//
-//        var pointsGained :Number = points * (bloodLost / maxBlood)
-//
-//        var preyPlayer :Player = getPlayer( prey );
-//        if( preyPlayer != null ) {
-//            preyPlayer.damage( bloodLost );
-//            preyPlayer.addXP( pointsGained );
-//            ServerContext.vserver.awardSiresXpEarned( preyPlayer, pointsGained );
-//
-//            addFeedback( "You lost " + bloodLost + " blood!", prey );
-//            addFeedback( "You gained " + pointsGained + " experience!", prey );
-//        }
-//        else {
-//            ServerContext.nonPlayersBloodMonitor.damageNonPlayer( prey, bloodLost, roomId );
-//        }
-//
-//
-//        for each( var predId :int in predators ) {
-//            var predPlayer :Player = getPlayer( predId );
-//            if( predPlayer == null) {
-//                log.error("Predator " + predId + " awarding points, but doesn't exist");
-//            }
-//            predPlayer.mostRecentVictimIds = prey;
-//            predPlayer.addBlood( bloodPerPredator );
-//            predPlayer.addXP( pointsGained );
-//            ServerContext.vserver.awardSiresXpEarned( predPlayer, pointsGained );
-//
-//            addFeedback( "You gained " + bloodPerPredator + " blood!", prey );
-//            addFeedback( "You gained " + pointsGained + " experience!", prey );
-//
-//
-//            if( preyPlayer != null && preyPlayer.mostRecentVictimIds == predId) {
-//                //Become blood bonds
-//
-//                predPlayer.setBloodBonded( prey );
-//                preyPlayer.setBloodBonded( predId );
-//                addFeedback( predPlayer.name + " is now Bloodbonded to you.", prey );
-//                addFeedback( preyPlayer.name + " is now Bloodbonded to you.", predId );
-//
-//                log.info("Creating blood bonds between " + predPlayer.name + " and " + preyPlayer.name);
-//            }
-//
-//
-//
-////            //If there is not sufficient blood for another feed, break off feeding.
-////            if( victim.blood <= 1) {
-////                setAction( VConstants.GAME_MODE_NOTHING );
-////                victim.setAction( VConstants.GAME_MODE_NOTHING );
-////            }
-//
-//        }
-//
-//
-//    }
-
-
-
-    public function handleFeedRequest(  e :FeedRequestMessage2 ) :void
-    {
-
-
-
-
-
-        //Arrange the players in order
-        //For the first predator, move just behind the prey
-//        if( game.predators.size() == 1 ) {
-//            pred.ctrl.setAvatarLocation( e.targetX, e.targetY, e.targetZ , 1);
-//        }
-
-
-
-//        var playerIds :Array = playerIds;
-//        if( playerIds.length >= 2 ) {
-//            _bloodBloomGameStarter.requestFeed( playerIds[0], playerIds[1] );
-//            _bloodBloomGameStarter.predatorBeginsGame( playerIds[0] );
-//        }
-
-//        if( _players.size() == 2) {
-//            _bloodBloomGameStarter.predatorBeginsGame( e.playerId );
-//        }
-
-//        if( isPlayerPredatorInBloodBloomGame( player.playerId )) {
-//            return;
-//        }
-//
-
-
-
-
-
-//
-//        var victimId :int = getClosestVictim( player );
-//        var victimLocation :Array = getLocation( victimId );
-//        player.setTargetLocation( victimLocation );
-//        player.setTargetId( victimId );
-//
-//        player.ctrl.setAvatarLocation( victimLocation[0], victimLocation[1], victimLocation[2] , 1);
-//
-//        //Join an existing feed
-//        if( isPreyInBloodBloomGame( victimId )) {
-//
-//        }
-//        else {//Start your feed as leas predator
-//        }
-//
-
-    }
-
-
-
-
-
 
     public function get players() :HashMap
     {
