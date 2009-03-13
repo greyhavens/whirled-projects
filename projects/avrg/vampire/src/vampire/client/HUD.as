@@ -119,6 +119,9 @@ public class HUD extends DraggableSceneObject
         //Otherwise check for player updates
         var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
         var levelUp :SceneObjectPlayMovieClipOnce;
+        var oldLevel :int;
+        var newLevel :int;
+
 
         if( !isNaN( playerIdUpdated ) ) {
             //If it's us, update the player HUD
@@ -126,28 +129,38 @@ public class HUD extends DraggableSceneObject
 
                 if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
 
-                    if( _currentBlood < ClientContext.model.blood ) {
-                        //Animate a blood bonus movieclip
+                    if( e.oldValue < e.newValue) {
                         var bloodUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
-                            ClientContext.instantiateMovieClip("HUD", "levelup", true) );
+                                ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true) );
                         bloodUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
                         bloodUp.y = _hudBlood.y;
-                        db.addObject( bloodUp, _hudBlood.parent );
+                        db.addObject( bloodUp, _hudBlood.parent  );
                     }
-                    _currentBlood = ClientContext.model.blood;
+
+//                    if( _currentBlood < ClientContext.model.blood ) {
+//                        //Animate a blood bonus movieclip
+//                        var bloodUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+//                            ClientContext.instantiateMovieClip("HUD", "levelup", true) );
+//                        bloodUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
+//                        bloodUp.y = _hudBlood.y;
+//                        db.addObject( bloodUp, _hudBlood.parent );
+//                    }
+//                    _currentBlood = ClientContext.model.blood;
 
 
                     showBlood( ClientContext.ourPlayerId );
                 }
                 else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
 
-                    if( _currentLevel < ClientContext.model.level) {
-                        //Animate a level up movieclip
+
+                    oldLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.oldValue), ClientContext.model.invites);
+                    newLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.newValue), ClientContext.model.invites);
+                    if( oldLevel < newLevel) {
                         levelUp = new SceneObjectPlayMovieClipOnce(
-                            ClientContext.instantiateMovieClip("HUD", "levelup", true) );
+                                ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true) );
                         levelUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
                         levelUp.y = _hudBlood.y;
-                        db.addObject( levelUp, _hudBlood.parent );
+                        db.addObject( levelUp, _hudBlood.parent  );
                     }
                     _currentLevel = ClientContext.model.level;
 
@@ -155,10 +168,22 @@ public class HUD extends DraggableSceneObject
                 }
                 else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES) {
 
+
+                    oldLevel = Logic.levelGivenCurrentXpAndInvites(ClientContext.model.xp, int(e.oldValue));
+                    newLevel = Logic.levelGivenCurrentXpAndInvites(ClientContext.model.xp, int(e.newValue));
+                    if( oldLevel < newLevel) {
+                        levelUp = new SceneObjectPlayMovieClipOnce(
+                                ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true) );
+                        levelUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
+                        levelUp.y = _hudBlood.y;
+                        db.addObject( levelUp, _hudBlood.parent  );
+                    }
+
+
                     if( _currentLevel < ClientContext.model.level) {
                         //Animate a level up movieclip
                         levelUp = new SceneObjectPlayMovieClipOnce(
-                            ClientContext.instantiateMovieClip("HUD", "levelup", true) );
+                            ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true) );
                         levelUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
                         levelUp.y = _hudBlood.y;
                         db.addObject( levelUp, _hudBlood.parent );
@@ -166,6 +191,17 @@ public class HUD extends DraggableSceneObject
                     _currentLevel = ClientContext.model.level;
 
                     showXP( ClientContext.ourPlayerId );
+                }
+                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
+
+                    if( e.newValue != 0) {
+                        var bloodBondMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+                                ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true) );
+                        bloodBondMovie.x = _hudBlood.x + ClientContext.model.maxblood/2;
+                        bloodBondMovie.y = _hudBlood.y;
+                        db.addObject( bloodBondMovie, _hudBlood.parent  );
+                    }
+
                 }
             }
         }

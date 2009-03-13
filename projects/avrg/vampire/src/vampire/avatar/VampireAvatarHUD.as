@@ -7,6 +7,7 @@ package vampire.avatar
     import com.whirled.contrib.EventHandlerManager;
     import com.whirled.contrib.avrg.AvatarHUD;
     import com.whirled.contrib.simplegame.objects.SceneButton;
+    import com.whirled.contrib.simplegame.objects.SceneObjectPlayMovieClipOnce;
     import com.whirled.contrib.simplegame.objects.SimpleTimer;
     import com.whirled.contrib.simplegame.tasks.AlphaTask;
     import com.whirled.contrib.simplegame.tasks.FunctionTask;
@@ -468,20 +469,55 @@ public class VampireAvatarHUD extends AvatarHUD
 
     protected function handleElementChanged (e :ElementChangedEvent) :void
     {
+        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
 
+        //Some things we update regardless whether they are our attributes or not
         if( e.name == Codes.ROOM_PROP_MINION_HIERARCHY ) {
             updateInfoHud();
         }
         else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
             updateInfoHud();
         }
-        else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
-            var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
-            //If it's us, update the our HUD
-            if( !isNaN( playerIdUpdated ) && playerIdUpdated == playerId) {
+
+        //If it's us, update the our HUD
+        if( !isNaN( playerIdUpdated ) && playerIdUpdated == playerId) {
+            if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
                 updateBlood();
+                //Animate feedback for blood gain
+                if( e.oldValue < e.newValue) {
+                    var bloodUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+                            ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true) );
+                    db.addObject( bloodUp, _displaySprite );
+                }
             }
+
+            if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
+                updateBlood();
+                //Animate feedback for blood gain
+                if( e.oldValue < e.newValue) {
+
+                    var oldLevel :int = Logic.levelGivenCurrentXpAndInvites(Number(e.oldValue), ClientContext.model.invites);
+                    var newLevel :int = Logic.levelGivenCurrentXpAndInvites(Number(e.newValue), ClientContext.model.invites);
+                    if( oldLevel < newLevel) {
+                        var levelUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+                                ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true) );
+                        db.addObject( levelUp, _displaySprite );
+                    }
+                }
+            }
+
+            else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
+
+                if( e.newValue != 0) {
+                    var bloodBondMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+                            ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true) );
+                    db.addObject( bloodBondMovie, _displaySprite );
+                }
+
+            }
+
         }
+
     }
 
     protected function handleMessageReceived( e :MessageReceivedEvent ) :void
@@ -821,6 +857,9 @@ public class VampireAvatarHUD extends AvatarHUD
     protected var _frenzyButtonClicked :Boolean;
 
     protected var _glowTimer :SimpleTimer;
+
+    //Store local copies of blood and other stats so we can animate feedback when those values
+
     protected static const BLOOD_BAR_MIN_WIDTH :int = 50;
     protected static const FEED_BUTTON_Y :int = 22;
     protected static const ANIMATION_TIME :Number = 0.2;
