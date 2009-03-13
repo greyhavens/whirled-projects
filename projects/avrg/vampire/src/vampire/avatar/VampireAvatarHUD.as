@@ -26,7 +26,7 @@ package vampire.avatar
 
     import vampire.client.ClientContext;
     import vampire.client.VampireController;
-    import vampire.client.events.HierarchyUpdatedEvent;
+    import vampire.client.events.LineageUpdatedEvent;
     import vampire.data.Codes;
     import vampire.data.Logic;
     import vampire.data.SharedPlayerStateClient;
@@ -49,9 +49,22 @@ public class VampireAvatarHUD extends AvatarHUD
         registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
         registerListener(ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
 
+        registerListener(ClientContext.model, LineageUpdatedEvent.LINEAGE_UPDATED, updateLineageInfo);
+
         setupUI();
 
 
+    }
+
+    protected function updateLineageInfo( e :LineageUpdatedEvent) :void
+    {
+        var currentMinions :int = e.lineage.getAllMinionsAndSubminions( playerId ).size();
+        var currentSire :int = e.lineage.getSireId(playerId);
+        if( currentMinions > _localMinionCount || currentSire != _localSire) {
+            _localMinionCount = currentMinions;
+            _localSire = currentSire;
+            updateInfoHud();
+        }
     }
 
 
@@ -136,7 +149,7 @@ public class VampireAvatarHUD extends AvatarHUD
         }
 
         //Listen for changes in the hierarchy
-        registerListener(ClientContext.model, HierarchyUpdatedEvent.HIERARCHY_UPDATED, updateInfoHud);
+        registerListener(ClientContext.model, LineageUpdatedEvent.LINEAGE_UPDATED, updateInfoHud);
 
         _feedButton = new SceneButton(_target_UI.button_feed);
         _frenzyButton = new SceneButton(_target_UI.button_frenzy);
@@ -472,12 +485,14 @@ public class VampireAvatarHUD extends AvatarHUD
         var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
 
         //Some things we update regardless whether they are our attributes or not
-        if( e.name == Codes.ROOM_PROP_MINION_HIERARCHY ) {
-            updateInfoHud();
-        }
-        else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
-            updateInfoHud();
-        }
+//        if( e.name == Codes.ROOM_PROP_MINION_HIERARCHY ) {
+//            //Check if we have new minions
+//
+//            updateInfoHud();
+//        }
+//        else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
+//            updateInfoHud();
+//        }
 
         //If it's us, update the our HUD
         if( !isNaN( playerIdUpdated ) && playerIdUpdated == playerId) {
@@ -513,7 +528,15 @@ public class VampireAvatarHUD extends AvatarHUD
                             ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true) );
                     db.addObject( bloodBondMovie, _displaySprite );
                 }
+                updateInfoHud();
+            }
 
+            else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_SIRE) {
+                if( e.newValue != 0) {
+                    var lineageMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+                            ClientContext.instantiateMovieClip("HUD", "lineage_feedback", true) );
+                    db.addObject( lineageMovie, _displaySprite );
+                }
             }
 
         }
@@ -700,7 +723,7 @@ public class VampireAvatarHUD extends AvatarHUD
         }
 
         var serialTask :SerialTask = new SerialTask();
-        serialTask.addTask( AlphaTask.CreateEaseOut(0, ANIMATION_TIME) );
+        serialTask.addTask( AlphaTask.CreateEaseIn(0, ANIMATION_TIME) );
         serialTask.addTask( new FunctionTask( function() :void {
 
             if( sceneButton.displayObject.parent == null ) {
@@ -857,6 +880,9 @@ public class VampireAvatarHUD extends AvatarHUD
     protected var _frenzyButtonClicked :Boolean;
 
     protected var _glowTimer :SimpleTimer;
+
+    protected var _localMinionCount :int = 0;
+    protected var _localSire :int = 0;
 
     //Store local copies of blood and other stats so we can animate feedback when those values
 
