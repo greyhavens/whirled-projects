@@ -30,6 +30,7 @@ public class Util
     public static function isProgenitor( playerId :int ) :Boolean
     {
         return playerId == VConstants.UBER_VAMP_ID;
+        //1877 == ubervamp on dev
 //         || //Ragbeard
 //               playerId == 1769  || //Capital-T-Tim
 //               playerId == 12     ;  //Nemo
