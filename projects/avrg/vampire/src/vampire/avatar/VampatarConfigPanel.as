@@ -25,7 +25,7 @@ public class VampatarConfigPanel extends Sprite
         addChild(panel);
 
         // create dropdowns
-        var skinButton :SimpleButton = panel["skin_option"];
+        /*var skinButton :SimpleButton = panel["skin_option"];
         createDropdown(
             skinButton,
             [ "Lighter", 0xDEEFF5,
@@ -40,7 +40,7 @@ public class VampatarConfigPanel extends Sprite
                     configUpdated();
                 }
             },
-            _config.skinColor);
+            _config.skinColor);*/
 
         var hairButton :SimpleButton = panel["hair_option"];
         createDropdown(
