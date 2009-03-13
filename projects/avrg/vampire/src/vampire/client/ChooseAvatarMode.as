@@ -31,7 +31,7 @@ package vampire.client
             });
 
             registerListener( infoPanel["choose_male"], MouseEvent.CLICK, function(...ignored) :void {
-                ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_MESSAGE_CHOOSE_FEMALE);
+                ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_MESSAGE_CHOOSE_MALE);
                 ClientContext.game.ctx.mainLoop.popMode();
             });
 
@@ -68,7 +68,8 @@ package vampire.client
             var lastTimeAwake :Number = Number(ClientContext.ctrl.player.props.get(
                 Codes.PLAYER_PROP_LAST_TIME_AWAKE ) );
 
-            if( isNaN( lastTimeAwake ) || lastTimeAwake == 0 ) {
+            //The last is debugging in whirled dev
+            if( isNaN( lastTimeAwake ) || lastTimeAwake == 0 || ClientContext.ctrl.player.getPlayerId() == 1735) {
                 return true;
             }
             return false;
