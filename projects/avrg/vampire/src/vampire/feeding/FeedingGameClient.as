@@ -48,6 +48,14 @@ public class FeedingGameClient extends Sprite
     }
 
     /**
+     * Cleans up when the game is over.
+     */
+    public function shutdown () :void
+    {
+        // overridden by subclass
+    }
+
+    /**
      * @private
      */
     public function FeedingGameClient ()

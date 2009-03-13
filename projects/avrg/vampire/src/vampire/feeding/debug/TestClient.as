@@ -77,6 +77,7 @@ public class TestClient extends Sprite
     protected function onGameComplete () :void
     {
         removeChild(_curGame);
+        _curGame.shutdown();
         _curGame = null;
 
         // In the test client, we just disconnect from the game when it ends.

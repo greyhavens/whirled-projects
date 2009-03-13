@@ -57,7 +57,6 @@ public class BloodBloom extends FeedingGameClient
         ClientCtx.roundMgr = new GameRoundMgr(ClientCtx.msgMgr);
 
         _events.registerListener(this, Event.ADDED_TO_STAGE, onAddedToStage);
-        _events.registerListener(this, Event.REMOVED_FROM_STAGE, onRemovedFromStage);
         _events.registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
 
         // If the resources aren't loaded, wait for them to load
@@ -76,6 +75,20 @@ public class BloodBloom extends FeedingGameClient
         }
 
         ClientCtx.mainLoop.run();
+    }
+
+    override public function shutdown () :void
+    {
+        _events.freeAllHandlers();
+        ClientCtx.mainLoop.shutdown();
+        ClientCtx.audio.stopAllSounds();
+
+        ClientCtx.msgMgr.shutdown();
+        ClientCtx.roundMgr.shutdown();
+
+        ClientCtx.init(); // release any memory we might be holding onto here
+
+        log.info("Quitting BloodBloom");
     }
 
     override public function get playerData () :PlayerFeedingData
@@ -120,20 +133,6 @@ public class BloodBloom extends FeedingGameClient
     {
         _addedToStage = true;
         maybeReportReady();
-    }
-
-    protected function onRemovedFromStage (...ignored) :void
-    {
-        _events.freeAllHandlers();
-        ClientCtx.mainLoop.shutdown();
-        ClientCtx.audio.stopAllSounds();
-
-        ClientCtx.msgMgr.shutdown();
-        ClientCtx.roundMgr.shutdown();
-
-        ClientCtx.init(); // release any memory we might be holding onto here
-
-        log.info("Quitting BloodBloom");
     }
 
     protected function maybeReportReady () :void
