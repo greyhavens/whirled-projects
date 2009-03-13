@@ -187,18 +187,14 @@ public class DebugMode extends DraggableSceneObject
     {
         ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_ADD_XP );
         if( VConstants.LOCAL_DEBUG_MODE) {
-            trace("gainXP");
             var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
-            trace(" start xp=" + ClientContext.model.xp);
             var currentXP:int = ClientContext.model.xp;
             var invites:int = ClientContext.model.invites;
             currentXP += 500;
 
-            trace(" Logic.maxXPGivenXPAndInvites(currentXP=" + currentXP + ", invites="+invites+")=" + Logic.maxXPGivenXPAndInvites(currentXP, invites));
             currentXP = Math.min( currentXP, Logic.maxXPGivenXPAndInvites(currentXP, invites));
 
             props.setIn( Codes.playerRoomPropKey( ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, Math.max(0,currentXP));
-            trace(" Final xp=" + ClientContext.model.xp);
         }
     }
 
