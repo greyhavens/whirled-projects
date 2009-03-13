@@ -43,11 +43,9 @@ public class MainGameMode extends AppMode
             ClientContext.isNewPlayer = false;
         }
         else {
-            trace("We're NOT a new player");
+            log.debug("We're NOT a new player");
         }
 
-//        var testPopup :PopupMessage = new PopupMessage(ClientContext.ctrl, "sdsdf", ClientContext.hud);
-//        addObject( testPopup, modeSprite );
     }
 
     protected function updateNonPlayerIds(...ignored ) :void
@@ -205,24 +203,10 @@ public class MainGameMode extends AppMode
         addObject( _hud, modeSprite );
         ClientContext.hud = _hud;
 
-//        _subgameSprite = new Sprite();
-//        modeSprite.addChild( _subgameSprite );
-//        var subgameconfig :Config = new Config();
-//        subgameconfig.hostSprite = _subgameSprite;
-//        subgame = new SimpleGame( subgameconfig );
-////        subgame.run();
-//        subgame.ctx.mainLoop.pushMode( new NothingMode() );
 
         trace(ClientContext.ourPlayerId + " setting avatar state from game beginning");
         ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
 
-//        registerListener( ClientContext.model, ChangeActionEvent.CHANGE_ACTION, changeAction );
-
-//        registerListener( ClientContext.gameCtrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged);
-
-//        _thaneObjectDBForNonPlayers = new ObjectDBThane();
-
-//        updateNonPlayersIds( ClientContext.gameCtrl.room.props.get( Codes.ROOM_PROP_NON_PLAYERS ) as Array );
 
         //Every X seconds, check the non-player ids, updating the server if changed.
         var nonPlayerIdTimer :SimpleTimer = new SimpleTimer(2, updateNonPlayerIds, true, "npTimer");
@@ -253,10 +237,6 @@ public class MainGameMode extends AppMode
             } else {
                 _feedingGameClient = FeedingGameClient.create( gameId, ClientContext.model.playerFeedingData, onGameComplete);
 
-//                Sprite(_feedingGameDraggableSprite.displayObject).addChild( _feedingGameClient );
-//                _feedingGameClient.mouseEnabled = true;
-//                _feedingGameClient.mouseChildren = true;
-//                _feedingGameDraggableSprite.init(new Rectangle(0,0,0,0), 0,0,0,0);
                 modeSprite.addChild(_feedingGameClient);
             }
         }
@@ -269,11 +249,6 @@ public class MainGameMode extends AppMode
     {
         log.info(ClientContext.ourPlayerId + " onGameComplete(), Feeding complete, setting avatar state to default");//, "completedSuccessfully", completedSuccessfully);
 
-        if( _feedingGameClient.parent != null ){
-            _feedingGameClient.parent.removeChild( _feedingGameClient )
-        }
-
-//        modeSprite.removeChild(_feedingGameClient);
         trace(ClientContext.ourPlayerId + " setting avatar state from game complete");
         ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
         if( _feedingGameClient.playerData != null ) {
@@ -284,18 +259,18 @@ public class MainGameMode extends AppMode
         else {
             log.error("onGameComplete(), _feedingGameClient.playerData==null");
         }
-        _feedingGameClient = null;
+        _feedingGameClient.shutdown();
 
+        //Remove game after getting the feeding data, feeding data is nulled after stage removal.
+        if( _feedingGameClient.parent != null ){
+            _feedingGameClient.parent.removeChild( _feedingGameClient )
+        }
+        _feedingGameClient = null;
         //Reset the overlay
 //        ClientContext.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
 
     }
 
-//    override public function update( dt :Number ) :void
-//    {
-//        super.update( dt );
-//        _thaneObjectDBForNonPlayers.update( dt );
-//    }
 
 
 
@@ -311,66 +286,15 @@ public class MainGameMode extends AppMode
 
     override protected function destroy() :void
     {
-//        subgame.shutdown();
-//        _thaneObjectDBForNonPlayers.shutdown();
+        super.destroy();
     }
 
-//    protected function changeAction( e :ChangeActionEvent ) :void
-//    {
-//        return;
-//        var action :String = e.action;
-//
-//        var m :AppMode;
-//
-//        switch( action ) {
-////                case Constants.GAME_MODE_BLOODBOND:
-////                     m = new BloodBondMode();
-////                     break;
-//
-//             case VConstants.GAME_MODE_FEED_FROM_PLAYER:
-//             case VConstants.GAME_MODE_FEED_FROM_NON_PLAYER:
-//                 m = new FeedMode();
-//                 break;
-//
-//             case VConstants.GAME_MODE_BARED:
-//                 m = new EatMeMode();
-//                 break;
-//
-//             case VConstants.GAME_MODE_FIGHT:
-//                 m = new FightMode();
-//                 break;
-//
-////                 case Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
-////                     m = new HierarchyMode();
-////                     break;
-//
-//             default:
-//                 m = new NothingMode();
-//        }
-//
-//        log.debug("current mode=" + ClassUtil.getClassName( subgame.ctx.mainLoop.topMode ) );
-//        log.debug("new mode=" + ClassUtil.getClassName( m ) );
-//        if( m !== subgame.ctx.mainLoop.topMode) {
-//            subgame.ctx.mainLoop.unwindToMode( m );
-//        }
-//        else{
-//            log.debug("Not changing mode because the mode is already on top, m=" + m);
-//        }
-//
-//    }
-
-//    protected var subgame :SimpleGame;
-//    protected var _subgameSprite :Sprite;
     protected var _hud :HUD;
 
     protected var _feedingGameClient :FeedingGameClient;
-//    protected var _feedingGameDraggableSprite :DraggableSceneObject;
 
     protected var _currentNonPlayerIds :Array;
-//    /**Holds feeding data until game is over and it's sent to the server*/
-//    protected var _playerFeedingDataTemp :PlayerFeedingData;
 
-//    protected var _thaneObjectDBForNonPlayers :ObjectDBThane;
 
     protected static const log :Log = Log.getLog( MainGameMode );
 }
