@@ -6,6 +6,7 @@ package vampire.client
 
     import flash.display.MovieClip;
     import flash.events.MouseEvent;
+    import flash.geom.Rectangle;
 
     import vampire.data.Codes;
     import vampire.data.VConstants;
@@ -23,7 +24,12 @@ package vampire.client
 
 
             var infoPanel :MovieClip = ClientContext.instantiateMovieClip("HUD", "popup_avatar", false);
-            modeSprite.addChild( infoPanel );
+
+            var drag :DraggableSceneObject = new DraggableSceneObject(ClientContext.ctrl);
+            drag.displaySprite.addChild( infoPanel );
+            drag.init( new Rectangle(0,0,100, 100), 0, 0, 0, 0);
+
+            modeSprite.addChild( drag.displayObject );
 
             registerListener( infoPanel["choose_female"], MouseEvent.CLICK, function(...ignored) :void {
                 ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_MESSAGE_CHOOSE_FEMALE);

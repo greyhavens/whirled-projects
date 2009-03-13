@@ -24,7 +24,7 @@ package vampire.data
  */
 
 
-public class MinionHierarchy extends SimObjectThane
+public class Lineage extends SimObjectThane
 {
     public function setPlayerSire( playerId :int, sireId :int) :void
     {
@@ -242,6 +242,18 @@ public class MinionHierarchy extends SimObjectThane
         return false;
     }
 
+    /**
+    * Checks if ubervamp is a grandsire
+    *
+    */
+    public function isMemberOfLineage( playerId :int ) :Boolean
+    {
+        if( playerId == VConstants.UBER_VAMP_ID) {
+            return true;
+        }
+        return getAllSiresAndGrandSires(playerId).contains( VConstants.UBER_VAMP_ID );
+    }
+
     public function toStringOld() :String
     {
         log.debug(VConstants.DEBUG_MINION + " toString(), playerIds=" + playerIds);
@@ -410,7 +422,7 @@ public class MinionHierarchy extends SimObjectThane
 
 
 
-    protected static const log :Log = Log.getLog( MinionHierarchy );
+    protected static const log :Log = Log.getLog( Lineage );
 }
 }
     import com.threerings.util.Hashable;

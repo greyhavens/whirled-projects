@@ -15,7 +15,6 @@ import com.whirled.contrib.simplegame.server.SimObjectThane;
 
 import vampire.Util;
 import vampire.data.Codes;
-import vampire.data.Logic;
 import vampire.data.VConstants;
 import vampire.net.messages.FeedRequestMessage2;
 
@@ -350,29 +349,22 @@ public class Room extends SimObjectThane
 
     override protected function destroyed () :void
     {
-        //Remove the reference to ourselves from the non-players.
-//        for each( var npId :int in _nonPlayerIds ) {
-//            if( ServerContext.vserver.isNonPlayer( npId ) ) {
-//                var np :PlayerAvatar = ServerContext.vserver.getNonPlayer( npId, this );
-//                if( np.roomCtrl != null && np.roomCtrl.getRoomId() == roomId ) {
-//                    np.setRoomControlServer( null );
-//                }
-//            }
-//        }
+        try {
+            if( _roomDB != null ) {
+                _roomDB.shutdown();
+            }
+            if (_players.size() != 0) {
+                log.warning("Eek! Room unloading with players still here!",
+                            "players", _players.values());
+            } else {
+                log.debug("Unloaded room", "roomId", roomId);
+            }
+            _players.clear();
+            _ctrl = null;
+        }
+        catch(err :Error) {
 
-//        _nonplayerMonitor.destroySelf();
-        if( _roomDB != null ) {
-            _roomDB.shutdown();
         }
-//        _ctrl = null;
-        if (_players.size() != 0) {
-            log.warning("Eek! Room unloading with players still here!",
-                        "players", _players.values());
-        } else {
-            log.debug("Unloaded room", "roomId", roomId);
-        }
-        _players.clear();
-        _ctrl = null;
     }
 
     protected function handlePlayerMoved( e :AVRGameRoomEvent ) :void
@@ -472,6 +464,8 @@ public class Room extends SimObjectThane
         var preyIsPlayer :Boolean = isPlayer( gameRecord.preyId );
         var preyPlayer :Player;
         var bloodGained :Number;
+        var preyId :int = gameRecord.preyId;
+
         //Handle the prey loss of blood
         if( preyIsPlayer ) {
             log.debug("Prey is player");
@@ -493,6 +487,7 @@ public class Room extends SimObjectThane
         var bloodGainedPerPredator :Number = bloodGained / gameRecord.predators.size();
         var bloodGainedPerPredatorFormatted :String = Util.formatNumberForFeedback(bloodGainedPerPredator);
 
+
         for each( var predatorId :int in gameRecord.predators.toArray()) {
             var pred :Player = getPlayer( predatorId );
             if( pred == null ) {
@@ -509,10 +504,11 @@ public class Room extends SimObjectThane
 
             if( preyIsPlayer && preyPlayer != null ) {
 
-                //Check if the prey was a vampire, and we don't have a sire.  The prey vampire becomes it.
-                if( pred.sire <= 0 && preyPlayer.isVampire() ) {
+                //Check if we don't have a sire.  The prey vampire becomes it.
+                if( pred.sire == 0 ) {
 
-                    if( Util.isProgenitor( preyPlayer.playerId ) || preyPlayer.sire > 0 ) {
+
+                    if( ServerContext.lineage.isMemberOfLineage( preyId )) {
                         pred.makeSire( preyPlayer.playerId );
                         addFeedback( preyPlayer.name + " has become your sire ", pred.playerId);
 
@@ -522,7 +518,7 @@ public class Room extends SimObjectThane
 
 
                         for each( var sireId :int in
-                            ServerContext.minionHierarchy.getAllSiresAndGrandSires( pred.playerId ).toArray() ) {
+                            ServerContext.lineage.getAllSiresAndGrandSires( pred.playerId ).toArray() ) {
 
                             if( ServerContext.vserver.isPlayer( sireId )
                                 && ServerContext.vserver.getPlayer( sireId ).room != null) {
@@ -539,8 +535,8 @@ public class Room extends SimObjectThane
                         }
                     }
                     else {
-                        addFeedback( preyPlayer.name + " is not part of the Lineage.  Feed from a vampire lineage member to join.", pred.playerId);
-                        addFeedback( "You are not part of the Lineage, so " + preyPlayer.name + " cannot become your minion. "
+                        addFeedback( preyPlayer.name + " is not part of the Lineage (Minions of Übervamp).  Feed from a Lineage member to join.", pred.playerId);
+                        addFeedback( "You are not part of the Lineage (Minions of Übervamp), so " + preyPlayer.name + " cannot become your minion. "
                             + " Feed on a member of the Lineage to join.", preyPlayer.playerId);
                     }
                 }

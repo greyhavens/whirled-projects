@@ -184,6 +184,10 @@ public class ClientContext
                playerId == 12    || //Nemo
                playerId == 1     || //local msoy
                playerId == 2     || //local msoy
+               playerId == 3     || //local msoy
+               playerId == 1734     || //dev Dion
+               playerId == 1735     || //dev Ragbeard's Evil Twin
+
                playerId == VConstants.UBER_VAMP_ID; //Übervamp
     }
 

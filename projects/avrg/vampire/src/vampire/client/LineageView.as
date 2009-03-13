@@ -20,7 +20,7 @@ package vampire.client
     import flash.text.TextFormatAlign;
 
     import vampire.client.events.HierarchyUpdatedEvent;
-    import vampire.data.MinionHierarchy;
+    import vampire.data.Lineage;
     import vampire.data.VConstants;
 
     public class LineageView extends SceneObject
@@ -41,7 +41,7 @@ package vampire.client
             }
             else if( VConstants.LOCAL_DEBUG_MODE){
                 trace("SHowing test hierarchy");
-                _hierarchy = new MinionHierarchy();
+                _hierarchy = new Lineage();
                 _hierarchy.setPlayerSire(1, 2);
                 _hierarchy.setPlayerSire(3, 1);
                 _hierarchy.setPlayerSire(4, 1);
@@ -98,7 +98,7 @@ package vampire.client
         public function updateHierarchy( playerIdToCenter :int) :void
         {
             if( _hierarchy == null) {
-                _hierarchy = new MinionHierarchy();
+                _hierarchy = new Lineage();
                 _hierarchy.setPlayerSire( playerIdToCenter, 0);
             }
 
@@ -398,7 +398,7 @@ package vampire.client
 
         protected var _hierarchyTree :Sprite;
 
-        public var _hierarchy :MinionHierarchy;
+        public var _hierarchy :Lineage;
 
         protected static const yInc :int = 30;
         public var _selectedPlayerIdCenter :int;

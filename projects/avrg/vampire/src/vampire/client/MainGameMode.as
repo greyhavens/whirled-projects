@@ -20,7 +20,7 @@ import flash.geom.Rectangle;
 import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.events.HierarchyUpdatedEvent;
 import vampire.client.events.PlayerArrivedAtLocationEvent;
-import vampire.data.MinionHierarchy;
+import vampire.data.Lineage;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingGameClient;
 import vampire.net.messages.NonPlayerIdsInRoomMessage;
@@ -76,20 +76,20 @@ public class MainGameMode extends AppMode
 
         if( VConstants.LOCAL_DEBUG_MODE) {
 
-            var lineage :MinionHierarchy = new MinionHierarchy();
-//                lineage.setPlayerSire(1, 2);
+            var lineage :Lineage = new Lineage();
+                lineage.setPlayerSire(1, 2);
                 lineage.setPlayerSire(3, 1);
-//                lineage.setPlayerSire(4, 1);
-//                lineage.setPlayerSire(5, 1);
-//                lineage.setPlayerSire(6, 5);
-//                lineage.setPlayerSire(7, 6);
-//                lineage.setPlayerSire(8, 6);
-//                lineage.setPlayerSire(9, 1);
-//                lineage.setPlayerSire(10, 1);
-//                lineage.setPlayerSire(11, 1);
-//                lineage.setPlayerSire(12, 1);
-//                lineage.setPlayerSire(13, 1);
-//                lineage.setPlayerSire(14, 1);
+                lineage.setPlayerSire(4, 1);
+                lineage.setPlayerSire(5, 1);
+                lineage.setPlayerSire(6, 5);
+                lineage.setPlayerSire(7, 6);
+                lineage.setPlayerSire(8, 6);
+                lineage.setPlayerSire(9, 1);
+                lineage.setPlayerSire(10, 1);
+                lineage.setPlayerSire(11, 1);
+                lineage.setPlayerSire(12, 1);
+                lineage.setPlayerSire(13, 1);
+                lineage.setPlayerSire(14, 1);
             var msg :HierarchyUpdatedEvent = new HierarchyUpdatedEvent(lineage, ClientContext.ourPlayerId);
             ClientContext.model.lineage = lineage;
             ClientContext.model.dispatchEvent( msg );
@@ -264,6 +264,7 @@ public class MainGameMode extends AppMode
         trace(ClientContext.ourPlayerId + " setting avatar state from game complete");
         ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
         if( _feedingGameClient.playerData != null ) {
+            log.info(_feedingGameClient.playerData);
             ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_UPDATE_FEEDING_DATA,
                 _feedingGameClient.playerData.toBytes() );
         }

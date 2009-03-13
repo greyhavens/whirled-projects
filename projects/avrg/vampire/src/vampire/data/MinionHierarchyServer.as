@@ -15,7 +15,7 @@ package vampire.data
     import vampire.server.Trophies;
     import vampire.server.VServer;
 
-public class MinionHierarchyServer extends MinionHierarchy
+public class MinionHierarchyServer extends Lineage
 {
     public function MinionHierarchyServer( vserver :VServer )
     {
@@ -114,7 +114,7 @@ public class MinionHierarchyServer extends MinionHierarchy
     */
     public function playerEnteredRoom( player :Player, room :Room ) :void
     {
-        log.debug(VConstants.DEBUG_MINION + " playerEnteredRoom(), hierarchy=" + ServerContext.minionHierarchy.toString());
+        log.debug(VConstants.DEBUG_MINION + " playerEnteredRoom(), hierarchy=" + ServerContext.lineage.toString());
 
         if( player == null || room == null) {
             log.error(VConstants.DEBUG_MINION + " playerEnteredRoom(), player == null || room == null");

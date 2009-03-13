@@ -75,8 +75,8 @@ public class VServer extends ObjectDBThane
         _lastTickTime = _startTime;
         setInterval(tick, SERVER_TICK_UPDATE_MILLISECONDS);
 
-        ServerContext.minionHierarchy = new MinionHierarchyServer( this );
-        addObject( ServerContext.minionHierarchy );
+        ServerContext.lineage = new MinionHierarchyServer( this );
+        addObject( ServerContext.lineage );
 
 //        ServerContext.trophies = new Trophies(this, ServerContext.minionHierarchy);
 
@@ -297,7 +297,7 @@ public class VServer extends ObjectDBThane
     public function playerGainedBlood( player :Player, blood :Number, sourcePlayerId :int = 0 ) :void
     {
         var bloodShared :Number = VConstants.BLOOD_GAIN_FRACTION_SHARED_WITH_SIRES * blood;
-        var allsires :HashSet = ServerContext.minionHierarchy.getAllSiresAndGrandSires( player.playerId );
+        var allsires :HashSet = ServerContext.lineage.getAllSiresAndGrandSires( player.playerId );
 
         if( allsires.size() == 0 ) {
             log.debug("no sires");
@@ -321,7 +321,7 @@ public class VServer extends ObjectDBThane
     {
         log.debug("awardSiresXpEarned(" + player.name + ", xp=" + xp);
 
-        var allsires :HashSet = ServerContext.minionHierarchy.getAllSiresAndGrandSires( player.playerId );
+        var allsires :HashSet = ServerContext.lineage.getAllSiresAndGrandSires( player.playerId );
         if( allsires.size() == 0 ) {
             log.debug("no sires");
             return;
@@ -334,7 +334,7 @@ public class VServer extends ObjectDBThane
             return;
         }
 
-        var immediateSire :int = ServerContext.minionHierarchy.getSireId( player.playerId );
+        var immediateSire :int = ServerContext.lineage.getSireId( player.playerId );
 
         function awardXP( sireId :int, awardXP :Number ) :void {
             if( isPlayer( sireId )) {
@@ -556,7 +556,10 @@ public class VServer extends ObjectDBThane
                 prey.addFeedback( "You are now bloodbonded with " + predator.name);
                 predator.addFeedback( "You are now bloodbonded with " + prey.name);
                 _globalFeedback.push(prey.name + " is now bloodbonded with " + predator.name);
-                break;
+                //Reset the tallies.
+                preyVictims.splice(0);
+                predVictims.splice(0);
+                continue;
             }
         }
     }

@@ -63,6 +63,11 @@ public class Player extends EventHandlerManager
         log.debug("Getting ", "time", new Date(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
         _timePlayerPreviouslyQuit = Number(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE));
 
+        //Debugging
+        //WhirledDev, 1734==Dion, 1735==Ragbears's Evil Twin
+        if( _playerId == 1735 ) {
+            setTime(0);
+        }
 
 
         //Get experience
@@ -134,10 +139,24 @@ public class Player extends EventHandlerManager
                  maxBlood, "level", level, "sire", sire, "time", new Date(time).toTimeString());
 
         //Create feeding data if there is none
+        var feedingData :PlayerFeedingData = new PlayerFeedingData();
         if( _ctrl.props.get(Codes.PLAYER_PROP_FEEDING_DATA) == null ) {
-            var feedingData :PlayerFeedingData = new PlayerFeedingData();
             _ctrl.props.set(Codes.PLAYER_PROP_FEEDING_DATA, feedingData.toBytes() );
         }
+        try {
+            var bytes :ByteArray = _ctrl.props.get(Codes.PLAYER_PROP_FEEDING_DATA) as ByteArray;
+            if( bytes != null) {
+                bytes.position = 0;
+                feedingData.fromBytes( bytes );
+            }
+        }
+        catch(err :Error) {
+            log.error("Error in feeding data, old version?  Resetting...");
+            log.error(err.getStackTrace());
+            feedingData = new PlayerFeedingData();
+            _ctrl.props.set(Codes.PLAYER_PROP_FEEDING_DATA, feedingData.toBytes() );
+        }
+        log.debug("Getting feeding data=" + feedingData);
 
         //Load/Create minionIds
         _minionsForTrophies = _ctrl.props.get(Codes.PLAYER_PROP_MINIONIDS) as Array;
@@ -217,7 +236,7 @@ public class Player extends EventHandlerManager
         var currentTime :Number = new Date().time;
 //        log.info("shutdown()", "currentTime", new Date(currentTime).toTimeString());
         setTime( currentTime, true );
-        setSire( ServerContext.minionHierarchy.getSireId( playerId ) );
+        setSire( ServerContext.lineage.getSireId( playerId ) );
 //        log.info("before player shutdown", "time", new Date(_ctrl.props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
         setAction( VConstants.GAME_MODE_NOTHING );
         updateAvatarState();
@@ -387,6 +406,18 @@ public class Player extends EventHandlerManager
             }
             else if( name == VConstants.NAMED_EVENT_BLOOD_DOWN ) {
                 damage( 20 );
+            }
+
+            else if( name == VConstants.NAMED_MESSAGE_DEBUG_GIVE_BLOOD_ALL_ROOM ) {
+                if( room != null) {
+                    room.players.forEach( function(playerId :int, player :Player) :void {
+                        player.addBlood( 20 );
+                    });
+                }
+            }
+
+            if( name == VConstants.NAMED_MESSAGE_DEBUG_RESET_MY_SIRE ) {
+                makeSire(0);
             }
 
             if( name == VConstants.NAMED_EVENT_ADD_XP ) {
@@ -574,27 +605,27 @@ public class Player extends EventHandlerManager
         log.info(playerId + " makeSire(" + targetPlayerId + ")");
 
 
-        ServerContext.minionHierarchy.setPlayerSire( playerId, targetPlayerId);
-        log.info(playerId + " then setting sire(" + ServerContext.minionHierarchy.getSireId( playerId ) + ")");
-        setSire( ServerContext.minionHierarchy.getSireId( playerId ) );
+        ServerContext.lineage.setPlayerSire( playerId, targetPlayerId);
+        log.info(playerId + " then setting sire(" + ServerContext.lineage.getSireId( playerId ) + ")");
+        setSire( ServerContext.lineage.getSireId( playerId ) );
 
 //        ServerContext.minionHierarchy.updatePlayer( targetPlayerId );
-        ServerContext.minionHierarchy.updatePlayer( playerId );
+        ServerContext.lineage.updatePlayer( playerId );
 //        ServerContext.minionHierarchy.updateIntoRoomProps();
 
-        if( oldSire > 0 ) {
-            ServerContext.minionHierarchy.updatePlayer( oldSire );
+        if( oldSire != 0 ) {
+            ServerContext.lineage.updatePlayer( oldSire );
         }
     }
 
     protected function makeMinion(targetPlayerId :int ) :void
     {
         log.info("makeMinion(" + targetPlayerId + ")");
-        ServerContext.minionHierarchy.setPlayerSire( targetPlayerId, playerId);
+        ServerContext.lineage.setPlayerSire( targetPlayerId, playerId);
 
-        setSire( ServerContext.minionHierarchy.getSireId( playerId ) );
+        setSire( ServerContext.lineage.getSireId( playerId ) );
 
-        ServerContext.minionHierarchy.updatePlayer( playerId );
+        ServerContext.lineage.updatePlayer( playerId );
 //        ServerContext.minionHierarchy.updateIntoRoomProps();
     }
 
@@ -884,7 +915,7 @@ public class Player extends EventHandlerManager
     {
 
         log.info(VConstants.DEBUG_MINION + " Player entered room {{{", "player", toString());
-        log.debug(VConstants.DEBUG_MINION + " hierarchy=" + ServerContext.minionHierarchy);
+        log.debug(VConstants.DEBUG_MINION + " hierarchy=" + ServerContext.lineage);
 
 //        log.debug( Constants.DEBUG_MINION + " Player enteredRoom, already on the database=" + toString());
 //        log.debug( Constants.DEBUG_MINION + " Player enteredRoom, hierarch=" + ServerContext.minionHierarchy);
@@ -899,7 +930,7 @@ public class Player extends EventHandlerManager
 //                        _room.ctrl.props.set( Codes.ROOM_PROP_MINION_HIERARCHY, minionsBytes );
 
                         _room.playerEntered(thisPlayer);
-                        ServerContext.minionHierarchy.playerEnteredRoom( thisPlayer, _room);
+                        ServerContext.lineage.playerEnteredRoom( thisPlayer, _room);
                         updateAvatarState();
                     }
                     else {
@@ -917,7 +948,7 @@ public class Player extends EventHandlerManager
 //        setIntoRoomProps();
 
         log.debug(VConstants.DEBUG_MINION + "after _room.playerEntered");
-        log.debug(VConstants.DEBUG_MINION + "hierarchy=" + ServerContext.minionHierarchy);
+        log.debug(VConstants.DEBUG_MINION + "hierarchy=" + ServerContext.lineage);
 
     }
 
@@ -1469,7 +1500,7 @@ public class Player extends EventHandlerManager
 
     protected var _sire :int;
     /**Hold max 25 player ids for recording minions for trophies.*/
-    protected var _minionsForTrophies :Array;
+    protected var _minionsForTrophies :Array = new Array();
 
     protected var _timePlayerPreviouslyQuit :Number;
 

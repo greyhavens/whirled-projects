@@ -21,7 +21,7 @@ import vampire.client.events.ChangeActionEvent;
 import vampire.client.events.ClosestPlayerChangedEvent;
 import vampire.client.events.HierarchyUpdatedEvent;
 import vampire.data.Codes;
-import vampire.data.MinionHierarchy;
+import vampire.data.Lineage;
 import vampire.data.SharedPlayerStateClient;
 import vampire.data.VConstants;
 import vampire.feeding.PlayerFeedingData;
@@ -193,10 +193,10 @@ public class GameModel extends SimObject//EventDispatcher
 //        _proximityTimer.stop();
     }
 
-    protected function loadHierarchyFromProps() :MinionHierarchy
+    protected function loadHierarchyFromProps() :Lineage
     {
         log.debug(VConstants.DEBUG_MINION + " loadHierarchyFromProps()");
-        var hierarchy :MinionHierarchy = new MinionHierarchy();
+        var hierarchy :Lineage = new Lineage();
 //        var playerIds :Array = ClientContext.gameCtrl.room.props.get( Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS ) as Array;
 
 //        log.debug(Constants.DEBUG_MINION + " loadHierarchyFromProps()", "playerIds", playerIds);
@@ -485,13 +485,13 @@ public class GameModel extends SimObject//EventDispatcher
         return VConstants.LOCAL_DEBUG_MODE || level >= VConstants.MINIMUM_VAMPIRE_LEVEL;
     }
 
-    public function get lineage() :MinionHierarchy
+    public function get lineage() :Lineage
     {
         return _hierarchy;
     }
 
     //For debugging
-    public function set lineage(h :MinionHierarchy) :void
+    public function set lineage(h :Lineage) :void
     {
         _hierarchy = h;
     }
@@ -545,7 +545,7 @@ public class GameModel extends SimObject//EventDispatcher
 
     public var currentSelectedTarget :int = 0;
 
-    protected var _hierarchy :MinionHierarchy;
+    protected var _hierarchy :Lineage;
     protected var _agentCtrl :AgentSubControl;
     protected var _propsCtrl :PropertyGetSubControl;
 

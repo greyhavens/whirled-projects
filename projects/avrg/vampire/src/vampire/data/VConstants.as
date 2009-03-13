@@ -127,6 +127,7 @@ public class VConstants
 //    public static const GAME_MODE_BLOODBOND :String = "BloodBond";
     public static const GAME_MODE_HIERARCHY_AND_BLOODBONDS :String = "Hierarchy";
 
+    //Obsolete
     public static const GAME_MODES :Array = [
                                         GAME_MODE_FEED_FROM_PLAYER,
                                         GAME_MODE_BARED,
@@ -137,6 +138,8 @@ public class VConstants
 
 
 
+    public static const NAMED_MESSAGE_DEBUG_GIVE_BLOOD_ALL_ROOM:String = "GiveBloodAllRoom";
+    public static const NAMED_MESSAGE_DEBUG_RESET_MY_SIRE:String = "ResetMySire";
 
     public static const NAMED_EVENT_BLOOD_UP :String = "BloodUp";//Only for testing purposes
     public static const NAMED_EVENT_BLOOD_DOWN :String = "BloodDown";//Only for testing purposes

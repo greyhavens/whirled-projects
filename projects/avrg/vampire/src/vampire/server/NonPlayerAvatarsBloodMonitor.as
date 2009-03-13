@@ -170,15 +170,15 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
 //    }
 
 
-    protected function removeNonPlayerFromAllRooms( nonplayerId :int ) :void
-    {
-        //Remove the nonplayer from its old room
-//        if( ServerContext.vserver.isRoom( _nonplayer2RoomId.get( nonplayerId ))) {
-//            var room :Room = ServerContext.vserver.getRoom( _nonplayer2RoomId.get( nonplayerId ));
-//            room.nonPlayerAvatarIds.remove( nonplayerId );
-//        }
-//        _nonplayer2RoomId.remove( nonplayerId );
-    }
+//    protected function removeNonPlayerFromAllRooms( nonplayerId :int ) :void
+//    {
+//        //Remove the nonplayer from its old room
+////        if( ServerContext.vserver.isRoom( _nonplayer2RoomId.get( nonplayerId ))) {
+////            var room :Room = ServerContext.vserver.getRoom( _nonplayer2RoomId.get( nonplayerId ));
+////            room.nonPlayerAvatarIds.remove( nonplayerId );
+////        }
+////        _nonplayer2RoomId.remove( nonplayerId );
+//    }
 
     //Allow the non-players to regenerate blood and update room props
     override protected  function update( dt :Number ) :void
@@ -204,7 +204,17 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
             //Regenerate //if we aren't being eaten.
             blood += VConstants.THRALL_BLOOD_REGENERATION_RATE * dt;
             blood = MathUtil.clamp(blood, 1, VConstants.MAX_BLOOD_NONPLAYERS);
+
+            //If we've played, but are currently offline, our blood is 1, so as to stop
+            //players drinking it without our permission.
+            if( _playerIdsThatHavePlayedEver.contains(userId) &&
+                !ServerContext.vserver.isPlayer(userId)) {
+
+                blood = 1;
+            }
+
             _nonplayerBlood.put( userId, blood );
+
 
 
             //If we're not assigned a room, we can't update the room props.
@@ -281,7 +291,7 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
 
 
     protected var _bloodUpdateTime :Number = 0;
-    protected static const UPDATE_BLOOD_INTERVAL :Number = 3;
+    protected static const UPDATE_BLOOD_INTERVAL :Number = 2;
 
     protected static const NAME :String = "NonAvatarPlayersBloodMonitor";
     protected static const log :Log = Log.getLog( NonPlayerAvatarsBloodMonitor );

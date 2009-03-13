@@ -90,6 +90,22 @@ public class DebugMode extends DraggableSceneObject
         _menuSprite.addChild( loseInviteButton );
 
 
+        var addAllBloodButton :SimpleTextButton = new SimpleTextButton( "+20 Blood Room" );
+        addAllBloodButton.x = loseInviteButton.x;
+        addAllBloodButton.y = addInviteButton.y + 50;
+        registerListener(addAllBloodButton, MouseEvent.CLICK, function(...ignored) :void {
+            ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_MESSAGE_DEBUG_GIVE_BLOOD_ALL_ROOM );
+        });
+        _menuSprite.addChild( addAllBloodButton );
+
+        var resetMySireButton :SimpleTextButton = new SimpleTextButton( "Reset Sire" );
+        resetMySireButton.x = addAllBloodButton.x;
+        resetMySireButton.y = addAllBloodButton.y + 50;
+        registerListener(resetMySireButton, MouseEvent.CLICK, function(...ignored) :void {
+            ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_MESSAGE_DEBUG_RESET_MY_SIRE );
+        });
+        _menuSprite.addChild( resetMySireButton );
+
         _menuSprite.x = -_menuSprite.width / 2;
         _menuSprite.y = -_menuSprite.height / 2;
         _displaySprite.addChild( _menuSprite );

@@ -285,6 +285,11 @@ public class DraggableSceneObject extends SceneObject
         return _displaySprite;
     }
 
+    public function get displaySprite () :Sprite
+    {
+        return _displaySprite;
+    }
+
     protected var _displaySprite :Sprite = new Sprite();
 
     protected var _ctrl :AVRGameControl;

@@ -11,7 +11,7 @@ public class ServerContext
     public static var msg :VMessageManager;
     public static var ctrl :AVRServerGameControl;
     public static var vserver :VServer;
-    public static var minionHierarchy :MinionHierarchyServer;
+    public static var lineage :MinionHierarchyServer;
     public static var nonPlayersBloodMonitor :NonPlayerAvatarsBloodMonitor;
     public static var trophies :Trophies;
 

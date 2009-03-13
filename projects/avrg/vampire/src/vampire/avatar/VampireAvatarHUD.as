@@ -172,7 +172,7 @@ public class VampireAvatarHUD extends AvatarHUD
                 }, true);
                 db.addObject( t );
             }
-            trace("frenzy button clicked, _frenzyDelayRemaining=" + _frenzyDelayRemaining);
+//            trace("frenzy button clicked, _frenzyDelayRemaining=" + _frenzyDelayRemaining);
             _frenzyButtonClicked = true;
             showFrenzyTimerWithoutButton();
         });
@@ -201,7 +201,6 @@ public class VampireAvatarHUD extends AvatarHUD
         //Add a mouse move listener to the blood.  This triggers showing the feed buttons
         var showMenuFunction :Function = function(...ignored) :void {
             _isMouseOver = true;
-            trace("mouse over function");
 
 
             if( VConstants.LOCAL_DEBUG_MODE ) {
@@ -213,11 +212,11 @@ public class VampireAvatarHUD extends AvatarHUD
 
             //Only show feed buttons if there is sufficient blood
             if( (!isPlayer && !isChattedEnoughForTargeting) || SharedPlayerStateClient.getBlood( playerId ) <= 1) {
-                trace(" doing nothing because:");
-                trace("   isPlayer=" + isPlayer);
-                trace("   isChattedEnoughForTargeting=" + isChattedEnoughForTargeting);
-                trace("   SharedPlayerStateClient.getBlood( " + playerId + " ) <= 1)=" + (SharedPlayerStateClient.getBlood( playerId ) <= 1));
-                trace("   SharedPlayerStateClient.getBlood( " + playerId + " )=" + SharedPlayerStateClient.getBlood( playerId ));
+//                trace(" doing nothing because:");
+//                trace("   isPlayer=" + isPlayer);
+//                trace("   isChattedEnoughForTargeting=" + isChattedEnoughForTargeting);
+//                trace("   SharedPlayerStateClient.getBlood( " + playerId + " ) <= 1)=" + (SharedPlayerStateClient.getBlood( playerId ) <= 1));
+//                trace("   SharedPlayerStateClient.getBlood( " + playerId + " )=" + SharedPlayerStateClient.getBlood( playerId ));
                 return;
             }
 
@@ -238,8 +237,8 @@ public class VampireAvatarHUD extends AvatarHUD
                 }
             }
             else {
-                trace(" more doing nothing because:");
-                trace("   action=" + action);
+//                trace(" more doing nothing because:");
+//                trace("   action=" + action);
             }
 
         }
