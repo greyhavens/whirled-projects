@@ -100,10 +100,10 @@ public class VampireBody extends NewBody
             }
 
             config.hairColor = pack.getColor("HairColor");
-            config.shirtColor = pack.getColor("ShirtColor");
+            config.topColor = pack.getColor("ShirtColor");
             config.pantsColor = pack.getColor("PantsColor");
             config.shoesColor = pack.getColor("ShoesColor");
-            config.shirtNumber = pack.getInt("Shirt");
+            config.topNumber = pack.getInt("Shirt");
             config.hairNumber = pack.getInt("Hair");
             config.shoesNumber = pack.getInt("Shoes");
         }
@@ -115,29 +115,29 @@ public class VampireBody extends NewBody
     {
         var skinFilter :ColorMatrixFilter = createColorFilter(config.skinColor);
         var hairFilter :ColorMatrixFilter = createColorFilter(config.hairColor);
-        var shirtFilter :ColorMatrixFilter = createColorFilter(config.shirtColor);
+        var shirtFilter :ColorMatrixFilter = createColorFilter(config.topColor);
         var pantsFilter :ColorMatrixFilter = createColorFilter(config.pantsColor);
         var shoesFilter :ColorMatrixFilter = createColorFilter(config.shoesColor);
 
         for each (var movie :MovieClip in getAllMovies()) {
             // Shirt
-            selectFrame(movie, [ "torso", "shirt" ], config.shirtNumber);
-            selectFrame(movie, [ "neck", "shirt" ], config.shirtNumber);
-            selectFrame(movie, [ "hips", "shirt" ], config.shirtNumber);
-            selectFrame(movie, [ "breasts", "shirt" ], config.shirtNumber);
-            selectFrame(movie, [ "breasts", "breasts" ], config.shirtNumber);
-            selectFrame(movie, [ "bicepL", "shirt" ], config.shirtNumber);
-            selectFrame(movie, [ "bicepR", "shirt" ], config.shirtNumber);
-            selectFrame(movie, [ "bicepL", "bicepL" ], config.shirtNumber);
-            selectFrame(movie, [ "bicepR", "bicepR" ], config.shirtNumber);
-            selectFrame(movie, [ "forearmL", "shirt" ], config.shirtNumber);
-            selectFrame(movie, [ "forearmR", "shirt" ], config.shirtNumber);
-            selectFrame(movie, [ "forearmL", "forearmL" ], config.shirtNumber);
-            selectFrame(movie, [ "forearmR", "forearmR" ], config.shirtNumber);
-            selectFrame(movie, [ "handL", "shirt" ], config.shirtNumber);
-            selectFrame(movie, [ "handR", "shirt" ], config.shirtNumber);
-            selectFrame(movie, [ "handL", "handL" ], config.shirtNumber);
-            selectFrame(movie, [ "handR", "handR" ], config.shirtNumber);
+            selectFrame(movie, [ "torso", "shirt" ], config.topNumber);
+            selectFrame(movie, [ "neck", "shirt" ], config.topNumber);
+            selectFrame(movie, [ "hips", "shirt" ], config.topNumber);
+            selectFrame(movie, [ "breasts", "shirt" ], config.topNumber);
+            selectFrame(movie, [ "breasts", "breasts" ], config.topNumber);
+            selectFrame(movie, [ "bicepL", "shirt" ], config.topNumber);
+            selectFrame(movie, [ "bicepR", "shirt" ], config.topNumber);
+            selectFrame(movie, [ "bicepL", "bicepL" ], config.topNumber);
+            selectFrame(movie, [ "bicepR", "bicepR" ], config.topNumber);
+            selectFrame(movie, [ "forearmL", "shirt" ], config.topNumber);
+            selectFrame(movie, [ "forearmR", "shirt" ], config.topNumber);
+            selectFrame(movie, [ "forearmL", "forearmL" ], config.topNumber);
+            selectFrame(movie, [ "forearmR", "forearmR" ], config.topNumber);
+            selectFrame(movie, [ "handL", "shirt" ], config.topNumber);
+            selectFrame(movie, [ "handR", "shirt" ], config.topNumber);
+            selectFrame(movie, [ "handL", "handL" ], config.topNumber);
+            selectFrame(movie, [ "handR", "handR" ], config.topNumber);
 
             // Hair
             selectFrame(movie, [ "head", "scalp", "scalp" ], config.hairNumber);

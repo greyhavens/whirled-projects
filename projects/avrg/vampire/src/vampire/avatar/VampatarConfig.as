@@ -6,10 +6,10 @@ public class VampatarConfig
 {
     public var skinColor :uint = 0xD0DFFD;
     public var hairColor :uint = 0x220000;
-    public var shirtColor :uint = 0x222222;
+    public var topColor :uint = 0x222222;
     public var pantsColor :uint = 0x203030;
     public var shoesColor :uint = 0x000008;
-    public var shirtNumber :int = 1;
+    public var topNumber :int = 1;
     public var hairNumber :int = 2;
     public var shoesNumber :int = 3;
 
@@ -32,10 +32,10 @@ public class VampatarConfig
 
         ba.writeUnsignedInt(skinColor);
         ba.writeUnsignedInt(hairColor);
-        ba.writeUnsignedInt(shirtColor);
+        ba.writeUnsignedInt(topColor);
         ba.writeUnsignedInt(pantsColor);
         ba.writeUnsignedInt(shoesColor);
-        ba.writeByte(shirtNumber);
+        ba.writeByte(topNumber);
         ba.writeByte(hairNumber);
         ba.writeByte(shoesNumber);
 
@@ -51,10 +51,10 @@ public class VampatarConfig
 
         skinColor = ba.readUnsignedInt();
         hairColor = ba.readUnsignedInt();
-        shirtColor = ba.readUnsignedInt();
+        topColor = ba.readUnsignedInt();
         pantsColor = ba.readUnsignedInt();
         shoesColor = ba.readUnsignedInt();
-        shirtNumber = ba.readByte();
+        topNumber = ba.readByte();
         hairNumber = ba.readByte();
         shoesNumber = ba.readByte();
     }

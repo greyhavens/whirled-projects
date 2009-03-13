@@ -1,8 +1,8 @@
 package vampire.avatar {
 
-import fl.controls.ColorPicker;
-import fl.events.ColorPickerEvent;
+import com.threerings.util.Log;
 
+import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.MovieClip;
@@ -25,96 +25,122 @@ public class VampatarConfigPanel extends Sprite
         addChild(panel);
 
         // create dropdowns
-        /*var skinButton :SimpleButton = panel["skin_option"];
-        createDropdown(
-            skinButton,
-            [ "Lighter", 0xDEEFF5,
-              "Light", 0xD0DFFD,
-              "Cool", 0xC2EDD3,
-              "Warm", 0xE1C2ED,
-              "Dark", 0xC7B4EB,
-              "Darker", 0xCCCCCC ],
-            function (skinColor :uint) :void {
-                if (_config.skinColor != skinColor) {
-                    _config.skinColor = skinColor;
-                    configUpdated();
-                }
-            },
-            _config.skinColor);*/
-
-        var hairButton :SimpleButton = panel["hair_option"];
-        createDropdown(
-            hairButton,
+        var hairDropdown :Dropdown = createDropdown(
+            panel["hair_option"],
             [ "Long & Wavy", 1,
               "Long & Straight", 2,
               "Shag", 3,
               "Severe", 4 ],
-            function (hairNumber :int) :void {
-                if (_config.hairNumber != hairNumber) {
-                    _config.hairNumber = hairNumber;
+            function (value :int) :void {
+                if (_config.hairNumber != value) {
+                    _config.hairNumber = value;
                     configUpdated();
                 }
             },
             _config.hairNumber);
 
-        var shirtButton :SimpleButton = panel["top_option"];
-        createDropdown(
-            shirtButton,
+        var topDropdown :Dropdown = createDropdown(
+            panel["top_option"],
             [ "Tee", 1,
               "Corset", 2,
               "Striped", 3,
               "Hoodie", 4 ],
-            function (shirtNumber :int) :void {
-                if (_config.shirtNumber != shirtNumber) {
-                    _config.shirtNumber = shirtNumber;
+            function (value :int) :void {
+                if (_config.topNumber != value) {
+                    _config.topNumber = value;
                     configUpdated();
                 }
             },
-            _config.shirtNumber);
+            _config.topNumber);
 
-        var shoesButton :SimpleButton = panel["shoes_option"];
-        createDropdown(
-            shoesButton,
+        var shoesDropdown :Dropdown = createDropdown(
+            panel["shoes_option"],
             [ "Boots", 1,
               "Slip-ons", 2,
               "None", 3 ],
-            function (shoesNumber :int) :void {
-                if (_config.shoesNumber != shoesNumber) {
-                    _config.shoesNumber = shoesNumber;
+            function (value :int) :void {
+                if (_config.shoesNumber != value) {
+                    _config.shoesNumber = value;
                     configUpdated();
                 }
             },
             _config.shoesNumber);
 
         // color pickers
-        var hairColorButton :ColorPicker = panel["hair_color"];
-        hairColorButton.selectedColor = _config.hairColor;
-        hairColorButton.addEventListener(ColorPickerEvent.CHANGE,
-            function (e :ColorPickerEvent) :void {
-                if (_config.hairColor != e.color) {
-                    _config.hairColor = e.color;
+        var skinPicker :MyColorPicker = createColorPicker(
+            MyColorPicker.TYPE_SKIN,
+            panel["skin_color"],
+            function (color :uint) :void {
+                if (_config.skinColor != color) {
+                    _config.skinColor = color;
                     configUpdated();
                 }
-            });
+            },
+            _config.skinColor);
 
-        var shirtColorButton :ColorPicker = panel["top_color"];
-        shirtColorButton.selectedColor = _config.shirtColor;
-        shirtColorButton.addEventListener(ColorPickerEvent.CHANGE,
-            function (e :ColorPickerEvent) :void {
-                if (_config.shirtColor != e.color) {
-                    _config.shirtColor = e.color;
+        var pantsPicker :MyColorPicker = createColorPicker(
+            MyColorPicker.TYPE_GENERAL,
+            panel["pants_color"],
+            function (color :uint) :void {
+                if (_config.pantsColor != color) {
+                    _config.pantsColor = color;
                     configUpdated();
                 }
-            });
+            },
+            _config.pantsColor);
 
-        var shoesColorButton :ColorPicker = panel["shoes_color"];
-        shoesColorButton.selectedColor = _config.shoesColor;
-        shoesColorButton.addEventListener(ColorPickerEvent.CHANGE,
-            function (e :ColorPickerEvent) :void {
-                if (_config.shoesColor != e.color) {
-                    _config.shoesColor = e.color;
+        var topPicker :MyColorPicker = createColorPicker(
+            MyColorPicker.TYPE_GENERAL,
+            panel["top_color"],
+            function (color :uint) :void {
+                if (_config.topColor != color) {
+                    _config.topColor = color;
                     configUpdated();
                 }
+            },
+            _config.topColor);
+
+        var shoesPicker :MyColorPicker = createColorPicker(
+            MyColorPicker.TYPE_GENERAL,
+            panel["shoes_color"],
+            function (color :uint) :void {
+                if (_config.shoesColor != color) {
+                    _config.shoesColor = color;
+                    configUpdated();
+                }
+            },
+            _config.shoesColor);
+
+        var hairPicker :MyColorPicker = createColorPicker(
+            MyColorPicker.TYPE_GENERAL,
+            panel["hair_color"],
+            function (color :uint) :void {
+                if (_config.hairColor != color) {
+                    _config.hairColor = color;
+                    configUpdated();
+                }
+            },
+            _config.hairColor);
+
+        // randomize button
+        var randomizeButton :SimpleButton = panel["button_randomize"];
+        randomizeButton.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                // suppress config updates until all options have been chosen, so
+                // that we don't flood the network with meaningless updates
+                _suppressConfigUpdates = true;
+
+                hairDropdown.selectRandomItem();
+                topDropdown.selectRandomItem();
+                shoesDropdown.selectRandomItem();
+                skinPicker.selectRandomColor();
+                pantsPicker.selectRandomColor();
+                topPicker.selectRandomColor();
+                shoesPicker.selectRandomColor();
+                hairPicker.selectRandomColor();
+
+                _suppressConfigUpdates = false;
+                configUpdated();
             });
 
         // A hack to fake mouse capture when a dropdown is being displayed. (Captures
@@ -132,7 +158,7 @@ public class VampatarConfigPanel extends Sprite
     }
 
     protected function createDropdown (button :SimpleButton, items :Array,
-                                       onItemSelected :Function, initialValue :*) :void
+                                       onItemSelected :Function, initialValue :*) :Dropdown
     {
         var dropdown :Dropdown = new Dropdown(button, items, onItemSelected);
         dropdown.x = button.x;
@@ -145,6 +171,28 @@ public class VampatarConfigPanel extends Sprite
             });
 
         _pickers.push(dropdown);
+
+        return dropdown;
+    }
+
+    protected function createColorPicker (type :int,
+                                          button :MovieClip,
+                                          onColorSelected :Function,
+                                          initialColor :uint) :MyColorPicker
+    {
+        var cp :MyColorPicker = new MyColorPicker(type, button, onColorSelected);
+        cp.x = button.x;
+        cp.y = button.y;
+        cp.selectColor(initialColor);
+
+        button.addEventListener(MouseEvent.MOUSE_DOWN,
+            function (...ignored) :void {
+                showPicker(cp);
+            });
+
+        _pickers.push(cp);
+
+        return cp;
     }
 
     protected function showPicker (picker :DisplayObject) :void
@@ -170,17 +218,9 @@ public class VampatarConfigPanel extends Sprite
 
     protected function configUpdated () :void
     {
-        _applyConfigCallback(_config);
-    }
-
-    protected static function randPick (arr :Array) :*
-    {
-        return (arr.length == 0 ? undefined : arr[rand(0, arr.length - 1)]);
-    }
-
-    protected static function rand (lo :uint, hi :uint) :uint
-    {
-        return lo + (Math.random() * (hi - lo + 1));
+        if (!_suppressConfigUpdates) {
+            _applyConfigCallback(_config);
+        }
     }
 
     protected var _pickers :Array = [];
@@ -189,6 +229,9 @@ public class VampatarConfigPanel extends Sprite
     protected var _originalConfig :VampatarConfig;
     protected var _config :VampatarConfig;
     protected var _applyConfigCallback :Function;
+    protected var _suppressConfigUpdates :Boolean;
+
+    protected static const log :Log = Log.getLog(VampatarConfigPanel);
 }
 
 }
@@ -201,10 +244,128 @@ import flash.events.MouseEvent;
 import flash.display.DisplayObjectContainer;
 import com.threerings.util.Log;
 import flash.display.DisplayObject;
+import flash.display.Graphics;
+import flash.display.MovieClip;
+import flash.display.Shape;
+import flash.display.BitmapData;
+import com.whirled.contrib.platformer.piece.Rect;
+import flash.geom.Rectangle;
+import flash.geom.Matrix;
+import flash.display.Bitmap;
 
 function getClass (name :String) :Class
 {
     return ApplicationDomain.currentDomain.getDefinition(name) as Class;
+}
+
+function randPick (arr :Array) :*
+{
+    return (arr.length == 0 ? undefined : arr[rand(0, arr.length - 1)]);
+}
+
+function rand (lo :uint, hi :uint) :uint
+{
+    return lo + (Math.random() * (hi - lo + 1));
+}
+
+class MyColorPicker extends Sprite
+{
+    public static const TYPE_SKIN :int = 0;
+    public static const TYPE_GENERAL :int = 1;
+
+    public static function randPaletteColor (paletteType :int) :uint
+    {
+        var bm :BitmapData = _bitmaps[paletteType];
+        return bm.getPixel(rand(0, bm.width - 1), rand(0, bm.height - 1));
+    }
+
+    public function MyColorPicker (type :int, button :MovieClip, onColorSelected :Function)
+    {
+        //_button = button;
+        _type = type;
+        _onColorSelected = onColorSelected;
+
+        var uiSprite :Sprite = new Sprite();
+
+        _swatch = new Shape();
+        uiSprite.addChild(_swatch);
+
+        var paletteClass :Class = getClass(PALETTE_MOVIES[type]);
+        _palette = new paletteClass();
+        _palette.scaleX = _palette.scaleY = SCALES[type];
+        _palette.y = SWATCH_HEIGHT;
+        uiSprite.addChild(_palette);
+
+        setSwatchColor(0xffffff);
+
+        var g :Graphics = this.graphics;
+        g.beginFill(0);
+        g.drawRect(0, 0, uiSprite.width + (BORDER * 2), uiSprite.height + (BORDER * 2));
+        g.endFill();
+
+        uiSprite.x = (this.width - uiSprite.width) * 0.5;
+        uiSprite.y = (this.height - uiSprite.height) * 0.5;
+        addChild(uiSprite);
+
+        if (_bitmaps[type] == null) {
+            _bitmaps[type] = getBitmapData(_palette);
+        }
+
+        _palette.addEventListener(MouseEvent.MOUSE_MOVE,
+            function (e :MouseEvent) :void {
+                var bm :BitmapData = _bitmaps[type];
+                setSwatchColor(bm.getPixel(e.localX, e.localY));
+            });
+
+        _palette.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                selectColor(_swatchColor);
+            });
+    }
+
+    public function selectColor (color :uint) :void
+    {
+        setSwatchColor(color);
+        _onColorSelected(color);
+    }
+
+    public function selectRandomColor () :void
+    {
+        var bm :BitmapData = _bitmaps[_type];
+        selectColor(bm.getPixel(rand(0, bm.width - 1), rand(0, bm.height - 1)));
+    }
+
+    protected function setSwatchColor (color :uint) :void
+    {
+        _swatch.graphics.beginFill(color);
+        _swatch.graphics.drawRect(0, 0, _palette.width, SWATCH_HEIGHT);
+        _swatch.graphics.endFill();
+
+        _swatchColor = color;
+    }
+
+    protected static function getBitmapData (src :DisplayObject) :BitmapData
+    {
+        var bounds :Rectangle = src.getBounds(src);
+        var bd :BitmapData = new BitmapData(bounds.width, bounds.height, true, 0);
+        bd.draw(src, new Matrix(1, 0, 0, 1, -bounds.x, -bounds.y));
+        return bd;
+    }
+
+    //protected var _button :SimpleButton;
+    protected var _type :int;
+    protected var _onColorSelected :Function;
+    protected var _palette :MovieClip;
+    protected var _swatch :Shape;
+    protected var _swatchColor :uint;
+
+    protected static var _bitmaps :Array = [ null, null ];
+
+    protected static const PALETTE_MOVIES :Array = [ "palette_vamp", "palette_all" ];
+    protected static const SCALES :Array = [ 3, 2 ];
+
+    protected static const SWATCH_HEIGHT :int = 20;
+    protected static const BORDER :int = 6;
 }
 
 class Dropdown extends Sprite
@@ -216,6 +377,7 @@ class Dropdown extends Sprite
         _items = items;
         _onItemSelected = onItemSelected;
 
+        var uiSprite :Sprite = new Sprite();
         var dropdownClass :Class = getClass("dropdown_option");
         var yOffset :Number = 0;
         for (var ii :int = 0; ii < items.length; ii += 2) {
@@ -227,10 +389,19 @@ class Dropdown extends Sprite
             selectButton.addEventListener(MouseEvent.CLICK, createItemSelectedCallback(ii));
             selectButton.x = (selectButton.width * 0.5);
             selectButton.y = (selectButton.height * 0.5) + yOffset;
-            addChild(selectButton);
+            uiSprite.addChild(selectButton);
 
             yOffset += 15;
         }
+
+        var g :Graphics = this.graphics;
+        g.beginFill(0);
+        g.drawRect(0, 0, uiSprite.width + (BORDER * 2), uiSprite.height + (BORDER * 2));
+        g.endFill();
+
+        uiSprite.x = (this.width - uiSprite.width) * 0.5;
+        uiSprite.y = (this.height - uiSprite.height) * 0.5;
+        addChild(uiSprite);
     }
 
     public function selectItemByName (name :String) :void
@@ -249,6 +420,11 @@ class Dropdown extends Sprite
                 selectItem(ii);
             }
         }
+    }
+
+    public function selectRandomItem () :void
+    {
+        selectItem(2 * rand(0, (_items.length / 2) - 1));
     }
 
     protected function selectItem (idx :int) :void
@@ -296,4 +472,6 @@ class Dropdown extends Sprite
     protected var _onItemSelected :Function;
 
     protected static const log :Log = Log.getLog(Dropdown);
+
+    protected static const BORDER :Number = 6;
 }
