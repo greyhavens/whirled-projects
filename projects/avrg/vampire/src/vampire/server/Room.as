@@ -16,7 +16,6 @@ import com.whirled.contrib.simplegame.server.SimObjectThane;
 import vampire.Util;
 import vampire.data.Codes;
 import vampire.data.VConstants;
-import vampire.net.messages.FeedRequestMessage2;
 
 public class Room extends SimObjectThane
     implements Hashable
@@ -463,20 +462,23 @@ public class Room extends SimObjectThane
 
         var preyIsPlayer :Boolean = isPlayer( gameRecord.preyId );
         var preyPlayer :Player;
-        var bloodGained :Number;
+        var bloodGained :Number = 0;
         var preyId :int = gameRecord.preyId;
+        var damage :Number = VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
+        //Each predator damages the prey
+        damage = damage * gameRecord.predators.size();
 
         //Handle the prey loss of blood
         if( preyIsPlayer ) {
             log.debug("Prey is player");
             preyPlayer = getPlayer( gameRecord.preyId );
-            bloodGained =  Math.abs(preyPlayer.damage( VConstants.BLOOD_FRACTION_LOST_PER_FEED * preyPlayer.maxBlood ));
+            bloodGained = Math.abs(preyPlayer.damage( damage ));
             ServerContext.vserver.awardBloodBondedBloodEarned( preyPlayer, bloodGained);
             addFeedback( "You lost " + Util.formatNumberForFeedback(bloodGained) + " from feeding", preyPlayer.playerId);
         }
         else {
             log.debug("Prey is nonplayer");
-            bloodGained = Math.abs(ServerContext.nonPlayersBloodMonitor.damageNonPlayer( gameRecord.preyId, VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED, roomId ));
+            bloodGained = Math.abs(ServerContext.nonPlayersBloodMonitor.damageNonPlayer( gameRecord.preyId, damage, roomId ));
         }
         log.debug("Prey lost " + bloodGained + " blood");
 
