@@ -13,7 +13,7 @@ package vampire.client.events
             _playerGainedMinion = playerWithNewMinion;
         }
 
-        public function get hierarchy() :Lineage
+        public function get lineage() :Lineage
         {
             return _lineage;
         }
