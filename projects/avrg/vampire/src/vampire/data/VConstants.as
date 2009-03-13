@@ -8,7 +8,9 @@ public class VConstants
     /**
     * If you're not related to the ubervamp
     */
-    public static const UBER_VAMP_ID :int = 12;//On localhost only.  Create an id for whirled.
+    public static const UBER_VAMP_ID :int = 12;
+    //ubervamp localhost == 12
+    //ubervamp dev.whirled == 1877
 
     /**This is like a radius in logical distance units.*/
     public static const FEEDING_LOGICAL_X_OFFSET :Number = 0.1;
@@ -24,7 +26,7 @@ public class VConstants
 
     public static const UNIQUE_BLOOD_STRAINS :int = 12;
 
-    public static const TIME_FEEDBACK_MESSAGE_DISPLAY :Number = 4;
+//    public static const TIME_FEEDBACK_MESSAGE_DISPLAY :Number = 4;
 
     public static const BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME :int = 10;
 
@@ -38,7 +40,7 @@ public class VConstants
     /**
     * The hourly loss of blood as a fraction of the maximum amount of blood of a vampire.
     */
-    public static const BLOOD_LOSS_HOURLY_RATE_WHILE_SLEEPING :Number = 1.0;// / 48;//After two days you lose all your blood
+    public static const BLOOD_LOSS_DAILY_RATE_WHILE_SLEEPING :Number = 10;// / 48;//After two days you lose all your blood
 
     /**
     * When a vampire is fed upon, it loses this fraction of total blood.

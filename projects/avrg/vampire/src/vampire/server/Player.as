@@ -119,14 +119,14 @@ public class Player extends EventHandlerManager
             if( millisecondsSinceLastAwake < 0) {
                 log.error("Computing time since last awake, but < 0, now=" + now + ", time=" + time);
             }
-            var hoursSinceLastAwake :Number = millisecondsSinceLastAwake / (1000*60*60);
-            log.debug("hoursSinceLastAwake=" + hoursSinceLastAwake);
+            var daysSinceLastAwake :Number = millisecondsSinceLastAwake / (1000*60*60*24);
+            log.debug("daysSinceLastAwake=" + daysSinceLastAwake);
             log.debug("secondSinceLastAwake=" + (millisecondsSinceLastAwake/1000));
-            var bloodReduction :Number = VConstants.BLOOD_LOSS_HOURLY_RATE_WHILE_SLEEPING * hoursSinceLastAwake * maxBlood;
+            var bloodReduction :Number = VConstants.BLOOD_LOSS_DAILY_RATE_WHILE_SLEEPING * daysSinceLastAwake;
             log.debug("bloodReduction=" + bloodReduction);
-            bloodReduction = Math.min( bloodReduction, this.blood - 1);
-            addFeedback( "Blood lost during sleep: " + Util.formatNumberForFeedback(bloodReduction));
-            damage( bloodReduction );
+//            bloodReduction = Math.min( bloodReduction, this.blood - 1);
+            var actualBloodLost :Number = damage( bloodReduction );
+            addFeedback( "Blood lost during sleep: " + Util.formatNumberForFeedback(actualBloodLost));
 
 //            log.debug("bloodnow=" + bloodnow, "in props", blood);
 
@@ -1199,12 +1199,6 @@ public class Player extends EventHandlerManager
     public function setTargetId (id :int) :void
     {
         _targetId = id;
-
-        //If we have a new target, reset the chatting record.
-//        if( _targetId != id) {
-//            _chatTimesWithTarget.splice(0);
-//        }
-
     }
 
     public function setTargetLocation (location :Array) :void
@@ -1212,9 +1206,9 @@ public class Player extends EventHandlerManager
         _targetLocation = location;
     }
 
-    protected function setTime (time :Number, force :Boolean = false) :void
+    public function setTime (time :Number, force :Boolean = false) :void
     {
-        log.info("setTime()", "time", new Date(time).toTimeString());
+//        log.info("setTime()", "time", new Date(time).toTimeString());
 
         // update our runtime state
         if (!force && time == _timePlayerPreviouslyQuit) {
@@ -1222,7 +1216,7 @@ public class Player extends EventHandlerManager
         }
         _timePlayerPreviouslyQuit = time;
 
-        _ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, _timePlayerPreviouslyQuit, true);
+//        _ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, _timePlayerPreviouslyQuit, true);
     }
 
     public function addToInviteTally( addition :int = 1 ) :void
@@ -1458,7 +1452,6 @@ public class Player extends EventHandlerManager
             case VConstants.GAME_MODE_FEED_FROM_PLAYER:
                 var victim :Player = ServerContext.vserver.getPlayer( targetId );
                 if( victim != null ) {
-//                    victim.setTargetId(0);
                     victim.setAction( VConstants.GAME_MODE_NOTHING );
                 }
                 else {
@@ -1470,7 +1463,6 @@ public class Player extends EventHandlerManager
             case VConstants.GAME_MODE_BARED:
                 var predator :Player = ServerContext.vserver.getPlayer( targetId );
                 if( predator != null ) {
-//                    predator.setTargetId(0);
                     predator.setAction( VConstants.GAME_MODE_NOTHING );
                 }
                 else {
