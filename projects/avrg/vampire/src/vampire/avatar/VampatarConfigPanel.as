@@ -87,16 +87,35 @@ public class VampatarConfigPanel extends Sprite
             _config.shoesNumber);
 
         // color pickers
-        var hairColorButton :SimpleButton = panel["hair_color"];
-        createColorPicker(
-            hairColorButton,
-            function (color :uint) :void {
-                if (_config.hairColor != color) {
-                    _config.hairColor = color;
+        var hairColorButton :ColorPicker = panel["hair_color"];
+        hairColorButton.selectedColor = _config.hairColor;
+        hairColorButton.addEventListener(ColorPickerEvent.CHANGE,
+            function (e :ColorPickerEvent) :void {
+                if (_config.hairColor != e.color) {
+                    _config.hairColor = e.color;
                     configUpdated();
                 }
-            },
-            _config.hairColor);
+            });
+
+        var shirtColorButton :ColorPicker = panel["top_color"];
+        shirtColorButton.selectedColor = _config.shirtColor;
+        shirtColorButton.addEventListener(ColorPickerEvent.CHANGE,
+            function (e :ColorPickerEvent) :void {
+                if (_config.shirtColor != e.color) {
+                    _config.shirtColor = e.color;
+                    configUpdated();
+                }
+            });
+
+        var shoesColorButton :ColorPicker = panel["shoes_color"];
+        shoesColorButton.selectedColor = _config.shoesColor;
+        shoesColorButton.addEventListener(ColorPickerEvent.CHANGE,
+            function (e :ColorPickerEvent) :void {
+                if (_config.shoesColor != e.color) {
+                    _config.shoesColor = e.color;
+                    configUpdated();
+                }
+            });
 
         // A hack to fake mouse capture when a dropdown is being displayed. (Captures
         // all clicks outside the dropdown, and closes the dropdown without allowing the
@@ -126,24 +145,6 @@ public class VampatarConfigPanel extends Sprite
             });
 
         _pickers.push(dropdown);
-    }
-
-    protected function createColorPicker (button :SimpleButton, onColorSelected :Function,
-                                          initialColor :uint) :void
-    {
-        var cp :ColorPicker = new ColorPicker();
-        cp.selectedColor = initialColor;
-        cp.addEventListener(ColorPickerEvent.CHANGE,
-            function (e :ColorPickerEvent) :void {
-                onColorSelected(e.color);
-            });
-
-        button.addEventListener(MouseEvent.MOUSE_DOWN,
-            function (...ignored) :void {
-                showPicker(cp);
-            });
-
-        _pickers.push(cp);
     }
 
     protected function showPicker (picker :DisplayObject) :void
