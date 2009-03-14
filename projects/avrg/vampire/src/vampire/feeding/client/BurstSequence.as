@@ -116,12 +116,13 @@ public class BurstSequence extends SceneObject
 
         if (_totalBursts >= Constants.CREATE_BONUS_BURST_SIZE) {
             // Send a multiplier to the other players
-            GameCtx.gameMode.sendMultiplier(_largestMultiplier + 1, this.x, this.y);
+            var multiplierSize :int = _totalMultiplier + 1;
+            GameCtx.gameMode.sendMultiplier(multiplierSize, this.x, this.y);
 
             // Show an animation of this happening
             var anim :NewBonusAnimation = new NewBonusAnimation(
                 NewBonusAnimation.TYPE_SEND,
-                _largestMultiplier + 1,
+                multiplierSize,
                 new Vector2(this.x, this.y));
             GameCtx.gameMode.addObject(anim, GameCtx.uiLayer);
         }
