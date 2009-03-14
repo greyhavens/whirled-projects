@@ -86,6 +86,10 @@ public class AvatarHUD extends SceneObject
     {
         super.update(dt);
 
+        if( _ctrl == null || !_ctrl.isConnected() ) {
+            return;
+        }
+
 
         //We don't need to update every frame.
 //        _timeSinceLastUpdate += dt;
