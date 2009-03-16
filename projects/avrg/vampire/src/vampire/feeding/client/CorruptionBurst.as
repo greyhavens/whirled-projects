@@ -4,9 +4,9 @@ import com.whirled.contrib.simplegame.tasks.*;
 
 import vampire.feeding.*;
 
-public class WhiteBurst extends CellBurst
+public class CorruptionBurst extends CellBurst
 {
-    public function WhiteBurst (isBlackBurst :Boolean)
+    public function CorruptionBurst (isBlackBurst :Boolean)
     {
         super(
             isBlackBurst ? Constants.BURST_BLACK : Constants.BURST_WHITE,
@@ -32,7 +32,7 @@ public class WhiteBurst extends CellBurst
     {
         super.update(dt);
 
-        // When we collide with red cells, bonus cells, or RedBursts, we create new WhiteBursts
+        // When we collide with red cells, bonus cells, or RedBursts, we create new CorruptionBursts
         var collided :CollidableObj = RedBurst.getRedBurstCollision(this);
         if (collided == null) {
             var cell :Cell = Cell.getCellCollision(this);
@@ -42,7 +42,7 @@ public class WhiteBurst extends CellBurst
         }
 
         if (collided != null) {
-            GameObjects.createWhiteBurst(collided);
+            GameObjects.createCorruptionBurst(collided);
         }
     }
 

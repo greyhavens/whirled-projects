@@ -40,14 +40,14 @@ public class GameObjects
         return obj;
     }
 
-    public static function createWhiteBurst (fromObj :CollidableObj) :WhiteBurst
+    public static function createCorruptionBurst (fromObj :CollidableObj) :CorruptionBurst
     {
         var isBlackBurst :Boolean = true;
         if (fromObj is Cell) {
             isBlackBurst = !((fromObj as Cell).isWhiteCell);
         }
 
-        var obj :WhiteBurst = new WhiteBurst(isBlackBurst);
+        var obj :CorruptionBurst = new CorruptionBurst(isBlackBurst);
 
         var loc :Point =
             fromObj.displayObject.parent.localToGlobal(new Point(fromObj.x, fromObj.y));

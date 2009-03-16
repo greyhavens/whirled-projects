@@ -177,7 +177,7 @@ public class Cell extends CollidableObj
             new ShowFramesTask(
                 _movie, 1, ShowFramesTask.LAST_FRAME, Constants.WHITE_CELL_EXPLODE_TIME),
             new FunctionTask(function () :void {
-                GameObjects.createWhiteBurst(thisCell);
+                GameObjects.createCorruptionBurst(thisCell);
                 GameCtx.gameMode.whiteCellBurst();
             })));
     }
