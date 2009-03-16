@@ -22,8 +22,8 @@ public class GameMode extends AppMode
         this.modeSprite.addChild(_gameUILayer);
         this.modeSprite.addChild(_helpLayer);
 
-        this.addObject(new HUDView(), _gameUILayer);
-        this.addObject(new InGameHelpView(), _helpLayer);
+        this.addSceneObject(new HUDView(), _gameUILayer);
+        this.addSceneObject(new InGameHelpView(), _helpLayer);
 
         this.hideHelpScreen();
 
@@ -61,7 +61,7 @@ public class GameMode extends AppMode
 
         // create a new card
         ClientCtx.model.createNewCard();
-        this.addObject(new BingoCardView(ClientCtx.model.card), _gameUILayer);
+        this.addSceneObject(new BingoCardView(ClientCtx.model.card), _gameUILayer);
 
         this.startNewBallTimer();
 
@@ -151,7 +151,7 @@ public class GameMode extends AppMode
         // the WinnerAnimationController will destroy itself when the animation is complete.
         // We check for the presence of the controller in update(), and when it's gone, we
         // start the next round.
-        this.addObject(new WinnerAnimationView(winnerName), _gameUILayer);
+        this.addSceneObject(new WinnerAnimationView(winnerName), _gameUILayer);
     }
 
     protected function handleNewScores (...ignored) :void
