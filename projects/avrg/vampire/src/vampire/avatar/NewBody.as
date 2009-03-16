@@ -256,24 +256,29 @@ public class NewBody
         if ((_curMovie != _playing.current) ||
             (_curMovie != null && _curMovie.currentFrame == _curMovie.totalFrames)) {
 
+            // Get the next scene
             if (_movieQueue.length > 0) {
                 _playing = (_movieQueue.shift() as MovieList);
             } else {
                 _playing.update();
             }
 
-            if (_curMovie != null) {
-                _media.removeChild(_curMovie);
-                _curMovie = null;
-            }
+            if (_playing.current != _curMovie) {
+                // Remove the currently-playing movie
+                if (_curMovie != null) {
+                    _media.removeChild(_curMovie);
+                    _curMovie = null;
+                }
 
-            if (_playing.current != null) {
-                _curMovie = _playing.current;
-                _curMovie.x = _playing.currentLoc.x;
-                _curMovie.y = _playing.currentLoc.y;
-                _media.addChild(_curMovie);
-                _curMovie.gotoAndPlay(1);
-                _center = null;
+                // And play the new one
+                if (_playing.current != null) {
+                    _curMovie = _playing.current;
+                    _curMovie.x = _playing.currentLoc.x;
+                    _curMovie.y = _playing.currentLoc.y;
+                    _media.addChild(_curMovie);
+                    playMovie(_curMovie);
+                    _center = null;
+                }
             }
         }
 
@@ -286,6 +291,13 @@ public class NewBody
                 _ctrl.setHotSpot(_center.x, _center.y, _mediaHeight);
             }
         }
+    }
+
+    protected function playMovie (movie :MovieClip) :void
+    {
+        // subclasses can override this to do implementation-specific things when a new
+        // movie is played
+        movie.gotoAndPlay(1);
     }
 
     protected function appearanceChanged (event :ControlEvent) :void
