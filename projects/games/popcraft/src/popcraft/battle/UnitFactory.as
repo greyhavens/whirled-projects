@@ -65,7 +65,7 @@ public class UnitFactory extends EventDispatcher
             break;
         }
 
-        GameCtx.gameMode.addObject(creatureView, GameCtx.battleBoardView.unitViewParent);
+        GameCtx.gameMode.addSceneObject(creatureView, GameCtx.battleBoardView.unitViewParent);
 
         // play a sound
         GameCtx.playGameSound("sfx_create_" + Constants.CREATURE_UNIT_NAMES[unitType]);
@@ -79,7 +79,7 @@ public class UnitFactory extends EventDispatcher
         GameCtx.netObjects.addObject(workshop);
 
         var workshopView :WorkshopView = new WorkshopView(workshop);
-        GameCtx.gameMode.addObject(workshopView, GameCtx.battleBoardView.unitViewParent);
+        GameCtx.gameMode.addSceneObject(workshopView, GameCtx.battleBoardView.unitViewParent);
 
         dispatchEvent(new UnitCreatedEvent(Constants.UNIT_TYPE_WORKSHOP,
             owningPlayerInfo.playerIndex));

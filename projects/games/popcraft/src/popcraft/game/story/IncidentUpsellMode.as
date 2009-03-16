@@ -35,7 +35,7 @@ public class IncidentUpsellMode extends AppMode
         _manualObj = new SimpleSceneObject(movie);
         _manualObj.x = Constants.SCREEN_SIZE.x * 0.5;
         _manualObj.y = Constants.SCREEN_SIZE.y * 0.5;
-        addObject(_manualObj, this.modeSprite);
+        addSceneObject(_manualObj, this.modeSprite);
 
         var okButton :SimpleButton = rightPage["ok"];
         registerOneShotCallback(okButton, MouseEvent.CLICK,

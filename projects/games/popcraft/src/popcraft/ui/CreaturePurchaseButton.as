@@ -1,5 +1,6 @@
 package popcraft.ui {
 
+import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
@@ -18,10 +19,10 @@ import flash.geom.Point;
 import flash.text.TextField;
 
 import popcraft.*;
-import popcraft.game.*;
 import popcraft.battle.*;
 import popcraft.battle.view.*;
 import popcraft.data.*;
+import popcraft.game.*;
 
 public class CreaturePurchaseButton extends SimObject
 {
@@ -110,7 +111,7 @@ public class CreaturePurchaseButton extends SimObject
     {
         super.addedToDB();
         _animView = new BitmapAnimView(_disabledAnim);
-        this.db.addObject(_animView, _unitDisplay);
+        (this.db as AppMode).addSceneObject(_animView, _unitDisplay);
 
         if (Constants.UNIT_TYPE_COURIER != _unitType && Constants.UNIT_TYPE_SAPPER != _unitType) {
             _animView.y = 30;

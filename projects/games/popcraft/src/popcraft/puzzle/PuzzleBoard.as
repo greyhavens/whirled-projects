@@ -99,7 +99,7 @@ public class PuzzleBoard extends SceneObject
         _board[boardIndex] = piece;
 
         // add the Piece to the mode, as a child of the board sprite
-        this.db.addObject(piece, _sprite);
+        (this.db as AppMode).addSceneObject(piece, _sprite);
 
         return piece;
     }
@@ -245,7 +245,7 @@ public class PuzzleBoard extends SceneObject
         // Show the "resources earned" animation. It will clean up after itself.
         var animLoc :Point = _sprite.localToGlobal(new Point(_sprite.mouseX, _sprite.mouseY - 6));
         animLoc = GameCtx.overlayLayer.globalToLocal(animLoc);
-        GameCtx.gameMode.addObject(
+        GameCtx.gameMode.addSceneObject(
             new ResourceValueAnim(animLoc, resourceType, resourceValue),
             GameCtx.overlayLayer);
 

@@ -116,7 +116,7 @@ public class EndlessLevelSelectModeBase extends AppMode
                         mx.effects.easing.Cubic.easeIn),
                     new ScaleTask(1, 1, 1))));
 
-            addObject(multiplierObj, _modeSprite);
+            addSceneObject(multiplierObj, _modeSprite);
         }
     }
 
@@ -200,7 +200,7 @@ public class EndlessLevelSelectModeBase extends AppMode
         _saveView.x = newStartLoc.x;
         _saveView.y = newStartLoc.y;
         _saveView.addTask(newViewTask);
-        addObject(_saveView, _saveViewLayer);
+        addSceneObject(_saveView, _saveViewLayer);
 
         // wire up buttons
         if (this.enableHelpButton) {
@@ -303,7 +303,7 @@ public class EndlessLevelSelectModeBase extends AppMode
             _helpView = new HelpView();
             _helpView.x = HELP_VIEW_LOC.x;
             _helpView.y = HELP_VIEW_LOC.y;
-            addObject(_helpView, _helpLayer);
+            addSceneObject(_helpView, _helpLayer);
         }
 
         _helpView.visible = true;

@@ -318,7 +318,7 @@ public class MultiplayerLobbyMode extends AppMode
                     var headshot :LobbyHeadshotSprite = _headshots.get(seat);
                     if (headshot == null) {
                         headshot = new LobbyHeadshotSprite(seat);
-                        addObject(headshot, _lobbyLayer);
+                        addSceneObject(headshot, _lobbyLayer);
                         _headshots.put(seat, headshot);
                     }
 

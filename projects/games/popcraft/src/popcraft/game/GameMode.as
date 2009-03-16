@@ -83,7 +83,7 @@ public class GameMode extends TransitionMode
 
         if (Constants.DEBUG_DRAW_STATS) {
             _debugDataView = new DebugDataView();
-            addObject(_debugDataView, GameCtx.overlayLayer);
+            addSceneObject(_debugDataView, GameCtx.overlayLayer);
             _debugDataView.visible = true;
         }
     }
@@ -184,7 +184,7 @@ public class GameMode extends TransitionMode
         var dashboard :DashboardView = new DashboardView();
         dashboard.x = DASHBOARD_LOC.x;
         dashboard.y = DASHBOARD_LOC.y;
-        addObject(dashboard, GameCtx.dashboardLayer);
+        addSceneObject(dashboard, GameCtx.dashboardLayer);
 
         GameCtx.dashboard = dashboard;
 
@@ -229,7 +229,7 @@ public class GameMode extends TransitionMode
 
         // Board
         var battleBoardView :BattleBoardView = new BattleBoardView(BATTLE_WIDTH, BATTLE_HEIGHT);
-        addObject(battleBoardView, GameCtx.battleLayer);
+        addSceneObject(battleBoardView, GameCtx.battleLayer);
 
         GameCtx.battleBoardView = battleBoardView;
 
@@ -241,7 +241,7 @@ public class GameMode extends TransitionMode
             var diurnalMeter :DiurnalCycleView = new DiurnalCycleView();
             diurnalMeter.x = DIURNAL_METER_LOC.x;
             diurnalMeter.y = DIURNAL_METER_LOC.y;
-            addObject(diurnalMeter, GameCtx.battleBoardView.diurnalMeterParent);
+            addSceneObject(diurnalMeter, GameCtx.battleBoardView.diurnalMeterParent);
         }
     }
 

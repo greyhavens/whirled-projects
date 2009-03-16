@@ -3,6 +3,7 @@ package popcraft.battle.view {
 import com.threerings.flash.Vector2;
 import com.threerings.util.Assert;
 import com.threerings.util.Log;
+import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
@@ -15,9 +16,9 @@ import flash.display.Sprite;
 import flash.geom.Rectangle;
 
 import popcraft.*;
-import popcraft.game.*;
 import popcraft.battle.*;
 import popcraft.data.*;
+import popcraft.game.*;
 import popcraft.ui.HealthMeters;
 import popcraft.ui.RectMeterView;
 import popcraft.util.*;
@@ -135,7 +136,7 @@ public class CreatureUnitView extends BattlefieldSprite
             bloodObj.x = x;
             bloodObj.y = y;
 
-            this.db.addObject(bloodObj, _sprite);
+            (this.db as AppMode).addSceneObject(bloodObj, _sprite);
 
             _lastBloodTime = timeNow;
         }
@@ -326,7 +327,7 @@ public class CreatureUnitView extends BattlefieldSprite
 
             // show a death animation (will self-destruct when animation is complete)
             if (!_unit.preventDeathAnimation) {
-                GameCtx.gameMode.addObject(
+                GameCtx.gameMode.addSceneObject(
                     new DeadCreatureUnitView(_unit, _lastViewState.facing),
                     GameCtx.battleBoardView.unitViewParent);
             }

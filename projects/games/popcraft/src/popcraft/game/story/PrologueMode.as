@@ -38,7 +38,7 @@ public class PrologueMode extends TransitionMode
         movieTask.addTask(new WaitForFrameTask("end"));
         movieTask.addTask(new FunctionTask(endPrologue));
         movieObj.addTask(movieTask);
-        addObject(movieObj, _modeLayer);
+        addSceneObject(movieObj, _modeLayer);
 
         // skip button, to end the sequence
         _skipButton = UIBits.createButton("Skip", 1.2);

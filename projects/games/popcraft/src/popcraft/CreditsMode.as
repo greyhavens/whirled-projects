@@ -78,7 +78,7 @@ public class CreditsMode extends AppMode
                 Rand.nextIntRange(WANDER_BOUNDS.left, WANDER_BOUNDS.right + 1, Rand.STREAM_COSMETIC);
             creature.y =
                 Rand.nextIntRange(WANDER_BOUNDS.top, WANDER_BOUNDS.bottom + 1, Rand.STREAM_COSMETIC);
-            addObject(creature, _unitParent);
+            addSceneObject(creature, _unitParent);
         }
 
         for (ii = 0; ii < NUM_DEAD_CREATURES; ++ii) {
@@ -104,7 +104,7 @@ public class CreditsMode extends AppMode
                 Rand.nextIntRange(DIE_BOUNDS.top, DIE_BOUNDS.bottom + 1, Rand.STREAM_COSMETIC);
             animView.scaleX = (flipX ? -1 : 1);
 
-            addObject(animView, _unitParent);
+            addSceneObject(animView, _unitParent);
         }
     }
 

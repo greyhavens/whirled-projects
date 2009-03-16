@@ -41,7 +41,7 @@ public class DeadCreatureUnitView extends BattlefieldSprite
             }
 
             _bitmapAnimView = new BitmapAnimView(bitmapAnim);
-            GameCtx.gameMode.addObject(_bitmapAnimView, _sprite);
+            GameCtx.gameMode.addSceneObject(_bitmapAnimView, _sprite);
 
             // wait 2 seconds, then self destruct
             addTask(After(2, new SelfDestructTask()));

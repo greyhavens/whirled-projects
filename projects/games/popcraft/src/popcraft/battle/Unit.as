@@ -208,7 +208,7 @@ public class Unit extends SimObject
             // fade out and die
             aoeObj.addTask(After(1, new SerialTask(new AlphaTask(0, 0.3), new SelfDestructTask())));
 
-            GameCtx.gameMode.addObject(aoeObj, GameCtx.battleBoardView.unitViewParent);
+            GameCtx.gameMode.addSceneObject(aoeObj, GameCtx.battleBoardView.unitViewParent);
         }
 
         return totalDamage;

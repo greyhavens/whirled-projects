@@ -96,7 +96,8 @@ public class PopCraft extends Sprite
             handleSizeChanged();
 
             // and don't show the "rematch" button - we have a UI for it in-game
-            ClientCtx.gameCtrl.local.setShowReplay(false);
+            // (This is now no longer in the API)
+            //ClientCtx.gameCtrl.local.setShowReplay(false);
 
             // get level packs
             ClientCtx.reloadLevelPacks();

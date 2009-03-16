@@ -23,7 +23,7 @@ public class SpellDropFactory
         var spellDropView :SpellDropView = new SpellDropView(spellDrop);
         spellDropView.x = loc.x;
         spellDropView.y = loc.y;
-        GameCtx.gameMode.addObject(spellDropView, GameCtx.battleBoardView.unitViewParent);
+        GameCtx.gameMode.addSceneObject(spellDropView, GameCtx.battleBoardView.unitViewParent);
 
         if (playSound) {
             GameCtx.playGameSound("sfx_spelldrop");

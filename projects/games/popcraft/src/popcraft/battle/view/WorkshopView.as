@@ -103,7 +103,7 @@ public class WorkshopView extends BattlefieldSprite
         _shoutView = new ShoutView();
         _shoutView.x = SHOUT_VIEW_LOC.x;
         _shoutView.y = SHOUT_VIEW_LOC.y;
-        GameCtx.gameMode.addObject(_shoutView, _sprite);
+        GameCtx.gameMode.addSceneObject(_shoutView, _sprite);
 
         // clickable sprite
         _clickableSprite.graphics.beginFill(0, 0);
@@ -248,7 +248,7 @@ public class WorkshopView extends BattlefieldSprite
                 destroySelf();
 
                 // create the rubble sprite
-                GameCtx.gameMode.addObject(
+                GameCtx.gameMode.addSceneObject(
                     new DeadWorkshopView(_unit),
                     GameCtx.battleBoardView.unitViewParent);
 
@@ -357,7 +357,7 @@ public class WorkshopView extends BattlefieldSprite
             debrisObj.x = x;
             debrisObj.y = y;
 
-            this.db.addObject(debrisObj, _sprite);
+            (this.db as AppMode).addSceneObject(debrisObj, _sprite);
 
             _lastDebrisTime = timeNow;
         }

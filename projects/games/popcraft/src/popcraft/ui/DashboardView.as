@@ -70,7 +70,8 @@ public class DashboardView extends SceneObject
                 continue;
             }
 
-            GameCtx.gameMode.addObject(new CreaturePurchaseButton(unitType, buttonNumber++, unitParent));
+            GameCtx.gameMode.addObject(
+                new CreaturePurchaseButton(unitType, buttonNumber++, unitParent));
         }
 
         // hide the components of all the buttons that aren't being used
@@ -172,7 +173,7 @@ public class DashboardView extends SceneObject
             if (!liveView.isLiveObject) {
                 liveView.x = loc.x;
                 liveView.y = loc.y + liveView.height;
-                GameCtx.gameMode.addObject(liveView, playerFrame);
+                GameCtx.gameMode.addSceneObject(liveView, playerFrame);
             }
 
             // animate the view to its new location
@@ -244,7 +245,7 @@ public class DashboardView extends SceneObject
                 onSpellButtonClicked(spellButton);
             });
 
-        this.db.addObject(spellButton, _movie);
+        (this.db as AppMode).addSceneObject(spellButton, _movie);
     }
 
     protected function onSpellButtonClicked (spellButton :SpellButton) :void

@@ -21,7 +21,7 @@ public class MissileFactory
 
         // create the animated missile view
         var missileView :MissileView = new MissileView(srcUnitLoc, targetUnit, travelTime);
-        GameCtx.gameMode.addObject(missileView, GameCtx.battleBoardView.unitViewParent);
+        GameCtx.gameMode.addSceneObject(missileView, GameCtx.battleBoardView.unitViewParent);
 
         return missile;
     }

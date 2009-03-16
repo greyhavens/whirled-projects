@@ -28,7 +28,7 @@ public class PlayerOptionsPopup extends SceneObject
         var popup :PlayerOptionsPopup = topMode.getObjectNamed(NAME) as PlayerOptionsPopup;
         if (popup == null) {
             popup = new PlayerOptionsPopup();
-            topMode.addObject(popup, parent);
+            topMode.addSceneObject(popup, parent);
         }
 
         popup.initPlayerOptions();

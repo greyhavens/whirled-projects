@@ -17,7 +17,7 @@ public class ResetSavedGamesDialog extends AppMode
     {
         super.setup();
 
-        addObject(new ResetSavedGamesView(TEXT,
+        addSceneObject(new ResetSavedGamesView(TEXT,
             function () :void {
                 close(true);
             },

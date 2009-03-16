@@ -71,7 +71,7 @@ public class EndlessGameMode extends GameMode
         }
 
         var scoreView :ScoreView = new ScoreView();
-        addObject(scoreView, GameCtx.overlayLayer);
+        addSceneObject(scoreView, GameCtx.overlayLayer);
     }
 
     override protected function enter () :void

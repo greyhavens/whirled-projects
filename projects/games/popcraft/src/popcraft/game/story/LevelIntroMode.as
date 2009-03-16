@@ -66,7 +66,7 @@ public class LevelIntroMode extends AppMode
 
         manualFrontObj.addTask(manualFrontTask);
 
-        addObject(manualFrontObj, this.modeSprite);
+        addSceneObject(manualFrontObj, this.modeSprite);
 
         this.modeSprite.visible = false;
     }
@@ -94,7 +94,7 @@ public class LevelIntroMode extends AppMode
         _manualObj = new SimpleSceneObject(manual);
         _manualObj.x = Constants.SCREEN_SIZE.x * 0.5;
         _manualObj.y = Constants.SCREEN_SIZE.y * 0.5;
-        addObject(_manualObj, this.modeSprite);
+        addSceneObject(_manualObj, this.modeSprite);
 
         doNextPhase();
     }

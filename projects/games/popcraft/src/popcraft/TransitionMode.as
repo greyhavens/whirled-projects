@@ -66,7 +66,7 @@ public class TransitionMode extends AppMode
             g.endFill();
 
             _darkness = new SimpleSceneObject(shape);
-            addObject(_darkness, _fadeLayer);
+            addSceneObject(_darkness, _fadeLayer);
         }
 
         return _darkness;

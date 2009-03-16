@@ -116,7 +116,7 @@ public class LevelSelectMode extends DemoGameMode
         playButton.y = STORY_BUTTON_LOC.y;
         registerListener(playButton, MouseEvent.CLICK, onPlayClicked);
         _playButtonObj = new SimpleSceneObject(playButton);
-        addObject(_playButtonObj, _mainUiLayer);
+        addSceneObject(_playButtonObj, _mainUiLayer);
 
         // show the select panel, which contains the Multiplayer button
         var selectPanel :MovieClip = ClientCtx.instantiateMovieClip("splashUi", "select_panel");
@@ -223,7 +223,7 @@ public class LevelSelectMode extends DemoGameMode
         _puzzleIntro.x = 470;
         _puzzleIntro.y = 275;
         createHelpTextAnimTask(_puzzleIntro, 470, 475);
-        addObject(_puzzleIntro, _mainUiLayer);
+        addSceneObject(_puzzleIntro, _mainUiLayer);
 
         var unitIntroMovie :MovieClip = ClientCtx.instantiateMovieClip("splashUi",
             "unit_intro");
@@ -232,7 +232,7 @@ public class LevelSelectMode extends DemoGameMode
         _unitIntro.x = 9;
         _unitIntro.y = 265;
         createHelpTextAnimTask(_unitIntro, 9, 4);
-        addObject(_unitIntro, _mainUiLayer);
+        addSceneObject(_unitIntro, _mainUiLayer);
 
         var resourceIntroMovie :MovieClip = ClientCtx.instantiateMovieClip("splashUi",
             "resource_intro");
@@ -241,7 +241,7 @@ public class LevelSelectMode extends DemoGameMode
         _resourceIntro.x = 9;
         _resourceIntro.y = 265;
         createHelpTextAnimTask(_resourceIntro, 9, 4);
-        addObject(_resourceIntro, _mainUiLayer);
+        addSceneObject(_resourceIntro, _mainUiLayer);
 
         _showingTutorial = true;
         updateTutorial();

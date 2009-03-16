@@ -54,7 +54,7 @@ public class SpEndlessLevelSelectMode extends SpEndlessLevelSelectModeBase
                 resetView.destroySelf();
             });
 
-        addObject(resetView, _modeSprite);
+        addSceneObject(resetView, _modeSprite);
     }
 
     override protected function get enableResetButton () :Boolean
