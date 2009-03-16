@@ -4,6 +4,8 @@ import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
 import com.whirled.contrib.ColorMatrix;
 
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.filters.BitmapFilter;
 import flash.filters.ColorMatrixFilter;
@@ -187,8 +189,27 @@ public class VampireBody extends NewBody
     override protected function playMovie (movie :MovieClip) :void
     {
         super.playMovie(movie);
+
         if (movie != null) {
+            log.info("Restarting movies");
+            // recursively restart all movies
+            restartAllMovies(movie);
+            // and reselect our configurations
             selectCurConfigFrames([ movie ]);
+        }
+    }
+
+    protected static function restartAllMovies (disp :DisplayObjectContainer) :void
+    {
+        if (disp is MovieClip) {
+            (disp as MovieClip).gotoAndPlay(1);
+        }
+
+        for (var ii :int = 0; ii < disp.numChildren; ++ii) {
+            var child :DisplayObject = disp.getChildAt(ii);
+            if (child is DisplayObjectContainer) {
+                restartAllMovies(child as DisplayObjectContainer);
+            }
         }
     }
 
