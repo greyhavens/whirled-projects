@@ -32,7 +32,7 @@ public class HUDView extends SceneObject
         var switchBoardsButton :SwitchBoardsButton = new SwitchBoardsButton();
         switchBoardsButton.x = BUTTON_X;
         switchBoardsButton.y = (size.y - switchBoardsButton.height) * 0.5;
-        GameCtx.gameMode.addObject(switchBoardsButton, _sprite);
+        GameCtx.gameMode.addSceneObject(switchBoardsButton, _sprite);
     }
 
     override public function get displayObject () :DisplayObject

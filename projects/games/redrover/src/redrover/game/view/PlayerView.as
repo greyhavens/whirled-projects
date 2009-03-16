@@ -106,7 +106,7 @@ public class PlayerView extends SceneObject
         var gems :Array = data.gems;
         var points :int = data.points;
         var boardCell :BoardCell = data.boardCell;
-        GameCtx.gameMode.addObject(
+        GameCtx.gameMode.addSceneObject(
             new GemsRedeemedAnim(_player, gems, boardCell, points),
             GameCtx.gameMode.getTeamSprite(_player.teamId));
     }

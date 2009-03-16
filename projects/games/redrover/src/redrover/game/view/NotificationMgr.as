@@ -160,7 +160,7 @@ class Notification extends SceneObject
                 After(moveTime - fadeTime, new AlphaTask(0, fadeTime))),
             new SelfDestructTask()));
 
-        GameCtx.gameMode.addObject(this, overlay);
+        GameCtx.gameMode.addSceneObject(this, overlay);
     }
 
     override protected function addedToDB () :void

@@ -130,13 +130,13 @@ public class GameMode extends AppMode
             var teamSprite :TeamSprite = new TeamSprite();
             _teamSprites.push(teamSprite);
 
-            addObject(new BoardView(_boards[teamId]), teamSprite.boardLayer);
+            addSceneObject(new BoardView(_boards[teamId]), teamSprite.boardLayer);
         }
 
         var cam :Camera = new Camera(CAM_SIZE);
         cam.x = CAM_LOC.x;
         cam.y = CAM_LOC.y;
-        addObject(cam, _modeSprite);
+        addSceneObject(cam, _modeSprite);
 
         _overlayLayer = SpriteUtil.createSprite(true);
         _modeSprite.addChild(_overlayLayer);
@@ -144,7 +144,7 @@ public class GameMode extends AppMode
         var hud :HUDView = new HUDView(HUD_SIZE);
         hud.x = HUD_LOC.x;
         hud.y = HUD_LOC.y;
-        addObject(hud, _overlayLayer);
+        addSceneObject(hud, _overlayLayer);
 
         addObject(new MusicPlayer());
 
@@ -328,7 +328,7 @@ public class GameMode extends AppMode
         var cell :BoardCell = getBoard(boardId).getCell(gridX, gridY);
         if (cell != null) {
             cell.addGem(gemType);
-            addObject(new GemView(gemType, boardId, cell), getTeamSprite(boardId).objectLayer);
+            addSceneObject(new GemView(gemType, boardId, cell), getTeamSprite(boardId).objectLayer);
         }
     }
 
