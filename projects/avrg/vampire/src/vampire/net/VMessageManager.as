@@ -5,18 +5,19 @@ import com.threerings.util.Log;
 import com.whirled.AbstractControl;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRServerGameControl;
+import com.whirled.contrib.platformer.net.GameMessage;
 import com.whirled.game.GameControl;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.events.EventDispatcher;
 import flash.utils.ByteArray;
 
-import vampire.net.messages.BloodBondRequestMessage;
-import vampire.net.messages.FeedRequestMessage2;
-import vampire.net.messages.NonPlayerIdsInRoomMessage;
-import vampire.net.messages.RequestActionChangeMessage;
-import vampire.net.messages.ShareTokenMessage;
-import vampire.net.messages.SuccessfulFeedMessage;
+import vampire.net.messages.BloodBondRequestMsg;
+import vampire.net.messages.FeedRequestMsg;
+import vampire.net.messages.NonPlayerIdsInRoomMsg;
+import vampire.net.messages.RequestActionChangeMsg;
+import vampire.net.messages.ShareTokenMsg;
+import vampire.net.messages.SuccessfulFeedMsg;
 
 
 public class VMessageManager extends EventDispatcher
@@ -52,12 +53,12 @@ public class VMessageManager extends EventDispatcher
 
         _msgTypes = new HashMap();
         //Move this out of here!  But to where???
-        addMessageType( BloodBondRequestMessage );
-        addMessageType( FeedRequestMessage2 );
-        addMessageType( NonPlayerIdsInRoomMessage );
-        addMessageType( RequestActionChangeMessage );
-        addMessageType( ShareTokenMessage );
-        addMessageType( SuccessfulFeedMessage );
+        addMessageType( BloodBondRequestMsg );
+        addMessageType( FeedRequestMsg );
+        addMessageType( NonPlayerIdsInRoomMsg );
+        addMessageType( RequestActionChangeMsg );
+        addMessageType( ShareTokenMsg );
+        addMessageType( SuccessfulFeedMsg );
 
 
     }
@@ -69,7 +70,7 @@ public class VMessageManager extends EventDispatcher
         }
     }
 
-    public function sendMessage( gameEvent :IGameMessage, toPlayer :int = TO_ALL) :void
+    public function sendMessage( gameEvent :GameMessage, toPlayer :int = TO_ALL) :void
     {
 
         log.debug("attempting to send message " + gameEvent);
@@ -98,7 +99,7 @@ public class VMessageManager extends EventDispatcher
         else {//GameControl-less local testing.  Faster for development
             log.debug("     sending locally ");
             var msgClass :Class = _msgTypes.get(gameEvent.name);
-            var messageToSend :IGameMessage = new msgClass();
+            var messageToSend :GameMessage = new msgClass();
 //            trace("creating new message type: " + messageToSend.name);
             var bytes :ByteArray = gameEvent.toBytes();
             bytes.position = 0;
@@ -120,7 +121,7 @@ public class VMessageManager extends EventDispatcher
         var msgClass :Class = _msgTypes.get(e.name);
         if (msgClass != null) {
 
-            var msg :IGameMessage = new msgClass();
+            var msg :GameMessage = new msgClass();
             msg.fromBytes( e.value as ByteArray );
             if(msg == null) {
                 throw Error("Message Error");

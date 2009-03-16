@@ -8,9 +8,9 @@ import flash.utils.ByteArray;
  * When a vampire successfully feeds on something.  This event is fired from the client
  * every time a blood amount is gained.
  */
-public class SuccessfulFeedMessage extends BaseGameMessage
+public class SuccessfulFeedMsg extends BaseGameMsg
 {
-    public function SuccessfulFeedMessage(biterId :int = 0, eatenId :int = 0)
+    public function SuccessfulFeedMsg(biterId :int = 0, eatenId :int = 0)
     {
         super(playerId);
         _eatenId = eatenId;

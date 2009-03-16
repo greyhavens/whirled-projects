@@ -4,9 +4,9 @@ package vampire.net.messages
 
     import flash.utils.ByteArray;
 
-    public class NonPlayerIdsInRoomMessage extends BaseGameMessage
+    public class NonPlayerIdsInRoomMsg extends BaseGameMsg
     {
-        public function NonPlayerIdsInRoomMessage(playerId:int = 0, nonPlayerIds :Array = null, roomId :int = 0)
+        public function NonPlayerIdsInRoomMsg(playerId:int = 0, nonPlayerIds :Array = null, roomId :int = 0)
         {
             super(playerId);
             _npIds = nonPlayerIds != null ? nonPlayerIds : new Array();

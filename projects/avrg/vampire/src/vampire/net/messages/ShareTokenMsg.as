@@ -4,9 +4,9 @@ package vampire.net.messages
     
     import flash.utils.ByteArray;
     
-    public class ShareTokenMessage extends BaseGameMessage
+    public class ShareTokenMsg extends BaseGameMsg
     {
-        public function ShareTokenMessage(playerId:int = 0, inviterId :int = 0, token :String = "")
+        public function ShareTokenMsg(playerId:int = 0, inviterId :int = 0, token :String = "")
         {
             super(playerId);
             _inviterId = inviterId;

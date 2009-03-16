@@ -4,9 +4,9 @@ package vampire.net.messages
 
     import flash.utils.ByteArray;
 
-    public class BloodBondRequestMessage extends BaseGameMessage
+    public class BloodBondRequestMsg extends BaseGameMsg
     {
-        public function BloodBondRequestMessage(playerId:int = 0, targetPlayerId :int = 0, targetPlayerName :String = null, add :Boolean = true)
+        public function BloodBondRequestMsg(playerId:int = 0, targetPlayerId :int = 0, targetPlayerName :String = null, add :Boolean = true)
         {
             super(playerId);
             _targetPlayerId = targetPlayerId;

@@ -4,9 +4,9 @@ package vampire.net.messages
 
     import flash.utils.ByteArray;
 
-    public class FeedRequestMessage2 extends BaseGameMessage
+    public class FeedRequestMsg extends BaseGameMsg
     {
-        public function FeedRequestMessage2(playerId :int = 0,
+        public function FeedRequestMsg(playerId :int = 0,
                                             targetPlayerId :int = 0,
                                             allowMultiplePredators :Boolean = false,
                                             targetLocationX :Number = 0,

@@ -4,9 +4,9 @@ package vampire.net.messages
 
     import flash.utils.ByteArray;
 
-    public class RequestActionChangeMessage extends BaseGameMessage
+    public class RequestActionChangeMsg extends BaseGameMsg
     {
-        public function RequestActionChangeMessage(playerId:int = 0, action :String = null)
+        public function RequestActionChangeMsg(playerId:int = 0, action :String = null)
         {
             super(playerId);
             _action = action == null ? "" : action;
