@@ -191,7 +191,7 @@ public class VampireBody extends NewBody
         super.playMovie(movie);
 
         if (movie != null) {
-            log.info("Restarting movies");
+            //log.info("Restarting movies");
             // recursively restart all movies
             restartAllMovies(movie);
             // and reselect our configurations
