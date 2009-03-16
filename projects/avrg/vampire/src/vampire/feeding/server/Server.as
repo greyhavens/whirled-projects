@@ -57,6 +57,7 @@ public class Server extends FeedingGameServer
         _playerLeftCallback = playerLeftCallback;
         _roomCtrl = _gameCtrl.getRoom(roomId);
         _nameUtil = new NameUtil(_gameId);
+        _props = new GamePropControl(_gameId, _roomCtrl.props);
 
         waitForPlayers();
 
@@ -403,6 +404,7 @@ public class Server extends FeedingGameServer
     protected var _waitForPlayersTimer :ManagedTimer;
     protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _roomCtrl :RoomSubControlServer;
+    protected var _props :GamePropControl;
     protected var _nameUtil :NameUtil;
     protected var _finalScores :HashMap; // Map<playerId, score>
     protected var _noMoreFeeding :Boolean;

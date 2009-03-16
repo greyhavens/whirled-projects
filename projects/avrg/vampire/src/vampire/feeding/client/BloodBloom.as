@@ -50,6 +50,7 @@ public class BloodBloom extends FeedingGameClient
         }
 
         ClientCtx.init();
+        ClientCtx.props = new GamePropGetControl(gameId, ClientCtx.gameCtrl.room.props);
         ClientCtx.playerData = playerData.clone();
         ClientCtx.gameCompleteCallback = gameCompleteCallback;
         ClientCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);
