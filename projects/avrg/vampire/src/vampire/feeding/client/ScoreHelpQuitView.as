@@ -64,7 +64,7 @@ public class ScoreHelpQuitView extends SceneObject
     protected function createFlyingCell (size :int, delay :Number) :FlyingCell
     {
         var cellObj :FlyingCell = new FlyingCell(size);
-        GameCtx.gameMode.addObject(cellObj, this.displayObject as DisplayObjectContainer);
+        GameCtx.gameMode.addSceneObject(cellObj, this.displayObject as DisplayObjectContainer);
 
         // fly the cell to the meter, make it disappear, increase the blood count
         cellObj.addTask(new SerialTask(

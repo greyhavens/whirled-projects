@@ -124,7 +124,7 @@ public class BurstSequence extends SceneObject
                 NewBonusAnimation.TYPE_SEND,
                 multiplierSize,
                 new Vector2(this.x, this.y));
-            GameCtx.gameMode.addObject(anim, GameCtx.uiLayer);
+            GameCtx.gameMode.addSceneObject(anim, GameCtx.uiLayer);
         }
 
         // trophies

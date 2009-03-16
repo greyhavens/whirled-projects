@@ -10,14 +10,14 @@ public class GameObjects
                                        multiplierOrStrain :int = 1) :Cell
     {
         var obj :Cell = new Cell(type, beingBorn, multiplierOrStrain);
-        GameCtx.gameMode.addObject(obj, GameCtx.cellLayer);
+        GameCtx.gameMode.addSceneObject(obj, GameCtx.cellLayer);
 
         return obj;
     }
 
     public static function createSpecialBloodAnim (fromCell :Cell) :void
     {
-        GameCtx.gameMode.addObject(
+        GameCtx.gameMode.addSceneObject(
             new GotSpecialStrainAnim(fromCell.specialStrain, fromCell.x, fromCell.y),
             GameCtx.uiLayer);
 
@@ -33,7 +33,7 @@ public class GameObjects
         loc = GameCtx.cellLayer.globalToLocal(loc);
         obj.x = loc.x;
         obj.y = loc.y;
-        GameCtx.gameMode.addObject(obj, GameCtx.burstLayer);
+        GameCtx.gameMode.addSceneObject(obj, GameCtx.burstLayer);
 
         fromCell.destroySelf();
 
@@ -54,7 +54,7 @@ public class GameObjects
         loc = GameCtx.cellLayer.globalToLocal(loc);
         obj.x = loc.x;
         obj.y = loc.y;
-        GameCtx.gameMode.addObject(obj, GameCtx.burstLayer);
+        GameCtx.gameMode.addSceneObject(obj, GameCtx.burstLayer);
 
         fromObj.destroySelf();
 
@@ -64,7 +64,7 @@ public class GameObjects
     public static function createPlayerCursor () :PlayerCursor
     {
         var obj :PlayerCursor = new PlayerCursor();
-        GameCtx.gameMode.addObject(obj, GameCtx.cursorLayer);
+        GameCtx.gameMode.addSceneObject(obj, GameCtx.cursorLayer);
 
         return obj;
     }

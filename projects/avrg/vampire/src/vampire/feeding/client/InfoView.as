@@ -24,7 +24,7 @@ public class InfoView extends SceneObject
             var parent :Sprite = (ClientCtx.mainLoop.topMode == GameCtx.gameMode ?
                                   GameCtx.uiLayer :
                                   ClientCtx.mainLoop.topMode.modeSprite);
-            ClientCtx.mainLoop.topMode.addObject(view, parent);
+            ClientCtx.mainLoop.topMode.addSceneObject(view, parent);
         }
 
         view.visible = true;

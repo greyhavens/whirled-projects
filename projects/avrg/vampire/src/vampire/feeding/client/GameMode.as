@@ -95,7 +95,7 @@ public class GameMode extends AppMode
             var statView :StatView = new StatView();
             statView.x = 0;
             statView.y = 460;
-            addObject(statView, GameCtx.uiLayer);
+            addSceneObject(statView, GameCtx.uiLayer);
         }
 
         // Setup game objects
@@ -135,12 +135,12 @@ public class GameMode extends AppMode
         var timerView :TimerView = new TimerView();
         timerView.x = TIMER_LOC.x;
         timerView.y = TIMER_LOC.y;
-        addObject(timerView, GameCtx.uiLayer);
+        addSceneObject(timerView, GameCtx.uiLayer);
 
         GameCtx.scoreView = new ScoreHelpQuitView();
         GameCtx.scoreView.x = SCORE_LOC.x;
         GameCtx.scoreView.y = SCORE_LOC.y;
-        addObject(GameCtx.scoreView, GameCtx.uiLayer);
+        addSceneObject(GameCtx.scoreView, GameCtx.uiLayer);
 
         GameCtx.cursor = GameObjects.createPlayerCursor();
 
@@ -150,7 +150,7 @@ public class GameMode extends AppMode
 
         // create some non-interactive debris that floats around the heart
         for (var ii :int = 0; ii < Constants.DEBRIS_COUNT; ++ii) {
-            addObject(new Debris(), GameCtx.bgLayer);
+            addSceneObject(new Debris(), GameCtx.bgLayer);
         }
 
         if (ClientCtx.noMoreFeeding) {
@@ -224,7 +224,7 @@ public class GameMode extends AppMode
                 loc,
                 function () :void { addMultiplierToBoard(msg.multiplier, loc, msg.playerId); });
 
-            addObject(anim, GameCtx.uiLayer);
+            addSceneObject(anim, GameCtx.uiLayer);
         }
     }
 
@@ -254,7 +254,7 @@ public class GameMode extends AppMode
                 new TimedTask(0.5),
                 LocationTask.CreateEaseIn(animX, animY - 50, 1),
                 new SelfDestructTask()));
-            addObject(animName, GameCtx.uiLayer);
+            addSceneObject(animName, GameCtx.uiLayer);
         }
     }
 

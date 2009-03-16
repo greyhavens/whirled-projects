@@ -70,7 +70,7 @@ public class PlayerCursor extends CollidableObj
                 cell.destroySelf();
                 //GameObjects.createWhiteBurst(cell);
                 //GameObjects.createSpecialBloodAnim(cell);
-                GameCtx.gameMode.addObject(
+                GameCtx.gameMode.addSceneObject(
                     new LostSpecialStrainAnim(cell.specialStrain, cell.x, cell.y),
                     GameCtx.uiLayer);
 

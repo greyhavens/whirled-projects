@@ -13,7 +13,7 @@ public class NewPlayerIntroMode extends AppMode
         var infoView :InfoView = new InfoView(ClientCtx.mainLoop.popMode);
         infoView.x = LOC.x + (infoView.width * 0.5);
         infoView.y = LOC.y + (infoView.height * 0.5);
-        addObject(infoView, _modeSprite);
+        addSceneObject(infoView, _modeSprite);
     }
 
     override protected function destroy () :void

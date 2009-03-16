@@ -90,7 +90,7 @@ public class TutorialMgr extends SimObject
                 _playingTutorial = false;
             }),
             new SelfDestructTask()));
-        GameCtx.gameMode.addObject(obj, GameCtx.uiLayer);
+        GameCtx.gameMode.addSceneObject(obj, GameCtx.uiLayer);
 
         ClientCtx.playerData.incrementNumTimesPlayedTutorial(type);
         _tutorialsThisRound.add(type);
