@@ -19,6 +19,7 @@ import vampire.data.Codes;
 import vampire.data.Logic;
 import vampire.data.VConstants;
 import vampire.net.messages.BloodBondRequestMsg;
+import vampire.net.messages.FeedConfirmMsg;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.NonPlayerIdsInRoomMsg;
 import vampire.net.messages.RequestActionChangeMsg;
@@ -30,7 +31,7 @@ public class ServerLogic
 {
 
 
-        /**
+    /**
     * When a player gains blood, his sires all share a portion of the gain
     *
     */
@@ -460,6 +461,13 @@ public class ServerLogic
                 else if( value is ShareTokenMsg) {
                     handleShareTokenMessage( player, ShareTokenMsg(msg) );
                 }
+                else if( value is FeedConfirmMsg) {
+                    var feedConform :FeedConfirmMsg = FeedConfirmMsg(msg);
+                    var requestingPlayer :PlayerData = getPlayer( feedConform.playerId );
+                    handleFeedConfirmMessage( requestingPlayer, feedConform );
+                }
+
+
                 else {
                     log.debug("Cannot handle IGameMessage ", "player", playerId, "type", value );
                     log.debug("  Classname=" + ClassUtil.getClassName(value) );
@@ -534,25 +542,63 @@ public class ServerLogic
         player.setTargetId( e.targetPlayer );
         player.setTargetLocation( [e.targetX, e.targetY, e.targetZ] );
 
+        //If a game lobby already exists, add ourselves to that game, and move into position.
+        //Otherwise, first ask the prey.
 
-        //Add ourselves to a game.  We'll check this later, when we arrive at our location
-        game = player.room._bloodBloomGameManager.requestFeed(
-            e.playerId,
-            (e.targetPlayer != 0 ? e.targetPlayer : -1),//BB used -1 as the AI player
-            e.isAllowingMultiplePredators,
-            [e.targetX, e.targetY, e.targetZ] );//Prey location
 
+        //Prey is already in a game, add ourselves.
+        if(player.room.bloodBloomGameManager.isPreyInGame( e.targetPlayer )){
+            //Add ourselves to a game.  We'll check this later, when we arrive at our location
+            game = player.room.bloodBloomGameManager.requestFeed(
+                e.playerId,
+                (e.targetPlayer != 0 ? e.targetPlayer : -1),//BB used -1 as the AI player
+                e.isAllowingMultiplePredators,
+                [e.targetX, e.targetY, e.targetZ] );//Prey location
+
+            if( !game.isStarted ) {
+
+                if( player.room.isPlayer( e.targetPlayer ) ) {
+                    actionChange( player, VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER );
+                }
+                else {
+                    actionChange( player, VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER );
+                }
+            }
+        }
+        else {
+            //Ask the prey first.
+            var preyPlayer :PlayerData = getPlayer( e.targetPlayer );
+            if(preyPlayer != null) {
+                log.debug(player.name + " is asking " + preyPlayer.name + " to feed");
+                preyPlayer.ctrl.sendMessage( e.name, e.toBytes());
+            }
+        }
+
+    }
+
+    public static function handleFeedConfirmMessage( player :PlayerData, e :FeedConfirmMsg ) :void
+    {
+        log.debug("handleFeedConfirmMessage");
+        var game :BloodBloomGameRecord = player.room.bloodBloomGameManager.requestFeed(
+                player.playerId,
+                (player.targetId != 0 ? player.targetId : -1),//BB used -1 as the AI player
+                true,
+                player.targetLocation );//Prey location
 
         if( !game.isStarted ) {
 
-            if( player.room.isPlayer( e.targetPlayer ) ) {
+            if( player.room.isPlayer( player.targetId ) ) {
                 actionChange( player, VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER );
             }
             else {
                 actionChange( player, VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER );
             }
         }
+    }
 
+    public static function getPlayer( playerId :int ) :PlayerData
+    {
+        return ServerContext.server.getPlayer( playerId );
     }
 
 
@@ -644,8 +690,8 @@ public class ServerLogic
             case VConstants.GAME_MODE_BARED:
 
                 //If I'm feeding, just break off the feed.
-                if( room._bloodBloomGameManager.isPredatorInGame( playerId )) {
-                    room._bloodBloomGameManager.playerQuitsGame( playerId );
+                if( room.bloodBloomGameManager.isPredatorInGame( playerId )) {
+                    room.bloodBloomGameManager.playerQuitsGame( playerId );
                     player.setAction( VConstants.GAME_MODE_NOTHING );
                     break;
                 }
@@ -653,7 +699,7 @@ public class ServerLogic
                 //If we are alrady in bare mode, toggle it, unless we are in a game.
                 //Then we should quit the game to get out of bared mode
                 if( player.action == VConstants.GAME_MODE_BARED ) {
-                    if( !room._bloodBloomGameManager.isPreyInGame( playerId )) {
+                    if( !room.bloodBloomGameManager.isPreyInGame( playerId )) {
                         player.setAction( VConstants.GAME_MODE_NOTHING );
                         break;
                     }
@@ -674,10 +720,10 @@ public class ServerLogic
                     player.setAction( newAction );
                     }
 
-                game = room._bloodBloomGameManager.getGame( playerId );
+                game = room.bloodBloomGameManager.getGame( playerId );
                 if( game == null ) {
                     log.error("actionChange(" + newAction + ") but no game. We should have already registered.");
-                    log.error("no game hmmm.  here is the bbmanager:" + room._bloodBloomGameManager);
+                    log.error("no game hmmm.  here is the bbmanager:" + room.bloodBloomGameManager);
                     break;
                 }
                 var targetLocation :Array = player.targetLocation;
@@ -716,16 +762,16 @@ public class ServerLogic
             case VConstants.GAME_MODE_FEED_FROM_PLAYER:
             case VConstants.GAME_MODE_FEED_FROM_NON_PLAYER:
 
-                game = room._bloodBloomGameManager.getGame( playerId );
+                game = room.bloodBloomGameManager.getGame( playerId );
                 if( game == null ) {
                     log.error("actionChange(" + newAction + ") but no game. We should have already registered.");
-                    log.error("_room._bloodBloomGameManager=" + room._bloodBloomGameManager);
+                    log.error("_room._bloodBloomGameManager=" + room.bloodBloomGameManager);
                     break;
                 }
 
                 if( !game.isPredator( playerId )) {
                     log.error("actionChange(" + newAction + ") but not predator in game. We should have already registered.");
-                    log.error("_room._bloodBloomGameManager=" + room._bloodBloomGameManager);
+                    log.error("_room._bloodBloomGameManager=" + room.bloodBloomGameManager);
                     break;
                 }
 

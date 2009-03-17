@@ -147,7 +147,7 @@ public class Room extends SimObject
         }
 
         try {
-            roomDB.update( dt );
+//            roomDB.update( dt );
             //Update PlayerData objects. This means setting them into room props and player props.
             _players.forEach( function( playerId :int, p :PlayerData) :void{ p.update(dt)});
 
@@ -158,7 +158,7 @@ public class Room extends SimObject
             }
 
             //Update the playerIds of players playing the feeding game
-            var playerIdsFeedingNow :Array = _bloodBloomGameManager.players;
+            var playerIdsFeedingNow :Array = bloodBloomGameManager.players;
             var playerIdsFeedingPrevious :Array =
                 _ctrl.props.get( Codes.ROOM_PROP_BLOODBLOOM_PLAYERS ) as Array;
 
@@ -205,7 +205,7 @@ public class Room extends SimObject
 //            registerListener(_ctrl, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
 
             _bloodBloomGameManager = new BloodBloomManager( this );
-            _roomDB.addObject( _bloodBloomGameManager );
+//            _roomDB.addObject( bloodBloomGameManager );
 
         }
     }
@@ -221,9 +221,9 @@ public class Room extends SimObject
     override protected function destroyed () :void
     {
         try {
-            if( _roomDB != null ) {
-                _roomDB.shutdown();
-            }
+//            if( _roomDB != null ) {
+//                _roomDB.shutdown();
+//            }
             if (_players.size() != 0) {
                 trace("Eek! Room unloading with players still here!",
                             "players", _players.values());
@@ -292,10 +292,10 @@ public class Room extends SimObject
 
 
 
-    public function get roomDB () :ObjectDB
-    {
-        return _roomDB;
-    }
+//    public function get roomDB () :ObjectDB
+//    {
+//        return _roomDB;
+//    }
 
     public function addFeedback( msg :String, playerId :int = 0 ) :void
     {
@@ -303,11 +303,16 @@ public class Room extends SimObject
         _feedbackMessageQueue.push( [playerId, msg] );
     }
 
+    public function get bloodBloomGameManager () :BloodBloomManager
+    {
+        return _bloodBloomGameManager;
+    }
+
 
     /**
     * Holds BloodBloomGameRecord objects.  They have countdown timers so need to be updated.
     */
-    protected var _roomDB :ObjectDB = new ObjectDB();
+//    protected var _roomDB :ObjectDB = new ObjectDB();
 
     protected var _roomId :int;
     protected var _ctrl :RoomSubControlServer;
