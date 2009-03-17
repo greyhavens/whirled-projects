@@ -10,14 +10,12 @@ import com.threerings.util.Hashable;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.RoomSubControlServer;
-import com.whirled.contrib.simplegame.server.ObjectDBThane;
-import com.whirled.contrib.simplegame.server.SimObjectThane;
+import com.whirled.contrib.simplegame.ObjectDB;
+import com.whirled.contrib.simplegame.SimObject;
 
-import vampire.Util;
 import vampire.data.Codes;
-import vampire.data.VConstants;
 
-public class Room extends SimObjectThane
+public class Room extends SimObject
     implements Hashable
 {
     public static var log :Log = Log.getLog(Room);
@@ -53,11 +51,6 @@ public class Room extends SimObjectThane
         return _ctrl;
     }
 
-//    public function get state () :String
-//    {
-//        return _state;
-//    }
-
     public function get isShutdown () :Boolean
     {
         return _errorCount > 5;
@@ -86,7 +79,7 @@ public class Room extends SimObjectThane
         return "Room [roomId=" + _roomId + ", playerIds=" + _players.keys() +"]";
     }
 
-    public function playerEntered (player :Player) :void
+    public function playerEntered (player :PlayerData) :void
     {
 
         if (!_players.put(player.playerId, player)) {
@@ -100,7 +93,7 @@ public class Room extends SimObjectThane
 
         log.info("Setting " + playername + " props into room, player=" + player);
 
-        _players.put( player.playerId, player );
+//        _players.put( player.playerId, player );
 //        player.setIntoRoomProps();
 
         //Let the avatars know who is who, so they don't spam us with movement updates
@@ -108,7 +101,7 @@ public class Room extends SimObjectThane
 
     }
 
-    public function playerLeft (player :Player) :void
+    public function playerLeft (player :PlayerData) :void
     {
 //        _entityLocations.remove( player.playerId );
 
@@ -127,7 +120,7 @@ public class Room extends SimObjectThane
 //        ctrl.sendSignal( VConstants.SIGNAL_PLAYER_IDS, playerIds );
 
         //Broadcast the players in the room
-//        _ctrl.sendSignal(Constants.ROOM_SIGNAL_ENTITYID_REPONSE, _players.toArray().map( function( p :Player) :int { return p.playerId}));
+//        _ctrl.sendSignal(Constants.ROOM_SIGNAL_ENTITYID_REPONSE, _players.toArray().map( function( p :PlayerData) :int { return p.playerId}));
 
 
 //        _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, null, true);
@@ -154,8 +147,9 @@ public class Room extends SimObjectThane
         }
 
         try {
-            _roomDB.update( dt );
-            _players.forEach( function( playerId :int, p :Player) :void{ p.update(dt)});
+            roomDB.update( dt );
+            //Update PlayerData objects. This means setting them into room props and player props.
+            _players.forEach( function( playerId :int, p :PlayerData) :void{ p.update(dt)});
 
             //Send feedback messages.
             if( _feedbackMessageQueue.length > 0 ) {
@@ -163,26 +157,16 @@ public class Room extends SimObjectThane
                 _feedbackMessageQueue.splice(0);
             }
 
+            //Update the playerIds of players playing the feeding game
+            var playerIdsFeedingNow :Array = _bloodBloomGameManager.players;
+            var playerIdsFeedingPrevious :Array =
+                _ctrl.props.get( Codes.ROOM_PROP_BLOODBLOOM_PLAYERS ) as Array;
 
-//            _bloodBloomGameStarter.update( dt );
-
-            //Send queued avatar movement messages.
-//            var playersMoved :HashSet = new HashSet();
-//
-//            while( _avatarMovedSignalQueue.length > 0 ) {
-//                var data :Array = _avatarMovedSignalQueue.pop() as Array;
-//                var userId :int = int(data[0]);
-//                if( !playersMoved.contains( userId ) ) {
-//                    playersMoved.add( userId );
-//                    log.info("sending room message "
-//                        + VConstants.NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER + " " + data);
-//                    _ctrl.sendMessage( VConstants.NAMED_EVENT_AVATAR_MOVED_SIGNAL_FROM_SERVER, data);
-//
-//                }
-//            }
-
-
-        } catch (e :Error) {
+            if( !ArrayUtil.equals( playerIdsFeedingNow, playerIdsFeedingPrevious)) {
+                _ctrl.props.set( Codes.ROOM_PROP_BLOODBLOOM_PLAYERS, playerIdsFeedingNow);
+            }
+        }
+        catch (e :Error) {
             log.error("Tick error", e);
 
             _errorCount++;
@@ -193,124 +177,12 @@ public class Room extends SimObjectThane
         }
     }
 
-    // called from Player when a MSG_MINIGAME_RESULT comes in from a client
-//    public function minigameCompletion (
-//        player :Player, weapon :int, win :Boolean, damageDone :int, healingDone :int) :void
-//    {
-//        if (_ctrl == null) {
-//            log.warning("Null room control", "action", "minigame completion",
-//                        "playerId", player.playerId);
-//            return;
-//        }
-
-////        log.debug("Minigame completion", "playerId", player.playerId, "weapon", weapon, "damage",
-////                  damageDone, "healing", healingDone);
-//
-//        // award 3 points for a win, 1 for a lose
-//        _stats.put(player, int(_stats.get(player)) + (win ? 3 : 1));
-//
-//        // record which minigame was used
-//        var dict :Dictionary = _minigames.get(player);
-//        if (dict == null) {
-//            dict = new Dictionary();
-//        }
-//        dict[weapon] = int(dict[weapon]) + 1;
-//        _minigames.put(player, dict);
-//
-//        try {
-//            Trophies.handleMinigameCompletion(player, weapon, win);
-//        } catch (e :Error) {
-//            log.warning("Error in handleMinigameCompletion", "roomId", this.roomId, "playerId",
-//                        player.playerId, e);
-//        }
-//
-//        // tweak damageDone and healingDone by the player's level
-//        var tweak :Number = Formulae.quadRamp(player.level);
-//
-//        // then actually apply the damage or healing
-//        if (damageDone > 0) {
-//            damageGhost(damageDone * tweak);
-//            _ctrl.sendMessage(Codes.SMSG_GHOST_ATTACKED, player.playerId);
-//        }
-//        if (healingDone > 0) {
-//            doHealPlayers(player, healingDone * tweak);
-//        }
-//    }
 
     public function isPlayer( userId :int ) :Boolean
     {
         return ArrayUtil.contains( ctrl.getPlayerIds(), userId );
     }
-    internal function playerUpdated (player :Player) :void
-    {
-        //WE don't update on direct changes, we wait for the server update to batch it.
-        return;
-        if (_ctrl == null) {
-            log.warning("Null room control", "action", "player update",
-                        "playerId", player.playerId);
-            return;
-        }
 
-
-//        ServerContext.serverLogBroadcast.log("Updating player room props=" + player);
-
-//        var key :String = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + player.playerId;
-//        _ctrl.props.set(key, player.playerState.toBytes());
-
-
-        player.setIntoRoomProps( this );
-
-//        _ctrl.props.set("" + player.playerId, player.sharedPlayerState.toBytes());
-
-//        var dict :Dictionary = _ctrl.props.get(key) as Dictionary;
-//        if (dict == null) {
-//            dict = new Dictionary();
-//        }
-//
-//        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL] != player.level) {
-//            _ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL, player.level);
-//        }
-//        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_MAX_BLOOD] != player.maxBlood) {
-//            _ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_MAX_BLOOD, player.maxBlood);
-//        }
-//        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD] != player.health) {
-//            _ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD, player.health);
-//        }
-    }
-
-//    internal function reset () :void
-//    {
-//        if (_ctrl == null) {
-//            log.warning("Null room control", "action", "reset");
-//            return;
-//        }
-//
-////        _stats.clear();
-////        _minigames.clear();
-//    }
-
-//    internal function setState (state :String) :void
-//    {
-//        if (_ctrl == null) {
-//            log.warning("Null room control", "action", "state set", "state", state);
-//            return;
-//        }
-//
-////        _state = state;
-////
-////        _ctrl.props.set(Codes.PROP_STATE, state, true);
-////
-////        _players.forEach(function (player :Player) :void {
-////            player.roomStateChanged();
-////        });
-//        log.debug("Room state set", "roomId", this.roomId, "state", state);
-//    }
-
-//    protected function _tick (dt :Number) :void
-//    {
-//        _players.forEach( function( playerId :int, p :Player) :void{ p.tick(dt)});
-//        _bloodBloomGameStarter.update( dt );
-//    }
 
     protected function maybeLoadControl () :void
     {
@@ -353,11 +225,16 @@ public class Room extends SimObjectThane
                 _roomDB.shutdown();
             }
             if (_players.size() != 0) {
-                log.warning("Eek! Room unloading with players still here!",
+                trace("Eek! Room unloading with players still here!",
                             "players", _players.values());
             } else {
-                log.debug("Unloaded room", "roomId", roomId);
+                trace("Unloaded room", "roomId", roomId);
             }
+//            if(_players != null) {
+//                _players.forEach(function( playerId :int, player :PlayerData) :void {
+//                    player.r
+//                });
+//            }
             _players.clear();
             _ctrl = null;
         }
@@ -371,252 +248,51 @@ public class Room extends SimObjectThane
         log.debug("handlePlayerMoved() " + e);
 
 
-        _players.forEach( function(playerId :int, p :Player) :void {
+        _players.forEach( function(playerId :int, p :PlayerData) :void {
             if( p.playerId == int(e.value)) {
-               p.handleAvatarMoved(int(e.value) );
+                ServerLogic.handleAvatarMoved( p, int(e.value) );
+//               p.handleAvatarMoved(int(e.value) );
             }
         });
     }
 
-//    protected function handleSignalReceived( e :AVRGameRoomEvent ) :void
-//    {
-//        log.debug("handleSignalReceived() " + e);
-//
-//
-//        //Record all non-players movements.
-//        if( e.name == Constants.SIGNAL_NON_PLAYER_MOVED ) {
-//            var data :Array = e.value as Array;
-//            var userId :int = int(data[0]);
-//            var location :Array = data[1] as Array;
-//
-//            if( location == null ) {
-//                _entityLocations.remove( userId );
-//            }
-//            else {
-//                _entityLocations.put( userId, location );
-//            }
-//
-//        }
-//
-//        _players.forEach( function(playerId :int, p :Player) :void {
-//           p.handleSignalReceived( e );
-//        });
-//    }
-
-//    public function getLocation( userId :int ) :Array
-//    {
-//        if( ServerContext.vserver.isPlayer( userId ) ) {
-//            return ServerContext.vserver.getPlayer( userId ).location;
-//        }
-//        if( _entityLocations.containsKey( userId )) {
-//            return _entityLocations.get( userId ) as Array;
-//        }
-//        return null;
-//    }
 
     public function getCurrentBlood( userId :int ) :Number
     {
-        if( ServerContext.vserver.isPlayer( userId ) ) {
-            return ServerContext.vserver.getPlayer( userId ).blood;
+        if( ServerContext.server.isPlayer( userId ) ) {
+            return ServerContext.server.getPlayer( userId ).blood;
         }
         return ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( userId );
     }
 
     public function getMaxBlood( userId :int ) :Number
     {
-        if( ServerContext.vserver.isPlayer( userId ) ) {
-            return ServerContext.vserver.getPlayer( userId ).maxBlood;
+        if( ServerContext.server.isPlayer( userId ) ) {
+            return ServerContext.server.getPlayer( userId ).maxBlood;
         }
         return ServerContext.nonPlayersBloodMonitor.maxBloodFromNonPlayer( userId );
     }
 
-    public function bloodBloomRoundOver( gameRecord :BloodBloomGameRecord ) :void
-    {
-        log.debug("bloodBloomRoundOver()", "gameRecord", gameRecord);
 
-        if( gameRecord == null ) {
-            log.error("bloodBloomRoundOver gameRecord==null");
-            return;
-        }
-        if( gameRecord.gameServer == null ) {
-            log.error("bloodBloomRoundOver gameRecord.gameServer==null");
-            return;
-        }
-
-        if( gameRecord.gameServer.lastRoundScore == 0 ) {
-            log.debug("score==0 so no blood lost or gained.");
-            return;
-        }
-
-        //Check if it's a human practising
-        if( getPlayer(gameRecord.primaryPredatorId) != null &&
-            !getPlayer(gameRecord.primaryPredatorId).isVampire() ) {
-
-            addFeedback( "Find a vampire to feed for real.", gameRecord.primaryPredatorId);
-            return;
-        }
-
-        //Update the highest possible score.  We use this to scale the coin payout
-        ServerContext.topBloodBloomScore = Math.max( ServerContext.topBloodBloomScore,
-            gameRecord.gameServer.lastRoundScore );
-
-        var preyIsPlayer :Boolean = isPlayer( gameRecord.preyId );
-        var preyPlayer :Player;
-        var bloodGained :Number = 0;
-        var preyId :int = gameRecord.preyId;
-        var damage :Number = VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
-        //Each predator damages the prey
-        damage = damage * gameRecord.predators.size();
-
-        //Handle the prey loss of blood
-        if( preyIsPlayer ) {
-            log.debug("Prey is player");
-            preyPlayer = getPlayer( gameRecord.preyId );
-            bloodGained = Math.abs(preyPlayer.damage( damage ));
-            ServerContext.vserver.awardBloodBondedBloodEarned( preyPlayer, bloodGained);
-            addFeedback( "You lost " + Util.formatNumberForFeedback(bloodGained) + " from feeding", preyPlayer.playerId);
-        }
-        else {
-            log.debug("Prey is nonplayer");
-            bloodGained = Math.abs(ServerContext.nonPlayersBloodMonitor.damageNonPlayer( gameRecord.preyId, damage, roomId ));
-        }
-        log.debug("Prey lost " + bloodGained + " blood");
-
-        //You get half the blood lost
-        bloodGained = 0.5 * bloodGained;
-
-        //Predators gain blood from the prey, divvied up
-        var bloodGainedPerPredator :Number = bloodGained / gameRecord.predators.size();
-        var bloodGainedPerPredatorFormatted :String = Util.formatNumberForFeedback(bloodGainedPerPredator);
-
-
-        for each( var predatorId :int in gameRecord.predators.toArray()) {
-            var pred :Player = getPlayer( predatorId );
-            if( pred == null ) {
-                log.error("adding blood, but no pred", "predatorId", predatorId);
-                continue;
-            }
-            pred.addMostRecentVictimIds( gameRecord.preyId );
-
-            pred.addBlood( bloodGainedPerPredator );
-            //The bloodbonded also gains a fraction
-            ServerContext.vserver.awardBloodBondedBloodEarned( pred, bloodGainedPerPredator);
-            log.debug(predatorId + " gained " + bloodGainedPerPredatorFormatted);
-            addFeedback( "You gained " + bloodGainedPerPredatorFormatted + " blood!", pred.playerId);
-
-            if( preyIsPlayer && preyPlayer != null ) {
-
-                //Check if we don't have a sire.  The prey vampire becomes it.
-                if( pred.sire == 0 ) {
-
-
-                    if( ServerContext.lineage.isMemberOfLineage( preyId )) {
-                        pred.makeSire( preyPlayer.playerId );
-                        addFeedback( preyPlayer.name + " has become your sire ", pred.playerId);
-
-                        //Award coins to the sire
-                        preyPlayer.ctrl.completeTask( Codes.TASK_ACQUIRE_MINION_ID,
-                            Codes.TASK_ACQUIRE_MINION_SCORE );
-
-
-                        for each( var sireId :int in
-                            ServerContext.lineage.getAllSiresAndGrandSires( pred.playerId ).toArray() ) {
-
-                            if( ServerContext.vserver.isPlayer( sireId )
-                                && ServerContext.vserver.getPlayer( sireId ).room != null) {
-
-                                //Tell the sire she's got children
-                                ServerContext.vserver.getPlayer( sireId ).room.addFeedback(
-                                    pred.name + " has become your minion ", sireId);
-
-                                //Award coins to the sire(s)
-                                preyPlayer.ctrl.completeTask( Codes.TASK_ACQUIRE_MINION_ID,
-                                    Codes.TASK_ACQUIRE_MINION_SCORE/10 );
-
-                            }
-                        }
-                    }
-                    else {
-                        addFeedback( preyPlayer.name + " is not part of the Lineage (Minions of Übervamp).  Feed from a Lineage member to join.", pred.playerId);
-                        addFeedback( "You are not part of the Lineage (Minions of Übervamp), so " + preyPlayer.name + " cannot become your minion. "
-                            + " Feed on a member of the Lineage to join.", preyPlayer.playerId);
-                    }
-                }
-                else {
-                    log.debug("Already have sire, or prey not a vampire, so no sire creation");
-                }
-            }
-            else {
-                log.debug("Prey was not a player");
-            }
-        }
-
-
-        //Check for blood bonds
-        if( preyIsPlayer ) {
-            ServerContext.vserver.checkBloodBondFormation( gameRecord.preyId, gameRecord.predators.toArray());
-        }
-
-        //Then handle experience.  ATM everyone gets xp=score
-        var xpGained :Number = gameRecord.gameServer.lastRoundScore;
-        var xpFormatted :String = Util.formatNumberForFeedback( xpGained );
-
-        function awardXP( playerId :int, xp :Number, xpFormatted :String ) :void
-        {
-            var p :Player = getPlayer( playerId );
-            if( p != null ) {
-                p.addXP( xp );
-                addFeedback("You gained " + xpFormatted + " experience!", p.playerId);
-                //Add some bonus xp to your blood bond, if they are online
-                ServerContext.vserver.awardBloodBondedXpEarned( p, xp );
-                //Add some bonus xp to your sires
-                ServerContext.vserver.awardSiresXpEarned( p, xp );
-                var feedingScore :Number = gameRecord.gameServer.lastRoundScore / ServerContext.topBloodBloomScore
-                p.ctrl.completeTask( Codes.TASK_FEEDING_ID, feedingScore );
-            }
-        }
-
-        if( preyIsPlayer && preyPlayer != null) {
-
-            if( preyPlayer.isVampire() ) {
-                awardXP( gameRecord.preyId, xpGained, xpFormatted);
-            }
-            else {//If we are not a vampire, we don't share our xp
-                preyPlayer.addXP( xpGained );
-                addFeedback("You gained " + xpFormatted + " experience from feeding.", preyPlayer.playerId);
-            }
-        }
-
-        gameRecord.predators.forEach( function( predId :int) :void {
-            awardXP( predId, xpGained, xpFormatted);
-        });
-
-
-
-
-    }
 
     public function get players() :HashMap
     {
         return _players;
     }
 
-    public function getPlayer( playerId :int ) :Player
+    public function getPlayer( playerId :int ) :PlayerData
     {
-        return _players.get( playerId ) as Player;
+        return _players.get( playerId ) as PlayerData;
     }
 
     public function get playerIds() :Array
     {
         return _players.keys();
-//        var ids :Array = new Array();
-//        _players.forEach( function(playerId :int, p :Player) :void {
-//            ids.push( p.playerId );
-//        });
-//        return ids;
     }
 
-    public function get roomDB () :ObjectDBThane
+
+
+    public function get roomDB () :ObjectDB
     {
         return _roomDB;
     }
@@ -627,80 +303,19 @@ public class Room extends SimObjectThane
         _feedbackMessageQueue.push( [playerId, msg] );
     }
 
-//    public function isPlayerPredatorInBloodBloomGame( playerId :int ) :Boolean
-//    {
-//        for each( var g :BloodBloomGameRecord in _bloodBloomGames) {
-//            if( g.isPredator( playerId )) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
-//    public function isPreyInBloodBloomGame( playerId :int ) :Boolean
-//    {
-//        for each( var g :BloodBloomGameRecord in _bloodBloomGames) {
-//            if( g.isPrey( playerId )) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 
-//    public function setNonpPlayerIds (ids :Array) :void
-//    {
-//        // update our runtime state
-//        log.debug("setNonpPlayerIds( " + ids + "), _nonPlayerIds=" + _nonPlayerIds);
-//        if ( ArrayUtil.equals(_nonPlayerIds, ids) && ids != null) {
-//            log.warning("Er, why aren't we setting ids into room props?", "_nonPlayerIds", _nonPlayerIds, "ids", ids);
-//            return;
-//        }
-//        _nonPlayerIds = ids;
-//        // and if we're in a room, update the room properties
-//        log.debug("Setting into room props( " + Codes.ROOM_PROP_NON_PLAYERS + ":" + _nonPlayerIds +")");
-//        _ctrl.props.set(Codes.ROOM_PROP_NON_PLAYERS, _nonPlayerIds);
-//    }
-
-//    public function get location() :LocationTracker
-//    {
-//        return _locationTracker;
-//    }
-
-//    public function get nonPlayerAvatarIds() :Array
-//    {
-//        return location.nonPlayerAvatarIds;
-//    }
-
-
-    protected var _roomDB :ObjectDBThane = new ObjectDBThane();
+    /**
+    * Holds BloodBloomGameRecord objects.  They have countdown timers so need to be updated.
+    */
+    protected var _roomDB :ObjectDB = new ObjectDB();
 
     protected var _roomId :int;
     protected var _ctrl :RoomSubControlServer;
 
-//    protected var _state :String;
     protected var _players :HashMap = new HashMap();
-
-//    protected var _nonPlayerIds :Array = new Array();
-
-//    public var _nonplayers :HashSet = new HashSet();
-
     public var _bloodBloomGameManager :BloodBloomManager;
 
-//    public var _bloodBloomGames :Array = new Array();
-
-//    protected var _nonplayerMonitor :NonPlayerMonitor;
-
-//    public var _locationTracker :LocationTracker;
-
-//    protected var _entityLocations :HashMap = new HashMap();
-
-//    protected var _playerEntityIds :HashSet = new HashSet();
-
     protected var _errorCount :int = 0;
-
-
-    //temp signal fix
-    protected var _avatarMovedSignalQueue :Array = new Array();
 
     /**
     * Each value is a array with two values: the message target, and the message itself.
@@ -709,13 +324,5 @@ public class Room extends SimObjectThane
     * */
     protected var _feedbackMessageQueue :Array = new Array();
 
-    // each player's contribution to a ghost's eventual defeat is accumulated here, by player
-//    protected var _stats :HashMap = new HashMap();
-
-    // a dictionary of dictionaries of number of times each minigame was used by each player
-//    protected var _minigames :HashMap = new HashMap();
-
-    // new ghost every 10 minutes -- force players to actually hunt for ghosts, not slaughter them
-//    protected static const GHOST_RESPAWN_MINUTES :int = 10;
 }
 }
