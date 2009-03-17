@@ -5,7 +5,9 @@ import com.threerings.util.ArrayUtil;
 import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
+import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimpleGame;
+import com.whirled.contrib.simplegame.net.BasicMessageManager;
 import com.whirled.contrib.simplegame.resource.ResourceManager;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
@@ -19,7 +21,7 @@ import vampire.avatar.AvatarGameBridge;
 import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.data.Codes;
 import vampire.data.VConstants;
-import vampire.net.VMessageManager;
+import vampire.Util;
 
 /**
  * Client specific functions and info.
@@ -27,12 +29,15 @@ import vampire.net.VMessageManager;
 public class ClientContext
 {
     public static var ctrl :AVRGameControl;
-    public static var msg :VMessageManager;
+    public static var msg :BasicMessageManager;
 
     public static var game :SimpleGame;
     public static var gameResources :ResourceManager;
 
     public static var model :GameModel;
+
+    /**The main game mode to add all game objects.*/
+    public static var gameMode :AppMode;
     public static var hud :HUD;
     public static var avatarOverlay :VampireAvatarHUDOverlay;
     public static var ourPlayerId :int;
@@ -46,6 +51,13 @@ public class ClientContext
     protected static var _playerEntityId :String;
     protected static var _playerRoomKey :String;
 
+
+    public static function init( gameControl :AVRGameControl ) :void
+    {
+        ctrl = gameControl;
+        msg = new BasicMessageManager();
+        vampire.Util.initMessageManager(msg);
+    }
     public static function quit () :void
     {
         if (ctrl.isConnected()) {
@@ -169,6 +181,19 @@ public class ClientContext
             }
         }
         return nonPlayerIds;
+    }
+
+    public static function getAvatarIds( excludeOurId :Boolean = false) :Array
+    {
+        var avatarIds :Array = new Array();
+
+        for each( var entityId :String in ctrl.room.getEntityIds( EntityControl.TYPE_AVATAR) ) {
+            var userId :int = int(ctrl.room.getEntityProperty( EntityControl.PROP_MEMBER_ID, entityId));
+            if( !(excludeOurId && ourPlayerId == userId)) {
+                avatarIds.push( userId );
+            }
+        }
+        return avatarIds;
     }
 
     public static function get isWearingValidAvatar() :Boolean

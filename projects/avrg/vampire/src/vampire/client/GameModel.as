@@ -22,7 +22,7 @@ import vampire.client.events.ClosestPlayerChangedEvent;
 import vampire.client.events.LineageUpdatedEvent;
 import vampire.data.Codes;
 import vampire.data.Lineage;
-import vampire.data.SharedPlayerStateClient;
+import vampire.client.SharedPlayerStateClient;
 import vampire.data.VConstants;
 import vampire.feeding.PlayerFeedingData;
 
@@ -524,13 +524,22 @@ public class GameModel extends SimObject//EventDispatcher
         return pfd;
     }
 
-    public function get validNonPlayerTargetsFromChatting() :Array
-    {
-        var targets :Array = ClientContext.ctrl.room.getEntityProperty(
-            AvatarGameBridge.ENTITY_PROPERTY_CHAT_TARGETS, ClientContext.ourEntityId) as Array;
+//    public function get validNonPlayerTargetsFromChatting() :Array
+//    {
+//        var targets :Array = ClientContext.ctrl.room.getEntityProperty(
+//            AvatarGameBridge.ENTITY_PROPERTY_CHAT_TARGETS, ClientContext.ourEntityId) as Array;
+//
+//        trace("validNonPlayerTargetsFromChatting targets != null: " + (targets != null));
+//        return targets;
+//    }
 
-        trace("validNonPlayerTargetsFromChatting targets != null: " + (targets != null));
-        return targets;
+
+    public function get playersFeeding() :Array
+    {
+        var feedingPlayers :Array =
+            ClientContext.ctrl.room.props.get( Codes.ROOM_PROP_BLOODBLOOM_PLAYERS ) as Array;
+
+        return feedingPlayers == null ? [] : feedingPlayers;
     }
 
 

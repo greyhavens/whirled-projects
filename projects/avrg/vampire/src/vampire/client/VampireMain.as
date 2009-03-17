@@ -12,9 +12,8 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
-import vampire.data.SharedPlayerStateClient;
+import vampire.client.SharedPlayerStateClient;
 import vampire.data.VConstants;
-import vampire.net.VMessageManager;
 import vampire.server.AVRGAgentLogTarget;
 
 [SWF(width="700", height="500")]
@@ -80,7 +79,7 @@ public class VampireMain extends Sprite
 
 //            ClientContext.gameCtrl = new AVRGameControl( this );
             if( ClientContext.ctrl == null) {
-                ClientContext.ctrl = new AVRGameControl( this );
+                ClientContext.init( new AVRGameControl( this ) );
             }
 
 
@@ -90,13 +89,9 @@ public class VampireMain extends Sprite
             }
 
 
-            ClientContext.msg = new VMessageManager( ClientContext.ctrl );
             ClientContext.ourPlayerId = ClientContext.ctrl.player.getPlayerId();
 
             ClientContext.controller = new VampireController(this);
-
-
-
 
             if( VConstants.LOCAL_DEBUG_MODE ) {
                 ClientContext.game.ctx.mainLoop.pushMode( new MainGameMode() );

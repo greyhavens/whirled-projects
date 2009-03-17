@@ -8,14 +8,11 @@ import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameRoomEvent;
-import com.whirled.contrib.avrg.DraggableSceneObject;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.net.MessageReceivedEvent;
 
-import flash.display.Sprite;
 import flash.events.MouseEvent;
-import flash.geom.Rectangle;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.events.LineageUpdatedEvent;
@@ -23,7 +20,7 @@ import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.Lineage;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingGameClient;
-import vampire.net.messages.NonPlayerIdsInRoomMessage;
+import vampire.net.messages.NonPlayerIdsInRoomMsg;
 
 public class MainGameMode extends AppMode
 {
@@ -38,7 +35,7 @@ public class MainGameMode extends AppMode
         log.debug("Starting " + ClassUtil.tinyClassName( this ));
 
         //Add intro panel if we're a new player
-        if( ClientContext.isNewPlayer) {
+        if( true || ClientContext.isNewPlayer) {
             ClientContext.controller.handleShowIntro("intro");
             ClientContext.isNewPlayer = false;
         }
@@ -60,7 +57,7 @@ public class MainGameMode extends AppMode
         var roomId :int = ClientContext.ctrl.room.getRoomId();
 
         if( !ArrayUtil.equals( _currentNonPlayerIds, npIds ) ) {
-            var msg :NonPlayerIdsInRoomMessage = new NonPlayerIdsInRoomMessage(
+            var msg :NonPlayerIdsInRoomMsg = new NonPlayerIdsInRoomMsg(
                 ClientContext.ourPlayerId, npIds, roomId );
     //        log.debug("Sending " + msg);
             ClientContext.ctrl.agent.sendMessage( msg.name, msg.toBytes() );
@@ -74,6 +71,9 @@ public class MainGameMode extends AppMode
 
     override protected function setup() :void
     {
+        //Set the game mode where all game objects are added.
+        ClientContext.gameMode = this;
+
         modeSprite.visible = false;
         super.setup();
 
@@ -185,7 +185,7 @@ public class MainGameMode extends AppMode
 
         //Create the overlay for individual avatars
         ClientContext.avatarOverlay = new VampireAvatarHUDOverlay( ClientContext.ctrl );
-        addObject( ClientContext.avatarOverlay, modeSprite );
+        addSceneObject( ClientContext.avatarOverlay, modeSprite );
         //And pass to the server player arrival events, if we are moving to feed.
         //This lets the server know that we have moved into position, and the game can
         //start.
@@ -200,7 +200,7 @@ public class MainGameMode extends AppMode
             });
 
         _hud = new HUD();
-        addObject( _hud, modeSprite );
+        addSceneObject( _hud, modeSprite );
         ClientContext.hud = _hud;
 
 
