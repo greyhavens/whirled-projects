@@ -10,7 +10,6 @@ public class Util
     {
         mgr.addMessageType(CreateMultiplierMsg);
         mgr.addMessageType(ClientReadyMsg);
-        mgr.addMessageType(StartRoundMsg);
         mgr.addMessageType(GetRoundScores);
         mgr.addMessageType(RoundScoreMsg);
         mgr.addMessageType(GameEndedMsg);
@@ -19,8 +18,6 @@ public class Util
         mgr.addMessageType(NoMoreFeedingMsg);
         mgr.addMessageType(ClientBootedMsg);
         mgr.addMessageType(RoundStartingSoonMsg);
-        mgr.addMessageType(PlayerLeftMsg);
-        mgr.addMessageType(StartGameMsg);
         mgr.addMessageType(AwardTrophyMsg);
         mgr.addMessageType(CloseLobbyMsg);
     }

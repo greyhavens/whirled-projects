@@ -2,16 +2,19 @@ package vampire.feeding.client {
 
 import com.threerings.util.Log;
 import com.whirled.contrib.EventHandlerManager;
+import com.whirled.net.PropertyChangedEvent;
 
 import vampire.feeding.*;
 import vampire.feeding.net.*;
 
 public class GameRoundMgr
 {
-    public function GameRoundMgr (msgMgr :ClientMsgMgr)
+    public function GameRoundMgr ()
     {
-        _msgMgr = msgMgr;
-        _events.registerListener(msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
+        _events.registerListener(
+            ClientCtx.props,
+            PropertyChangedEvent.PROPERTY_CHANGED,
+            onPropChanged);
     }
 
     public function shutdown () :void
@@ -29,18 +32,18 @@ public class GameRoundMgr
             if (!_ready) {
                 log.info("Client ready for next round", "playerId", ClientCtx.localPlayerId);
                 _ready = true;
-                _msgMgr.sendMessage(ClientReadyMsg.create());
+                ClientCtx.msgMgr.sendMessage(ClientReadyMsg.create());
             }
         }
     }
 
-    protected function onMsgReceived (e :ClientMsgEvent) :void
+    protected function onPropChanged (e :PropertyChangedEvent) :void
     {
-        if (e.msg is StartRoundMsg) {
+        if (e.name == Props.STATE && e.newValue == Constants.STATE_PLAYING) {
             if (!_ready) {
-                log.warning("Received StartRoundMsg before we were ready!");
+                log.warning("Round started before we were ready!");
             } else {
-                log.info("Received StartRoundMsg. Starting!");
+                log.info("Starting the game!");
                 startRound();
                 _ready = false;
             }
@@ -53,7 +56,6 @@ public class GameRoundMgr
     }
 
     protected var _ready :Boolean;
-    protected var _msgMgr :ClientMsgMgr;
     protected var _events :EventHandlerManager = new EventHandlerManager();
 
     protected static var log :Log = Log.getLog(GameRoundMgr);

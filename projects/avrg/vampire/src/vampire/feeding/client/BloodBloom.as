@@ -1,15 +1,18 @@
 package vampire.feeding.client {
 
-import com.threerings.util.ArrayUtil;
+import com.adobe.utils.DictionaryUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.ResourceManager;
+import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.TimerEvent;
+import flash.utils.Dictionary;
 import flash.utils.Timer;
 
 import vampire.feeding.*;
@@ -55,10 +58,16 @@ public class BloodBloom extends FeedingClient
         ClientCtx.gameCompleteCallback = gameCompleteCallback;
         ClientCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);
         Util.initMessageManager(ClientCtx.msgMgr);
-        ClientCtx.roundMgr = new GameRoundMgr(ClientCtx.msgMgr);
+        ClientCtx.roundMgr = new GameRoundMgr();
 
         _events.registerListener(this, Event.ADDED_TO_STAGE, onAddedToStage);
         _events.registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
+        _events.registerListener(ClientCtx.props, PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
+        _events.registerListener(ClientCtx.props, ElementChangedEvent.ELEMENT_CHANGED, onPropChanged);
+
+        updatePlayers();
+        updatePreyId();
+        updatePreyBloodType();
 
         // If the resources aren't loaded, wait for them to load
         if (!_resourcesLoaded) {
@@ -97,31 +106,41 @@ public class BloodBloom extends FeedingClient
         return ClientCtx.playerData;
     }
 
+    protected function onPropChanged (e :PropertyChangedEvent) :void
+    {
+        if (e.name == Props.PLAYERS) {
+            updatePlayers();
+        } else if (e.name == Props.PREY_ID) {
+            updatePreyId();
+        } else if (e.name == Props.PREY_BLOOD_TYPE) {
+            updatePreyBloodType();
+        }
+    }
+
+    protected function updatePlayers () :void
+    {
+        var playerDict :Dictionary = ClientCtx.props.get(Props.PLAYERS) as Dictionary;
+        if (playerDict == null) {
+            ClientCtx.playerIds = [];
+        } else {
+            ClientCtx.playerIds = DictionaryUtil.getKeys(playerDict);
+        }
+    }
+
+    protected function updatePreyId () :void
+    {
+        ClientCtx.preyId = ClientCtx.props.get(Props.PREY_ID) as int;
+        ClientCtx.isAiPrey = (ClientCtx.preyId == Constants.NULL_PLAYER);
+    }
+
+    protected function updatePreyBloodType () :void
+    {
+        ClientCtx.preyBloodType = ClientCtx.props.get(Props.PREY_BLOOD_TYPE) as int;
+    }
+
     protected function onMsgReceived (e :ClientMsgEvent) :void
     {
-        if (e.msg is StartGameMsg) {
-            if (ClientCtx.gameStarted) {
-                log.warning("Received StartGameMsg after game already started!");
-                return;
-            }
-
-            var startGameMsg :StartGameMsg = e.msg as StartGameMsg;
-            ClientCtx.gameStarted = true;
-            ClientCtx.playerIds = startGameMsg.playerIds;
-            ClientCtx.preyId = startGameMsg.preyId;
-            ClientCtx.preyBloodType = startGameMsg.preyBloodType;
-            ClientCtx.isAiPrey = (ClientCtx.preyId == Constants.NULL_PLAYER);
-
-        } else if (e.msg is PlayerLeftMsg) {
-            if (!ClientCtx.gameStarted) {
-                log.warning("Received PlayerLeftMsg before game started!");
-                return;
-            }
-
-            var playerLeftMsg :PlayerLeftMsg = e.msg as PlayerLeftMsg;
-            ArrayUtil.removeFirst(ClientCtx.playerIds, playerLeftMsg.playerId);
-
-        } else if (e.msg is GameEndedMsg || e.msg is ClientBootedMsg) {
+        if (e.msg is GameEndedMsg || e.msg is ClientBootedMsg) {
             // We were booted from the game, or it ended prematurely for some reason
             ClientCtx.quit(false);
 

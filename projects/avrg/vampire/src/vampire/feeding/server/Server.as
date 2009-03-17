@@ -68,52 +68,63 @@ public class Server extends FeedingServer
         _ctx.props = new GamePropControl(_ctx.gameId, _ctx.roomCtrl.props);
 
         // Players are stored as a Dictionary property:
-        // Dictionary<playerId:int, isPredator:Boolean>
+        // Dictionary<playerId:int, null>
         var playersDict :Dictionary = new Dictionary();
         for each (var predatorId :int in predatorIds) {
-            playersDict[predatorId] = true;
+            playersDict[predatorId] = false;
         }
         if (preyId != Constants.NULL_PLAYER) {
             playersDict[preyId] = false;
         }
         _ctx.props.set(Props.PLAYERS, playersDict);
+        _ctx.props.set(Props.LOBBY_LEADER, predatorId);
+        _ctx.props.set(Props.PREY_ID, preyId);
 
         _events.registerListener(
             _ctx.gameCtrl.game,
             MessageReceivedEvent.MESSAGE_RECEIVED,
             onMsgReceived);
 
-        setMode(new ServerLobbyMode(_ctx));
+        setState(Constants.STATE_LOBBY);
     }
 
-    public function roundComplete (roundScore :int) :void
+    public function setState (state :String) :void
     {
-        _lastRoundScore = roundScore;
-        waitForPlayers();
-    }
-
-    public function closeLobby () :void
-    {
-        _ctx.sendMessage(new CloseLobbyMsg());
-        waitForPlayers();
-    }
-
-    public function startRound () :void
-    {
-        // If the game hasn't been started yet, let all the players know what the initial
-        // setup of players is
-        if (!_gameStarted) {
-            _ctx.sendMessage(StartGameMsg.create(
-                _ctx.playerIds.slice(),
-                _ctx.preyId,
-                _ctx.preyBloodType));
-
-            _ctx.gameStartedCallback();
-            _gameStarted = true;
+        if (_ctx.props.get(Props.STATE) == state) {
+            log.warning("setState failed; already in requested state", "state", state);
+            return;
         }
 
-        _ctx.sendMessage(StartRoundMsg.create());
-        setMode(new ServerGameMode(_ctx));
+        if (_serverMode != null) {
+            _serverMode.shutdown();
+            _serverMode = null;
+        }
+
+        var newMode :ServerMode;
+        switch (state) {
+        case Constants.STATE_LOBBY:
+            newMode = new ServerLobbyMode(_ctx);
+            break;
+
+        case Constants.STATE_WAITING_FOR_CHECKIN:
+            newMode = new ServerWaitForCheckinMode(_ctx);
+            break;
+
+        case Constants.STATE_PLAYING:
+            if (!_gameStarted) {
+                _gameStarted = true;
+                _ctx.gameStartedCallback();
+            }
+            newMode = new ServerGameMode(_ctx);
+            break;
+        }
+
+        if (newMode != null) {
+            _serverMode = newMode;
+            _serverMode.run();
+        } else {
+            log.warning("unrecognized state", "state", state);
+        }
     }
 
     public function bootPlayer (playerId :int) :void
@@ -130,7 +141,7 @@ public class Server extends FeedingServer
         }
 
         _ctx.playerIds.push(playerId);
-        _ctx.props.setIn(Props.PLAYERS, playerId, true);
+        _ctx.props.setIn(Props.PLAYERS, playerId, false);
 
         return true;
     }
@@ -141,9 +152,14 @@ public class Server extends FeedingServer
             _ctx.preyId = Constants.NULL_PLAYER;
         }
 
+        var oldLobbyLeader :int = this.primaryPredatorId;
         ArrayUtil.removeFirst(_ctx.playerIds, playerId);
+        var newLobbyLeader :int = this.primaryPredatorId;
 
         _ctx.props.setIn(Props.PLAYERS, playerId, null);
+        if (oldLobbyLeader != newLobbyLeader) {
+            _ctx.props.set(Props.LOBBY_LEADER, newLobbyLeader);
+        }
 
         if (_ctx.playerIds.length == 0) {
             // If the last predator or prey just left the game, we're done and should shut down
@@ -151,13 +167,6 @@ public class Server extends FeedingServer
             shutdown();
 
         } else {
-            if (_gameStarted) {
-                // Let all the clients know that somebody has left
-                // (If the game hasn't yet started, the StartGameMsg hasn't been delivered,
-                // and the clients don't know who is in the game yet.)
-                _ctx.sendMessage(PlayerLeftMsg.create(playerId));
-            }
-
             if (!_noMoreFeeding && !_ctx.canContinueFeeding()) {
                 // If the prey has left, or all the predators have left, no more feeding
                 // can take place.
@@ -210,14 +219,12 @@ public class Server extends FeedingServer
         return _lastRoundScore;
     }
 
-    protected function waitForPlayers () :void
-    {
-        setMode(new ServerWaitForCheckinMode(_ctx));
-    }
-
     protected function shutdown () :void
     {
-        setMode(null);
+        if (_serverMode != null) {
+            _serverMode.shutdown();
+            _serverMode = null;
+        }
 
         // Tell any remaining players that we're done
         _ctx.sendMessage(GameEndedMsg.create());
@@ -280,19 +287,6 @@ public class Server extends FeedingServer
         :void
     {
         _ctx.logBadMessage(e.senderId, _ctx.nameUtil.decodeName(e.name), reason, err);
-    }
-
-    protected function setMode (newMode :ServerMode) :void
-    {
-        if (_serverMode != null) {
-            _serverMode.shutdown();
-            _serverMode = null;
-        }
-
-        if (newMode != null) {
-            _serverMode = newMode;
-            _serverMode.run();
-        }
     }
 
     protected var _ctx :ServerCtx = new ServerCtx();

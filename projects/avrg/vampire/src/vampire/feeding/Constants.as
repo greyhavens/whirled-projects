@@ -93,6 +93,9 @@ public class Constants
     public static const TUT_EXPLODE_WHITE :int = 5;
     public static const TUT_GET_SPECIAL :int = 6;
 
+    public static const STATE_LOBBY :String = "s_Lobby";
+    public static const STATE_WAITING_FOR_CHECKIN :String = "s_WaitingForCheckin";
+    public static const STATE_PLAYING :String = "s_Playing";
 }
 
 }

@@ -28,7 +28,6 @@ public class ClientCtx
     public static var msgMgr :ClientMsgMgr;
     public static var gameCompleteCallback :Function;
     public static var playerData :PlayerFeedingData;
-    public static var gameStarted :Boolean;
     public static var noMoreFeeding :Boolean;
     public static var playerIds :Array;
     public static var preyId :int;
@@ -43,7 +42,6 @@ public class ClientCtx
         msgMgr = null;
         gameCompleteCallback = null;
         playerData = null;
-        gameStarted = false;
         noMoreFeeding = false;
         playerIds = null;
         preyId = 0;
