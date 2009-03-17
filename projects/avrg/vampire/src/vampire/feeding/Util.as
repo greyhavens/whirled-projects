@@ -22,6 +22,7 @@ public class Util
         mgr.addMessageType(PlayerLeftMsg);
         mgr.addMessageType(StartGameMsg);
         mgr.addMessageType(AwardTrophyMsg);
+        mgr.addMessageType(CloseLobbyMsg);
     }
 }
 

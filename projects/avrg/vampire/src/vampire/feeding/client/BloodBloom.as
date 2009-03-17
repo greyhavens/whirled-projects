@@ -15,7 +15,7 @@ import flash.utils.Timer;
 import vampire.feeding.*;
 import vampire.feeding.net.*;
 
-public class BloodBloom extends FeedingGameClient
+public class BloodBloom extends FeedingClient
 {
     public static function init (hostSprite :Sprite, gameCtrl :AVRGameControl) :void
     {

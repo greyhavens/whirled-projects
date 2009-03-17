@@ -7,7 +7,7 @@ import flash.display.Sprite;
 
 import vampire.feeding.client.BloodBloom;
 
-public class FeedingGameClient extends Sprite
+public class FeedingClient extends Sprite
 {
     /**
      * Performs one-time initialization of the client. Should be called shortly after the
@@ -32,7 +32,7 @@ public class FeedingGameClient extends Sprite
      * function gameCompleteCallback () :void
      */
     public static function create (gameId :int, playerData :PlayerFeedingData,
-                                   gameCompleteCallback :Function) :FeedingGameClient
+                                   gameCompleteCallback :Function) :FeedingClient
     {
         return new BloodBloom(gameId, playerData, gameCompleteCallback);
     }
@@ -58,9 +58,9 @@ public class FeedingGameClient extends Sprite
     /**
      * @private
      */
-    public function FeedingGameClient ()
+    public function FeedingClient ()
     {
-        if (ClassUtil.getClass(this) == FeedingGameClient) {
+        if (ClassUtil.getClass(this) == FeedingClient) {
             throw new Error("Use FeedingGameClient.create to create a FeedingGameClient");
         }
     }

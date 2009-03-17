@@ -5,7 +5,7 @@ import com.whirled.avrg.AVRServerGameControl;
 
 import vampire.feeding.server.*;
 
-public class FeedingGameServer
+public class FeedingServer
 {
     /**
      * Performs one-time initialization of the server. Should be called shortly after the
@@ -45,17 +45,34 @@ public class FeedingGameServer
      *
      */
     public static function create (roomId :int,
-                                   predatorIds :Array,
+                                   predatorId :int,
                                    preyId :int,
                                    preyBlood :Number,
                                    preyBloodType :int,
+                                   gameStartedCallback :Function,
                                    roundCompleteCallback :Function,
                                    gameCompleteCallback :Function,
-                                   playerLeftCallback :Function) :FeedingGameServer
+                                   playerLeftCallback :Function) :FeedingServer
     {
-        return new vampire.feeding.server.Server(roomId, predatorIds, preyId, preyBlood,
-                                                 preyBloodType, roundCompleteCallback,
-                                                 gameCompleteCallback, playerLeftCallback);
+        return new vampire.feeding.server.Server(roomId,
+                                                 predatorId,
+                                                 preyId,
+                                                 preyBlood,
+                                                 preyBloodType,
+                                                 gameStartedCallback,
+                                                 roundCompleteCallback,
+                                                 gameCompleteCallback,
+                                                 playerLeftCallback);
+    }
+
+    /**
+     * Attempts to add a new predator to the game. This will fail if the game has already started.
+     * Returns true if the predator was successfully added.
+     */
+    public function addPredator (playerId :int) :Boolean
+    {
+        // Overridden by Server
+        return false;
     }
 
     /**
@@ -86,6 +103,44 @@ public class FeedingGameServer
     }
 
     /**
+     * Returns the playerId of the Prey, or 0 if the prey has left or is being controlled by
+     * an AI.
+     */
+    public function get preyId () :int
+    {
+        // Overridden by Server
+        return 0;
+    }
+
+    /**
+     * Returns the playerIds of the Predators.
+     */
+    public function get predatorIds () :Array
+    {
+        // Overridden by Server
+        return null;
+    }
+
+    /**
+     * Returns the playerId of the primary predator - the player in charge of the lobby.
+     */
+    public function get primaryPredatorId () :int
+    {
+        // Overridden by Server
+        return 0;
+    }
+
+    /**
+     * Returns true if the game has started, and false if the lobby is still open.
+     * Players can't be added to the game once hasStarted is true.
+     */
+    public function get hasStarted () :Boolean
+    {
+        // Overridden by Server
+        return false;
+    }
+
+    /**
      * Returns the final score for this game. Valid only after the game has ended.
      */
     public function get lastRoundScore () :int
@@ -97,9 +152,9 @@ public class FeedingGameServer
     /**
      * @private
      */
-    public function FeedingGameServer ()
+    public function FeedingServer ()
     {
-        if (ClassUtil.getClass(this) == FeedingGameServer) {
+        if (ClassUtil.getClass(this) == FeedingServer) {
             throw new Error("Use FeedingGameServer.create to create a FeedingGameServer");
         }
     }

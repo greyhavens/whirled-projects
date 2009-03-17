@@ -12,7 +12,7 @@ public class TestServer extends OneRoomGameServer
     public function TestServer ()
     {
         OneRoomGameServer.roomType = TestGameController;
-        FeedingGameServer.init(this.gameCtrl);
+        FeedingServer.init(this.gameCtrl);
     }
 }
 
@@ -74,7 +74,7 @@ class TestGameController extends OneRoomGameRoom
             cancelGameTimer();
         }
 
-        var game :FeedingGameServer = _playerGameMap.remove(playerId) as FeedingGameServer;
+        var game :FeedingServer = _playerGameMap.remove(playerId) as FeedingServer;
         if (game != null) {
             game.playerLeft(playerId);
         }
@@ -109,15 +109,18 @@ class TestGameController extends OneRoomGameRoom
 
         var preyId :int =
             (_waitingPlayers.length > 1 ? _waitingPlayers.pop() : Constants.NULL_PLAYER);
-        var predators :Array = _waitingPlayers;
-        _waitingPlayers = [];
+        var predatorId :int = _waitingPlayers.pop();
 
-        var game :FeedingGameServer = FeedingGameServer.create(
+        var game :FeedingServer = FeedingServer.create(
             _roomCtrl.getRoomId(),
-            predators,
+            predatorId,
             preyId,
-            _preyBlood,    // the amount of blood the prey is starting the feeding with
+            _preyBlood,
+            // the amount of blood the prey is starting the feeding with
             Logic.getPlayerBloodStrain(preyId),
+            function () :void {
+                // game started!
+            },
             function () :Number {
                 return onRoundComplete(game);
             },
@@ -125,6 +128,10 @@ class TestGameController extends OneRoomGameRoom
                 onGameComplete(game, true);
             },
             onPlayerLeft);
+
+        for each (var playerId :int in _waitingPlayers) {
+            game.addPredator(playerId);
+        }
 
 
         // send a message with the game ID to each of the players, and store the
@@ -143,7 +150,8 @@ class TestGameController extends OneRoomGameRoom
     {
         log.info("Player left", "playerId", playerId);
     }
-    protected function onRoundComplete (game :FeedingGameServer) :Number
+
+    protected function onRoundComplete (game :FeedingServer) :Number
     {
         log.info("Round ended", "gameId", game.gameId, "score", game.lastRoundScore);
         // return the amount of blood the prey has left. Real games will want to return a real
@@ -160,7 +168,7 @@ class TestGameController extends OneRoomGameRoom
         return _preyBlood;
     }
 
-    protected function onGameComplete (game :FeedingGameServer, successfullyEnded :Boolean) :void
+    protected function onGameComplete (game :FeedingServer, successfullyEnded :Boolean) :void
     {
         var playerIds :Array = game.playerIds;
         for each (var playerId :int in playerIds) {

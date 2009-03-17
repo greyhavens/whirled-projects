@@ -9,9 +9,9 @@ import com.whirled.contrib.simplegame.util.Rand;
 import vampire.feeding.*;
 import vampire.feeding.net.*;
 
-public class ServerGame extends ServerMode
+public class ServerGameMode extends ServerMode
 {
-    public function ServerGame (ctx :ServerCtx)
+    public function ServerGameMode (ctx :ServerCtx)
     {
         super(ctx);
     }
@@ -110,7 +110,7 @@ public class ServerGame extends ServerMode
     protected var _playersNeedingScoreUpdate :Array;
     protected var _finalScores :HashMap; // Map<playerId, score>
 
-    protected static const log :Log = Log.getLog(ServerGame);
+    protected static const log :Log = Log.getLog(ServerGameMode);
 
     protected static const STATE_PLAYING :int = 0;
     protected static const STATE_WAITING_FOR_SCORES :int = 1;

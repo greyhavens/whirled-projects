@@ -1,5 +1,6 @@
 package vampire.feeding.server {
 
+import com.threerings.util.Log;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.simplegame.net.Message;
@@ -33,6 +34,8 @@ public class ServerMode
     protected var _ctx :ServerCtx;
     protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _timerMgr :TimerManager = new TimerManager();
+
+    protected const log :Log = Log.getLog(this);
 }
 
 }

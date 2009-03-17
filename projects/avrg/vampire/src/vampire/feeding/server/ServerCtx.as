@@ -7,7 +7,7 @@ import com.whirled.avrg.RoomSubControlServer;
 import com.whirled.contrib.simplegame.net.BasicMessageManager;
 import com.whirled.contrib.simplegame.net.Message;
 
-import vampire.feeding.Util;
+import vampire.feeding.*;
 import vampire.feeding.net.*;
 
 public class ServerCtx
@@ -20,6 +20,7 @@ public class ServerCtx
     public var preyIsAi :Boolean;
     public var preyBlood :Number;
     public var preyBloodType :int;
+    public var gameStartedCallback :Function;
     public var roundCompleteCallback :Function;
     public var gameCompleteCallback :Function;
     public var playerLeftCallback :Function;
@@ -27,6 +28,17 @@ public class ServerCtx
     public var roomCtrl :RoomSubControlServer;
     public var props :GamePropControl;
     public var nameUtil :NameUtil;
+
+    public function getPrimaryPredatorId () :int
+    {
+        for each (var playerId :int in playerIds) {
+            if (playerId != preyId) {
+                return playerId;
+            }
+        }
+
+        return Constants.NULL_PLAYER;
+    }
 
     public function getPredatorIds () :Array
     {

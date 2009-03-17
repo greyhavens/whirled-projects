@@ -20,7 +20,7 @@ public class TestClient extends Sprite
         log.info("Starting TestClient");
 
         _gameCtrl = new AVRGameControl(this);
-        FeedingGameClient.init(this, _gameCtrl);
+        FeedingClient.init(this, _gameCtrl);
 
         _events.registerListener(this, Event.REMOVED_FROM_STAGE, onQuit);
         _events.registerListener(_gameCtrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
@@ -59,7 +59,7 @@ public class TestClient extends Sprite
             } else {
                 var pfd :PlayerFeedingData = new PlayerFeedingData();
                 pfd.playerStrain = Logic.getPlayerBloodStrain(_gameCtrl.player.getPlayerId());
-                _curGame = FeedingGameClient.create(gameId, pfd, onGameComplete);
+                _curGame = FeedingClient.create(gameId, pfd, onGameComplete);
 
                 addChild(_curGame);
                 freezeAvatars(true);
@@ -102,7 +102,7 @@ public class TestClient extends Sprite
 
     protected var _gameCtrl :AVRGameControl;
     protected var _events :EventHandlerManager = new EventHandlerManager();
-    protected var _curGame :FeedingGameClient;
+    protected var _curGame :FeedingClient;
     protected var _handshakeTimer :Timer;
 
     protected static var log :Log = Log.getLog(TestClient);
