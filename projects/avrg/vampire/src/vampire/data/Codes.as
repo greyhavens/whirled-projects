@@ -11,10 +11,6 @@ public class Codes
     }
 
     public static const ROOM_PROP_MINION_HIERARCHY :String = "hierarchy";
-//    public static const ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS :String = "hierarchyKeys";
-//    public static const ROOM_PROP_PLAYER_ENTITY_IDS :String = "playerEntityIds";
-//    public static const ROOM_PROP_NON_PLAYERS :String = "nonPlayers";
-
     public static const ROOM_PROP_BLOODBLOOM_PLAYERS :String = "bloodbloom";
     public static const ROOM_PROP_FEEDBACK :String = "feedback";
 

@@ -4,7 +4,7 @@ package vampire.data
     import com.threerings.util.HashSet;
     import com.threerings.util.Log;
     import com.threerings.util.StringBuilder;
-    import com.whirled.contrib.simplegame.server.SimObjectThane;
+    import com.whirled.contrib.simplegame.SimObject;
 
     import flash.utils.ByteArray;
 
@@ -24,7 +24,7 @@ package vampire.data
  */
 
 
-public class Lineage extends SimObjectThane
+public class Lineage extends SimObject
 {
     public function setPlayerSire( playerId :int, sireId :int) :void
     {

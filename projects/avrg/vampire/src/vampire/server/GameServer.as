@@ -17,7 +17,6 @@ import flash.utils.getTimer;
 import flash.utils.setInterval;
 
 import vampire.data.Codes;
-import vampire.data.LineageServer;
 import vampire.feeding.FeedingGameServer;
 
 public class GameServer extends ObjectDB

@@ -1,4 +1,4 @@
-package vampire.data
+package vampire.client
 {
     import com.threerings.util.ArrayUtil;
     import com.threerings.util.Log;
@@ -6,7 +6,9 @@ package vampire.data
 
     import flash.utils.Dictionary;
 
-    import vampire.client.ClientContext;
+    import vampire.data.Codes;
+    import vampire.data.Logic;
+    import vampire.data.VConstants;
 
 
 /**

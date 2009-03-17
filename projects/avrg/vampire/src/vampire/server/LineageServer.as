@@ -1,4 +1,4 @@
-package vampire.data
+package vampire.server
 {
     import com.threerings.util.ArrayUtil;
     import com.threerings.util.HashMap;
@@ -9,15 +9,13 @@ package vampire.data
 
     import flash.utils.Dictionary;
 
-    import vampire.server.Player;
-    import vampire.server.Room;
-    import vampire.server.ServerContext;
-    import vampire.server.Trophies;
-    import vampire.server.VServer;
+    import vampire.data.Codes;
+    import vampire.data.Lineage;
+    import vampire.data.VConstants;
 
 public class LineageServer extends Lineage
 {
-    public function LineageServer( vserver :VServer )
+    public function LineageServer( vserver :GameServer )
     {
         _vserver = vserver;
     }
@@ -37,7 +35,7 @@ public class LineageServer extends Lineage
                 _playerIdsNeedingUpdate.splice(i, 1);
                 continue;
             }
-            var player :Player = _vserver.getPlayer( playerId );
+            var player :PlayerData = _vserver.getPlayer( playerId );
             if( player != null && player.room != null) {
                 _roomsNeedingUpdate.add( player.room.roomId );
                 _playerIdsNeedingUpdate.splice(i, 1);
@@ -66,7 +64,7 @@ public class LineageServer extends Lineage
         }
     }
 
-    protected function isPlayerDataEqual( player :Player ) :Boolean
+    protected function isPlayerDataEqual( player :PlayerData ) :Boolean
     {
         if( player.sire != getSireId( player.playerId) ) {
             return false;
@@ -112,7 +110,7 @@ public class LineageServer extends Lineage
     /**
     * Called by Player.  That way, we are sure that Player has updated its room member.
     */
-    public function playerEnteredRoom( player :Player, room :Room ) :void
+    public function playerEnteredRoom( player :PlayerData, room :Room ) :void
     {
         log.debug(VConstants.DEBUG_MINION + " playerEnteredRoom(), hierarchy=" + ServerContext.lineage.toString());
 
@@ -205,7 +203,7 @@ public class LineageServer extends Lineage
 
         for each( var idToUpdate :int in relatedPlayersToUpdate) {
             if( _vserver.isPlayer( idToUpdate ) ) {
-                var player :Player = _vserver.getPlayer( idToUpdate );
+                var player :PlayerData = _vserver.getPlayer( idToUpdate );
                 //If the player is in a room, update the room
 //                if( player != null && player.room != null ) {
 //                    updateRoom( player.room.roomId );
@@ -217,7 +215,8 @@ public class LineageServer extends Lineage
 //                }
             }
             else {
-                log.error("updatePlayer(), but no Player in server", "playerId", idToUpdate);
+                //No logging, as this could happen a lot as players log on, then log off.
+//                log.debug("updatePlayer(), but no Player in server", "playerId", idToUpdate);
             }
         }
 
@@ -236,7 +235,7 @@ public class LineageServer extends Lineage
                 //Get the subtree containing all trees of all players in the room
                 var playerTree :HashMap = new HashMap();
                 log.debug(VConstants.DEBUG_MINION + "updateIntoRoomProps(), subtree containing all trees of all players in the room");
-                room.players.forEach( function( playerId :int, player :Player) :void {
+                room.players.forEach( function( playerId :int, player :PlayerData) :void {
                     getMapOfSiresAndMinions( player.playerId, playerTree );
                 });
 
@@ -344,7 +343,7 @@ public class LineageServer extends Lineage
 //        }
         super.setPlayerSire( playerId, sireId );
 
-        var sire :Player = _vserver.getPlayer( sireId );
+        var sire :PlayerData = _vserver.getPlayer( sireId );
         if( sire != null ) {
             sire.updateMinions( getMinionIds( sireId ).toArray() );
             Trophies.checkMinionTrophies( sire );
@@ -359,7 +358,7 @@ public class LineageServer extends Lineage
 
 
 
-    protected var _vserver :VServer;
+    protected var _vserver :GameServer;
     protected var _roomsNeedingUpdate :HashSet = new HashSet();
     protected var _playerIdsNeedingUpdate :Array = new Array();
 

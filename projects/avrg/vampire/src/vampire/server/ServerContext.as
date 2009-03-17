@@ -5,7 +5,6 @@ import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.contrib.simplegame.net.BasicMessageManager;
 
 import vampire.Util;
-import vampire.data.LineageServer;
 
 public class ServerContext
 {
