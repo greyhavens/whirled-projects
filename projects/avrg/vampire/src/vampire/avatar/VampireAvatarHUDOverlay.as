@@ -3,18 +3,15 @@ package vampire.avatar
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashSet;
 import com.whirled.avrg.AVRGameControl;
-import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.avrg.AvatarHUD;
 import com.whirled.contrib.avrg.TargetingOverlayAvatars;
-import com.whirled.contrib.simplegame.objects.SimpleTimer;
-import com.whirled.net.ElementChangedEvent;
 
 import flash.events.MouseEvent;
 
+import framework.FakeAVRGContext;
+
 import vampire.client.ClientContext;
-import vampire.data.Codes;
-import vampire.data.SharedPlayerStateClient;
 import vampire.data.VConstants;
 
 
@@ -25,7 +22,7 @@ import vampire.data.VConstants;
  */
 public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 {
-
+    //For debugging
     protected var p1 :VampireAvatarHUD;
 
     public function VampireAvatarHUDOverlay(ctrl:AVRGameControl)
@@ -46,14 +43,13 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 //            }
 //        );
 
+
         //If an avatar changes state, make sure we are updated.
-//        registerListener( _ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED,
-//            function( e :ElementChangedEvent ) :void {
-//                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE) {
-//                    reapplyDisplayMode();
-//                }
-//            }
-//        );
+        registerListener( _ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED,
+            function( e :AVRGameRoomEvent ) :void {
+                setDisplayMode( _displayMode );
+            }
+        );
 
 
 
@@ -93,6 +89,8 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 //        registerListener(_paintableOverlay, MouseEvent.CLICK, function(...ignored) :void {
 //            setDisplayMode( DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
 //        });
+
+        setDisplayMode( DISPLAY_MODE_OFF );
     }
 
 //    protected function reapplyDisplayMode( ...ignored ) :void
@@ -105,17 +103,17 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
         if( VConstants.LOCAL_DEBUG_MODE) {
 
             for each( var p :AvatarHUD in _avatars.values()) {
-                db.addObject( p, _paintableOverlay );
+                mode.addSceneObject( p, _paintableOverlay );
             }
 
-//            db.addObject(new SimpleTimer(10, function (...ignored) :void {
+//            mode.addSceneObject(new SimpleTimer(10, function (...ignored) :void {
 //                p1.setLocation( [0.6, 0, 0.1], 6 );
 //            }));
         }
 
 //        var updateDisplayTimer :SimpleTimer = new SimpleTimer(1, reapplyDisplayMode, true,
 //            UPDATE_DISPLAY_TIMER_NAME );
-//        db.addObject( updateDisplayTimer );
+//        mode.addSceneObject( updateDisplayTimer );
     }
 
     override protected function destroyed():void
@@ -264,140 +262,138 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 
     protected function getValidPlayerIdTargets() :HashSet
     {
-
+        //Debugging mode
         if( VConstants.LOCAL_DEBUG_MODE) {
             var a :HashSet = new HashSet();
-            a.add(1);
-            a.add(2);
+            FakeAVRGContext.playerIds.forEach( function(playerId :int, ...ignored) :void {
+                a.add(playerId);
+
+            });
+            a.remove( ClientContext.ourPlayerId );
             return a;
         }
+
+
 
         var validIds :HashSet = new HashSet();
 
-        if( !ClientContext.model.isVampire() ) {
-            return validIds;
-        }
+        var playersAlreadyFeeding :Array = ClientContext.model.playersFeeding;
 
-        var playerIds :Array = _ctrl.room.getPlayerIds();
-
-        var validCHatTargets :Array = ClientContext.model.validNonPlayerTargetsFromChatting;
-
-        //Add the nonplayers
-        _avatars.forEach( function( playerId :int, ...ignored) :void {
-            if( !ArrayUtil.contains(playerIds, playerId )) {
-                if( isNaN(SharedPlayerStateClient.getBlood( playerId )) || SharedPlayerStateClient.getBlood( playerId ) > 1 ) {
-                    //Check if they have chatted enough
-                    if( ArrayUtil.contains( validCHatTargets, playerId) ) {
-                        validIds.add( playerId );
-                    }
-                }
-            }
-        });
-
-        //Add players in 'bare' mode
-        for each( var playerId :int in playerIds ) {
-
-            if( playerId == _ctrl.player.getPlayerId() ) {
-                continue;
-            }
-
-            var action :String = SharedPlayerStateClient.getCurrentAction( playerId );
-            if( action != null && action == VConstants.GAME_MODE_BARED
-                && SharedPlayerStateClient.getBlood( playerId ) > 1 ) {
-
-                validIds.add( playerId );
+        for each( var avatarId :int in ClientContext.getAvatarIds(true)) {
+            //Don't allow the targeting of players already feeding.
+            if( !ArrayUtil.contains( playersAlreadyFeeding, avatarId )){
+                validIds.add( avatarId );
             }
         }
-
         return validIds;
+
+//        var playerIds :Array = _ctrl.room.getPlayerIds();
+//        trace("playerIds=" + playerIds);
+//
+//        var validCHatTargets :Array = ClientContext.model.validNonPlayerTargetsFromChatting;
+//        trace("validCHatTargets=" + validCHatTargets);
+//
+//        //Add the nonplayers
+//        _avatars.forEach( function( playerId :int, ...ignored) :void {
+//            if( !ArrayUtil.contains(playerIds, playerId )) {
+//                if( isNaN(SharedPlayerStateClient.getBlood( playerId )) || SharedPlayerStateClient.getBlood( playerId ) > 1 ) {
+//                    //Check if they have chatted enough
+//                    if( ArrayUtil.contains( validCHatTargets, playerId) ) {
+//                        validIds.add( playerId );
+//                    }
+//                }
+//            }
+//        });
+//
+//        //Add players in 'bare' mode
+//        for each( var playerId :int in playerIds ) {
+//
+//            trace("_ctrl.player.getPlayerId()=" + _ctrl.player.getPlayerId());
+//            if( playerId == _ctrl.player.getPlayerId() ) {
+//                continue;
+//            }
+//
+//            var action :String = SharedPlayerStateClient.getCurrentAction( playerId );
+//            if( action != null && action == VConstants.GAME_MODE_BARED
+//                && SharedPlayerStateClient.getBlood( playerId ) > 1 ) {
+//
+//                validIds.add( playerId );
+//            }
+//        }
+//
+//        return validIds;
     }
 
-    protected function getPotentialPredatorIds() :HashSet
-    {
-
-        if( VConstants.LOCAL_DEBUG_MODE) {
-            var a :HashSet = new HashSet();
-            a.add(1);
-            a.add(2);
-            return a;
-        }
-
-        var preds :HashSet = new HashSet();
-
-        var playerIds :Array = _ctrl.room.getPlayerIds();
-        for each( var playerId :int in playerIds ) {
-            if( SharedPlayerStateClient.isVampire( playerId )
-                && SharedPlayerStateClient.getCurrentAction( playerId ) != VConstants.GAME_MODE_BARED ) {
-                preds.add( playerId );
-            }
-        }
-
-        return preds;
-
-    }
+//    protected function getPotentialPredatorIds() :HashSet
+//    {
+//
+//        if( VConstants.LOCAL_DEBUG_MODE) {
+//            var a :HashSet = new HashSet();
+//            a.add(1);
+//            a.add(2);
+//            return a;
+//        }
+//
+//        var preds :HashSet = new HashSet();
+//
+//        var playerIds :Array = _ctrl.room.getPlayerIds();
+//        for each( var playerId :int in playerIds ) {
+//            if( SharedPlayerStateClient.isVampire( playerId )
+//                && SharedPlayerStateClient.getCurrentAction( playerId ) != VConstants.GAME_MODE_BARED ) {
+//                preds.add( playerId );
+//            }
+//        }
+//
+//        return preds;
+//
+//    }
 
 //    public function get displayMode() :int
 //    {
 //        return _displayMode;
 //    }
-    protected function setDisplayModeOLD( mode :int, selectedPlayer :int = 0, multiPredators :Boolean = false ) :void
+    public function setDisplayMode( mode :int ) :void
     {
         _displayMode = mode;
         var validIds :HashSet;
         var predators :HashSet;
 
         switch( mode ) {
-            case DISPLAY_MODE_SHOW_INFO_ALL_AVATARS:
-//                trace("DISPLAY_MODE_SHOW_INFO_ALL_AVATARS");
+//            case DISPLAY_MODE_SHOW_INFO_ALL_AVATARS:
+////                trace("DISPLAY_MODE_SHOW_INFO_ALL_AVATARS");
+//                _displaySprite.addChild( _paintableOverlay );
+////                trace("avatars=" + _avatars.size());
+//                _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
+////                    avatar.setDisplayModeShowInfo();
+//                });
+//
+//
+//                break;
+
+            case DISPLAY_MODE_SHOW_VALID_TARGETS:
+//                trace("DISPLAY_MODE_SHOW_VALID_TARGETS");
                 _displaySprite.addChild( _paintableOverlay );
-//                trace("avatars=" + _avatars.size());
-                _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
-//                    avatar.setDisplayModeShowInfo();
-                });
+//                _paintableOverlay.graphics.clear();
+//                _paintableOverlay.graphics.beginFill(0, 0.3);
+//                _paintableOverlay.graphics.drawRect( 0, 0, 500, 300 );
+//                _paintableOverlay.graphics.endFill();
 
-
-                break;
-//            case DISPLAY_MODE_SHOW_FEED_TARGET:
-////                trace("DISPLAY_MODE_SHOW_FEED_TARGET");
-//                _displaySprite.addChild( _paintableOverlay );
-//
-//                if( !ClientContext.model.isVampire() && !VConstants.LOCAL_DEBUG_MODE) {
-//                    break;
-//                }
-//                predators = getPotentialPredatorIds();
-//                _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
-//                    if( selectedPlayer == avatar.playerId ) {
-////                        avatar.selected = true;
-//                        avatar.setSelectedForFeed( predators.size() > 1 );
-//                    }
-//                    else {
-//                        avatar.setDisplayModeInvisible();
-//                    }
-//                });
-//                break;
-//            case DISPLAY_MODE_SHOW_VALID_TARGETS:
-////                trace("DISPLAY_MODE_SHOW_VALID_TARGETS");
-//                _displaySprite.addChild( _paintableOverlay );
-//
-//                if( !ClientContext.model.isVampire() && !VConstants.LOCAL_DEBUG_MODE) {
-////                    trace("no vampire");
-//                    break;
-//                }
 //                validIds = getValidPlayerIdTargets();
-//                predators = getPotentialPredatorIds();
-////                trace("validIds=" + validIds.toArray());
-//                _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
-//                    if( validIds.contains( avatar.playerId ) ) {
-////                        trace("  selectable " + avatar);
-//                        avatar.setDisplayModeSelectableForFeed( predators.size() > 1 );
-//                    }
-//                    else {
-////                        trace("  Invisible " + avatar);
-////                        avatar.setDisplayModeInvisible();
+                validIds = getValidPlayerIdTargets();
+                trace("validIds=" + validIds.toArray());
+                trace("my id=" + ClientContext.ourPlayerId);
+                _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
+                    if( validIds.contains( avatar.playerId ) ) {
+//                        trace("  selectable " + avatar);
+                        avatar.setDisplayModeSelectableForFeed();
+                    }
+                    else {
+//                        trace("  Invisible " + avatar);
+                        avatar.setDisplayModeInvisible();
 //                        avatar.setDisplayModeShowInfo();
-//                    }
-//                });
-//                break;
+                    }
+                });
+                break;
 //            case DISPLAY_MODE_SHOW_FEED_TARGET:
 //                _displaySprite.addChild( _paintableOverlay );
 //
@@ -415,7 +411,7 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 
 //                trace("DISPLAY_MODE_OFF");
                 _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
-//                    avatar.setDisplayModeInvisible();
+                    avatar.setDisplayModeInvisible();
                 });
 
 //                if( _displaySprite.contains( _paintableOverlay ) ) {
@@ -468,13 +464,18 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 
     }
 
+    public function get displayMode() :int
+    {
+        return _displayMode;
+    }
+
 //    protected function checkVampire
 
     protected var _displayMode :int = 0;
 
-//    public static const DISPLAY_MODE_OFF :int = 0;
-    public static const DISPLAY_MODE_SHOW_INFO_ALL_AVATARS :int = 1;
-//    public static const DISPLAY_MODE_SHOW_VALID_TARGETS :int = 2;
+    public static const DISPLAY_MODE_OFF :int = 0;
+//    public static const DISPLAY_MODE_SHOW_INFO_ALL_AVATARS :int = 1;
+    public static const DISPLAY_MODE_SHOW_VALID_TARGETS :int = 2;
 //    public static const DISPLAY_MODE_SHOW_FEED_TARGET :int = 3;
 
     protected static const UPDATE_DISPLAY_TIMER_NAME :String = "updateVampireHUDTimer";

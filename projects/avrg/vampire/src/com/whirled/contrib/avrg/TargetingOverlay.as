@@ -134,6 +134,9 @@ public class TargetingOverlay extends SceneObject
 
     protected var _displaySprite :Sprite;
 
+    /**
+    * Another sprite is used to paint on, so it can be detached from the _displaySprite if neccesary.
+    */
     protected var _paintableOverlay :Sprite;
 
     protected var _targetClickedCallback :Function;

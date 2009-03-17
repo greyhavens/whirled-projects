@@ -7,6 +7,7 @@ import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRGameRoomEvent;
+import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 
 import vampire.client.events.PlayerArrivedAtLocationEvent;
@@ -75,6 +76,11 @@ public class TargetingOverlayAvatars extends TargetingOverlay
         _avatars.clear();
     }
 
+    protected function get mode() :AppMode
+    {
+        return db as AppMode;
+    }
+
     protected function get playerEntityId () :String
     {
         if( _playerEntityId == null ) {
@@ -129,7 +135,7 @@ public class TargetingOverlayAvatars extends TargetingOverlay
                     function(...ignored) :void {
                         dispatchEvent( new PlayerArrivedAtLocationEvent() );
                     });
-                db.addObject( playerAvatar, _paintableOverlay );
+                mode.addSceneObject( playerAvatar, _paintableOverlay );
                 _avatars.put( userId, playerAvatar );
             }
 
@@ -148,7 +154,7 @@ public class TargetingOverlayAvatars extends TargetingOverlay
 
             //Add the avatar to the db if not yet added.
             if( avatar.db == null ) {
-                db.addObject( avatar, _paintableOverlay );
+                mode.addSceneObject( avatar, _paintableOverlay );
             }
 
             if( avatar.sprite != null && !_paintableOverlay.contains( avatar.sprite ) ) {

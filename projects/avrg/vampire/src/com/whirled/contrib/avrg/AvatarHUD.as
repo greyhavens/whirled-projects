@@ -7,6 +7,7 @@ import com.threerings.util.Log;
 import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameRoomEvent;
+import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 
 import flash.display.DisplayObject;
@@ -76,6 +77,11 @@ public class AvatarHUD extends SceneObject
 //            log.debug("CLient NonPlayerAvatar new and loaded room props=" + this);
 //
 //        }
+    }
+
+    protected function get mode() :AppMode
+    {
+        return db as AppMode;
     }
 
     protected function resetEntityId(...ignored) :void
