@@ -19,7 +19,7 @@ import vampire.client.events.LineageUpdatedEvent;
 import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.Lineage;
 import vampire.data.VConstants;
-import vampire.feeding.FeedingGameClient;
+import vampire.feeding.FeedingClient;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.NonPlayerIdsInRoomMsg;
 
@@ -160,7 +160,7 @@ public class MainGameMode extends AppMode
 
 
 
-        FeedingGameClient.init( modeSprite, ClientContext.ctrl );
+        FeedingClient.init( modeSprite, ClientContext.ctrl );
 
         _events.registerListener(ClientContext.ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessageReceived);
@@ -217,7 +217,7 @@ public class MainGameMode extends AppMode
             if (_feedingGameClient != null) {
                 log.warning("Received StartFeeding message while already in game");
             } else {
-                _feedingGameClient = FeedingGameClient.create( gameId, ClientContext.model.playerFeedingData, onGameComplete);
+                _feedingGameClient = FeedingClient.create( gameId, ClientContext.model.playerFeedingData, onGameComplete);
 
                 modeSprite.addChild(_feedingGameClient);
             }
@@ -306,7 +306,7 @@ public class MainGameMode extends AppMode
 
     protected var _hud :HUD;
 
-    protected var _feedingGameClient :FeedingGameClient;
+    protected var _feedingGameClient :FeedingClient;
 
     protected var _currentNonPlayerIds :Array;
 

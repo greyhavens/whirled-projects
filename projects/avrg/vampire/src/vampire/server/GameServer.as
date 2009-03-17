@@ -17,7 +17,7 @@ import flash.utils.getTimer;
 import flash.utils.setInterval;
 
 import vampire.data.Codes;
-import vampire.feeding.FeedingGameServer;
+import vampire.feeding.FeedingServer;
 
 public class GameServer extends ObjectDB
 {
@@ -79,7 +79,7 @@ public class GameServer extends ObjectDB
         addObject( ServerContext.nonPlayersBloodMonitor );
 
         //Tim's bloodbond game server
-        FeedingGameServer.init( _ctrl );
+        FeedingServer.init( _ctrl );
 
 //        _stub = new ServerStub(_ctrl);\
 

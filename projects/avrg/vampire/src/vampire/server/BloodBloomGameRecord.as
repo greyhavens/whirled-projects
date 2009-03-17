@@ -9,7 +9,7 @@ package vampire.server
 
     import vampire.data.Logic;
     import vampire.data.VConstants;
-    import vampire.feeding.FeedingGameServer;
+    import vampire.feeding.FeedingServer;
 
 public class BloodBloomGameRecord extends EventCollecter
 {
@@ -123,11 +123,15 @@ public class BloodBloomGameRecord extends EventCollecter
 
         var preyBloodType :int = Logic.getPlayerBloodStrain(_preyId);
 
-        _gameServer = FeedingGameServer.create( _room.roomId,
-                                                _predators.toArray(),
+        // TODO: fix this
+        var predatorId :int = _predators.toArray()[0];
+
+        _gameServer = FeedingServer.create( _room.roomId,
+                                                predatorId,
                                                 gamePreyId,
                                                 preyBlood,
                                                 preyBloodType,
+                                                gameStartedCallback,
                                                 roundCompleteCallback,
                                                 gameFinishedCallback,
                                                 playerLeftCallback);
@@ -168,6 +172,11 @@ public class BloodBloomGameRecord extends EventCollecter
                 _primaryPredMoved = true;
         }
 
+    }
+
+    protected function gameStartedCallback () :void
+    {
+        // TODO
     }
 
     protected function roundCompleteCallback() :Number
@@ -323,7 +332,7 @@ public class BloodBloomGameRecord extends EventCollecter
         return _predators.toArray().concat([_preyId]);
     }
 
-    public function get gameServer() :FeedingGameServer
+    public function get gameServer() :FeedingServer
     {
         return _gameServer;
     }
@@ -396,7 +405,7 @@ public class BloodBloomGameRecord extends EventCollecter
     protected var _room :Room;
     protected var _gameId :int;
 
-    protected var _gameServer :FeedingGameServer;
+    protected var _gameServer :FeedingServer;
 
     protected var _predators :HashSet = new HashSet();
     protected var _preyId :int;
