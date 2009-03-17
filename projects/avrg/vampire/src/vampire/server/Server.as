@@ -8,7 +8,7 @@ package vampire.server
     {
         public function Server()
         {
-            ServerContext.ctrl = new AVRServerGameControl( this );
+            ServerContext.init( new AVRServerGameControl( this ) );
 
             //Plug the client broadcaster to the Log
 //            ServerContext.serverLogBroadcast = new AVRGAgentLogTarget( ServerContext.ctrl );
@@ -21,7 +21,7 @@ package vampire.server
 
 
             //Start the game server
-            var v :VServer = new VServer();
+            var v :GameServer = new GameServer();
         }
 
     }

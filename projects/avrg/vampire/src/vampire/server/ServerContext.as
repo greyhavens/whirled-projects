@@ -2,15 +2,16 @@ package vampire.server
 {
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRServerGameControl;
+import com.whirled.contrib.simplegame.net.BasicMessageManager;
 
+import vampire.Util;
 import vampire.data.LineageServer;
-import vampire.net.VMessageManager;
 
 public class ServerContext
 {
-    public static var msg :VMessageManager;
+    public static var msg :BasicMessageManager;
     public static var ctrl :AVRServerGameControl;
-    public static var vserver :VServer;
+    public static var server :GameServer;
     public static var lineage :LineageServer;
     public static var nonPlayersBloodMonitor :NonPlayerAvatarsBloodMonitor;
     public static var trophies :Trophies;
@@ -23,7 +24,7 @@ public class ServerContext
 
     public static function getPlayerName( playerId :int) :String
     {
-        var player :Player = vserver.getPlayer(playerId);
+        var player :PlayerData = server.getPlayer(playerId);
 
         if( player == null || player.room == null) {
             return "Player " + playerId;
@@ -39,6 +40,13 @@ public class ServerContext
     public static function trace2( msg :String ) :void
     {
         serverLogBroadcast.log( msg );
+    }
+
+    public static function init (gameCtrl :AVRServerGameControl) :void
+    {
+        ctrl = gameCtrl;
+        msg = new BasicMessageManager();
+        vampire.Util.initMessageManager(msg);
     }
 
 

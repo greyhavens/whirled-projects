@@ -4,11 +4,11 @@ package vampire.server
     import com.threerings.util.HashMap;
     import com.threerings.util.HashSet;
     import com.threerings.util.Log;
-    import com.whirled.contrib.simplegame.server.SimObjectThane;
+    import com.whirled.contrib.simplegame.SimObject;
 
     import vampire.data.VConstants;
 
-public class BloodBloomManager extends SimObjectThane
+public class BloodBloomManager extends SimObject
 {
     public function BloodBloomManager( room :Room )
     {
@@ -20,6 +20,9 @@ public class BloodBloomManager extends SimObjectThane
     {
         var gamesShutdown :HashSet = new HashSet();
         _playerId2Game.forEach( function( playerId :int, game :BloodBloomGameRecord) :void {
+            if( game.isFinished ) {
+                gamesShutdown.add( game.gameServer.gameId );
+            }
             if( !gamesShutdown.contains( game.gameServer.gameId ) ) {
                 gamesShutdown.add( game.gameServer.gameId );
                 game.shutdown();
@@ -29,6 +32,8 @@ public class BloodBloomManager extends SimObjectThane
         _games.splice(0);
         _room = null;
     }
+
+
 
     public function predatorBeginsGame( predatorId :int ) :void
     {
@@ -116,7 +121,7 @@ public class BloodBloomManager extends SimObjectThane
                 //Set the avatars to the default state after a game.
                 for each( var playerId :int in gameRecord.playerIds) {
                     if( _room.isPlayer( playerId ) ) {
-                        _room.getPlayer( playerId ).actionChange( VConstants.GAME_MODE_NOTHING );
+                        ServerLogic.actionChange( _room.getPlayer( playerId ), VConstants.GAME_MODE_NOTHING);
                     }
                 }
 
@@ -187,6 +192,13 @@ public class BloodBloomManager extends SimObjectThane
         _games.push( gameRecord );
 
         return gameRecord;
+    }
+
+    public function get players() :Array
+    {
+        var keys :Array = _playerId2Game.keys();
+        keys.sort();
+        return keys;
     }
 
     override public function toString() :String

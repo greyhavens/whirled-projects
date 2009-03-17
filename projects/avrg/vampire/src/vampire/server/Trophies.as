@@ -45,7 +45,7 @@ public class Trophies
     }
 
 
-    public static function checkMinionTrophies ( player :Player ) :void
+    public static function checkMinionTrophies ( player :PlayerData ) :void
     {
         if( player == null ) {
             log.error("checkMinionTrophies", "player", player);
@@ -63,7 +63,7 @@ public class Trophies
 
     }
 
-    public static function checkInviteTrophies( player :Player ) :void
+    public static function checkInviteTrophies( player :PlayerData ) :void
     {
         if( player == null ) {
             log.error("checkInviteTrophies", "player", player);
@@ -82,15 +82,15 @@ public class Trophies
     }
 
 
-    protected static function isPossessingBasicAvatar (player :Player, trophy :String) :void
-    {
-        if (!player.ctrl.holdsTrophy(trophy)) {
-            log.debug("Awarding", "player", player.playerId, "trophy", trophy);
-            player.ctrl.awardTrophy(trophy);
-        }
-    }
+//    protected static function isPossessingBasicAvatar (player :PlayerData, trophy :String) :void
+//    {
+//        if (!player.ctrl.holdsTrophy(trophy)) {
+//            log.debug("Awarding", "player", player.playerId, "trophy", trophy);
+//            player.ctrl.awardTrophy(trophy);
+//        }
+//    }
 
-    protected static function doAward (player :Player, trophy :String) :void
+    protected static function doAward (player :PlayerData, trophy :String) :void
     {
         if (!player.ctrl.holdsTrophy(trophy)) {
             log.debug("Awarding", "player", player.playerId, "trophy", trophy);

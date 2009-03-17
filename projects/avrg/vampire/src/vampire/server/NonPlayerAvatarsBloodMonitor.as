@@ -7,16 +7,16 @@ package vampire.server
     import com.threerings.util.Log;
     import com.threerings.util.StringBuilder;
     import com.whirled.avrg.AVRGameControlEvent;
-    import com.whirled.contrib.simplegame.server.SimObjectThane;
+    import com.whirled.contrib.simplegame.SimObject;
     import com.whirled.net.MessageReceivedEvent;
 
     import flash.utils.Dictionary;
 
     import vampire.data.Codes;
     import vampire.data.VConstants;
-    import vampire.net.messages.NonPlayerIdsInRoomMessage;
+    import vampire.net.messages.NonPlayerIdsInRoomMsg;
 
-public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
+public class NonPlayerAvatarsBloodMonitor extends SimObject
 {
 
     public function NonPlayerAvatarsBloodMonitor()
@@ -34,8 +34,8 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
 
     protected function handleMessage( e :MessageReceivedEvent ) :void
     {
-        if( e.value is NonPlayerIdsInRoomMessage ) {
-            var msg :NonPlayerIdsInRoomMessage = e.value as NonPlayerIdsInRoomMessage;
+        if( e.value is NonPlayerIdsInRoomMsg ) {
+            var msg :NonPlayerIdsInRoomMsg = e.value as NonPlayerIdsInRoomMsg;
             if( msg != null) {
 
                 var roomId :int = msg.roomId;
@@ -208,7 +208,7 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
             //If we've played, but are currently offline, our blood is 1, so as to stop
             //players drinking it without our permission.
             if( _playerIdsThatHavePlayedEver.contains(userId) &&
-                !ServerContext.vserver.isPlayer(userId)) {
+                !ServerContext.server.isPlayer(userId)) {
 
                 blood = 1;
             }
@@ -224,11 +224,11 @@ public class NonPlayerAvatarsBloodMonitor extends SimObjectThane
 
             roomId = _nonplayer2RoomId.get( userId );
 
-            if( !ServerContext.vserver.isRoom( roomId )) {
+            if( !ServerContext.server.isRoom( roomId )) {
                 continue;
             }
 
-            var room :Room = ServerContext.vserver.getRoom( roomId );
+            var room :Room = ServerContext.server.getRoom( roomId );
 
             //Skip if the room is wonky
             if( room == null || room.ctrl == null || !room.ctrl.isConnected() || room.isStale) {

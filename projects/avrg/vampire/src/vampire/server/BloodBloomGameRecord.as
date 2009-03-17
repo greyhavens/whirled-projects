@@ -154,15 +154,16 @@ public class BloodBloomGameRecord extends EventCollecter
         //Force all predator avatars out of the feeding state
         if( playerId == _preyId ) {
             _predators.forEach( function( predId :int ) :void {
-                var pred :Player = ServerContext.vserver.getPlayer( predId );
+                var pred :PlayerData = ServerContext.server.getPlayer( predId );
                 if( pred != null ) {
-                    pred.actionChange( VConstants.GAME_MODE_NOTHING );
+                    ServerLogic.actionChange( pred, VConstants.GAME_MODE_NOTHING );
+//                    pred.actionChange( VConstants.GAME_MODE_NOTHING );
                 }
             });
         }
 
         if( _room != null && _room.getPlayer( primaryPredatorId ) != null ) {
-            var primaryPred :Player = _room.getPlayer( primaryPredatorId );
+            var primaryPred :PlayerData = _room.getPlayer( primaryPredatorId );
                 primaryPred.ctrl.sendMessage( VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING );
                 _primaryPredMoved = true;
         }
@@ -176,8 +177,9 @@ public class BloodBloomGameRecord extends EventCollecter
             if( _gameServer != null ) {
                 var score :Number = _gameServer.lastRoundScore;
                 log.debug("Score=" + score);
-                ServerContext.vserver.control.doBatch( function() :void {
-                    _room.bloodBloomRoundOver( _thisBloodBloomRecord );
+                ServerContext.server.control.doBatch( function() :void {
+                    ServerLogic.bloodBloomRoundOver( _thisBloodBloomRecord );
+//                    _room.bloodBloomRoundOver( _thisBloodBloomRecord );
                 });
 
             }
@@ -207,7 +209,7 @@ public class BloodBloomGameRecord extends EventCollecter
 
             //The prey steps away from the predator, if the predator
             if( !_primaryPredMoved && _room != null && _room.getPlayer( primaryPredatorId ) != null ) {
-                var primaryPred :Player = _room.getPlayer( primaryPredatorId );
+                var primaryPred :PlayerData = _room.getPlayer( primaryPredatorId );
                 primaryPred.ctrl.sendMessage( VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING );
             }
 
@@ -241,21 +243,26 @@ public class BloodBloomGameRecord extends EventCollecter
 
     public function removePlayer ( playerId :int ) :void
     {
-        if( _preyId == playerId ) {
-            log.info("Shutting down bloodbloom game because prey removed");
-            shutdown();
+        if( !_started ) {
         }
         else {
-            _predators.remove( playerId );
-            if( _gameServer != null ) {
-                if(_gameServer.playerLeft( playerId ) ) {
+            if( _preyId == playerId ) {
+                log.info("Shutting down bloodbloom game because prey removed");
+                shutdown();
+            }
+            else {
+                _predators.remove( playerId );
+                if( _gameServer != null ) {
+                    if(_gameServer.playerLeft( playerId ) ) {
+                        shutdown();
+                    }
+                }
+                if( _predators.size() == 0) {
+                    log.info("Shutting down bloodbloom game because pred==0");
                     shutdown();
                 }
             }
-            if( _predators.size() == 0) {
-                log.info("Shutting down bloodbloom game because pred==0");
-                shutdown();
-            }
+
         }
     }
 
@@ -360,6 +367,11 @@ public class BloodBloomGameRecord extends EventCollecter
     public function get preyLocation() :Array
     {
         return _preyLocation;
+    }
+
+    public function get room() :Room
+    {
+        return _room;
     }
 
     override public function toString() :String
