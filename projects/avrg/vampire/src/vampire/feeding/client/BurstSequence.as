@@ -59,7 +59,12 @@ public class BurstSequence extends SceneObject
 
     public function get totalValue () :int
     {
-        return _totalBursts * _totalMultiplier;
+        return _totalBursts * this.multiplier;
+    }
+
+    public function get multiplier () :int
+    {
+        return Math.min(_totalMultiplier, Constants.MAX_MULTIPLIER);
     }
 
     override public function getObjectGroup (groupNum :int) :String
@@ -87,8 +92,8 @@ public class BurstSequence extends SceneObject
                 text = "";
             } else {
                 text = String(_totalBursts);
-                if (_totalMultiplier > 1) {
-                    text += " x" + _totalMultiplier;
+                if (this.multiplier > 1) {
+                    text += " x" + this.multiplier;
                 }
 
                 if (_needsRelocate) {
@@ -116,7 +121,7 @@ public class BurstSequence extends SceneObject
 
         if (_totalBursts >= Constants.CREATE_BONUS_BURST_SIZE) {
             // Send a multiplier to the other players
-            var multiplierSize :int = _totalMultiplier + 1;
+            var multiplierSize :int = Math.min(this.multiplier + 1, Constants.MAX_MULTIPLIER);
             GameCtx.gameMode.sendMultiplier(multiplierSize, this.x, this.y);
 
             // Show an animation of this happening
@@ -136,7 +141,7 @@ public class BurstSequence extends SceneObject
         ClientCtx.awardTrophySequence(
             Trophies.MULTIPLIER_TROPHIES,
             Trophies.MULTIPLIER_REQS,
-            _totalMultiplier);
+            this.multiplier);
     }
 
     protected var _bursts :Array = [];
