@@ -2,11 +2,13 @@ package vampire.client
 {
 import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.MathUtil;
+import com.threerings.flash.SimpleTextButton;
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.avrg.DraggableSceneObject;
+import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.objects.SceneObjectPlayMovieClipOnce;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
@@ -27,9 +29,9 @@ import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 
 import vampire.Util;
+import vampire.client.events.PlayerStateChangedEvent;
 import vampire.data.Codes;
 import vampire.data.Logic;
-import vampire.data.SharedPlayerStateClient;
 import vampire.data.VConstants;
 import vampire.server.BloodBloomGameRecord;
 
@@ -57,7 +59,12 @@ public class HUD extends DraggableSceneObject
 
     override protected function addedToDB() :void
     {
-        db.addObject(_bloodXPMouseOverSceneObject );
+        mode.addObject(_bloodXPMouseOverSceneObject );
+    }
+
+    protected function get mode() :AppMode
+    {
+        return db as AppMode;
     }
 
     protected function handleMessageReceived( e :MessageReceivedEvent ) :void
@@ -142,7 +149,7 @@ public class HUD extends DraggableSceneObject
                                 ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true) );
                         bloodUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
                         bloodUp.y = _hudBlood.y;
-                        db.addObject( bloodUp, _hudBlood.parent  );
+                        mode.addSceneObject( bloodUp, _hudBlood.parent  );
                     }
 
 //                    if( _currentBlood < ClientContext.model.blood ) {
@@ -151,7 +158,7 @@ public class HUD extends DraggableSceneObject
 //                            ClientContext.instantiateMovieClip("HUD", "levelup", true) );
 //                        bloodUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
 //                        bloodUp.y = _hudBlood.y;
-//                        db.addObject( bloodUp, _hudBlood.parent );
+//                        mode.addSceneObject( bloodUp, _hudBlood.parent );
 //                    }
 //                    _currentBlood = ClientContext.model.blood;
 
@@ -168,7 +175,7 @@ public class HUD extends DraggableSceneObject
                                 ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true) );
                         levelUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
                         levelUp.y = _hudBlood.y;
-                        db.addObject( levelUp, _hudBlood.parent  );
+                        mode.addSceneObject( levelUp, _hudBlood.parent  );
                     }
                     _currentLevel = ClientContext.model.level;
 
@@ -184,7 +191,7 @@ public class HUD extends DraggableSceneObject
                                 ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true) );
                         levelUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
                         levelUp.y = _hudBlood.y;
-                        db.addObject( levelUp, _hudBlood.parent  );
+                        mode.addSceneObject( levelUp, _hudBlood.parent  );
                     }
 
 
@@ -194,7 +201,7 @@ public class HUD extends DraggableSceneObject
                             ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true) );
                         levelUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
                         levelUp.y = _hudBlood.y;
-                        db.addObject( levelUp, _hudBlood.parent );
+                        mode.addSceneObject( levelUp, _hudBlood.parent );
                     }
                     _currentLevel = ClientContext.model.level;
 
@@ -207,7 +214,7 @@ public class HUD extends DraggableSceneObject
                                 ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true) );
                         bloodBondMovie.x = _hudBlood.x + ClientContext.model.maxblood/2;
                         bloodBondMovie.y = _hudBlood.y;
-                        db.addObject( bloodBondMovie, _hudBlood.parent  );
+                        mode.addSceneObject( bloodBondMovie, _hudBlood.parent  );
                     }
 
                 }
@@ -218,7 +225,7 @@ public class HUD extends DraggableSceneObject
                                 ClientContext.instantiateMovieClip("HUD", "lineage_feedback", true) );
                         lineageMovie.x = _hudBlood.x + ClientContext.model.maxblood/2;
                         lineageMovie.y = _hudBlood.y;
-                        db.addObject( lineageMovie, _displaySprite );
+                        mode.addSceneObject( lineageMovie, _displaySprite );
                     }
                 }
 
@@ -251,6 +258,7 @@ public class HUD extends DraggableSceneObject
         return o;
     }
 
+
     protected function setupUI() :void
     {
 
@@ -266,7 +274,7 @@ public class HUD extends DraggableSceneObject
         init( new Rectangle(-_hudMC.width/2, _hudMC.height/2, _hudMC.width, _hudMC.height), 0, 0, 0, 100);
 
 
-        this.x = _hudMC.width + 40 + 180;
+        this.x = _hudMC.width  ;
         this.y = _hudMC.height;
 
         _hudMC.mouseChildren = true;
@@ -293,21 +301,11 @@ public class HUD extends DraggableSceneObject
         _bloodXPMouseOverSceneObject.alpha = 0;
 
         registerListener( bloodXPMouseOverSprite, MouseEvent.ROLL_OVER, function(...ignored) :void {
-//            trace("in");
             _bloodXPMouseOverSceneObject.addTask( AlphaTask.CreateEaseIn(1, 0.3));
         });
         registerListener( bloodXPMouseOverSprite, MouseEvent.ROLL_OUT, function(...ignored) :void {
-//            trace("out");
             _bloodXPMouseOverSceneObject.addTask( AlphaTask.CreateEaseIn(0, 0.3));
         });
-
-//        var textField :TextField = TextFieldUtil.createField("asfdasdf");
-//        bloodXPMouseOverSprite.addChild( textField );
-
-//        var test :Sprite = new Sprite();
-//        ClientContext.drawDotAtCenter(test);
-//        bloodXPMouseOverSprite.addChild( test );
-
 
         _hudCap.parent.addChild(bloodXPMouseOverSprite );
 
@@ -318,6 +316,10 @@ public class HUD extends DraggableSceneObject
         Command.bind( hudClose, MouseEvent.CLICK, VampireController.QUIT);
 
 
+        var feedButton :SimpleTextButton = new SimpleTextButton("Feed");
+        Command.bind(feedButton, MouseEvent.CLICK, VampireController.FEED );
+        feedButton.y = 30;
+        _hud.addChild( feedButton );
 
 
     }
@@ -533,7 +535,7 @@ public class HUD extends DraggableSceneObject
 //            db.getObjectNamed( FEEDBACK_SIMOBJECT_NAME ).destroySelf();
 //        }
 //
-//        db.addObject( textSceneObject, _hudMC);
+//        mode.addSceneObject( textSceneObject, _hudMC);
 //
 //        var serialTask :SerialTask = new SerialTask();
 //        serialTask.addTask(
@@ -582,7 +584,7 @@ public class HUD extends DraggableSceneObject
 //            db.getObjectNamed( FEEDBACK_SIMOBJECT_NAME ).destroySelf();
 //        }
 //
-//        db.addObject( textSceneObject, _hudMC);
+//        mode.addSceneObject( textSceneObject, _hudMC);
 //        _hudMC.addChildAt( textSceneObject.displayObject, 2 );
 //
 //

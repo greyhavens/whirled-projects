@@ -23,7 +23,7 @@ package vampire.client
     import vampire.client.events.LineageUpdatedEvent;
     import vampire.data.Codes;
     import vampire.data.Logic;
-    import vampire.data.SharedPlayerStateClient;
+    import vampire.client.SharedPlayerStateClient;
     import vampire.data.VConstants;
     import vampire.feeding.Constants;
     import vampire.feeding.PlayerFeedingData;
@@ -207,6 +207,7 @@ package vampire.client
                     log.error(textFieldName + " is null");
                     continue;
                 }
+                tf.gotoAndStop(1);
 
                 if( Logic.getPlayerBloodStrain( ClientContext.ourPlayerId ) == i) {
                     tf.gotoAndStop(3);
