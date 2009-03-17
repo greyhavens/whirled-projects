@@ -10,7 +10,6 @@ import flash.display.Sprite;
 
 import vampire.avatar.AvatarGameBridge;
 import vampire.avatar.VampireAvatarHUDOverlay;
-import vampire.client.actions.BaseVampireMode;
 import vampire.client.events.ChangeActionEvent;
 import vampire.data.Codes;
 import vampire.client.SharedPlayerStateClient;
@@ -28,7 +27,7 @@ import vampire.net.messages.SuccessfulFeedMsg;
 public class VampireController extends Controller
 {
     public static const SWITCH_MODE :String = "SwitchMode";
-    public static const CLOSE_MODE :String = "CloseMode";
+//    public static const CLOSE_MODE :String = "CloseMode";
 //    public static const PLAYER_STATE_CHANGED :String = "PlayerStateChanged";
     public static const QUIT :String = "Quit";
 
@@ -43,6 +42,8 @@ public class VampireController extends Controller
 
     public static const FEED :String = "Feed";
     public static const FEED_REQUEST :String = "FeedRequest";
+    public static const FEED_REQUEST_ACCEPT :String = "AcceptFeedRequest";
+    public static const FEED_REQUEST_DENY :String = "DenyFeedRequest";
 
     public static const HIERARCHY_CENTER_SELECTED :String = "HierarchyCenterSelected";
 
@@ -119,26 +120,26 @@ public class VampireController extends Controller
 
 
 
-    public function handleCloseMode( actionmode :BaseVampireMode) :void
-    {
-        switch(ClientContext.model.action) {
-            case VConstants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
-//            case Constants.GAME_MODE_BLOODBOND:
-            case VConstants.GAME_MODE_NOTHING:
-            case null:
-                ClientContext.model.dispatchEvent( new ChangeActionEvent( VConstants.GAME_MODE_NOTHING ) );
-                break;
-            default:
-                ClientContext.ctrl.agent.sendMessage( RequestActionChangeMsg.NAME, new RequestActionChangeMsg( ClientContext.ourPlayerId, VConstants.GAME_MODE_NOTHING).toBytes() );
-
-        }
-
-        if( VConstants.LOCAL_DEBUG_MODE ) {
-            ClientContext.model.dispatchEvent( new ChangeActionEvent( VConstants.GAME_MODE_NOTHING ) );
-        }
-
-
-    }
+//    public function handleCloseMode( actionmode :BaseVampireMode) :void
+//    {
+//        switch(ClientContext.model.action) {
+//            case VConstants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
+////            case Constants.GAME_MODE_BLOODBOND:
+//            case VConstants.GAME_MODE_NOTHING:
+//            case null:
+//                ClientContext.model.dispatchEvent( new ChangeActionEvent( VConstants.GAME_MODE_NOTHING ) );
+//                break;
+//            default:
+//                ClientContext.ctrl.agent.sendMessage( RequestActionChangeMsg.NAME, new RequestActionChangeMsg( ClientContext.ourPlayerId, VConstants.GAME_MODE_NOTHING).toBytes() );
+//
+//        }
+//
+//        if( VConstants.LOCAL_DEBUG_MODE ) {
+//            ClientContext.model.dispatchEvent( new ChangeActionEvent( VConstants.GAME_MODE_NOTHING ) );
+//        }
+//
+//
+//    }
 
 
     public function handleQuit() :void
@@ -409,7 +410,19 @@ public class VampireController extends Controller
 
     }
 
+    public function handleAcceptFeedRequest( msg :String ) :void
+    {
 
+
+
+    }
+
+    public function handleDenyFeedRequest( msg :String ) :void
+    {
+
+
+
+    }
 
 
     protected static const log :Log = Log.getLog( VampireController );

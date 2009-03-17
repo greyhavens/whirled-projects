@@ -20,6 +20,7 @@ import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.Lineage;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingGameClient;
+import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.NonPlayerIdsInRoomMsg;
 
 public class MainGameMode extends AppMode
@@ -149,30 +150,11 @@ public class MainGameMode extends AppMode
             });
 
         //Move our avatar a while after feeding
-        registerListener(ClientContext.ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED, function(
-            e :MessageReceivedEvent) :void {
-                if( e.name == VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING ) {
-
-                    //Humans practising don't need to move.
-                    if( !ClientContext.model.isVampire() ) {
-                        return;
-                    }
-
-                    var moveTimer :SimpleTimer = new SimpleTimer( 2.5, function() :void {
-
-                        var location :Array = ClientContext.model.location;
-                        if( location != null ) {
-                            ClientContext.ctrl.player.setAvatarLocation(
-                                MathUtil.clamp( location[0] + 0.1,0,1),
-                                location[1],
-                                MathUtil.clamp( location[2] - 0.1,0,1), location[3]);
-                        }
-                    }, false);
-                    addObject( moveTimer );
-
-                }
-
-            });
+//        registerListener(ClientContext.ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED, function(
+//            e :MessageReceivedEvent) :void {
+//
+//
+//            });
 
         //If the game server says no more feeding, leave predator action
 
@@ -239,6 +221,39 @@ public class MainGameMode extends AppMode
 
                 modeSprite.addChild(_feedingGameClient);
             }
+        }
+        else if( e.name == VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING ) {
+
+            //Humans practising don't need to move.
+            if( !ClientContext.model.isVampire() ) {
+                return;
+            }
+
+            var moveTimer :SimpleTimer = new SimpleTimer( 2.5, function() :void {
+
+                var location :Array = ClientContext.model.location;
+                if( location != null ) {
+                    ClientContext.ctrl.player.setAvatarLocation(
+                        MathUtil.clamp( location[0] + 0.1,0,1),
+                        location[1],
+                        MathUtil.clamp( location[2] - 0.1,0,1), location[3]);
+                }
+            }, false);
+            addObject( moveTimer );
+        }
+        else if( e.name == FeedRequestMsg.NAME ) {
+            var msg :FeedRequestMsg =
+                ClientContext.msg.deserializeMessage( e.name, e.value) as FeedRequestMsg;
+
+            trace("got " + FeedRequestMsg.NAME);
+            var fromPlayerName :String = ClientContext.getPlayerName( msg.playerId );
+            var popup :PopupQuery = new PopupQuery( ClientContext.ctrl,
+                    "RequestFeed",
+                    fromPlayerName + " would like to feed on you.",
+                    [VampireController.FEED_REQUEST_ACCEPT, VampireController.FEED_REQUEST_DENY],
+                    [msg.playerId, msg.playerId]);
+            addSceneObject( popup, modeSprite );
+
         }
     }
 
