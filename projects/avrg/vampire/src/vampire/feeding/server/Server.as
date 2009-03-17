@@ -1,17 +1,13 @@
 package vampire.feeding.server {
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.PlayerSubControlServer;
-import com.whirled.avrg.RoomSubControlServer;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.ManagedTimer;
 import com.whirled.contrib.TimerManager;
-import com.whirled.contrib.simplegame.net.BasicMessageManager;
 import com.whirled.contrib.simplegame.net.Message;
-import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.net.MessageReceivedEvent;
 
 import vampire.feeding.*;
@@ -25,9 +21,7 @@ public class Server extends FeedingGameServer
             throw new Error("init has already been called");
         }
 
-        _gameCtrl = gameCtrl;
-        _msgMgr = new BasicMessageManager();
-        Util.initMessageManager(_msgMgr);
+        ServerCtx.init(gameCtrl);
 
         _inited = true;
     }
@@ -40,45 +34,54 @@ public class Server extends FeedingGameServer
             throw new Error("FeedingGameServer.init has not been called");
         }
 
-        log.info("New server starting", "roomId", roomId, "predatorIds", predatorIds,
-            "preyId", preyId, "preyBlood", preyBlood);
+        log.info(
+            "New server starting",
+            "roomId", roomId,
+            "predatorIds", predatorIds,
+            "preyId", preyId,
+            "preyBlood", preyBlood);
 
-        _gameId = _gameIdCounter++;
-        _playerIds = predatorIds.slice();
+        _ctx.server = this;
+        _ctx.gameId = _gameIdCounter++;
+        _ctx.playerIds = predatorIds.slice();
         if (preyId != Constants.NULL_PLAYER) {
-            _playerIds.push(preyId);
+            _ctx.playerIds.push(preyId);
         }
-        _preyId = preyId;
-        _preyIsAi = (_preyId == Constants.NULL_PLAYER);
-        _preyBlood = preyBlood;
-        _preyBloodType = preyBloodType;
-        _roundCompleteCallback = roundCompleteCallback;
-        _gameCompleteCallback = gameCompleteCallback;
-        _playerLeftCallback = playerLeftCallback;
-        _roomCtrl = _gameCtrl.getRoom(roomId);
-        _nameUtil = new NameUtil(_gameId);
-        _props = new GamePropControl(_gameId, _roomCtrl.props);
+        _ctx.preyId = preyId;
+        _ctx.preyIsAi = (_ctx.preyId == Constants.NULL_PLAYER);
+        _ctx.preyBlood = preyBlood;
+        _ctx.preyBloodType = preyBloodType;
+        _ctx.roundCompleteCallback = roundCompleteCallback;
+        _ctx.gameCompleteCallback = gameCompleteCallback;
+        _ctx.playerLeftCallback = playerLeftCallback;
+
+        _ctx.roomCtrl = _ctx.gameCtrl.getRoom(roomId);
+        _ctx.nameUtil = new NameUtil(_ctx.gameId);
+        _ctx.props = new GamePropControl(_ctx.gameId, _ctx.roomCtrl.props);
+
+        _events.registerListener(
+            _ctx.gameCtrl.game,
+            MessageReceivedEvent.MESSAGE_RECEIVED,
+            onMsgReceived);
 
         waitForPlayers();
+    }
 
-        if (_roomCtrl == null) {
-            log.warning("Failed to get RoomSubControl", "roomId", roomId);
-            return;
-        }
-
-        _events.registerListener(_gameCtrl.game, MessageReceivedEvent.MESSAGE_RECEIVED,
-            onMsgReceived);
+    public function roundComplete (roundScore :int) :void
+    {
+        _lastRoundScore = roundScore;
+        waitForPlayers();
     }
 
     override public function playerLeft (playerId :int) :void
     {
-        if (playerId == _preyId) {
-            _preyId = 0;
+        if (playerId == _ctx.preyId) {
+            _ctx.preyId = Constants.NULL_PLAYER;
         }
 
-        ArrayUtil.removeFirst(_playerIds, playerId);
+        ArrayUtil.removeFirst(_ctx.playerIds, playerId);
 
-        if (_playerIds.length == 0) {
+        if (_ctx.playerIds.length == 0) {
             // If the last predator or prey just left the game, we're done and should shut down
             // prematurely
             shutdown();
@@ -88,94 +91,90 @@ public class Server extends FeedingGameServer
                 // Let all the clients know that somebody has left
                 // (If the game hasn't yet started, the StartGameMsg hasn't been delivered,
                 // and the clients don't know who is in the game yet.)
-                sendMessage(PlayerLeftMsg.create(playerId));
+                _ctx.sendMessage(PlayerLeftMsg.create(playerId));
             }
 
-            if (((_preyId == 0 && !_preyIsAi) || getPredatorIds().length == 0) && !_noMoreFeeding) {
+            if (!_noMoreFeeding && !_ctx.canContinueFeeding()) {
                 // If the prey has left, or all the predators have left, no more feeding
                 // can take place.
                 _noMoreFeeding = true;
-                sendMessage(NoMoreFeedingMsg.create());
+                _ctx.sendMessage(NoMoreFeedingMsg.create());
             }
 
             if (_state == STATE_WAITING_FOR_PLAYERS) {
                 ArrayUtil.removeFirst(_playersNeedingCheckin, playerId);
                 startRoundIfReady();
 
-            } else if (_state == STATE_WAITING_FOR_SCORES) {
-                ArrayUtil.removeFirst(_playersNeedingScoreUpdate, playerId);
-                endRoundIfReady();
+            }
+
+            if (_serverMode != null) {
+                _serverMode.playerLeft(playerId);
             }
         }
 
-        if( _playerLeftCallback != null) {
-            _playerLeftCallback(playerId);
-        }
+        _ctx.playerLeftCallback(playerId);
     }
 
     override public function get gameId () :int
     {
-        return _gameId;
+        return _ctx.gameId;
     }
 
     override public function get playerIds () :Array
     {
-        return _playerIds.slice();
+        return _ctx.playerIds.slice();
     }
 
     override public function get lastRoundScore () :int
     {
-        if (_finalScores == null) {
-            return 0;
-
-        } else {
-            var totalScore :int;
-            _finalScores.forEach(
-                function (playerId :int, score :int) :void {
-                    totalScore += score;
-                });
-            return totalScore;
-        }
+        return _lastRoundScore;
     }
 
     protected function waitForPlayers () :void
     {
+        setMode(null);
         _state = STATE_WAITING_FOR_PLAYERS;
-        _playersNeedingCheckin = _playerIds.slice();
+        _playersNeedingCheckin = _ctx.playerIds.slice();
     }
 
     protected function shutdown () :void
     {
+        setMode(null);
+
         // Tell any remaining players that we're done
-        sendMessage(GameEndedMsg.create());
+        _ctx.sendMessage(GameEndedMsg.create());
 
         _timerMgr.shutdown();
         _events.freeAllHandlers();
-        _gameCompleteCallback();
+        _ctx.gameCompleteCallback();
 
         log.info("Shutting down Blood Bloom server");
     }
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
     {
-        if (e.isFromServer() || !_nameUtil.isForGame(e.name)) {
+        if (e.isFromServer() || !_ctx.nameUtil.isForGame(e.name)) {
             // don't listen to messages that we've sent, or that aren't for this
             // particular game
             return;
         }
 
-        var name :String = _nameUtil.decodeName(e.name);
-        var msg :Message = _msgMgr.deserializeMessage(name, e.value);
+        var name :String = _ctx.nameUtil.decodeName(e.name);
+        var msg :Message = _ctx.msgMgr.deserializeMessage(name, e.value);
         if (msg == null) {
             return;
         }
 
-        if (!ArrayUtil.contains(_playerIds, e.senderId)) {
+        if (!ArrayUtil.contains(_ctx.playerIds, e.senderId)) {
             logBadMessage(e, "unrecognized player (maybe they were just booted?)");
             return;
         }
 
         log.info("Received message", "name", msg.name, "sender", e.senderId);
+
+        if (_serverMode != null) {
+            _serverMode.onMsgReceived(e.senderId, msg);
+        }
 
         switch (name) {
         case ClientReadyMsg.NAME:
@@ -191,41 +190,13 @@ public class Server extends FeedingGameServer
                     // When at least one player has checked in, start a timer that will force
                     // the game to start after a maximum amount of time has elapsed, even if
                     // the rest of the players haven't joined yet.
-                    if (_state != STATE_PLAYING && _waitForPlayersTimer == null) {
+                    if (_state != STATE_IN_ROUND && _waitForPlayersTimer == null) {
                         _waitForPlayersTimer = _timerMgr.createTimer(
                             Constants.WAIT_FOR_PLAYERS_TIMEOUT * 1000, 1, startGameNow);
                         _waitForPlayersTimer.start();
-                        sendMessage(RoundStartingSoonMsg.create());
+                        _ctx.sendMessage(RoundStartingSoonMsg.create());
                     }
                 }
-            }
-            break;
-
-        case RoundScoreMsg.NAME:
-            if (_state != STATE_WAITING_FOR_SCORES) {
-                logBadMessage(e, "not waiting for scores");
-
-            } else {
-                if (!ArrayUtil.removeFirst(_playersNeedingScoreUpdate, e.senderId)) {
-                    logBadMessage(e, "unrecognized player, or player already reported score");
-                } else {
-                    _finalScores.put(e.senderId, (msg as RoundScoreMsg).score);
-                    endRoundIfReady();
-                }
-            }
-            break;
-
-        case CreateMultiplierMsg.NAME:
-            // bonuses are delivered to another randomly-picked player
-            var targetPlayerId :int = getAnotherPlayer(e.senderId);
-            if (targetPlayerId != Constants.NULL_PLAYER) {
-                sendMessage(msg, targetPlayerId);
-            }
-            break;
-
-        case CurrentScoreMsg.NAME:
-            if (_state == STATE_PLAYING) {
-                resendMessage(e);
             }
             break;
 
@@ -235,7 +206,7 @@ public class Server extends FeedingGameServer
 
         case AwardTrophyMsg.NAME:
             // we trust clients on all trophy award requests
-            var senderCtrl :PlayerSubControlServer = _gameCtrl.getPlayer(e.senderId);
+            var senderCtrl :PlayerSubControlServer = _ctx.gameCtrl.getPlayer(e.senderId);
             if (senderCtrl == null) {
                 logBadMessage(e, "Couldn't get PlayerSubControlServer for player");
             } else {
@@ -250,25 +221,10 @@ public class Server extends FeedingGameServer
         }
     }
 
-    protected function logBadMessage (e :MessageReceivedEvent,
-                                      problemText :String = null,
-                                      err :Error = null) :void
+    protected function logBadMessage (e :MessageReceivedEvent, reason :String, err :Error = null)
+        :void
     {
-        var args :Array = [
-            "Bad game message",
-            "name", _nameUtil.decodeName(e.name),
-            "sender", e.senderId
-        ];
-
-        if (problemText != null) {
-            args.push("problem", problemText);
-        }
-
-        if (err != null) {
-            args.push(err);
-        }
-
-        log.warning.apply(null, args);
+        _ctx.logBadMessage(e.senderId, _ctx.nameUtil.decodeName(e.name), reason, err);
     }
 
     protected function startRoundIfReady () :void
@@ -290,8 +246,6 @@ public class Server extends FeedingGameServer
             return;
         }
 
-        _state = STATE_PLAYING;
-
         if (_waitForPlayersTimer != null) {
             _waitForPlayersTimer.cancel();
             _waitForPlayersTimer = null;
@@ -300,7 +254,7 @@ public class Server extends FeedingGameServer
         // any players who haven't checked in when the game starts are booted from the game
         for each (var playerId :int in _playersNeedingCheckin) {
             log.info("Booting unresponsive player", "playerId", playerId);
-            sendMessage(ClientBootedMsg.create(), playerId);
+            _ctx.sendMessage(ClientBootedMsg.create(), playerId);
             playerLeft(playerId);
         }
 
@@ -309,122 +263,54 @@ public class Server extends FeedingGameServer
         // If the game hasn't been started yet, let all the players know what the initial
         // setup of players is
         if (!_gameStarted) {
-            sendMessage(StartGameMsg.create(_playerIds.slice(), _preyId, _preyBloodType));
+            _ctx.sendMessage(StartGameMsg.create(
+                _ctx.playerIds.slice(),
+                _ctx.preyId,
+                _ctx.preyBloodType));
+
             _gameStarted = true;
         }
 
-        sendMessage(StartRoundMsg.create());
-
-        _timerMgr.createTimer(Constants.GAME_TIME * 1000, 1, onTimeOver).start();
+        _ctx.sendMessage(StartRoundMsg.create());
+        _state = STATE_IN_ROUND;
+        setMode(new ServerGame(_ctx));
     }
 
-    protected function onTimeOver (...ignored) :void
+    protected function setMode (newMode :ServerMode) :void
     {
-        if (_state == STATE_PLAYING) {
-            _state = STATE_WAITING_FOR_SCORES;
-            _playersNeedingScoreUpdate = _playerIds.slice();
-            _finalScores = new HashMap();
-            sendMessage(GetRoundScores.create());
+        if (_serverMode != null) {
+            _serverMode.shutdown();
+            _serverMode = null;
+        }
+
+        if (newMode != null) {
+            _serverMode = newMode;
+            _serverMode.run();
         }
     }
 
-    protected function endRoundIfReady () :void
-    {
-        if (_state != STATE_WAITING_FOR_SCORES) {
-            return;
-        }
+    protected var _ctx :ServerCtx = new ServerCtx();
+    protected var _serverMode :ServerMode;
 
-        if (_playersNeedingScoreUpdate.length == 0) {
-            _state = STATE_ROUND_OVER;
-            // Send the final scores to the clients.
-            var preyBloodStart :Number = _preyBlood;
-            _preyBlood = _roundCompleteCallback();
-            sendMessage(RoundOverMsg.create(_finalScores, preyBloodStart, _preyBlood));
-            // move to the waiting_for_players state
-            waitForPlayers();
-
-        } else {
-            log.info("Waiting for " + _playersNeedingScoreUpdate.length +
-                     " more player scores to end the round.");
-        }
-    }
-
-    protected function getAnotherPlayer (playerId :int) :int
-    {
-        // returns a random player id
-
-        var players :Array = this.playerIds.slice();
-        if (players.length <= 1) {
-            return Constants.NULL_PLAYER;
-        }
-
-        ArrayUtil.removeFirst(players, playerId);
-        return Rand.nextElement(players, Rand.STREAM_GAME);
-    }
-
-    protected function sendMessage (msg :Message, toPlayer :int = 0) :void
-    {
-        if( !_roomCtrl.isConnected() ) {
-            log.info("Not sending msg (not connected) '" + msg.name + "' to " + (toPlayer != 0 ? toPlayer : "ALL"));
-            return;
-        }
-        var name :String = _nameUtil.encodeName(msg.name);
-        var val :Object = msg.toBytes();
-        if (toPlayer == 0) {
-            _roomCtrl.sendMessage(name, val);
-        } else {
-            _gameCtrl.getPlayer(toPlayer).sendMessage(name, val);
-        }
-
-        log.info("Sending msg '" + msg.name + "' to " + (toPlayer != 0 ? toPlayer : "ALL"));
-    }
-
-    protected function resendMessage (e :MessageReceivedEvent) :void
-    {
-        _roomCtrl.sendMessage(e.name, e.value);
-    }
-
-    protected function getPredatorIds () :Array
-    {
-        var predators :Array = _playerIds.slice();
-        ArrayUtil.removeFirst(predators, _preyId);
-        return predators;
-    }
-
-    protected var _gameId :int;
     protected var _state :int;
-    protected var _playerIds :Array;
-    protected var _preyId :int;
-    protected var _preyBlood :Number;
-    protected var _preyBloodType :int;
-    protected var _roundCompleteCallback :Function;
-    protected var _gameCompleteCallback :Function;
-    protected var _playerLeftCallback :Function;
-    protected var _timerMgr :TimerManager = new TimerManager();
     protected var _waitForPlayersTimer :ManagedTimer;
-    protected var _events :EventHandlerManager = new EventHandlerManager();
-    protected var _roomCtrl :RoomSubControlServer;
-    protected var _props :GamePropControl;
-    protected var _nameUtil :NameUtil;
-    protected var _finalScores :HashMap; // Map<playerId, score>
     protected var _noMoreFeeding :Boolean;
     protected var _gameStarted :Boolean;
-    protected var _preyIsAi :Boolean;
+    protected var _lastRoundScore :int;
+
+    protected var _timerMgr :TimerManager = new TimerManager();
+    protected var _events :EventHandlerManager = new EventHandlerManager();
 
     protected var _playersNeedingCheckin :Array;
-    protected var _playersNeedingScoreUpdate :Array;
 
     protected static var _inited :Boolean;
     protected static var _gameIdCounter :int;
-    protected static var _gameCtrl :AVRServerGameControl;
-    protected static var _msgMgr :BasicMessageManager = new BasicMessageManager();
 
     protected static var log :Log = Log.getLog(Server);
 
-    protected static const STATE_WAITING_FOR_PLAYERS :int = 0;
-    protected static const STATE_PLAYING :int = 1;
-    protected static const STATE_WAITING_FOR_SCORES :int = 2;
-    protected static const STATE_ROUND_OVER :int = 3;
+    protected static const STATE_LOBBY :int = 0;
+    protected static const STATE_WAITING_FOR_PLAYERS :int = 1;
+    protected static const STATE_IN_ROUND :int = 2;
 }
 
 }

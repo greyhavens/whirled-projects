@@ -98,6 +98,11 @@ public class ClientCtx
         return (!isConnected || playerIds.length <= 1);
     }
 
+    public static function get isMultiplayer () :Boolean
+    {
+        return !isSinglePlayer;
+    }
+
     public static function quit (playerInitiated :Boolean) :void
     {
         if (playerInitiated) {

@@ -30,10 +30,13 @@ public class GameMode extends AppMode
 
     public function sendMultiplier (multiplier :int, x :int, y :int) :void
     {
-        ClientCtx.msgMgr.sendMessage(
-            CreateMultiplierMsg.create(ClientCtx.localPlayerId, x, y, multiplier));
+        if (ClientCtx.isMultiplayer) {
+            ClientCtx.msgMgr.sendMessage(CreateMultiplierMsg.create(
+                ClientCtx.localPlayerId,
+                x, y,
+                multiplier));
 
-        if (ClientCtx.isSinglePlayer) {
+        } else {
             // In single-player games, there's nobody else to volley our multipliers back
             // to us, so we fake it by sending occasionally sending fake multipliers to ourselves
             if (Rand.nextNumber(Rand.STREAM_GAME) < Constants.SP_MULTIPLIER_RETURN_CHANCE) {
