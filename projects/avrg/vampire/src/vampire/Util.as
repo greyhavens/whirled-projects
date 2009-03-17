@@ -1,6 +1,15 @@
 package vampire
 {
+    import com.whirled.contrib.simplegame.net.MessageManager;
+
     import vampire.data.VConstants;
+    import vampire.net.messages.BloodBondRequestMsg;
+    import vampire.net.messages.FeedConfirmMsg;
+    import vampire.net.messages.FeedRequestMsg;
+    import vampire.net.messages.NonPlayerIdsInRoomMsg;
+    import vampire.net.messages.RequestActionChangeMsg;
+    import vampire.net.messages.ShareTokenMsg;
+    import vampire.net.messages.SuccessfulFeedMsg;
 
 
 public class Util
@@ -35,6 +44,19 @@ public class Util
 //               playerId == 1769  || //Capital-T-Tim
 //               playerId == 12     ;  //Nemo
 //               playerId == 1   ;   //debugging
+    }
+
+
+    public static function initMessageManager (mgr :MessageManager) :void
+    {
+        mgr.addMessageType(BloodBondRequestMsg);
+        mgr.addMessageType(FeedConfirmMsg);
+        mgr.addMessageType(FeedRequestMsg);
+        mgr.addMessageType(NonPlayerIdsInRoomMsg);
+        mgr.addMessageType(RequestActionChangeMsg);
+        mgr.addMessageType(ShareTokenMsg);
+        mgr.addMessageType(SuccessfulFeedMsg);
+
     }
 
 
