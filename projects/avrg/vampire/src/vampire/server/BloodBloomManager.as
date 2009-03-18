@@ -40,7 +40,7 @@ public class BloodBloomManager extends SimObject
         var gameRecord :BloodBloomGameRecord = _playerId2Game.get( predatorId ) as BloodBloomGameRecord;
         if( gameRecord != null) {
             log.debug("predatorBeginsGame ", "predatorId", predatorId);
-            gameRecord.startGame();
+            gameRecord.startLobby();
         }
         else {
             log.debug("predatorBeginsGame, but no game for that record", "predatorId", predatorId);
@@ -52,10 +52,10 @@ public class BloodBloomManager extends SimObject
         return ++_bloodBloomIdCounter;
     }
 
-    public function requestFeed( predatorId :int, preyId :int, multiplePredators :Boolean, preyLocation :Array ) :BloodBloomGameRecord
+    public function requestFeed( predatorId :int, preyId :int, preyLocation :Array ) :BloodBloomGameRecord
     {
         log.debug("begin requestFeed ", "predatorId", predatorId, "preyId", preyId,
-            "multiplePredators", multiplePredators, "BloodBloomManager", this);
+            "BloodBloomManager", this);
 
         var currentGame :BloodBloomGameRecord = _playerId2Game.get( predatorId ) as BloodBloomGameRecord;
         if( currentGame != null ) {
@@ -84,7 +84,7 @@ public class BloodBloomManager extends SimObject
         }
         else {
             log.debug(predatorId + " requestFeed, creating a new game");
-            return createNewBloodBloomGameRecord( predatorId, preyId, multiplePredators, preyLocation );
+            return createNewBloodBloomGameRecord( predatorId, preyId, preyLocation );
         }
     }
 
@@ -98,9 +98,9 @@ public class BloodBloomManager extends SimObject
     override protected function update( dt :Number ) :void
     {
 
-        for each( var game :BloodBloomGameRecord in _games ) {
-            game.update( dt );
-        }
+//        for each( var game :BloodBloomGameRecord in _games ) {
+//            game.update( dt );
+//        }
         removeFinishedGames();
     }
 
@@ -121,7 +121,7 @@ public class BloodBloomManager extends SimObject
                 //Set the avatars to the default state after a game.
                 for each( var playerId :int in gameRecord.playerIds) {
                     if( _room.isPlayer( playerId ) ) {
-                        ServerLogic.actionChange( _room.getPlayer( playerId ), VConstants.GAME_MODE_NOTHING);
+                        ServerLogic.stateChange( _room.getPlayer( playerId ), VConstants.PLAYER_STATE_DEFAULT);
                     }
                 }
 
@@ -179,11 +179,11 @@ public class BloodBloomManager extends SimObject
 
 
     protected function createNewBloodBloomGameRecord( predatorId :int, preyId :int,
-        multiplePredators :Boolean, preyLocation :Array ) :BloodBloomGameRecord
+        preyLocation :Array ) :BloodBloomGameRecord
     {
-        log.debug("createNewBloodBloomGameRecord ", "predatorId", predatorId, "preyId", preyId, "multiplePredators", multiplePredators);
+        log.debug("createNewBloodBloomGameRecord ", "predatorId", predatorId, "preyId", preyId);
         var gameRecord :BloodBloomGameRecord = new BloodBloomGameRecord( _room,
-            nextBloodBloomGameId, predatorId, preyId, multiplePredators, preyLocation,
+            nextBloodBloomGameId, predatorId, preyId, preyLocation,
             gameFinishedCallback);
         _playerId2Game.put( predatorId, gameRecord );
         if( preyId > 0 ) {

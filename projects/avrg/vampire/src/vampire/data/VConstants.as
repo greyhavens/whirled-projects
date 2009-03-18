@@ -107,7 +107,7 @@ public class VConstants
     * her blood is reduced proportionally to the time sleeping,
     * to a minimum needed to move around.
     */
-    public static const MINMUM_BLOOD_AFTER_SLEEPING :int = 5;
+    public static const MINIMUM_BLOOD_AFTER_SLEEPING :int = 5;
 
 
     public static const MINIMUM_VAMPIRE_LEVEL :int = 1;
@@ -119,25 +119,28 @@ public class VConstants
 //        return MAXIMUM_LEVEL_FOR_NON_VAMPIRE + 1;
 //    }
 
-    public static const GAME_MODE_NOTHING :String = "Default";
-    public static const GAME_MODE_FEED_FROM_PLAYER :String = "Feeding";
-    public static const GAME_MODE_FEED_FROM_NON_PLAYER :String = "FeedingNonPlayer";
-    public static const GAME_MODE_WAITING_FOR_NO_CHATS :String = "WaitingForChats";
-    public static const GAME_MODE_MOVING_TO_FEED_ON_PLAYER :String = "MoveToFeeding";
-    public static const GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER :String = "MoveToFeedingNonPlayer";
-    public static const GAME_MODE_BARED :String = "Bared";
-    public static const GAME_MODE_FIGHT :String = "Fighting";
-//    public static const GAME_MODE_BLOODBOND :String = "BloodBond";
-    public static const GAME_MODE_HIERARCHY_AND_BLOODBONDS :String = "Hierarchy";
+    //Possible avatar states
+    public static const AVATAR_STATE_DEFAULT :String = "Default";
+    public static const AVATAR_STATE_MOVING_TO_FEED :String = "MoveToFeeding";
+    public static const AVATAR_STATE_FEEDING :String = "Feeding";
+    public static const AVATAR_STATE_BARED :String = "Bared";
 
-    //Obsolete
-    public static const GAME_MODES :Array = [
-                                        GAME_MODE_FEED_FROM_PLAYER,
-                                        GAME_MODE_BARED,
-                                        GAME_MODE_FIGHT,
-//                                        GAME_MODE_BLOODBOND,
-                                        GAME_MODE_HIERARCHY_AND_BLOODBONDS
-                                        ];
+    //Game states.  There is a mapping from game state to player state
+    public static const PLAYER_STATE_DEFAULT :String = "Default";
+    public static const PLAYER_STATE_MOVING_TO_FEED :String = "MoveToFeed";
+    public static const PLAYER_STATE_BARED :String = "Bared";
+    public static const PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION :String = "ArrivedToFeed";
+    public static const PLAYER_STATE_FEEDING_PREDATOR :String = "FeedingPredator";
+    public static const PLAYER_STATE_FEEDING_PREY :String = "FeedingPrey";
+
+
+//    public static const GAME_MODE_FEED_FROM_NON_PLAYER :String = "FeedingNonPlayer";
+//    public static const GAME_MODE_WAITING_FOR_NO_CHATS :String = "WaitingForChats";
+//    public static const GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER :String = "MoveToFeedingNonPlayer";
+//    public static const GAME_MODE_FIGHT :String = "Fighting";
+////    public static const GAME_MODE_BLOODBOND :String = "BloodBond";
+//    public static const GAME_MODE_HIERARCHY_AND_BLOODBONDS :String = "Hierarchy";
+
 
 
 

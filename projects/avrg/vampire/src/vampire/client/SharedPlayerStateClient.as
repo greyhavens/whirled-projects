@@ -112,10 +112,10 @@ public class SharedPlayerStateClient
         return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LOCATION) as Array;
     }
 
-    public static function getCurrentAction (playerId :int) :String
+    public static function getCurrentState (playerId :int) :String
     {
-        if( playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION) !== undefined) {
-            return String(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION));
+        if( playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE) !== undefined) {
+            return String(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE));
         }
         else {
             return null;
@@ -168,7 +168,7 @@ public class SharedPlayerStateClient
 
     public static function toStringForPlayer( playerId :int ) :String
     {
-        return playerId + ", blood=" + getBlood( playerId ) + ", level=" + getLevel( playerId ) + ", action=" + getCurrentAction( playerId ) + ", bloodbonded=" + getBloodBonded( playerId ) + ", bloodbondname=" + getBloodBondedName(playerId) + ", time=" + new Date(getTime( playerId )).toTimeString()
+        return playerId + ", blood=" + getBlood( playerId ) + ", level=" + getLevel( playerId ) + ", action=" + getCurrentState( playerId ) + ", bloodbonded=" + getBloodBonded( playerId ) + ", bloodbondname=" + getBloodBondedName(playerId) + ", time=" + new Date(getTime( playerId )).toTimeString()
 //            + ", closestUserId=" + getClosestUserData( playerId )
             ;
     }

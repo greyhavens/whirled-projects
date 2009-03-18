@@ -2,11 +2,13 @@ package vampire.client
 {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
+import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.AgentSubControl;
 import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
@@ -20,9 +22,9 @@ import vampire.avatar.AvatarGameBridge;
 import vampire.client.events.ChangeActionEvent;
 import vampire.client.events.ClosestPlayerChangedEvent;
 import vampire.client.events.LineageUpdatedEvent;
+import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.Codes;
 import vampire.data.Lineage;
-import vampire.client.SharedPlayerStateClient;
 import vampire.data.VConstants;
 import vampire.feeding.PlayerFeedingData;
 
@@ -43,18 +45,38 @@ public class GameModel extends SimObject//EventDispatcher
         _agentCtrl = ClientContext.ctrl.agent;
         _propsCtrl = ClientContext.ctrl.room.props;
 
+
+        _currentEntityId = ClientContext.ourEntityId;
+
         registerListener( _propsCtrl, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged);
         registerListener( _propsCtrl, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
+
+        //Monitor and adjust for avatar changes
+        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, handleAvatarChanged);
 
 
         //Update the HUD when the room props come in.
         registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, playerEnteredRoom);
 
+
+        //Let's hear when the avatar arrived at a destination
+         var setCallback :Function = ClientContext.ctrl.room.getEntityProperty(
+            AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
+        if( setCallback != null) {
+            setCallback( avatarArrivedAtDestination );
+        }
+        else {
+            log.error("!!!!!! This avatar is CRUSTY and old, missing AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK");
+        }
+
+
         //Reset the entityId if something about the avatar changes
-        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED,
-            function ( e :AVRGameRoomEvent) :void {
-                ClientContext.clearOurEntityId();
-            });
+        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, handleAvatarChanged);
+
+        resetAvatarArrivedFunction();
+
+
+
 //
 //        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_MOVED,
 //            function ( e :AVRGameRoomEvent) :void {
@@ -109,6 +131,126 @@ public class GameModel extends SimObject//EventDispatcher
 //        _proximityTimer = new Timer(Constants.TIME_INTERVAL_PROXIMITY_CHECK, 0);
 //        _events.registerListener( _proximityTimer, TimerEvent.TIMER, checkProximity );
 //        _proximityTimer.start();
+
+    }
+
+    protected function resetAvatarArrivedFunction() :void
+    {
+//        trace("resetAvatarArrivedFunction, ClientContext.ourEntityId=" + ClientContext.ourEntityId);
+        //Let's hear when the avatar arrived at a destination
+         var setCallback :Function = ClientContext.ctrl.room.getEntityProperty(
+            AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
+        if( setCallback != null) {
+            setCallback( avatarArrivedAtDestination );
+        }
+        else {
+            log.error("!!!!!! This avatar is CRUSTY and old, missing AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK");
+
+            //Ok, our avatar has changed.
+            //I can't seem to update the avatar location function, so quit the game with a warning
+
+            if( ClientContext.gameMode.getObjectNamed("Quit") == null) {
+                var popup :PopupQuery = new PopupQuery(ClientContext.ctrl,
+                                                        "Quit",
+                                                        "If you change avatars, you must restart the game.",
+                                                        []);
+                ClientContext.gameMode.addSceneObject( popup, ClientContext.gameMode.modeSprite );
+
+                var quitTimer :SimpleTimer = new SimpleTimer(2, function() :void {
+                    ClientContext.controller.handleQuit();
+                });
+                ClientContext.gameMode.addObject( quitTimer );
+            }
+        }
+    }
+
+    protected function avatarArrivedAtDestination(...ignored) :void
+    {
+        if( !ClientContext.ctrl.isConnected()) {
+            trace("avatarArrivedAtDestination, ctrl null, setting callback null");
+            var setCallback :Function = ClientContext.ctrl.room.getEntityProperty(
+            AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
+            if( setCallback != null) {
+                setCallback( null );
+            }
+            return;
+        }
+
+
+//        trace("dispatchEvent PlayerArrivedAtLocationEvent");
+        dispatchEvent( new PlayerArrivedAtLocationEvent() );
+
+//        trace("Game knows avatar stopped!!!!");
+//        if( ClientContext.model.state == VConstants.PLAYER_STATE_MOVING_TO_FEED ) {
+//            trace("Sending player arrived event");
+//            ClientContext.ctrl.agent.sendMessage( PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
+//        }
+
+    }
+
+
+    /**
+    * If we change avatars, make sure to update the movement notification function
+    */
+    protected function handleAvatarChanged( e :AVRGameRoomEvent ) :void
+    {
+//        trace("handleAvatarChanged");
+        var playerAvatarChangedId :int = int( e.value );
+
+        //We are care about our own avatar
+        if( playerAvatarChangedId != ClientContext.ourPlayerId ) {
+            return;
+        }
+
+        //Get our entityId
+        var currentEntityId :String;
+
+        for each( var entityId :String in ClientContext.ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
+
+            var entityUserId :int = int(ClientContext.ctrl.room.getEntityProperty( EntityControl.PROP_MEMBER_ID, entityId));
+
+            if( entityUserId == ClientContext.ctrl.player.getPlayerId() ) {
+                currentEntityId = entityId;
+                break;
+            }
+
+        }
+
+        if( currentEntityId != _currentEntityId) {
+
+            //Update the clientcontext cached version
+            ClientContext.clearOurEntityId();
+
+            //Change our id for future reference.
+            _currentEntityId = currentEntityId;
+
+            resetAvatarArrivedFunction();
+        }
+
+
+
+//        trace("  currentEntityId=" + currentEntityId);
+//
+//        trace("  _currentEntityId=" + _currentEntityId);
+
+//        if( currentEntityId != _currentEntityId) {
+//
+//            _updateAvatar = true;
+//            //Update the clientcontext cached version
+//            ClientContext.clearOurEntityId();
+//
+//            //Change our id for future reference.
+//            _currentEntityId = currentEntityId;
+//        }
+//
+//
+//        //Update the avatar functions on the second event.
+//        if( _updateAvatar ) {
+//            _updateAvatar = false;
+//            //Update avatar dependent stuff
+//            resetAvatarArrivedFunction();
+//
+//        }
 
     }
 
@@ -339,12 +481,13 @@ public class GameModel extends SimObject//EventDispatcher
                     AvatarGameBridge.ENTITY_PROPERTY_SETSTATE_FUNCTION, entityAvatarId) as Function;
 
                 if( setStateFunction != null ) {
-                    log.debug("From room props " + playerIdUpdated + ", action=" + ClientContext.model.action +
+                    log.debug("From room props " + playerIdUpdated + ", action=" + ClientContext.model.state +
                         ", setStateFunction() " + e.newValue.toString());
                     setStateFunction( e.newValue.toString() );
                 }
                 else {
-                    log.error("handleElementChanged, setStateFunction==null, crusty avatar??", "e", e );
+                    log.error("handleElementChanged, setStateFunction==null, crusty avatar??", "e",
+                        e, "entityAvatarId", entityAvatarId, "playerIdUpdated", playerIdUpdated );
                 }
 
             }
@@ -352,7 +495,7 @@ public class GameModel extends SimObject//EventDispatcher
 
             if( playerIdUpdated == ClientContext.ourPlayerId ) {
                 //If the action changes on the server, that means the change is forced, so change to that action.
-                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION) {
+                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE) {
     //                log.debug("  Dispatching event=" + ChangeActionEvent.CHANGE_ACTION + " new action=" + e.newValue);
                     dispatchEvent( new ChangeActionEvent( e.newValue.toString() ) );
                 }
@@ -470,9 +613,9 @@ public class GameModel extends SimObject//EventDispatcher
         return SharedPlayerStateClient.getTargetPlayer(  ClientContext.ourPlayerId );
     }
 
-    public function get action() :String
+    public function get state() :String
     {
-        return SharedPlayerStateClient.getCurrentAction( ClientContext.ourPlayerId );
+        return SharedPlayerStateClient.getCurrentState( ClientContext.ourPlayerId );
     }
 
     public function isNewPlayer() :Boolean
@@ -551,6 +694,18 @@ public class GameModel extends SimObject//EventDispatcher
     }
 
 
+    protected var _currentEntityId :String;
+
+//    /**
+//    * When you change avatars, the AVRGameRoomEvent.AVATAR_CHANGED is dispatched twice.  Once,
+//    * when the old avatar is removed, and once when the new avatar is loaded.  However, there is
+//    * no way to listen specifically for the second, since your entityID is changed on the first
+//    * event.
+//    *
+//    * So use the boolean, on the first event, set it to true, then on the second, reload the
+//    * avatar functions.
+//    */
+//    protected var _updateAvatar :Boolean = false;
 
     public var currentSelectedTarget :int = 0;
 

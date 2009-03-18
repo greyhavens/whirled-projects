@@ -95,7 +95,7 @@ public class Codes
     public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBLOOM_COUNTDOWN :int = 4;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_SIRE :int = 5;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED :int = 6;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION :int = 7;
+    public static const ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE :int = 7;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_XP :int = 8;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_INVITES :int = 9;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_ID :int = 10;

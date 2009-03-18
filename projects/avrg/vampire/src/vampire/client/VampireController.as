@@ -12,12 +12,11 @@ import vampire.avatar.AvatarGameBridge;
 import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.events.ChangeActionEvent;
 import vampire.data.Codes;
-import vampire.client.SharedPlayerStateClient;
 import vampire.data.VConstants;
 import vampire.net.messages.BloodBondRequestMsg;
+import vampire.net.messages.FeedConfirmMsg;
 import vampire.net.messages.FeedRequestMsg;
-import vampire.net.messages.RequestActionChangeMsg;
-import vampire.net.messages.SuccessfulFeedMsg;
+import vampire.net.messages.RequestStateChangeMsg;
 
 
 /**
@@ -26,7 +25,7 @@ import vampire.net.messages.SuccessfulFeedMsg;
  */
 public class VampireController extends Controller
 {
-    public static const SWITCH_MODE :String = "SwitchMode";
+    public static const CHANGE_STATE :String = "ChangeState";
 //    public static const CLOSE_MODE :String = "CloseMode";
 //    public static const PLAYER_STATE_CHANGED :String = "PlayerStateChanged";
     public static const QUIT :String = "Quit";
@@ -52,53 +51,78 @@ public class VampireController extends Controller
         setControlledPanel( panel );
     }
 
-    public function handleSwitchMode( mode :String ) :void
+    public function handleChangeState( state :String ) :void
     {
-        log.debug("handleSwitchMode("+mode+")");
+        log.debug("handleChangeState("+state+")");
 
-        //If we want to go to bared mode, disable any previus targeting overlays
-        if( mode == VConstants.GAME_MODE_BARED  ) {
-//            ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
-        }
+        switch( state ) {
+            case VConstants.PLAYER_STATE_BARED:
+//            case VConstants.PLAYER_STATE_FEEDING_PREY:
 
-        //If we are already baring, toggle us out.
-        if( mode == VConstants.GAME_MODE_BARED &&
-            ClientContext.model.action == VConstants.GAME_MODE_BARED) {
-
-//            return;
-//            log.debug("  sending to server "+VConstants.GAME_MODE_NOTHING);
-            ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
-
-            ClientContext.ctrl.agent.sendMessage( RequestActionChangeMsg.NAME,
-                new RequestActionChangeMsg( ClientContext.ourPlayerId,
-                    VConstants.GAME_MODE_NOTHING).toBytes() );
-        }
-        else if(mode == VConstants.GAME_MODE_FEED_FROM_NON_PLAYER ||
-            mode == VConstants.GAME_MODE_FEED_FROM_PLAYER) {
+            //If we are already bared, toggle us out of bared state to the default state.
+            if( ClientContext.model.state == VConstants.PLAYER_STATE_BARED) {
+                ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
+                ClientContext.ctrl.agent.sendMessage( RequestStateChangeMsg.NAME,
+                    new RequestStateChangeMsg( ClientContext.ourPlayerId,
+                        VConstants.PLAYER_STATE_DEFAULT).toBytes() );
+            }
+            else {//Otherwise, put us in bared mode
+                ClientContext.ctrl.agent.sendMessage( RequestStateChangeMsg.NAME,
+                    new RequestStateChangeMsg( ClientContext.ourPlayerId,
+                        VConstants.PLAYER_STATE_BARED).toBytes() );
+            }
+            break;
 
             //If we want to feed on someone, but we are already in bared mode,
             //first stop bared mode.
-            if( ClientContext.model.action == VConstants.GAME_MODE_BARED ) {
+//            case :VConstants.PLAYER_STATE_FEEDING_PREDATOR:
+//            break;
 
-                var playerKey :String = Codes.playerRoomPropKey( ClientContext.ourPlayerId );
-                ClientContext.ctrl.player.props.setIn( playerKey,
-                    Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, VConstants.GAME_MODE_NOTHING);
-
-                log.debug("  sending to server "+VConstants.GAME_MODE_NOTHING);
-                trace(ClientContext.ourPlayerId + " setting avatar state mode switch");
-                ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
-            }
-
-            trace(ClientContext.ourPlayerId + " setting avatar state mode switch");
-            ClientContext.model.setAvatarState( VConstants.GAME_MODE_FEED_FROM_PLAYER );
-
+            default:
+            break;
         }
-        else {
-
-            log.debug("  sending to server "+mode);
-            ClientContext.ctrl.agent.sendMessage( RequestActionChangeMsg.NAME,
-                new RequestActionChangeMsg( ClientContext.ourPlayerId, mode).toBytes() );
-        }
+        //If we want to go to bared mode, disable any previus targeting overlays
+//        if( state == VConstants.AVATAR_STATE_BARED  ) {
+////            ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
+//        }
+//
+//        //If we are already baring, toggle us out.
+//        if( state == VConstants.AVATAR_STATE_BARED &&
+//            ClientContext.model.state == VConstants.AVATAR_STATE_BARED) {
+//
+////            return;
+////            log.debug("  sending to server "+VConstants.GAME_MODE_NOTHING);
+//            ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
+//
+//            ClientContext.ctrl.agent.sendMessage( RequestStateChangeMsg.NAME,
+//                new RequestStateChangeMsg( ClientContext.ourPlayerId,
+//                    VConstants.AVATAR_STATE_DEFAULT).toBytes() );
+//        }
+//        else if(state == VConstants.GAME_MODE_FEED_FROM_NON_PLAYER ||
+//            state == VConstants.AVATAR_STATE_FEEDING) {
+//
+//
+//            if( ClientContext.model.state == VConstants.AVATAR_STATE_BARED ) {
+//
+//                var playerKey :String = Codes.playerRoomPropKey( ClientContext.ourPlayerId );
+//                ClientContext.ctrl.player.props.setIn( playerKey,
+//                    Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, VConstants.AVATAR_STATE_DEFAULT);
+//
+//                log.debug("  sending to server "+VConstants.AVATAR_STATE_DEFAULT);
+//                trace(ClientContext.ourPlayerId + " setting avatar state mode switch");
+//                ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
+//            }
+//
+//            trace(ClientContext.ourPlayerId + " setting avatar state mode switch");
+//            ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_FEEDING );
+//
+//        }
+//        else {
+//
+//            log.debug("  sending to server "+state);
+//            ClientContext.ctrl.agent.sendMessage( RequestStateChangeMsg.NAME,
+//                new RequestStateChangeMsg( ClientContext.ourPlayerId, state).toBytes() );
+//        }
         //Some actions we don't need the agents permission
 //        trace("handleSwitchMode, ClientContext.model.action=" + ClientContext.model.action + ", mode=" + mode);
 //        trace("handleSwitchMode, ClientContext.model.action=" + (ClientContext.model.action == null));
@@ -114,7 +138,7 @@ public class VampireController extends Controller
 //        }
 
         if( VConstants.LOCAL_DEBUG_MODE ) {
-            ClientContext.model.dispatchEvent( new ChangeActionEvent( mode ) );
+            ClientContext.model.dispatchEvent( new ChangeActionEvent( state ) );
         }
     }
 
@@ -145,7 +169,7 @@ public class VampireController extends Controller
     public function handleQuit() :void
     {
         trace(ClientContext.ourPlayerId + " setting avatar state from quit");
-        ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
+        ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
         ClientContext.ctrl.player.props.set( Codes.PLAYER_PROP_LAST_TIME_AWAKE, new Date().time );
 
         ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_QUIT );
@@ -236,17 +260,17 @@ public class VampireController extends Controller
     public function handleFeedRequest( targetingOverlay :VampireAvatarHUDOverlay, parentSprite :Sprite, hud :HUD) :void
     {
         //If we are alrady in bared mode, first dump us out before any feeding shinannigens
-        if( ClientContext.model.action == VConstants.GAME_MODE_BARED ) {
+        if( ClientContext.model.state == VConstants.AVATAR_STATE_BARED ) {
             var playerKey :String = Codes.playerRoomPropKey( ClientContext.ourPlayerId );
             ClientContext.ctrl.player.props.setIn( playerKey,
-                Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, VConstants.GAME_MODE_NOTHING);
+                Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE, VConstants.AVATAR_STATE_DEFAULT);
 
             trace(ClientContext.ourPlayerId + " setting avatar state from handleFeedRequest");
-            ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
+            ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
 
-            ClientContext.ctrl.agent.sendMessage( RequestActionChangeMsg.NAME,
-                new RequestActionChangeMsg( ClientContext.ourPlayerId,
-                    VConstants.GAME_MODE_NOTHING).toBytes() );
+            ClientContext.ctrl.agent.sendMessage( RequestStateChangeMsg.NAME,
+                new RequestStateChangeMsg( ClientContext.ourPlayerId,
+                    VConstants.AVATAR_STATE_DEFAULT).toBytes() );
 
 //            targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
             return;
@@ -410,18 +434,18 @@ public class VampireController extends Controller
 
     }
 
-    public function handleAcceptFeedRequest( msg :String ) :void
+    public function handleAcceptFeedRequest( popup :PopupQuery, playerId :int ) :void
     {
-
-
-
+        var msg :FeedConfirmMsg = new FeedConfirmMsg(ClientContext.ourPlayerId, playerId, true);
+        ClientContext.ctrl.agent.sendMessage( FeedConfirmMsg.NAME, msg.toBytes() );
+        popup.destroySelf();
     }
 
-    public function handleDenyFeedRequest( msg :String ) :void
+    public function handleDenyFeedRequest( popup :PopupQuery, playerId :int ) :void
     {
-
-
-
+        var msg :FeedConfirmMsg = new FeedConfirmMsg(ClientContext.ourPlayerId, playerId, false);
+        ClientContext.ctrl.agent.sendMessage( FeedConfirmMsg.NAME, msg.toBytes() );
+        popup.destroySelf();
     }
 
 

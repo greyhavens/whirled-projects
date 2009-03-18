@@ -224,18 +224,18 @@ public class Room extends SimObject
 //            if( _roomDB != null ) {
 //                _roomDB.shutdown();
 //            }
-            if (_players.size() != 0) {
-                trace("Eek! Room unloading with players still here!",
-                            "players", _players.values());
-            } else {
-                trace("Unloaded room", "roomId", roomId);
-            }
-//            if(_players != null) {
-//                _players.forEach(function( playerId :int, player :PlayerData) :void {
-//                    player.r
-//                });
+//            if (_players.size() != 0) {
+////                trace("Eek! Room unloading with players still here!",
+////                            "players", _players.values());
+//            } else {
+////                trace("Unloaded room", "roomId", roomId);
 //            }
-            _players.clear();
+////            if(_players != null) {
+////                _players.forEach(function( playerId :int, player :PlayerData) :void {
+////                    player.r
+////                });
+////            }
+////            _players.clear();
             _ctrl = null;
         }
         catch(err :Error) {
@@ -243,18 +243,18 @@ public class Room extends SimObject
         }
     }
 
-    protected function handlePlayerMoved( e :AVRGameRoomEvent ) :void
-    {
-        log.debug("handlePlayerMoved() " + e);
-
-
-        _players.forEach( function(playerId :int, p :PlayerData) :void {
-            if( p.playerId == int(e.value)) {
-                ServerLogic.handleAvatarMoved( p, int(e.value) );
-//               p.handleAvatarMoved(int(e.value) );
-            }
-        });
-    }
+//    protected function handlePlayerMoved( e :AVRGameRoomEvent ) :void
+//    {
+//        log.debug("handlePlayerMoved() " + e);
+//
+//
+//        _players.forEach( function(playerId :int, p :PlayerData) :void {
+//            if( p.playerId == int(e.value)) {
+//                ServerLogic.handleAvatarMoved( p, int(e.value) );
+////               p.handleAvatarMoved(int(e.value) );
+//            }
+//        });
+//    }
 
 
     public function getCurrentBlood( userId :int ) :Number
@@ -262,7 +262,7 @@ public class Room extends SimObject
         if( ServerContext.server.isPlayer( userId ) ) {
             return ServerContext.server.getPlayer( userId ).blood;
         }
-        return ServerContext.nonPlayersBloodMonitor.bloodAvailableFromNonPlayer( userId );
+        return ServerContext.npBlood.bloodAvailableFromNonPlayer( userId );
     }
 
     public function getMaxBlood( userId :int ) :Number
@@ -270,7 +270,7 @@ public class Room extends SimObject
         if( ServerContext.server.isPlayer( userId ) ) {
             return ServerContext.server.getPlayer( userId ).maxBlood;
         }
-        return ServerContext.nonPlayersBloodMonitor.maxBloodFromNonPlayer( userId );
+        return ServerContext.npBlood.maxBloodFromNonPlayer( userId );
     }
 
 

@@ -131,10 +131,10 @@ public class TargetingOverlayAvatars extends TargetingOverlay
 //            trace("Creating avatarHUD for " + userId);
             if( !_avatars.containsKey( userId ) ) {
                 var playerAvatar :AvatarHUD = createPlayerAvatar( userId );
-                registerListener( playerAvatar, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED,
-                    function(...ignored) :void {
-                        dispatchEvent( new PlayerArrivedAtLocationEvent() );
-                    });
+//                registerListener( playerAvatar, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED,
+//                    function(...ignored) :void {
+//                        dispatchEvent( new PlayerArrivedAtLocationEvent() );
+//                    });
                 mode.addSceneObject( playerAvatar, _paintableOverlay );
                 _avatars.put( userId, playerAvatar );
             }

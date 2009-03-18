@@ -51,7 +51,7 @@ public class HUD extends DraggableSceneObject
         registerListener( ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, updateOurPlayerState );
         registerListener( ClientContext.ctrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED, propChanged );
         registerListener( ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
-        registerListener( ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
+//        registerListener( ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
 
 
         updateOurPlayerState();
@@ -67,12 +67,12 @@ public class HUD extends DraggableSceneObject
         return db as AppMode;
     }
 
-    protected function handleMessageReceived( e :MessageReceivedEvent ) :void
-    {
-        if( e.name == VConstants.NAMED_EVENT_BLOODBLOOM_COUNTDOWN ) {
-            var bb :BloodBloomGameRecord = BloodBloomGameRecord.fromArray( e.value as Array );
-        }
-    }
+//    protected function handleMessageReceived( e :MessageReceivedEvent ) :void
+//    {
+//        if( e.name == VConstants.NAMED_EVENT_BLOODBLOOM_COUNTDOWN ) {
+//            var bb :BloodBloomGameRecord = BloodBloomGameRecord.fromArray( e.value as Array );
+//        }
+//    }
 
     override protected function destroyed () :void
     {

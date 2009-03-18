@@ -11,6 +11,11 @@ import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.avrg.probe.ServerStub;
 import com.whirled.contrib.simplegame.ObjectDB;
+import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.tasks.FunctionTask;
+import com.whirled.contrib.simplegame.tasks.RepeatingTask;
+import com.whirled.contrib.simplegame.tasks.SerialTask;
+import com.whirled.contrib.simplegame.tasks.TimedTask;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.getTimer;
@@ -18,6 +23,7 @@ import flash.utils.setInterval;
 
 import vampire.data.Codes;
 import vampire.feeding.FeedingServer;
+import vampire.net.messages.NonPlayerIdsInRoomMsg;
 
 public class GameServer extends ObjectDB
 {
@@ -75,8 +81,8 @@ public class GameServer extends ObjectDB
 
 //        ServerContext.trophies = new Trophies(this, ServerContext.minionHierarchy);
 
-        ServerContext.nonPlayersBloodMonitor = new NonPlayerAvatarsBloodMonitor();
-        addObject( ServerContext.nonPlayersBloodMonitor );
+        ServerContext.npBlood = new NonPlayerAvatarsBloodMonitor();
+        addObject( ServerContext.npBlood );
 
         //Tim's bloodbond game server
         FeedingServer.init( _ctrl );
@@ -84,26 +90,36 @@ public class GameServer extends ObjectDB
 //        _stub = new ServerStub(_ctrl);\
 
         //Update the players time
-//        var playerTimeUpdater :SimpleTimer = new SimpleTimer(UPDATE_PLAYER_TIME,
+        var timedTask :TimedTask = new TimedTask(UPDATE_PLAYER_TIME);
+        var updatePlayerTimeTask :FunctionTask = new FunctionTask(updatePlayersCurrentTime);
+        var serialTask :SerialTask = new SerialTask( timedTask, updatePlayerTimeTask );
+        var repeatingTask :RepeatingTask = new RepeatingTask(serialTask);
+
+        var timerObject :SimObject = new SimObject();
+        addObject( timerObject );
+        timerObject.addTask( repeatingTask );
+
+//        var playerTimeUpdater :SimpleTimerThane = new SimpleTimerThane(UPDATE_PLAYER_TIME,
 //            updatePlayersCurrentTime, true);
 //        addObject( playerTimeUpdater );
 
     }
 
-//    /**
-//    * Update the current time of all the players.  THis is handled seperately because it's not
-//    * critical and only occurs every couple of seconds.
-//    */
-//    protected function updatePlayersCurrentTime(...ignored) :void
-//    {
-//        _players.forEach( function( playerId :int, player :Player) :void {
-//            //Update the players time, unless they are a new player (time==0)
-//            if( player.time != 0) {
-//                player.setTime( ServerContext.time );
-//            }
-//        });
-//
-//    }
+    /**
+    * Update the current time of all the players.  This is handled seperately because it's not
+    * critical and only occurs every couple of seconds.
+    */
+    protected function updatePlayersCurrentTime(...ignored) :void
+    {
+        log.debug("updatePlayersCurrentTime " + ServerContext.time);
+        _players.forEach( function( playerId :int, player :PlayerData) :void {
+            //Update the players time, unless they are a new player (time==0)
+            if( player.time != 0) {
+                player.setTime( ServerContext.time );
+            }
+        });
+
+    }
 
 
 
@@ -155,7 +171,7 @@ public class GameServer extends ObjectDB
         var time :int = getTimer();
         var dT :int = time - _lastTickTime;
         _lastTickTime = time;
-        var dT_seconds :Number = dT / 1000.0;
+        var dt :Number = dT / 1000.0;//Seconds
 
         //Store the current (enough) time so all the PlayerData objects don't have to create another.
         ServerContext.time = new Date().time;
@@ -175,7 +191,7 @@ public class GameServer extends ObjectDB
 
         //Batch up the updates, so all the network traffic is sent as one lump
         _ctrl.doBatch(function () :void {
-            update(dT_seconds);
+            update(dt);
         });
 
     }
@@ -185,6 +201,12 @@ public class GameServer extends ObjectDB
     // a message comes in from a player, figure out which PlayerData instance will handle it
     protected function handleMessage (evt :MessageReceivedEvent) :void
     {
+        //Ignore messages not meant for individual players.
+        if( evt.name == NonPlayerIdsInRoomMsg.NAME ) {
+            return;
+        }
+
+        //Let the originating player handle the message
         try {
 //            log.debug("handleMessage", "evt", evt);
             var player :PlayerData = getPlayer(evt.senderId);
@@ -237,7 +259,7 @@ public class GameServer extends ObjectDB
             _ctrl.doBatch(function () :void {
                 var player :PlayerData = new PlayerData(pctrl);
                 _players.put(playerId, player);
-                ServerContext.nonPlayersBloodMonitor.addNewPlayer( playerId );
+                ServerContext.npBlood.addNewPlayer( playerId );
             });
 
             //Keep a record of player ids to distinguish players and non-players
@@ -310,6 +332,7 @@ public class GameServer extends ObjectDB
     protected var _stub :ServerStub;
 
     public static const SERVER_TICK_UPDATE_MILLISECONDS :int = 400;
+    public static const UPDATE_PLAYER_TIME :int = 5000;
 
 }
 }

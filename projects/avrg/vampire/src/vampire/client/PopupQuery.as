@@ -9,7 +9,10 @@ import com.whirled.contrib.avrg.DraggableSceneObject;
 import flash.display.MovieClip;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
+import flash.text.AntiAliasType;
 import flash.text.TextField;
+import flash.text.TextFormat;
+import flash.text.TextFormatAlign;
 
 public class PopupQuery extends DraggableSceneObject
 {
@@ -17,6 +20,7 @@ public class PopupQuery extends DraggableSceneObject
         commands :Array, commandArgs :Array = null)
     {
 
+        trace("con, commands=" + commands);
         super(ctrl, name);
         _popupPanel = ClientContext.instantiateMovieClip("HUD", "popup", false);
         _popupPanel.mouseEnabled = true;
@@ -27,9 +31,9 @@ public class PopupQuery extends DraggableSceneObject
             function( e :MouseEvent ) :void {
                 destroySelf();
             });
-
-        setupText( message );
-        setupCommands( commands, commandArgs );
+        trace("con, commandArgs=" + commandArgs);
+        setupText(message);
+        setupCommands(commands, commandArgs);
 
 //        init( new Rectangle(-_popupPanel.width/2, _popupPanel.height/2, _popupPanel.width, _popupPanel.height), 0, 0, 0, 0);
         init( new Rectangle(-10, -10, 20, 20), 0, 0, 0, 0);
@@ -37,30 +41,53 @@ public class PopupQuery extends DraggableSceneObject
 
     }
 
-    protected function setupText( message :String): void
+    protected function setupText (message :String): void
     {
         var tf :TextField = TextFieldUtil.createField( message );
+        tf.multiline = true;
+        tf.wordWrap = true;
+        var format :TextFormat = new TextFormat();
+        format.align = TextFormatAlign.CENTER;
+        format.size = 20;
+        format.color = 0xffffff;
+        tf.setTextFormat(format);
+        tf.antiAliasType = AntiAliasType.ADVANCED;
+        tf.width = _popupPanel.width - 40;
+        tf.height = _popupPanel.height - 30;
+        tf.x = -tf.width / 2;
         _popupPanel.addChild( tf );
     }
 
     protected function setupCommands( commands :Array, commandArgs :Array = null): void
     {
-
+        trace("setup, commands" + commands);
+        if( commands == null) {
+            trace("nu;;");
+            return;
+        }
         var startX :int = _popupPanel.width / 2;
         var startY :int = _popupPanel.height / 2 - 30;
 
         for( var i :int = 0; i < commands.length; i++){
             var command :String = commands[i] as String;
-            var commandArg :Object = null;
+            trace("command="+command);
+            //Add this object to the arguments
+            var commandArg :Array = [this];
             if( commandArgs != null && i < commandArgs.length) {
-                commandArg = commandArgs[i] as Object;
+                if( commandArgs[i] is Array) {
+                    commandArg.concat(commandArgs[i]);
+                }
+                else {
+                    commandArg.push( commandArgs[i] );
+                }
             }
+            trace("!!!!!!!!adding button");
             var b :SimpleTextButton = new SimpleTextButton(command);
-            Command.bind( b, MouseEvent.CLICK, command, commandArg );
+            Command.bind( b, MouseEvent.CLICK, command,  commandArg );
             _popupPanel.addChild( b );
             b.x = startX;
             b.y = startY;
-            startX += 50;
+            startY += 50;
         }
     }
 

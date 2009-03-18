@@ -40,7 +40,7 @@ public class DraggableSceneObject extends SceneObject
     {
         _ctrl = ctrl;
         //Don't store the positions for now
-//        _persistId = persistId;
+        _persistId = persistId;
 
         registerListener(_ctrl.local, AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
         registerListener(_ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, handleEnteredRoom);
@@ -60,8 +60,8 @@ public class DraggableSceneObject extends SceneObject
         _bounds = bounds;
         _bleed = bleed;
 
-        var locData :Dictionary = (_persistId != null) ?
-            _ctrl.player.props.get(PROP_PREFIX + _persistId) as Dictionary : null;
+        var locData :Dictionary = null;//(_persistId != null) ?
+//            _ctrl.player.props.get(PROP_PREFIX + _persistId) as Dictionary : null;
 
         if (locData != null) {
             _xSnap = locData[IX_XSNAP];
@@ -161,7 +161,7 @@ public class DraggableSceneObject extends SceneObject
             locData[IX_YSNAP] = _ySnap;
             locData[IX_YFIX] = _yFix;
 
-            _ctrl.player.props.set(PROP_PREFIX + _persistId, locData);
+//            _ctrl.player.props.set(PROP_PREFIX + _persistId, locData);
         }
 
         layout();
@@ -288,6 +288,11 @@ public class DraggableSceneObject extends SceneObject
     public function get displaySprite () :Sprite
     {
         return _displaySprite;
+    }
+
+    override public function get objectName () :String
+    {
+        return _persistId;
     }
 
     protected var _displaySprite :Sprite = new Sprite();

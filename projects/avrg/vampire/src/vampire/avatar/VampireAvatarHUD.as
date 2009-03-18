@@ -2,7 +2,6 @@ package vampire.avatar
 {
     import com.threerings.util.ArrayUtil;
     import com.threerings.util.Command;
-    import com.threerings.util.HashSet;
     import com.whirled.avrg.AVRGameControl;
     import com.whirled.contrib.EventHandlerManager;
     import com.whirled.contrib.avrg.AvatarHUD;
@@ -13,9 +12,7 @@ package vampire.avatar
     import com.whirled.contrib.simplegame.tasks.FunctionTask;
     import com.whirled.contrib.simplegame.tasks.SerialTask;
     import com.whirled.net.ElementChangedEvent;
-    import com.whirled.net.MessageReceivedEvent;
 
-    import flash.display.DisplayObject;
     import flash.display.InteractiveObject;
     import flash.display.MovieClip;
     import flash.display.SimpleButton;
@@ -23,11 +20,11 @@ package vampire.avatar
     import flash.events.MouseEvent;
 
     import vampire.client.ClientContext;
+    import vampire.client.SharedPlayerStateClient;
     import vampire.client.VampireController;
     import vampire.client.events.LineageUpdatedEvent;
     import vampire.data.Codes;
     import vampire.data.Logic;
-    import vampire.client.SharedPlayerStateClient;
     import vampire.data.VConstants;
 
 
@@ -175,6 +172,8 @@ public class VampireAvatarHUD extends AvatarHUD
 
         _feedButton.registerButtonListener( MouseEvent.CLICK, function (...ignored) :void {
             ClientContext.controller.handleSendFeedRequest( playerId, false );
+            ClientContext.ctrl.local.feedback("Request for feed sent");
+            ClientContext.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF);
 //            showBloodBarOnly();
             _isMouseOver = false;
 //            _feedButton.alpha = 0;

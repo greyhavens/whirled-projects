@@ -14,6 +14,7 @@ import com.whirled.net.MessageReceivedEvent;
 
 import flash.events.MouseEvent;
 
+import vampire.avatar.AvatarGameBridge;
 import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.events.LineageUpdatedEvent;
 import vampire.client.events.PlayerArrivedAtLocationEvent;
@@ -36,13 +37,17 @@ public class MainGameMode extends AppMode
         log.debug("Starting " + ClassUtil.tinyClassName( this ));
 
         //Add intro panel if we're a new player
-        if( true || ClientContext.isNewPlayer) {
+        if( ClientContext.isNewPlayer) {
             ClientContext.controller.handleShowIntro("intro");
             ClientContext.isNewPlayer = false;
         }
         else {
             log.debug("We're NOT a new player");
         }
+
+        //Let's hear when the avatar arrived at a destination
+//
+
 
     }
 
@@ -103,6 +108,8 @@ public class MainGameMode extends AppMode
             ClientContext.model.dispatchEvent( msg );
         }
 
+
+
         //If this player hasn't played before, automatically show the help.
         if( ClientContext.model.isNewPlayer() ) {
 //            addObject(  new HelpPopup(), modeSprite );
@@ -112,42 +119,14 @@ public class MainGameMode extends AppMode
 //        modeSprite.addChild( _feedingGameDraggableSprite.displayObject );
 
         //If we start moving, and we are in bared mode, change to default mode.
-        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_MOVED, function(
-            e :AVRGameRoomEvent) :void {
-                var playerMovedId :int = int( e.value );
-                if( playerMovedId == ClientContext.ourPlayerId) {
-                    if( ClientContext.model.action == VConstants.GAME_MODE_BARED ) {
-                        ClientContext.controller.handleSwitchMode( VConstants.GAME_MODE_NOTHING );
-//                        trace(ClientContext.ourPlayerId + " setting avatar state from player moved");
-                        ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
-                    }
-                }
-            });
+        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_MOVED, handlePlayerMoved);
 
         //If we go into bared mode via the avatar menu, update the game too.
-        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, function(
-            e :AVRGameRoomEvent) :void {
-                var playerMovedId :int = int( e.value );
-//                trace("avatar changed, playerId="+playerMovedId);
+        registerListener(ClientContext.ctrl.room,
+            AVRGameRoomEvent.AVATAR_CHANGED, handleAvatarChanged);
 
-                //We are only allowed to change our own avatar.
-                if( playerMovedId != ClientContext.ourPlayerId ) {
-                    return;
-                }
-
-                //Do as if we have pushed the 'Bared" button.
-                var avatar :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo( playerMovedId );
-//                trace("avatar state="+avatar.state);
-//                trace("ClientContext.model.action="+ClientContext.model.action);
-                if( avatar != null) {
-                    //If we change our avatar to bared, but we are not in the bared state.
-                    if( avatar.state == VConstants.GAME_MODE_BARED &&
-                        ClientContext.model.action != VConstants.GAME_MODE_BARED) {
-                        ClientContext.controller.handleSwitchMode( VConstants.GAME_MODE_BARED );
-                    }
-                }
-
-            });
+        registerListener(ClientContext.model,
+            PlayerArrivedAtLocationEvent.PLAYER_ARRIVED, handlePlayerArrivedAtLocation);
 
         //Move our avatar a while after feeding
 //        registerListener(ClientContext.ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED, function(
@@ -170,16 +149,16 @@ public class MainGameMode extends AppMode
         addSceneObject( ClientContext.avatarOverlay, modeSprite );
         //And pass to the server player arrival events, if we are moving to feed.
         //This lets the server know that we have moved into position, and the game can
-        //start.
-        registerListener( ClientContext.avatarOverlay, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED,
-            function(...ignored) :void {
-                if( ClientContext.model.action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER ||
-                    ClientContext.model.action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER ) {
-
-                        ClientContext.ctrl.agent.sendMessage(
-                            PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
-                    }
-            });
+//        //start.
+//        registerListener( ClientContext.avatarOverlay, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED,
+//            function(...ignored) :void {
+//                if( ClientContext.model.state == VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER ||
+//                    ClientContext.model.state == VConstants.AVATAR_STATE_MOVING_TO_FEED ) {
+//
+//                        ClientContext.ctrl.agent.sendMessage(
+//                            PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
+//                    }
+//            });
 
         _hud = new HUD();
         addSceneObject( _hud, modeSprite );
@@ -187,7 +166,7 @@ public class MainGameMode extends AppMode
 
 
         trace(ClientContext.ourPlayerId + " setting avatar state from game beginning");
-        ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
+        ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
 
 
         //Every X seconds, check the non-player ids, updating the server if changed.
@@ -206,6 +185,53 @@ public class MainGameMode extends AppMode
         }
 
 
+    }
+
+    protected function handlePlayerMoved( e :AVRGameRoomEvent ) :void
+    {
+        var playerMovedId :int = int( e.value );
+        if( playerMovedId == ClientContext.ourPlayerId) {
+            if( ClientContext.model.state == VConstants.AVATAR_STATE_BARED ) {
+                ClientContext.controller.handleChangeState( VConstants.AVATAR_STATE_DEFAULT );
+                ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
+            }
+        }
+    }
+
+    protected function handlePlayerArrivedAtLocation( e :PlayerArrivedAtLocationEvent ) :void
+    {
+        trace("MainGameMode, handlePlayerArrivedAtLocation");
+        if( ClientContext.model.state == VConstants.PLAYER_STATE_MOVING_TO_FEED ) {
+            trace("Sending player arrived event");
+            ClientContext.ctrl.agent.sendMessage( PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
+        }
+    }
+
+    /**
+    * We can go into 'bared' mode via the game HUD menu, or via the regular avatar menu.
+    * Therefore, we must listen to changes in the avatar and check if we have gone into
+    * bared mode.
+    */
+    protected function handleAvatarChanged( e :AVRGameRoomEvent ) :void
+    {
+        var playerAvatarChangedId :int = int( e.value );
+
+        //We are only allowed to change our own avatar.
+        if( playerAvatarChangedId != ClientContext.ourPlayerId ) {
+            return;
+        }
+
+        //Do as if we have pushed the 'Bared" button.
+        var avatar :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo( playerAvatarChangedId );
+        if( avatar != null) {
+
+            var isBared :Boolean = ClientContext.model.state == VConstants.PLAYER_STATE_BARED ||
+                ClientContext.model.state == VConstants.PLAYER_STATE_FEEDING_PREY;
+            //If we change our avatar to bared, but we are not in the bared player state.
+            if( !isBared && avatar.state == VConstants.AVATAR_STATE_BARED ) {
+                ClientContext.controller.handleChangeState( VConstants.PLAYER_STATE_BARED );
+            }
+        }
     }
 
     protected function handleMessageReceived (e :MessageReceivedEvent) :void
@@ -248,11 +274,14 @@ public class MainGameMode extends AppMode
             trace("got " + FeedRequestMsg.NAME);
             var fromPlayerName :String = ClientContext.getPlayerName( msg.playerId );
             var popup :PopupQuery = new PopupQuery( ClientContext.ctrl,
-                    "RequestFeed",
+                    "RequestFeed" + msg.playerId,
                     fromPlayerName + " would like to feed on you.",
                     [VampireController.FEED_REQUEST_ACCEPT, VampireController.FEED_REQUEST_DENY],
                     [msg.playerId, msg.playerId]);
-            addSceneObject( popup, modeSprite );
+
+            if( getObjectNamed( popup.objectName) == null) {
+                addSceneObject( popup, modeSprite );
+            }
 
         }
     }
@@ -265,7 +294,7 @@ public class MainGameMode extends AppMode
         log.info(ClientContext.ourPlayerId + " onGameComplete(), Feeding complete, setting avatar state to default");//, "completedSuccessfully", completedSuccessfully);
 
         trace(ClientContext.ourPlayerId + " setting avatar state from game complete");
-        ClientContext.model.setAvatarState( VConstants.GAME_MODE_NOTHING );
+        ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
         if( _feedingGameClient.playerData != null ) {
             log.info(_feedingGameClient.playerData);
             ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_UPDATE_FEEDING_DATA,
@@ -286,6 +315,26 @@ public class MainGameMode extends AppMode
 
     }
 
+//    protected function avatarArrivedAtDestination(...ignored) :void
+//    {
+//        if( !ClientContext.ctrl.isConnected()) {
+//            trace("avatarArrivedAtDestination, ctrl null, setting callback null");
+//            var setCallback :Function = ClientContext.ctrl.room.getEntityProperty(
+//            AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
+//            if( setCallback != null) {
+//                setCallback( null );
+//            }
+//            return;
+//        }
+//
+//
+//        trace("Game knows avatar stopped!!!!");
+//        if( ClientContext.model.state == VConstants.PLAYER_STATE_MOVING_TO_FEED ) {
+//            trace("Sending player arrived event");
+//            ClientContext.ctrl.agent.sendMessage( PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
+//        }
+//
+//    }
 
 
 
@@ -297,11 +346,25 @@ public class MainGameMode extends AppMode
     {
         modeSprite.visible = false;
         log.warning("!!! " + ClassUtil.tinyClassName(this) + "exiting.  Is this what we want??");
+
+        //Remove the avatar callback
+        var setCallback :Function = ClientContext.ctrl.room.getEntityProperty(
+        AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
+        if( setCallback != null) {
+            setCallback( null );
+        }
     }
 
     override protected function destroy() :void
     {
         super.destroy();
+
+        //Remove the avatar callback
+        var setCallback :Function = ClientContext.ctrl.room.getEntityProperty(
+        AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
+        if( setCallback != null) {
+            setCallback( null );
+        }
     }
 
     protected var _hud :HUD;

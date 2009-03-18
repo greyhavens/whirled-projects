@@ -45,7 +45,7 @@ public class PlayerData extends EventHandlerManager
 
 
         //Start in the default state
-        _action = VConstants.GAME_MODE_NOTHING;
+        _state = VConstants.AVATAR_STATE_DEFAULT;
 
         //Get last time awake
         log.debug("Getting ", "time", new Date(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
@@ -54,7 +54,7 @@ public class PlayerData extends EventHandlerManager
         //Debugging
         //WhirledDev, 1734==Dion, 1735==Ragbears's Evil Twin
         if( _playerId == 1 ) {
-            setTime(0);
+//            setTime(0);
         }
 
 
@@ -96,7 +96,7 @@ public class PlayerData extends EventHandlerManager
 
         log.debug("Getting sire=" + _sire);
 
-        setAction( VConstants.GAME_MODE_NOTHING );
+        setState( VConstants.AVATAR_STATE_DEFAULT );
 
         //If we have previously been awake, reduce our blood proportionally to the time since we last played.
         log.debug("Getting time=" + time);
@@ -154,7 +154,7 @@ public class PlayerData extends EventHandlerManager
 
         _inviteTally = int(_ctrl.props.get(Codes.PLAYER_PROP_INVITES));
 
-        updateAvatarState();
+//        updateAvatarState();
 
     }
 
@@ -226,7 +226,7 @@ public class PlayerData extends EventHandlerManager
             setTime( currentTime, true );
             setIntoPlayerProps();
             if( _ctrl != null && _ctrl.isConnected() ) {
-                _ctrl.setAvatarState( VConstants.GAME_MODE_NOTHING );
+                _ctrl.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
             }
         }
         _room = null;
@@ -248,13 +248,13 @@ public class PlayerData extends EventHandlerManager
         _xp = Math.min( _xp, Logic.maxXPGivenXPAndInvites(_xp, invites));
     }
 
-    public function setAvatarState (s :String, force :Boolean = false) :void
+    public function setAvatarState (s :String) :void
     {
         _avatarState = s;
     }
-    public function setAction (action :String) :void
+    public function setState (action :String) :void
     {
-        _action = action;
+        _state = action;
     }
 
     public function setName (name :String) :void
@@ -327,7 +327,8 @@ public class PlayerData extends EventHandlerManager
 
                         _room.playerEntered(thisPlayer);
                         ServerContext.lineage.playerEnteredRoom( thisPlayer, _room);
-                        updateAvatarState();
+                        thisPlayer.setState( VConstants.PLAYER_STATE_DEFAULT );
+                        ServerLogic.updateAvatarState(thisPlayer);
                     }
                     else {
                         log.error("WTF, enteredRoom called, but room == null???");
@@ -400,9 +401,9 @@ public class PlayerData extends EventHandlerManager
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD, blood);
             }
 
-            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION] != action) {
-                log.debug("Setting " + playerId + " action=" + action + " into room props");
-                room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, action);
+            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE] != state) {
+                log.debug("Setting " + playerId + " action=" + state + " into room props");
+                room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE, state);
             }
 
             if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED] != bloodbonded ) {
@@ -601,9 +602,9 @@ public class PlayerData extends EventHandlerManager
         _sire = sire;
     }
 
-    public function get action () :String
+    public function get state () :String
     {
-        return _action;
+        return _state;
     }
 
     public function get name () :String
@@ -701,8 +702,8 @@ public class PlayerData extends EventHandlerManager
             _bloodUpdateTime = 0;
         }
 
-        //Change the avatar state depending on our current action
-        updateAvatarState();
+        //Change the avatar state depending on our current player state
+//        ServerLogic.updateAvatarState( this );
         //Save our state into the permanent props
         setIntoPlayerProps();
         //And also into the room props so all clients can see our state
@@ -726,24 +727,7 @@ public class PlayerData extends EventHandlerManager
         }
     }
 
-    public function updateAvatarState() :void
-    {
-        var newState :String = "Default";
 
-        if( action == VConstants.GAME_MODE_BARED) {
-            newState = action;
-        }
-
-        if( action == VConstants.GAME_MODE_FEED_FROM_PLAYER ||
-            action == VConstants.GAME_MODE_FEED_FROM_NON_PLAYER ) {
-            newState = VConstants.GAME_MODE_FEED_FROM_PLAYER;
-        }
-
-        if( newState != avatarState ) {
-            log.debug(playerId + " updateAvatarState(" + newState + "), when action=" + action);
-            setAvatarState(newState);
-        }
-    }
 
     public function addFeedingRecord( prey :int, predator :int ) :void
     {
@@ -773,7 +757,7 @@ public class PlayerData extends EventHandlerManager
 
     public function isVictim() :Boolean
     {
-        if( action != VConstants.GAME_MODE_BARED) {
+        if( state != VConstants.AVATAR_STATE_BARED) {
             return false;
         }
 
@@ -782,7 +766,7 @@ public class PlayerData extends EventHandlerManager
             return false;
         }
 
-        if( predator.action == VConstants.GAME_MODE_FEED_FROM_PLAYER && predator.targetId == playerId) {
+        if( predator.state == VConstants.AVATAR_STATE_FEEDING && predator.targetId == playerId) {
             return true;
         }
         return false;
@@ -793,7 +777,7 @@ public class PlayerData extends EventHandlerManager
     protected var _name :String;
     protected var _blood :Number;
     protected var _xp :Number;
-    protected var _action :String;
+    protected var _state :String;
 
     protected var _avatarState :String = "Default";
 
