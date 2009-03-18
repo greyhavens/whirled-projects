@@ -142,40 +142,29 @@ public class HUD extends DraggableSceneObject
             //If it's us, update the player HUD
             if( playerIdUpdated == ClientContext.ourPlayerId) {
 
-                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
-
-                    if( e.oldValue < e.newValue) {
-                        var bloodUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
-                                ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true) );
-                        bloodUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
-                        bloodUp.y = _hudBlood.y;
-                        mode.addSceneObject( bloodUp, _hudBlood.parent  );
-                    }
-
-//                    if( _currentBlood < ClientContext.model.blood ) {
-//                        //Animate a blood bonus movieclip
+//                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
+//
+//                    if( e.oldValue < e.newValue) {
 //                        var bloodUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
-//                            ClientContext.instantiateMovieClip("HUD", "levelup", true) );
+//                                ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true) );
 //                        bloodUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
 //                        bloodUp.y = _hudBlood.y;
-//                        mode.addSceneObject( bloodUp, _hudBlood.parent );
+//                        mode.addSceneObject( bloodUp, _hudBlood.parent  );
 //                    }
-//                    _currentBlood = ClientContext.model.blood;
+//                    showBlood( ClientContext.ourPlayerId );
+//                }
+                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
 
 
-                    showBlood( ClientContext.ourPlayerId );
-                }
-                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
-
-
-                    oldLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.oldValue), ClientContext.model.invites);
-                    newLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.newValue), ClientContext.model.invites);
-                    if( oldLevel < newLevel) {
+//                    oldLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.oldValue), ClientContext.model.invites);
+//                    newLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.newValue), ClientContext.model.invites);
+//                    if( oldLevel < newLevel) {
+                    if( e.oldValue < e.newValue) {
                         levelUp = new SceneObjectPlayMovieClipOnce(
                                 ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true) );
-                        levelUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
-                        levelUp.y = _hudBlood.y;
-                        mode.addSceneObject( levelUp, _hudBlood.parent  );
+                        levelUp.x = _hudXP.x + ClientContext.model.maxblood/2;
+                        levelUp.y = _hudXP.y;
+                        mode.addSceneObject( levelUp, _hudXP.parent  );
                     }
                     _currentLevel = ClientContext.model.level;
 
@@ -284,20 +273,20 @@ public class HUD extends DraggableSceneObject
         //Store the x as the x anchor for the blood and xp bars.
         _hudCapStartX = _hudCap.x;
 
-        _hudBlood = new Sprite();
-        _hudCap.parent.addChild( _hudBlood );
-        _hudBlood.x = _hudCap.x - _hudCap.width/2;
-        _hudBlood.y = _hudCap.y - (_hudCap.height/2 + 1);
+//        _hudBlood = new Sprite();
+//        _hudCap.parent.addChild( _hudBlood );
+//        _hudBlood.x = _hudCap.x - _hudCap.width/2;
+//        _hudBlood.y = _hudCap.y - (_hudCap.height/2 + 1);
 
         _hudXP = new Sprite();
         _hudCap.parent.addChild( _hudXP );
-        _hudXP.x = _hudBlood.x;
+        _hudXP.x = _hudCap.x;
         _hudXP.y = _hudCap.y;
 
         var bloodXPMouseOverSprite :Sprite = new Sprite();
         _bloodXPMouseOverSceneObject = new SimpleSceneObject( bloodXPMouseOverSprite, "MouseOverBloood" );
-        _bloodXPMouseOverSceneObject.x = _hudBlood.x;
-        _bloodXPMouseOverSceneObject.y = _hudBlood.y;
+        _bloodXPMouseOverSceneObject.x = _hudXP.x;
+        _bloodXPMouseOverSceneObject.y = _hudXP.y;
         _bloodXPMouseOverSceneObject.alpha = 0;
 
         registerListener( bloodXPMouseOverSprite, MouseEvent.ROLL_OVER, function(...ignored) :void {
@@ -312,14 +301,11 @@ public class HUD extends DraggableSceneObject
         var hudHelp :SimpleButton = SimpleButton( findSafely("button_menu") );
         Command.bind( hudHelp, MouseEvent.CLICK, VampireController.SHOW_INTRO);
 
-        var hudClose :SimpleButton = SimpleButton( findSafely("HUDquit") );
+        var hudClose :SimpleButton = SimpleButton( findSafely("button_quit") );
         Command.bind( hudClose, MouseEvent.CLICK, VampireController.QUIT);
 
-
-        var feedButton :SimpleTextButton = new SimpleTextButton("Feed");
-        Command.bind(feedButton, MouseEvent.CLICK, VampireController.FEED );
-        feedButton.y = 30;
-        _hud.addChild( feedButton );
+        var hudFeed :SimpleButton = SimpleButton( findSafely("button_feed") );
+        Command.bind( hudFeed, MouseEvent.CLICK, VampireController.FEED);
 
 
     }
@@ -375,7 +361,7 @@ public class HUD extends DraggableSceneObject
         var xpGap :Number = xpNeededForNextLevel - xpNeededForCurrentLevel;
         var ourXPForOurLevel :Number = ClientContext.model.xp - xpNeededForCurrentLevel;
 
-        _xpText = TextFieldUtil.createField("Level " + ClientContext.model.level + ", XP " +
+        _xpText = TextFieldUtil.createField(
             Util.formatNumberForFeedback(ourXPForOurLevel) + " / " + xpGap );
 
             _xpText.selectable = false;
@@ -388,7 +374,7 @@ public class HUD extends DraggableSceneObject
             lineageformat.size = 12;
             lineageformat.align = TextFormatAlign.LEFT;
             lineageformat.bold = false;
-            lineageformat.color = 0xffffff;
+            lineageformat.color = 0;
             _xpText.width = 180;
             _xpText.height = 20;
 //            _mouseOverText.x = 100;
@@ -401,7 +387,7 @@ public class HUD extends DraggableSceneObject
 
 
         _xpText.x = ClientContext.model.maxblood/2 - _xpText.getLineMetrics(0).width/2;
-        _xpText.y = _hudCap.height / 2 + _hudXP.height/2 - _xpText.getLineMetrics(0).height/2;
+        _xpText.y = _hudCap.height / 2  - _xpText.getLineMetrics(0).height/2;
 
 //        _xpText.addEventListener( MouseEvent.ROLL_OUT
 
@@ -688,7 +674,7 @@ public class HUD extends DraggableSceneObject
 
     protected function showXP( playerId :int ) :void
     {
-        showBlood( playerId );
+//        showBlood( playerId );
 
         //Use the blood scale for the xp scale
         var maxBlood :Number = SharedPlayerStateClient.getMaxBlood( playerId );
@@ -713,18 +699,20 @@ public class HUD extends DraggableSceneObject
         //Xp
         _hudXP.graphics.clear();
         _hudXP.graphics.beginFill(0xA9D2E3);
-        _hudXP.graphics.drawRect(1, borderWidth, xpAbsoluteX, _hudCap.height/2 - borderWidth - 3);
+//        _hudXP.graphics.drawRect(1, borderWidth, xpAbsoluteX, _hudCap.height/2 - borderWidth - 3);
+        _hudXP.graphics.drawRect(0, 1, xpAbsoluteX, _hudCap.height - 3);
         _hudXP.graphics.endFill();
         //Highlight
         if( xpOverCurrentLevelMinimum >= 1) {
             _hudXP.graphics.lineStyle(2, 0xDFEFF4);
-            _hudXP.graphics.moveTo( xpAbsoluteX + 1, borderWidth + 1);
-            _hudXP.graphics.lineTo( xpAbsoluteX + 1, _hudCap.height/2 - 3);
+            _hudXP.graphics.moveTo( xpAbsoluteX -1, 1);
+            _hudXP.graphics.lineTo( xpAbsoluteX -1, _hudCap.height - 2 );
         }
         //Border
         _hudXP.graphics.lineStyle(borderWidth, 0);
-        _hudXP.graphics.drawRect(0, borderWidth, maxBlood + borderWidth*2 - 1, _hudCap.height/2 - (borderWidth - 1) - 3);
+        _hudXP.graphics.drawRect(0, borderWidth - 1, maxBlood + borderWidth - 1, _hudCap.height - (borderWidth * 2 - 2) + 1);
 
+        _hudCap.x = _hudXP.x + maxBlood - borderWidth + 1;
         createXPText();
     }
 
