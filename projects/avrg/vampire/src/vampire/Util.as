@@ -7,7 +7,7 @@ package vampire
     import vampire.net.messages.FeedConfirmMsg;
     import vampire.net.messages.FeedRequestMsg;
     import vampire.net.messages.NonPlayerIdsInRoomMsg;
-    import vampire.net.messages.RequestActionChangeMsg;
+    import vampire.net.messages.RequestStateChangeMsg;
     import vampire.net.messages.ShareTokenMsg;
     import vampire.net.messages.SuccessfulFeedMsg;
 
@@ -53,7 +53,7 @@ public class Util
         mgr.addMessageType(FeedConfirmMsg);
         mgr.addMessageType(FeedRequestMsg);
         mgr.addMessageType(NonPlayerIdsInRoomMsg);
-        mgr.addMessageType(RequestActionChangeMsg);
+        mgr.addMessageType(RequestStateChangeMsg);
         mgr.addMessageType(ShareTokenMsg);
         mgr.addMessageType(SuccessfulFeedMsg);
 
