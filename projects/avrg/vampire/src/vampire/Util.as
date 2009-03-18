@@ -32,18 +32,13 @@ public class Util
 
 
     /**
-    * You cannot be a sire from feeding unless you are a progenitor vampire. So far, that
-    * means us developers.
+    * You cannot be a sire from feeding unless you are a connected to the official Lineage,
+    * meaning that your great-great-great sire is the Übervamp.
     *
     */
-    public static function isProgenitor( playerId :int ) :Boolean
+    public static function isProgenitor (playerId :int) :Boolean
     {
         return playerId == VConstants.UBER_VAMP_ID;
-        //1877 == ubervamp on dev
-//         || //Ragbeard
-//               playerId == 1769  || //Capital-T-Tim
-//               playerId == 12     ;  //Nemo
-//               playerId == 1   ;   //debugging
     }
 
 
@@ -56,7 +51,6 @@ public class Util
         mgr.addMessageType(RequestStateChangeMsg);
         mgr.addMessageType(ShareTokenMsg);
         mgr.addMessageType(SuccessfulFeedMsg);
-
     }
 
 
