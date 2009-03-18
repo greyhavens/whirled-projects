@@ -15,7 +15,7 @@ public class Props
     public static const LOBBY_LEADER :String = "LobbyLeader";
 
     /** state :String */
-    public static const STATE :String = "State";
+    public static const MODE :String = "State";
 }
 
 }

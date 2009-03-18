@@ -1,7 +1,7 @@
 package vampire.feeding.client {
 
-import com.adobe.utils.DictionaryUtil;
 import com.threerings.flash.SimpleTextButton;
+import com.threerings.util.Util;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
@@ -41,25 +41,28 @@ public class LobbyMode extends AppMode
         _tf = new TextField();
         _tf.x = 5;
         _tf.y = _startButton.y + _startButton.height + 5;
+        _modeSprite.addChild(_tf);
 
         registerListener(ClientCtx.props, PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
         registerListener(ClientCtx.props, ElementChangedEvent.ELEMENT_CHANGED, onPropChanged);
+
+        updateButton();
+        updateText();
     }
 
     protected function updateButton () :void
     {
         _startButton.visible =
-            (ClientCtx.props.get(Props.LOBBY_LEADER) != null &&
-             ClientCtx.props.get(Props.LOBBY_LEADER == ClientCtx.localPlayerId);
+            ((ClientCtx.props.get(Props.LOBBY_LEADER) as int) == ClientCtx.localPlayerId);
     }
 
     protected function updateText () :void
     {
         var playersText :String = "";
-        var players :Dictionary = ClientCtx.props.get(Props.PLAYERS);
+        var players :Dictionary = ClientCtx.props.get(Props.PLAYERS) as Dictionary;
         if (players != null) {
             var needsBreak :Boolean;
-            for each (var playerId :int in DictionaryUtil.getKeys(players)) {
+            for each (var playerId :int in Util.keys(players)) {
                 if (needsBreak) {
                     playersText += "\n";
                 }
@@ -69,7 +72,7 @@ public class LobbyMode extends AppMode
             }
         }
 
-        TextBits.initTextField(_tf, playersText, 1.2, 250);
+        TextBits.initTextField(_tf, playersText, 1.5, 0, 0xffffff);
     }
 
     protected function onPropChanged (e :PropertyChangedEvent) :void

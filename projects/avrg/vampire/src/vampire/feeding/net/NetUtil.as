@@ -1,10 +1,10 @@
-package vampire.feeding {
+package vampire.feeding.net {
 
 import com.whirled.contrib.simplegame.net.MessageManager;
 
 import vampire.feeding.net.*;
 
-public class Util
+public class NetUtil
 {
     public static function initMessageManager (mgr :MessageManager) :void
     {

@@ -41,7 +41,7 @@ public class GamePropGetControl extends EventDispatcher
         _propGetCtrl.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, onElemChanged);
     }
 
-    public function get partyId () :int
+    public function get gameId () :int
     {
         return _gameId;
     }

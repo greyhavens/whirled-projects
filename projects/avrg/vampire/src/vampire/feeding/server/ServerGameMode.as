@@ -85,7 +85,8 @@ public class ServerGameMode extends ServerMode
                 function (playerId :int, score :int) :void {
                     totalScore += score;
                 });
-            _ctx.server.roundComplete(totalScore);
+            _ctx.lastRoundScore = totalScore;
+            _ctx.server.setMode(Constants.MODE_WAITING_FOR_CHECKIN);
 
         } else {
             log.info("Waiting for " + _playersNeedingScoreUpdate.length +

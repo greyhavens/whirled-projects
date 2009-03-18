@@ -2,6 +2,7 @@ package vampire.feeding.server {
 
 import com.whirled.contrib.simplegame.net.Message;
 
+import vampire.feeding.*;
 import vampire.feeding.net.*;
 
 public class ServerLobbyMode extends ServerMode
@@ -17,7 +18,7 @@ public class ServerLobbyMode extends ServerMode
             if (senderId != _ctx.getPrimaryPredatorId()) {
                 _ctx.logBadMessage(senderId, msg.name, "player is not the lobby leader");
             } else {
-                _ctx.server.closeLobby();
+                _ctx.server.setMode(Constants.MODE_WAITING_FOR_CHECKIN);
             }
 
             return true;

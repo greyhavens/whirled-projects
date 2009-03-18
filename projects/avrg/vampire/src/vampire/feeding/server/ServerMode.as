@@ -35,7 +35,12 @@ public class ServerMode
     protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _timerMgr :TimerManager = new TimerManager();
 
-    protected const log :Log = Log.getLog(this);
+    protected var log :Log = Log.getLog(this);
+    protected const foo :Foo = new Foo();
 }
 
+}
+
+class Foo
+{
 }

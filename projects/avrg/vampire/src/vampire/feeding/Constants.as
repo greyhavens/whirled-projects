@@ -79,7 +79,7 @@ public class Constants
     public static const SP_MULTIPLIER_RETURN_CHANCE :Number = 1;
     public static const SP_MULTIPLIER_RETURN_TIME :NumRange = new NumRange(4, 9, Rand.STREAM_GAME);
 
-    public static const MAX_MULTIPLIER :int = 9;
+    public static const MAX_MULTIPLIER :int = 10;
 
     public static const DEBRIS_COUNT :int = 12;
 
@@ -93,9 +93,9 @@ public class Constants
     public static const TUT_EXPLODE_WHITE :int = 5;
     public static const TUT_GET_SPECIAL :int = 6;
 
-    public static const STATE_LOBBY :String = "s_Lobby";
-    public static const STATE_WAITING_FOR_CHECKIN :String = "s_WaitingForCheckin";
-    public static const STATE_PLAYING :String = "s_Playing";
+    public static const MODE_LOBBY :String = "m_Lobby";
+    public static const MODE_WAITING_FOR_CHECKIN :String = "m_WaitingForCheckin";
+    public static const MODE_PLAYING :String = "m_Playing";
 }
 
 }

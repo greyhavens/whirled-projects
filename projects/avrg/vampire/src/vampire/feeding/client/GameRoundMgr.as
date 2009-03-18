@@ -39,7 +39,7 @@ public class GameRoundMgr
 
     protected function onPropChanged (e :PropertyChangedEvent) :void
     {
-        if (e.name == Props.STATE && e.newValue == Constants.STATE_PLAYING) {
+        if (e.name == Props.MODE && e.newValue == Constants.MODE_PLAYING) {
             if (!_ready) {
                 log.warning("Round started before we were ready!");
             } else {

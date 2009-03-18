@@ -1,7 +1,7 @@
 package vampire.feeding.client {
 
-import com.adobe.utils.DictionaryUtil;
 import com.threerings.util.Log;
+import com.threerings.util.Util;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.*;
@@ -57,17 +57,29 @@ public class BloodBloom extends FeedingClient
         ClientCtx.playerData = playerData.clone();
         ClientCtx.gameCompleteCallback = gameCompleteCallback;
         ClientCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);
-        Util.initMessageManager(ClientCtx.msgMgr);
+        NetUtil.initMessageManager(ClientCtx.msgMgr);
         ClientCtx.roundMgr = new GameRoundMgr();
 
         _events.registerListener(this, Event.ADDED_TO_STAGE, onAddedToStage);
-        _events.registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
-        _events.registerListener(ClientCtx.props, PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
-        _events.registerListener(ClientCtx.props, ElementChangedEvent.ELEMENT_CHANGED, onPropChanged);
 
-        updatePlayers();
-        updatePreyId();
-        updatePreyBloodType();
+        if (ClientCtx.isConnected) {
+            _events.registerListener(
+                ClientCtx.msgMgr,
+                ClientMsgEvent.MSG_RECEIVED,
+                onMsgReceived);
+            _events.registerListener(
+                ClientCtx.props,
+                PropertyChangedEvent.PROPERTY_CHANGED,
+                onPropChanged);
+            _events.registerListener(
+                ClientCtx.props,
+                ElementChangedEvent.ELEMENT_CHANGED,
+                onPropChanged);
+
+            updatePlayers();
+            updatePreyId();
+            updatePreyBloodType();
+        }
 
         // If the resources aren't loaded, wait for them to load
         if (!_resourcesLoaded) {
@@ -123,7 +135,7 @@ public class BloodBloom extends FeedingClient
         if (playerDict == null) {
             ClientCtx.playerIds = [];
         } else {
-            ClientCtx.playerIds = DictionaryUtil.getKeys(playerDict);
+            ClientCtx.playerIds = Util.keys(playerDict);
         }
     }
 
@@ -158,11 +170,16 @@ public class BloodBloom extends FeedingClient
     protected function maybeReportReady () :void
     {
         if (_addedToStage && _resourcesLoaded) {
-            if (ClientCtx.playerData.timesPlayed == 0) {
+            /*if (ClientCtx.playerData.timesPlayed == 0) {
                 ClientCtx.mainLoop.pushMode(new WaitForOtherPlayersMode());
                 ClientCtx.mainLoop.pushMode(new NewPlayerIntroMode());
             } else {
                 ClientCtx.mainLoop.pushMode(new WaitForOtherPlayersMode());
+                ClientCtx.roundMgr.reportReadyForNextRound();
+            }*/
+            if (ClientCtx.isConnected) {
+                ClientCtx.mainLoop.pushMode(new LobbyMode());
+            } else {
                 ClientCtx.roundMgr.reportReadyForNextRound();
             }
         }

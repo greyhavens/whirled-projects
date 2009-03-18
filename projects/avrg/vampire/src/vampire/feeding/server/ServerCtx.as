@@ -29,6 +29,8 @@ public class ServerCtx
     public var props :GamePropControl;
     public var nameUtil :NameUtil;
 
+    public var lastRoundScore :int;
+
     public function getPrimaryPredatorId () :int
     {
         for each (var playerId :int in playerIds) {
@@ -110,7 +112,7 @@ public class ServerCtx
     {
         _gameCtrl = gameCtrl;
         _msgMgr = new BasicMessageManager();
-        vampire.feeding.Util.initMessageManager(_msgMgr);
+        NetUtil.initMessageManager(_msgMgr);
     }
 
     protected static var _gameCtrl :AVRServerGameControl;

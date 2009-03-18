@@ -22,7 +22,7 @@ public class TextBits
     }
 
     public static function initTextField (tf :TextField, text :String, textScale :Number,
-        maxWidth :int, textColor :Number, align :String = "center", font :int = FONT_JUICE) :void
+        maxWidth :int, textColor :uint = 0, align :String = "center", font :int = FONT_JUICE) :void
     {
         var wordWrap :Boolean = (maxWidth > 0);
 

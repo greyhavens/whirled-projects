@@ -76,7 +76,7 @@ public class ServerWaitForCheckinMode extends ServerMode
             _ctx.server.bootPlayer(playerId);
         }
 
-        _ctx.server.startRound();
+        _ctx.server.setMode(Constants.MODE_PLAYING);
     }
 
     protected var _playersNeedingCheckin :Array;

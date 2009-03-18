@@ -79,19 +79,20 @@ public class Server extends FeedingServer
         _ctx.props.set(Props.PLAYERS, playersDict);
         _ctx.props.set(Props.LOBBY_LEADER, predatorId);
         _ctx.props.set(Props.PREY_ID, preyId);
+        _ctx.props.set(Props.MODE, null);
 
         _events.registerListener(
             _ctx.gameCtrl.game,
             MessageReceivedEvent.MESSAGE_RECEIVED,
             onMsgReceived);
 
-        setState(Constants.STATE_LOBBY);
+        setMode(Constants.MODE_LOBBY);
     }
 
-    public function setState (state :String) :void
+    public function setMode (modeName :String) :void
     {
-        if (_ctx.props.get(Props.STATE) == state) {
-            log.warning("setState failed; already in requested state", "state", state);
+        if (_ctx.props.get(Props.MODE) == modeName) {
+            log.warning("setMode failed; already in requested mode", "mode", modeName);
             return;
         }
 
@@ -101,16 +102,16 @@ public class Server extends FeedingServer
         }
 
         var newMode :ServerMode;
-        switch (state) {
-        case Constants.STATE_LOBBY:
+        switch (modeName) {
+        case Constants.MODE_LOBBY:
             newMode = new ServerLobbyMode(_ctx);
             break;
 
-        case Constants.STATE_WAITING_FOR_CHECKIN:
+        case Constants.MODE_WAITING_FOR_CHECKIN:
             newMode = new ServerWaitForCheckinMode(_ctx);
             break;
 
-        case Constants.STATE_PLAYING:
+        case Constants.MODE_PLAYING:
             if (!_gameStarted) {
                 _gameStarted = true;
                 _ctx.gameStartedCallback();
@@ -120,10 +121,13 @@ public class Server extends FeedingServer
         }
 
         if (newMode != null) {
+            log.info("Setting new mode", "mode", modeName);
             _serverMode = newMode;
             _serverMode.run();
+            _ctx.props.set(Props.MODE, modeName);
+
         } else {
-            log.warning("unrecognized state", "state", state);
+            log.warning("unrecognized mode", "mode", modeName);
         }
     }
 
@@ -216,7 +220,7 @@ public class Server extends FeedingServer
 
     override public function get lastRoundScore () :int
     {
-        return _lastRoundScore;
+        return _ctx.lastRoundScore;
     }
 
     protected function shutdown () :void
@@ -294,7 +298,6 @@ public class Server extends FeedingServer
 
     protected var _noMoreFeeding :Boolean;
     protected var _gameStarted :Boolean;
-    protected var _lastRoundScore :int;
 
     protected var _events :EventHandlerManager = new EventHandlerManager();
 
