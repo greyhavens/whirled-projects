@@ -7,6 +7,8 @@ import com.whirled.avrg.RoomSubControlServer;
 import com.whirled.contrib.simplegame.net.BasicMessageManager;
 import com.whirled.contrib.simplegame.net.Message;
 
+import flash.utils.Dictionary;
+
 import vampire.feeding.*;
 import vampire.feeding.net.*;
 
@@ -112,7 +114,7 @@ public class ServerCtx
     {
         _gameCtrl = gameCtrl;
         _msgMgr = new BasicMessageManager();
-        NetUtil.initMessageManager(_msgMgr);
+        FeedingUtil.initMessageManager(_msgMgr);
     }
 
     protected static var _gameCtrl :AVRServerGameControl;

@@ -5,6 +5,9 @@ import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.simplegame.net.Message;
 
+import vampire.feeding.*;
+import vampire.feeding.net.*;
+
 public class ServerMode
 {
     public function ServerMode (ctx :ServerCtx)
@@ -14,6 +17,7 @@ public class ServerMode
 
     public function run () :void
     {
+        _ctx.props.set(Props.MODE, this.modeName, true);
     }
 
     public function shutdown () :void
@@ -29,6 +33,11 @@ public class ServerMode
     public function onMsgReceived (senderId :int, msg :Message) :Boolean
     {
         return false;
+    }
+
+    public function get modeName () :String
+    {
+        throw new Error("not implemented");
     }
 
     protected var _ctx :ServerCtx;

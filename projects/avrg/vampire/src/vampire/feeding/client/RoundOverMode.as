@@ -80,7 +80,7 @@ public class RoundOverMode extends AppMode
         tfTitle.text = "Total Score";
         tfScore.text = String(totalScore);
 
-        _replayBtn = panelMovie["panel_button"];
+        /*_replayBtn = panelMovie["panel_button"];
         _feedingOverText = panelMovie["deadgame_text"];
         if (ClientCtx.noMoreFeeding) {
             noMoreFeeding();
@@ -93,7 +93,7 @@ public class RoundOverMode extends AppMode
                      ClientCtx.roundMgr.reportReadyForNextRound();
                      _replayBtn.visible = false;
                 });
-        }
+        }*/
 
         var quitBtn :SimpleButton = panelMovie["button_close"];
         registerOneShotCallback(quitBtn, MouseEvent.CLICK,

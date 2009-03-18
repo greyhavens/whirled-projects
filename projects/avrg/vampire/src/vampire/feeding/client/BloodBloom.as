@@ -1,5 +1,6 @@
 package vampire.feeding.client {
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Util;
 import com.whirled.avrg.AVRGameControl;
@@ -57,29 +58,13 @@ public class BloodBloom extends FeedingClient
         ClientCtx.playerData = playerData.clone();
         ClientCtx.gameCompleteCallback = gameCompleteCallback;
         ClientCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);
-        NetUtil.initMessageManager(ClientCtx.msgMgr);
-        ClientCtx.roundMgr = new GameRoundMgr();
+        FeedingUtil.initMessageManager(ClientCtx.msgMgr);
 
-        _events.registerListener(this, Event.ADDED_TO_STAGE, onAddedToStage);
-
-        if (ClientCtx.isConnected) {
-            _events.registerListener(
-                ClientCtx.msgMgr,
-                ClientMsgEvent.MSG_RECEIVED,
-                onMsgReceived);
-            _events.registerListener(
-                ClientCtx.props,
-                PropertyChangedEvent.PROPERTY_CHANGED,
-                onPropChanged);
-            _events.registerListener(
-                ClientCtx.props,
-                ElementChangedEvent.ELEMENT_CHANGED,
-                onPropChanged);
-
-            updatePlayers();
-            updatePreyId();
-            updatePreyBloodType();
-        }
+        _events.registerListener(this, Event.ADDED_TO_STAGE,
+            function (...ignored) :void {
+                _addedToStage = true;
+                maybeFinishInit();
+            });
 
         // If the resources aren't loaded, wait for them to load
         if (!_resourcesLoaded) {
@@ -91,7 +76,7 @@ public class BloodBloom extends FeedingClient
                 if (_resourcesLoaded) {
                     timer.removeEventListener(TimerEvent.TIMER, checkResourcesLoaded);
                     timer.stop();
-                    maybeReportReady();
+                    maybeFinishInit();
                 }
             }
         }
@@ -106,7 +91,6 @@ public class BloodBloom extends FeedingClient
         ClientCtx.audio.stopAllSounds();
 
         ClientCtx.msgMgr.shutdown();
-        ClientCtx.roundMgr.shutdown();
 
         ClientCtx.init(); // release any memory we might be holding onto here
 
@@ -120,18 +104,20 @@ public class BloodBloom extends FeedingClient
 
     protected function onPropChanged (e :PropertyChangedEvent) :void
     {
-        if (e.name == Props.PLAYERS) {
+        if (e.name == Props.ALL_PLAYERS) {
             updatePlayers();
         } else if (e.name == Props.PREY_ID) {
             updatePreyId();
         } else if (e.name == Props.PREY_BLOOD_TYPE) {
             updatePreyBloodType();
+        } else if (e.name == Props.MODE) {
+            updateMode();
         }
     }
 
     protected function updatePlayers () :void
     {
-        var playerDict :Dictionary = ClientCtx.props.get(Props.PLAYERS) as Dictionary;
+        var playerDict :Dictionary = ClientCtx.props.get(Props.ALL_PLAYERS) as Dictionary;
         if (playerDict == null) {
             ClientCtx.playerIds = [];
         } else {
@@ -150,6 +136,32 @@ public class BloodBloom extends FeedingClient
         ClientCtx.preyBloodType = ClientCtx.props.get(Props.PREY_BLOOD_TYPE) as int;
     }
 
+    protected function updateMode () :void
+    {
+        var modeName :String = ClientCtx.props.get(Props.MODE) as String;
+        if (modeName != null && modeName == _curModeName) {
+            log.warning("updateMode failed: we're already in this mode", "mode", modeName);
+            return;
+        }
+
+        log.info("Changing mode", "mode", modeName);
+
+        if (modeName == Constants.MODE_LOBBY) {
+            ClientCtx.mainLoop.unwindToMode(new LobbyMode());
+
+        } else if (modeName == Constants.MODE_PLAYING) {
+            var gamePlayers :Array = Util.keys(ClientCtx.props.get(Props.GAME_PLAYERS));
+            if (ArrayUtil.contains(gamePlayers, ClientCtx.localPlayerId)) {
+                ClientCtx.mainLoop.unwindToMode(new GameMode());
+            } else {
+                log.info("A round is being played, but we're not in it.");
+                ClientCtx.mainLoop.unwindToMode(new WaitingForNextRoundMode());
+            }
+        }
+
+        _curModeName = modeName;
+    }
+
     protected function onMsgReceived (e :ClientMsgEvent) :void
     {
         if (e.msg is GameEndedMsg || e.msg is ClientBootedMsg) {
@@ -161,27 +173,26 @@ public class BloodBloom extends FeedingClient
         }
     }
 
-    protected function onAddedToStage (...ignored) :void
+    protected function maybeFinishInit () :void
     {
-        _addedToStage = true;
-        maybeReportReady();
-    }
+        if (!_addedToStage || !_resourcesLoaded) {
+            return;
+        }
 
-    protected function maybeReportReady () :void
-    {
-        if (_addedToStage && _resourcesLoaded) {
-            /*if (ClientCtx.playerData.timesPlayed == 0) {
-                ClientCtx.mainLoop.pushMode(new WaitForOtherPlayersMode());
-                ClientCtx.mainLoop.pushMode(new NewPlayerIntroMode());
-            } else {
-                ClientCtx.mainLoop.pushMode(new WaitForOtherPlayersMode());
-                ClientCtx.roundMgr.reportReadyForNextRound();
-            }*/
-            if (ClientCtx.isConnected) {
-                ClientCtx.mainLoop.pushMode(new LobbyMode());
-            } else {
-                ClientCtx.roundMgr.reportReadyForNextRound();
-            }
+        if (ClientCtx.isConnected) {
+            _events.registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
+            _events.registerListener(ClientCtx.props, PropertyChangedEvent.PROPERTY_CHANGED,
+                onPropChanged);
+            _events.registerListener(ClientCtx.props, ElementChangedEvent.ELEMENT_CHANGED,
+                onPropChanged);
+
+            updatePlayers();
+            updatePreyId();
+            updatePreyBloodType();
+            updateMode();
+
+        } else {
+            ClientCtx.mainLoop.pushMode(new GameMode());
         }
     }
 
@@ -211,6 +222,7 @@ public class BloodBloom extends FeedingClient
 
     protected var _addedToStage :Boolean;
     protected var _events :EventHandlerManager = new EventHandlerManager();
+    protected var _curModeName :String;
 
     protected static var _inited :Boolean;
     protected static var _sg :SimpleGame;

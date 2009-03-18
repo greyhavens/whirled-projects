@@ -18,7 +18,7 @@ public class ServerLobbyMode extends ServerMode
             if (senderId != _ctx.getPrimaryPredatorId()) {
                 _ctx.logBadMessage(senderId, msg.name, "player is not the lobby leader");
             } else {
-                _ctx.server.setMode(Constants.MODE_WAITING_FOR_CHECKIN);
+                _ctx.server.setMode(Constants.MODE_PLAYING);
             }
 
             return true;
@@ -27,6 +27,10 @@ public class ServerLobbyMode extends ServerMode
         return false;
     }
 
+    override public function get modeName () :String
+    {
+        return Constants.MODE_LOBBY;
+    }
 }
 
 }

@@ -59,7 +59,7 @@ public class LobbyMode extends AppMode
     protected function updateText () :void
     {
         var playersText :String = "";
-        var players :Dictionary = ClientCtx.props.get(Props.PLAYERS) as Dictionary;
+        var players :Dictionary = ClientCtx.props.get(Props.ALL_PLAYERS) as Dictionary;
         if (players != null) {
             var needsBreak :Boolean;
             for each (var playerId :int in Util.keys(players)) {
@@ -77,7 +77,7 @@ public class LobbyMode extends AppMode
 
     protected function onPropChanged (e :PropertyChangedEvent) :void
     {
-        if (e.name == Props.PLAYERS) {
+        if (e.name == Props.ALL_PLAYERS) {
             updateText();
         } else if (e.name == Props.LOBBY_LEADER) {
             updateButton();

@@ -94,7 +94,6 @@ public class Constants
     public static const TUT_GET_SPECIAL :int = 6;
 
     public static const MODE_LOBBY :String = "m_Lobby";
-    public static const MODE_WAITING_FOR_CHECKIN :String = "m_WaitingForCheckin";
     public static const MODE_PLAYING :String = "m_Playing";
 }
 

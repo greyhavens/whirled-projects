@@ -2,8 +2,17 @@ package vampire.feeding.net {
 
 public class Props
 {
-    /** Dictionary<playerId :int, null> */
-    public static const PLAYERS :String = "Players";
+    /**
+     * Dictionary<playerId :int, null>
+     * All the players in the game, including those waiting for the next round to start
+     */
+    public static const ALL_PLAYERS :String = "AllPlayers";
+
+    /**
+     * Dictionary<playerId :int, null>
+     * The players in the current round. A subset of ALL_PLAYERS.
+     */
+    public static const GAME_PLAYERS :String = "GamePlayers";
 
     /** playerId :int */
     public static const PREY_ID :String = "PreyId";

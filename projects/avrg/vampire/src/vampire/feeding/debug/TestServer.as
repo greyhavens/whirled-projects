@@ -53,14 +53,34 @@ class TestGameController extends OneRoomGameRoom
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
     {
-        if (e.name == "Client_Hello" && !ArrayUtil.contains(_waitingPlayers, e.senderId)) {
+        if (e.name == "Client_Hello" && !ArrayUtil.contains(_allPlayers, e.senderId)) {
+            _allPlayers.push(e.senderId);
             _gameCtrl.getPlayer(e.senderId).sendMessage("Server_Hello");
-            _waitingPlayers.push(e.senderId);
-             if (_waitingPlayers.length >= MIN_PLAYERS) {
-                startGameIn(START_GAME_DELAY);
-            } else {
-                log.info("Waiting for " + String(MIN_PLAYERS - _waitingPlayers.length) +
-                         " more players to start game");
+
+            // Is there a game already in progress? Put the player in that.
+            var addedToGame :Boolean;
+            if (_gamesInProgress.length > 0) {
+                log.info("Trying to add player to a game in progress.");
+                var game :FeedingServer = _gamesInProgress[0];
+                addedToGame = game.addPredator(e.senderId);
+                if (addedToGame) {
+                    notePlayersInGame(game, [ e.senderId ]);
+                    log.info("Player was ACCEPTED to game in progress.");
+                } else {
+                    log.info("Player was REJECTED from game in progress.");
+                }
+            }
+
+            if (!addedToGame) {
+                _waitingPlayers.push(e.senderId);
+                if (_allPlayers.length >= MIN_PLAYERS) {
+                    startGame(_waitingPlayers.slice());
+                    _waitingPlayers = [];
+
+                } else {
+                    log.info("Waiting for " + String(MIN_PLAYERS - _waitingPlayers.length) +
+                             " more players to start game");
+                }
             }
         }
     }
@@ -69,10 +89,8 @@ class TestGameController extends OneRoomGameRoom
     {
         log.info("Player left", "playerId", playerId);
 
+        ArrayUtil.removeFirst(_allPlayers, playerId);
         ArrayUtil.removeFirst(_waitingPlayers, playerId);
-        if (_waitingPlayers.length < MIN_PLAYERS) {
-            cancelGameTimer();
-        }
 
         var game :FeedingServer = _playerGameMap.remove(playerId) as FeedingServer;
         if (game != null) {
@@ -88,28 +106,10 @@ class TestGameController extends OneRoomGameRoom
         }
     }
 
-    protected function startGameIn (time :Number) :void
+    protected function startGame (players :Array) :void
     {
-        cancelGameTimer();
-        _startGameTimer = _timerMgr.createTimer(time * 1000, 1,
-            function (...ignored) :void {
-                startGame();
-            });
-        _startGameTimer.start();
-
-        log.info("Game will start in " + time + " seconds.");
-    }
-
-    protected function startGame () :void
-    {
-        if (_waitingPlayers.length == 0) {
-            log.info("Couldn't start game - no waiting players.");
-            return;
-        }
-
-        var preyId :int =
-            (_waitingPlayers.length > 1 ? _waitingPlayers.pop() : Constants.NULL_PLAYER);
-        var predatorId :int = _waitingPlayers.pop();
+        var preyId :int = (players.length > 1 ? players.pop() : Constants.NULL_PLAYER);
+        var predatorId :int = players.pop();
 
         var game :FeedingServer = FeedingServer.create(
             _roomCtrl.getRoomId(),
@@ -119,7 +119,7 @@ class TestGameController extends OneRoomGameRoom
             // the amount of blood the prey is starting the feeding with
             Logic.getPlayerBloodStrain(preyId),
             function () :void {
-                // game started!
+                log.info("Game started", "gameId", game.gameId);
             },
             function () :Number {
                 return onRoundComplete(game);
@@ -127,13 +127,23 @@ class TestGameController extends OneRoomGameRoom
             function () :void {
                 onGameComplete(game, true);
             },
-            onPlayerLeft);
+            function (playerId :int) :void {
+                log.info("Player left game", "gameId", game.gameId, "playerId", playerId);
+            });
 
-        for each (var playerId :int in _waitingPlayers) {
+        for each (var playerId :int in players) {
             game.addPredator(playerId);
         }
 
+        notePlayersInGame(game, game.playerIds);
 
+        log.info("Creating game", "gameId", game.gameId, "players", game.playerIds);
+
+        _gamesInProgress.push(game);
+    }
+
+    protected function notePlayersInGame (game :FeedingServer, players :Array) :void
+    {
         // send a message with the game ID to each of the players, and store the
         // playerIds in a map
         _gameCtrl.doBatch(function () :void {
@@ -142,13 +152,6 @@ class TestGameController extends OneRoomGameRoom
                 _gameCtrl.getPlayer(playerId).sendMessage("StartFeeding", game.gameId);
             }
         });
-
-        log.info("Starting game", "gameId", game.gameId, "players", game.playerIds);
-    }
-
-    protected function onPlayerLeft (playerId :int) :void
-    {
-        log.info("Player left", "playerId", playerId);
     }
 
     protected function onRoundComplete (game :FeedingServer) :Number
@@ -175,6 +178,8 @@ class TestGameController extends OneRoomGameRoom
             _playerGameMap.remove(playerId);
         }
 
+        ArrayUtil.removeFirst(_gamesInProgress, game);
+
         if (successfullyEnded) {
             log.info("Game successfully ended", "gameId", game.gameId,
                      "finalScore", game.lastRoundScore);
@@ -183,7 +188,9 @@ class TestGameController extends OneRoomGameRoom
         }
     }
 
+    protected var _allPlayers :Array = [];
     protected var _waitingPlayers :Array = [];
+    protected var _gamesInProgress :Array = [];
     protected var _playerGameMap :HashMap = new HashMap(); // Map<playerId, FeedingGameServer>
     protected var _preyBlood :Number = 1;
     protected var _startGameTimer :ManagedTimer;
@@ -192,5 +199,4 @@ class TestGameController extends OneRoomGameRoom
     protected var _timerMgr :TimerManager = new TimerManager();
 
     protected static const MIN_PLAYERS :int = 1;
-    protected static const START_GAME_DELAY :Number = 2;
 }

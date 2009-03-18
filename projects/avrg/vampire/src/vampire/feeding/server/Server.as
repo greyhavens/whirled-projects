@@ -67,19 +67,10 @@ public class Server extends FeedingServer
         _ctx.nameUtil = new NameUtil(_ctx.gameId);
         _ctx.props = new GamePropControl(_ctx.gameId, _ctx.roomCtrl.props);
 
-        // Players are stored as a Dictionary property:
-        // Dictionary<playerId:int, null>
-        var playersDict :Dictionary = new Dictionary();
-        for each (var predatorId :int in predatorIds) {
-            playersDict[predatorId] = false;
-        }
-        if (preyId != Constants.NULL_PLAYER) {
-            playersDict[preyId] = false;
-        }
-        _ctx.props.set(Props.PLAYERS, playersDict);
-        _ctx.props.set(Props.LOBBY_LEADER, predatorId);
-        _ctx.props.set(Props.PREY_ID, preyId);
-        _ctx.props.set(Props.MODE, null);
+        _ctx.props.set(Props.ALL_PLAYERS, FeedingUtil.arrayToDict(_ctx.playerIds), true);
+        _ctx.props.set(Props.LOBBY_LEADER, predatorId, true);
+        _ctx.props.set(Props.PREY_ID, preyId, true);
+        _ctx.props.set(Props.MODE, null, true);
 
         _events.registerListener(
             _ctx.gameCtrl.game,
@@ -107,10 +98,6 @@ public class Server extends FeedingServer
             newMode = new ServerLobbyMode(_ctx);
             break;
 
-        case Constants.MODE_WAITING_FOR_CHECKIN:
-            newMode = new ServerWaitForCheckinMode(_ctx);
-            break;
-
         case Constants.MODE_PLAYING:
             if (!_gameStarted) {
                 _gameStarted = true;
@@ -124,7 +111,6 @@ public class Server extends FeedingServer
             log.info("Setting new mode", "mode", modeName);
             _serverMode = newMode;
             _serverMode.run();
-            _ctx.props.set(Props.MODE, modeName);
 
         } else {
             log.warning("unrecognized mode", "mode", modeName);
@@ -139,13 +125,12 @@ public class Server extends FeedingServer
 
     override public function addPredator (playerId :int) :Boolean
     {
-        // we can only add players if the game hasn't started yet
-        if (!this.hasStarted || ArrayUtil.contains(_ctx.playerIds, playerId)) {
+        /*if (!this.hasStarted || ArrayUtil.contains(_ctx.playerIds, playerId)) {
             return false;
-        }
+        }*/
 
         _ctx.playerIds.push(playerId);
-        _ctx.props.setIn(Props.PLAYERS, playerId, false);
+        _ctx.props.setIn(Props.ALL_PLAYERS, playerId, false, true);
 
         return true;
     }
@@ -160,9 +145,9 @@ public class Server extends FeedingServer
         ArrayUtil.removeFirst(_ctx.playerIds, playerId);
         var newLobbyLeader :int = this.primaryPredatorId;
 
-        _ctx.props.setIn(Props.PLAYERS, playerId, null);
+        _ctx.props.setIn(Props.ALL_PLAYERS, playerId, null, true);
         if (oldLobbyLeader != newLobbyLeader) {
-            _ctx.props.set(Props.LOBBY_LEADER, newLobbyLeader);
+            _ctx.props.set(Props.LOBBY_LEADER, newLobbyLeader, true);
         }
 
         if (_ctx.playerIds.length == 0) {

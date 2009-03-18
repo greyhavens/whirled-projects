@@ -24,7 +24,6 @@ public class ClientCtx
 
     // Initialized every time a new feeding takes place
     public static var props :GamePropGetControl;
-    public static var roundMgr :GameRoundMgr;
     public static var msgMgr :ClientMsgMgr;
     public static var gameCompleteCallback :Function;
     public static var playerData :PlayerFeedingData;
@@ -38,7 +37,6 @@ public class ClientCtx
     public static function init () :void
     {
         props = null;
-        roundMgr = null;
         msgMgr = null;
         gameCompleteCallback = null;
         playerData = null;
