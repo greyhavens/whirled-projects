@@ -36,11 +36,6 @@ public class ServerMode
     protected var _timerMgr :TimerManager = new TimerManager();
 
     protected var log :Log = Log.getLog(this);
-    protected const foo :Foo = new Foo();
 }
 
-}
-
-class Foo
-{
 }
