@@ -27,7 +27,6 @@ public class ClientCtx
     public static var msgMgr :ClientMsgMgr;
     public static var gameCompleteCallback :Function;
     public static var playerData :PlayerFeedingData;
-    public static var noMoreFeeding :Boolean;
     public static var playerIds :Array;
     public static var preyId :int;
     public static var preyBloodType :int;
@@ -40,7 +39,6 @@ public class ClientCtx
         msgMgr = null;
         gameCompleteCallback = null;
         playerData = null;
-        noMoreFeeding = false;
         playerIds = null;
         preyId = 0;
         preyBloodType = -1;

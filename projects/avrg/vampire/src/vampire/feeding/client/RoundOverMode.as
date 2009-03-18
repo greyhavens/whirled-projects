@@ -131,9 +131,6 @@ public class RoundOverMode extends AppMode
                 ShowFramesTask.LAST_FRAME,
                 Constants.WAIT_FOR_PLAYERS_TIMEOUT));
             addObject(timerAnimObj);
-
-        } else if (e.msg is NoMoreFeedingMsg) {
-            noMoreFeeding();
         }
     }
 

@@ -8,8 +8,6 @@ import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.net.Message;
 import com.whirled.net.MessageReceivedEvent;
 
-import flash.utils.Dictionary;
-
 import vampire.feeding.*;
 import vampire.feeding.net.*;
 
@@ -41,7 +39,7 @@ public class Server extends FeedingServer
         }
 
         log.info(
-            "New server starting",
+            "New Blood Bloom server starting",
             "roomId", roomId,
             "predatorId", predatorId,
             "preyId", preyId,
@@ -53,7 +51,9 @@ public class Server extends FeedingServer
         if (preyId != Constants.NULL_PLAYER) {
             _ctx.playerIds.push(preyId);
         }
-        _ctx.playerIds.push(predatorId);
+        if (predatorId != Constants.NULL_PLAYER) {
+            _ctx.playerIds.push(predatorId);
+        }
         _ctx.preyId = preyId;
         _ctx.preyIsAi = (_ctx.preyId == Constants.NULL_PLAYER);
         _ctx.preyBlood = preyBlood;
@@ -78,6 +78,24 @@ public class Server extends FeedingServer
             onMsgReceived);
 
         setMode(Constants.MODE_LOBBY);
+    }
+
+    override public function shutdown () :void
+    {
+        log.info("Shutting down Blood Bloom server");
+
+        if (_serverMode != null) {
+            _serverMode.shutdown();
+            _serverMode = null;
+        }
+
+        // Tell any remaining players that we're done
+        _ctx.sendMessage(GameEndedMsg.create());
+
+        _events.freeAllHandlers();
+        _events = null;
+
+        _ctx = null;
     }
 
     public function setMode (modeName :String) :void
@@ -131,6 +149,7 @@ public class Server extends FeedingServer
 
         _ctx.playerIds.push(playerId);
         _ctx.props.setIn(Props.ALL_PLAYERS, playerId, false, true);
+        updateLobbyLeader();
 
         return true;
     }
@@ -141,34 +160,19 @@ public class Server extends FeedingServer
             _ctx.preyId = Constants.NULL_PLAYER;
         }
 
-        var oldLobbyLeader :int = this.primaryPredatorId;
         ArrayUtil.removeFirst(_ctx.playerIds, playerId);
-        var newLobbyLeader :int = this.primaryPredatorId;
-
         _ctx.props.setIn(Props.ALL_PLAYERS, playerId, null, true);
-        if (oldLobbyLeader != newLobbyLeader) {
-            _ctx.props.set(Props.LOBBY_LEADER, newLobbyLeader, true);
-        }
-
-        if (_ctx.playerIds.length == 0) {
-            // If the last predator or prey just left the game, we're done and should shut down
-            // prematurely
-            shutdown();
-
-        } else {
-            if (!_noMoreFeeding && !_ctx.canContinueFeeding()) {
-                // If the prey has left, or all the predators have left, no more feeding
-                // can take place.
-                _noMoreFeeding = true;
-                _ctx.sendMessage(NoMoreFeedingMsg.create());
-            }
-
-            if (_serverMode != null) {
-                _serverMode.playerLeft(playerId);
-            }
-        }
+        updateLobbyLeader();
 
         _ctx.playerLeftCallback(playerId);
+
+        if (_ctx.playerIds.length == 0) {
+            // If the last predator or prey just left the game, the game is complete.
+            _ctx.gameCompleteCallback();
+
+        } else if (_serverMode != null) {
+            _serverMode.playerLeft(playerId);
+        }
     }
 
     override public function get gameId () :int
@@ -208,20 +212,12 @@ public class Server extends FeedingServer
         return _ctx.lastRoundScore;
     }
 
-    protected function shutdown () :void
+    protected function updateLobbyLeader () :void
     {
-        if (_serverMode != null) {
-            _serverMode.shutdown();
-            _serverMode = null;
+        var newLobbyLeader :int = this.primaryPredatorId;
+        if ((_ctx.props.get(Props.LOBBY_LEADER) as int) != newLobbyLeader) {
+            _ctx.props.set(Props.LOBBY_LEADER, newLobbyLeader, true);
         }
-
-        // Tell any remaining players that we're done
-        _ctx.sendMessage(GameEndedMsg.create());
-
-        _events.freeAllHandlers();
-        _ctx.gameCompleteCallback();
-
-        log.info("Shutting down Blood Bloom server");
     }
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
@@ -280,10 +276,7 @@ public class Server extends FeedingServer
 
     protected var _ctx :ServerCtx = new ServerCtx();
     protected var _serverMode :ServerMode;
-
-    protected var _noMoreFeeding :Boolean;
     protected var _gameStarted :Boolean;
-
     protected var _events :EventHandlerManager = new EventHandlerManager();
 
     protected static var _inited :Boolean;

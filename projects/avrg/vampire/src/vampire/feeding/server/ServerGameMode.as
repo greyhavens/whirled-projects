@@ -40,6 +40,12 @@ public class ServerGameMode extends ServerMode
         if (_state == STATE_WAITING_FOR_SCORES) {
             ArrayUtil.removeFirst(_playersNeedingScoreUpdate, playerId);
             endRoundIfReady();
+
+        } else if (!_noMoreFeeding && !_ctx.canContinueFeeding()) {
+            // If the prey has left, or all the predators have left, no more feeding
+            // can take place.
+            _noMoreFeeding = true;
+            _ctx.sendMessage(NoMoreFeedingMsg.create());
         }
     }
 
@@ -126,6 +132,7 @@ public class ServerGameMode extends ServerMode
     protected var _playersInGame :Array;
     protected var _playersNeedingScoreUpdate :Array;
     protected var _finalScores :HashMap; // Map<playerId, score>
+    protected var _noMoreFeeding :Boolean;
 
     protected static const log :Log = Log.getLog(ServerGameMode);
 

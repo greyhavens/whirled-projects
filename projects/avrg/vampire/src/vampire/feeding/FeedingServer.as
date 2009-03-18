@@ -66,6 +66,15 @@ public class FeedingServer
     }
 
     /**
+     * Call this when the Server should be shut down (it is safe to call this from within
+     * the gameCompleteCallback)
+     */
+    public function shutdown () :void
+    {
+        // Overridden by Server
+    }
+
+    /**
      * Attempts to add a new predator to the game. This will fail if the game has already started.
      * Returns true if the predator was successfully added.
      */

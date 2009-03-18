@@ -167,9 +167,6 @@ public class BloodBloom extends FeedingClient
         if (e.msg is GameEndedMsg || e.msg is ClientBootedMsg) {
             // We were booted from the game, or it ended prematurely for some reason
             ClientCtx.quit(false);
-
-        } else if (e.msg is NoMoreFeedingMsg) {
-            ClientCtx.noMoreFeeding = true;
         }
     }
 

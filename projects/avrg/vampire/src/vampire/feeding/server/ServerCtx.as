@@ -53,7 +53,7 @@ public class ServerCtx
 
     public function canContinueFeeding () :Boolean
     {
-        if (preyId == 0 && !preyIsAi) {
+        if (preyId == Constants.NULL_PLAYER && !preyIsAi) {
             return false;
         } else if (getPredatorIds().length == 0) {
             return false;
@@ -74,11 +74,6 @@ public class ServerCtx
 
     public function sendMessage (msg :Message, toPlayer :int = 0) :void
     {
-        /*if( !roomCtrl.isConnected() ) {
-            log.info("Not sending msg (not connected) '" + msg.name + "' to " + (toPlayer != 0 ? toPlayer : "ALL"));
-            return;
-        }*/
-
         var name :String = nameUtil.encodeName(msg.name);
         var val :Object = msg.toBytes();
         if (toPlayer == 0) {

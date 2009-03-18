@@ -87,7 +87,7 @@ class TestGameController extends OneRoomGameRoom
 
     override protected function playerLeft (playerId :int) :void
     {
-        log.info("Player left", "playerId", playerId);
+        log.info("Player left server", "playerId", playerId);
 
         ArrayUtil.removeFirst(_allPlayers, playerId);
         ArrayUtil.removeFirst(_waitingPlayers, playerId);
@@ -108,8 +108,8 @@ class TestGameController extends OneRoomGameRoom
 
     protected function startGame (players :Array) :void
     {
-        var preyId :int = (players.length > 1 ? players.pop() : Constants.NULL_PLAYER);
-        var predatorId :int = players.pop();
+        var preyId :int = players.pop();
+        var predatorId :int = (players.length > 0 ? players.pop() : Constants.NULL_PLAYER);
 
         var game :FeedingServer = FeedingServer.create(
             _roomCtrl.getRoomId(),
@@ -129,6 +129,7 @@ class TestGameController extends OneRoomGameRoom
             },
             function (playerId :int) :void {
                 log.info("Player left game", "gameId", game.gameId, "playerId", playerId);
+                _playerGameMap.remove(playerId);
             });
 
         for each (var playerId :int in players) {
@@ -186,6 +187,8 @@ class TestGameController extends OneRoomGameRoom
         } else {
             log.info("Game ended prematurely", "gameId", game.gameId);
         }
+
+        game.shutdown();
     }
 
     protected var _allPlayers :Array = [];
