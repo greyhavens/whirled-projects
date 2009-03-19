@@ -178,6 +178,7 @@ public class LobbyMode extends AppMode
     protected function onPropChanged (e :PropertyChangedEvent) :void
     {
         if (e.name == Props.ALL_PLAYERS) {
+            updateButtonsAndNotices();
             updatePlayerList();
         } else if (e.name == Props.LOBBY_LEADER || e.name == Props.PREY_ID) {
             updateButtonsAndNotices();
