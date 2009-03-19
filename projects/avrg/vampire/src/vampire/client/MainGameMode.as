@@ -148,17 +148,6 @@ public class MainGameMode extends AppMode
         ClientContext.avatarOverlay = new VampireAvatarHUDOverlay( ClientContext.ctrl );
         addSceneObject( ClientContext.avatarOverlay, modeSprite );
         //And pass to the server player arrival events, if we are moving to feed.
-        //This lets the server know that we have moved into position, and the game can
-//        //start.
-//        registerListener( ClientContext.avatarOverlay, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED,
-//            function(...ignored) :void {
-//                if( ClientContext.model.state == VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER ||
-//                    ClientContext.model.state == VConstants.AVATAR_STATE_MOVING_TO_FEED ) {
-//
-//                        ClientContext.ctrl.agent.sendMessage(
-//                            PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
-//                    }
-//            });
 
         _hud = new HUD();
         addSceneObject( _hud, modeSprite );
@@ -276,6 +265,7 @@ public class MainGameMode extends AppMode
             var popup :PopupQuery = new PopupQuery( ClientContext.ctrl,
                     "RequestFeed" + msg.playerId,
                     fromPlayerName + " would like to feed on you.",
+                    ["Accept", "Deny"],
                     [VampireController.FEED_REQUEST_ACCEPT, VampireController.FEED_REQUEST_DENY],
                     [msg.playerId, msg.playerId]);
 
@@ -315,26 +305,6 @@ public class MainGameMode extends AppMode
 
     }
 
-//    protected function avatarArrivedAtDestination(...ignored) :void
-//    {
-//        if( !ClientContext.ctrl.isConnected()) {
-//            trace("avatarArrivedAtDestination, ctrl null, setting callback null");
-//            var setCallback :Function = ClientContext.ctrl.room.getEntityProperty(
-//            AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
-//            if( setCallback != null) {
-//                setCallback( null );
-//            }
-//            return;
-//        }
-//
-//
-//        trace("Game knows avatar stopped!!!!");
-//        if( ClientContext.model.state == VConstants.PLAYER_STATE_MOVING_TO_FEED ) {
-//            trace("Sending player arrived event");
-//            ClientContext.ctrl.agent.sendMessage( PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
-//        }
-//
-//    }
 
 
 

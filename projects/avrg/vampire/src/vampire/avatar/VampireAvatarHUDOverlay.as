@@ -292,6 +292,9 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 
         var playersAlreadyFeeding :Array = ClientContext.model.playersFeeding;
 
+        log.debug("getValidPlayerIdTargets", "playersAlreadyFeeding", playersAlreadyFeeding);
+        log.debug("getValidPlayerIdTargets", "avatarIds", ClientContext.getAvatarIds(true));
+
         for each( var avatarId :int in ClientContext.getAvatarIds(true)) {
             //Don't allow the targeting of players already feeding.
             if( !ArrayUtil.contains( playersAlreadyFeeding, avatarId )){

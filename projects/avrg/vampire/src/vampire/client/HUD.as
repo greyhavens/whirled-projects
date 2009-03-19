@@ -619,7 +619,7 @@ public class HUD extends DraggableSceneObject
         }
 
 
-        showBlood( ClientContext.ourPlayerId );
+//        showBlood( ClientContext.ourPlayerId );
         showXP( ClientContext.ourPlayerId );
 //        showLevel( ClientContext.ourPlayerId );
 //        showBloodBonds( ClientContext.ourPlayerId );

@@ -175,11 +175,11 @@ public class VampireAvatarHUD extends AvatarHUD
         _feedButton = new SceneButton(_target_UI.button_feed);
 
         _feedButton.registerButtonListener( MouseEvent.CLICK, function (...ignored) :void {
-            ClientContext.controller.handleSendFeedRequest( playerId, false );
-            ClientContext.ctrl.local.feedback("Request for feed sent");
+            ClientContext.controller.handleSendFeedRequest(playerId);
+
             ClientContext.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF);
 //            showBloodBarOnly();
-            _isMouseOver = false;
+//            _isMouseOver = false;
 //            _feedButton.alpha = 0;
 //            _frenzyButton.alpha = 0;
         });
@@ -293,6 +293,7 @@ public class VampireAvatarHUD extends AvatarHUD
     protected function handleUnavailablePlayerListChanged (e :PlayersFeedingEvent) :void
     {
         if (ArrayUtil.contains(e.playersFeeding, playerId)) {
+            trace(playerId + " handleUnavailablePlayerListChanged " + e.playersFeeding);
             setDisplayModeInvisible();
         }
     }
@@ -533,8 +534,11 @@ public class VampireAvatarHUD extends AvatarHUD
                     var bloodBondMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
                             ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true) );
                     mode.addSceneObject( bloodBondMovie, _displaySprite );
+                    addBloodBondIcon();
                 }
-                addBloodBondIcon();
+                else {
+                    removeBloodbondIcon();
+                }
 //                updateInfoHud();
             }
 //            else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_SIRE) {
@@ -857,6 +861,7 @@ public class VampireAvatarHUD extends AvatarHUD
 
     public function setDisplayModeSelectableForFeed() :void
     {
+        trace(playerId + " setDisplayModeSelectableForFeed, hotspot=" + hotspot);
         _hudSprite.graphics.clear();
 //        _hudSprite.graphics.beginFill(0, 0.3);
 //        _hudSprite.graphics.drawRect( -hotspot[0]/2, 0, hotspot[0], hotspot[1]);
@@ -869,7 +874,9 @@ public class VampireAvatarHUD extends AvatarHUD
 //        _hudSprite.addChild( _mouseOverSprite );
 
         //Adjust the graphics, now that we have a hotspot
-        _target_UI.y = hotspot[1] / 2;
+        if (_target_UI != null && hotspot != null) {
+            _target_UI.y = hotspot[1] / 2;
+        }
 
 //        _hierarchyIcon.y = hotspot[1] / 2;
 
@@ -905,6 +912,7 @@ public class VampireAvatarHUD extends AvatarHUD
 
     public function setDisplayModeInvisible() :void
     {
+        trace(playerId + " setDisplayModeInvisible");
         _hudSprite.graphics.clear();
 
         animateHideSceneObject(_targetUIScene);
@@ -938,21 +946,21 @@ public class VampireAvatarHUD extends AvatarHUD
     * I've had some trouble with ROLL_OUT events.  So instead, we'll activate this when the mouse
     * rolls over the blood bar, and deactivate it when the mouse leaves the sprite defined area.
     */
-    protected var _isMouseOver :Boolean = false;
-    protected var _mouseOverSprite :Sprite = new Sprite();
+//    protected var _isMouseOver :Boolean = false;
+//    protected var _mouseOverSprite :Sprite = new Sprite();
 
 //    protected var _frenzyDelayRemaining :Number = -1;
 //    protected var _frenzyButtonClicked :Boolean;
 
-    protected var _glowTimer :SimpleTimer;
+//    protected var _glowTimer :SimpleTimer;
 
 //    protected var _localMinionCount :int = 0;
 //    protected var _localSire :int = 0;
 
     //Store local copies of blood and other stats so we can animate feedback when those values
 
-    protected static const BLOOD_BAR_MIN_WIDTH :int = 50;
-    protected static const FEED_BUTTON_Y :int = 22;
+//    protected static const BLOOD_BAR_MIN_WIDTH :int = 50;
+//    protected static const FEED_BUTTON_Y :int = 22;
     protected static const ANIMATION_TIME :Number = 0.2;
 
 }

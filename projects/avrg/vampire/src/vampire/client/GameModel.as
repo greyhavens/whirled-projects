@@ -28,6 +28,7 @@ import vampire.data.Codes;
 import vampire.data.Lineage;
 import vampire.data.VConstants;
 import vampire.feeding.PlayerFeedingData;
+import vampire.net.messages.TargetMovedMsg;
 
 
 /**
@@ -74,7 +75,7 @@ public class GameModel extends SimObject//EventDispatcher
         //Reset the entityId if something about the avatar changes
         registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, handleAvatarChanged);
 
-        resetAvatarArrivedFunction();
+        resetAvatarCallbackFunctions();
 
 
 
@@ -99,17 +100,6 @@ public class GameModel extends SimObject//EventDispatcher
 
 
 //        _avatarManager = new VampireAvatarHUDManager(ClientContext.ctrl);
-//        //Let the server know when we arrive at a location, if we are walking to a feed.
-//        registerListener( _avatarManager, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED,
-//            function(...ignored) :void {
-//                if( action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER ||
-//                    action == VConstants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER ) {
-//
-//                        ClientContext.ctrl.agent.sendMessage(
-//                            PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
-//                    }
-//            });
-//
 //
 //
 //        this.db.addObject( _avatarManager );
@@ -135,14 +125,14 @@ public class GameModel extends SimObject//EventDispatcher
 
     }
 
-    protected function resetAvatarArrivedFunction() :void
+    protected function resetAvatarCallbackFunctions() :void
     {
 //        trace("resetAvatarArrivedFunction, ClientContext.ourEntityId=" + ClientContext.ourEntityId);
         //Let's hear when the avatar arrived at a destination
-         var setCallback :Function = ClientContext.ctrl.room.getEntityProperty(
+        var setAvatarArrivedCallback :Function = ClientContext.ctrl.room.getEntityProperty(
             AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
-        if( setCallback != null) {
-            setCallback( avatarArrivedAtDestination );
+        if( setAvatarArrivedCallback != null) {
+            setAvatarArrivedCallback( avatarArrivedAtDestination );
         }
         else {
             log.error("!!!!!! This avatar is CRUSTY and old, missing AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK");
@@ -154,15 +144,21 @@ public class GameModel extends SimObject//EventDispatcher
                 var popup :PopupQuery = new PopupQuery(ClientContext.ctrl,
                     "Quit",
                     "Sorry.  Vampire Whirled cannot (yet) handle a mid-game avatar change.  " +
-                    " So I have to shutdown.",
-                    []);
+                    " So I have to shutdown.");
                 ClientContext.gameMode.addSceneObject( popup, ClientContext.gameMode.modeSprite );
 
-                var quitTimer :SimpleTimer = new SimpleTimer(2, function() :void {
+                var quitTimer :SimpleTimer = new SimpleTimer(5, function() :void {
                     ClientContext.controller.handleQuit();
                 });
                 ClientContext.gameMode.addObject( quitTimer );
             }
+        }
+
+
+        var setTargetMovedCallback :Function = ClientContext.ctrl.room.getEntityProperty(
+            AvatarGameBridge.ENTITY_PROPERTY_SET_TARGET_MOVED_CALLBACK, ClientContext.ourEntityId) as Function;
+        if( setTargetMovedCallback != null) {
+            setTargetMovedCallback( targetMoved );
         }
     }
 
@@ -182,12 +178,17 @@ public class GameModel extends SimObject//EventDispatcher
 //        trace("dispatchEvent PlayerArrivedAtLocationEvent");
         dispatchEvent( new PlayerArrivedAtLocationEvent() );
 
-//        trace("Game knows avatar stopped!!!!");
-//        if( ClientContext.model.state == VConstants.PLAYER_STATE_MOVING_TO_FEED ) {
-//            trace("Sending player arrived event");
-//            ClientContext.ctrl.agent.sendMessage( PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
-//        }
+    }
 
+    /**
+    * Notify the server that our target has moved.
+    * Then reset our target.
+    */
+    protected function targetMoved(...ignored) :void
+    {
+        trace("Sending server target moved");
+        ClientContext.ctrl.agent.sendMessage(TargetMovedMsg.NAME, new TargetMovedMsg().toBytes());
+        setAvatarTarget(0);
     }
 
 
@@ -226,7 +227,7 @@ public class GameModel extends SimObject//EventDispatcher
             //Change our id for future reference.
             _currentEntityId = currentEntityId;
 
-            resetAvatarArrivedFunction();
+            resetAvatarCallbackFunctions();
         }
 
 
@@ -497,10 +498,15 @@ public class GameModel extends SimObject//EventDispatcher
 
 
             if( playerIdUpdated == ClientContext.ourPlayerId ) {
-                //If the action changes on the server, that means the change is forced, so change to that action.
-                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE) {
-    //                log.debug("  Dispatching event=" + ChangeActionEvent.CHANGE_ACTION + " new action=" + e.newValue);
+
+                switch (e.index) {
+                    case Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE:
                     dispatchEvent( new ChangeActionEvent( e.newValue.toString() ) );
+                    break;
+
+                    case Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_ID:
+                    setAvatarTarget(int(e.newValue));
+                    break;
                 }
             }
 
@@ -573,6 +579,11 @@ public class GameModel extends SimObject//EventDispatcher
         return SharedPlayerStateClient.getLevel( ClientContext.ourPlayerId );
     }
 
+    public function get sire() :int
+    {
+        return SharedPlayerStateClient.getSire( ClientContext.ourPlayerId );
+    }
+
     public function get invites() :int
     {
         return SharedPlayerStateClient.getInvites( ClientContext.ourPlayerId );
@@ -609,7 +620,33 @@ public class GameModel extends SimObject//EventDispatcher
         }
     }
 
+    public function setAvatarTarget (targetId :int) :void
+    {
+        //Set the avatar target.  That way, when the avatar arrived at it's destination, it
+        //will set it's orientation the same as the target's orientation.
+        var setTargetFunction :Function = ClientContext.ctrl.room.getEntityProperty(
+            AvatarGameBridge.ENTITY_PROPERTY_SETTARGET_FUNCTION, ClientContext.ourEntityId ) as Function;
+        if( setTargetFunction != null ) {
+            setTargetFunction( targetId );
+        }
+        else {
+            log.error("Cannot set avatar targe as the function is null, targetId=" + targetId);
+        }
+    }
 
+    public function setStandBehindTarget (targetId :int) :void
+    {
+        //Set the avatar target.  That way, when the avatar arrived at it's destination, it
+        //will set it's orientation the same as the target's orientation.
+        var setTargetFunction :Function = ClientContext.ctrl.room.getEntityProperty(
+            AvatarGameBridge.ENTITY_PROPERTY_SET_STAND_BEHIND_ID_FUNCTION, ClientContext.ourEntityId ) as Function;
+        if( setTargetFunction != null ) {
+            setTargetFunction( targetId );
+        }
+        else {
+            log.error("Cannot set avatar stand behind target as the function is null, targetId=" + targetId);
+        }
+    }
 
     public function get targetPlayerId() :int
     {
