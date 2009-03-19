@@ -1,15 +1,16 @@
 package vampire
 {
-    import com.whirled.contrib.simplegame.net.MessageManager;
+import com.whirled.contrib.simplegame.net.MessageManager;
 
-    import vampire.data.VConstants;
-    import vampire.net.messages.BloodBondRequestMsg;
-    import vampire.net.messages.FeedConfirmMsg;
-    import vampire.net.messages.FeedRequestMsg;
-    import vampire.net.messages.NonPlayerIdsInRoomMsg;
-    import vampire.net.messages.RequestStateChangeMsg;
-    import vampire.net.messages.ShareTokenMsg;
-    import vampire.net.messages.SuccessfulFeedMsg;
+import vampire.data.VConstants;
+import vampire.net.messages.BloodBondRequestMsg;
+import vampire.net.messages.FeedConfirmMsg;
+import vampire.net.messages.FeedRequestMsg;
+import vampire.net.messages.NonPlayerIdsInRoomMsg;
+import vampire.net.messages.RequestStateChangeMsg;
+import vampire.net.messages.ShareTokenMsg;
+import vampire.net.messages.SuccessfulFeedMsg;
+import vampire.net.messages.TargetMovedMsg;
 
 
 public class Util
@@ -19,7 +20,7 @@ public class Util
     *
     *
     */
-    public static function formatNumberForFeedback( n :Number ) :String
+    public static function formatNumberForFeedback (n :Number) :String
     {
         if( n >= 1) {
             return "" + int( Math.floor( n ));
@@ -51,10 +52,8 @@ public class Util
         mgr.addMessageType(RequestStateChangeMsg);
         mgr.addMessageType(ShareTokenMsg);
         mgr.addMessageType(SuccessfulFeedMsg);
+        mgr.addMessageType(TargetMovedMsg);
+
     }
-
-
-
-
 }
 }
