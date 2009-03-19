@@ -45,7 +45,7 @@ public class AvatarHUD extends SceneObject
 
         _displaySprite = new Sprite();
 
-        registerListener( _ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, resetEntityId);
+        registerListener( _ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, avatarChanged);
 
 
 
@@ -84,9 +84,14 @@ public class AvatarHUD extends SceneObject
         return db as AppMode;
     }
 
-    protected function resetEntityId(...ignored) :void
+    protected function avatarChanged(...ignored) :void
     {
         _entityId = null;
+
+        var newHotspot :Array = _ctrl.room.getEntityProperty(
+            EntityControl.PROP_HOTSPOT, entityId) as Array;
+
+        setHotspot( newHotspot );
     }
     override protected function update(dt:Number) :void
     {
@@ -121,14 +126,7 @@ public class AvatarHUD extends SceneObject
             }
 
 
-            var newHotspot :Array = _ctrl.room.getEntityProperty(
-                EntityControl.PROP_HOTSPOT, entityId) as Array;
 
-//            trace("newLocation=" + newLocation);
-//            trace("newHotspot=" + newHotspot);
-
-//            if( !ArrayUtil.equals( newHotspot, hotspot ) ) {
-                setHotspot( newHotspot );
 //            }
 
 //            if( !ArrayUtil.equals( newLocation, location ) ) {
@@ -762,7 +760,7 @@ public class AvatarHUD extends SceneObject
 
     public function get entityId () :String
     {
-        resetEntityId();
+        avatarChanged();
 
         if( _entityId == null ) {
             for each( var entityId :String in _ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
