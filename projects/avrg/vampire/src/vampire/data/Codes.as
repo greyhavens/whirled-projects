@@ -1,22 +1,22 @@
 package vampire.data
 {
-    import com.whirled.net.NetConstants;
+import com.whirled.net.NetConstants;
 
 public class Codes
 {
 
-    public static function playerRoomPropKey( playerId :int ) :String
+    public static function playerRoomPropKey (playerId :int) :String
     {
         return Codes.ROOM_PROP_PREFIX_PLAYER_DICT + playerId;
     }
 
     public static const ROOM_PROP_MINION_HIERARCHY :String = "hierarchy";
-    public static const ROOM_PROP_BLOODBLOOM_PLAYERS :String = "bloodbloom";
+    public static const ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE :String = "noFeedingPlayers";
     public static const ROOM_PROP_FEEDBACK :String = "feedback";
 
 
 
-        /** Pplayer name.  Needed even when player is offline*/
+    /** Pplayer name.  Needed even when player is offline*/
     public static const PLAYER_PROP_NAME:String = NetConstants.makePersistent("playerName");
 
     /** Current amount of blood*/
