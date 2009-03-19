@@ -39,7 +39,7 @@ public class FeedingRecord extends EventCollecter
 
     public function playerLeavesGame (playerId :int, moved :Boolean = false ) :void
     {
-        if (moved && _primaryPredatorId == playerId) {
+        if (moved && (_primaryPredatorId == playerId || _preyId == playerId)) {
             _primaryPredMoved = true;
         }
 
