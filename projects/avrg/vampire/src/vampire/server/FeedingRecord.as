@@ -37,8 +37,12 @@ public class FeedingRecord extends EventCollecter
         playerLeavesGame(playerId);
     }
 
-    public function playerLeavesGame (playerId :int) :void
+    public function playerLeavesGame (playerId :int, moved :Boolean = false ) :void
     {
+        if (moved && _primaryPredatorId == playerId) {
+            _primaryPredMoved = true;
+        }
+
         if (_gameServer != null && ArrayUtil.contains(_gameServer.playerIds, playerId)) {
             log.debug("handlePlayerLeftRoom", "playerId", playerId);
             _gameServer.playerLeft( playerId );
@@ -58,7 +62,7 @@ public class FeedingRecord extends EventCollecter
             return;
         }
         _started = true;
-        _elapsedGameTime = 0;
+//        _elapsedGameTime = 0;
 
         var gamePreyId :int = _room.isPlayer( _preyId ) ? _preyId : 0;
 
@@ -142,6 +146,18 @@ public class FeedingRecord extends EventCollecter
     protected function gameStartedCallback () :void
     {
         _started = true;
+
+        _gameServer.predatorIds.forEach( function(playerId :int, ...ignored) :void {
+            var player :PlayerData = _room.getPlayer(playerId);
+            if (player != null) {
+                ServerLogic.stateChange(player, VConstants.PLAYER_STATE_FEEDING_PREDATOR);
+            }
+        });
+
+        var prey :PlayerData = _room.getPlayer(_gameServer.preyId);
+        if (prey != null) {
+            ServerLogic.stateChange(prey, VConstants.PLAYER_STATE_FEEDING_PREY);
+        }
     }
 
     protected function roundCompleteCallback() :Number
@@ -188,7 +204,9 @@ public class FeedingRecord extends EventCollecter
                 var primaryPred :PlayerData = _room.getPlayer( primaryPredatorId );
                 primaryPred.ctrl.sendMessage( VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING );
             }
-
+            if (_gameServer != null) {
+//                _gameServer.shutdown();
+            }
             log.debug("gameFinishedCallback");
             shutdown();
             _gameFinishedManagerCallback(this);
@@ -205,17 +223,17 @@ public class FeedingRecord extends EventCollecter
         _preyLocation = preyLocation;
     }
 
-    public function isPredator( playerId :int ) :Boolean
+    public function isPredator (playerId :int) :Boolean
     {
         return _predators.contains( playerId );
     }
 
-    public function isPrey( playerId :int ) :Boolean
+    public function isPrey (playerId :int) :Boolean
     {
         return playerId == _preyId;
     }
 
-    public function removePlayer ( playerId :int ) :void
+    public function removePlayer (playerId :int) :void
     {
         if( !_started ) {
         }
@@ -328,10 +346,10 @@ public class FeedingRecord extends EventCollecter
     {
         return _predators;
     }
-    public function get currentCountDownSecond() :int
-    {
-        return _currentCountdownSecond;
-    }
+//    public function get currentCountDownSecond() :int
+//    {
+//        return _currentCountdownSecond;
+//    }
 
 //    public function get multiplePredators() :Boolean
 //    {
@@ -355,11 +373,10 @@ public class FeedingRecord extends EventCollecter
             + " _predators=" + _predators.toArray()
 //            + " _multiplePredators=" + _multiplePredators
             + " _primaryPredatorId=" + _primaryPredatorId
-            + " _countdownTimeRemaining=" + _countdownTimeRemaining
             + " _started=" + _started
             + " _finished=" + _finished
-            + " _elapsedGameTime=" + _elapsedGameTime
-            + "lastRoundScore=" + (_gameServer != null ? _gameServer.lastRoundScore : 0)
+//            + " _elapsedGameTime=" + _elapsedGameTime
+//            + "lastRoundScore=" + (_gameServer != null ? _gameServer.lastRoundScore : 0)
     }
 
 
@@ -384,9 +401,9 @@ public class FeedingRecord extends EventCollecter
     */
     protected var _primaryPredMoved:Boolean = false;
 //    protected var _multiplePredators :Boolean;
-    protected var _countdownTimeRemaining :Number = 0;
-    protected var _currentCountdownSecond :int;
-    protected var _elapsedGameTime :Number = 0;
+//    protected var _countdownTimeRemaining :Number = 0;
+//    protected var _currentCountdownSecond :int;
+//    protected var _elapsedGameTime :Number = 0;
     protected var _gameFinishedManagerCallback :Function;
     protected var _thisBloodBloomRecord :FeedingRecord;
 

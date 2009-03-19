@@ -492,19 +492,21 @@ public class ServerLogic
 
     public static function handlePlayerArrivedAtLocation( player :PlayerData ) :void
     {
-        log.debug(player.playerId + " message " + PlayerArrivedAtLocationEvent.PLAYER_ARRIVED);
+        log.debug(player.playerId + " message " + PlayerArrivedAtLocationEvent.PLAYER_ARRIVED,
+            "player", player.playerId, "state", player.state);
 
         switch (player.state) {
             case VConstants.PLAYER_STATE_MOVING_TO_FEED:
-            log.debug(player.playerId + " changing to " + VConstants.PLAYER_STATE_FEEDING_PREDATOR);
             stateChange(player,  VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION);
             break;
 
+            //If we are in a game or lobby, and we move, break off the game.
             case VConstants.PLAYER_STATE_FEEDING_PREDATOR:
             case VConstants.PLAYER_STATE_FEEDING_PREY:
+            case VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION:
             var game :FeedingRecord = player.room.bloodBloomGameManager.getGame(player.playerId);
             if (game != null) {
-                game.playerLeavesGame(player.playerId);
+                game.playerLeavesGame(player.playerId, true);
                 stateChange(player, VConstants.PLAYER_STATE_DEFAULT);
             }
             break;
@@ -749,7 +751,7 @@ public class ServerLogic
     */
     public static function stateChange( player :PlayerData, newState :String ) :void
     {
-        log.debug("stateChange(" + newState + ")");
+        log.debug(player.name + " stateChange(" + newState + ")");
         if( player == null || player.room == null) {
             log.error("room null");
             return;
@@ -893,12 +895,12 @@ public class ServerLogic
 
                 break;
 
-                case VConstants.PLAYER_STATE_FEEDING_PREDATOR:
-                player.setState( VConstants.PLAYER_STATE_FEEDING_PREDATOR );
-                break;
+//                case VConstants.PLAYER_STATE_FEEDING_PREDATOR:
+//                player.setState( VConstants.PLAYER_STATE_FEEDING_PREDATOR );
+//                break;
 
             default:
-                player.setState( VConstants.PLAYER_STATE_DEFAULT );
+                player.setState( newState );
 
 
         }
