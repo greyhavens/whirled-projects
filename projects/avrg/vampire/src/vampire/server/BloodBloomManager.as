@@ -201,6 +201,21 @@ public class BloodBloomManager extends SimObject
         return keys;
     }
 
+    public function get unavailablePlayers() :Array
+    {
+         var playerids :Array = new Array();
+         _playerId2Game.forEach( function(playerId :int, game :BloodBloomGameRecord) :void {
+
+             if (game.isPredator(playerId)){
+                 playerids.push(playerId);
+             }
+             else if (game.isStarted){
+                 playerids.push(playerId);
+             }
+         });
+         return playerids;
+    }
+
     override public function toString() :String
     {
         return ClassUtil.tinyClassName( this )
