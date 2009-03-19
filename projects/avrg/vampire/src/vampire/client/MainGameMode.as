@@ -200,11 +200,11 @@ public class MainGameMode extends AppMode
 
     protected function handlePlayerArrivedAtLocation( e :PlayerArrivedAtLocationEvent ) :void
     {
-        trace("MainGameMode, handlePlayerArrivedAtLocation");
-        if( ClientContext.model.state == VConstants.PLAYER_STATE_MOVING_TO_FEED ) {
+//        trace("MainGameMode, handlePlayerArrivedAtLocation");
+//        if( ClientContext.model.state == VConstants.PLAYER_STATE_MOVING_TO_FEED ) {
             trace("Sending player arrived event");
             ClientContext.ctrl.agent.sendMessage( PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
-        }
+//        }
     }
 
     /**
