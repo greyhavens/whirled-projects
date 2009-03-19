@@ -78,7 +78,7 @@ public class GamePropGetControl extends EventDispatcher
 
     protected function onElemChanged (e :ElementChangedEvent) :void
     {
-        if (!_nameUtil.isForGame(e.name)) {
+        if (_nameUtil.isForGame(e.name)) {
             dispatchEvent(new ElementChangedEvent(
                 ElementChangedEvent.ELEMENT_CHANGED,
                 _nameUtil.decodeName(e.name),
