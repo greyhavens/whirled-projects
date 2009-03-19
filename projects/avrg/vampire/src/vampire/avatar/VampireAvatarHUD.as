@@ -6,7 +6,9 @@ package vampire.avatar
     import com.whirled.contrib.EventHandlerManager;
     import com.whirled.contrib.avrg.AvatarHUD;
     import com.whirled.contrib.simplegame.objects.SceneButton;
+    import com.whirled.contrib.simplegame.objects.SceneObject;
     import com.whirled.contrib.simplegame.objects.SceneObjectPlayMovieClipOnce;
+    import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
     import com.whirled.contrib.simplegame.objects.SimpleTimer;
     import com.whirled.contrib.simplegame.tasks.AlphaTask;
     import com.whirled.contrib.simplegame.tasks.FunctionTask;
@@ -15,18 +17,15 @@ package vampire.avatar
 
     import flash.display.InteractiveObject;
     import flash.display.MovieClip;
-    import flash.display.SimpleButton;
     import flash.display.Sprite;
     import flash.events.MouseEvent;
 
     import vampire.client.ClientContext;
     import vampire.client.SharedPlayerStateClient;
     import vampire.client.VampireController;
-    import vampire.client.events.LineageUpdatedEvent;
     import vampire.client.events.PlayersFeedingEvent;
     import vampire.data.Codes;
     import vampire.data.Logic;
-    import vampire.data.VConstants;
     import vampire.feeding.PlayerFeedingData;
 
 
@@ -43,12 +42,19 @@ public class VampireAvatarHUD extends AvatarHUD
         _roomKey = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + _userId;
 
         //Listen for changes in blood levels
-//        registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
+        registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
 //        registerListener(ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
 //
 //        registerListener(ClientContext.model, LineageUpdatedEvent.LINEAGE_UPDATED, updateLineageInfo);
 
-        setupUI();
+                //Set up common UI elements
+        _hudSprite = new Sprite();
+        _displaySprite.addChild( _hudSprite );
+
+        registerListener( _hudSprite, MouseEvent.CLICK, function(...ignored) :void {
+            trace(playerId + " clicked ");
+        });
+
     }
 
 //    protected function updateLineageInfo( e :LineageUpdatedEvent) :void
@@ -62,19 +68,35 @@ public class VampireAvatarHUD extends AvatarHUD
 //        }
 //    }
 
+    protected function addBloodBondIcon () :void
+    {
+        if ( _bloodBondIcon == null) {
+            _bloodBondIcon = ClientContext.instantiateMovieClip("HUD", "bond_icon", false);
+            _bloodBondIcon.scaleX = _bloodBondIcon.scaleY = 2;
+            if (ClientContext.ourPlayerId != playerId) {
+                _displaySprite.addChild( _bloodBondIcon );
+            }
+            addGlowFilter(_bloodBondIcon);
+            //Go to the help page when you click on the icon
+            Command.bind(_bloodBondIcon, MouseEvent.CLICK, VampireController.SHOW_INTRO, "default");
+        }
+
+        if (hotspot != null) {
+            _bloodBondIcon.x = hotspot[0] / 2;
+        }
+    }
+
+    protected function removeBloodbondIcon () :void
+    {
+        if ( _bloodBondIcon != null) {
+            if (_bloodBondIcon.parent != null) {
+                _bloodBondIcon.parent.removeChild(_bloodBondIcon);
+            }
+        }
+    }
 
     protected function setupUI() :void
     {
-        //Set up common UI elements
-        _hudSprite = new Sprite();
-        _displaySprite.addChild( _hudSprite );
-
-        registerListener( _hudSprite, MouseEvent.CLICK, function(...ignored) :void {
-            trace(playerId + " clicked ");
-        });
-
-
-
 
 //        _blood = ClientContext.instantiateMovieClip("HUD", "target_blood_meter", false);
 //        _blood.height = 10;
@@ -83,13 +105,12 @@ public class VampireAvatarHUD extends AvatarHUD
 //        _hudSprite.addChild( _bloodMouseDetector );
 //
 //
-//        //Create a mouse over sprite.
-//        _mouseOverSprite.graphics.beginFill(0, 0);
-//        _mouseOverSprite.graphics.drawRect( -40, -20, 80, 100);
-//        _mouseOverSprite.graphics.endFill();
-//
 //
         _target_UI = ClientContext.instantiateMovieClip("HUD", "target_UI", false);
+        _target_UI.alpha = 0;
+        _targetUIScene = new SimpleSceneObject(_target_UI);
+        db.addObject( _targetUIScene );
+
 
 //
         //Set up UI elements depending if we are the players avatar
@@ -147,32 +168,11 @@ public class VampireAvatarHUD extends AvatarHUD
         _hudSprite.addChild( _target_UI );
 
         //Listen for changes in the hierarchy
-        registerListener(ClientContext.model, LineageUpdatedEvent.LINEAGE_UPDATED, updateInfoHud);
+//        registerListener(ClientContext.model, LineageUpdatedEvent.LINEAGE_UPDATED, updateInfoHud);
         registerListener(ClientContext.model, PlayersFeedingEvent.PLAYERS_FEEDING,
             handleUnavailablePlayerListChanged);
 
         _feedButton = new SceneButton(_target_UI.button_feed);
-
-        //Remove unneeded elements
-//        _target_UI.button_frenzy.parent.removeChild( _target_UI.button_frenzy );
-//        _target_UI.frenzy_countdown.parent.removeChild( _target_UI.frenzy_countdown );
-//        _target_UI.waiting_sign.parent.removeChild( _target_UI.waiting_sign );
-//        _target_UI.button_bare.parent.removeChild( _target_UI.button_bare );
-//        _target_UI.button_revert.parent.removeChild( _target_UI.button_revert );
-
-
-
-
-//        _frenzyButton = new SceneButton(_target_UI.button_frenzy);
-
-
-//        _feedButton.alpha = 0;
-//        _frenzyButton.alpha = 0;
-
-        //Move both buttons down a notch
-//        var yDiffFeedFrenzy :int = _frenzyButton.y - _feedButton.y;
-        _feedButton.y = FEED_BUTTON_Y;
-//        _frenzyButton.y = _feedButton.y + yDiffFeedFrenzy;
 
         _feedButton.registerButtonListener( MouseEvent.CLICK, function (...ignored) :void {
             ClientContext.controller.handleSendFeedRequest( playerId, false );
@@ -184,46 +184,17 @@ public class VampireAvatarHUD extends AvatarHUD
 //            _frenzyButton.alpha = 0;
         });
 
-//        _frenzyButton.registerButtonListener( MouseEvent.CLICK, function (...ignored) :void {
-//            _feedButton.alpha = 0;
-//            _frenzyButton.alpha = 0;
-//            ClientContext.controller.handleSendFeedRequest( playerId, true );
-//
-//            if( _frenzyDelayRemaining <= 0 ) {
-//                _frenzyDelayRemaining = VConstants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME;
-//            }
-//            if( VConstants.LOCAL_DEBUG_MODE) {
-//                _frenzyDelayRemaining = VConstants.BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME;
-//                var t :SimpleTimer = new SimpleTimer(1, function() :void {
-//                   decrementTime();
-//                }, true);
-//                mode.addObject( t );
-//            }
-////            trace("frenzy button clicked, _frenzyDelayRemaining=" + _frenzyDelayRemaining);
-//            _frenzyButtonClicked = true;
-//            showFrenzyTimerWithoutButton();
-//        });
 
-//        frenzyCountdown.visible = false;
-//        frenzyCountdown.addEventListener(MouseEvent.ROLL_OVER, function(...ignored) :void {
-//            waitingSign.visible = true;
-//        });
-//        frenzyCountdown.addEventListener(MouseEvent.ROLL_OUT, function(...ignored) :void {
-//            waitingSign.visible = false;
-//        });
-//        frenzyCountdown.y += 10;
-//        waitingSign.visible = false;
-//        waitingSign.y += 10;
 
 
         //HUD bits and bobs
-        _hierarchyIcon = ClientContext.instantiateButton("HUD", "button_hierarchy_no_mouse");
-        _hierarchyIcon.mouseEnabled = true;
-        _hierarchyIcon.scaleX = _hierarchyIcon.scaleY = 0.8;
-        _bloodBondIcon = ClientContext.instantiateMovieClip("HUD", "bond_icon", false);
+//        _hierarchyIcon = ClientContext.instantiateButton("HUD", "button_hierarchy_no_mouse");
+//        _hierarchyIcon.mouseEnabled = true;
+//        _hierarchyIcon.scaleX = _hierarchyIcon.scaleY = 0.8;
 
-        _preyStrainDroplet = ClientContext.instantiateMovieClip("HUD", "prey_strain", false);
-        _preyStrainDroplet.scaleX = _preyStrainDroplet.scaleY = 2;
+
+//        _preyStrainDroplet = ClientContext.instantiateMovieClip("HUD", "prey_strain", false);
+//        _preyStrainDroplet.scaleX = _preyStrainDroplet.scaleY = 2;
 
 
 //        _preyStrain = ClientContext.instantiateMovieClip("HUD", "type", false);
@@ -283,26 +254,25 @@ public class VampireAvatarHUD extends AvatarHUD
 //        registerListener( _bloodMouseDetector, MouseEvent.MOUSE_MOVE, showMenuFunction);
 
 
-        _hudSprite.addChild( _hierarchyIcon );
-        _hudSprite.addChild( _bloodBondIcon );
+//        _hudSprite.addChild( _hierarchyIcon );
 
-        if( Logic.getPlayerPreferredBloodStrain( ClientContext.ourPlayerId ) == playerId ) {
-            _hudSprite.addChild( _preyStrainDroplet );
-            _preyStrainDroplet.y -= 15;
-        }
-
+//        if( Logic.getPlayerPreferredBloodStrain( ClientContext.ourPlayerId ) == playerId ) {
+//            _hudSprite.addChild( _preyStrainDroplet );
+//            _preyStrainDroplet.y -= 15;
+//        }
 
 
-        addGlowFilter( _bloodBondIcon );
-        addGlowFilter( _preyStrainDroplet );
+
+//        addGlowFilter( _preyStrainDroplet );
 
         //Go to the help page when you click on the icon
-        Command.bind(_hierarchyIcon, MouseEvent.CLICK, VampireController.SHOW_INTRO, "default");
-        Command.bind(_bloodBondIcon, MouseEvent.CLICK, VampireController.SHOW_INTRO, "default");
-        Command.bind(_preyStrainDroplet, MouseEvent.CLICK,
+//        Command.bind(_hierarchyIcon, MouseEvent.CLICK, VampireController.SHOW_INTRO, "default");
+//        Command.bind(_preyStrainDroplet, MouseEvent.CLICK,
+//            VampireController.SHOW_INTRO, "bloodtype");
+        Command.bind(MovieClip(_target_UI["strain"]), MouseEvent.CLICK,
             VampireController.SHOW_INTRO, "bloodtype");
-        Command.bind(MovieClip(_target_UI["type"]), MouseEvent.CLICK,
-            VampireController.SHOW_INTRO, "bloodtype");
+
+        addGlowFilter(MovieClip(_target_UI["strain"]));
 
 //        Command.bind( _blood, MouseEvent.CLICK, VampireController.SHOW_INTRO, "feedinggame");
 
@@ -407,6 +377,8 @@ public class VampireAvatarHUD extends AvatarHUD
     override protected function addedToDB():void
     {
         super.addedToDB();
+        setupUI();
+        setDisplayModeInvisible();
 
 //        if( ClientContext.ourPlayerId == playerId ) {
 //            mode.addObject( _bareButton );
@@ -562,15 +534,16 @@ public class VampireAvatarHUD extends AvatarHUD
                             ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true) );
                     mode.addSceneObject( bloodBondMovie, _displaySprite );
                 }
-                updateInfoHud();
+                addBloodBondIcon();
+//                updateInfoHud();
             }
-            else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_SIRE) {
-                if( e.newValue != 0) {
-                    var lineageMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
-                            ClientContext.instantiateMovieClip("HUD", "lineage_feedback", true) );
-                    mode.addSceneObject( lineageMovie, _displaySprite );
-                }
-            }
+//            else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_SIRE) {
+//                if( e.newValue != 0) {
+//                    var lineageMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+//                            ClientContext.instantiateMovieClip("HUD", "lineage_feedback", true) );
+//                    mode.addSceneObject( lineageMovie, _displaySprite );
+//                }
+//            }
 
         }
 
@@ -639,21 +612,21 @@ public class VampireAvatarHUD extends AvatarHUD
 
 //        updateBlood();
 
-        var isHierarch :Boolean = VConstants.LOCAL_DEBUG_MODE
-            || (ClientContext.model.lineage != null &&
-                ClientContext.model.lineage.isPlayerSireOrMinionOfPlayer( playerId,
-                ClientContext.ourPlayerId ));
+//        var isHierarch :Boolean = VConstants.LOCAL_DEBUG_MODE
+//            || (ClientContext.model.lineage != null &&
+//                ClientContext.model.lineage.isPlayerSireOrMinionOfPlayer( playerId,
+//                ClientContext.ourPlayerId ));
 
 
-        var isBloodBond :Boolean = VConstants.LOCAL_DEBUG_MODE ||
-            (SharedPlayerStateClient.getBloodBonded( ClientContext.ourPlayerId ) == playerId);
-
-        _hierarchyIcon.visible = isHierarch;
-        _bloodBondIcon.visible = isBloodBond;
-
-
-        _hierarchyIcon.x = 16;
-        _bloodBondIcon.x = -16;
+//        var isBloodBond :Boolean = VConstants.LOCAL_DEBUG_MODE ||
+//            (SharedPlayerStateClient.getBloodBonded( ClientContext.ourPlayerId ) == playerId);
+//
+////        _hierarchyIcon.visible = isHierarch;
+//        _bloodBondIcon.visible = isBloodBond;
+//
+//
+////        _hierarchyIcon.x = 16;
+//        _bloodBondIcon.x = -16;
 
     }
 
@@ -741,14 +714,14 @@ public class VampireAvatarHUD extends AvatarHUD
 //    }
 
 
-    protected function animateShowButton( sceneButton :SceneButton ) :void
+    protected function animateShowSceneObject( sceneButton :SceneObject ) :void
     {
         _hudSprite.addChild( sceneButton.displayObject);
-        sceneButton.mouseEnabled = true;
+//        sceneButton.mouseEnabled = true;
         sceneButton.addTask( AlphaTask.CreateEaseIn(1, ANIMATION_TIME));
     }
 
-    protected function animateHideButton(sceneButton :SceneButton ) :void
+    protected function animateHideSceneObject(sceneButton :SceneObject ) :void
     {
         if( sceneButton == null || sceneButton.displayObject == null ||
             sceneButton.displayObject.parent == null ) {
@@ -885,22 +858,25 @@ public class VampireAvatarHUD extends AvatarHUD
     public function setDisplayModeSelectableForFeed() :void
     {
         _hudSprite.graphics.clear();
-        _hudSprite.graphics.beginFill(0, 0.3);
-        _hudSprite.graphics.drawRect( -hotspot[0]/2, 0, hotspot[0], hotspot[1]);
-        _hudSprite.graphics.endFill();
+//        _hudSprite.graphics.beginFill(0, 0.3);
+//        _hudSprite.graphics.drawRect( -hotspot[0]/2, 0, hotspot[0], hotspot[1]);
+//        _hudSprite.graphics.endFill();
 
         _displaySprite.addChild( _hudSprite );
+        _hudSprite.addChild(_target_UI);
+        animateShowSceneObject( _targetUIScene );
+
 //        _hudSprite.addChild( _mouseOverSprite );
 
         //Adjust the graphics, now that we have a hotspot
         _target_UI.y = hotspot[1] / 2;
 
-        _hierarchyIcon.y = hotspot[1] / 2;
-        _bloodBondIcon.y = hotspot[1] / 2;
-        _preyStrainDroplet.y = hotspot[1] / 2;
+//        _hierarchyIcon.y = hotspot[1] / 2;
+
+//        _preyStrainDroplet.y = hotspot[1] / 2;
 
         //Show relevant strain info
-        var bloodType :MovieClip = _target_UI["type"] as MovieClip;
+        var bloodType :MovieClip = _target_UI["strain"] as MovieClip;
         bloodType.gotoAndStop(Logic.getPlayerBloodStrain(playerId));
         var pdf :PlayerFeedingData = ClientContext.model.playerFeedingData;
         if (pdf.canCollectStrainFromPlayer(Logic.getPlayerBloodStrain(playerId), playerId)){
@@ -915,12 +891,26 @@ public class VampireAvatarHUD extends AvatarHUD
 
     }
 
+    override protected function avatarChanged(...ignored) :void
+    {
+        super.avatarChanged(ignored);
+        //Change the location of the bloodbond icon if the hotspot changed
+        if (hotspot != null && _bloodBondIcon != null) {
+            _bloodBondIcon.x = hotspot[0] / 2;
+        }
+        if (hotspot != null && _target_UI != null) {
+            _target_UI.y = hotspot[1] / 2;
+        }
+    }
+
     public function setDisplayModeInvisible() :void
     {
         _hudSprite.graphics.clear();
-        if( _hudSprite.parent != null ) {
-            _hudSprite.parent.removeChild( _hudSprite );
-        }
+
+        animateHideSceneObject(_targetUIScene);
+//        if( _target_UI.parent != null ) {
+//            _target_UI.parent.removeChild( _target_UI );
+//        }
     }
 
 
@@ -930,10 +920,10 @@ public class VampireAvatarHUD extends AvatarHUD
     protected var _hudSprite :Sprite;
     protected var _target_UI :MovieClip;
     protected var _bloodBondIcon :MovieClip;
-    protected var _hierarchyIcon :SimpleButton;
+//    protected var _hierarchyIcon :SimpleButton;
 //    protected var _blood :MovieClip;
 //    protected var _bloodMouseDetector :Sprite;
-    protected var _preyStrainDroplet :MovieClip;
+//    protected var _preyStrainDroplet :MovieClip;
     protected var _preyStrain :MovieClip;
 
     protected var _roomKey :String;
@@ -941,7 +931,7 @@ public class VampireAvatarHUD extends AvatarHUD
     protected var _feedButton :SceneButton;
 //    protected var _frenzyButton :SceneButton;
 //    protected var _bareButton :SceneButton;
-//    protected var _unbareButton :SceneButton;
+    protected var _targetUIScene :SceneObject;
 
 
     /**
