@@ -8,7 +8,6 @@ package vampire.net.messages
     {
         public function FeedRequestMsg(playerId :int = 0,
                                             targetPlayerId :int = 0,
-                                            allowMultiplePredators :Boolean = false,
                                             targetLocationX :Number = 0,
                                             targetLocationY :Number = 0,
                                             targetLocationZ :Number = 0
@@ -16,7 +15,6 @@ package vampire.net.messages
         {
             super(playerId);
             _targetPlayerId = targetPlayerId;
-            _allowMultiplePredators = allowMultiplePredators;
             _targetX = targetLocationX;
             _targetY = targetLocationY;
             _targetZ = targetLocationZ;
@@ -26,7 +24,6 @@ package vampire.net.messages
         {
             super.fromBytes(bytes);
             _targetPlayerId = bytes.readInt();
-            _allowMultiplePredators = bytes.readBoolean();
             _targetX = bytes.readFloat();
             _targetY = bytes.readFloat();
             _targetZ = bytes.readFloat();
@@ -36,7 +33,6 @@ package vampire.net.messages
         {
             var bytes :ByteArray = super.toBytes(bytes);
             bytes.writeInt( _targetPlayerId );
-            bytes.writeBoolean( _allowMultiplePredators );
             bytes.writeFloat( _targetX );
             bytes.writeFloat( _targetY );
             bytes.writeFloat( _targetZ );
@@ -48,11 +44,6 @@ package vampire.net.messages
            return _targetPlayerId;
         }
 
-        public function get isAllowingMultiplePredators () :Boolean
-        {
-           return _allowMultiplePredators;
-        }
-
         override public function get name () :String
         {
            return NAME;
@@ -60,7 +51,7 @@ package vampire.net.messages
 
         override public function toString() :String
         {
-            return ClassUtil.tinyClassName( this ) + ": player=" + _playerId + ", " + (_allowMultiplePredators ? " Allows multiple predators " : " eating alone ") + ", eating " + targetPlayer;
+            return ClassUtil.tinyClassName( this ) + ": player=" + _playerId + ", eating " + targetPlayer;
         }
 
         public function get targetX () :Number
