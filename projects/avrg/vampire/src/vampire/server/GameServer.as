@@ -78,8 +78,8 @@ public class GameServer extends ObjectDB
         ServerContext.lineage = new LineageServer( this );
         addObject( ServerContext.lineage );
 
-        ServerContext.npBlood = new NonPlayerAvatarsBloodMonitor();
-        addObject( ServerContext.npBlood );
+//        ServerContext.npBlood = new NonPlayerAvatarsBloodMonitor();
+//        addObject( ServerContext.npBlood );
 
         //Tim's bloodbond game server
         FeedingServer.init( _ctrl );
