@@ -48,7 +48,9 @@ public class GameMode extends AppMode
                     new TimedTask(Constants.SP_MULTIPLIER_RETURN_TIME.next()),
                     new FunctionTask(function () :void {
                         onCreateMultiplier(CreateMultiplierMsg.create(
-                            Constants.NULL_PLAYER, loc.x, loc.y, multiplier + 1));
+                            Constants.NULL_PLAYER,
+                            loc.x, loc.y,
+                            Math.min(multiplier + 1, Constants.MAX_MULTIPLIER)));
                     }),
                     new SelfDestructTask()));
                 addObject(sendMultiplierObj);
