@@ -89,7 +89,7 @@ public class HUD extends DraggableSceneObject
         switch( e.name ) {
             case Codes.ROOM_PROP_MINION_HIERARCHY:
                 break;
-            case Codes.ROOM_PROP_BLOODBLOOM_PLAYERS:
+            case Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE:
                 break;
 
             case Codes.ROOM_PROP_FEEDBACK:
