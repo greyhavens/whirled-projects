@@ -66,22 +66,21 @@ public class PlayerData extends EventHandlerManager
 
         log.debug("Getting xp=" + _xp);
 
+        //For now we ignore blood.
         //Get blood
-        _blood = Number(_ctrl.props.get(Codes.PLAYER_PROP_BLOOD));
-        if(_timePlayerPreviouslyQuit == 0) {
-            // blood should always be set if level is set, but let's play it safe
-            log.debug("   setting blood=" + VConstants.MAX_BLOOD_FOR_LEVEL( 1));
-            setBlood(VConstants.MAX_BLOOD_FOR_LEVEL( 1 ));
-
-        }
-
-        //In the current game, we don't let you die.
-        if( _blood < 1 ) {
-            setBlood( 1 );
-        }
-
-
-        log.debug("Getting blood="+_blood);
+//        _blood = Number(_ctrl.props.get(Codes.PLAYER_PROP_BLOOD));
+//        if(_timePlayerPreviouslyQuit == 0) {
+//            // blood should always be set if level is set, but let's play it safe
+//            log.debug("   setting blood=" + VConstants.MAX_BLOOD_FOR_LEVEL( 1));
+//            setBlood(VConstants.MAX_BLOOD_FOR_LEVEL( 1 ));
+//
+//        }
+//
+//        //In the current game, we don't let you die.
+//        if( _blood < 1 ) {
+//            setBlood( 1 );
+//        }
+//        log.debug("Getting blood="+_blood);
 
         //Get bloodbonded data
         _bloodbonded = int( _ctrl.props.get(Codes.PLAYER_PROP_BLOODBONDED));
@@ -397,9 +396,10 @@ public class PlayerData extends EventHandlerManager
                 dict = new Dictionary();
             }
 
-            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD] != blood && !isNaN(blood)) {
-                room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD, blood);
-            }
+            //For now we ignore blood.
+//            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD] != blood && !isNaN(blood)) {
+//                room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD, blood);
+//            }
 
             if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE] != state) {
                 log.debug("Setting " + playerId + " action=" + state + " into room props");
@@ -452,9 +452,10 @@ public class PlayerData extends EventHandlerManager
                 return;
             }
 
-            if( _ctrl.props.get(Codes.PLAYER_PROP_BLOOD) != blood ) {
-                _ctrl.props.set(Codes.PLAYER_PROP_BLOOD, blood, true);
-            }
+            //For now we ignore blood.
+//            if( _ctrl.props.get(Codes.PLAYER_PROP_BLOOD) != blood ) {
+//                _ctrl.props.set(Codes.PLAYER_PROP_BLOOD, blood, true);
+//            }
 
             if( _ctrl.props.get(Codes.PLAYER_PROP_NAME) != name ) {
                 _ctrl.props.set(Codes.PLAYER_PROP_NAME, name, true);

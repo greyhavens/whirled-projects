@@ -12,7 +12,7 @@ public class ServerContext
     public static var ctrl :AVRServerGameControl;
     public static var server :GameServer;
     public static var lineage :LineageServer;
-    public static var npBlood :NonPlayerAvatarsBloodMonitor;
+//    public static var npBlood :NonPlayerAvatarsBloodMonitor;
     public static var trophies :Trophies;
     public static var time :Number;
 

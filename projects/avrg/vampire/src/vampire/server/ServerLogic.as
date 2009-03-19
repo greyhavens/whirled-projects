@@ -337,7 +337,9 @@ public class ServerLogic
     }
 
 
-    // called from Server
+    /**
+    * When a message comes in from a player, figure out which PlayerData instance will handle it
+    */
     public static function handleMessage (player :PlayerData, name :String, value :Object) :void
     {
         var room :Room = player.room;
@@ -1044,32 +1046,32 @@ public class ServerLogic
 
         var preyIsPlayer :Boolean = srv.isPlayer( gameRecord.preyId );
         var preyPlayer :PlayerData;
-        var bloodGained :Number = 0;
+//        var bloodGained :Number = 0;
         var preyId :int = gameRecord.preyId;
-        var damage :Number = VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
-        //Each predator damages the prey
-        damage = damage * gameRecord.predators.size();
-
-        //Handle the prey loss of blood
-        if( preyIsPlayer ) {
-            log.debug("Prey is player");
-            preyPlayer = srv.getPlayer( gameRecord.preyId );
-            bloodGained = Math.abs( ServerLogic.damage( preyPlayer, damage ));
-            awardBloodBondedBloodEarned( preyPlayer, bloodGained);
-            preyPlayer.addFeedback( "You lost " + Util.formatNumberForFeedback(bloodGained) + " from feeding");
-        }
-        else {
-            log.debug("Prey is nonplayer");
-            bloodGained = Math.abs(ServerContext.npBlood.damageNonPlayer( gameRecord.preyId, damage, room.roomId ));
-        }
-        log.debug("Prey lost " + bloodGained + " blood");
-
-        //You get half the blood lost
-        bloodGained = 0.5 * bloodGained;
-
-        //Predators gain blood from the prey, divvied up
-        var bloodGainedPerPredator :Number = bloodGained / gameRecord.predators.size();
-        var bloodGainedPerPredatorFormatted :String = Util.formatNumberForFeedback(bloodGainedPerPredator);
+//        var damage :Number = VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
+//        //Each predator damages the prey
+//        damage = damage * gameRecord.predators.size();
+//
+//        //Handle the prey loss of blood
+//        if( preyIsPlayer ) {
+//            log.debug("Prey is player");
+//            preyPlayer = srv.getPlayer( gameRecord.preyId );
+//            bloodGained = Math.abs( ServerLogic.damage( preyPlayer, damage ));
+//            awardBloodBondedBloodEarned( preyPlayer, bloodGained);
+//            preyPlayer.addFeedback( "You lost " + Util.formatNumberForFeedback(bloodGained) + " from feeding");
+//        }
+//        else {
+//            log.debug("Prey is nonplayer");
+//            bloodGained = Math.abs(ServerContext.npBlood.damageNonPlayer( gameRecord.preyId, damage, room.roomId ));
+//        }
+//        log.debug("Prey lost " + bloodGained + " blood");
+//
+//        //You get half the blood lost
+//        bloodGained = 0.5 * bloodGained;
+//
+//        //Predators gain blood from the prey, divvied up
+//        var bloodGainedPerPredator :Number = bloodGained / gameRecord.predators.size();
+//        var bloodGainedPerPredatorFormatted :String = Util.formatNumberForFeedback(bloodGainedPerPredator);
 
 
         for each( var predatorId :int in gameRecord.predators.toArray()) {
@@ -1080,11 +1082,11 @@ public class ServerLogic
             }
             pred.addMostRecentVictimIds( gameRecord.preyId );
 
-            pred.addBlood( bloodGainedPerPredator );
-            //The bloodbonded also gains a fraction
-            awardBloodBondedBloodEarned( pred, bloodGainedPerPredator);
-            log.debug(predatorId + " gained " + bloodGainedPerPredatorFormatted);
-            pred.addFeedback( "You gained " + bloodGainedPerPredatorFormatted + " blood!");
+//            pred.addBlood( bloodGainedPerPredator );
+//            //The bloodbonded also gains a fraction
+//            awardBloodBondedBloodEarned( pred, bloodGainedPerPredator);
+//            log.debug(predatorId + " gained " + bloodGainedPerPredatorFormatted);
+//            pred.addFeedback( "You gained " + bloodGainedPerPredatorFormatted + " blood!");
 
             if( preyIsPlayer && preyPlayer != null ) {
 
