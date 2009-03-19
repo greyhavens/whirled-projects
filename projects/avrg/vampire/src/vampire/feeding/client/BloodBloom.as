@@ -53,6 +53,12 @@ public class BloodBloom extends FeedingClient
             throw new Error("FeedingGameClient.init has not been called");
         }
 
+        if (_instanceRunning) {
+            throw new Error("There's already a BloodBloom instance running.");
+        }
+
+        _instanceRunning = true;
+
         ClientCtx.init();
         ClientCtx.props = new GamePropGetControl(gameId, ClientCtx.gameCtrl.room.props);
         ClientCtx.playerData = playerData.clone();
@@ -95,6 +101,8 @@ public class BloodBloom extends FeedingClient
         ClientCtx.init(); // release any memory we might be holding onto here
 
         log.info("Quitting BloodBloom");
+
+        _instanceRunning = false;
     }
 
     override public function get playerData () :PlayerFeedingData
@@ -234,6 +242,7 @@ public class BloodBloom extends FeedingClient
     protected static var _inited :Boolean;
     protected static var _sg :SimpleGame;
     protected static var _resourcesLoaded :Boolean;
+    protected static var _instanceRunning :Boolean;
     protected static var log :Log = Log.getLog(BloodBloom);
 
     [Embed(source="../../../../rsrc/feeding/blood.swf", mimeType="application/octet-stream")]
