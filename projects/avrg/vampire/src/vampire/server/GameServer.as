@@ -27,8 +27,6 @@ import vampire.net.messages.NonPlayerIdsInRoomMsg;
 
 public class GameServer extends ObjectDB
 {
-//    public static const FRAMES_PER_SECOND :int = 30;
-
     public static var log :Log = Log.getLog(GameServer);
 
 
@@ -39,6 +37,9 @@ public class GameServer extends ObjectDB
         return _ctrl;
     }
 
+    /**
+    * This function is currently not used properly.
+    */
     public function isAdmin (playerId :int) :Boolean
     {
         // we might want to make this dynamic later
@@ -64,13 +65,11 @@ public class GameServer extends ObjectDB
 
         _ctrl = ServerContext.ctrl;
 
-//        _ctrl.game.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
         registerListener(_ctrl.game, AVRGameControlEvent.PLAYER_JOINED_GAME, playerJoinedGame);
         registerListener(_ctrl.game, AVRGameControlEvent.PLAYER_QUIT_GAME, playerQuitGame);
+        registerListener(_ctrl.game, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
 
 //        ServerContext.msg = new VMessageManager( _ctrl );
-//        registerListener(ServerContext.msg, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage );
-        registerListener(_ctrl.game, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
 
         _startTime = getTimer();
         _lastTickTime = _startTime;
@@ -79,17 +78,19 @@ public class GameServer extends ObjectDB
         ServerContext.lineage = new LineageServer( this );
         addObject( ServerContext.lineage );
 
-//        ServerContext.trophies = new Trophies(this, ServerContext.minionHierarchy);
-
         ServerContext.npBlood = new NonPlayerAvatarsBloodMonitor();
         addObject( ServerContext.npBlood );
 
         //Tim's bloodbond game server
         FeedingServer.init( _ctrl );
+    }
 
-//        _stub = new ServerStub(_ctrl);\
-
-        //Update the players time
+    /**
+    * Update the players time.  Every couple of seconds, set the players time.
+    * Then we can compute the time interval between games, to calculate blood loss.
+    */
+    protected function setupPlayerTimeUpdater () :void
+    {
         var timedTask :TimedTask = new TimedTask(UPDATE_PLAYER_TIME);
         var updatePlayerTimeTask :FunctionTask = new FunctionTask(updatePlayersCurrentTime);
         var serialTask :SerialTask = new SerialTask( timedTask, updatePlayerTimeTask );
@@ -98,18 +99,15 @@ public class GameServer extends ObjectDB
         var timerObject :SimObject = new SimObject();
         addObject( timerObject );
         timerObject.addTask( repeatingTask );
-
-//        var playerTimeUpdater :SimpleTimerThane = new SimpleTimerThane(UPDATE_PLAYER_TIME,
-//            updatePlayersCurrentTime, true);
-//        addObject( playerTimeUpdater );
-
     }
+
+
 
     /**
     * Update the current time of all the players.  This is handled seperately because it's not
     * critical and only occurs every couple of seconds.
     */
-    protected function updatePlayersCurrentTime(...ignored) :void
+    protected function updatePlayersCurrentTime (...ignored) :void
     {
         log.debug("updatePlayersCurrentTime " + ServerContext.time);
         _players.forEach( function( playerId :int, player :PlayerData) :void {
@@ -118,12 +116,13 @@ public class GameServer extends ObjectDB
                 player.setTime( ServerContext.time );
             }
         });
-
     }
 
 
-
-
+    /**
+    * Get the room with the roomID.  Attempts to create the room if no room
+    * currently exists.
+    */
     public function getRoom (roomId :int) :Room
     {
         if (roomId == 0) {
@@ -145,7 +144,7 @@ public class GameServer extends ObjectDB
         return room;
     }
 
-    public function isRoom( roomId :int) :Boolean
+    public function isRoom (roomId :int) :Boolean
     {
         return _rooms.containsKey( roomId );
     }
@@ -155,8 +154,11 @@ public class GameServer extends ObjectDB
         return _players.get(playerId) as PlayerData;
     }
 
-
-    protected function removeStaleRooms() :void
+    /**
+    * Rooms with no players, or that are not connected are marked for removal with the
+    * isStale flag.
+    */
+    protected function removeStaleRooms () :void
     {
         for each( var roomId :int in _rooms.keys()) {
             var room :Room = _rooms.get( roomId ) as Room;
@@ -166,6 +168,12 @@ public class GameServer extends ObjectDB
             }
         }
     }
+
+    /**
+    * The update method.  All contained simobjects, such as rooms, the lineage server, etc
+    * are updated on this pass.  It controls the global, game-wide update, thus controlling
+    * network updates.
+    */
     protected function tick () :void
     {
         var time :int = getTimer();
@@ -186,6 +194,7 @@ public class GameServer extends ObjectDB
                     room.addFeedback( globalMessage, 0);
                 }
             });
+
         //Then empty the global message queue
         _globalFeedback.splice(0);
 
@@ -198,7 +207,9 @@ public class GameServer extends ObjectDB
 
 
 
-    // a message comes in from a player, figure out which PlayerData instance will handle it
+    /**
+    * Pass messages to the ServerLogic object.
+    */
     protected function handleMessage (evt :MessageReceivedEvent) :void
     {
         //Ignore messages not meant for individual players.
@@ -206,15 +217,15 @@ public class GameServer extends ObjectDB
             return;
         }
 
-        //Let the originating player handle the message
+        //Only handle the message if the originating player exists.
         try {
-//            log.debug("handleMessage", "evt", evt);
             var player :PlayerData = getPlayer(evt.senderId);
             if (player == null) {
                 log.warning("Received message for non-existent player [evt=" + evt + "]");
                 log.warning("playerids=" + _players.keys());
                 return;
             }
+            //Batch up the resultant network traffic from the message.
             _ctrl.doBatch(function () :void {
                 ServerLogic.handleMessage(player, evt.name, evt.value);
             });
@@ -224,17 +235,14 @@ public class GameServer extends ObjectDB
         }
     }
 
-    // when players enter the game, we create a local record for them
+    /**
+    * When players enter the game, we create a local record for them
+    */
     protected function playerJoinedGame (evt :AVRGameControlEvent) :void
     {
         try {
             log.info("playerJoinedGame() " + evt);
             var playerId :int = int(evt.value);
-
-            //Add to the permanent record of players.
-//            if( playerId > 0 ) {
-//                _playerIds.add( playerId );
-//            }
 
             if (_players.containsKey(playerId)) {
                 log.warning("Joining player already known", "playerId", playerId);
@@ -259,11 +267,11 @@ public class GameServer extends ObjectDB
             _ctrl.doBatch(function () :void {
                 var player :PlayerData = new PlayerData(pctrl);
                 _players.put(playerId, player);
-                ServerContext.npBlood.addNewPlayer( playerId );
+                //Keep a record of player ids to distinguish players and non-players
+                //even when the players are not actively playing.
+//                ServerContext.npBlood.addNewPlayer( playerId );
             });
 
-            //Keep a record of player ids to distinguish players and non-players
-            //even when the players are not actively playing.
 
             log.debug("Sucessfully created Player object.");
         }
@@ -274,7 +282,9 @@ public class GameServer extends ObjectDB
 
 
 
-    // when they leave, clean up
+    /**
+    * When players leave, clean up
+    */
     protected function playerQuitGame (evt :AVRGameControlEvent) :void
     {
         try {
@@ -288,33 +298,22 @@ public class GameServer extends ObjectDB
             }
 
             _ctrl.doBatch(function () :void {
-
                 player.shutdown();
             });
 
             log.info("Player quit the game", "player", player);
-
-    //        log.info("!!!!!After player quit the game", "player time", _ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
-            log.info("!!!!!After player quit the game", "player time", new Date(_ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
         }
         catch( err :Error ) {
             log.error(err + "\n" + err.getStackTrace());
         }
     }
 
-    public function get rooms() :HashMap
-    {
-        return _rooms;
-    }
-
-    public function addGlobalFeedback( msg :String ) :void
+    public function addGlobalFeedback (msg :String) :void
     {
         _globalFeedback.push( msg );
     }
 
-
-
-    public function isPlayer( playerId :int ) :Boolean
+    public function isPlayer (playerId :int) :Boolean
     {
         return _players.containsKey( playerId );
     }
@@ -328,8 +327,6 @@ public class GameServer extends ObjectDB
     protected var _players :HashMap = new HashMap();
 
     protected var _globalFeedback :Array = new Array();
-
-    protected var _stub :ServerStub;
 
     public static const SERVER_TICK_UPDATE_MILLISECONDS :int = 400;
     public static const UPDATE_PLAYER_TIME :int = 5000;
