@@ -4,6 +4,12 @@ import com.threerings.util.Controller;
 import com.threerings.util.Log;
 import com.whirled.contrib.avrg.AvatarHUD;
 import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.tasks.AlphaTask;
+import com.whirled.contrib.simplegame.tasks.FunctionTask;
+import com.whirled.contrib.simplegame.tasks.LocationTask;
+import com.whirled.contrib.simplegame.tasks.ScaleTask;
+import com.whirled.contrib.simplegame.tasks.SerialTask;
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
@@ -235,19 +241,21 @@ public class VampireController extends Controller
     public function handleShowIntro( startFrame :String = null) :void
     {
         try {
-            var hierarchySceneObject :SimObject =
-                ClientContext.game.ctx.mainLoop.topMode.getObjectNamed( HelpPopup.NAME );
+            var help :SceneObject =
+                ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as SceneObject;
 
-            if( hierarchySceneObject == null) {
-                ClientContext.game.ctx.mainLoop.topMode.addSceneObject( new HelpPopup(startFrame),
+            if( help == null) {
+                help = new HelpPopup(startFrame);
+                ClientContext.gameMode.addSceneObject(help,
                     ClientContext.game.ctx.mainLoop.topMode.modeSprite);
+                animateEnlargeFromMouseClick(help);
             }
             else {
                 if( startFrame == null ) {
-                    hierarchySceneObject.destroySelf();
+                    help.destroySelf();
                 }
                 else {
-                    HelpPopup(hierarchySceneObject).gotoFrame( startFrame );
+                    HelpPopup(help).gotoFrame( startFrame );
                 }
             }
         }
@@ -255,6 +263,25 @@ public class VampireController extends Controller
             trace( err.getStackTrace() );
         }
     }
+
+    public static function animateEnlargeFromMouseClick( so :SceneObject ) :void
+    {
+
+        var finalX :int = so.x;
+        var finalY :int = so.y;
+
+        //Get the mouse point
+        var mouseX :int = so.displayObject.parent.mouseX;
+        var mouseY :int = so.displayObject.parent.mouseY;
+        so.x = mouseX;
+        so.y = mouseY;
+
+        so.scaleX = so.scaleY = 0.1;
+        so.addTask( ScaleTask.CreateEaseIn(1, 1, ANIMATION_TIME));
+        so.addTask( LocationTask.CreateEaseIn(finalX, finalY, ANIMATION_TIME));
+    }
+
+
 
 //    public function handleFeedRequest( targetPlayerId :int, targetIsVictim :Boolean) :void
     public function handleFeedRequest( targetingOverlay :VampireAvatarHUDOverlay, parentSprite :Sprite, hud :HUD) :void
@@ -450,6 +477,7 @@ public class VampireController extends Controller
 
 
     protected static const log :Log = Log.getLog( VampireController );
+    protected static const ANIMATION_TIME :Number = 0.2;
 
 }
 }
