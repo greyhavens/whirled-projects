@@ -30,7 +30,7 @@ public class ClientCtx
     public static var playerIds :Array;
     public static var preyId :int;
     public static var preyBloodType :int;
-    public static var isAiPrey :Boolean;
+    public static var preyIsAi :Boolean;
     public static var awardedTrophies :HashSet;
 
     public static function init () :void
@@ -42,7 +42,7 @@ public class ClientCtx
         playerIds = null;
         preyId = 0;
         preyBloodType = -1;
-        isAiPrey = false;
+        preyIsAi = false;
         awardedTrophies = new HashSet();
     }
 

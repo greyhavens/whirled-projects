@@ -15,8 +15,10 @@ public class ServerLobbyMode extends ServerMode
     override public function onMsgReceived (senderId :int, msg :Message) :Boolean
     {
         if (msg is CloseLobbyMsg) {
-            if (senderId != _ctx.getPrimaryPredatorId()) {
+            if (senderId != _ctx.lobbyLeader) {
                 _ctx.logBadMessage(senderId, msg.name, "player is not the lobby leader");
+            } else if (!_ctx.preyIsAi && _ctx.preyIsAi == Constants.NULL_PLAYER) {
+                _ctx.logBadMessage(senderId, msg.name, "The prey has left; the game can't start.");
             } else {
                 _ctx.server.setMode(Constants.MODE_PLAYING);
             }

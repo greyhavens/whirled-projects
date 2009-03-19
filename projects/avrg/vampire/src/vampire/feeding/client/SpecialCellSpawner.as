@@ -31,7 +31,7 @@ public class SpecialCellSpawner extends SimObject
     {
         // Is there a special blood strain to collect from the prey? Can we collect it?
         return (!ClientCtx.isPrey &&
-                !ClientCtx.isAiPrey &&
+                !ClientCtx.preyIsAi &&
                 ClientCtx.preyBloodType >= 0 &&
                 ClientCtx.playerData.canCollectStrainFromPlayer(ClientCtx.preyBloodType,
                                                                 ClientCtx.preyId));

@@ -47,6 +47,10 @@ public class Server extends FeedingServer
 
         _ctx.server = this;
         _ctx.gameId = _gameIdCounter++;
+        _ctx.roomCtrl = _ctx.gameCtrl.getRoom(roomId);
+        _ctx.nameUtil = new NameUtil(_ctx.gameId);
+        _ctx.props = new GamePropControl(_ctx.gameId, _ctx.roomCtrl.props);
+
         _ctx.playerIds = [];
         if (preyId != Constants.NULL_PLAYER) {
             _ctx.playerIds.push(preyId);
@@ -63,13 +67,8 @@ public class Server extends FeedingServer
         _ctx.gameCompleteCallback = gameCompleteCallback;
         _ctx.playerLeftCallback = playerLeftCallback;
 
-        _ctx.roomCtrl = _ctx.gameCtrl.getRoom(roomId);
-        _ctx.nameUtil = new NameUtil(_ctx.gameId);
-        _ctx.props = new GamePropControl(_ctx.gameId, _ctx.roomCtrl.props);
-
         _ctx.props.set(Props.ALL_PLAYERS, FeedingUtil.arrayToDict(_ctx.playerIds), true);
         _ctx.props.set(Props.LOBBY_LEADER, predatorId, true);
-        _ctx.props.set(Props.PREY_ID, preyId, true);
         _ctx.props.set(Props.MODE, null, true);
 
         _events.registerListener(
@@ -199,7 +198,7 @@ public class Server extends FeedingServer
 
     override public function get primaryPredatorId () :int
     {
-        return _ctx.getPrimaryPredatorId();
+        return _ctx.lobbyLeader;
     }
 
     override public function get hasStarted () :Boolean
@@ -214,9 +213,13 @@ public class Server extends FeedingServer
 
     protected function updateLobbyLeader () :void
     {
-        var newLobbyLeader :int = this.primaryPredatorId;
-        if ((_ctx.props.get(Props.LOBBY_LEADER) as int) != newLobbyLeader) {
-            _ctx.props.set(Props.LOBBY_LEADER, newLobbyLeader, true);
+        if (!ArrayUtil.contains(_ctx.playerIds, _ctx.lobbyLeader)) {
+            for each (var playerId :int in _ctx.playerIds) {
+                if (playerId != _ctx.preyId) {
+                    _ctx.lobbyLeader = playerId;
+                    break;
+                }
+            }
         }
     }
 

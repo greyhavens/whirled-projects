@@ -17,6 +17,9 @@ public class Props
     /** playerId :int */
     public static const PREY_ID :String = "PreyId";
 
+    /** Boolean */
+    public static const PREY_IS_AI :String = "PreyIsAi";
+
     /** bloodType :int */
     public static const PREY_BLOOD_TYPE :String = "PreyBloodType";
 

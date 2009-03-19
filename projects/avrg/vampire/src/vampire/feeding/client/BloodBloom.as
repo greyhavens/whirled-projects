@@ -110,6 +110,8 @@ public class BloodBloom extends FeedingClient
             updatePreyId();
         } else if (e.name == Props.PREY_BLOOD_TYPE) {
             updatePreyBloodType();
+        } else if (e.name == Props.PREY_IS_AI) {
+            updatePreyIsAi();
         } else if (e.name == Props.MODE) {
             updateMode();
         }
@@ -123,17 +125,25 @@ public class BloodBloom extends FeedingClient
         } else {
             ClientCtx.playerIds = Util.keys(playerDict);
         }
+
+        if (!ArrayUtil.contains(ClientCtx.playerIds, ClientCtx.preyId)) {
+            ClientCtx.preyId = Constants.NULL_PLAYER;
+        }
     }
 
     protected function updatePreyId () :void
     {
         ClientCtx.preyId = ClientCtx.props.get(Props.PREY_ID) as int;
-        ClientCtx.isAiPrey = (ClientCtx.preyId == Constants.NULL_PLAYER);
     }
 
     protected function updatePreyBloodType () :void
     {
         ClientCtx.preyBloodType = ClientCtx.props.get(Props.PREY_BLOOD_TYPE) as int;
+    }
+
+    protected function updatePreyIsAi () :void
+    {
+        ClientCtx.preyIsAi = ClientCtx.props.get(Props.PREY_IS_AI) as Boolean;
     }
 
     protected function updateMode () :void
@@ -179,9 +189,9 @@ public class BloodBloom extends FeedingClient
         if (ClientCtx.isConnected) {
             _events.registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
             _events.registerListener(ClientCtx.props, PropertyChangedEvent.PROPERTY_CHANGED,
-                onPropChanged);
+                onPropChanged, false, int.MAX_VALUE);
             _events.registerListener(ClientCtx.props, ElementChangedEvent.ELEMENT_CHANGED,
-                onPropChanged);
+                onPropChanged, false, int.MAX_VALUE);
 
             updatePlayers();
             updatePreyId();

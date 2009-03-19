@@ -7,8 +7,6 @@ import com.whirled.avrg.RoomSubControlServer;
 import com.whirled.contrib.simplegame.net.BasicMessageManager;
 import com.whirled.contrib.simplegame.net.Message;
 
-import flash.utils.Dictionary;
-
 import vampire.feeding.*;
 import vampire.feeding.net.*;
 
@@ -17,31 +15,57 @@ public class ServerCtx
     public var server :vampire.feeding.server.Server;
 
     public var gameId :int;
+    public var roomCtrl :RoomSubControlServer;
+    public var props :GamePropControl;
+    public var nameUtil :NameUtil;
+
     public var playerIds :Array;
-    public var preyId :int;
-    public var preyIsAi :Boolean;
     public var preyBlood :Number;
-    public var preyBloodType :int;
     public var gameStartedCallback :Function;
     public var roundCompleteCallback :Function;
     public var gameCompleteCallback :Function;
     public var playerLeftCallback :Function;
 
-    public var roomCtrl :RoomSubControlServer;
-    public var props :GamePropControl;
-    public var nameUtil :NameUtil;
-
     public var lastRoundScore :int;
 
-    public function getPrimaryPredatorId () :int
+    public function get preyId () :int
     {
-        for each (var playerId :int in playerIds) {
-            if (playerId != preyId) {
-                return playerId;
-            }
-        }
+        return props.get(Props.PREY_ID) as int;
+    }
 
-        return Constants.NULL_PLAYER;
+    public function set preyId (id :int) :void
+    {
+        props.set(Props.PREY_ID, id, true);
+    }
+
+    public function get preyIsAi () :Boolean
+    {
+        return props.get(Props.PREY_ID) as Boolean;
+    }
+
+    public function set preyIsAi (val :Boolean) :void
+    {
+        props.set(Props.PREY_IS_AI, val, true);
+    }
+
+    public function get preyBloodType () :int
+    {
+        return props.get(Props.PREY_BLOOD_TYPE) as int;
+    }
+
+    public function set preyBloodType (val :int) :void
+    {
+        props.set(Props.PREY_BLOOD_TYPE, val, true);
+    }
+
+    public function get lobbyLeader () :int
+    {
+        return props.get(Props.LOBBY_LEADER) as int;
+    }
+
+    public function set lobbyLeader (val :int) :void
+    {
+        props.set(Props.LOBBY_LEADER, val, true);
     }
 
     public function getPredatorIds () :Array

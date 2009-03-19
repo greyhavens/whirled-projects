@@ -9,6 +9,7 @@ import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 
+import vampire.feeding.Constants;
 import vampire.feeding.net.CloseLobbyMsg;
 import vampire.feeding.net.Props;
 import vampire.feeding.net.RoundOverMsg;
@@ -27,29 +28,33 @@ public class LobbyMode extends AppMode
         registerListener(ClientCtx.props, PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
         registerListener(ClientCtx.props, ElementChangedEvent.ELEMENT_CHANGED, onPropChanged);
 
-        var panelMovie :MovieClip = ClientCtx.instantiateMovieClip("blood", "popup_panel");
-        panelMovie.x = 300;
-        panelMovie.y = 200;
-        _modeSprite.addChild(panelMovie);
+        _panelMovie = ClientCtx.instantiateMovieClip("blood", "popup_panel");
+        _panelMovie.x = 300;
+        _panelMovie.y = 200;
+        _modeSprite.addChild(_panelMovie);
 
         // Instructions
-        var instructions0 :MovieClip = panelMovie["instructions_basic"];
-        var instructions1 :MovieClip = panelMovie["instructions_multiplayer"];
+        var instructions0 :MovieClip = _panelMovie["instructions_basic"];
+        var instructions1 :MovieClip = _panelMovie["instructions_multiplayer"];
         instructions0.visible = true;
         instructions1.visible = false;
 
         // Quit button
-        var quitBtn :SimpleButton = panelMovie["button_close"];
+        var quitBtn :SimpleButton = _panelMovie["button_close"];
         registerOneShotCallback(quitBtn, MouseEvent.CLICK,
             function (...ignored) :void {
                 ClientCtx.quit(true);
             });
 
         // Done/Start/Play Again
-        var doneButton :SimpleButton = panelMovie["button_done"];
-        var startButton :SimpleButton = panelMovie["button_start"];
-        var replayButton :SimpleButton = panelMovie["button_again"];
-        doneButton.visible = false;
+        _doneButton = _panelMovie["button_done"];
+        registerListener(_doneButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                ClientCtx.quit(true);
+            });
+
+        var startButton :SimpleButton = _panelMovie["button_start"];
+        var replayButton :SimpleButton = _panelMovie["button_again"];
         startButton.visible = false;
         replayButton.visible = false;
         _startButton = (isPostRoundLobby ? replayButton : startButton);
@@ -60,11 +65,13 @@ public class LobbyMode extends AppMode
                 }
             });
 
-        _waitingText = panelMovie["waiting_text"];
-        updateButton();
+        _tfWaiting = _panelMovie["waiting_text"];
+        _tfNoPrey = _panelMovie["done_text"];
+
+        updateButtonsAndNotices();
 
         // Total score
-        var total :MovieClip = panelMovie["total"];
+        var total :MovieClip = _panelMovie["total"];
         if (this.isPreGameLobby) {
             total.visible = false;
         } else {
@@ -76,7 +83,7 @@ public class LobbyMode extends AppMode
         // Player list
         _playerList = new SimpleListController(
             [],
-            panelMovie,
+            _panelMovie,
             "player",
             [ "player_name", "player_score" ],
             "arrow_up",
@@ -85,15 +92,26 @@ public class LobbyMode extends AppMode
         updatePlayerList();
     }
 
-    protected function updateButton () :void
+    protected function updateButtonsAndNotices () :void
     {
-        if (ClientCtx.isLobbyLeader) {
-            _startButton.visible = true;
-            _waitingText.visible = false;
-        } else {
+        if (ClientCtx.preyId == Constants.NULL_PLAYER && !ClientCtx.preyIsAi) {
+            _doneButton.visible = true;
+            _tfNoPrey.visible = true;
             _startButton.visible = false;
-            _waitingText.visible = true;
-            _waitingText.text = (ClientCtx.playerIds.length == 1 ?
+            _tfWaiting.visible = false;
+
+        } else if (ClientCtx.isLobbyLeader) {
+            _doneButton.visible = false;
+            _tfNoPrey.visible = false;
+            _startButton.visible = true;
+            _tfWaiting.visible = false;
+
+        } else {
+            _doneButton.visible = false;
+            _tfNoPrey.visible = false;
+            _startButton.visible = false;
+            _tfWaiting.visible = true;
+            _tfWaiting.text = (ClientCtx.playerIds.length == 1 ?
                 "Waiting for a predator!" :
                 "The prime predator is waiting...");
         }
@@ -104,18 +122,39 @@ public class LobbyMode extends AppMode
         var listData :Array = [];
         var obj :Object;
         var playerId :int;
+
+        // Fill in the Prey
+        var preyInfo :MovieClip = _panelMovie["playerprey"];
+        if (ClientCtx.preyId == Constants.NULL_PLAYER) {
+            preyInfo.visible = false;
+        } else {
+            preyInfo.visible = true;
+            var tfName :TextField = preyInfo["player_name"];
+            tfName.text = ClientCtx.getPlayerName(ClientCtx.preyId);
+            var tfScore :TextField = preyInfo["player_score"];
+            if (this.isPostRoundLobby) {
+                tfScore.visible = true;
+                tfScore.text = String(_results.scores.get(ClientCtx.preyId));
+            } else {
+                tfScore.visible = false;
+            }
+        }
+
+        // Fill in the Predators list
         if (this.isPostRoundLobby) {
             _results.scores.forEach(
                 function (playerId :int, score :int) :void {
-                    obj = {};
-                    obj["player_name"] = ClientCtx.getPlayerName(playerId);
-                    obj["player_score"] = score;
-                    listData.push(obj);
+                    if (playerId != ClientCtx.preyId) {
+                        obj = {};
+                        obj["player_name"] = ClientCtx.getPlayerName(playerId);
+                        obj["player_score"] = score;
+                        listData.push(obj);
+                    }
                 });
 
             // Anyone who joined the game while the round was in progress has a score of 0
             for each (playerId in ClientCtx.playerIds) {
-                if (!_results.scores.containsKey(playerId)) {
+                if (playerId != ClientCtx.preyId && !_results.scores.containsKey(playerId)) {
                     obj = {};
                     obj["player_name"] = ClientCtx.getPlayerName(playerId);
                     obj["player_score"] = 0;
@@ -125,9 +164,11 @@ public class LobbyMode extends AppMode
 
         } else {
             for each (playerId in ClientCtx.playerIds) {
-                obj = {};
-                obj["player_name"] = ClientCtx.getPlayerName(playerId);
-                listData.push(obj);
+                if (playerId != ClientCtx.preyId) {
+                    obj = {};
+                    obj["player_name"] = ClientCtx.getPlayerName(playerId);
+                    listData.push(obj);
+                }
             }
         }
 
@@ -138,8 +179,8 @@ public class LobbyMode extends AppMode
     {
         if (e.name == Props.ALL_PLAYERS) {
             updatePlayerList();
-        } else if (e.name == Props.LOBBY_LEADER) {
-            updateButton();
+        } else if (e.name == Props.LOBBY_LEADER || e.name == Props.PREY_ID) {
+            updateButtonsAndNotices();
         }
     }
 
@@ -153,8 +194,11 @@ public class LobbyMode extends AppMode
         return (!isPostRoundLobby);
     }
 
+    protected var _panelMovie :MovieClip;
     protected var _startButton :SimpleButton;
-    protected var _waitingText :TextField;
+    protected var _doneButton :SimpleButton;
+    protected var _tfWaiting :TextField;
+    protected var _tfNoPrey :TextField;
     protected var _playerList :SimpleListController;
 
     protected var _results :RoundOverMsg;
