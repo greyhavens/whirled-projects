@@ -8,8 +8,11 @@ import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimpleGame;
 import com.whirled.contrib.simplegame.net.BasicMessageManager;
+import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.ResourceManager;
 import com.whirled.contrib.simplegame.resource.SwfResource;
+import com.whirled.contrib.simplegame.tasks.LocationTask;
+import com.whirled.contrib.simplegame.tasks.ScaleTask;
 
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
@@ -17,11 +20,11 @@ import flash.display.Sprite;
 import flash.filters.GlowFilter;
 import flash.geom.Rectangle;
 
+import vampire.Util;
 import vampire.avatar.AvatarGameBridge;
 import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.data.Codes;
 import vampire.data.VConstants;
-import vampire.Util;
 
 /**
  * Client specific functions and info.
@@ -226,6 +229,24 @@ public class ClientContext
         s.graphics.endFill();
     }
 
+    public static function animateEnlargeFromMouseClick( so :SceneObject ) :void
+    {
+
+        var finalX :int = so.x;
+        var finalY :int = so.y;
+
+        //Get the mouse point
+        var mouseX :int = so.displayObject.parent.mouseX;
+        var mouseY :int = so.displayObject.parent.mouseY;
+        so.x = mouseX;
+        so.y = mouseY;
+
+        so.scaleX = so.scaleY = 0.1;
+        so.addTask( ScaleTask.CreateEaseIn(1, 1, ANIMATION_TIME));
+        so.addTask( LocationTask.CreateEaseIn(finalX, finalY, ANIMATION_TIME));
+    }
+
+    protected static const ANIMATION_TIME :Number = 0.2;
     public static const glowFilter :GlowFilter = new GlowFilter(0xffffff);
 
 }

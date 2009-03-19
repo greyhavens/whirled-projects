@@ -5,16 +5,10 @@ import com.threerings.util.Log;
 import com.whirled.contrib.avrg.AvatarHUD;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.tasks.AlphaTask;
-import com.whirled.contrib.simplegame.tasks.FunctionTask;
-import com.whirled.contrib.simplegame.tasks.LocationTask;
-import com.whirled.contrib.simplegame.tasks.ScaleTask;
-import com.whirled.contrib.simplegame.tasks.SerialTask;
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
 
-import vampire.avatar.AvatarGameBridge;
 import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.events.ChangeActionEvent;
 import vampire.data.Codes;
@@ -248,7 +242,7 @@ public class VampireController extends Controller
                 help = new HelpPopup(startFrame);
                 ClientContext.gameMode.addSceneObject(help,
                     ClientContext.game.ctx.mainLoop.topMode.modeSprite);
-                animateEnlargeFromMouseClick(help);
+                ClientContext.animateEnlargeFromMouseClick(help);
             }
             else {
                 if( startFrame == null ) {
@@ -264,22 +258,7 @@ public class VampireController extends Controller
         }
     }
 
-    public static function animateEnlargeFromMouseClick( so :SceneObject ) :void
-    {
 
-        var finalX :int = so.x;
-        var finalY :int = so.y;
-
-        //Get the mouse point
-        var mouseX :int = so.displayObject.parent.mouseX;
-        var mouseY :int = so.displayObject.parent.mouseY;
-        so.x = mouseX;
-        so.y = mouseY;
-
-        so.scaleX = so.scaleY = 0.1;
-        so.addTask( ScaleTask.CreateEaseIn(1, 1, ANIMATION_TIME));
-        so.addTask( LocationTask.CreateEaseIn(finalX, finalY, ANIMATION_TIME));
-    }
 
 
 
@@ -320,7 +299,7 @@ public class VampireController extends Controller
         }
         else {
             var msg :FeedRequestMsg = new FeedRequestMsg( ClientContext.ourPlayerId,
-                0, false, 0,0,0);
+                0, 0,0,0);
             log.debug(ClientContext.ctrl + " handleSendFeedRequest() sending " + msg)
             ClientContext.ctrl.agent.sendMessage( FeedRequestMsg.NAME, msg.toBytes() );
         }
@@ -361,30 +340,60 @@ public class VampireController extends Controller
 //        ClientContext.gameCtrl.agent.sendMessage( FeedRequestMessage.NAME, new FeedRequestMessage( ClientContext.ourPlayerId, 0, false).toBytes() );
     }
 
-    public function handleSendFeedRequest( targetId :int, multiPredators :Boolean  ) :void
+    public function handleSendFeedRequest (targetId :int) :void
     {
-        var targetLocation :Array;
-        var targetAvatar :AvatarHUD = ClientContext.avatarOverlay.getAvatar( targetId );
-        if( targetAvatar != null ) {
-            targetLocation = targetAvatar.location;
+        function sendFeedRequest () :void {
+            var targetLocation :Array;
+            var targetAvatar :AvatarHUD = ClientContext.avatarOverlay.getAvatar( targetId );
+            if( targetAvatar != null ) {
+                targetLocation = targetAvatar.location;
+            }
+            else {
+                log.error("handleSendFeedRequest(target=" + targetId + "), avatar is null so no loc");
+            }
+
+            var msg :FeedRequestMsg = new FeedRequestMsg( ClientContext.ourPlayerId, targetId,
+                targetLocation[0], targetLocation[1], targetLocation[2]);
+
+            log.debug(ClientContext.ctrl + " handleSendFeedRequest() sending " + msg)
+            ClientContext.ctrl.agent.sendMessage( FeedRequestMsg.NAME, msg.toBytes() );
+            ClientContext.ctrl.local.feedback("Request for feed sent");
+
+            //Set the avatar target to stand behind.
+            //That way, when the avatar arrived at it's destination, it
+            //will set it's orientation the same as the target's orientation.
+            ClientContext.model.setStandBehindTarget(targetId);
+        }
+
+
+
+        //Show a popup if we aren't connected to the Lineage, and we choose a sire that is
+        var targetIsVampireAndLineageMember :Boolean =
+            ClientContext.model.lineage.isMemberOfLineage(targetId);
+        if (ClientContext.model.sire == 0 && targetIsVampireAndLineageMember) {
+            trace("No sire and target is Lineage, show popup");
+
+            var popup :PopupQuery = new PopupQuery( ClientContext.ctrl,
+                    "MakeSire",
+                    "If you feed from this Lineage vampire, (s)he will become your permanent sire",
+                    ["Accept", "Deny"],
+                    [sendFeedRequest, null]);
+
+            if (ClientContext.gameMode.getObjectNamed(popup.objectName) == null) {
+                ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
+            }
+
+
+
+
+
+
         }
         else {
-            log.error("handleSendFeedRequest(target=" + targetId + "), avatar is null so no loc");
+            sendFeedRequest();
+
         }
 
-        var msg :FeedRequestMsg = new FeedRequestMsg( ClientContext.ourPlayerId, targetId,
-            multiPredators, targetLocation[0], targetLocation[1], targetLocation[2]);
-
-        log.debug(ClientContext.ctrl + " handleSendFeedRequest() sending " + msg)
-        ClientContext.ctrl.agent.sendMessage( FeedRequestMsg.NAME, msg.toBytes() );
-
-        //Set the avatar target.  That way, when the avatar arrived at it's destination, it
-        //will set it's orientation the same as the target's orientation.
-        var setTargetFunction :Function = ClientContext.ctrl.room.getEntityProperty(
-            AvatarGameBridge.ENTITY_PROPERTY_SETTARGET_FUNCTION, ClientContext.ourEntityId ) as Function;
-        if( setTargetFunction != null ) {
-            setTargetFunction( targetId );
-        }
 
     }
 
@@ -454,30 +463,25 @@ public class VampireController extends Controller
     }
 
 
-    public function handleShowPopupMessage( msg :String ) :void
+    public function handleShowPopupMessage (msg :String) :void
     {
-
-
-
     }
 
-    public function handleAcceptFeedRequest( popup :PopupQuery, playerId :int ) :void
+    public function handleAcceptFeedRequest (playerId :int) :void
     {
         var msg :FeedConfirmMsg = new FeedConfirmMsg(ClientContext.ourPlayerId, playerId, true);
         ClientContext.ctrl.agent.sendMessage( FeedConfirmMsg.NAME, msg.toBytes() );
-        popup.destroySelf();
     }
 
-    public function handleDenyFeedRequest( popup :PopupQuery, playerId :int ) :void
+    public function handleDenyFeedRequest (playerId :int) :void
     {
         var msg :FeedConfirmMsg = new FeedConfirmMsg(ClientContext.ourPlayerId, playerId, false);
         ClientContext.ctrl.agent.sendMessage( FeedConfirmMsg.NAME, msg.toBytes() );
-        popup.destroySelf();
     }
 
 
     protected static const log :Log = Log.getLog( VampireController );
-    protected static const ANIMATION_TIME :Number = 0.2;
+
 
 }
 }

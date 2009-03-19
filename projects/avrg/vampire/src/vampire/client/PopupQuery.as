@@ -17,12 +17,12 @@ import flash.text.TextFormatAlign;
 public class PopupQuery extends DraggableSceneObject
 {
     public function PopupQuery (ctrl :AVRGameControl, name :String, message :String,
-        commands :Array, commandArgs :Array = null)
+        buttonNames :Array = null, commandsOrFunctions :Array = null, extraArgs :Array = null)
     {
 
-        trace("con, commands=" + commands);
-        trace("con, message=" + message);
-        trace("con, name=" + name);
+//        trace("con, commands=" + commands);
+//        trace("con, message=" + message);
+//        trace("con, name=" + name);
         super(ctrl, name);
         _popupPanel = ClientContext.instantiateMovieClip("HUD", "popup", false);
         _popupPanel.mouseEnabled = true;
@@ -34,16 +34,23 @@ public class PopupQuery extends DraggableSceneObject
                 destroySelf();
             });
 
-        commands = ["asdsf", "sdfadsf"]
+//        commands = ["asdsf", "sdfadsf"]
 
-        trace("con, commandArgs=" + commandArgs);
+//        trace("con, commandArgs=" + commandArgs);
         setupText(message);
-        setupCommands(commands, commandArgs);
+        if (buttonNames != null) {
+            setupCommands(buttonNames, commandsOrFunctions, extraArgs);
+        }
 
 //        init( new Rectangle(-_popupPanel.width/2, _popupPanel.height/2, _popupPanel.width, _popupPanel.height), 0, 0, 0, 0);
         init( new Rectangle(-10, -10, 20, 20), 0, 0, 0, 0);
         centerOnViewableRoom();
 
+    }
+
+    override protected function addedToDB () :void
+    {
+        ClientContext.animateEnlargeFromMouseClick(this);
     }
 
     protected function setupText (message :String): void
@@ -65,32 +72,42 @@ public class PopupQuery extends DraggableSceneObject
         _popupPanel.addChild( tf );
     }
 
-    protected function setupCommands (commands :Array, commandArgs :Array = null): void
+    protected function setupCommands (buttonNames :Array,
+        commandsOrFunctions :Array, extraArgs :Array): void
     {
-        trace("setup, commands" + commands);
-        if( commands == null) {
-            trace("nu;;");
+//        trace("setup, commands" + commands);
+        if( buttonNames == null) {
+//            trace("nu;;");
             return;
         }
 //        var startX :int = -_popupPanel.width / 2;
         var startY :int = _popupPanel.height / 2 - 50;
 
-        for( var i :int = 0; i < commands.length; i++){
-            var command :String = commands[i] as String;
-            trace("command="+command);
-            //Add this object to the arguments
-            var commandArg :Array = [this];
-            if( commandArgs != null && i < commandArgs.length) {
-                if( commandArgs[i] is Array) {
-                    commandArg.concat(commandArgs[i]);
+        for (var i :int = 0; i < buttonNames.length; i++) {
+
+            var b :SimpleTextButton = new SimpleTextButton(buttonNames[i] as String);
+
+            if (commandsOrFunctions[i] != null) {
+                if (commandsOrFunctions[i] is Function) {
+                    registerListener( b, MouseEvent.CLICK, commandsOrFunctions[i]);
                 }
                 else {
-                    commandArg.push( commandArgs[i] );
+                    if( extraArgs != null &&  i < extraArgs.length) {
+                        Command.bind( b, MouseEvent.CLICK, commandsOrFunctions[i], extraArgs[i]);
+                    }
+                    else {
+                        Command.bind( b, MouseEvent.CLICK, commandsOrFunctions[i]);
+                    }
                 }
             }
-            trace("!!!!!!!!adding button");
-            var b :SimpleTextButton = new SimpleTextButton(command);
-            Command.bind( b, MouseEvent.CLICK, command,  commandArg );
+
+//            Command.bind( b, MouseEvent.CLICK, command,  commandArg );
+
+            //Also make the buttons shut the popup
+            registerListener( b, MouseEvent.CLICK, function(e :MouseEvent) :void {
+                destroySelf();
+            });
+
             _popupPanel.addChild( b );
 //            b.x = startX;
             b.y = startY;
