@@ -77,6 +77,11 @@ public class ClientCtx
         return true;
     }
 
+    public static function get isLobbyLeader () :Boolean
+    {
+        return ((props.get(Props.LOBBY_LEADER) as int) == localPlayerId);
+    }
+
     public static function get isPrey () :Boolean
     {
         return (localPlayerId == preyId);

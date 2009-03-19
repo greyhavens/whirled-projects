@@ -25,6 +25,16 @@ public class RoundOverMsg
         return msg;
     }
 
+    public function get totalScore () :int
+    {
+        var score :int;
+        scores.forEach(
+            function (playerId :int, playerScore :int) :void {
+                score += playerScore;
+            });
+        return score;
+    }
+
     public function toBytes (ba :ByteArray = null) :ByteArray
     {
         if (ba == null) {

@@ -75,7 +75,12 @@ public class SimpleListController extends SimObject
                 var data :Object = _data[dataIndex];
                 for each (var columnName :String in _columnNames) {
                     var column :TextField = row[columnName];
-                    column.text = data[columnName];
+                    if (data.hasOwnProperty(columnName)) {
+                        column.text = data[columnName];
+                        column.visible = true;
+                    } else {
+                        column.visible = false;
+                    }
                 }
             }
         }
