@@ -11,9 +11,9 @@ import vampire.data.Logic;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingServer;
 
-public class BloodBloomGameRecord extends EventCollecter
+public class FeedingRecord extends EventCollecter
 {
-    public function BloodBloomGameRecord( room :Room, gameId :int, predatorId :int, preyId :int,
+    public function FeedingRecord( room :Room, gameId :int, predatorId :int, preyId :int,
         preyLocation :Array, gameFinishesCallback :Function)
     {
         _room = room;
@@ -34,12 +34,16 @@ public class BloodBloomGameRecord extends EventCollecter
     protected function handlePlayerLeftRoom (e :AVRGameRoomEvent) :void
     {
         var playerId :int = int(e.value);
+        playerLeavesGame(playerId);
+    }
+
+    public function playerLeavesGame (playerId :int) :void
+    {
         if (_gameServer != null && ArrayUtil.contains(_gameServer.playerIds, playerId)) {
             log.debug("handlePlayerLeftRoom", "playerId", playerId);
             _gameServer.playerLeft( playerId );
         }
     }
-
 
     public function get isLobbyStarted () :Boolean
     {
@@ -384,9 +388,9 @@ public class BloodBloomGameRecord extends EventCollecter
     protected var _currentCountdownSecond :int;
     protected var _elapsedGameTime :Number = 0;
     protected var _gameFinishedManagerCallback :Function;
-    protected var _thisBloodBloomRecord :BloodBloomGameRecord;
+    protected var _thisBloodBloomRecord :FeedingRecord;
 
-    protected static const log :Log = Log.getLog( BloodBloomGameRecord );
+    protected static const log :Log = Log.getLog( FeedingRecord );
 
 }
 }

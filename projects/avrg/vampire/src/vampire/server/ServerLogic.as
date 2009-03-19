@@ -493,15 +493,25 @@ public class ServerLogic
     public static function handlePlayerArrivedAtLocation( player :PlayerData ) :void
     {
         log.debug(player.playerId + " message " + PlayerArrivedAtLocationEvent.PLAYER_ARRIVED);
-        if( player.state == VConstants.PLAYER_STATE_MOVING_TO_FEED ) {
+
+        switch (player.state) {
+            case VConstants.PLAYER_STATE_MOVING_TO_FEED:
             log.debug(player.playerId + " changing to " + VConstants.PLAYER_STATE_FEEDING_PREDATOR);
             stateChange(player,  VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION);
-        }
-        else {
-            log.error(player.playerId + " Received PLAYER_ARRIVED but we are not moving to feed");
-//                    if( player.state == VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER ){
-//                        log.debug(playerId + " changing to " + VConstants.GAME_MODE_FEED_FROM_NON_PLAYER);
-//                        stateChange(player, VConstants.GAME_MODE_FEED_FROM_NON_PLAYER );
+            break;
+
+            case VConstants.PLAYER_STATE_FEEDING_PREDATOR:
+            case VConstants.PLAYER_STATE_FEEDING_PREY:
+            var game :FeedingRecord = player.room.bloodBloomGameManager.getGame(player.playerId);
+            if (game != null) {
+                game.playerLeavesGame(player.playerId);
+                stateChange(player, VConstants.PLAYER_STATE_DEFAULT);
+            }
+            break;
+
+            default:
+            log.error(player.playerId + " Received PLAYER_ARRIVED but doing nothing");
+            break;
         }
     }
 
@@ -556,7 +566,7 @@ public class ServerLogic
     public static function handleFeedRequestMessage( player :PlayerData, e :FeedRequestMsg ) :void
     {
         log.debug("handleFeedRequestMessage");
-        var game :BloodBloomGameRecord;
+        var game :FeedingRecord;
 
         //If we're bared, return us the the default state.
 //        if( player.state == VConstants.PLAYER_STATE_BARED ) {
@@ -646,7 +656,7 @@ public class ServerLogic
             stateChange( prey, VConstants.PLAYER_STATE_BARED );
 
             //Join the game
-            var game :BloodBloomGameRecord = player.room.bloodBloomGameManager.requestFeed(
+            var game :FeedingRecord = player.room.bloodBloomGameManager.requestFeed(
                     player.playerId,
                     prey.playerId,
                     player.targetLocation );//Prey location
@@ -746,7 +756,7 @@ public class ServerLogic
         }
         var angleRadians :Number;
         var degs :Number;
-        var game :BloodBloomGameRecord;
+        var game :FeedingRecord;
         var predLocIndex :int;
         var newLocation :Array;
         var targetX :Number;
@@ -1012,7 +1022,7 @@ public class ServerLogic
         }
     }
 
-   public static function bloodBloomRoundOver( gameRecord :BloodBloomGameRecord ) :void
+   public static function bloodBloomRoundOver( gameRecord :FeedingRecord ) :void
     {
         log.debug("bloodBloomRoundOver()", "gameRecord", gameRecord);
 
