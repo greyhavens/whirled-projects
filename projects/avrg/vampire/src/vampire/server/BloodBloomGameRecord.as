@@ -203,8 +203,6 @@ public class BloodBloomGameRecord extends EventCollecter
 
     public function isPredator( playerId :int ) :Boolean
     {
-        log.debug("isPredator(" +  playerId + "), _predators=" + _predators.toArray());
-        log.debug("  returning " + _predators.contains( playerId ));
         return _predators.contains( playerId );
     }
 
