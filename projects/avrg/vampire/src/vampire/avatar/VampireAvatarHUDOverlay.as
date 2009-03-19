@@ -388,32 +388,35 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 
             case DISPLAY_MODE_SHOW_VALID_TARGETS:
 //                trace("DISPLAY_MODE_SHOW_VALID_TARGETS");
-                _displaySprite.addChild( _paintableOverlay );
-
-                //Draw on the paintable overlay so it can intercept mouseclicks.
-                //These clicks are interpreted as 'cancel'.
-                _paintableOverlay.graphics.clear();
-                _paintableOverlay.graphics.beginFill(0, 0);
-                var screenWidth :Number = _ctrl.local.getPaintableArea().width;
-                var screenHeight :Number = _ctrl.local.getPaintableArea().height;
-                _paintableOverlay.graphics.drawRect( 0, 0, screenWidth, screenHeight );
-                _paintableOverlay.graphics.endFill();
-
-//                validIds = getValidPlayerIdTargets();
                 validIds = getValidPlayerIdTargets();
-//                trace("validIds=" + validIds.toArray());
-//                trace("my id=" + ClientContext.ourPlayerId);
-                _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
-                    if( validIds.contains( avatar.playerId ) ) {
-//                        trace("  selectable " + avatar);
-                        avatar.setDisplayModeSelectableForFeed();
-                    }
-                    else {
-//                        trace("  Invisible " + avatar);
-                        avatar.setDisplayModeInvisible();
-//                        avatar.setDisplayModeShowInfo();
-                    }
-                });
+
+                if (validIds.size() > 0) {
+                    _displaySprite.addChild( _paintableOverlay );
+
+                    //Draw on the paintable overlay so it can intercept mouseclicks.
+                    //These clicks are interpreted as 'cancel'.
+                    _paintableOverlay.graphics.clear();
+                    _paintableOverlay.graphics.beginFill(0, 0);
+                    var screenWidth :Number = _ctrl.local.getPaintableArea().width;
+                    var screenHeight :Number = _ctrl.local.getPaintableArea().height;
+                    _paintableOverlay.graphics.drawRect( 0, 0, screenWidth, screenHeight );
+                    _paintableOverlay.graphics.endFill();
+
+    //                validIds = getValidPlayerIdTargets();
+    //                trace("validIds=" + validIds.toArray());
+    //                trace("my id=" + ClientContext.ourPlayerId);
+                    _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
+                        if( validIds.contains( avatar.playerId ) ) {
+    //                        trace("  selectable " + avatar);
+                            avatar.setDisplayModeSelectableForFeed();
+                        }
+                        else {
+    //                        trace("  Invisible " + avatar);
+                            avatar.setDisplayModeInvisible();
+    //                        avatar.setDisplayModeShowInfo();
+                        }
+                    });
+                }
                 break;
 //            case DISPLAY_MODE_SHOW_FEED_TARGET:
 //                _displaySprite.addChild( _paintableOverlay );
