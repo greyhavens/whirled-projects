@@ -45,11 +45,24 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 
 
         //If an avatar changes state, make sure we are updated.
+        _paintableOverlay.mouseEnabled = true;
         registerListener( _ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED,
             function( e :AVRGameRoomEvent ) :void {
                 setDisplayMode( _displayMode );
             }
         );
+
+
+        //If you click outside the feeding buttons, return to the default display.
+        registerListener(_paintableOverlay, MouseEvent.CLICK,
+            function(e :MouseEvent) :void {
+                if (e.target == _paintableOverlay){
+                    setDisplayMode(DISPLAY_MODE_OFF);
+                }
+            }
+        );
+
+
 
 
 
@@ -373,15 +386,20 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
             case DISPLAY_MODE_SHOW_VALID_TARGETS:
 //                trace("DISPLAY_MODE_SHOW_VALID_TARGETS");
                 _displaySprite.addChild( _paintableOverlay );
-//                _paintableOverlay.graphics.clear();
-//                _paintableOverlay.graphics.beginFill(0, 0.3);
-//                _paintableOverlay.graphics.drawRect( 0, 0, 500, 300 );
-//                _paintableOverlay.graphics.endFill();
+
+                //Draw on the paintable overlay so it can intercept mouseclicks.
+                //These clicks are interpreted as 'cancel'.
+                _paintableOverlay.graphics.clear();
+                _paintableOverlay.graphics.beginFill(0, 0);
+                var screenWidth :Number = _ctrl.local.getPaintableArea().width;
+                var screenHeight :Number = _ctrl.local.getPaintableArea().height;
+                _paintableOverlay.graphics.drawRect( 0, 0, screenWidth, screenHeight );
+                _paintableOverlay.graphics.endFill();
 
 //                validIds = getValidPlayerIdTargets();
                 validIds = getValidPlayerIdTargets();
-                trace("validIds=" + validIds.toArray());
-                trace("my id=" + ClientContext.ourPlayerId);
+//                trace("validIds=" + validIds.toArray());
+//                trace("my id=" + ClientContext.ourPlayerId);
                 _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
                     if( validIds.contains( avatar.playerId ) ) {
 //                        trace("  selectable " + avatar);
@@ -410,6 +428,7 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
             default://Off
 
 //                trace("DISPLAY_MODE_OFF");
+                _paintableOverlay.graphics.clear();
                 _avatars.forEach( function( id :int, avatar :VampireAvatarHUD) :void {
                     avatar.setDisplayModeInvisible();
                 });
