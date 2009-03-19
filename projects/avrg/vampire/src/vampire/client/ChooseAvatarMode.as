@@ -64,11 +64,6 @@ package vampire.client
         }
         override protected function enter():void
         {
-//            var buttonNames :Array = ["button1", "button2"];
-//            var popup :PopupQuery = new PopupQuery(ClientContext.ctrl, "some", "asdfa fasd fasd fas fdasd fasdf asdf", buttonNames);
-
-//            addSceneObject( popup, modeSprite );
-
             if( !isFirstTimePlayer() ) {
                 //Push the main game mode
                 ClientContext.game.ctx.mainLoop.popMode();
