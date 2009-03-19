@@ -207,7 +207,7 @@ public class Room extends SimObject
 //            registerListener(_ctrl, AVRGameRoomEvent.PLAYER_MOVED, handlePlayerMoved);
 //            registerListener(_ctrl, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
 
-            _bloodBloomGameManager = new BloodBloomManager( this );
+            _bloodBloomGameManager = new FeedingManager( this );
 //            _roomDB.addObject( bloodBloomGameManager );
 
         }
@@ -274,7 +274,7 @@ public class Room extends SimObject
         _feedbackMessageQueue.push( [playerId, msg] );
     }
 
-    public function get bloodBloomGameManager () :BloodBloomManager
+    public function get bloodBloomGameManager () :FeedingManager
     {
         return _bloodBloomGameManager;
     }
@@ -289,7 +289,7 @@ public class Room extends SimObject
     protected var _ctrl :RoomSubControlServer;
 
     protected var _players :HashMap = new HashMap();
-    public var _bloodBloomGameManager :BloodBloomManager;
+    public var _bloodBloomGameManager :FeedingManager;
 
     protected var _errorCount :int = 0;
 

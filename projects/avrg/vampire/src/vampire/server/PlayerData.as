@@ -253,6 +253,9 @@ public class PlayerData extends EventHandlerManager
     }
     public function setState (action :String) :void
     {
+        if (action != _state) {
+            log.debug( playerId + " state => " + action);
+        }
         _state = action;
     }
 
@@ -488,10 +491,6 @@ public class PlayerData extends EventHandlerManager
                     }
                 }
 
-            }
-
-            if( _ctrl.props.get(Codes.PLAYER_PROP_SIRE) != sire ) {
-                _ctrl.props.set(Codes.PLAYER_PROP_SIRE, sire, true);
             }
 
             if( _ctrl.props.get(Codes.PLAYER_PROP_MINIONIDS) == null ||

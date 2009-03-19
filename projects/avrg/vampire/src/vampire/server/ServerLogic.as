@@ -22,6 +22,7 @@ import vampire.net.messages.FeedConfirmMsg;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.RequestStateChangeMsg;
 import vampire.net.messages.ShareTokenMsg;
+import vampire.net.messages.TargetMovedMsg;
 
 
 
@@ -358,6 +359,9 @@ public class ServerLogic
                 if( msg is RequestStateChangeMsg) {
                     handleRequestActionChange( player, RequestStateChangeMsg(msg) );
                 }
+                else if( msg is TargetMovedMsg) {
+                    handleTargetMoved( player, TargetMovedMsg(msg) );
+                }
                 else if( msg is BloodBondRequestMsg) {
                     handleBloodBondRequest( player, BloodBondRequestMsg(msg) );
                 }
@@ -490,7 +494,13 @@ public class ServerLogic
 
     }
 
-    public static function handlePlayerArrivedAtLocation( player :PlayerData ) :void
+    protected static function handleTargetMoved (player :PlayerData, e :TargetMovedMsg) :void
+    {
+        log.debug(player.name + " handleTargetMoved", "target", player.targetId);
+        player.room.bloodBloomGameManager.playerQuitsGame(player.targetId);
+        player.setTargetId(0);
+    }
+    protected static function handlePlayerArrivedAtLocation (player :PlayerData) :void
     {
         log.debug(player.playerId + " message " + PlayerArrivedAtLocationEvent.PLAYER_ARRIVED,
             "player", player.playerId, "state", player.state);
