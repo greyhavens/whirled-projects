@@ -165,6 +165,7 @@ public class Room extends SimObject
                 _ctrl.props.get( Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE ) as Array;
 
             if( !ArrayUtil.equals( playerIdsFeedingNow, playerIdsFeedingPrevious)) {
+                log.debug("Room " + roomId + ", Setting busy players=" + playerIdsFeedingNow);
                 _ctrl.props.set( Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE, playerIdsFeedingNow);
             }
         }
