@@ -32,6 +32,7 @@ public class ClientCtx
     public static var preyBloodType :int;
     public static var preyIsAi :Boolean;
     public static var awardedTrophies :HashSet;
+    public static var lastRoundResults :RoundOverMsg;
 
     public static function init () :void
     {
@@ -44,6 +45,7 @@ public class ClientCtx
         preyBloodType = -1;
         preyIsAi = false;
         awardedTrophies = new HashSet();
+        lastRoundResults = null;
     }
 
     public static function awardTrophySequence (trophyNames :Array, valueRequirements :Array,
@@ -154,6 +156,16 @@ public class ClientCtx
             className,
             disableMouseInteraction,
             fromCache);
+    }
+
+    public static function createSpecialStrainMovie (strain :int,
+        disableMouseInteraction :Boolean = false, fromCache :Boolean = false) :MovieClip
+    {
+        var movie :MovieClip =
+            instantiateMovieClip("blood", "cell_strain", disableMouseInteraction, fromCache);
+        var typeMovie :MovieClip = movie["type"];
+        typeMovie.gotoAndStop(strain + 1);
+        return movie;
     }
 }
 

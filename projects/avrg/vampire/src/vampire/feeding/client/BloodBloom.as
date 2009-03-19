@@ -157,7 +157,7 @@ public class BloodBloom extends FeedingClient
         log.info("Changing mode", "mode", modeName);
 
         if (modeName == Constants.MODE_LOBBY) {
-            ClientCtx.mainLoop.unwindToMode(new LobbyMode());
+            ClientCtx.mainLoop.unwindToMode(new LobbyMode(ClientCtx.lastRoundResults));
 
         } else if (modeName == Constants.MODE_PLAYING) {
             var gamePlayers :Array = Util.keys(ClientCtx.props.get(Props.GAME_PLAYERS));

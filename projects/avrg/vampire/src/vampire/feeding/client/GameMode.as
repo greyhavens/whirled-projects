@@ -201,7 +201,7 @@ public class GameMode extends AppMode
 
     protected function onRoundOver (results :RoundOverMsg) :void
     {
-        ClientCtx.mainLoop.changeMode(new RoundOverMode(results));
+        ClientCtx.lastRoundResults = results;
     }
 
     protected function onCreateMultiplier (msg :CreateMultiplierMsg) :void

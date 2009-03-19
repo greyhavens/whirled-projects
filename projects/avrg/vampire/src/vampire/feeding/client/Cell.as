@@ -23,10 +23,9 @@ public class Cell extends CollidableObj
     public static function createCellSprite (cellType :int, multiplierOrStrain :int) :Sprite
     {
         var sprite :Sprite = SpriteUtil.createSprite();
-        var movieName :String = (cellType == Constants.CELL_SPECIAL ?
-                                 SPECIAL_STRAIN_MOVIES[multiplierOrStrain] :
-                                 CELL_MOVIES[cellType]);
-        var movie :MovieClip = ClientCtx.instantiateMovieClip("blood", movieName, true, true);
+        var movie :MovieClip = (cellType == Constants.CELL_SPECIAL ?
+            ClientCtx.createSpecialStrainMovie(multiplierOrStrain, true, true) :
+            ClientCtx.instantiateMovieClip("blood", CELL_MOVIES[cellType], true, true));
         movie.gotoAndPlay(1);
         sprite.addChild(movie);
 
@@ -368,20 +367,6 @@ public class Cell extends CollidableObj
     protected static const SPECIAL_CELL_AVOID_PLAYER_TIME :Number = 0.5;
 
     protected static const CELL_MOVIES :Array = [ "cell_red", "cell_white", "cell_coop" ];
-    protected static const SPECIAL_STRAIN_MOVIES :Array = [
-        "type_01",
-        "type_02",
-        "type_03",
-        "type_04",
-        "type_05",
-        "type_06",
-        "type_07",
-        "type_08",
-        "type_09",
-        "type_10",
-        "type_11",
-        "type_12",
-    ];
 }
 
 }

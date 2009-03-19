@@ -15,7 +15,9 @@ public class LostSpecialStrainAnim
 {
     public function LostSpecialStrainAnim (strain :int, x :int, y :int)
     {
-        _movie = ClientCtx.instantiateMovieClip("blood", MOVIES[strain], true, true);
+        _movie = ClientCtx.createSpecialStrainMovie(strain, true, true);
+        _movie.gotoAndPlay(1);
+
         _sprite = SpriteUtil.createSprite();
         _sprite.addChild(_movie);
 
@@ -42,21 +44,6 @@ public class LostSpecialStrainAnim
 
     protected var _sprite :Sprite;
     protected var _movie :MovieClip;
-
-    protected static const MOVIES :Array = [
-        "type_01",
-        "type_02",
-        "type_03",
-        "type_04",
-        "type_05",
-        "type_06",
-        "type_07",
-        "type_08",
-        "type_09",
-        "type_10",
-        "type_11",
-        "type_12",
-    ];
 }
 
 }
