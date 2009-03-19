@@ -15,7 +15,6 @@ import flash.display.Sprite;
 import flash.geom.Point;
 
 import vampire.client.ClientContext;
-import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.VConstants;
 
 /**
@@ -29,11 +28,6 @@ public class AvatarHUD extends SceneObject
 {
     public function AvatarHUD(ctrl :AVRGameControl, userId :int)//,  updateCallback :Function )//roomCtrl :RoomSubControlBase,
     {
-//        if( roomCtrl == null )
-//        {
-//            throw new Error("Cannot create NonPlayerAvatar without RoomSubControlBase");
-//        }
-
         if( ctrl == null ) {
             throw new Error("AVRGameControl cannot be null");
         }
@@ -46,7 +40,7 @@ public class AvatarHUD extends SceneObject
         _displaySprite = new Sprite();
 
         registerListener( _ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, avatarChanged);
-
+        updateHotspot();
 
 
 
@@ -87,12 +81,16 @@ public class AvatarHUD extends SceneObject
     protected function avatarChanged(...ignored) :void
     {
         _entityId = null;
+        updateHotspot();
+    }
 
+    protected function updateHotspot () :void
+    {
         var newHotspot :Array = _ctrl.room.getEntityProperty(
             EntityControl.PROP_HOTSPOT, entityId) as Array;
-
         setHotspot( newHotspot );
     }
+
     override protected function update(dt:Number) :void
     {
         super.update(dt);
@@ -512,17 +510,7 @@ public class AvatarHUD extends SceneObject
 
     public function setLocation (location :Array, dt :Number) :void
     {
-//        if( location != null && _isMoving && ArrayUtil.equals( location, _location ) ) {
-//            //We assume the avatar has arrived.  Send an avatar arrived event.
-//            dispatchEvent( new PlayerArrivedAtLocationEvent() );
-//            _isMoving = false;
-//        }
-
-//        if( ArrayUtil.equals( location, _location )) {
-//            return;
-//        }
-
-//        _isMoving = true;
+        updateHotspot();
 
         _location = location;
         var newXY :Point = locationToRoomCoords( _ctrl, location, hotspot, _displaySprite );
@@ -760,7 +748,7 @@ public class AvatarHUD extends SceneObject
 
     public function get entityId () :String
     {
-        avatarChanged();
+//        avatarChanged();
 
         if( _entityId == null ) {
             for each( var entityId :String in _ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {

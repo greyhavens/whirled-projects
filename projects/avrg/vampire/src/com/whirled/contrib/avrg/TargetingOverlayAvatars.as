@@ -10,7 +10,6 @@ import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 
-import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.VConstants;
 
 //import vampire.data.Codes;
@@ -131,10 +130,6 @@ public class TargetingOverlayAvatars extends TargetingOverlay
 //            trace("Creating avatarHUD for " + userId);
             if( !_avatars.containsKey( userId ) ) {
                 var playerAvatar :AvatarHUD = createPlayerAvatar( userId );
-//                registerListener( playerAvatar, PlayerArrivedAtLocationEvent.PLAYER_ARRIVED,
-//                    function(...ignored) :void {
-//                        dispatchEvent( new PlayerArrivedAtLocationEvent() );
-//                    });
                 mode.addSceneObject( playerAvatar, _paintableOverlay );
                 _avatars.put( userId, playerAvatar );
             }
