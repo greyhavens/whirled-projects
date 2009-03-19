@@ -158,12 +158,14 @@ public class Room extends SimObject
             }
 
             //Update the playerIds of players playing the feeding game
-            var playerIdsFeedingNow :Array = bloodBloomGameManager.players;
+            var playerIdsFeedingNow :Array = bloodBloomGameManager.unavailablePlayers;
+            //Sort for comparion
+            playerIdsFeedingNow.sort();
             var playerIdsFeedingPrevious :Array =
-                _ctrl.props.get( Codes.ROOM_PROP_BLOODBLOOM_PLAYERS ) as Array;
+                _ctrl.props.get( Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE ) as Array;
 
             if( !ArrayUtil.equals( playerIdsFeedingNow, playerIdsFeedingPrevious)) {
-                _ctrl.props.set( Codes.ROOM_PROP_BLOODBLOOM_PLAYERS, playerIdsFeedingNow);
+                _ctrl.props.set( Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE, playerIdsFeedingNow);
             }
         }
         catch (e :Error) {

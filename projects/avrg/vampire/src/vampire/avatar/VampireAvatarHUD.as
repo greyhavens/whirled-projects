@@ -23,9 +23,11 @@ package vampire.avatar
     import vampire.client.SharedPlayerStateClient;
     import vampire.client.VampireController;
     import vampire.client.events.LineageUpdatedEvent;
+    import vampire.client.events.PlayersFeedingEvent;
     import vampire.data.Codes;
     import vampire.data.Logic;
     import vampire.data.VConstants;
+    import vampire.feeding.PlayerFeedingData;
 
 
 /**
@@ -146,15 +148,17 @@ public class VampireAvatarHUD extends AvatarHUD
 
         //Listen for changes in the hierarchy
         registerListener(ClientContext.model, LineageUpdatedEvent.LINEAGE_UPDATED, updateInfoHud);
+        registerListener(ClientContext.model, PlayersFeedingEvent.PLAYERS_FEEDING,
+            handleUnavailablePlayerListChanged);
 
         _feedButton = new SceneButton(_target_UI.button_feed);
 
         //Remove unneeded elements
-        _target_UI.button_frenzy.parent.removeChild( _target_UI.button_frenzy );
-        _target_UI.frenzy_countdown.parent.removeChild( _target_UI.frenzy_countdown );
-        _target_UI.waiting_sign.parent.removeChild( _target_UI.waiting_sign );
-        _target_UI.button_bare.parent.removeChild( _target_UI.button_bare );
-        _target_UI.button_revert.parent.removeChild( _target_UI.button_revert );
+//        _target_UI.button_frenzy.parent.removeChild( _target_UI.button_frenzy );
+//        _target_UI.frenzy_countdown.parent.removeChild( _target_UI.frenzy_countdown );
+//        _target_UI.waiting_sign.parent.removeChild( _target_UI.waiting_sign );
+//        _target_UI.button_bare.parent.removeChild( _target_UI.button_bare );
+//        _target_UI.button_revert.parent.removeChild( _target_UI.button_revert );
 
 
 
@@ -218,8 +222,12 @@ public class VampireAvatarHUD extends AvatarHUD
         _hierarchyIcon.scaleX = _hierarchyIcon.scaleY = 0.8;
         _bloodBondIcon = ClientContext.instantiateMovieClip("HUD", "bond_icon", false);
 
-        _preyStrain = ClientContext.instantiateMovieClip("HUD", "prey_strain", false);
-        _preyStrain.scaleX = _preyStrain.scaleY = 2;
+        _preyStrainDroplet = ClientContext.instantiateMovieClip("HUD", "prey_strain", false);
+        _preyStrainDroplet.scaleX = _preyStrainDroplet.scaleY = 2;
+
+
+//        _preyStrain = ClientContext.instantiateMovieClip("HUD", "type", false);
+
 
 //        //Add a mouse move listener to the blood.  This triggers showing the feed buttons
 //        var showMenuFunction :Function = function(...ignored) :void {
@@ -279,19 +287,23 @@ public class VampireAvatarHUD extends AvatarHUD
         _hudSprite.addChild( _bloodBondIcon );
 
         if( Logic.getPlayerPreferredBloodStrain( ClientContext.ourPlayerId ) == playerId ) {
-            _hudSprite.addChild( _preyStrain );
-            _preyStrain.y -= 15;
+            _hudSprite.addChild( _preyStrainDroplet );
+            _preyStrainDroplet.y -= 15;
         }
 
 
 
         addGlowFilter( _bloodBondIcon );
-        addGlowFilter( _preyStrain );
+        addGlowFilter( _preyStrainDroplet );
 
         //Go to the help page when you click on the icon
-        Command.bind( _hierarchyIcon, MouseEvent.CLICK, VampireController.SHOW_INTRO, "default");
-        Command.bind( _bloodBondIcon, MouseEvent.CLICK, VampireController.SHOW_INTRO, "default");
-        Command.bind( _preyStrain, MouseEvent.CLICK, VampireController.SHOW_INTRO, "bloodtype");
+        Command.bind(_hierarchyIcon, MouseEvent.CLICK, VampireController.SHOW_INTRO, "default");
+        Command.bind(_bloodBondIcon, MouseEvent.CLICK, VampireController.SHOW_INTRO, "default");
+        Command.bind(_preyStrainDroplet, MouseEvent.CLICK,
+            VampireController.SHOW_INTRO, "bloodtype");
+        Command.bind(MovieClip(_target_UI["type"]), MouseEvent.CLICK,
+            VampireController.SHOW_INTRO, "bloodtype");
+
 //        Command.bind( _blood, MouseEvent.CLICK, VampireController.SHOW_INTRO, "feedinggame");
 
 
@@ -302,6 +314,17 @@ public class VampireAvatarHUD extends AvatarHUD
 
         updateInfoHud();
 
+    }
+
+    /**
+    * If we are in the list, sent from the server, of players currently feeding, or predators
+    * in a lobby, make sure we are not available for feeding.
+    */
+    protected function handleUnavailablePlayerListChanged (e :PlayersFeedingEvent) :void
+    {
+        if (ArrayUtil.contains(e.playersFeeding, playerId)) {
+            setDisplayModeInvisible();
+        }
     }
 
 //    protected function setupUIYourAvatar() :void
@@ -874,7 +897,20 @@ public class VampireAvatarHUD extends AvatarHUD
 
         _hierarchyIcon.y = hotspot[1] / 2;
         _bloodBondIcon.y = hotspot[1] / 2;
-        _preyStrain.y = hotspot[1] / 2;
+        _preyStrainDroplet.y = hotspot[1] / 2;
+
+        //Show relevant strain info
+        var bloodType :MovieClip = _target_UI["type"] as MovieClip;
+        bloodType.gotoAndStop(Logic.getPlayerBloodStrain(playerId));
+        var pdf :PlayerFeedingData = ClientContext.model.playerFeedingData;
+        if (pdf.canCollectStrainFromPlayer(Logic.getPlayerBloodStrain(playerId), playerId)){
+            bloodType.visible = true;
+            bloodType.mouseEnabled = true;
+        }
+        else {
+            bloodType.visible = false;
+            bloodType.mouseEnabled = false;
+        }
 
 
     }
@@ -897,6 +933,7 @@ public class VampireAvatarHUD extends AvatarHUD
     protected var _hierarchyIcon :SimpleButton;
 //    protected var _blood :MovieClip;
 //    protected var _bloodMouseDetector :Sprite;
+    protected var _preyStrainDroplet :MovieClip;
     protected var _preyStrain :MovieClip;
 
     protected var _roomKey :String;

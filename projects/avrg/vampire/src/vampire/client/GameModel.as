@@ -23,6 +23,7 @@ import vampire.client.events.ChangeActionEvent;
 import vampire.client.events.ClosestPlayerChangedEvent;
 import vampire.client.events.LineageUpdatedEvent;
 import vampire.client.events.PlayerArrivedAtLocationEvent;
+import vampire.client.events.PlayersFeedingEvent;
 import vampire.data.Codes;
 import vampire.data.Lineage;
 import vampire.data.VConstants;
@@ -151,9 +152,10 @@ public class GameModel extends SimObject//EventDispatcher
 
             if( ClientContext.gameMode.getObjectNamed("Quit") == null) {
                 var popup :PopupQuery = new PopupQuery(ClientContext.ctrl,
-                                                        "Quit",
-                                                        "If you change avatars, you must restart the game.",
-                                                        []);
+                    "Quit",
+                    "Sorry.  Vampire Whirled cannot (yet) handle a mid-game avatar change.  " +
+                    " So I have to shutdown.",
+                    []);
                 ClientContext.gameMode.addSceneObject( popup, ClientContext.gameMode.modeSprite );
 
                 var quitTimer :SimpleTimer = new SimpleTimer(2, function() :void {
@@ -380,19 +382,20 @@ public class GameModel extends SimObject//EventDispatcher
         //Check if it is non-player properties changed??
 //        log.debug(VConstants.DEBUG_MINION + " propChanged", "e", e);
 
-        if( e.name == Codes.ROOM_PROP_MINION_HIERARCHY ) {//|| e.name == Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS) {
 
-//            var playerIds :Array = ClientContext.gameCtrl.room.props.get( Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS ) as Array;
-
-//            if( playerIds == null) {
-//                log.error("propChanged", "e", e, "playerIds", playerIds);
-//                return;
-//            }
-
+        switch (e.name) {
+            case Codes.ROOM_PROP_MINION_HIERARCHY:// ) {//|| e.name == Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS) {
             _hierarchy = loadHierarchyFromProps();
-//            log.debug(VConstants.DEBUG_MINION + " HUD updating hierarchy=" + _hierarchy);
-
             dispatchEvent( new LineageUpdatedEvent( _hierarchy ) );
+            break;
+
+            case Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE:
+            var p :Array = playersFeeding;
+            dispatchEvent( new PlayersFeedingEvent( p ) );
+            break;
+
+            default:
+            break;
         }
 //        else if( e.name == Codes.ROOM_PROP_NON_PLAYERS ) {
 //            updateNonPlayersIds();
@@ -680,7 +683,7 @@ public class GameModel extends SimObject//EventDispatcher
     public function get playersFeeding() :Array
     {
         var feedingPlayers :Array =
-            ClientContext.ctrl.room.props.get( Codes.ROOM_PROP_BLOODBLOOM_PLAYERS ) as Array;
+            ClientContext.ctrl.room.props.get( Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE ) as Array;
 
         return feedingPlayers == null ? [] : feedingPlayers;
     }
