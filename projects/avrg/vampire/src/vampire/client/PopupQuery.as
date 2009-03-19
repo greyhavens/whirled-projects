@@ -16,11 +16,13 @@ import flash.text.TextFormatAlign;
 
 public class PopupQuery extends DraggableSceneObject
 {
-    public function PopupQuery(ctrl :AVRGameControl, name :String, message :String,
+    public function PopupQuery (ctrl :AVRGameControl, name :String, message :String,
         commands :Array, commandArgs :Array = null)
     {
 
         trace("con, commands=" + commands);
+        trace("con, message=" + message);
+        trace("con, name=" + name);
         super(ctrl, name);
         _popupPanel = ClientContext.instantiateMovieClip("HUD", "popup", false);
         _popupPanel.mouseEnabled = true;
@@ -31,6 +33,9 @@ public class PopupQuery extends DraggableSceneObject
             function( e :MouseEvent ) :void {
                 destroySelf();
             });
+
+        commands = ["asdsf", "sdfadsf"]
+
         trace("con, commandArgs=" + commandArgs);
         setupText(message);
         setupCommands(commands, commandArgs);
@@ -55,18 +60,20 @@ public class PopupQuery extends DraggableSceneObject
         tf.width = _popupPanel.width - 40;
         tf.height = _popupPanel.height - 30;
         tf.x = -tf.width / 2;
+        tf.selectable = false;
+        tf.mouseEnabled = false;
         _popupPanel.addChild( tf );
     }
 
-    protected function setupCommands( commands :Array, commandArgs :Array = null): void
+    protected function setupCommands (commands :Array, commandArgs :Array = null): void
     {
         trace("setup, commands" + commands);
         if( commands == null) {
             trace("nu;;");
             return;
         }
-        var startX :int = _popupPanel.width / 2;
-        var startY :int = _popupPanel.height / 2 - 30;
+//        var startX :int = -_popupPanel.width / 2;
+        var startY :int = _popupPanel.height / 2 - 50;
 
         for( var i :int = 0; i < commands.length; i++){
             var command :String = commands[i] as String;
@@ -85,9 +92,9 @@ public class PopupQuery extends DraggableSceneObject
             var b :SimpleTextButton = new SimpleTextButton(command);
             Command.bind( b, MouseEvent.CLICK, command,  commandArg );
             _popupPanel.addChild( b );
-            b.x = startX;
+//            b.x = startX;
             b.y = startY;
-            startY += 50;
+            startY += 30;
         }
     }
 

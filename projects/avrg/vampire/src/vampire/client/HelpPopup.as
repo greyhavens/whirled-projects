@@ -493,9 +493,9 @@ package vampire.client
                     Logic.invitesNeededForLevel( level + 1 );
 
             _infoText.text =
-                "Blood: " + Util.formatNumberForFeedback(ClientContext.model.blood) + "/"
-                + ClientContext.model.maxblood
-                + "       Level: " + level
+//                "Blood: " + Util.formatNumberForFeedback(ClientContext.model.blood) + "/"
+//                + ClientContext.model.maxblood
+                "       Level: " + level
                 + "    Experience: " + Util.formatNumberForFeedback(ourXPForOurLevel) + " / " + xpGap + "\n"
                 + inviteText
                 + ""
