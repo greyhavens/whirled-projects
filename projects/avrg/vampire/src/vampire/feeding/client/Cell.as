@@ -20,12 +20,13 @@ public class Cell extends CollidableObj
     public static const STATE_PREPARING_TO_EXPLODE :int = 2;
     public static const STATE_AVOID_PLAYER :int = 3;
 
-    public static function createCellSprite (cellType :int, multiplierOrStrain :int) :Sprite
+    public static function createCellSprite (cellType :int, multiplierOrStrain :int,
+                                             fromCache :Boolean) :Sprite
     {
         var sprite :Sprite = SpriteUtil.createSprite();
         var movie :MovieClip = (cellType == Constants.CELL_SPECIAL ?
-            ClientCtx.createSpecialStrainMovie(multiplierOrStrain, true, true) :
-            ClientCtx.instantiateMovieClip("blood", CELL_MOVIES[cellType], true, true));
+            ClientCtx.createSpecialStrainMovie(multiplierOrStrain, fromCache) :
+            ClientCtx.instantiateMovieClip("blood", CELL_MOVIES[cellType], true, fromCache));
         movie.gotoAndPlay(1);
         sprite.addChild(movie);
 
@@ -76,11 +77,12 @@ public class Cell extends CollidableObj
         _state = STATE_NORMAL;
         _needsBirth = beingBorn;
 
-        _sprite = createCellSprite(type, multiplierOrStrain);
+        _movieLoadedFromCache = (_type != Constants.CELL_SPECIAL);
+        _sprite = createCellSprite(type, multiplierOrStrain, _movieLoadedFromCache);
         _movie = MovieClip(_sprite.getChildAt(0));
 
-        if (type == Constants.CELL_RED || type == Constants.CELL_MULTIPLIER) {
-            var rotationTime :Number = (type == Constants.CELL_RED ?
+        if (_type == Constants.CELL_RED || _type == Constants.CELL_MULTIPLIER) {
+            var rotationTime :Number = (_type == Constants.CELL_RED ?
                 RED_ROTATION_TIME : BONUS_ROTATION_TIME);
             addTask(new SerialTask(
                 new VariableTimedTask(0, 1, Rand.STREAM_GAME),
@@ -91,11 +93,11 @@ public class Cell extends CollidableObj
     override protected function addedToDB () :void
     {
         if (_needsBirth) {
-            if (type == Constants.CELL_RED) {
+            if (_type == Constants.CELL_RED) {
                 birthRedCell();
-            } else if (type == Constants.CELL_WHITE) {
+            } else if (_type == Constants.CELL_WHITE) {
                 birthWhiteCell();
-            } else if (type == Constants.CELL_SPECIAL) {
+            } else if (_type == Constants.CELL_SPECIAL) {
                 birthSpecialCell();
             }
 
@@ -112,7 +114,9 @@ public class Cell extends CollidableObj
 
     override protected function destroyed () :void
     {
-        SwfResource.releaseMovieClip(_movie);
+        if (_movieLoadedFromCache) {
+            SwfResource.releaseMovieClip(_movie);
+        }
         super.destroyed();
     }
 
@@ -350,6 +354,7 @@ public class Cell extends CollidableObj
 
     protected var _sprite :Sprite;
     protected var _movie :MovieClip;
+    protected var _movieLoadedFromCache :Boolean;
 
     protected static const SPEED_BASE :Number = 5;
     protected static const SPEED_FOLLOW :Number = 60;

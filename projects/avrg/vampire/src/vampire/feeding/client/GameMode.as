@@ -138,14 +138,23 @@ public class GameMode extends AppMode
         addObject(whiteCellSpawner);
 
         var timerView :TimerView = new TimerView();
-        timerView.x = TIMER_LOC.x;
-        timerView.y = TIMER_LOC.y;
+        timerView.x = Constants.GAME_CTR.x;
+        timerView.y = Constants.GAME_CTR.y;
         addSceneObject(timerView, GameCtx.uiLayer);
 
         GameCtx.scoreView = new ScoreHelpQuitView();
-        GameCtx.scoreView.x = SCORE_LOC.x;
-        GameCtx.scoreView.y = SCORE_LOC.y;
+        GameCtx.scoreView.x = Constants.GAME_CTR.x;
+        GameCtx.scoreView.y = Constants.GAME_CTR.y;
         addSceneObject(GameCtx.scoreView, GameCtx.uiLayer);
+
+        if (!ClientCtx.isPrey && ClientCtx.preyBloodType >= 0) {
+            GameCtx.strainTallyView = new StrainTallyView(
+                ClientCtx.preyBloodType,
+                ClientCtx.playerData.getStrainCount(ClientCtx.preyBloodType));
+            GameCtx.strainTallyView.x = Constants.GAME_CTR.x;
+            GameCtx.strainTallyView.y = Constants.GAME_CTR.y;
+            addSceneObject(GameCtx.strainTallyView, GameCtx.uiLayer);
+        }
 
         GameCtx.cursor = GameObjects.createPlayerCursor();
 
@@ -202,6 +211,9 @@ public class GameMode extends AppMode
     protected function onRoundOver (results :RoundOverMsg) :void
     {
         ClientCtx.lastRoundResults = results;
+        if (!ClientCtx.isConnected) {
+            ClientCtx.mainLoop.changeMode(new LobbyMode(results));
+        }
     }
 
     protected function onCreateMultiplier (msg :CreateMultiplierMsg) :void
@@ -332,10 +344,6 @@ public class GameMode extends AppMode
     protected var _musicChannel :AudioChannel;
 
     protected static var log :Log = Log.getLog(GameMode);
-
-    protected static const SCORE_LOC :Point = Constants.GAME_CTR.toPoint();
-    protected static const TIMER_LOC :Point = Constants.GAME_CTR.toPoint();
-    protected static const SCORE_VIEWS_LOC :Point = new Point(550, 120);
 }
 
 }

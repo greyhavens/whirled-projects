@@ -15,7 +15,7 @@ public class LostSpecialStrainAnim
 {
     public function LostSpecialStrainAnim (strain :int, x :int, y :int)
     {
-        _movie = ClientCtx.createSpecialStrainMovie(strain, true, true);
+        _movie = ClientCtx.createSpecialStrainMovie(strain);
         _movie.gotoAndPlay(1);
 
         _sprite = SpriteUtil.createSprite();
@@ -35,11 +35,6 @@ public class LostSpecialStrainAnim
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
-    }
-
-    override protected function destroyed () :void
-    {
-        SwfResource.releaseMovieClip(_movie);
     }
 
     protected var _sprite :Sprite;

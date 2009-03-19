@@ -17,10 +17,7 @@ public class GameObjects
 
     public static function createSpecialBloodAnim (fromCell :Cell) :void
     {
-        GameCtx.gameMode.addSceneObject(
-            new GotSpecialStrainAnim(fromCell.specialStrain, fromCell.x, fromCell.y),
-            GameCtx.uiLayer);
-
+        GameCtx.strainTallyView.playGotStrainAnim(fromCell.x, fromCell.y);
         fromCell.destroySelf();
     }
 

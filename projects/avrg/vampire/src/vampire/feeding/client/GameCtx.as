@@ -14,6 +14,7 @@ public class GameCtx
     public static var cursor :PlayerCursor;
     public static var scoreView :ScoreHelpQuitView;
     public static var specialCellSpawner :SpecialCellSpawner;
+    public static var strainTallyView :StrainTallyView;
 
     public static var bgLayer :Sprite;
     public static var cellBirthLayer :Sprite;
