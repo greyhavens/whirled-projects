@@ -69,7 +69,7 @@ public class ScoreHelpQuitView extends SceneObject
         // fly the cell to the meter, make it disappear, increase the blood count
         cellObj.addTask(new SerialTask(
             new TimedTask(delay),
-            LocationTask.CreateSmooth(196, -147, 1),
+            LocationTask.CreateSmooth(221, -138, 1),
             new FunctionTask(
                 function () :void {
                     _displayedBloodCount += CELL_SIZE_VALUES[size];
@@ -77,12 +77,8 @@ public class ScoreHelpQuitView extends SceneObject
             new SelfDestructTask()));
 
         cellObj.addTask(new SerialTask(
-            new TimedTask(delay + 0.7),
-            new FunctionTask(function () :void {
-                ClientCtx.audio.playSoundNamed("sfx_got_blood")
-            })));
-
-        cellObj.addTask(After(delay + 0.9, new AlphaTask(0, 0.1)));
+            new TimedTask(delay + 0.85),
+            new PlaySoundTask("sfx_got_blood")));
 
         return cellObj;
     }
