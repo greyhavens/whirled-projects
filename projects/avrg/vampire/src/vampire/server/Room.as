@@ -31,13 +31,13 @@ public class Room extends SimObject
         return _roomId;
     }
 
-    override public function get objectName():String
+    override public function get objectName () :String
     {
         return "Room " + _roomId;
     }
 
 
-    public function get isStale() :Boolean
+    public function get isStale () :Boolean
     {
         return !isLiveObject || isShutdown || _ctrl == null || !_ctrl.isConnected();
     }
@@ -178,9 +178,9 @@ public class Room extends SimObject
     }
 
 
-    public function isPlayer( userId :int ) :Boolean
+    public function isPlayer (userId :int) :Boolean
     {
-        return ArrayUtil.contains( ctrl.getPlayerIds(), userId );
+        return ArrayUtil.contains(ctrl.getPlayerIds(), userId);
     }
 
 
@@ -210,7 +210,7 @@ public class Room extends SimObject
         }
     }
 
-    public function destroy(...ignored):void
+    public function destroy (...ignored) :void
     {
         if( isLiveObject ) {
             destroySelf();
@@ -243,49 +243,17 @@ public class Room extends SimObject
         }
     }
 
-//    protected function handlePlayerMoved( e :AVRGameRoomEvent ) :void
-//    {
-//        log.debug("handlePlayerMoved() " + e);
-//
-//
-//        _players.forEach( function(playerId :int, p :PlayerData) :void {
-//            if( p.playerId == int(e.value)) {
-//                ServerLogic.handleAvatarMoved( p, int(e.value) );
-////               p.handleAvatarMoved(int(e.value) );
-//            }
-//        });
-//    }
-
-
-    public function getCurrentBlood( userId :int ) :Number
-    {
-        if( ServerContext.server.isPlayer( userId ) ) {
-            return ServerContext.server.getPlayer( userId ).blood;
-        }
-        return ServerContext.npBlood.bloodAvailableFromNonPlayer( userId );
-    }
-
-    public function getMaxBlood( userId :int ) :Number
-    {
-        if( ServerContext.server.isPlayer( userId ) ) {
-            return ServerContext.server.getPlayer( userId ).maxBlood;
-        }
-        return ServerContext.npBlood.maxBloodFromNonPlayer( userId );
-    }
-
-
-
-    public function get players() :HashMap
+    public function get players () :HashMap
     {
         return _players;
     }
 
-    public function getPlayer( playerId :int ) :PlayerData
+    public function getPlayer (playerId :int) :PlayerData
     {
         return _players.get( playerId ) as PlayerData;
     }
 
-    public function get playerIds() :Array
+    public function get playerIds () :Array
     {
         return _players.keys();
     }
@@ -297,7 +265,7 @@ public class Room extends SimObject
 //        return _roomDB;
 //    }
 
-    public function addFeedback( msg :String, playerId :int = 0 ) :void
+    public function addFeedback (msg :String, playerId :int = 0) :void
     {
         log.debug(playerId + " " + msg);
         _feedbackMessageQueue.push( [playerId, msg] );

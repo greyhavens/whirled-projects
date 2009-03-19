@@ -58,11 +58,14 @@ public class BloodBloomGameRecord extends EventCollecter
 
         var gamePreyId :int = _room.isPlayer( _preyId ) ? _preyId : 0;
 
-        var preyBlood :Number = _room.isPlayer( _preyId ) ?
-            _room.getPlayer( _preyId ).blood / _room.getPlayer( _preyId ).maxBlood
-            :
-            ServerContext.npBlood.bloodAvailableFromNonPlayer( _preyId ) /
-            ServerContext.npBlood.maxBloodFromNonPlayer( _preyId );
+
+        //We have disabled blood, until the game gets more interesting.
+        var preyBlood :Number = 1.0;
+//        var preyBlood :Number = _room.isPlayer( _preyId ) ?
+//            _room.getPlayer( _preyId ).blood / _room.getPlayer( _preyId ).maxBlood
+//            :
+//            ServerContext.npBlood.bloodAvailableFromNonPlayer( _preyId ) /
+//            ServerContext.npBlood.maxBloodFromNonPlayer( _preyId );
 
         var preyBloodType :int = Logic.getPlayerBloodStrain(_preyId);
 
@@ -154,14 +157,15 @@ public class BloodBloomGameRecord extends EventCollecter
                 log.error("roundCompleteCallback, but gameserver is null, no points!");
             }
 
-
-            if( _room.isPlayer( _preyId ) ) {
-                return _room.getPlayer( _preyId ).blood / _room.getPlayer( _preyId ).maxBlood;
-            }
-            else {
-                return ServerContext.npBlood.bloodAvailableFromNonPlayer( _preyId ) /
-                    ServerContext.npBlood.maxBloodFromNonPlayer(_preyId);
-            }
+            //For the moment we don't record the amount of blood in anyone.
+//            if( _room.isPlayer( _preyId ) ) {
+//                return _room.getPlayer( _preyId ).blood / _room.getPlayer( _preyId ).maxBlood;
+//            }
+//            else {
+//                return ServerContext.npBlood.bloodAvailableFromNonPlayer( _preyId ) /
+//                    ServerContext.npBlood.maxBloodFromNonPlayer(_preyId);
+//            }
+            return 1;
         }
         catch( err :Error ) {
             log.error(err.getStackTrace());
