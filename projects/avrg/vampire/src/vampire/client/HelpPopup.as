@@ -213,9 +213,9 @@ package vampire.client
                     tf.gotoAndStop(3);
                 }
 
-                if( Logic.getPlayerPreferredBloodStrain( ClientContext.ourPlayerId ) == i) {
-                    tf.gotoAndStop(2);
-                }
+//                if( Logic.getPlayerPreferredBloodStrain( ClientContext.ourPlayerId ) == i) {
+//                    tf.gotoAndStop(2);
+//                }
 
                 TextField(tf["tally"]).text = "";
                 var tally :TextField = TextField(tf["tally"]);
