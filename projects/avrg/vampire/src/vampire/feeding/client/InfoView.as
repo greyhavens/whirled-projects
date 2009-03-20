@@ -42,8 +42,8 @@ public class InfoView extends SceneObject
     {
         _okCallback = okCallback;
         _movie = ClientCtx.instantiateMovieClip("blood", "info_panel");
-        var okBtn :SimpleButton = _movie["button_ok"];
-        registerListener(okBtn, MouseEvent.CLICK,
+        var closeBtn :SimpleButton = _movie["button_done"];
+        registerListener(closeBtn, MouseEvent.CLICK,
             function (...ignored) :void {
                 InfoView.hide();
                 if (_okCallback != null) {
@@ -66,7 +66,7 @@ public class InfoView extends SceneObject
     protected var _okCallback :Function;
 
     protected static const NAME :String = "InfoView";
-    protected static const LOC :Vector2 = new Vector2(540, 0);
+    protected static const LOC :Vector2 = new Vector2(550, 30);
 }
 
 }
