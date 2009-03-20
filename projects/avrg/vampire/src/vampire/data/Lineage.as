@@ -248,10 +248,10 @@ public class Lineage extends SimObject
     */
     public function isMemberOfLineage( playerId :int ) :Boolean
     {
-        if( playerId == VConstants.UBER_VAMP_ID) {
+        if (Logic.isProgenitor(playerId)) {
             return true;
         }
-        return getAllSiresAndGrandSires(playerId).contains( VConstants.UBER_VAMP_ID );
+        return getAllSiresAndGrandSires(playerId).contains(VConstants.UBER_VAMP_ID);
     }
 
     public function toStringOld() :String

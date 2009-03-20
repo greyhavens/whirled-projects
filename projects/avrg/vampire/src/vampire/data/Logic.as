@@ -123,6 +123,16 @@ public class Logic
     }
 
     /**
+    * You cannot be a sire from feeding unless you are a connected to the official Lineage,
+    * meaning that your great-great-great sire is the Übervamp.
+    *
+    */
+    public static function isProgenitor (playerId :int) :Boolean
+    {
+        return playerId == VConstants.UBER_VAMP_ID;
+    }
+
+    /**
     * [level, minimum number of invites]
     */
     public static const LEVEL_INVITE_CAPS :Array = [
