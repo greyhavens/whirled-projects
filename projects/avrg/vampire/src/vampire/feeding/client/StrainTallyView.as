@@ -46,6 +46,7 @@ public class StrainTallyView extends SceneObject
         } else {
             anim.x = slotMovie.x;
             anim.y = slotMovie.y;
+            anim.scaleX = anim.scaleY = CELL_SCALE;
         }
 
         _strainCount++;
@@ -78,6 +79,8 @@ import vampire.feeding.*;
 import vampire.feeding.client.*;
 import flash.geom.Point;
 
+const CELL_SCALE :Number = 0.6;
+
 class GotSpecialStrainAnim
     extends SceneObject
 {
@@ -95,7 +98,7 @@ class GotSpecialStrainAnim
             new PlaySoundTask("sfx_got_special_strain"),
             new WaitForFrameTask(55, _movie),
             LocationTask.CreateSmooth(end.x, end.y, 1.25),
-            new ScaleTask(0.6, 0.6, 0.5),
+            new ScaleTask(CELL_SCALE, CELL_SCALE, 0.5),
             new GoToFrameTask(1)));
     }
 
