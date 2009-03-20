@@ -1047,10 +1047,10 @@ public class ServerLogic
             return;
         }
 
-        if( gameRecord.gameServer.lastRoundScore == 0 ) {
-            log.debug("score==0 so no blood lost or gained.");
-            return;
-        }
+//        if( gameRecord.gameServer.lastRoundScore == 0 ) {
+//            log.debug("score==0 so no blood lost or gained.");
+//            return;
+//        }
 
         var srv :GameServer = ServerContext.server;
         var room :Room = gameRecord.room;
@@ -1110,13 +1110,13 @@ public class ServerLogic
 //            log.debug(predatorId + " gained " + bloodGainedPerPredatorFormatted);
 //            pred.addFeedback( "You gained " + bloodGainedPerPredatorFormatted + " blood!");
 
-            if( preyIsPlayer && preyPlayer != null ) {
+            if (preyIsPlayer && preyPlayer != null) {
 
                 //Check if we don't have a sire.  The prey vampire becomes it.
-                if( pred.sire == 0 ) {
+                if (pred.sire == 0) {
 
 
-                    if( true || ServerContext.lineage.isMemberOfLineage( preyId )) {
+                    if (ServerContext.lineage.isMemberOfLineage( preyId )) {
                         makeSire( pred,  preyPlayer.playerId );
                         pred.addFeedback( preyPlayer.name + " has become your sire ");
 
@@ -1169,8 +1169,12 @@ public class ServerLogic
 
         function awardXP( playerId :int, xp :Number, xpFormatted :String ) :void
         {
+            if (xp == 0) {
+                return;
+            }
+
             var p :PlayerData = ServerContext.server.getPlayer( playerId );
-            if( p != null ) {
+            if (p != null) {
                 addXP( p.playerId, xp );
                 p.addFeedback("You gained " + xpFormatted + " experience!");
                 //Add some bonus xp to your blood bond, if they are online
