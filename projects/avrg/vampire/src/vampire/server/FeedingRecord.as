@@ -9,6 +9,7 @@ import com.whirled.contrib.simplegame.EventCollecter;
 
 import vampire.data.Logic;
 import vampire.data.VConstants;
+import vampire.feeding.Constants;
 import vampire.feeding.FeedingServer;
 
 public class FeedingRecord extends EventCollecter
@@ -64,7 +65,7 @@ public class FeedingRecord extends EventCollecter
         _started = true;
 //        _elapsedGameTime = 0;
 
-        var gamePreyId :int = _room.isPlayer( _preyId ) ? _preyId : 0;
+        var gamePreyId :int = _room.isPlayer( _preyId ) ? _preyId : Constants.NULL_PLAYER;
 
 
         //We have disabled blood, until the game gets more interesting.
@@ -185,7 +186,7 @@ public class FeedingRecord extends EventCollecter
 //                return ServerContext.npBlood.bloodAvailableFromNonPlayer( _preyId ) /
 //                    ServerContext.npBlood.maxBloodFromNonPlayer(_preyId);
 //            }
-            return 1;
+            return 0.1;
         }
         catch( err :Error ) {
             log.error(err.getStackTrace());
