@@ -78,6 +78,7 @@ import flash.display.Sprite;
 import vampire.feeding.*;
 import vampire.feeding.client.*;
 import flash.geom.Point;
+import flash.events.Event;
 
 const CELL_SCALE :Number = 0.6;
 
@@ -86,20 +87,26 @@ class GotSpecialStrainAnim
 {
     public function GotSpecialStrainAnim (strain :int)
     {
+        _strain = strain;
         _movie = ClientCtx.createSpecialStrainMovie(strain);
-        _movie.gotoAndPlay(1);
+        /*_events.registerListener(_movie, Event.ENTER_FRAME,
+            function (...ignored) :void {
+                var typeMovie :MovieClip = _movie["type"];
+                typeMovie = typeMovie["type"];
+                typeMovie.gotoAndStop(strain + 1);
+            });*/
     }
 
     public function animate (end :Point) :void
     {
-        _movie.gotoAndPlay(2);
+        _movie.play();
 
         addTask(new SerialTask(
             new PlaySoundTask("sfx_got_special_strain"),
             new WaitForFrameTask(55, _movie),
             LocationTask.CreateSmooth(end.x, end.y, 1.25),
             new ScaleTask(CELL_SCALE, CELL_SCALE, 0.5),
-            new GoToFrameTask(1)));
+            new GoToFrameTask(1, null, false)));
     }
 
     override public function get displayObject () :DisplayObject
@@ -108,4 +115,5 @@ class GotSpecialStrainAnim
     }
 
     protected var _movie :MovieClip;
+    protected var _strain :int;
 }

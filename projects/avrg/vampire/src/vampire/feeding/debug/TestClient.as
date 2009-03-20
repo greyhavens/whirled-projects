@@ -83,7 +83,7 @@ public class TestClient extends Sprite
         // In the test client, we just disconnect from the game when it ends.
         _gameCtrl.player.deactivateGame();
 
-        freezeAvatars(false);
+        //freezeAvatars(false);
     }
 
     protected function freezeAvatars (freeze :Boolean) :void

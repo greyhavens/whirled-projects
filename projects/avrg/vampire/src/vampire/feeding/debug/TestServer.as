@@ -30,6 +30,7 @@ import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.ManagedTimer;
 import vampire.data.Logic;
+import vampire.data.VConstants;
 
 class TestGameController extends OneRoomGameRoom
 {
@@ -111,13 +112,16 @@ class TestGameController extends OneRoomGameRoom
         var preyId :int = players.pop();
         var predatorId :int = (players.length > 0 ? players.pop() : Constants.NULL_PLAYER);
 
+        var preyBloodStrain :int =
+            Rand.nextIntRange(0, VConstants.UNIQUE_BLOOD_STRAINS, Rand.STREAM_COSMETIC);
+
         var game :FeedingServer = FeedingServer.create(
             _roomCtrl.getRoomId(),
             predatorId,
             preyId,
             _preyBlood,
             // the amount of blood the prey is starting the feeding with
-            Logic.getPlayerBloodStrain(preyId),
+            preyBloodStrain,
             function () :void {
                 log.info("Game started", "gameId", game.gameId);
             },

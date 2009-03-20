@@ -163,8 +163,12 @@ public class ClientCtx
     {
         var movie :MovieClip =
             instantiateMovieClip("blood", "cell_strain", disableMouseInteraction, fromCache);
+        movie.gotoAndStop(1);
+
         var typeMovie :MovieClip = movie["type"];
+        typeMovie = typeMovie["type"];
         typeMovie.gotoAndStop(strain + 1);
+
         return movie;
     }
 }

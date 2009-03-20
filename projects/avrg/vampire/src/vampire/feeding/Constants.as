@@ -7,7 +7,7 @@ public class Constants
 {
     public static const DEBUG_SHOW_STATS :Boolean = false;
     public static const DEBUG_DISABLE_AUDIO :Boolean = false;
-    public static const DEBUG_FORCE_SPECIAL_BLOOD_STRAIN :Boolean = false;
+    public static const DEBUG_FORCE_SPECIAL_BLOOD_STRAIN :Boolean = true;
 
     public static const GAME_TIME :Number = 60 * 2;
 
@@ -56,7 +56,7 @@ public class Constants
     public static const WHITE_CELL_EXPLODE_TIME :Number = 7;
 
     public static const SPECIAL_CELL_CREATION_TIME :NumRange =
-        new NumRange(14, 20, Rand.STREAM_GAME);
+        new NumRange(1, 1, Rand.STREAM_GAME);
     public static const MAX_COLLECTIONS_PER_STRAIN :int = 3;
 
     public static const RED_BURST_RADIUS_MIN :Number = 8;

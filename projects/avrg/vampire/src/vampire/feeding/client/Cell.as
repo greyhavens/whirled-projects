@@ -23,11 +23,16 @@ public class Cell extends CollidableObj
     public static function createCellSprite (cellType :int, multiplierOrStrain :int,
                                              fromCache :Boolean) :Sprite
     {
+        var movie :MovieClip;
+        if (cellType == Constants.CELL_SPECIAL) {
+            movie = ClientCtx.createSpecialStrainMovie(multiplierOrStrain, fromCache);
+            movie.gotoAndStop(1);
+        } else {
+            movie = ClientCtx.instantiateMovieClip("blood", CELL_MOVIES[cellType], true, fromCache);
+            movie.gotoAndPlay(1);
+        }
+
         var sprite :Sprite = SpriteUtil.createSprite();
-        var movie :MovieClip = (cellType == Constants.CELL_SPECIAL ?
-            ClientCtx.createSpecialStrainMovie(multiplierOrStrain, fromCache) :
-            ClientCtx.instantiateMovieClip("blood", CELL_MOVIES[cellType], true, fromCache));
-        movie.gotoAndPlay(1);
         sprite.addChild(movie);
 
         if (cellType == Constants.CELL_MULTIPLIER) {

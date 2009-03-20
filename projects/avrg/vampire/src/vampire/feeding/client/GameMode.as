@@ -136,11 +136,11 @@ public class GameMode extends AppMode
             })));
         addObject(whiteCellSpawner);
 
-        GameCtx.bonusSentIndicator = new BonusSentIndicator(
+        GameCtx.sentMultiplierIndicator = new SentMultiplierIndicator(
             ClientCtx.isPredator ?
             BONUS_SENT_INDICATOR_PREDATOR_LOC :
             BONUS_SENT_INDICATOR_PREY_LOC);
-        addSceneObject(GameCtx.bonusSentIndicator, GameCtx.uiLayer);
+        addSceneObject(GameCtx.sentMultiplierIndicator, GameCtx.uiLayer);
 
         var timerView :TimerView = new TimerView();
         timerView.x = Constants.GAME_CTR.x;

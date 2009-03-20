@@ -16,16 +16,11 @@ public class LostSpecialStrainAnim
     public function LostSpecialStrainAnim (strain :int, x :int, y :int)
     {
         _movie = ClientCtx.createSpecialStrainMovie(strain);
-        _movie.gotoAndPlay(1);
-
-        _sprite = SpriteUtil.createSprite();
-        _sprite.addChild(_movie);
-
         addTask(new SerialTask(
             new PlaySoundTask("sfx_popped_special_strain"),
             new ParallelTask(
                 ScaleTask.CreateSmooth(0, 0, 0.7),
-                ColorMatrixBlendTask.colorize(0xffffff, 0, 0.3, _sprite)),
+                ColorMatrixBlendTask.colorize(0xffffff, 0, 0.3, _movie)),
             new SelfDestructTask()));
 
         this.x = x;
@@ -34,10 +29,9 @@ public class LostSpecialStrainAnim
 
     override public function get displayObject () :DisplayObject
     {
-        return _sprite;
+        return _movie;
     }
 
-    protected var _sprite :Sprite;
     protected var _movie :MovieClip;
 }
 
