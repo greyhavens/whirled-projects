@@ -36,8 +36,9 @@ public class LobbyMode extends AppMode
         // Instructions
         var instructions0 :MovieClip = _panelMovie["instructions_basic"];
         var instructions1 :MovieClip = _panelMovie["instructions_multiplayer"];
-        instructions0.visible = true;
-        instructions1.visible = false;
+        var showBasic :Boolean = (this.isPreGameLobby && ClientCtx.playerData.timesPlayed == 0);
+        instructions0.visible = showBasic;
+        instructions1.visible = !showBasic;
 
         // Quit button
         var quitBtn :SimpleButton = _panelMovie["button_done"];
