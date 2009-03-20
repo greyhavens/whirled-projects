@@ -136,7 +136,10 @@ public class GameMode extends AppMode
             })));
         addObject(whiteCellSpawner);
 
-        GameCtx.bonusSentIndicator = new BonusSentIndicator();
+        GameCtx.bonusSentIndicator = new BonusSentIndicator(
+            ClientCtx.isPredator ?
+            BONUS_SENT_INDICATOR_PREDATOR_LOC :
+            BONUS_SENT_INDICATOR_PREY_LOC);
         addSceneObject(GameCtx.bonusSentIndicator, GameCtx.uiLayer);
 
         var timerView :TimerView = new TimerView();
@@ -345,6 +348,9 @@ public class GameMode extends AppMode
     protected var _musicChannel :AudioChannel;
 
     protected static var log :Log = Log.getLog(GameMode);
+
+    protected static const BONUS_SENT_INDICATOR_PREDATOR_LOC :Vector2 = new Vector2(267, 276);
+    protected static const BONUS_SENT_INDICATOR_PREY_LOC :Vector2 = new Vector2(267, 306);
 }
 
 }

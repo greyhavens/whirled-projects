@@ -1,4 +1,6 @@
 package vampire.feeding.client {
+
+import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.contrib.simplegame.tasks.*;
@@ -11,18 +13,19 @@ import vampire.feeding.*;
 
 public class BonusSentIndicator extends SceneObject
 {
-    public function BonusSentIndicator ()
+    public function BonusSentIndicator (loc :Vector2)
     {
+        _loc = loc;
         _movie = ClientCtx.instantiateMovieClip("blood", "sent_panel", true, true);
-        _movie.x = HIDE_LOC.x;
-        _movie.y = HIDE_LOC.y;
+        this.x = _loc.x;
+        this.y = _loc.y;
     }
 
     public function animate () :void
     {
         if (!_showing) {
             _showing = true;
-            addTask(LocationTask.CreateSmooth(SHOW_LOC.x, SHOW_LOC.y, 0.5));
+            addTask(LocationTask.CreateSmooth(_loc.x + SHOW_OFFSET.x, _loc.y + SHOW_OFFSET.y, 0.5));
         }
 
         // If the indicator is already showing, don't reshow it - just extend the amount of
@@ -30,7 +33,7 @@ public class BonusSentIndicator extends SceneObject
         addNamedTask("Hide",
             new SerialTask(
                 new TimedTask(1.5),
-                LocationTask.CreateSmooth(HIDE_LOC.x, HIDE_LOC.x, 0.5),
+                LocationTask.CreateSmooth(_loc.x, _loc.y, 0.5),
                 new FunctionTask(function () :void {
                     _showing = false;
                 })),
@@ -51,8 +54,9 @@ public class BonusSentIndicator extends SceneObject
     protected var _movie :MovieClip;
     protected var _showing :Boolean;
 
-    protected static const HIDE_LOC :Point = new Point(267, 276);
-    protected static const SHOW_LOC :Point = new Point(267, 246);
+    protected var _loc :Vector2;
+
+    protected static const SHOW_OFFSET :Vector2 = new Vector2(0, -30);
 }
 
 }
