@@ -197,9 +197,9 @@ public class HUD extends DraggableSceneObject
                     if( e.newValue != 0) {
                         var bloodBondMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
                                 ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true) );
-                        bloodBondMovie.x = _hudBlood.x + ClientContext.model.maxblood/2;
-                        bloodBondMovie.y = _hudBlood.y;
-                        mode.addSceneObject( bloodBondMovie, _hudBlood.parent  );
+                        bloodBondMovie.x = _hudXP.x + ClientContext.model.maxblood/2;
+                        bloodBondMovie.y = _hudXP.y;
+                        mode.addSceneObject( bloodBondMovie, _hudXP.parent  );
                     }
 
                 }
@@ -208,8 +208,8 @@ public class HUD extends DraggableSceneObject
                     if( e.newValue != 0) {
                         var lineageMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
                                 ClientContext.instantiateMovieClip("HUD", "lineage_feedback", true) );
-                        lineageMovie.x = _hudBlood.x + ClientContext.model.maxblood/2;
-                        lineageMovie.y = _hudBlood.y;
+                        lineageMovie.x = _hudXP.x + ClientContext.model.maxblood/2;
+                        lineageMovie.y = _hudXP.y;
                         mode.addSceneObject( lineageMovie, _displaySprite );
                     }
                 }
@@ -309,44 +309,44 @@ public class HUD extends DraggableSceneObject
     }
 
 
-    protected function createBloodText() :void
-    {
-        if( _bloodText != null && _bloodText.parent != null ) {
-            _bloodText.parent.removeChild( _bloodText );
-        }
-
-//        if( _bloodText == null ) {
-            _bloodText = new TextField();//TextFieldUtil.createField(
-
-            _bloodText.selectable = false;
-            _bloodText.tabEnabled = false;
-//            _bloodText.embedFonts = true;
-            _bloodText.mouseEnabled = false;
-            var lineageformat :TextFormat = new TextFormat();
-    //        lineageformat.font = "JuiceEmbedded";
-//            lineageformat.size = 14;
-//            lineageformat.align = TextFormatAlign.LEFT;
-    //        lineageformat.bold = true;
-            _bloodText.textColor = 0xffffff;
-            _bloodText.width = 80;
-            _bloodText.height = 20;
-//            _bloodText.setTextFormat( lineageformat );
-
-            Sprite(_bloodXPMouseOverSceneObject.displayObject).addChild( _bloodText );
+//    protected function createBloodText() :void
+//    {
+//        if( _bloodText != null && _bloodText.parent != null ) {
+//            _bloodText.parent.removeChild( _bloodText );
 //        }
-
-            _bloodText.text =
-                Util.formatNumberForFeedback(ClientContext.model.blood) + " / " +
-                ClientContext.model.maxblood;
-
-//        _bloodText.antiAliasType = AntiAliasType.ADVANCED;
-
-
-//        _bloodText.alpha = 0;
-        _bloodText.x = ClientContext.model.maxblood/2 - _bloodText.getLineMetrics(0).width/2;
-        _bloodText.y = _hudBlood.height/2 - _bloodText.getLineMetrics(0).height/2;
-
-    }
+//
+////        if( _bloodText == null ) {
+//            _bloodText = new TextField();//TextFieldUtil.createField(
+//
+//            _bloodText.selectable = false;
+//            _bloodText.tabEnabled = false;
+////            _bloodText.embedFonts = true;
+//            _bloodText.mouseEnabled = false;
+//            var lineageformat :TextFormat = new TextFormat();
+//    //        lineageformat.font = "JuiceEmbedded";
+////            lineageformat.size = 14;
+////            lineageformat.align = TextFormatAlign.LEFT;
+//    //        lineageformat.bold = true;
+//            _bloodText.textColor = 0xffffff;
+//            _bloodText.width = 80;
+//            _bloodText.height = 20;
+////            _bloodText.setTextFormat( lineageformat );
+//
+//            Sprite(_bloodXPMouseOverSceneObject.displayObject).addChild( _bloodText );
+////        }
+//
+//            _bloodText.text =
+//                Util.formatNumberForFeedback(ClientContext.model.blood) + " / " +
+//                ClientContext.model.maxblood;
+//
+////        _bloodText.antiAliasType = AntiAliasType.ADVANCED;
+//
+//
+////        _bloodText.alpha = 0;
+//        _bloodText.x = ClientContext.model.maxblood/2 - _bloodText.getLineMetrics(0).width/2;
+//        _bloodText.y = _hudBlood.height/2 - _bloodText.getLineMetrics(0).height/2;
+//
+//    }
 
     protected function createXPText() :void
     {
@@ -629,49 +629,49 @@ public class HUD extends DraggableSceneObject
 
     }
 
-    protected function showBlood( playerId :int ) :void
-    {
-//        var scaleX :Number = SharedPlayerStateClient.getMaxBlood( playerId ) / VConstants.MAX_BLOOD_FOR_LEVEL(1);
-        var maxBlood :Number = SharedPlayerStateClient.getMaxBlood( playerId );
-        var blood :Number = MathUtil.clamp( SharedPlayerStateClient.getBlood( playerId ),
-            0, maxBlood);
-        if( isNaN(blood)) {
-            blood = 0;
-        }
-//        trace("blood=" + blood + " / " + maxBlood);
-
-        var borderWidth :int = 3;
-        //Draw the blood bar
-        //Blood
-        _hudBlood.graphics.clear();
-        _hudBlood.graphics.beginFill(0x990000);
-        _hudBlood.graphics.drawRect(1, borderWidth + 1, blood, _hudCap.height/2 - borderWidth);
-        _hudBlood.graphics.endFill();
-        //Highlight
-        if( blood >= 1) {
-            _hudBlood.graphics.lineStyle(2, 0xff00000);
-            _hudBlood.graphics.moveTo( blood + 1, borderWidth + 1);
-            _hudBlood.graphics.lineTo( blood + 1, _hudCap.height/2);
-        }
-//        //Border
-        _hudBlood.graphics.lineStyle(borderWidth, 0);
-        _hudBlood.graphics.drawRect(0, borderWidth, maxBlood + borderWidth*2 - 1, _hudCap.height/2 - (borderWidth - 1));
-
-//        trace("blood rect=" + _hudBlood.x + ", " + _hudBlood.y + ", " + _hudBlood.width + ", " + _hudBlood.height);
-
-
-        //Make sure the HUDCap is on the end of the bars
-        _hudCap.x = _hudBlood.x + maxBlood + borderWidth*2 + 5;
-
-        //Draw the mouseover sprite
-        var bloodXPMouseOverSprite :Sprite = _bloodXPMouseOverSceneObject.displayObject as Sprite;
-        bloodXPMouseOverSprite.graphics.clear();
-        bloodXPMouseOverSprite.graphics.beginFill(0, 0);
-        bloodXPMouseOverSprite.graphics.drawRect(0, 0, maxBlood, _hudCap.height - 3);
-        bloodXPMouseOverSprite.graphics.endFill();
-
-        createBloodText();
-    }
+//    protected function showBlood( playerId :int ) :void
+//    {
+////        var scaleX :Number = SharedPlayerStateClient.getMaxBlood( playerId ) / VConstants.MAX_BLOOD_FOR_LEVEL(1);
+//        var maxBlood :Number = SharedPlayerStateClient.getMaxBlood( playerId );
+//        var blood :Number = MathUtil.clamp( SharedPlayerStateClient.getBlood( playerId ),
+//            0, maxBlood);
+//        if( isNaN(blood)) {
+//            blood = 0;
+//        }
+////        trace("blood=" + blood + " / " + maxBlood);
+//
+//        var borderWidth :int = 3;
+//        //Draw the blood bar
+//        //Blood
+//        _hudBlood.graphics.clear();
+//        _hudBlood.graphics.beginFill(0x990000);
+//        _hudBlood.graphics.drawRect(1, borderWidth + 1, blood, _hudCap.height/2 - borderWidth);
+//        _hudBlood.graphics.endFill();
+//        //Highlight
+//        if( blood >= 1) {
+//            _hudBlood.graphics.lineStyle(2, 0xff00000);
+//            _hudBlood.graphics.moveTo( blood + 1, borderWidth + 1);
+//            _hudBlood.graphics.lineTo( blood + 1, _hudCap.height/2);
+//        }
+////        //Border
+//        _hudBlood.graphics.lineStyle(borderWidth, 0);
+//        _hudBlood.graphics.drawRect(0, borderWidth, maxBlood + borderWidth*2 - 1, _hudCap.height/2 - (borderWidth - 1));
+//
+////        trace("blood rect=" + _hudBlood.x + ", " + _hudBlood.y + ", " + _hudBlood.width + ", " + _hudBlood.height);
+//
+//
+//        //Make sure the HUDCap is on the end of the bars
+//        _hudCap.x = _hudBlood.x + maxBlood + borderWidth*2 + 5;
+//
+//        //Draw the mouseover sprite
+//        var bloodXPMouseOverSprite :Sprite = _bloodXPMouseOverSceneObject.displayObject as Sprite;
+//        bloodXPMouseOverSprite.graphics.clear();
+//        bloodXPMouseOverSprite.graphics.beginFill(0, 0);
+//        bloodXPMouseOverSprite.graphics.drawRect(0, 0, maxBlood, _hudCap.height - 3);
+//        bloodXPMouseOverSprite.graphics.endFill();
+//
+//        createBloodText();
+//    }
 
     protected function showXP( playerId :int ) :void
     {
@@ -735,7 +735,7 @@ public class HUD extends DraggableSceneObject
     protected var _hudMC :MovieClip;
 
 
-    protected var _hudBlood :Sprite;
+//    protected var _hudBlood :Sprite;
     protected var _hudXP :Sprite;
 //    protected var _bloodXPMouseOverSprite :Sprite;
     protected var _bloodXPMouseOverSceneObject :SceneObject;
