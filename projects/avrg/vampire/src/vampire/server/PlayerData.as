@@ -254,7 +254,7 @@ public class PlayerData extends EventHandlerManager
     public function setState (action :String) :void
     {
         if (action != _state) {
-            log.debug( playerId + " state => " + action);
+            log.debug( name + " state => " + action);
         }
         _state = action;
     }
@@ -405,7 +405,7 @@ public class PlayerData extends EventHandlerManager
 //            }
 
             if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE] != state) {
-                log.debug("Setting " + playerId + " action=" + state + " into room props");
+//                log.debug("Setting " + name + " action=" + state + " into room props");
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE, state);
             }
 
@@ -421,17 +421,17 @@ public class PlayerData extends EventHandlerManager
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE, time);
             }
             if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP] != xp && !isNaN(xp)) {
-                log.debug("Setting " + playerId + " xp=" + xp + " into room props");
+//                log.debug("Setting " + playerId + " xp=" + xp + " into room props");
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, xp);
             }
 
             if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES] != invites) {
-                log.debug("Setting " + playerId + " invites=" + invites + " into room props");
+//                log.debug("Setting " + playerId + " invites=" + invites + " into room props");
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES, invites);
             }
 
             if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE] != avatarState ) {
-                log.debug("Setting " + playerId + " avatar state=" + avatarState + " into room props");
+//                log.debug("Setting " + playerId + " avatar state=" + avatarState + " into room props");
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE, avatarState);
             }
 
