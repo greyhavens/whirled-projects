@@ -371,6 +371,7 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 //    }
     public function setDisplayMode( mode :int ) :void
     {
+        var previousDisplayMode :int = _displayMode;
         _displayMode = mode;
         var validIds :HashSet;
         var predators :HashSet;
@@ -419,14 +420,16 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
                     });
                 }
                 else {
-                    var avatars :int = _ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR).length;
-                    if (avatars > 1) {
-                        _ctrl.local.feedback("Everyone is in the midst of feeding.  Either wait " +
-                            " a little, or try hunting in a different room.");
-                    }
-                    else {
-                        _ctrl.local.feedback("This room is empty! " +
-                            "Try hunting in a different room.");
+                    if (previousDisplayMode != mode) {
+                        var avatars :int = _ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR).length;
+                        if (avatars > 1) {
+                            _ctrl.local.feedback("Everyone is in the midst of feeding.  Either wait " +
+                                " a little, or try hunting in a different room.");
+                        }
+                        else {
+                            _ctrl.local.feedback("This room is empty! " +
+                                "Try hunting in a different room.");
+                        }
                     }
                 }
                 break;
