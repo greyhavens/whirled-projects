@@ -239,19 +239,16 @@ public class MainGameMode extends AppMode
         }
         else if( e.name == VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING ) {
 
-            //Humans practising don't need to move.
-            if( !ClientContext.model.isVampire() ) {
-                return;
-            }
-
             var moveTimer :SimpleTimer = new SimpleTimer( 2.5, function() :void {
 
                 var location :Array = ClientContext.model.location;
                 if( location != null ) {
+
+                    var xDirection :Number = location[3] > 0 && location[3] <= 180 ? 1 : -1;
                     ClientContext.ctrl.player.setAvatarLocation(
-                        MathUtil.clamp( location[0] + 0.1,0,1),
+                        MathUtil.clamp( location[0] + 0.1 * xDirection, 0, 1),
                         location[1],
-                        MathUtil.clamp( location[2] - 0.1,0,1), location[3]);
+                        MathUtil.clamp( location[2] - 0.1, 0, 1), location[3]);
                 }
             }, false);
             addObject( moveTimer );

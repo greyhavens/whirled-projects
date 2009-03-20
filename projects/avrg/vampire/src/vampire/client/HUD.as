@@ -300,7 +300,7 @@ public class HUD extends DraggableSceneObject
         Command.bind( hudHelp, MouseEvent.CLICK, VampireController.SHOW_INTRO);
 
         var hudClose :SimpleButton = SimpleButton( findSafely("button_quit") );
-        Command.bind( hudClose, MouseEvent.CLICK, VampireController.QUIT);
+        Command.bind( hudClose, MouseEvent.CLICK, VampireController.QUIT_POPUP);
 
         var hudFeed :SimpleButton = SimpleButton( findSafely("button_feed") );
         Command.bind( hudFeed, MouseEvent.CLICK, VampireController.FEED);

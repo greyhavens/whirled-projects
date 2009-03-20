@@ -29,6 +29,7 @@ public class VampireController extends Controller
 //    public static const CLOSE_MODE :String = "CloseMode";
 //    public static const PLAYER_STATE_CHANGED :String = "PlayerStateChanged";
     public static const QUIT :String = "Quit";
+    public static const QUIT_POPUP :String = "ShowQuitPopup";
 
     public static const REMOVE_BLOODBOND :String = "RemoveBloodBond";
     public static const ADD_BLOODBOND :String = "AddBloodBond";
@@ -176,6 +177,22 @@ public class VampireController extends Controller
 
         ClientContext.quit();
     }
+
+
+    public function handleShowQuitPopup() :void
+    {
+        var popup :PopupQuery = new PopupQuery( ClientContext.ctrl,
+            "QuitPopup",
+            "Is your thirst for blood sated?",
+            ["Yes, I am sated with blood", "No, I hunger still"],
+            [VampireController.QUIT, null]);
+
+        if( ClientContext.gameMode.getObjectNamed( popup.objectName) == null) {
+            ClientContext.gameMode.addSceneObject( popup, ClientContext.gameMode.modeSprite );
+        }
+    }
+
+
 
 //    public function handleRemoveBloodBond( bloodBondedPlayerId :int) :void
 //    {
@@ -357,7 +374,12 @@ public class VampireController extends Controller
 
             log.debug(ClientContext.ctrl + " handleSendFeedRequest() sending " + msg)
             ClientContext.ctrl.agent.sendMessage( FeedRequestMsg.NAME, msg.toBytes() );
-            ClientContext.ctrl.local.feedback("Request for feed sent");
+
+            //Show feedback if it's a player.
+            if (ClientContext.model.isPlayer(targetId)) {
+                ClientContext.ctrl.local.feedback("Request for feed sent");
+            }
+
 
             //Set the avatar target to stand behind.
             //That way, when the avatar arrived at it's destination, it
@@ -375,19 +397,14 @@ public class VampireController extends Controller
 
             var popup :PopupQuery = new PopupQuery( ClientContext.ctrl,
                     "MakeSire",
-                    "If you feed from this Lineage vampire, (s)he will become your permanent sire",
-                    ["Accept", "Deny"],
+                    "If you feed from this Lineage vampire, they will become your permanent sire"
+                    + ", allowing you to draw power from your minions.  Are you sure?",
+                    ["Yes, I am ready to join the Lineage", "No, I fear the Lineage"],
                     [sendFeedRequest, null]);
 
             if (ClientContext.gameMode.getObjectNamed(popup.objectName) == null) {
                 ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
             }
-
-
-
-
-
-
         }
         else {
             sendFeedRequest();
