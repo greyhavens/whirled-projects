@@ -204,6 +204,7 @@ public class BloodBloom extends FeedingClient
             updatePlayers();
             updatePreyId();
             updatePreyBloodType();
+            updatePreyIsAi();
             updateMode();
 
         } else {

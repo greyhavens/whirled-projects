@@ -40,19 +40,13 @@ public class LobbyMode extends AppMode
         instructions1.visible = false;
 
         // Quit button
-        var quitBtn :SimpleButton = _panelMovie["button_close"];
+        var quitBtn :SimpleButton = _panelMovie["button_done"];
         registerOneShotCallback(quitBtn, MouseEvent.CLICK,
             function (...ignored) :void {
                 ClientCtx.quit(true);
             });
 
-        // Done/Start/Play Again
-        _doneButton = _panelMovie["button_done"];
-        registerListener(_doneButton, MouseEvent.CLICK,
-            function (...ignored) :void {
-                ClientCtx.quit(true);
-            });
-
+        // Start/Play Again/Status
         var startButton :SimpleButton = _panelMovie["button_start"];
         var replayButton :SimpleButton = _panelMovie["button_again"];
         startButton.visible = false;
@@ -65,10 +59,8 @@ public class LobbyMode extends AppMode
                 }
             });
 
-        _tfWaiting = _panelMovie["waiting_text"];
-        _tfNoPrey = _panelMovie["done_text"];
-
-        updateButtonsAndNotices();
+        _tfStatus = _panelMovie["feedback_text"];
+        updateButtonsAndStatus();
 
         // Total score
         var total :MovieClip = _panelMovie["total"];
@@ -92,28 +84,27 @@ public class LobbyMode extends AppMode
         updatePlayerList();
     }
 
-    protected function updateButtonsAndNotices () :void
+    protected function updateButtonsAndStatus () :void
     {
         if (ClientCtx.preyId == Constants.NULL_PLAYER && !ClientCtx.preyIsAi) {
-            _doneButton.visible = true;
-            _tfNoPrey.visible = true;
             _startButton.visible = false;
-            _tfWaiting.visible = false;
+            _tfStatus.visible = true;
+            _tfStatus.text = "Your Feast has wandered off";
 
         } else if (ClientCtx.isLobbyLeader) {
-            _doneButton.visible = false;
-            _tfNoPrey.visible = false;
             _startButton.visible = true;
-            _tfWaiting.visible = false;
+            _tfStatus.visible = false;
 
         } else {
-            _doneButton.visible = false;
-            _tfNoPrey.visible = false;
             _startButton.visible = false;
-            _tfWaiting.visible = true;
-            _tfWaiting.text = (ClientCtx.playerIds.length == 1 ?
-                "Waiting for a predator!" :
-                "The prime predator is waiting...");
+            _tfStatus.visible = true;
+            if (ClientCtx.playerIds.length == 1) {
+                _tfStatus.text = "All Feeders have left";
+            } else if (this.isPreGameLobby) {
+                _tfStatus.text = "Waiting on the Leader to start feeding";
+            } else {
+                _tfStatus.text = "Waiting on the Leader to feed again";
+            }
         }
     }
 
@@ -178,10 +169,10 @@ public class LobbyMode extends AppMode
     protected function onPropChanged (e :PropertyChangedEvent) :void
     {
         if (e.name == Props.ALL_PLAYERS) {
-            updateButtonsAndNotices();
+            updateButtonsAndStatus();
             updatePlayerList();
         } else if (e.name == Props.LOBBY_LEADER || e.name == Props.PREY_ID) {
-            updateButtonsAndNotices();
+            updateButtonsAndStatus();
         }
     }
 
@@ -197,9 +188,7 @@ public class LobbyMode extends AppMode
 
     protected var _panelMovie :MovieClip;
     protected var _startButton :SimpleButton;
-    protected var _doneButton :SimpleButton;
-    protected var _tfWaiting :TextField;
-    protected var _tfNoPrey :TextField;
+    protected var _tfStatus :TextField;
     protected var _playerList :SimpleListController;
 
     protected var _results :RoundOverMsg;
