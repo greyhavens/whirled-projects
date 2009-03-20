@@ -2,6 +2,7 @@ package vampire.avatar
 {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashSet;
+import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.avrg.AvatarHUD;
@@ -416,6 +417,17 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
     //                        avatar.setDisplayModeShowInfo();
                         }
                     });
+                }
+                else {
+                    var avatars :int = _ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR).length;
+                    if (avatars > 1) {
+                        _ctrl.local.feedback("Everyone is in the midst of feeding.  Either wait " +
+                            " a little, or try hunting in a different room.");
+                    }
+                    else {
+                        _ctrl.local.feedback("This room is empty! " +
+                            "Try hunting in a different room.");
+                    }
                 }
                 break;
 //            case DISPLAY_MODE_SHOW_FEED_TARGET:
