@@ -125,10 +125,8 @@ public class BurstSequence extends SceneObject
             GameCtx.gameMode.sendMultiplier(multiplierSize, this.x, this.y);
 
             // Show an animation of this happening
-            var anim :NewBonusAnimation = new NewBonusAnimation(
-                NewBonusAnimation.TYPE_SEND,
-                multiplierSize,
-                new Vector2(this.x, this.y));
+            var anim :SendMultiplierAnim =
+                new SendMultiplierAnim(multiplierSize, new Vector2(this.x, this.y));
             GameCtx.gameMode.addSceneObject(anim, GameCtx.uiLayer);
         }
 

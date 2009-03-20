@@ -14,7 +14,6 @@ import com.whirled.contrib.simplegame.util.*;
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
-import flash.geom.Point;
 import flash.text.TextField;
 
 import vampire.feeding.*;
@@ -137,6 +136,9 @@ public class GameMode extends AppMode
             })));
         addObject(whiteCellSpawner);
 
+        GameCtx.bonusSentIndicator = new BonusSentIndicator();
+        addSceneObject(GameCtx.bonusSentIndicator, GameCtx.uiLayer);
+
         var timerView :TimerView = new TimerView();
         timerView.x = Constants.GAME_CTR.x;
         timerView.y = Constants.GAME_CTR.y;
@@ -231,8 +233,7 @@ public class GameMode extends AppMode
 
             // animate the bonus into the game, and call addMultiplierToBoard
             // when the anim completes
-            var anim :NewBonusAnimation = new NewBonusAnimation(
-                NewBonusAnimation.TYPE_RECEIVE,
+            var anim :GetMultiplierAnim = new GetMultiplierAnim(
                 msg.multiplier,
                 loc,
                 function () :void { addMultiplierToBoard(msg.multiplier, loc, msg.playerId); });

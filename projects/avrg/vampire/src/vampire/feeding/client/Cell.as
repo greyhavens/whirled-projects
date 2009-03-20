@@ -31,16 +31,24 @@ public class Cell extends CollidableObj
         sprite.addChild(movie);
 
         if (cellType == Constants.CELL_MULTIPLIER) {
-            var text :String = "x" + multiplierOrStrain;
-            var tf :TextField =
-                TextBits.createText(text, 1, 0, 0, "center", TextBits.FONT_GARAMOND);
-            tf.scaleX = tf.scaleY = Math.min(movie.width / tf.width, movie.height / tf.height);
-            tf.x = -tf.width * 0.5;
-            tf.y = -tf.height * 0.5;
-            sprite.addChild(tf);
+            sprite.addChild(createMultiplierText(multiplierOrStrain, movie.width, movie.height));
         }
 
         return sprite;
+    }
+
+    public static function createMultiplierText (multiplier :int, width :Number, height :Number)
+        :TextField
+    {
+        var tf :TextField = TextBits.createText(
+            String("x" + multiplier),
+            1, 0, 0, "center", TextBits.FONT_GARAMOND);
+
+        tf.scaleX = tf.scaleY = Math.min(width / tf.width, height / tf.height);
+        tf.x = -tf.width * 0.5;
+        tf.y = -tf.height * 0.5;
+
+        return tf;
     }
 
     public static function getCellCount (cellType :int = -1) :int

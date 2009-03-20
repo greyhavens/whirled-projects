@@ -15,6 +15,7 @@ public class GameCtx
     public static var scoreView :ScoreHelpQuitView;
     public static var specialCellSpawner :SpecialCellSpawner;
     public static var strainTallyView :StrainTallyView;
+    public static var bonusSentIndicator :BonusSentIndicator;
 
     public static var bgLayer :Sprite;
     public static var cellBirthLayer :Sprite;
@@ -33,6 +34,8 @@ public class GameCtx
         cursor = null;
         scoreView = null;
         specialCellSpawner = null;
+        strainTallyView = null;
+        bonusSentIndicator = null;
 
         bgLayer = null;
         cellLayer = null;
