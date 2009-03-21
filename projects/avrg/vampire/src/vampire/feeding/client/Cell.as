@@ -1,6 +1,7 @@
 package vampire.feeding.client {
 
 import com.threerings.flash.Vector2;
+import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.contrib.simplegame.tasks.*;
@@ -106,17 +107,23 @@ public class Cell extends CollidableObj
     override protected function addedToDB () :void
     {
         if (_needsBirth) {
-            if (_type == Constants.CELL_RED) {
+            switch (_type) {
+            case Constants.CELL_RED:
                 birthRedCell();
-            } else if (_type == Constants.CELL_WHITE) {
-                birthWhiteCell();
-            } else if (_type == Constants.CELL_SPECIAL) {
-                birthSpecialCell();
-            }
+                break;
 
-            // fade in
-            this.alpha = 0;
-            addTask(new AlphaTask(1, 0.4));
+            case Constants.CELL_WHITE:
+                birthWhiteCell();
+                break;
+
+            case Constants.CELL_SPECIAL:
+                birthSpecialCell();
+                break;
+
+            case Constants.CELL_MULTIPLIER:
+                birthMultiplierCell();
+                break;
+            }
         }
     }
 
@@ -136,6 +143,19 @@ public class Cell extends CollidableObj
     public function attachToCursor (cursor :PlayerCursor) :void
     {
         _attachedTo = cursor.ref;
+
+        if (_type == Constants.CELL_WHITE) {
+            attachTip(TipFactory.DROP_WHITE);
+        }
+    }
+
+    protected function attachTip (type :int) :void
+    {
+        if (_attachedTip != null) {
+            _attachedTip.destroySelf();
+        }
+
+        _attachedTip = TipFactory.createTip(type, this);
     }
 
     protected function birthRedCell () :void
@@ -163,6 +183,10 @@ public class Cell extends CollidableObj
                 GameCtx.cellLayer.addChild(thisCell.displayObject);
                 _state = STATE_NORMAL;
             })));
+
+        // fade in
+        this.alpha = 0;
+        addTask(new AlphaTask(1, 0.4));
     }
 
     protected function birthWhiteCell () :void
@@ -196,6 +220,12 @@ public class Cell extends CollidableObj
                 GameObjects.createCorruptionBurst(thisCell);
                 GameCtx.gameMode.whiteCellBurst();
             })));
+
+        // fade in
+        this.alpha = 0;
+        addTask(new AlphaTask(1, 0.4));
+
+        attachTip(TipFactory.GRAB_WHITE);
     }
 
     protected function birthSpecialCell () :void
@@ -214,6 +244,17 @@ public class Cell extends CollidableObj
             new FunctionTask(function () :void {
                 _state = STATE_NORMAL;
             })));
+
+        // fade in
+        this.alpha = 0;
+        addTask(new AlphaTask(1, 0.4));
+
+        attachTip(TipFactory.GET_SPECIAL);
+    }
+
+    protected function birthMultiplierCell () :void
+    {
+        attachTip(TipFactory.GET_MULTIPLIER);
     }
 
     override protected function update (dt :Number) :void
@@ -368,6 +409,7 @@ public class Cell extends CollidableObj
     protected var _sprite :Sprite;
     protected var _movie :MovieClip;
     protected var _movieLoadedFromCache :Boolean;
+    protected var _attachedTip :SimObject;
 
     protected static const SPEED_BASE :Number = 5;
     protected static const SPEED_FOLLOW :Number = 60;

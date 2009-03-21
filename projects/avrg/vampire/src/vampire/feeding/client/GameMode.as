@@ -247,7 +247,7 @@ public class GameMode extends AppMode
 
     protected function addMultiplierToBoard (multiplier :int, loc :Vector2, playerId :int) :void
     {
-        var cell :Cell = GameObjects.createCell(Constants.CELL_MULTIPLIER, false, multiplier);
+        var cell :Cell = GameObjects.createCell(Constants.CELL_MULTIPLIER, true, multiplier);
         cell.x = loc.x;
         cell.y = loc.y;
 
