@@ -108,24 +108,39 @@ public class FeedingRecord extends EventCollecter
 
     }
 
+    /**
+    * If the primary predator has not moved away from behind the prey, send a message to do this.
+    */
+    protected function movePrimaryPred () :void
+    {
+        if (!_primaryPredMoved) {
+            var primaryPred :PlayerData = _room.getPlayer( primaryPredatorId );
+            primaryPred.ctrl.sendMessage(
+                VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING );
+            _primaryPredMoved = true;
+        }
+    }
+
     protected function playerLeftCallback( playerId :int ) :void
     {
+        if (_room.isPlayer(playerId)) {
+            log.debug("playerLeftCallback", "name", _room.getPlayer( playerId ).name);
+        }
         //Force all predator avatars out of the feeding state
-        if( playerId == _preyId ) {
+        if (playerId == _preyId) {
             _predators.forEach( function( predId :int ) :void {
                 var pred :PlayerData = ServerContext.server.getPlayer( predId );
                 if( pred != null ) {
                     ServerLogic.stateChange( pred, VConstants.PLAYER_STATE_DEFAULT );
-//                    pred.actionChange( VConstants.GAME_MODE_NOTHING );
                 }
             });
 
             if( _room != null && _room.getPlayer( primaryPredatorId ) != null ) {
-                var primaryPred :PlayerData = _room.getPlayer( primaryPredatorId );
-                    primaryPred.ctrl.sendMessage(
-                        VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING );
-                    _primaryPredMoved = true;
+                movePrimaryPred();
             }
+        }
+        else if (playerId == _primaryPredatorId) {
+            movePrimaryPred();
         }
     }
 
