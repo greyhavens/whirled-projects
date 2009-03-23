@@ -976,7 +976,8 @@ public class ServerLogic
 
             case VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION:
 
-                game = room.bloodBloomGameManager.getGame( playerId );
+                game = room.bloodBloomGameManager.getGame(playerId);
+
 
 
                 if( game == null ) {
@@ -990,6 +991,9 @@ public class ServerLogic
                     break;
                 }
 
+//                if (!ArrayUtil.contains(game.gameServer.predatorIds, playerId)) {
+//                    game.gameServer.addPredator(playerId);
+//                }
 
 //
 //                if( !game.isPredator( playerId )) {

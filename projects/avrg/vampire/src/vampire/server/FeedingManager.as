@@ -73,13 +73,13 @@ public class FeedingManager extends SimObject
         if( _playerId2Game.containsKey( preyId ) ) {
             log.debug(predatorId + " requestFeed, adding to existing game");
             var gameRecord :FeedingRecord = _playerId2Game.get( preyId ) as FeedingRecord;
-            if( !gameRecord.isStarted ) {
-                gameRecord.addPredator( predatorId, preyLocation );
-                _playerId2Game.put( predatorId, gameRecord );
-            }
-            else {
-                _room.addFeedback("You cannot join a game already in progress.", predatorId);
-            }
+            gameRecord.addPredator( predatorId, preyLocation );
+            _playerId2Game.put( predatorId, gameRecord );
+//            if( !gameRecord.isStarted ) {
+//            }
+//            else {
+//                _room.addFeedback("You cannot join a game already in progress.", predatorId);
+//            }
             return gameRecord;
         }
         else {

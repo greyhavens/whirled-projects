@@ -52,7 +52,7 @@ public class FeedingRecord extends EventCollecter
 
     public function get isLobbyStarted () :Boolean
     {
-        return _gameServer != null && _started == false;
+        return _gameServer != null && _started == true;
     }
     public function startLobby() :void
     {
