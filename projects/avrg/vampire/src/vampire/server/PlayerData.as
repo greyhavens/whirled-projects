@@ -729,30 +729,64 @@ public class PlayerData extends EventHandlerManager
 
 
 
-    public function addFeedingRecord( prey :int, predator :int ) :void
+    public function addFeedingRecord( preyId :int, predId :int ) :void
     {
-//        _feedingRecord.push([ prey, predator]);
-//        if( _feedingRecord.length > VConstants.b
+        _feedingRecord.push([ preyId, predId]);
     }
 
-    public function get mostRecentVictimIds() :Array
-    {
-        return _mostRecentVictimIds;
-    }
-
-    public function get fedingREcord() :Array
+    public function get feedingRecord() :Array
     {
         return _feedingRecord;
     }
 
-    public function addMostRecentVictimIds( id :int ) :void
+    public function clearFeedingRecord() :void
     {
-        _mostRecentVictimIds.push( id );
+        _feedingRecord.splice(0);
     }
 
-    public function clearVictimIds() :void
+    /**
+    * @param previousFeed NUmber of games previous.  0 is the current game.
+    */
+    public function getPreyInPreviousFeed (previousFeed :int) :int
     {
-        _mostRecentVictimIds.splice(0);
+        if (_feedingRecord.length == 0 || _feedingRecord.length < previousFeed) {
+            return 0;
+        }
+        else {
+            return _feedingRecord[previousFeed][0];
+        }
+    }
+
+    public function purgeFeedingRecordOfAllExcept (otherPlayerId :int) :void
+    {
+        var index :int = 0;
+        while( index < _feedingRecord.length) {
+
+            var currentRecord :Array = _feedingRecord[index] as Array;
+            //Record ok
+            if ((currentRecord[0] == playerId && currentRecord[1] == otherPlayerId) ||
+                (currentRecord[1] == playerId && currentRecord[0] == otherPlayerId)) {
+
+                index++;
+            }
+            else {//Purge this record
+                _feedingRecord.splice(index, 1);
+            }
+
+        }
+    }
+
+    /**
+    * @param previousFeed NUmber of games previous.  0 is the current game.
+    */
+    public function getPredatorInPreviousFeed (previousFeed :int) :int
+    {
+        if (_feedingRecord.length == 0 || _feedingRecord.length < previousFeed) {
+            return 0;
+        }
+        else {
+            return _feedingRecord[previousFeed][1];
+        }
     }
 
     public function isVictim() :Boolean
@@ -796,7 +830,7 @@ public class PlayerData extends EventHandlerManager
     protected var _inviteTally :int;
 
     /** Records who we eat, and who eats us, for determining blood bond status.*/
-    protected var _mostRecentVictimIds :Array = new Array();
+//    protected var _mostRecentVictimIds :Array = new Array();
 
     /** Player data for BloodBloom*/
 //    protected var _feedingData :PlayerFeedingData;
@@ -806,6 +840,7 @@ public class PlayerData extends EventHandlerManager
     protected var _ctrl :PlayerSubControlServer;
     protected var _playerId :int;
 
+    /**A list of the most recent feedings with this player, each element:[preyId, predId]*/
     protected var _feedingRecord :Array = new Array();
 
     protected var _bloodUpdateTime :Number = 0;
