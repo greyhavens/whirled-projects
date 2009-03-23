@@ -14,13 +14,11 @@ import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.PropertyGetSubControl;
 
-import flash.geom.Point;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
 import vampire.avatar.AvatarGameBridge;
 import vampire.client.events.ChangeActionEvent;
-import vampire.client.events.ClosestPlayerChangedEvent;
 import vampire.client.events.LineageUpdatedEvent;
 import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.client.events.PlayersFeedingEvent;
@@ -278,34 +276,34 @@ public class GameModel extends SimObject//EventDispatcher
 //    }
 
 
-    protected function checkProximity( ...ignored) :void
-    {
-        var av :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo( ClientContext.ourPlayerId);
-        if( av == null) {
-            return;
-        }
-        var mylocation :Point = new Point( av.x, av.y );
-        var closestOtherPlayerId :int = -1;
-        var closestOtherPlayerDistance :Number = Number.MAX_VALUE;
-
-        for each( var playerid :int in ClientContext.ctrl.room.getPlayerIds()) {
-            if( playerid == ClientContext.ourPlayerId) {
-                continue;
-            }
-            av = ClientContext.ctrl.room.getAvatarInfo( playerid );
-            var otherPlayerPoint :Point = new Point( av.x, av.y );
-            var distance :Number = Point.distance( mylocation, otherPlayerPoint);
-            if( distance < closestOtherPlayerDistance) {
-                closestOtherPlayerId = playerid;
-                closestOtherPlayerDistance = distance;
-            }
-        }
-
-//        if( closestOtherPlayerId > 0) {
-            ClientContext.currentClosestPlayerId = closestOtherPlayerId;
-            dispatchEvent( new ClosestPlayerChangedEvent( closestOtherPlayerId ) );
+//    protected function checkProximity( ...ignored) :void
+//    {
+//        var av :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo( ClientContext.ourPlayerId);
+//        if( av == null) {
+//            return;
 //        }
-    }
+//        var mylocation :Point = new Point( av.x, av.y );
+//        var closestOtherPlayerId :int = -1;
+//        var closestOtherPlayerDistance :Number = Number.MAX_VALUE;
+//
+//        for each( var playerid :int in ClientContext.ctrl.room.getPlayerIds()) {
+//            if( playerid == ClientContext.ourPlayerId) {
+//                continue;
+//            }
+//            av = ClientContext.ctrl.room.getAvatarInfo( playerid );
+//            var otherPlayerPoint :Point = new Point( av.x, av.y );
+//            var distance :Number = Point.distance( mylocation, otherPlayerPoint);
+//            if( distance < closestOtherPlayerDistance) {
+//                closestOtherPlayerId = playerid;
+//                closestOtherPlayerDistance = distance;
+//            }
+//        }
+//
+////        if( closestOtherPlayerId > 0) {
+//            ClientContext.currentClosestPlayerId = closestOtherPlayerId;
+//            dispatchEvent( new ClosestPlayerChangedEvent( closestOtherPlayerId ) );
+////        }
+//    }
     public function playerEnteredRoom( ...ignored ) :void
     {
         //Reset avatar locations
@@ -316,9 +314,9 @@ public class GameModel extends SimObject//EventDispatcher
 
         if( lineage == null) {
 
-            _hierarchy = loadHierarchyFromProps();
-            trace(VConstants.DEBUG_MINION + " loadHierarchyFromProps()=" + _hierarchy);
-            dispatchEvent( new LineageUpdatedEvent( _hierarchy ) );
+            _lineage = loadHierarchyFromProps();
+            trace(VConstants.DEBUG_MINION + " loadHierarchyFromProps()=" + _lineage);
+            dispatchEvent( new LineageUpdatedEvent( _lineage ) );
 
 //            var bytes :ByteArray = ClientContext.gameCtrl.room.props.get( Codes.ROOM_PROP_MINION_HIERARCHY ) as ByteArray;
 //            if( bytes != null) {
@@ -386,8 +384,8 @@ public class GameModel extends SimObject//EventDispatcher
 
         switch (e.name) {
             case Codes.ROOM_PROP_MINION_HIERARCHY:// ) {//|| e.name == Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS) {
-            _hierarchy = loadHierarchyFromProps();
-            dispatchEvent( new LineageUpdatedEvent( _hierarchy ) );
+            _lineage = loadHierarchyFromProps();
+            dispatchEvent( new LineageUpdatedEvent( _lineage ) );
             break;
 
             case Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE:
@@ -463,10 +461,10 @@ public class GameModel extends SimObject//EventDispatcher
 //        log.debug(Constants.DEBUG_MINION + " elementChanged()", "e", e);
         if( e.name == Codes.ROOM_PROP_MINION_HIERARCHY) {
 
-            _hierarchy = loadHierarchyFromProps();
+            _lineage = loadHierarchyFromProps();
 //            log.debug(Constants.DEBUG_MINION + " elementChanged", "e", e, "_hierarchy", _hierarchy);
 
-            dispatchEvent( new LineageUpdatedEvent( _hierarchy ) );
+            dispatchEvent( new LineageUpdatedEvent( _lineage ) );
             return;
         }
 
@@ -581,7 +579,10 @@ public class GameModel extends SimObject//EventDispatcher
 
     public function get sire() :int
     {
-        return SharedPlayerStateClient.getSire( ClientContext.ourPlayerId );
+        if (_lineage != null) {
+            return _lineage.getSireId(ClientContext.ourPlayerId);
+        }
+        return 0;
     }
 
     public function get invites() :int
@@ -670,15 +671,21 @@ public class GameModel extends SimObject//EventDispatcher
 
     public function get lineage() :Lineage
     {
-        return _hierarchy;
+        return _lineage;
     }
 
     //For debugging
     public function set lineage(h :Lineage) :void
     {
-        _hierarchy = h;
+        _lineage = h;
     }
 
+    public function get hotspot () :Array
+    {
+        var hotspot :Array = ClientContext.ctrl.room.getEntityProperty(
+            EntityControl.PROP_HOTSPOT, ClientContext.ourEntityId ) as Array;
+        return hotspot;
+    }
 
     public function get playerFeedingData () :PlayerFeedingData
     {
@@ -749,7 +756,7 @@ public class GameModel extends SimObject//EventDispatcher
 
     public var currentSelectedTarget :int = 0;
 
-    protected var _hierarchy :Lineage;
+    protected var _lineage :Lineage;
     protected var _agentCtrl :AgentSubControl;
     protected var _propsCtrl :PropertyGetSubControl;
 
