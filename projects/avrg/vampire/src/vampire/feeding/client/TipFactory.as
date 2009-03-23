@@ -6,12 +6,12 @@ import com.whirled.contrib.simplegame.objects.*;
 
 public class TipFactory
 {
-    public static const GRAB_WHITE :int = 0;
-    public static const DROP_WHITE :int = 1;
-    public static const GET_MULTIPLIER :int = 2;
-    public static const GET_SPECIAL :int = 3;
-    public static const POP_RED :int = 4;
-    public static const CASCADE :int = 5;
+    public static const POP_RED :int = 0;
+    public static const CASCADE :int = 1;
+    public static const GRAB_WHITE :int = 2;
+    public static const DROP_WHITE :int = 3;
+    public static const GET_MULTIPLIER :int = 4;
+    public static const GET_SPECIAL :int = 5;
 
     public static const NUM_TIPS :int = 6;
 
@@ -19,6 +19,12 @@ public class TipFactory
     {
         // Have we already displayed this tip enough?
         if (MAX_TIP_COUNT[type] >= 0 && _tipCounts[type] >= MAX_TIP_COUNT[type]) {
+            return SimObjectRef.Null();
+        }
+
+        // Is this tip dependent on another one?
+        var dependentTip :int = DEPENDENT_TIP[type];
+        if (dependentTip >= 0 && _tipCounts[dependentTip] == 0) {
             return SimObjectRef.Null();
         }
 
@@ -44,18 +50,19 @@ public class TipFactory
 
     protected var _tipCounts :Array = ArrayUtil.create(NUM_TIPS, 0);
 
-    protected static const MAX_TIP_COUNT :Array = [ -1, -1, -1, -1, 1, 2 ];
+    protected static const MAX_TIP_COUNT :Array = [ 1, 1, 2, 2, -1, -1 ];
+    protected static const DEPENDENT_TIP :Array = [ -1, 0, 1, 1, -1, -1 ];
 }
 
 }
 
 const TIP_TEXT :Array = [
-    "Grab White Cells\nbefore they corrupt",
-    "Drag White Cells\nto the arteries",
-    "Catch Multipliers\nin cascades",
-    "Catch Special Strains\nin cascades",
-    "Pop Red Cells\nto create cascades",
-    "Larger cascades\nscore more points",
+    "Pop red cells to score",
+    "Cascades send multipliers\nto your teammates",
+    "Grab white cells\nbefore they corrupt",
+    "Drag white cells\nto arteries",
+    "Catch multipliers\nin cascades",
+    "Catch special strains\nin cascades",
 ];
 
 function createTipText (type :int) :TextField
