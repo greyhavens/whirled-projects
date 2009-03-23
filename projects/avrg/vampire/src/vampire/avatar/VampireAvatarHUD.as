@@ -9,7 +9,6 @@ package vampire.avatar
     import com.whirled.contrib.simplegame.objects.SceneObject;
     import com.whirled.contrib.simplegame.objects.SceneObjectPlayMovieClipOnce;
     import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
-    import com.whirled.contrib.simplegame.objects.SimpleTimer;
     import com.whirled.contrib.simplegame.tasks.AlphaTask;
     import com.whirled.contrib.simplegame.tasks.FunctionTask;
     import com.whirled.contrib.simplegame.tasks.SerialTask;
@@ -19,6 +18,7 @@ package vampire.avatar
     import flash.display.MovieClip;
     import flash.display.Sprite;
     import flash.events.MouseEvent;
+    import flash.geom.Point;
 
     import vampire.client.ClientContext;
     import vampire.client.SharedPlayerStateClient;
@@ -55,6 +55,10 @@ public class VampireAvatarHUD extends AvatarHUD
             trace(playerId + " clicked ");
         });
 
+        if (ClientContext.model.bloodbonded == userId) {
+            addBloodBondIcon();
+        }
+
     }
 
 //    protected function updateLineageInfo( e :LineageUpdatedEvent) :void
@@ -79,10 +83,12 @@ public class VampireAvatarHUD extends AvatarHUD
             addGlowFilter(_bloodBondIcon);
             //Go to the help page when you click on the icon
             Command.bind(_bloodBondIcon, MouseEvent.CLICK, VampireController.SHOW_INTRO, "default");
+
+            _ctrl.local.feedback("Adding bb icon at (" + _bloodBondIcon.x + "," + _bloodBondIcon.y + ")");
         }
 
         if (hotspot != null) {
-            _bloodBondIcon.x = hotspot[0] / 2;
+//            _bloodBondIcon.x = hotspot[0] / 2;
         }
     }
 
@@ -646,6 +652,32 @@ public class VampireAvatarHUD extends AvatarHUD
     {
         super.update(dt);
 
+        if (hotspot != null) {
+            var heightLogical :Number = hotspot[1]/_ctrl.local.getRoomBounds()[1];
+
+            var p1 :Point = _ctrl.local.locationToPaintable(_location[0], _location[1], _location[2]);
+            var p2 :Point = _ctrl.local.locationToPaintable(_location[0], heightLogical, _location[2]);
+
+            var absoluteHeight :Number = Math.abs(p2.y - p1.y);
+            _target_UI.y = absoluteHeight / 2;
+
+
+//            var widthLogical :Number = hotspot[0]/_ctrl.local.getRoomBounds()[0];
+//            p1 = _ctrl.local.locationToPaintable(0, _location[1], _location[2]);
+//            p2 = _ctrl.local.locationToPaintable(widthLogical, _location[1], _location[2]);
+//
+//            var absoluteWidth :Number = Math.abs(p2.x - p1.x);
+
+//            _hudSprite.graphics.clear();
+//            _hudSprite.graphics.beginFill(0, 0.3);
+//
+//            _hudSprite.graphics.drawRect( -absoluteWidth/2, 0, absoluteWidth, absoluteHeight);
+//            _hudSprite.graphics.endFill();
+
+
+        }
+
+
 //        _frenzyDelayRemaining -= dt;
 //
 //        _frenzyDelayRemaining = Math.max( _frenzyDelayRemaining, 0 );
@@ -862,10 +894,7 @@ public class VampireAvatarHUD extends AvatarHUD
     public function setDisplayModeSelectableForFeed() :void
     {
         trace(playerId + " setDisplayModeSelectableForFeed, hotspot=" + hotspot);
-        _hudSprite.graphics.clear();
-//        _hudSprite.graphics.beginFill(0, 0.3);
-//        _hudSprite.graphics.drawRect( -hotspot[0]/2, 0, hotspot[0], hotspot[1]);
-//        _hudSprite.graphics.endFill();
+
 
         _displaySprite.addChild( _hudSprite );
         _hudSprite.addChild(_target_UI);
@@ -874,9 +903,9 @@ public class VampireAvatarHUD extends AvatarHUD
 //        _hudSprite.addChild( _mouseOverSprite );
 
         //Adjust the graphics, now that we have a hotspot
-        if (_target_UI != null && hotspot != null) {
-            _target_UI.y = hotspot[1] / 2;
-        }
+    //        if (_target_UI != null && hotspot != null) {
+    //            _target_UI.y = hotspot[1] / 2;
+    //        }
 
 //        _hierarchyIcon.y = hotspot[1] / 2;
 
@@ -902,12 +931,12 @@ public class VampireAvatarHUD extends AvatarHUD
     {
         super.avatarChanged(ignored);
         //Change the location of the bloodbond icon if the hotspot changed
-        if (hotspot != null && _bloodBondIcon != null) {
-            _bloodBondIcon.x = hotspot[0] / 2;
-        }
-        if (hotspot != null && _target_UI != null) {
-            _target_UI.y = hotspot[1] / 2;
-        }
+//        if (hotspot != null && _bloodBondIcon != null) {
+//            _bloodBondIcon.x = hotspot[0] / 2;
+//        }
+//        if (hotspot != null && _target_UI != null) {
+//            _target_UI.y = hotspot[1] / 2;
+//        }
     }
 
     public function setDisplayModeInvisible() :void

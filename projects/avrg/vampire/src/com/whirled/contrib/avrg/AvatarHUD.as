@@ -552,37 +552,6 @@ public class AvatarHUD extends SceneObject
 
 
         var fuckedPoint :Point = ClientContext.ctrl.local.locationToPaintable(location[0], heightLogical, location[2]);
-//        var lessFuckedPoint :Point = new Point( fuckedPoint.x, fuckedPoint.y );
-
-
-//
-//        //Try to account for scrolling rooms
-//        var a :Number = location[0] * ClientContext.ctrl.local.getRoomBounds()[0];
-//        var b :Number = a - (ClientContext.ctrl.local.getRoomBounds()[0] - ClientContext.ctrl.local.getPaintableArea().width);
-//        var loc2Paintable :Point = ClientContext.ctrl.local.locationToPaintable(location[0], location[1], location[2]);
-//        var loc2Room :Point = ClientContext.ctrl.local.locationToRoom(location[0], location[1], location[2]);
-//        var paintableArea :Rectangle = ClientContext.ctrl.local.getPaintableArea();
-//        var bounds :Array = ClientContext.ctrl.local.getRoomBounds();
-//        if( loc2Paintable.x < paintableArea.width / 2) { //Left
-//            lessFuckedPoint.x = fuckedPoint.x;
-//        }
-//        else {//Middle or right
-//            if( loc2Room.x + paintableArea.width/2 < bounds[0]) {//Middle
-//                lessFuckedPoint.x = paintableArea.width/2;
-//            }
-//            else {//Right
-//                lessFuckedPoint.x = b;
-//            }
-//
-//        }
-//
-//        //!!!HACKERY!!!!!
-//        //The hotspot should never be more left than the original, FUCKED, calculation
-//        if( lessFuckedPoint.x > fuckedPoint.x) {
-//            lessFuckedPoint.x = fuckedPoint.x;
-//        }
-
-
 
        return fuckedPoint;
 
