@@ -83,14 +83,6 @@ public class Constants
 
     public static const NULL_PLAYER :int = 0;
 
-    public static const TUT_RED_CELLS :int = 0;
-    public static const TUT_CASCADE :int = 1;
-    public static const TUT_CREATE_MULTIPLIER :int = 2;
-    public static const TUT_GET_MULTIPLIER :int = 3;
-    public static const TUT_DRAG_WHITE :int = 4;
-    public static const TUT_EXPLODE_WHITE :int = 5;
-    public static const TUT_GET_SPECIAL :int = 6;
-
     public static const MODE_LOBBY :String = "m_Lobby";
     public static const MODE_PLAYING :String = "m_Playing";
 }
