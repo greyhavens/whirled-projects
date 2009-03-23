@@ -1038,19 +1038,26 @@ public class ServerLogic
     {
         log.debug("bloodBloomRoundOver()", "gameRecord", gameRecord);
 
-        if( gameRecord == null ) {
+        if (gameRecord == null) {
             log.error("bloodBloomRoundOver gameRecord==null");
             return;
         }
-        if( gameRecord.gameServer == null ) {
+        if (gameRecord.gameServer == null) {
             log.error("bloodBloomRoundOver gameRecord.gameServer==null");
             return;
         }
 
-//        if( gameRecord.gameServer.lastRoundScore == 0 ) {
-//            log.debug("score==0 so no blood lost or gained.");
-//            return;
-//        }
+        if (gameRecord.gameServer.lastRoundScore == 0) {
+            log.debug("score==0 so no blood lost or gained.");
+
+            for each (var playerId :int in gameRecord.playerIds) {
+                if (srv.isPlayer(playerId)) {
+                    var player :PlayerData = srv.getPlayer(playerId);
+                    player.addFeedback("You scored 0, no blood!");
+                }
+            }
+            return;
+        }
 
         var srv :GameServer = ServerContext.server;
         var room :Room = gameRecord.room;
