@@ -1,7 +1,6 @@
 package vampire.client
 {
 import com.threerings.flash.DisplayUtil;
-import com.threerings.flash.MathUtil;
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
@@ -45,8 +44,8 @@ public class HUD extends DraggableSceneObject
 
         //Listen to events that might cause us to update ourselves
         registerListener( ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, updateOurPlayerState );
-        registerListener( ClientContext.ctrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED, propChanged );
-        registerListener( ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+        registerListener( ClientContext.ctrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged );
+        registerListener( ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
 //        registerListener( ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
 
 
@@ -81,7 +80,7 @@ public class HUD extends DraggableSceneObject
         return "HUD";
     }
 
-    protected function propChanged (e :PropertyChangedEvent) :void
+    protected function handlePropChanged (e :PropertyChangedEvent) :void
     {
         //Check if it is non-player properties changed??
         //Otherwise check for player updates
@@ -124,7 +123,7 @@ public class HUD extends DraggableSceneObject
 
     }
 
-    protected function elementChanged (e :ElementChangedEvent) :void
+    protected function handleElementChanged (e :ElementChangedEvent) :void
     {
         //Check if it is non-player properties changed??
         //Otherwise check for player updates
@@ -134,9 +133,9 @@ public class HUD extends DraggableSceneObject
         var newLevel :int;
 
 
-        if( !isNaN( playerIdUpdated ) ) {
+        if (!isNaN( playerIdUpdated)) {
             //If it's us, update the player HUD
-            if( playerIdUpdated == ClientContext.ourPlayerId) {
+            if (playerIdUpdated == ClientContext.ourPlayerId) {
 
 //                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
 //
@@ -149,13 +148,12 @@ public class HUD extends DraggableSceneObject
 //                    }
 //                    showBlood( ClientContext.ourPlayerId );
 //                }
-                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
+                if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
 
 
-//                    oldLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.oldValue), ClientContext.model.invites);
-//                    newLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.newValue), ClientContext.model.invites);
+
 //                    if( oldLevel < newLevel) {
-                    if( e.oldValue < e.newValue) {
+                    if (e.oldValue < e.newValue) {
                         levelUp = new SceneObjectPlayMovieClipOnce(
                                 ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true) );
                         levelUp.x = _hudXP.x + ClientContext.model.maxblood/2;
@@ -165,8 +163,46 @@ public class HUD extends DraggableSceneObject
                     _currentLevel = ClientContext.model.level;
 
                     showXP( ClientContext.ourPlayerId );
+
+                    //If we only need invite(s) for the next level, show a popup
+                    //if we haven't already done so.
+                    if (!_isNewLevelNeedingInvitePopupShown) {
+                        oldLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.oldValue),
+                            ClientContext.model.invites);
+                        newLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.newValue),
+                            ClientContext.model.invites);
+                        var newLevelWithInvites :int =
+                            Logic.levelGivenCurrentXpAndInvites(Number(e.newValue), 100000);
+
+
+                        if (newLevel != newLevelWithInvites) {
+
+                            var recruitFunction :Function = function( e :MouseEvent ) :void {
+                                ClientContext.ctrl.local.showInvitePage("Join my Coven!", "" +
+                                    ClientContext.ourPlayerId);
+                            };
+
+                            var invitesNeeded :int = Logic.invitesNeededForLevel(newLevel + 1);
+                            var popup :PopupQuery = new PopupQuery( ClientContext.ctrl,
+                                "NeedInvites",
+                                "You need " + Logic.invitesNeededForLevel(newLevel + 1) +
+                                " recruit" + (invitesNeeded > 1 ? "s" : "") + " for level " +
+                                (newLevel + 1),
+                                ["Recruit Now", "Recruit Later"],
+                                [recruitFunction, null]);
+
+                            var mode :AppMode = ClientContext.gameMode;
+                            if( mode.getObjectNamed( popup.objectName) == null) {
+                                mode.addSceneObject( popup, mode.modeSprite );
+                            }
+
+                            _isNewLevelNeedingInvitePopupShown = true;
+                        }
+                    }
+
+
                 }
-                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES) {
+                else if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES) {
 
 
 //                    oldLevel = Logic.levelGivenCurrentXpAndInvites(ClientContext.model.xp, int(e.oldValue));
@@ -186,7 +222,9 @@ public class HUD extends DraggableSceneObject
                             ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true) );
                         levelUp.x = _hudXP.x + ClientContext.model.maxblood/2;
                         levelUp.y = _hudXP.y;
-                        mode.addSceneObject( levelUp, _hudXP.parent );
+                        if (mode != null && _hudXP.parent != null) {
+                            mode.addSceneObject( levelUp, _hudXP.parent );
+                        }
                     }
                     _currentLevel = ClientContext.model.level;
 
@@ -681,7 +719,6 @@ public class HUD extends DraggableSceneObject
         var maxBlood :Number = SharedPlayerStateClient.getMaxBlood( playerId );
 //        var blood :Number = MathUtil.clamp( SharedPlayerStateClient.getBlood( playerId ),
 //            0, maxBlood);
-
         var xp :int = ClientContext.model.xp;
         var invites :int = ClientContext.model.invites;
 
@@ -748,6 +785,8 @@ public class HUD extends DraggableSceneObject
 
     protected var _bloodText :TextField;
     protected var _xpText :TextField;
+
+    protected var _isNewLevelNeedingInvitePopupShown :Boolean = false;
 
 
     /**Used for registering changed level to animate a level up movieclip*/
