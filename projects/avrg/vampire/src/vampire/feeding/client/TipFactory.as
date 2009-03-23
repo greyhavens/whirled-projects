@@ -50,6 +50,10 @@ class Tip extends SceneObject
     {
         _tf = TextBits.createText(text, 1.5, 0, 0xffffff);
         _ownerRef = owner.ref;
+
+        // Start invisible, so if a frame passes before we update our location, we
+        // don't appear in the wrong place
+        this.visible = false;
     }
 
     override public function get displayObject () :DisplayObject
@@ -71,6 +75,8 @@ class Tip extends SceneObject
         loc = this.displayObject.parent.globalToLocal(loc);
         this.x = loc.x;
         this.y = loc.y;
+
+        this.visible = true;
     }
 
     protected var _tf :TextField;
