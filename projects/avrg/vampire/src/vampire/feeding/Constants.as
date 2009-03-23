@@ -54,7 +54,7 @@ public class Constants
     public static const WHITE_CELL_EXPLODE_TIME :Number = 7;
 
     public static const SPECIAL_CELL_CREATION_TIME :NumRange =
-        new NumRange(14, 20, Rand.STREAM_GAME);
+        new NumRange(30, 90, Rand.STREAM_GAME);
     public static const MAX_COLLECTIONS_PER_STRAIN :int = 3;
 
     public static const RED_BURST_RADIUS_MIN :Number = 8;
