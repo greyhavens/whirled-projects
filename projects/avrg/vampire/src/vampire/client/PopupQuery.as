@@ -29,6 +29,9 @@ public class PopupQuery extends DraggableSceneObject
         _popupPanel.mouseChildren = true;
         _displaySprite.addChild( _popupPanel );
 
+        _popupText = _popupPanel["popup_text"] as TextField;
+
+
         registerListener( _popupPanel["popup_close"], MouseEvent.CLICK,
             function( e :MouseEvent ) :void {
                 destroySelf();
@@ -55,21 +58,8 @@ public class PopupQuery extends DraggableSceneObject
 
     protected function setupText (message :String): void
     {
-        var tf :TextField = TextFieldUtil.createField( message );
-        tf.multiline = true;
-        tf.wordWrap = true;
-        var format :TextFormat = new TextFormat();
-        format.align = TextFormatAlign.CENTER;
-        format.size = 20;
-        format.color = 0xffffff;
-        tf.setTextFormat(format);
-        tf.antiAliasType = AntiAliasType.ADVANCED;
-        tf.width = _popupPanel.width - 40;
-        tf.height = _popupPanel.height - 30;
-        tf.x = -tf.width / 2;
-        tf.selectable = false;
-        tf.mouseEnabled = false;
-        _popupPanel.addChild( tf );
+        _popupText.text = message;
+        _popupText.y = -_popupText.textHeight/2;
     }
 
     protected function setupCommands (buttonNames :Array,
@@ -120,6 +110,7 @@ public class PopupQuery extends DraggableSceneObject
 
 
     protected var _popupPanel :MovieClip;
+    protected var _popupText :TextField;
 
     }
 }
