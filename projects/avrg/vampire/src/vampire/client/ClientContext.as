@@ -2,6 +2,7 @@ package vampire.client {
 
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.Log;
 import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
@@ -18,6 +19,7 @@ import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.filters.GlowFilter;
+import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import vampire.Util;
@@ -246,8 +248,10 @@ public class ClientContext
         so.addTask( LocationTask.CreateEaseIn(finalX, finalY, ANIMATION_TIME));
     }
 
-    protected static const ANIMATION_TIME :Number = 0.2;
+    protected static const ANIMATION_TIME :Number = 0.3;
     public static const glowFilter :GlowFilter = new GlowFilter(0xffffff);
+
+    protected static const log :Log = Log.getLog(ClientContext);
 
 }
 
