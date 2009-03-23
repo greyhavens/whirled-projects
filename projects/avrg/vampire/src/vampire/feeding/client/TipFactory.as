@@ -12,8 +12,13 @@ public class TipFactory
 
     public static function createTip (type :int, owner :SceneObject) :SimObjectRef
     {
-        if (GameCtx.gameMode.getObjectRefsInGroup("Tip_" + type).length > 0) {
-            return SimObjectRef.Null();
+        var existingTip :Tip = GameCtx.gameMode.getObjectNamed("Tip") as Tip;
+        if (existingTip != null) {
+            if (existingTip.type == type || existingTip.lifeTime < 5) {
+                return SimObjectRef.Null();
+            } else {
+                existingTip.destroySelf();
+            }
         }
 
         var tip :Tip = new Tip(type, owner);
@@ -93,13 +98,18 @@ class Tip extends SceneObject
         return _tf;
     }
 
-    override public function getObjectGroup (groupNum :int) :String
+    /*override public function getObjectGroup (groupNum :int) :String
     {
         switch (groupNum) {
         case 0:     return "Tip";
         case 1:     return "Tip_" + _type;
         default:    return super.getObjectGroup(groupNum - 2);
         }
+    }*/
+
+    override public function get objectName () :String
+    {
+        return "Tip";
     }
 
     override protected function update (dt :Number) :void
