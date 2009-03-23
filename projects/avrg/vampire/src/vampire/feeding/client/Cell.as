@@ -1,7 +1,6 @@
 package vampire.feeding.client {
 
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.contrib.simplegame.tasks.*;
@@ -151,8 +150,8 @@ public class Cell extends CollidableObj
 
     protected function attachTip (type :int) :void
     {
-        if (_attachedTip != null) {
-            _attachedTip.destroySelf();
+        if (!_attachedTip.isNull) {
+            _attachedTip.object.destroySelf();
         }
 
         _attachedTip = TipFactory.createTip(type, this);
@@ -409,7 +408,7 @@ public class Cell extends CollidableObj
     protected var _sprite :Sprite;
     protected var _movie :MovieClip;
     protected var _movieLoadedFromCache :Boolean;
-    protected var _attachedTip :SimObject;
+    protected var _attachedTip :SimObjectRef = SimObjectRef.Null();
 
     protected static const SPEED_BASE :Number = 5;
     protected static const SPEED_FOLLOW :Number = 60;

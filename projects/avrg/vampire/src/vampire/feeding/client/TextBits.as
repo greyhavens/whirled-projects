@@ -11,6 +11,7 @@ public class TextBits
 {
     public static const FONT_JUICE :int = 0;
     public static const FONT_GARAMOND :int = 1;
+    public static const FONT_ARNO :int = 2;
 
     public static function createText (text :String, textScale :Number = 1, maxWidth :int = 0,
         textColor :uint = 0, align :String = "center", font :int = FONT_JUICE) :TextField
@@ -65,7 +66,9 @@ public class TextBits
     protected static const TEXT_WIDTH_PAD :int = 5;
     protected static const TEXT_HEIGHT_PAD :int = 4;
 
-    protected static const FONT_NAMES :Array = [ "Juice ITC", "Adobe Garamond Pro" ];
+    protected static const FONT_NAMES :Array = [
+        "Juice ITC", "Adobe Garamond Pro", "Arno Pro Semibold"
+    ];
 
     [Embed(source="../../../../rsrc/JUICE___.TTF", fontName="Juice ITC",
         unicodeRange="U+0020-U+007E")]
@@ -74,6 +77,10 @@ public class TextBits
     [Embed(source="../../../../rsrc/AGaramondPro-Regular.otf", fontName="Adobe Garamond Pro",
         unicodeRange="U+0020-U+007E")]
     protected static const GARAMOND_FONT :Class;
+
+    [Embed(source="../../../../rsrc/ArnoPro-LightDisplay.otf", fontName="Arno Pro Semibold",
+        unicodeRange="U+0020-U+007E")]
+    protected static const ARNO_FONT :Class;
 }
 
 }
