@@ -14,7 +14,7 @@ public class GameCtx
     public static var cursor :PlayerCursor;
     public static var scoreView :ScoreHelpQuitView;
     public static var specialCellSpawner :SpecialCellSpawner;
-    public static var strainTallyView :StrainTallyView;
+    public static var specialStrainTallyView :SpecialStrainTallyView;
     public static var sentMultiplierIndicator :SentMultiplierIndicator;
 
     public static var bgLayer :Sprite;
@@ -34,7 +34,7 @@ public class GameCtx
         cursor = null;
         scoreView = null;
         specialCellSpawner = null;
-        strainTallyView = null;
+        specialStrainTallyView = null;
         sentMultiplierIndicator = null;
 
         bgLayer = null;

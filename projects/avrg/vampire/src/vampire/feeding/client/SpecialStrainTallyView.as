@@ -12,10 +12,11 @@ import flash.geom.Point;
 
 import vampire.feeding.*;
 
-public class StrainTallyView extends SceneObject
+public class SpecialStrainTallyView extends SceneObject
 {
-    public function StrainTallyView (type :int, initialStrainCount :int)
+    public function SpecialStrainTallyView (type :int, initialStrainCount :int)
     {
+        _type = type;
         _movie = ClientCtx.instantiateMovieClip("blood", "strain_tally");
         for (var ii :int = 0; ii < initialStrainCount; ++ii) {
             incrementStrainCount(false);
@@ -89,18 +90,11 @@ class GotSpecialStrainAnim
     {
         _strain = strain;
         _movie = ClientCtx.createSpecialStrainMovie(strain);
-        /*_events.registerListener(_movie, Event.ENTER_FRAME,
-            function (...ignored) :void {
-                var typeMovie :MovieClip = _movie["type"];
-                typeMovie = typeMovie["type"];
-                typeMovie.gotoAndStop(strain + 1);
-            });*/
     }
 
     public function animate (end :Point) :void
     {
-        _movie.play();
-
+        _movie.gotoAndPlay(2);
         addTask(new SerialTask(
             new PlaySoundTask("sfx_got_special_strain"),
             new WaitForFrameTask(55, _movie),

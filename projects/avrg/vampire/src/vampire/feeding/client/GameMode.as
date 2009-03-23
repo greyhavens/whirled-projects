@@ -153,12 +153,12 @@ public class GameMode extends AppMode
         addSceneObject(GameCtx.scoreView, GameCtx.uiLayer);
 
         if (!ClientCtx.isPrey && ClientCtx.preyBloodType >= 0) {
-            GameCtx.strainTallyView = new StrainTallyView(
+            GameCtx.specialStrainTallyView = new SpecialStrainTallyView(
                 ClientCtx.preyBloodType,
                 ClientCtx.playerData.getStrainCount(ClientCtx.preyBloodType));
-            GameCtx.strainTallyView.x = Constants.GAME_CTR.x;
-            GameCtx.strainTallyView.y = Constants.GAME_CTR.y;
-            addSceneObject(GameCtx.strainTallyView, GameCtx.uiLayer);
+            GameCtx.specialStrainTallyView.x = Constants.GAME_CTR.x;
+            GameCtx.specialStrainTallyView.y = Constants.GAME_CTR.y;
+            addSceneObject(GameCtx.specialStrainTallyView, GameCtx.uiLayer);
         }
 
         GameCtx.cursor = GameObjects.createPlayerCursor();
