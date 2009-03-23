@@ -7,8 +7,11 @@ import com.threerings.util.ClassUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
+import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.net.MessageReceivedEvent;
 
@@ -234,26 +237,39 @@ public class MainGameMode extends AppMode
             } else {
                 _feedingGameClient = FeedingClient.create( gameId, ClientContext.model.playerFeedingData, onGameComplete);
 
-                modeSprite.addChild(_feedingGameClient);
+                _feedingGameClientSceneobjectWrapper = new SimpleSceneObject(_feedingGameClient,
+                    "FeedingGameClient");
+                addObject(_feedingGameClientSceneobjectWrapper);
+                //Set index 0 so the popup are above the feeding game.
+                modeSprite.addChildAt(_feedingGameClientSceneobjectWrapper.displayObject, 0)
+//                modeSprite.addChild(_feedingGameClient);
+                ClientContext.animateEnlargeFromMouseClick(_feedingGameClientSceneobjectWrapper);
             }
         }
-        else if( e.name == VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING ) {
+        else if (e.name == VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING) {
 
+            var ctrl :AVRGameControl = ClientContext.ctrl;
             var moveTimer :SimpleTimer = new SimpleTimer( 2.5, function() :void {
 
                 var location :Array = ClientContext.model.location;
-                if( location != null ) {
+                var hotspot :Array = ClientContext.model.hotspot;
+                if (location != null && hotspot != null) {
 
                     var xDirection :Number = location[3] > 0 && location[3] <= 180 ? 1 : -1;
-                    ClientContext.ctrl.player.setAvatarLocation(
-                        MathUtil.clamp( location[0] + 0.1 * xDirection, 0, 1),
+
+                    var widthLogical :Number = hotspot[0]/ctrl.local.getRoomBounds()[0];
+
+                    var xDistance :Number = xDirection * widthLogical / 3;
+
+                    ctrl.player.setAvatarLocation(
+                        MathUtil.clamp( location[0] + xDistance, 0, 1),
                         location[1],
                         MathUtil.clamp( location[2] - 0.1, 0, 1), location[3]);
                 }
             }, false);
             addObject( moveTimer );
         }
-        else if( e.name == FeedRequestMsg.NAME ) {
+        else if (e.name == FeedRequestMsg.NAME) {
             var msg :FeedRequestMsg =
                 ClientContext.msg.deserializeMessage( e.name, e.value) as FeedRequestMsg;
 
@@ -292,10 +308,13 @@ public class MainGameMode extends AppMode
         }
         _feedingGameClient.shutdown();
 
+
+        _feedingGameClientSceneobjectWrapper.destroySelf();
+        _feedingGameClientSceneobjectWrapper = null;
         //Remove game after getting the feeding data, feeding data is nulled after stage removal.
-        if( _feedingGameClient.parent != null ){
-            _feedingGameClient.parent.removeChild( _feedingGameClient )
-        }
+//        if( _feedingGameClient.parent != null ){
+//            _feedingGameClient.parent.removeChild( _feedingGameClient )
+//        }
         _feedingGameClient = null;
         //Reset the overlay
 //        ClientContext.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
@@ -337,6 +356,8 @@ public class MainGameMode extends AppMode
     protected var _hud :HUD;
 
     protected var _feedingGameClient :FeedingClient;
+
+    protected var _feedingGameClientSceneobjectWrapper :SceneObject;
 
     protected var _currentNonPlayerIds :Array;
 
