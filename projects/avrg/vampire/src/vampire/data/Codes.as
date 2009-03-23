@@ -110,5 +110,7 @@ public class Codes
     public static const TASK_ACQUIRE_MINION_ID :String = "taskAcquireMinion";
     public static const TASK_ACQUIRE_MINION_SCORE :Number = 0.8;
 
+    public static const POPUP_PREFIX :String = "POPUP";
+
 }
 }
