@@ -3,6 +3,7 @@ package vampire.client
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
 import com.whirled.contrib.avrg.AvatarHUD;
+import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 
@@ -480,8 +481,13 @@ public class VampireController extends Controller
     }
 
 
-    public function handleShowPopupMessage (msg :String) :void
+    public function handleShowPopupMessage (name :String, msg :String) :void
     {
+        var popup :PopupQuery = new PopupQuery( ClientContext.ctrl, name, msg);
+        var mode :AppMode = ClientContext.gameMode;
+        if( mode.getObjectNamed( popup.objectName) == null) {
+            mode.addSceneObject( popup, mode.modeSprite );
+        }
     }
 
     public function handleAcceptFeedRequest (playerId :int) :void
