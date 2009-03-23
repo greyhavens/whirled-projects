@@ -1067,7 +1067,7 @@ public class ServerLogic
             gameRecord.gameServer.lastRoundScore );
 
         var preyIsPlayer :Boolean = srv.isPlayer( gameRecord.preyId );
-        var preyPlayer :PlayerData;
+        var preyPlayer :PlayerData = preyIsPlayer ? srv.getPlayer( gameRecord.preyId ) : null;
 //        var bloodGained :Number = 0;
         var preyId :int = gameRecord.preyId;
 //        var damage :Number = VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
