@@ -349,12 +349,12 @@ public class ServerLogic
         try{
 
             // handle messages that make (at least some) sense even if we're between rooms
-            log.debug(playerId + " handleMessage() ", "name", name, "value", value);
+//            log.debug(playerId + " handleMessage() ", "name", name, "value", value);
 
             //Attempt to handle Message type message first
             var msg :Message = ServerContext.msg.deserializeMessage(name, value);
             if( msg != null) {
-                log.debug(playerId + " handleMessage() GameMessage: ", "name", name, "value", msg);
+//                log.debug(playerId + " handleMessage() GameMessage: ", "name", name, "value", msg);
 
                 if( msg is RequestStateChangeMsg) {
                     handleRequestActionChange( player, RequestStateChangeMsg(msg) );
@@ -377,8 +377,8 @@ public class ServerLogic
                     handleFeedConfirmMessage( requestingPlayer, feedConfirm );
                 }
                 else {
-                    log.debug("Cannot handle Message ", "player", playerId, "type", value );
-                    log.debug("  Classname=" + ClassUtil.getClassName(value) );
+//                    log.debug("Cannot handle Message ", "player", playerId, "type", value );
+//                    log.debug("  Classname=" + ClassUtil.getClassName(value) );
                 }
             }
             else {
@@ -483,7 +483,7 @@ public class ServerLogic
 
 
                     default:
-                    log.debug("Message not handled", "name", name);
+//                    log.debug("Message not handled", "name", name);
                 }
             }
 
