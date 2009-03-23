@@ -1,5 +1,8 @@
 package framework
 {
+    import com.whirled.contrib.simplegame.net.BasicMessageManager;
+    import com.whirled.contrib.simplegame.net.MessageManager;
+
     import flash.geom.Rectangle;
     import flash.utils.Dictionary;
 
@@ -12,7 +15,7 @@ package framework
         public static var roomProps :Dictionary = new Dictionary();
         public static var roomBounds :Array = [700, 500];
         public static var paintableArea :Rectangle = new Rectangle(0, 0, 750, 550);
-        public static var msg :MessageManager = new MessageManager();
+        public static var msg :MessageManager = new BasicMessageManager();
 
     }
 }
