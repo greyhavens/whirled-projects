@@ -209,9 +209,9 @@ public class FeedingManager extends SimObject
              if (game.isPredator(playerId)){
                  playerids.push(playerId);
              }
-             else if (game.isStarted){
-                 playerids.push(playerId);
-             }
+//             else if (game.isStarted){
+//                 playerids.push(playerId);
+//             }
          });
          return playerids;
     }
