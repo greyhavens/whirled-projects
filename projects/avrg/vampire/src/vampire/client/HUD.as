@@ -316,7 +316,7 @@ public class HUD extends DraggableSceneObject
 
         _hudXP = new Sprite();
         _hudXPParent = _hudCap.parent;
-        _hudCap.parent.addChild( _hudXP );
+        _hudXPParent.addChild( _hudXP );
         _hudXP.x = _hudCap.x;
         _hudXP.y = _hudCap.y;
         _hudCap.parent.removeChild(_hudCap);
