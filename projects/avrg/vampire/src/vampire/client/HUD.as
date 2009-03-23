@@ -15,6 +15,7 @@ import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
@@ -158,7 +159,7 @@ public class HUD extends DraggableSceneObject
                                 ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true) );
                         levelUp.x = _hudXP.x + ClientContext.model.maxblood/2;
                         levelUp.y = _hudXP.y;
-                        mode.addSceneObject( levelUp, _hudXP.parent  );
+                        mode.addSceneObject( levelUp, _hudXPParent  );
                     }
                     _currentLevel = ClientContext.model.level;
 
@@ -222,8 +223,8 @@ public class HUD extends DraggableSceneObject
                             ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true) );
                         levelUp.x = _hudXP.x + ClientContext.model.maxblood/2;
                         levelUp.y = _hudXP.y;
-                        if (mode != null && _hudXP.parent != null) {
-                            mode.addSceneObject( levelUp, _hudXP.parent );
+                        if (mode != null && _hudXPParent != null) {
+                            mode.addSceneObject( levelUp, _hudXPParent );
                         }
                     }
                     _currentLevel = ClientContext.model.level;
@@ -237,7 +238,7 @@ public class HUD extends DraggableSceneObject
                                 ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true) );
                         bloodBondMovie.x = _hudXP.x + ClientContext.model.maxblood/2;
                         bloodBondMovie.y = _hudXP.y;
-                        mode.addSceneObject( bloodBondMovie, _hudXP.parent  );
+                        mode.addSceneObject( bloodBondMovie, _hudXPParent  );
                     }
 
                 }
@@ -314,6 +315,7 @@ public class HUD extends DraggableSceneObject
 //        _hudBlood.y = _hudCap.y - (_hudCap.height/2 + 1);
 
         _hudXP = new Sprite();
+        _hudXPParent = _hudCap.parent;
         _hudCap.parent.addChild( _hudXP );
         _hudXP.x = _hudCap.x;
         _hudXP.y = _hudCap.y;
@@ -332,7 +334,7 @@ public class HUD extends DraggableSceneObject
             _bloodXPMouseOverSceneObject.addTask( AlphaTask.CreateEaseIn(0, 0.3));
         });
 
-        _hudXP.parent.addChild(bloodXPMouseOverSprite );
+        _hudXPParent.addChild(bloodXPMouseOverSprite );
 
         var hudHelp :SimpleButton = SimpleButton( findSafely("button_menu") );
         Command.bind( hudHelp, MouseEvent.CLICK, VampireController.SHOW_INTRO);
@@ -440,7 +442,13 @@ public class HUD extends DraggableSceneObject
         //Show feedback in the local client only feedback
         if( _feedbackMessageQueue.length > 0 ){
             for each( var msg :String in _feedbackMessageQueue) {
-                _ctrl.local.feedback( msg );
+                if (msg.substr(0, Codes.POPUP_PREFIX.length) == Codes.POPUP_PREFIX) {
+                    ClientContext.controller.handleShowPopupMessage("",
+                        msg.substring(Codes.POPUP_PREFIX.length));
+                }
+                else {
+                    _ctrl.local.feedback( msg );
+                }
             }
             _feedbackMessageQueue.splice(0);
         }
@@ -776,6 +784,7 @@ public class HUD extends DraggableSceneObject
     protected var _hudXP :Sprite;
 //    protected var _bloodXPMouseOverSprite :Sprite;
     protected var _bloodXPMouseOverSceneObject :SceneObject;
+    protected var _hudXPParent :DisplayObjectContainer;
 
 
     //Used for anchoring the bars.
