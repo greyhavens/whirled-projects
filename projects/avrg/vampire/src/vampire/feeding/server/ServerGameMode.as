@@ -97,17 +97,17 @@ public class ServerGameMode extends ServerMode
     protected function endRoundIfReady () :void
     {
         if (_playersNeedingScoreUpdate.length == 0) {
-            // Send the final scores to the clients.
-            var preyBloodStart :Number = _ctx.preyBlood;
-            _ctx.preyBlood = _ctx.roundCompleteCallback();
-            _ctx.sendMessage(RoundOverMsg.create(_finalScores, preyBloodStart, _ctx.preyBlood));
-
             var totalScore :int;
             _finalScores.forEach(
                 function (playerId :int, score :int) :void {
                     totalScore += score;
                 });
             _ctx.lastRoundScore = totalScore;
+            // Send the final scores to the clients.
+            var preyBloodStart :Number = _ctx.preyBlood;
+            _ctx.preyBlood = _ctx.roundCompleteCallback();
+            _ctx.sendMessage(RoundOverMsg.create(_finalScores, preyBloodStart, _ctx.preyBlood));
+
             _ctx.server.setMode(Constants.MODE_LOBBY);
 
         } else {
