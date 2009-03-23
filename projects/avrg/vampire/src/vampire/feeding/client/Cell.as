@@ -154,7 +154,7 @@ public class Cell extends CollidableObj
             _attachedTip.object.destroySelf();
         }
 
-        _attachedTip = TipFactory.createTip(type, this);
+        _attachedTip = GameCtx.tipFactory.createTip(type, this);
     }
 
     protected function birthRedCell () :void
@@ -186,6 +186,8 @@ public class Cell extends CollidableObj
         // fade in
         this.alpha = 0;
         addTask(new AlphaTask(1, 0.4));
+
+        attachTip(TipFactory.POP_RED);
     }
 
     protected function birthWhiteCell () :void

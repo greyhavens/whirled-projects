@@ -1,5 +1,6 @@
 package vampire.feeding.client {
 
+import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 
@@ -9,25 +10,41 @@ public class TipFactory
     public static const DROP_WHITE :int = 1;
     public static const GET_MULTIPLIER :int = 2;
     public static const GET_SPECIAL :int = 3;
+    public static const POP_RED :int = 4;
+    public static const CASCADE :int = 5;
 
-    public static function createTip (type :int, owner :SceneObject) :SimObjectRef
+    public static const NUM_TIPS :int = 6;
+
+    public function createTip (type :int, owner :SceneObject) :SimObjectRef
     {
+        // Have we already displayed this tip enough?
+        if (MAX_TIP_COUNT[type] >= 0 && _tipCounts[type] >= MAX_TIP_COUNT[type]) {
+            return SimObjectRef.Null();
+        }
+
+        // Are we already displaying a tip? Has it existed for longer than a few seconds?
         var existingTip :Tip = GameCtx.gameMode.getObjectNamed("Tip") as Tip;
         if (existingTip != null) {
             if (existingTip.type == type || existingTip.lifeTime < 5) {
                 return SimObjectRef.Null();
             } else {
-                existingTip.destroySelf();
+                existingTip.die();
             }
         }
 
         var tip :Tip = new Tip(type, owner);
         tip.offset.x = -tip.width * 0.5;
-        tip.offset.y = -tip.height - 8;
+        tip.offset.y = -tip.height - 10;
         GameCtx.gameMode.addSceneObject(tip, GameCtx.uiLayer);
+
+        _tipCounts[type] += 1;
 
         return tip.ref;
     }
+
+    protected var _tipCounts :Array = ArrayUtil.create(NUM_TIPS, 0);
+
+    protected static const MAX_TIP_COUNT :Array = [ -1, -1, -1, -1, 1, 2 ];
 }
 
 }
@@ -37,6 +54,8 @@ const TIP_TEXT :Array = [
     "Drag White Cells\nto the arteries",
     "Catch Multipliers\nin cascades",
     "Catch Special Strains\nin cascades",
+    "Pop Red Cells\nto create cascades",
+    "Larger cascades\nscore more points",
 ];
 
 function createTipText (type :int) :TextField
@@ -75,12 +94,14 @@ class Tip extends SceneObject
         addTask(new AlphaTask(1, 0.5));
     }
 
-    override protected function removedFromDB () :void
+    public function die () :void
     {
         var deadTip :DeadTip = new DeadTip(_type);
         deadTip.x = this.x;
         deadTip.y = this.y;
         GameCtx.gameMode.addSceneObject(deadTip, GameCtx.uiLayer);
+
+        destroySelf();
     }
 
     public function get type () :int

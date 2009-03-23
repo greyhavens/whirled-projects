@@ -103,6 +103,8 @@ public class GameMode extends AppMode
         }
 
         // Setup game objects
+        GameCtx.tipFactory = new TipFactory();
+
         GameCtx.bgLayer.addChild(ClientCtx.instantiateBitmap("bg"));
 
         var heartMovie :MovieClip = ClientCtx.instantiateMovieClip("blood", "circulatory");

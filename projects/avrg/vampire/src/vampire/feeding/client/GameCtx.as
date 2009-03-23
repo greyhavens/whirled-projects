@@ -16,6 +16,7 @@ public class GameCtx
     public static var specialCellSpawner :SpecialCellSpawner;
     public static var specialStrainTallyView :SpecialStrainTallyView;
     public static var sentMultiplierIndicator :SentMultiplierIndicator;
+    public static var tipFactory :TipFactory;
 
     public static var bgLayer :Sprite;
     public static var cellBirthLayer :Sprite;

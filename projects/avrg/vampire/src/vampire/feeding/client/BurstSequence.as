@@ -28,6 +28,11 @@ public class BurstSequence extends SceneObject
         _sprite.addChild(_tf);
     }
 
+    override protected function addedToDB () :void
+    {
+        GameCtx.tipFactory.createTip(TipFactory.CASCADE, this);
+    }
+
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
