@@ -308,15 +308,15 @@ public class ServerLogic
                 player.setBlood( Math.min( player.blood, 0.1 * player.maxBlood));
             }
 
-            var levelWithMaxInvites :int = Logic.levelGivenCurrentXpAndInvites( xp, 100000 );
-            if( levelWithMaxInvites > newLevel ) {
-                var invitesNeededForNextLevel :int = Logic.invitesNeededForLevel( newLevel + 1 );
-                invitesNeededForNextLevel = Math.max(0, invitesNeededForNextLevel - player.invites );
-                player.addFeedback("You've reached level " + newLevel + ", but your Lineage isn't diverse "
-                + "enough to handle your growing power.  Recruit " + invitesNeededForNextLevel +
-                " new player" + (invitesNeededForNextLevel > 1 ? "s":"")
-                + " from outside Whirled to support your new potency.");
-            }
+//            var levelWithMaxInvites :int = Logic.levelGivenCurrentXpAndInvites( xp, 100000 );
+//            if( levelWithMaxInvites > newLevel ) {
+//                var invitesNeededForNextLevel :int = Logic.invitesNeededForLevel( newLevel + 1 );
+//                invitesNeededForNextLevel = Math.max(0, invitesNeededForNextLevel - player.invites );
+//                player.addFeedback("You've reached level " + newLevel + ", but your Lineage isn't diverse "
+//                + "enough to handle your growing power.  Recruit " + invitesNeededForNextLevel +
+//                " new player" + (invitesNeededForNextLevel > 1 ? "s":"")
+//                + " from outside Whirled to support your new potency.");
+//            }
 
 
         }
@@ -1236,8 +1236,11 @@ public class ServerLogic
         var currentAvatarState :String = player.avatarState;
 
         if( newAvatarState != currentAvatarState ) {
-            log.debug(player.playerId + " updateAvatarState(" + newAvatarState + "), when action=" + playerState);
+            log.debug(player.name + " updateAvatarState(" + newAvatarState + "), when action=" + playerState);
             player.setAvatarState(newAvatarState);
+        }
+        else {
+            log.debug(player.name + " updateAvatarState(" + newAvatarState + "), but not changing since we are=" + currentAvatarState);
         }
     }
 
