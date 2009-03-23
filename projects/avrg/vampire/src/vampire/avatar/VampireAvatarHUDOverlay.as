@@ -431,6 +431,7 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
                                 "Try hunting in a different room.");
                         }
                     }
+                    setDisplayMode(DISPLAY_MODE_OFF);
                 }
                 break;
 //            case DISPLAY_MODE_SHOW_FEED_TARGET:
