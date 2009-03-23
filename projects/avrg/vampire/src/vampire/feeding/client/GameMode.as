@@ -172,8 +172,6 @@ public class GameMode extends AppMode
             addSceneObject(new Debris(), GameCtx.bgLayer);
         }
 
-        addObject(new TutorialMgr());
-
         ClientCtx.playerData.incrementTimesPlayed();
     }
 
