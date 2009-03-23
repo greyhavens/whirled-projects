@@ -50,8 +50,8 @@ public class TipFactory
 
     protected var _tipCounts :Array = ArrayUtil.create(NUM_TIPS, 0);
 
-    protected static const MAX_TIP_COUNT :Array = [ 1, 1, 2, 2, -1, -1 ];
-    protected static const DEPENDENT_TIP :Array = [ -1, 0, 1, 1, -1, -1 ];
+    protected static const MAX_TIP_COUNT :Array = [ 1, 1, 2, 2, 2, -1 ];
+    protected static const DEPENDENT_TIP :Array = [ -1, 0, 1, 1, 1, -1 ];
 }
 
 }
@@ -94,6 +94,10 @@ class Tip extends SceneObject
         _type = type;
         _tf = createTipText(type);
         _ownerRef = owner.ref;
+
+        if (_ownerRef.isNull) {
+            throw new Error("Tip owner isn't in an ObjectDB");
+        }
 
         // Start invisible, so if a frame passes before we update our location, we
         // don't appear in the wrong place
