@@ -29,8 +29,6 @@ import vampire.net.messages.TargetMovedMsg;
 
 public class ServerLogic
 {
-
-
     /**
     * When a player gains blood, his sires all share a portion of the gain
     *
@@ -725,7 +723,8 @@ public class ServerLogic
 
             game = player.room.bloodBloomGameManager.requestFeed(
                 e.playerId,
-                (e.targetPlayer != 0 ? e.targetPlayer : -1),//BB used -1 as the AI player
+                e.targetPlayer,
+                e.targetName,
                 [e.targetX, e.targetY, e.targetZ] );//Prey location
 
             stateChange( player, VConstants.PLAYER_STATE_MOVING_TO_FEED );
@@ -790,6 +789,7 @@ public class ServerLogic
             var game :FeedingRecord = player.room.bloodBloomGameManager.requestFeed(
                     player.playerId,
                     prey.playerId,
+                    e.preyName,
                     player.targetLocation );//Prey location
 
             stateChange( player, VConstants.PLAYER_STATE_MOVING_TO_FEED );
@@ -906,14 +906,14 @@ public class ServerLogic
                     break;
                 }
 
-                //If we are alrady in bare mode, toggle it, unless we are in a game.
-                //Then we should quit the game to get out of bared mode
-                if( player.state == VConstants.PLAYER_STATE_BARED ) {
-                    if( !room.bloodBloomGameManager.isPreyInGame( playerId )) {
-                        player.setState( VConstants.PLAYER_STATE_DEFAULT );
-                        break;
-                    }
-                }
+//                //If we are alrady in bare mode, toggle it, unless we are in a game.
+//                //Then we should quit the game to get out of bared mode
+//                if( player.state == VConstants.PLAYER_STATE_BARED ) {
+//                    if( !room.bloodBloomGameManager.isPreyInGame( playerId )) {
+//                        player.setState( VConstants.PLAYER_STATE_DEFAULT );
+//                        break;
+//                    }
+//                }
 
                 //Otherwise, go into bared mode.  Whay not?
                 player.setState( newState );
@@ -1171,6 +1171,7 @@ public class ServerLogic
    public static function bloodBloomRoundOver( gameRecord :FeedingRecord ) :void
     {
         log.debug("bloodBloomRoundOver()", "gameRecord", gameRecord);
+        var srv :GameServer = ServerContext.server;
 
         if (gameRecord == null) {
             log.error("bloodBloomRoundOver gameRecord==null");
@@ -1184,16 +1185,20 @@ public class ServerLogic
         if (gameRecord.gameServer.lastRoundScore == 0) {
             log.debug("score==0 so no blood lost or gained.");
 
-            for each (var playerId :int in gameRecord.playerIds) {
-                if (srv.isPlayer(playerId)) {
-                    var player :PlayerData = srv.getPlayer(playerId);
-                    player.addFeedback("You scored 0, no blood!");
+            if (gameRecord.playerIds != null) {
+                for each (var playerId :int in gameRecord.playerIds) {
+                    if (srv.isPlayer(playerId)) {
+                        var player :PlayerData = srv.getPlayer(playerId);
+                        player.addFeedback("You scored 0, no blood!");
+                    }
                 }
+            }
+            else {
+                log.error("bloodBloomRoundOver gameRecord.playerIds == null");
             }
             return;
         }
 
-        var srv :GameServer = ServerContext.server;
         var room :Room = gameRecord.room;
         //Check if it's a human practising
 //        if( srv.getPlayer(gameRecord.primaryPredatorId) != null &&

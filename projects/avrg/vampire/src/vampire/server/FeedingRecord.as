@@ -14,8 +14,14 @@ import vampire.feeding.FeedingServer;
 
 public class FeedingRecord extends EventCollecter
 {
-    public function FeedingRecord( room :Room, gameId :int, predatorId :int, preyId :int,
-        preyLocation :Array, gameFinishesCallback :Function, playerLeavesCallback :Function)
+    public function FeedingRecord( room :Room,
+                                   gameId :int,
+                                   predatorId :int,
+                                   preyId :int,
+                                   preyName :String,
+                                   preyLocation :Array,
+                                   gameFinishesCallback :Function,
+                                   playerLeavesCallback :Function)
     {
         _room = room;
         _gameId = gameId;
@@ -23,6 +29,7 @@ public class FeedingRecord extends EventCollecter
         _primaryPredatorId = predatorId;
 //        _predators.add( _primaryPredatorId );
         _preyId = preyId;
+        _preyName = preyName;
 //        _preyLocation = preyLocation;
 
         _gameFinishedManagerCallback = gameFinishesCallback;
@@ -46,10 +53,17 @@ public class FeedingRecord extends EventCollecter
             _primaryPredMoved = true;
         }
 
-        if (_gameServer != null && ArrayUtil.contains(_gameServer.playerIds, playerId)) {
+        if (_gameServer != null) {// && ArrayUtil.contains(_gameServer.playerIds, playerId)) {
             log.debug("playerLeavesGame", "playerId", playerId);
-            _gameServer.playerLeft( playerId );
+            if (_room.isPlayer(playerId)) {
+                _gameServer.playerLeft(playerId);
+            }
+            else {
+                _gameServer.playerLeft(Constants.NULL_PLAYER);
+            }
         }
+
+        removePlayer(playerId);
     }
 
     public function get isLobbyStarted () :Boolean
@@ -88,7 +102,7 @@ public class FeedingRecord extends EventCollecter
                                                 gamePreyId,
                                                 preyBlood,
                                                 preyBloodType,
-                                                "AI Prey", // Dion: fill this in
+                                                _preyName,
                                                 gameStartedCallback,
                                                 roundCompleteCallback,
                                                 gameFinishedCallback,
@@ -265,7 +279,7 @@ public class FeedingRecord extends EventCollecter
         return playerId == _preyId;
     }
 
-    public function removePlayer (playerId :int) :void
+    protected function removePlayer (playerId :int) :void
     {
         if (_playerLeavesCallback != null) {
             _playerLeavesCallback(playerId);
@@ -436,6 +450,7 @@ public class FeedingRecord extends EventCollecter
 
     protected var _predators :HashSet = new HashSet();
     protected var _preyId :int;
+    protected var _preyName :String;
     protected var _preyLocation :Array;
     protected var _primaryPredatorId :int;
     protected var _started :Boolean = false;

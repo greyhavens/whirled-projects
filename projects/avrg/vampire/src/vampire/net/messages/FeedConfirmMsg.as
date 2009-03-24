@@ -6,11 +6,12 @@ package vampire.net.messages
 
     public class FeedConfirmMsg extends BaseGameMsg
     {
-        public function FeedConfirmMsg(playerId:int = 0, predatorId :int= 0, isAllowedToFeed :Boolean = false)
+        public function FeedConfirmMsg(playerId:int = 0, preyName :String = null, predatorId :int= 0, isAllowedToFeed :Boolean = false)
         {
             super(playerId);
             _isAllowedToFeed = isAllowedToFeed;
             _predId = predatorId;
+            _preyName = preyName == null ? "" : preyName;
         }
 
         override public function fromBytes (bytes :ByteArray) :void
@@ -18,6 +19,7 @@ package vampire.net.messages
             super.fromBytes(bytes);
             _isAllowedToFeed = bytes.readBoolean();
             _predId = bytes.readInt();
+            _preyName = bytes.readUTF();
         }
 
         override public function toBytes (bytes :ByteArray = null) :ByteArray
@@ -25,6 +27,7 @@ package vampire.net.messages
             var bytes :ByteArray = super.toBytes(bytes);
             bytes.writeBoolean( _isAllowedToFeed );
             bytes.writeInt( _predId );
+            bytes.writeUTF(_preyName);
             return bytes;
         }
 
@@ -38,6 +41,11 @@ package vampire.net.messages
             return _predId;
         }
 
+        public function get preyName () :String
+        {
+           return _preyName;
+        }
+
         override public function get name () :String
         {
            return NAME;
@@ -45,9 +53,14 @@ package vampire.net.messages
 
         override public function toString() :String
         {
-            return ClassUtil.tinyClassName( this ) + ": prey=" + _playerId + ", predId=" + _predId + ", allow feeding=" + _isAllowedToFeed;
+            return ClassUtil.tinyClassName( this ) + ": prey="
+                + _playerId
+                + ", predId=" + predatorId
+                + ", preyName=" + preyName
+                + ", allow feeding=" + isAllowedToFeed;
         }
 
+        protected var _preyName :String;
         protected var _isAllowedToFeed :Boolean;
         protected var _predId :int;
 

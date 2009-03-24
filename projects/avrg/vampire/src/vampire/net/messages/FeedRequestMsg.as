@@ -8,6 +8,7 @@ package vampire.net.messages
     {
         public function FeedRequestMsg(playerId :int = 0,
                                             targetPlayerId :int = 0,
+                                            targetPlayerName :String = null,
                                             targetLocationX :Number = 0,
                                             targetLocationY :Number = 0,
                                             targetLocationZ :Number = 0
@@ -15,6 +16,7 @@ package vampire.net.messages
         {
             super(playerId);
             _targetPlayerId = targetPlayerId;
+            _targetPlayerName = targetPlayerName == null ? "" : targetPlayerName;
             _targetX = targetLocationX;
             _targetY = targetLocationY;
             _targetZ = targetLocationZ;
@@ -24,6 +26,7 @@ package vampire.net.messages
         {
             super.fromBytes(bytes);
             _targetPlayerId = bytes.readInt();
+            _targetPlayerName = bytes.readUTF();
             _targetX = bytes.readFloat();
             _targetY = bytes.readFloat();
             _targetZ = bytes.readFloat();
@@ -33,6 +36,7 @@ package vampire.net.messages
         {
             var bytes :ByteArray = super.toBytes(bytes);
             bytes.writeInt( _targetPlayerId );
+            bytes.writeUTF(_targetPlayerName);
             bytes.writeFloat( _targetX );
             bytes.writeFloat( _targetY );
             bytes.writeFloat( _targetZ );
@@ -51,7 +55,7 @@ package vampire.net.messages
 
         override public function toString() :String
         {
-            return ClassUtil.tinyClassName( this ) + ": player=" + _playerId + ", eating " + targetPlayer;
+            return ClassUtil.tinyClassName( this ) + ": player=" + _playerId + ", eating " + targetName;
         }
 
         public function get targetX () :Number
@@ -66,9 +70,14 @@ package vampire.net.messages
         {
            return _targetZ;
         }
+        public function get targetName () :String
+        {
+           return _targetPlayerName;
+        }
 
 
         protected var _targetPlayerId :int;
+        protected var _targetPlayerName :String;
         protected var _targetX :Number;
         protected var _targetY :Number;
         protected var _targetZ :Number;

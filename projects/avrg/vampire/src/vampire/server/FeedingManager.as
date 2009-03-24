@@ -52,9 +52,11 @@ public class FeedingManager extends SimObject
         return ++_bloodBloomIdCounter;
     }
 
-    public function requestFeed( predatorId :int, preyId :int, preyLocation :Array ) :FeedingRecord
+    public function requestFeed( predatorId :int, preyId :int, preyName :String,
+        preyLocation :Array ) :FeedingRecord
     {
-        log.debug("begin requestFeed ", "predatorId", predatorId, "preyId", preyId);
+        log.debug("begin requestFeed ", "predatorId", predatorId, "preyId", preyId,
+            "preyName", preyName);
 //            "BloodBloomManager", this);
 
         var currentGame :FeedingRecord = _playerId2Game.get( predatorId ) as FeedingRecord;
@@ -63,7 +65,7 @@ public class FeedingManager extends SimObject
                 log.debug(predatorId + " doing nothing, prey is already in a game I am also in. Game=" + currentGame);
             }
             else {
-                currentGame.removePlayer( predatorId );
+                currentGame.playerLeavesGame(predatorId);
                 _playerId2Game.remove( predatorId );
                 log.debug(predatorId + "  I am alrady in a game with a different prey, so leaving that game. Game=" + currentGame);
             }
@@ -84,7 +86,7 @@ public class FeedingManager extends SimObject
         }
         else {
             log.debug(predatorId + " requestFeed, creating a new game");
-            return createNewBloodBloomGameRecord( predatorId, preyId, preyLocation );
+            return createNewBloodBloomGameRecord( predatorId, preyId, preyName, preyLocation );
         }
     }
 
@@ -139,19 +141,20 @@ public class FeedingManager extends SimObject
         }
     }
 
-    public function playerQuitsGame( playerId :int ) :void
+    public function playerQuitsGame (playerId :int) :void
     {
         if( _playerId2Game.containsKey( playerId ) ) {
             var gameRecord :FeedingRecord = _playerId2Game.get( playerId ) as FeedingRecord;
-            gameRecord.removePlayer( playerId );
+            gameRecord.playerLeavesGame(playerId, true);
+//            gameRecord.removePlayer( playerId );
             _playerId2Game.remove( playerId );
         }
     }
 
-    public function isPredatorInGame( playerId :int ) :Boolean
+    public function isPredatorInGame (playerId :int) :Boolean
     {
         if( !_playerId2Game.containsKey( playerId )) {
-            log.debug("isPredatorInGame(" + playerId + "), but no key in _playerId2Game, _playerId2Game.keys=" + _playerId2Game.keys());
+//            log.debug("isPredatorInGame(" + playerId + "), but no key in _playerId2Game, _playerId2Game.keys=" + _playerId2Game.keys());
             return false;
         }
 
@@ -162,7 +165,7 @@ public class FeedingManager extends SimObject
         return isPredator;
     }
 
-    public function isPreyInGame( playerId :int ) :Boolean
+    public function isPreyInGame (playerId :int) :Boolean
     {
         if( !_playerId2Game.containsKey( playerId )) {
             return false;
@@ -184,11 +187,12 @@ public class FeedingManager extends SimObject
 
 
     protected function createNewBloodBloomGameRecord( predatorId :int, preyId :int,
-        preyLocation :Array ) :FeedingRecord
+        preyName :String, preyLocation :Array ) :FeedingRecord
     {
-        log.debug("createNewBloodBloomGameRecord ", "predatorId", predatorId, "preyId", preyId);
+        log.debug("createNewBloodBloomGameRecord ", "predatorId", predatorId, "preyId", preyId,
+            "preyName", preyName);
         var gameRecord :FeedingRecord = new FeedingRecord( _room,
-            nextBloodBloomGameId, predatorId, preyId, preyLocation,
+            nextBloodBloomGameId, predatorId, preyId, preyName, preyLocation,
             gameFinishedCallback, playerLeavesCallback);
         _playerId2Game.put( predatorId, gameRecord );
         if( preyId > 0 ) {
