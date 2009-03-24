@@ -83,12 +83,6 @@ public class VampireAvatarHUD extends AvatarHUD
             addGlowFilter(_bloodBondIcon);
             //Go to the help page when you click on the icon
             Command.bind(_bloodBondIcon, MouseEvent.CLICK, VampireController.SHOW_INTRO, "default");
-
-            _ctrl.local.feedback("Adding bb icon at (" + _bloodBondIcon.x + "," + _bloodBondIcon.y + ")");
-        }
-
-        if (hotspot != null) {
-//            _bloodBondIcon.x = hotspot[0] / 2;
         }
     }
 
@@ -299,7 +293,7 @@ public class VampireAvatarHUD extends AvatarHUD
     protected function handleUnavailablePlayerListChanged (e :PlayersFeedingEvent) :void
     {
         if (ArrayUtil.contains(e.playersFeeding, playerId)) {
-            trace(playerId + " handleUnavailablePlayerListChanged " + e.playersFeeding);
+//            trace(playerId + " handleUnavailablePlayerListChanged " + e.playersFeeding);
             setDisplayModeInvisible();
         }
     }
@@ -893,7 +887,7 @@ public class VampireAvatarHUD extends AvatarHUD
 
     public function setDisplayModeSelectableForFeed() :void
     {
-        trace(playerId + " setDisplayModeSelectableForFeed, hotspot=" + hotspot);
+//        trace(playerId + " setDisplayModeSelectableForFeed, hotspot=" + hotspot);
 
 
         _displaySprite.addChild( _hudSprite );
@@ -941,13 +935,8 @@ public class VampireAvatarHUD extends AvatarHUD
 
     public function setDisplayModeInvisible() :void
     {
-        trace(playerId + " setDisplayModeInvisible");
         _hudSprite.graphics.clear();
-
         animateHideSceneObject(_targetUIScene);
-//        if( _target_UI.parent != null ) {
-//            _target_UI.parent.removeChild( _target_UI );
-//        }
     }
 
 
