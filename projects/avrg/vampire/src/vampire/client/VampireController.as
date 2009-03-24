@@ -42,7 +42,7 @@ public class VampireController extends Controller
     public static const SHOW_HIERARCHY :String = "ShowHierarchy";
 
     public static const FEED :String = "Feed";
-    public static const FEED_REQUEST :String = "FeedRequest";
+//    public static const FEED_REQUEST :String = "FeedRequest";
     public static const FEED_REQUEST_ACCEPT :String = "AcceptFeedRequest";
     public static const FEED_REQUEST_DENY :String = "DenyFeedRequest";
 
@@ -185,7 +185,7 @@ public class VampireController extends Controller
         var popup :PopupQuery = new PopupQuery( ClientContext.ctrl,
             "QuitPopup",
             "Is your thirst for blood sated?",
-            ["Yes, I am sated with blood", "No, I hunger still"],
+            ["Yes", "I still hunger"],
             [VampireController.QUIT, null]);
 
         if( ClientContext.gameMode.getObjectNamed( popup.objectName) == null) {
@@ -280,47 +280,48 @@ public class VampireController extends Controller
 
 
 
-//    public function handleFeedRequest( targetPlayerId :int, targetIsVictim :Boolean) :void
-    public function handleFeedRequest( targetingOverlay :VampireAvatarHUDOverlay, parentSprite :Sprite, hud :HUD) :void
-    {
-        //If we are alrady in bared mode, first dump us out before any feeding shinannigens
-        if( ClientContext.model.state == VConstants.AVATAR_STATE_BARED ) {
-            var playerKey :String = Codes.playerRoomPropKey( ClientContext.ourPlayerId );
-            ClientContext.ctrl.player.props.setIn( playerKey,
-                Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE, VConstants.AVATAR_STATE_DEFAULT);
-
-            trace(ClientContext.ourPlayerId + " setting avatar state from handleFeedRequest");
-            ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
-
-            ClientContext.ctrl.agent.sendMessage( RequestStateChangeMsg.NAME,
-                new RequestStateChangeMsg( ClientContext.ourPlayerId,
-                    VConstants.AVATAR_STATE_DEFAULT).toBytes() );
-
-//            targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
-            return;
-        }
-
-        trace("handle handleFeedRequest");
-
-        //If we are a vampire we can feed, otherwise not.
-        if( ClientContext.model.level >= VConstants.MINIMUM_VAMPIRE_LEVEL ||
-            VConstants.LOCAL_DEBUG_MODE ) {
-
-//                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS );
-//            if( targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS ) {
-//                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
-//            }
-//            else {
-//                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS );
-//            }
-
-        }
-        else {
-            var msg :FeedRequestMsg = new FeedRequestMsg( ClientContext.ourPlayerId,
-                0, 0,0,0);
-            log.debug(ClientContext.ctrl + " handleSendFeedRequest() sending " + msg)
-            ClientContext.ctrl.agent.sendMessage( FeedRequestMsg.NAME, msg.toBytes() );
-        }
+////    public function handleFeedRequest( targetPlayerId :int, targetIsVictim :Boolean) :void
+//    public function handleFeedRequest( targetingOverlay :VampireAvatarHUDOverlay, parentSprite :Sprite, hud :HUD) :void
+//    {
+//        //If we are alrady in bared mode, first dump us out before any feeding shinannigens
+//        if( ClientContext.model.state == VConstants.AVATAR_STATE_BARED ) {
+//            var playerKey :String = Codes.playerRoomPropKey( ClientContext.ourPlayerId );
+//            ClientContext.ctrl.player.props.setIn( playerKey,
+//                Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE, VConstants.AVATAR_STATE_DEFAULT);
+//
+//            trace(ClientContext.ourPlayerId + " setting avatar state from handleFeedRequest");
+//            ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
+//
+//            ClientContext.ctrl.agent.sendMessage( RequestStateChangeMsg.NAME,
+//                new RequestStateChangeMsg( ClientContext.ourPlayerId,
+//                    VConstants.AVATAR_STATE_DEFAULT).toBytes() );
+//
+////            targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
+//            return;
+//        }
+//
+//        trace("handle handleFeedRequest");
+//
+//        //If we are a vampire we can feed, otherwise not.
+//        if( ClientContext.model.level >= VConstants.MINIMUM_VAMPIRE_LEVEL ||
+//            VConstants.LOCAL_DEBUG_MODE ) {
+//
+////                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS );
+////            if( targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS ) {
+////                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
+////            }
+////            else {
+////                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS );
+////            }
+//
+//        }
+//        else {
+////            var targetName :String = ClientContext.model.getAvatarName(
+//            var msg :FeedRequestMsg = new FeedRequestMsg( ClientContext.ourPlayerId,
+//                0, 0,0,0);
+//            log.debug(ClientContext.ctrl + " handleSendFeedRequest() sending " + msg)
+//            ClientContext.ctrl.agent.sendMessage( FeedRequestMsg.NAME, msg.toBytes() );
+//        }
 
 
 //
@@ -349,14 +350,8 @@ public class VampireController extends Controller
 //        }
 
 
-
-
-
-
-
-
 //        ClientContext.gameCtrl.agent.sendMessage( FeedRequestMessage.NAME, new FeedRequestMessage( ClientContext.ourPlayerId, 0, false).toBytes() );
-    }
+//    }
 
     public function handleSendFeedRequest (targetId :int) :void
     {
@@ -370,8 +365,10 @@ public class VampireController extends Controller
                 log.error("handleSendFeedRequest(target=" + targetId + "), avatar is null so no loc");
             }
 
+
+            var targetName :String = ClientContext.model.getAvatarName(targetId);
             var msg :FeedRequestMsg = new FeedRequestMsg( ClientContext.ourPlayerId, targetId,
-                targetLocation[0], targetLocation[1], targetLocation[2]);
+                targetName, targetLocation[0], targetLocation[1], targetLocation[2]);
 
             log.debug(ClientContext.ctrl + " handleSendFeedRequest() sending " + msg)
             ClientContext.ctrl.agent.sendMessage( FeedRequestMsg.NAME, msg.toBytes() );
@@ -400,7 +397,7 @@ public class VampireController extends Controller
                     "MakeSire",
                     "If you feed from this Lineage vampire, they will become your permanent sire"
                     + ", allowing you to draw power from your minions.  Are you sure?",
-                    ["Yes, I am ready to join the Lineage", "No, I fear the Lineage"],
+                    ["Yes", "No"],
                     [sendFeedRequest, null]);
 
             if (ClientContext.gameMode.getObjectNamed(popup.objectName) == null) {
@@ -492,13 +489,17 @@ public class VampireController extends Controller
 
     public function handleAcceptFeedRequest (playerId :int) :void
     {
-        var msg :FeedConfirmMsg = new FeedConfirmMsg(ClientContext.ourPlayerId, playerId, true);
+        var targetName :String = ClientContext.model.getAvatarName(playerId);
+        var msg :FeedConfirmMsg = new FeedConfirmMsg(ClientContext.ourPlayerId,
+            targetName, playerId, true);
         ClientContext.ctrl.agent.sendMessage( FeedConfirmMsg.NAME, msg.toBytes() );
     }
 
     public function handleDenyFeedRequest (playerId :int) :void
     {
-        var msg :FeedConfirmMsg = new FeedConfirmMsg(ClientContext.ourPlayerId, playerId, false);
+        var targetName :String = ClientContext.model.getAvatarName(playerId);
+        var msg :FeedConfirmMsg = new FeedConfirmMsg(ClientContext.ourPlayerId,
+            targetName, playerId, false);
         ClientContext.ctrl.agent.sendMessage( FeedConfirmMsg.NAME, msg.toBytes() );
     }
 
