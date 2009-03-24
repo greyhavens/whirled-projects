@@ -13,7 +13,10 @@ import flash.system.ApplicationDomain;
 
 public class VampatarConfigPanel extends Sprite
 {
-    public function VampatarConfigPanel (curConfig :VampatarConfig,
+    public function VampatarConfigPanel (hairNames :Array,
+                                         topNames :Array,
+                                         shoeNames :Array,
+                                         curConfig :VampatarConfig,
                                          applyConfigCallback :Function) :void
     {
         _originalConfig = curConfig;
@@ -27,10 +30,7 @@ public class VampatarConfigPanel extends Sprite
         // create dropdowns
         var hairDropdown :Dropdown = createDropdown(
             panel["hair_option"],
-            [ "Long & Wavy", 1,
-              "Long & Straight", 2,
-              "Shag", 3,
-              "Severe", 4 ],
+            numberItems(hairNames),
             function (value :int) :void {
                 if (_config.hairNumber != value) {
                     _config.hairNumber = value;
@@ -41,10 +41,7 @@ public class VampatarConfigPanel extends Sprite
 
         var topDropdown :Dropdown = createDropdown(
             panel["top_option"],
-            [ "Tee", 1,
-              "Corset", 2,
-              "Striped", 3,
-              "Hoodie", 4 ],
+            numberItems(topNames),
             function (value :int) :void {
                 if (_config.topNumber != value) {
                     _config.topNumber = value;
@@ -55,9 +52,7 @@ public class VampatarConfigPanel extends Sprite
 
         var shoesDropdown :Dropdown = createDropdown(
             panel["shoes_option"],
-            [ "Boots", 1,
-              "Slip-ons", 2,
-              "None", 3 ],
+            numberItems(shoeNames),
             function (value :int) :void {
                 if (_config.shoesNumber != value) {
                     _config.shoesNumber = value;
@@ -221,6 +216,17 @@ public class VampatarConfigPanel extends Sprite
         if (!_suppressConfigUpdates) {
             _applyConfigCallback(_config);
         }
+    }
+
+    protected static function numberItems (arr :Array) :Array
+    {
+        // Given [ "apple", "orange", "banana" ], returns [ "apple", 1, "orange", 2, "banana", 3 ]
+        var out :Array = [];
+        for (var ii :int = 0; ii < arr.length; ++ii) {
+            out.push(arr[ii], ii + 1);
+        }
+
+        return out;
     }
 
     protected var _pickers :Array = [];

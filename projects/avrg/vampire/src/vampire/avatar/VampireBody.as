@@ -13,10 +13,19 @@ import flash.utils.ByteArray;
 
 public class VampireBody extends NewBody
 {
-    public function VampireBody (ctrl :AvatarControl, media :MovieClip, isConfigurable :Boolean,
+    public function VampireBody (ctrl :AvatarControl,
+                                 media :MovieClip,
+                                 isConfigurable :Boolean,
+                                 hairNames :Array,
+                                 topNames :Array,
+                                 shoeNames :Array,
                                  width :int, height :int = -1)
     {
         super(ctrl, media, width, height);
+
+        _hairNames = hairNames;
+        _topNames = topNames;
+        _shoeNames = shoeNames;
 
         // Entity memory-based configuration
         loadConfig();
@@ -36,6 +45,9 @@ public class VampireBody extends NewBody
     protected function createConfigPanel () :VampatarConfigPanel
     {
         return new VampatarConfigPanel(
+            _hairNames,
+            _topNames,
+            _shoeNames,
             _curConfig,
             function (newConfig :VampatarConfig) :void {
                 saveConfig(newConfig);
@@ -250,6 +262,9 @@ public class VampireBody extends NewBody
     }
 
     protected var _curConfig :VampatarConfig;
+    protected var _hairNames :Array;
+    protected var _topNames :Array;
+    protected var _shoeNames :Array;
 
     protected static const MEMORY_CONFIG :String = "VampatarConfig";
 }
