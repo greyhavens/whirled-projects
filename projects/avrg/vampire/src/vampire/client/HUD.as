@@ -10,7 +10,6 @@ import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.objects.SceneObjectPlayMovieClipOnce;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
-import com.whirled.contrib.simplegame.tasks.AlphaTask;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
@@ -40,8 +39,13 @@ public class HUD extends DraggableSceneObject
     public function HUD()
     {
         super( ClientContext.ctrl, "HUD");
+    }
 
+    override protected function addedToDB() :void
+    {
         setupUI();
+
+        updateOurPlayerState();
 
         //Listen to events that might cause us to update ourselves
         registerListener( ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, updateOurPlayerState );
@@ -50,18 +54,17 @@ public class HUD extends DraggableSceneObject
 //        registerListener( ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
 
 
-        updateOurPlayerState();
+
+//        mode.addObject(_bloodXPMouseOverSceneObject );
     }
 
-    override protected function addedToDB() :void
-    {
-        mode.addObject(_bloodXPMouseOverSceneObject );
-    }
-
-    protected function get mode() :AppMode
-    {
-        return db as AppMode;
-    }
+//    protected function get mode() :AppMode
+//    {
+//        if ((db as AppMode) == null) {
+//            log.error("mode", "db as AppMode == null");
+//        }
+//        return db as AppMode;
+//    }
 
 //    protected function handleMessageReceived( e :MessageReceivedEvent ) :void
 //    {
@@ -73,7 +76,7 @@ public class HUD extends DraggableSceneObject
     override protected function destroyed () :void
     {
         super.destroyed();
-        _bloodXPMouseOverSceneObject.destroySelf();
+//        _bloodXPMouseOverSceneObject.destroySelf();
     }
 
     override public function get objectName () :String
@@ -133,6 +136,7 @@ public class HUD extends DraggableSceneObject
         var oldLevel :int;
         var newLevel :int;
 
+        var mode :AppMode = ClientContext.gameMode;
 
         if (!isNaN( playerIdUpdated)) {
             //If it's us, update the player HUD
@@ -192,7 +196,7 @@ public class HUD extends DraggableSceneObject
                                 ["Recruit Now", "Recruit Later"],
                                 [recruitFunction, null]);
 
-                            var mode :AppMode = ClientContext.gameMode;
+
                             if( mode.getObjectNamed( popup.objectName) == null) {
                                 mode.addSceneObject( popup, mode.modeSprite );
                             }
@@ -238,7 +242,13 @@ public class HUD extends DraggableSceneObject
                                 ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true) );
                         bloodBondMovie.x = _hudXP.x + ClientContext.model.maxblood/2;
                         bloodBondMovie.y = _hudXP.y;
-                        mode.addSceneObject( bloodBondMovie, _hudXPParent  );
+
+                        trace("mode=" + mode);
+                        trace("bloodBondMovie=" + bloodBondMovie);
+                        trace("_hudXPParent=" + _hudXPParent);
+                        if (mode != null) {
+                            mode.addSceneObject( bloodBondMovie, _hudXPParent);
+                        }
                     }
 
                 }
@@ -249,7 +259,9 @@ public class HUD extends DraggableSceneObject
                                 ClientContext.instantiateMovieClip("HUD", "lineage_feedback", true) );
                         lineageMovie.x = _hudXP.x + ClientContext.model.maxblood/2;
                         lineageMovie.y = _hudXP.y;
-                        mode.addSceneObject( lineageMovie, _displaySprite );
+                        if (mode != null) {
+                            mode.addSceneObject( lineageMovie, _displaySprite );
+                        }
                     }
                 }
 
@@ -285,7 +297,9 @@ public class HUD extends DraggableSceneObject
 
     protected function setupUI() :void
     {
-
+//        if (mode == null) {
+//            throw new Error("setupUI, mode should not be null");
+//        }
         _hud = new Sprite();
         _displaySprite.addChild( _hud );
 
@@ -321,29 +335,31 @@ public class HUD extends DraggableSceneObject
         _hudXP.y = _hudCap.y;
         _hudCap.parent.removeChild(_hudCap);
 
-        var bloodXPMouseOverSprite :Sprite = new Sprite();
-        _bloodXPMouseOverSceneObject = new SimpleSceneObject( bloodXPMouseOverSprite, "MouseOverBloood" );
-        _bloodXPMouseOverSceneObject.x = _hudXP.x;
-        _bloodXPMouseOverSceneObject.y = _hudXP.y;
-        _bloodXPMouseOverSceneObject.alpha = 0;
+        _bloodXPMouseOverSprite = new Sprite();
+//        _bloodXPMouseOverSceneObject = new SimpleSceneObject(bloodXPMouseOverSprite, "MouseOverBloood");
+//        _bloodXPMouseOverSceneObject.x = _hudXP.x;
+//        _bloodXPMouseOverSceneObject.y = _hudXP.y;
+//        _bloodXPMouseOverSceneObject.alpha = 0;
 
-        registerListener( bloodXPMouseOverSprite, MouseEvent.ROLL_OVER, function(...ignored) :void {
-            _bloodXPMouseOverSceneObject.addTask( AlphaTask.CreateEaseIn(1, 0.3));
-        });
-        registerListener( bloodXPMouseOverSprite, MouseEvent.ROLL_OUT, function(...ignored) :void {
-            _bloodXPMouseOverSceneObject.addTask( AlphaTask.CreateEaseIn(0, 0.3));
-        });
+        Command.bind(_bloodXPMouseOverSprite, MouseEvent.CLICK, VampireController.SHOW_INTRO, "blood");
 
-        _hudXPParent.addChild(bloodXPMouseOverSprite );
+//        registerListener( bloodXPMouseOverSprite, MouseEvent.ROLL_OVER, function(...ignored) :void {
+//            _bloodXPMouseOverSceneObject.addTask( AlphaTask.CreateEaseIn(1, 0.3));
+//        });
+//        registerListener( bloodXPMouseOverSprite, MouseEvent.ROLL_OUT, function(...ignored) :void {
+//            _bloodXPMouseOverSceneObject.addTask( AlphaTask.CreateEaseIn(0, 0.3));
+//        });
 
-        var hudHelp :SimpleButton = SimpleButton( findSafely("button_menu") );
-        Command.bind( hudHelp, MouseEvent.CLICK, VampireController.SHOW_INTRO);
+        _hudXPParent.addChild(_bloodXPMouseOverSprite );
 
-        var hudClose :SimpleButton = SimpleButton( findSafely("button_quit") );
-        Command.bind( hudClose, MouseEvent.CLICK, VampireController.QUIT_POPUP);
+        var hudHelp :SimpleButton = SimpleButton(findSafely("button_menu"));
+        Command.bind(hudHelp, MouseEvent.CLICK, VampireController.SHOW_INTRO);
 
-        var hudFeed :SimpleButton = SimpleButton( findSafely("button_feed") );
-        Command.bind( hudFeed, MouseEvent.CLICK, VampireController.FEED);
+        var hudClose :SimpleButton = SimpleButton(findSafely("button_quit"));
+        Command.bind(hudClose, MouseEvent.CLICK, VampireController.QUIT_POPUP);
+
+        var hudFeed :SimpleButton = SimpleButton(findSafely("button_feed"));
+        Command.bind(hudFeed, MouseEvent.CLICK, VampireController.FEED);
 
 
     }
@@ -423,7 +439,8 @@ public class HUD extends DraggableSceneObject
             _xpText.antiAliasType = AntiAliasType.ADVANCED;
             _xpText.setTextFormat( lineageformat );
 
-        Sprite(_bloodXPMouseOverSceneObject.displayObject).addChild( _xpText );
+        _bloodXPMouseOverSprite.addChild(_xpText);
+//        Sprite(_bloodXPMouseOverSceneObject.displayObject).addChild( _xpText );
 //        Sprite(_bloodXPMouseOverSceneObject.displayObject).addChild( _xpText );
 
 
@@ -656,7 +673,7 @@ public class HUD extends DraggableSceneObject
         }
     }
 
-    public function updateOurPlayerState( ...ignored ) :void
+    protected function updateOurPlayerState( ...ignored ) :void
     {
 
         if( !SharedPlayerStateClient.isProps( ClientContext.ourPlayerId )) {
@@ -761,6 +778,14 @@ public class HUD extends DraggableSceneObject
         _hudXP.graphics.drawRect(0, borderWidth - 1, maxBlood + borderWidth - 1, _hudCap.height - (borderWidth * 2 - 2) );
 
         _hudCap.x = _hudXP.x + maxBlood - borderWidth + 1;
+
+        //Change mouse click capturing sprite
+        _bloodXPMouseOverSprite.graphics.clear();
+        _bloodXPMouseOverSprite.graphics.beginFill(0, 0);
+        _bloodXPMouseOverSprite.graphics.drawRect(0, 0, _hudXP.width, _hudXP.height);
+        _bloodXPMouseOverSprite.graphics.endFill();
+        _bloodXPMouseOverSprite.x = _hudXP.x;
+        _bloodXPMouseOverSprite.y = _hudXP.y;
         createXPText();
     }
 
@@ -782,8 +807,8 @@ public class HUD extends DraggableSceneObject
 
 //    protected var _hudBlood :Sprite;
     protected var _hudXP :Sprite;
-//    protected var _bloodXPMouseOverSprite :Sprite;
-    protected var _bloodXPMouseOverSceneObject :SceneObject;
+    protected var _bloodXPMouseOverSprite :Sprite;
+//    protected var _bloodXPMouseOverSceneObject :SceneObject;
     protected var _hudXPParent :DisplayObjectContainer;
 
 
