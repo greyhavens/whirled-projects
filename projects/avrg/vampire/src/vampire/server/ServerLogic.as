@@ -20,6 +20,7 @@ import vampire.data.VConstants;
 import vampire.net.messages.BloodBondRequestMsg;
 import vampire.net.messages.FeedConfirmMsg;
 import vampire.net.messages.FeedRequestMsg;
+import vampire.net.messages.MovePredIntoPositionMsg;
 import vampire.net.messages.RequestStateChangeMsg;
 import vampire.net.messages.ShareTokenMsg;
 import vampire.net.messages.TargetMovedMsg;
@@ -714,8 +715,8 @@ public class ServerLogic
 
 
         //Prey is already in a game, or the prey is a non-player, add ourselves.
-        if(player.room.bloodBloomGameManager.isPreyInGame( e.targetPlayer )
-            || getPlayer( e.targetPlayer) == null){
+        if (player.room.bloodBloomGameManager.isPreyInGame(e.targetPlayer)
+            || !isPlayer( e.targetPlayer)) {
 
             //Make sure the prey immediately goes into bared mode
             if( isPlayer( e.targetPlayer)) {
@@ -949,27 +950,38 @@ public class ServerLogic
 
                 angleRadians = new Vector2( targetLocation[0] - avatar.x, targetLocation[2] - avatar.z).angle;
                 degs = convertStandardRads2GameDegrees( angleRadians );
-                var predIndex :int = game == null ? 0 : game.predators.size() - 1;
+                var predIndex :int = game == null ? 0 : game.getPredIndex(player.playerId);
                 predLocIndex = MathUtil.clamp(predIndex, 0,
-                    PREDATOR_LOCATIONS_RELATIVE_TO_PREY.length - 1 );
+                    VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY.length - 1 );
 
-                //If we are the first predator, we go directly behind the prey
-                //Otherwise, take a a place
-                targetX = targetLocation[0] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][0] * VConstants.FEEDING_LOGICAL_X_OFFSET;
-                targetY = targetLocation[1] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][1] * VConstants.FEEDING_LOGICAL_X_OFFSET;
-                targetZ = targetLocation[2] + PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][2] * VConstants.FEEDING_LOGICAL_X_OFFSET;
+                var msg :MovePredIntoPositionMsg = new MovePredIntoPositionMsg(
+                    player.playerId, player.targetId, predLocIndex, targetLocation);
 
-                //If the avatar is already at the location, the client will dispatch a
-                //PlayerArrivedAtLocation event, as the location doesn't change.
-                if( targetX == avatar.x &&
-                    targetY == avatar.y &&
-                    targetZ == avatar.z ) {
-                    log.error("Player already at location, changing to feed mode");
-                    handlePlayerArrivedAtLocation( player );
-                }
-                else {
-                    player.ctrl.setAvatarLocation( targetX, targetY, targetZ, degs);
-                }
+               player.ctrl.sendMessage(msg.name, msg.toBytes());
+
+//                //If we are the first predator, we go directly behind the prey
+//                //Otherwise, take a a place
+//                targetX = targetLocation[0] +
+//                    VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][0] *
+//                    VConstants.FEEDING_LOGICAL_X_OFFSET;
+//                targetY = targetLocation[1] +
+//                    VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][1] *
+//                    VConstants.FEEDING_LOGICAL_X_OFFSET;
+//                targetZ = targetLocation[2] +
+//                    VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][2] *
+//                    VConstants.FEEDING_LOGICAL_X_OFFSET;
+//
+//                //If the avatar is already at the location, the client will dispatch a
+//                //PlayerArrivedAtLocation event, as the location doesn't change.
+//                if( targetX == avatar.x &&
+//                    targetY == avatar.y &&
+//                    targetZ == avatar.z ) {
+//                    log.error("Player already at location, changing to feed mode");
+//                    handlePlayerArrivedAtLocation( player );
+//                }
+//                else {
+//                    player.ctrl.setAvatarLocation( targetX, targetY, targetZ, degs);
+//                }
 
 
                 break;
@@ -1367,24 +1379,7 @@ public class ServerLogic
     }
 
 
-    protected static const p4 :Number = Math.cos( Math.PI/4);
-    protected static const PREDATOR_LOCATIONS_RELATIVE_TO_PREY :Array = [
-        [  0, 0,  VConstants.FEEDING_LOGICAL_Z_OFFSET], //Behind
-        [  1, 0,  0], //Left
-        [ -1, 0,  0], //right
-        [ p4, 0, p4], //North east
-        [-p4, 0, p4],
-        [ p4, 0,-p4],
-        [-p4, 0,-p4],
-        [ -2, 0,  0],
-        [  2, 0,  0],
-        [ -3, 0,  0],
-        [  3, 0,  0],
-        [ -4, 0,  0],
-        [  5, 0,  0],
-        [ -6, 0,  0],
-        [  6, 0,  0]
-    ];
+
 
     protected static const log :Log = Log.getLog( ServerLogic );
 

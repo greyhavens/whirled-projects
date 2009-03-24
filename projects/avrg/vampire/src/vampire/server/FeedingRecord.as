@@ -19,10 +19,11 @@ public class FeedingRecord extends EventCollecter
     {
         _room = room;
         _gameId = gameId;
+        addPredator(predatorId, preyLocation);
         _primaryPredatorId = predatorId;
-        _predators.add( _primaryPredatorId );
+//        _predators.add( _primaryPredatorId );
         _preyId = preyId;
-        _preyLocation = preyLocation;
+//        _preyLocation = preyLocation;
 
         _gameFinishedManagerCallback = gameFinishesCallback;
         _thisBloodBloomRecord = this;//For referencing in enclosed functions.
@@ -122,7 +123,7 @@ public class FeedingRecord extends EventCollecter
         }
     }
 
-    protected function playerLeftCallback( playerId :int ) :void
+    protected function playerLeftCallback (playerId :int) :void
     {
         if (_room.isPlayer(playerId)) {
             log.debug("playerLeftCallback", "name", _room.getPlayer( playerId ).name);
@@ -139,9 +140,15 @@ public class FeedingRecord extends EventCollecter
             if( _room != null && _room.getPlayer( primaryPredatorId ) != null ) {
                 movePrimaryPred();
             }
+            _preyId = 0;
         }
         else if (playerId == _primaryPredatorId) {
             movePrimaryPred();
+            _primaryPredatorId = 0;
+        }
+
+        if (_predators.contains(playerId)) {
+            _predators.remove(playerId);
         }
     }
 
@@ -238,6 +245,9 @@ public class FeedingRecord extends EventCollecter
     {
         _predators.add( playerId );
         _preyLocation = preyLocation;
+        if (!ArrayUtil.contains(_predatorIndex, playerId)) {
+            _predatorIndex.push(playerId);
+        }
     }
 
     public function isPredator (playerId :int) :Boolean
@@ -396,7 +406,13 @@ public class FeedingRecord extends EventCollecter
 //            + "lastRoundScore=" + (_gameServer != null ? _gameServer.lastRoundScore : 0)
     }
 
-
+    public function getPredIndex (predId :int) :int
+    {
+        if (ArrayUtil.contains(_predatorIndex, predId)) {
+            return ArrayUtil.indexOf(_predatorIndex, predId);
+        }
+        return _predatorIndex.length - 1;
+    }
 
 
 
@@ -423,6 +439,12 @@ public class FeedingRecord extends EventCollecter
 //    protected var _elapsedGameTime :Number = 0;
     protected var _gameFinishedManagerCallback :Function;
     protected var _thisBloodBloomRecord :FeedingRecord;
+
+    /**
+    * A list of predators in the order they request to feed.  Does *not* remove predators
+    * that leave and then come back, since they will then stand over other predators.
+    */
+    protected var _predatorIndex :Array = [];
 
     protected static const log :Log = Log.getLog( FeedingRecord );
 
