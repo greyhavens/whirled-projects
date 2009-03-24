@@ -142,7 +142,7 @@ public class GameModel extends SimObject//EventDispatcher
                 var popup :PopupQuery = new PopupQuery(ClientContext.ctrl,
                     "Quit",
                     "Sorry.  Vampire Whirled cannot (yet) handle a mid-game avatar change.  " +
-                    " So I have to shutdown.");
+                    "Click the vampire icon to restart..");
                 ClientContext.gameMode.addSceneObject( popup, ClientContext.gameMode.modeSprite );
 
                 var quitTimer :SimpleTimer = new SimpleTimer(5, function() :void {
@@ -185,8 +185,9 @@ public class GameModel extends SimObject//EventDispatcher
     protected function targetMoved(...ignored) :void
     {
         trace("Sending server target moved");
-        ClientContext.ctrl.agent.sendMessage(TargetMovedMsg.NAME, new TargetMovedMsg().toBytes());
-        setAvatarTarget(0);
+        ClientContext.ctrl.agent.sendMessage(TargetMovedMsg.NAME,
+            new TargetMovedMsg(targetPlayerId).toBytes());
+//        setAvatarTarget(0);
     }
 
 
@@ -599,6 +600,23 @@ public class GameModel extends SimObject//EventDispatcher
         return null;
     }
 
+    public function getLocation (playerId :int) :Array
+    {
+        var avatar :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo(playerId);
+        if( avatar != null ) {
+            return [avatar.x, avatar.y, avatar.z, avatar.orientation];
+        }
+        return null;
+    }
+
+    public function get avatar() :AVRGameAvatar
+    {
+        if (ClientContext.ctrl.room == null) {
+            return null;
+        }
+        return ClientContext.ctrl.room.getAvatarInfo(ClientContext.ourPlayerId);
+    }
+
 
 
     public function get xp() :Number
@@ -685,6 +703,17 @@ public class GameModel extends SimObject//EventDispatcher
         var hotspot :Array = ClientContext.ctrl.room.getEntityProperty(
             EntityControl.PROP_HOTSPOT, ClientContext.ourEntityId ) as Array;
         return hotspot;
+    }
+
+    public function getAvatarName (playerId :int) :String
+    {
+        var entityId :String = ClientContext.getPlayerEntityId(playerId);
+        if (entityId != null) {
+            var name :String = ClientContext.ctrl.room.getEntityProperty(
+                EntityControl.PROP_NAME, entityId) as String;
+            return name;
+        }
+        return null;
     }
 
     public function get playerFeedingData () :PlayerFeedingData
