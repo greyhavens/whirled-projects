@@ -31,6 +31,7 @@ public class ClientCtx
     public static var preyId :int;
     public static var preyBloodType :int;
     public static var preyIsAi :Boolean;
+    public static var aiPreyName :String;
     public static var awardedTrophies :HashSet;
     public static var lastRoundResults :RoundOverMsg;
 
@@ -44,6 +45,7 @@ public class ClientCtx
         preyId = 0;
         preyBloodType = -1;
         preyIsAi = false;
+        aiPreyName = null;
         awardedTrophies = new HashSet();
         lastRoundResults = null;
     }

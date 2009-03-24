@@ -58,6 +58,16 @@ public class ServerCtx
         props.set(Props.PREY_BLOOD_TYPE, val, true);
     }
 
+    public function get aiPreyName () :String
+    {
+        return props.get(Props.AI_PREY_NAME) as String;
+    }
+
+    public function set aiPreyName (val :String) :void
+    {
+        props.set(Props.AI_PREY_NAME, val, true);
+    }
+
     public function get lobbyLeader () :int
     {
         return props.get(Props.LOBBY_LEADER) as int;

@@ -29,6 +29,7 @@ public class Server extends FeedingServer
                             preyId :int,
                             preyBlood :Number,
                             preyBloodType :int,
+                            aiPreyName :String,
                             gameStartedCallback :Function,
                             roundCompleteCallback :Function,
                             gameCompleteCallback :Function,
@@ -43,7 +44,8 @@ public class Server extends FeedingServer
             "roomId", roomId,
             "predatorId", predatorId,
             "preyId", preyId,
-            "preyBlood", preyBlood);
+            "preyBlood", preyBlood,
+            "aiPreyName", aiPreyName);
 
         _ctx.server = this;
         _ctx.gameId = _gameIdCounter++;
@@ -62,6 +64,7 @@ public class Server extends FeedingServer
         _ctx.preyIsAi = (_ctx.preyId == Constants.NULL_PLAYER);
         _ctx.preyBlood = preyBlood;
         _ctx.preyBloodType = preyBloodType;
+        _ctx.aiPreyName = aiPreyName;
         _ctx.gameStartedCallback = gameStartedCallback;
         _ctx.roundCompleteCallback = roundCompleteCallback;
         _ctx.gameCompleteCallback = gameCompleteCallback;

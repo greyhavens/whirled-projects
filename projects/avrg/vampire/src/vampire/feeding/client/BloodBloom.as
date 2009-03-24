@@ -115,7 +115,9 @@ public class BloodBloom extends FeedingClient
             updatePreyBloodType();
         } else if (e.name == Props.PREY_IS_AI) {
             updatePreyIsAi();
-        } else if (e.name == Props.MODE) {
+        } else if (e.name == Props.AI_PREY_NAME) {
+            updateAiPreyName();
+        }else if (e.name == Props.MODE) {
             updateMode();
         }
     }
@@ -147,6 +149,11 @@ public class BloodBloom extends FeedingClient
     protected function updatePreyIsAi () :void
     {
         ClientCtx.preyIsAi = ClientCtx.props.get(Props.PREY_IS_AI) as Boolean;
+    }
+
+    protected function updateAiPreyName () :void
+    {
+        ClientCtx.aiPreyName = ClientCtx.props.get(Props.AI_PREY_NAME) as String;
     }
 
     protected function updateMode () :void
@@ -200,6 +207,7 @@ public class BloodBloom extends FeedingClient
             updatePreyId();
             updatePreyBloodType();
             updatePreyIsAi();
+            updateAiPreyName();
             updateMode();
 
         } else {

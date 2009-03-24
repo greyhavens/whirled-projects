@@ -86,6 +86,7 @@ public class FeedingRecord extends EventCollecter
                                                 gamePreyId,
                                                 preyBlood,
                                                 preyBloodType,
+                                                "AI Prey", // Dion: fill this in
                                                 gameStartedCallback,
                                                 roundCompleteCallback,
                                                 gameFinishedCallback,

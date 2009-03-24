@@ -115,21 +115,19 @@ public class LobbyMode extends AppMode
         var obj :Object;
         var playerId :int;
 
-        // Fill in the Prey
+        // Fill in the Prey data
         var preyInfo :MovieClip = _panelMovie["playerprey"];
-        if (ClientCtx.preyId == Constants.NULL_PLAYER) {
-            preyInfo.visible = false;
+        var tfName :TextField = preyInfo["player_name"];
+        tfName.text = (ClientCtx.preyIsAi ?
+                        ClientCtx.aiPreyName :
+                        ClientCtx.getPlayerName(ClientCtx.preyId));
+
+        var tfScore :TextField = preyInfo["player_score"];
+        if (this.isPostRoundLobby && !ClientCtx.preyIsAi) {
+            tfScore.visible = true;
+            tfScore.text = String(_results.scores.get(ClientCtx.preyId));
         } else {
-            preyInfo.visible = true;
-            var tfName :TextField = preyInfo["player_name"];
-            tfName.text = ClientCtx.getPlayerName(ClientCtx.preyId);
-            var tfScore :TextField = preyInfo["player_score"];
-            if (this.isPostRoundLobby) {
-                tfScore.visible = true;
-                tfScore.text = String(_results.scores.get(ClientCtx.preyId));
-            } else {
-                tfScore.visible = false;
-            }
+            tfScore.visible = false;
         }
 
         // Fill in the Predators list

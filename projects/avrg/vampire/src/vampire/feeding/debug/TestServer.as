@@ -122,6 +122,7 @@ class TestGameController extends OneRoomGameRoom
             _preyBlood,
             // the amount of blood the prey is starting the feeding with
             preyBloodStrain,
+            (preyId == Constants.NULL_PLAYER ? "AI Prey" : ""),
             function () :void {
                 log.info("Game started", "gameId", game.gameId);
             },
@@ -205,5 +206,5 @@ class TestGameController extends OneRoomGameRoom
     protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _timerMgr :TimerManager = new TimerManager();
 
-    protected static const MIN_PLAYERS :int = 2;
+    protected static const MIN_PLAYERS :int = 1;
 }

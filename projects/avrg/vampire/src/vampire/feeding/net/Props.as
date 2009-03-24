@@ -23,6 +23,9 @@ public class Props
     /** bloodType :int */
     public static const PREY_BLOOD_TYPE :String = "PreyBloodType";
 
+    /** aiPreyName :String */
+    public static const AI_PREY_NAME :String = "AiPreyName";
+
     /** playerId :int */
     public static const LOBBY_LEADER :String = "LobbyLeader";
 
