@@ -281,31 +281,31 @@ public class FeedingRecord extends EventCollecter
 
     protected function removePlayer (playerId :int) :void
     {
-        if (_playerLeavesCallback != null) {
-            _playerLeavesCallback(playerId);
-        }
-
-        if( !_started ) {
-        }
-        else {
-            if( _preyId == playerId ) {
-                log.info("Shutting down bloodbloom game because prey removed");
-                shutdown();
-            }
-            else {
-                _predators.remove( playerId );
-                if( _gameServer != null ) {
-                    if(_gameServer.playerLeft( playerId ) ) {
-                        shutdown();
-                    }
-                }
-                if( _predators.size() == 0) {
-                    log.info("Shutting down bloodbloom game because pred==0");
-                    shutdown();
-                }
-            }
-
-        }
+//        if (_playerLeavesCallback != null) {
+//            _playerLeavesCallback(playerId);
+//        }
+//
+//        if( !_started ) {
+//        }
+//        else {
+//            if( _preyId == playerId ) {
+//                log.info("Shutting down bloodbloom game because prey removed");
+//                shutdown();
+//            }
+//            else {
+//                _predators.remove( playerId );
+//                if( _gameServer != null ) {
+//                    if(_gameServer.playerLeft( playerId ) ) {
+//                        shutdown();
+//                    }
+//                }
+//                if( _predators.size() == 0) {
+//                    log.info("Shutting down bloodbloom game because pred==0");
+//                    shutdown();
+//                }
+//            }
+//
+//        }
     }
 
 //    public function update( dt :Number ) :void
