@@ -1362,7 +1362,7 @@ public class ServerLogic
             break;
 
             case VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION:
-            newAvatarState = VConstants.AVATAR_STATE_DEFAULT;
+            newAvatarState = VConstants.AVATAR_STATE_FEEDING;
             break;
 
         }
