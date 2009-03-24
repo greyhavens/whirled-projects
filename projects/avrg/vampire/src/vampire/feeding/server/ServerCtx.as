@@ -40,7 +40,7 @@ public class ServerCtx
 
     public function get preyIsAi () :Boolean
     {
-        return props.get(Props.PREY_ID) as Boolean;
+        return props.get(Props.PREY_IS_AI) as Boolean;
     }
 
     public function set preyIsAi (val :Boolean) :void
