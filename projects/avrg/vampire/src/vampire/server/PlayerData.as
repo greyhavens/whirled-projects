@@ -92,6 +92,10 @@ public class PlayerData extends EventHandlerManager
 
 
         _sire = int(_ctrl.props.get(Codes.PLAYER_PROP_SIRE));
+        //Correction for older versions
+        if (_sire == -1) {
+            _sire = 0;
+        }
 
         log.debug("Getting sire=" + _sire);
 
@@ -430,10 +434,6 @@ public class PlayerData extends EventHandlerManager
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES, invites);
             }
 
-            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_ID] != targetId) {
-                room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_ID, targetId);
-            }
-
             if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE] != avatarState ) {
 //                log.debug("Setting " + playerId + " avatar state=" + avatarState + " into room props");
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE, avatarState);
@@ -495,6 +495,10 @@ public class PlayerData extends EventHandlerManager
                     }
                 }
 
+            }
+
+            if( _ctrl.props.get(Codes.PLAYER_PROP_BLOODBONDED_NAME) != bloodbondedName ) {
+                _ctrl.props.set(Codes.PLAYER_PROP_BLOODBONDED_NAME, bloodbondedName, true);
             }
 
             if( _ctrl.props.get(Codes.PLAYER_PROP_MINIONIDS) == null ||
@@ -643,6 +647,10 @@ public class PlayerData extends EventHandlerManager
 
     public function get bloodbondedName () :String
     {
+        //Update with the current name if the player is online
+        if (_bloodbonded != 0 && ServerContext.server.isPlayer(_bloodbonded)) {
+            return ServerContext.server.getPlayer(_bloodbonded).name;
+        }
         return _bloodbondedName;
     }
 
