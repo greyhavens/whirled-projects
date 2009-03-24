@@ -5,6 +5,8 @@ import com.threerings.util.Log;
 import com.threerings.util.Util;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.EventHandlerManager;
+import com.whirled.contrib.ManagedTimer;
+import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.ResourceManager;
 import com.whirled.net.ElementChangedEvent;
@@ -12,9 +14,7 @@ import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.Sprite;
 import flash.events.Event;
-import flash.events.TimerEvent;
 import flash.utils.Dictionary;
-import flash.utils.Timer;
 
 import vampire.feeding.*;
 import vampire.feeding.net.*;
@@ -65,17 +65,18 @@ public class BloodBloom extends FeedingClient
                 _addedToStage = true;
                 maybeFinishInit();
             });
+        _events.registerListener(this, Event.REMOVED_FROM_STAGE,
+            function (...ignored) :void {
+                shutdown();
+            });
 
         // If the resources aren't loaded, wait for them to load
         if (!_resourcesLoaded) {
-            var timer :Timer = new Timer(50);
-            timer.addEventListener(TimerEvent.TIMER, checkResourcesLoaded);
+            var timer :ManagedTimer = _timerMgr.runForever(50, checkResourcesLoaded);
             timer.start();
-
             function checkResourcesLoaded (...ignored) :void {
                 if (_resourcesLoaded) {
-                    timer.removeEventListener(TimerEvent.TIMER, checkResourcesLoaded);
-                    timer.stop();
+                    timer.cancel();
                     maybeFinishInit();
                 }
             }
@@ -86,9 +87,14 @@ public class BloodBloom extends FeedingClient
 
     override public function shutdown () :void
     {
+        if (_hasShutdown) {
+            return;
+        }
+
         _events.registerOneShotCallback(ClientCtx.mainLoop, MainLoop.HAS_STOPPED,
             function (...ignored) :void {
                 _events.freeAllHandlers();
+                _timerMgr.shutdown();
                 ClientCtx.audio.stopAllSounds();
                 ClientCtx.msgMgr.shutdown();
                 ClientCtx.init(); // release any memory we might be holding onto here
@@ -98,6 +104,7 @@ public class BloodBloom extends FeedingClient
 
         ClientCtx.mainLoop.popAllModes();
         ClientCtx.mainLoop.stop();
+        _hasShutdown = true;
     }
 
     override public function get playerData () :PlayerFeedingData
@@ -240,7 +247,9 @@ public class BloodBloom extends FeedingClient
     }
 
     protected var _addedToStage :Boolean;
+    protected var _hasShutdown :Boolean;
     protected var _events :EventHandlerManager = new EventHandlerManager();
+    protected var _timerMgr :TimerManager = new TimerManager();
     protected var _curModeName :String;
 
     protected static var _inited :Boolean;
