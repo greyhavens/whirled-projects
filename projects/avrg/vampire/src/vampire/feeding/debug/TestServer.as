@@ -109,8 +109,8 @@ class TestGameController extends OneRoomGameRoom
 
     protected function startGame (players :Array) :void
     {
-        var preyId :int = players.pop();
-        var predatorId :int = (players.length > 0 ? players.pop() : Constants.NULL_PLAYER);
+        var predatorId :int = players.pop();
+        var preyId :int = (players.length > 0 ? players.pop() : Constants.NULL_PLAYER);
 
         var preyBloodStrain :int =
             Rand.nextIntRange(0, VConstants.UNIQUE_BLOOD_STRAINS, Rand.STREAM_COSMETIC);
@@ -205,5 +205,5 @@ class TestGameController extends OneRoomGameRoom
     protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _timerMgr :TimerManager = new TimerManager();
 
-    protected static const MIN_PLAYERS :int = 1;
+    protected static const MIN_PLAYERS :int = 2;
 }
