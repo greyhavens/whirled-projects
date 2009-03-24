@@ -213,13 +213,12 @@ public class ClientContext
     {
         return playerId == 23340 || //Ragbeard
                playerId == 1769  || //Capital-T-Tim
-               playerId == 12    || //Nemo
+               playerId == 12    || //Nemo (Whirled and dev).
                playerId == 1     || //local msoy
                playerId == 2     || //local msoy
                playerId == 3     || //local msoy
                playerId == 1734     || //dev Dion
                playerId == 1735     || //dev Ragbeard's Evil Twin
-
                playerId == VConstants.UBER_VAMP_ID; //Übervamp
     }
 
