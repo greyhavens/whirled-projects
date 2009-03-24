@@ -86,7 +86,7 @@ public class BloodBloom extends FeedingClient
 
     override public function shutdown () :void
     {
-        _events.registerOneShotCallback(ClientCtx.mainLoop, MainLoop.HAS_SHUTDOWN,
+        _events.registerOneShotCallback(ClientCtx.mainLoop, MainLoop.HAS_STOPPED,
             function (...ignored) :void {
                 _events.freeAllHandlers();
                 ClientCtx.audio.stopAllSounds();
@@ -96,7 +96,8 @@ public class BloodBloom extends FeedingClient
                 log.info("Quitting BloodBloom");
             });
 
-        ClientCtx.mainLoop.shutdown();
+        ClientCtx.mainLoop.popAllModes();
+        ClientCtx.mainLoop.stop();
     }
 
     override public function get playerData () :PlayerFeedingData
