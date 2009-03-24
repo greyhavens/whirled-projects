@@ -2,10 +2,10 @@ package vampire
 {
 import com.whirled.contrib.simplegame.net.MessageManager;
 
-import vampire.data.VConstants;
 import vampire.net.messages.BloodBondRequestMsg;
 import vampire.net.messages.FeedConfirmMsg;
 import vampire.net.messages.FeedRequestMsg;
+import vampire.net.messages.MovePredIntoPositionMsg;
 import vampire.net.messages.NonPlayerIdsInRoomMsg;
 import vampire.net.messages.RequestStateChangeMsg;
 import vampire.net.messages.ShareTokenMsg;
@@ -38,12 +38,12 @@ public class Util
         mgr.addMessageType(BloodBondRequestMsg);
         mgr.addMessageType(FeedConfirmMsg);
         mgr.addMessageType(FeedRequestMsg);
+        mgr.addMessageType(MovePredIntoPositionMsg);
         mgr.addMessageType(NonPlayerIdsInRoomMsg);
         mgr.addMessageType(RequestStateChangeMsg);
         mgr.addMessageType(ShareTokenMsg);
         mgr.addMessageType(SuccessfulFeedMsg);
         mgr.addMessageType(TargetMovedMsg);
-
     }
 }
 }
