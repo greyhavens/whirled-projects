@@ -88,14 +88,19 @@ public class FeedingManager extends SimObject
         }
     }
 
-    protected function gameFinishedCallback( record :FeedingRecord ) :void
+    protected function gameFinishedCallback (record :FeedingRecord) :void
     {
         for each( var playerId :int in record.playerIds ) {
-            _playerId2Game.remove( playerId );
+            _playerId2Game.remove(playerId);
         }
     }
 
-    override protected function update( dt :Number ) :void
+    protected function playerLeavesCallback (playerId :int) :void
+    {
+        _playerId2Game.remove(playerId);
+    }
+
+    override protected function update (dt :Number) :void
     {
 
 //        for each( var game :BloodBloomGameRecord in _games ) {
@@ -104,7 +109,7 @@ public class FeedingManager extends SimObject
         removeFinishedGames();
     }
 
-    protected function removeFinishedGames() :void
+    protected function removeFinishedGames () :void
     {
         var index :int = 0;
         while( index < _games.length) {
@@ -184,7 +189,7 @@ public class FeedingManager extends SimObject
         log.debug("createNewBloodBloomGameRecord ", "predatorId", predatorId, "preyId", preyId);
         var gameRecord :FeedingRecord = new FeedingRecord( _room,
             nextBloodBloomGameId, predatorId, preyId, preyLocation,
-            gameFinishedCallback);
+            gameFinishedCallback, playerLeavesCallback);
         _playerId2Game.put( predatorId, gameRecord );
         if( preyId > 0 ) {
             _playerId2Game.put( preyId, gameRecord );

@@ -15,7 +15,7 @@ import vampire.feeding.FeedingServer;
 public class FeedingRecord extends EventCollecter
 {
     public function FeedingRecord( room :Room, gameId :int, predatorId :int, preyId :int,
-        preyLocation :Array, gameFinishesCallback :Function)
+        preyLocation :Array, gameFinishesCallback :Function, playerLeavesCallback :Function)
     {
         _room = room;
         _gameId = gameId;
@@ -26,6 +26,7 @@ public class FeedingRecord extends EventCollecter
 //        _preyLocation = preyLocation;
 
         _gameFinishedManagerCallback = gameFinishesCallback;
+        _playerLeavesCallback = playerLeavesCallback;
         _thisBloodBloomRecord = this;//For referencing in enclosed functions.
 
         if (_room != null && _room.ctrl != null) {
@@ -46,7 +47,7 @@ public class FeedingRecord extends EventCollecter
         }
 
         if (_gameServer != null && ArrayUtil.contains(_gameServer.playerIds, playerId)) {
-            log.debug("handlePlayerLeftRoom", "playerId", playerId);
+            log.debug("playerLeavesGame", "playerId", playerId);
             _gameServer.playerLeft( playerId );
         }
     }
@@ -149,6 +150,10 @@ public class FeedingRecord extends EventCollecter
 
         if (_predators.contains(playerId)) {
             _predators.remove(playerId);
+        }
+
+        if (_playerLeavesCallback != null) {
+            _playerLeavesCallback(playerId);
         }
     }
 
@@ -262,6 +267,10 @@ public class FeedingRecord extends EventCollecter
 
     public function removePlayer (playerId :int) :void
     {
+        if (_playerLeavesCallback != null) {
+            _playerLeavesCallback(playerId);
+        }
+
         if( !_started ) {
         }
         else {
@@ -356,6 +365,9 @@ public class FeedingRecord extends EventCollecter
 
             for each( var gamePlayerId :int in _gameServer.playerIds ) {
                 _gameServer.playerLeft( gamePlayerId );
+                if (_playerLeavesCallback != null) {
+                    _playerLeavesCallback(gamePlayerId);
+                }
             }
         }
         _room = null;
@@ -438,6 +450,7 @@ public class FeedingRecord extends EventCollecter
 //    protected var _currentCountdownSecond :int;
 //    protected var _elapsedGameTime :Number = 0;
     protected var _gameFinishedManagerCallback :Function;
+    protected var _playerLeavesCallback :Function;
     protected var _thisBloodBloomRecord :FeedingRecord;
 
     /**
