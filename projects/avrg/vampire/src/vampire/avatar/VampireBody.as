@@ -13,31 +13,10 @@ import flash.utils.ByteArray;
 
 public class VampireBody extends NewBody
 {
-    /**
-     * configOptions should be of the form:
-     * var configOptions :Object = {
-     *       topRemix: [
-     *          [ "torso", "shirt" ],
-     *          // ...
-     *       ],
-     *       hairRemix: [],
-     *       shoesRemix: [],
-     *       skinRecolor: [],
-     *       hairRecolor: [],
-     *       topRecolor: [],
-     *       pantsRecolor: [],
-     *       shoesColor: []
-     *  };
-     */
-    public function VampireBody (ctrl :AvatarControl,
-                                 media :MovieClip,
-                                 isConfigurable :Boolean,
-                                 configOptions :Object,
+    public function VampireBody (ctrl :AvatarControl, media :MovieClip, isConfigurable :Boolean,
                                  width :int, height :int = -1)
     {
         super(ctrl, media, width, height);
-
-        _configOptions = configOptions;
 
         // Entity memory-based configuration
         loadConfig();
@@ -101,22 +80,42 @@ public class VampireBody extends NewBody
     protected function selectCurConfigFrames (movies :Array) :void
     {
         //log.info("Selecting frames for " + movies.length + " movies");
+
         for each (var movie :MovieClip in movies) {
-            selectFrames(movie, "topRemix", _curConfig.topNumber);
-            selectFrames(movie, "hairRemix", _curConfig.hairNumber);
-            selectFrames(movie, "shoesRemix", _curConfig.shoesNumber);
-        }
-    }
+            // Shirt
+            selectFrame(movie, [ "torso", "shirt" ], _curConfig.topNumber);
+            selectFrame(movie, [ "neck", "shirt" ], _curConfig.topNumber);
+            selectFrame(movie, [ "hips", "shirt" ], _curConfig.topNumber);
+            selectFrame(movie, [ "breasts", "shirt" ], _curConfig.topNumber);
+            selectFrame(movie, [ "breasts", "breasts" ], _curConfig.topNumber);
+            selectFrame(movie, [ "bicepL", "shirt" ], _curConfig.topNumber);
+            selectFrame(movie, [ "bicepR", "shirt" ], _curConfig.topNumber);
+            selectFrame(movie, [ "bicepL", "bicepL" ], _curConfig.topNumber);
+            selectFrame(movie, [ "bicepR", "bicepR" ], _curConfig.topNumber);
+            selectFrame(movie, [ "forearmL", "shirt" ], _curConfig.topNumber);
+            selectFrame(movie, [ "forearmR", "shirt" ], _curConfig.topNumber);
+            selectFrame(movie, [ "forearmL", "forearmL" ], _curConfig.topNumber);
+            selectFrame(movie, [ "forearmR", "forearmR" ], _curConfig.topNumber);
+            selectFrame(movie, [ "handL", "shirt" ], _curConfig.topNumber);
+            selectFrame(movie, [ "handR", "shirt" ], _curConfig.topNumber);
+            selectFrame(movie, [ "handL", "handL" ], _curConfig.topNumber);
+            selectFrame(movie, [ "handR", "handR" ], _curConfig.topNumber);
 
-    protected function selectFrames (movie :MovieClip, optionName :String, frameNumber :int) :void
-    {
-        if (!_configOptions.hasOwnProperty(optionName) || !(_configOptions[optionName] is Array)) {
-            log.warning("missing config options", "optionName", optionName);
-            return;
-        }
+            // Hair
+            selectFrame(movie, [ "head", "scalp", "scalp" ], _curConfig.hairNumber);
+            selectFrame(movie, [ "bangs", "bangs" ], _curConfig.hairNumber);
+            selectFrame(movie, [ "hairL", "hairL" ], _curConfig.hairNumber);
+            selectFrame(movie, [ "hairR", "hairR" ], _curConfig.hairNumber);
+            selectFrame(movie, [ "hair", "hair" ], _curConfig.hairNumber);
+            selectFrame(movie, [ "hairTips", "hairTips" ], _curConfig.hairNumber);
 
-        for each (var path :Array in _configOptions[optionName]) {
-            selectFrame(movie, path, frameNumber);
+            // Shoes
+            selectFrame(movie, [ "footL", "shoes" ], _curConfig.shoesNumber);
+            selectFrame(movie, [ "footR", "shoes" ], _curConfig.shoesNumber);
+            selectFrame(movie, [ "footL", "foot" ], _curConfig.shoesNumber);
+            selectFrame(movie, [ "footR", "foot" ], _curConfig.shoesNumber);
+            selectFrame(movie, [ "calfL", "shoes" ], _curConfig.shoesNumber);
+            selectFrame(movie, [ "calfR", "shoes" ], _curConfig.shoesNumber);
         }
     }
 
@@ -124,25 +123,66 @@ public class VampireBody extends NewBody
     {
         //log.info("Applying filters to " + movies.length + " movies");
 
+        var skinFilter :ColorMatrixFilter = createColorFilter(_curConfig.skinColor);
+        var hairFilter :ColorMatrixFilter = createColorFilter(_curConfig.hairColor);
+        var shirtFilter :ColorMatrixFilter = createColorFilter(_curConfig.topColor);
+        var pantsFilter :ColorMatrixFilter = createColorFilter(_curConfig.pantsColor);
+        var shoesFilter :ColorMatrixFilter = createColorFilter(_curConfig.shoesColor);
+
         for each (var movie :MovieClip in movies) {
-            recolorElements(movie, "skinRecolor", _curConfig.skinColor);
-            recolorElements(movie, "hairRecolor", _curConfig.hairColor);
-            recolorElements(movie, "topRecolor", _curConfig.topColor);
-            recolorElements(movie, "pantsRecolor", _curConfig.pantsColor);
-            recolorElements(movie, "shoesRecolor", _curConfig.shoesColor);
-        }
-    }
+            // Skin color
+            applyFilter(movie, [ "head", "head" ], skinFilter);
+            applyFilter(movie, [ "head", "ear" ], skinFilter);
+            applyFilter(movie, [ "neck", "neck" ], skinFilter);
+            applyFilter(movie, [ "bicepL", "bicepL" ], skinFilter);
+            applyFilter(movie, [ "bicepR", "bicepR" ], skinFilter);
+            applyFilter(movie, [ "forearmL", "forearmL" ], skinFilter);
+            applyFilter(movie, [ "forearmR", "forearmR" ], skinFilter);
+            applyFilter(movie, [ "handL", "handL" ], skinFilter);
+            applyFilter(movie, [ "handR", "handR" ], skinFilter);
+            applyFilter(movie, [ "breasts", "breasts" ], skinFilter);
+            applyFilter(movie, [ "torso", "torso" ], skinFilter);
+            applyFilter(movie, [ "hips", "hips" ], skinFilter);
+            applyFilter(movie, [ "calfL", "calfL" ], skinFilter);
+            applyFilter(movie, [ "calfR", "calfR" ], skinFilter);
+            applyFilter(movie, [ "footL", "foot" ], skinFilter);
+            applyFilter(movie, [ "footR", "foot" ], skinFilter);
 
-    protected function recolorElements (movie :MovieClip, optionName :String, color :uint) :void
-    {
-        if (!_configOptions.hasOwnProperty(optionName) || !(_configOptions[optionName] is Array)) {
-            log.warning("missing config options", "optionName", optionName);
-            return;
-        }
+            // Hair color
+            applyFilter(movie, [ "head", "scalp", "scalp", ], hairFilter);
+            applyFilter(movie, [ "head", "eyebrows", ], hairFilter);
+            applyFilter(movie, [ "hairTips", "hairTips", ], hairFilter);
+            applyFilter(movie, [ "bangs", "bangs", ], hairFilter);
+            applyFilter(movie, [ "hairL", "hairL", ], hairFilter);
+            applyFilter(movie, [ "hairR", "hairR", ], hairFilter);
+            applyFilter(movie, [ "hair", "hair", ], hairFilter);
 
-        var filter :ColorMatrixFilter = createColorFilter(color);
-        for each (var path :Array in _configOptions[optionName]) {
-            applyFilter(movie, path, filter);
+            // Shirt color
+            applyFilter(movie, [ "neck", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "bicepL", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "bicepR", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "forearmL", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "forearmR", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "handL", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "handR", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "breasts", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "torso", "shirt", ], shirtFilter);
+            applyFilter(movie, [ "hips", "shirt", ], shirtFilter);
+
+            // Pants color
+            applyFilter(movie, [ "hips", "pants", ], pantsFilter);
+            applyFilter(movie, [ "thighL", "pants", ], pantsFilter);
+            applyFilter(movie, [ "thighR", "pants", ], pantsFilter);
+            applyFilter(movie, [ "calfL", "pants", ], pantsFilter);
+            applyFilter(movie, [ "calfR", "pants", ], pantsFilter);
+            applyFilter(movie, [ "footL", "pants", ], pantsFilter);
+            applyFilter(movie, [ "footR", "pants", ], pantsFilter);
+
+            // Shoes color
+            applyFilter(movie, [ "calfL", "shoes", ], shoesFilter);
+            applyFilter(movie, [ "calfR", "shoes", ], shoesFilter);
+            applyFilter(movie, [ "footL", "shoes", ], shoesFilter);
+            applyFilter(movie, [ "footR", "shoes", ], shoesFilter);
         }
     }
 
@@ -210,7 +250,6 @@ public class VampireBody extends NewBody
     }
 
     protected var _curConfig :VampatarConfig;
-    protected var _configOptions :Object;
 
     protected static const MEMORY_CONFIG :String = "VampatarConfig";
 }
