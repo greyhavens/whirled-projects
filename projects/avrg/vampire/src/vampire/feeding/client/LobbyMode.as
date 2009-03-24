@@ -102,9 +102,9 @@ public class LobbyMode extends AppMode
             if (ClientCtx.playerIds.length == 1) {
                 _tfStatus.text = "All Feeders have left";
             } else if (this.isPreGameLobby) {
-                _tfStatus.text = "Waiting on the Leader to start feeding";
+                _tfStatus.text = "Waiting for the Leader to start feeding";
             } else {
-                _tfStatus.text = "Waiting on the Leader to feed again";
+                _tfStatus.text = "Waiting for the Leader to feed again";
             }
         }
     }
