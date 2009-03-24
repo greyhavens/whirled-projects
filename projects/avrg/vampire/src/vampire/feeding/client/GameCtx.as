@@ -12,7 +12,7 @@ public class GameCtx
     public static var gameMode :GameMode;
     public static var heart :Heart;
     public static var cursor :PlayerCursor;
-    public static var scoreView :ScoreHelpQuitView;
+    public static var score :ScoreHelpQuitView;
     public static var specialCellSpawner :SpecialCellSpawner;
     public static var specialStrainTallyView :SpecialStrainTallyView;
     public static var sentMultiplierIndicator :SentMultiplierIndicator;
@@ -33,7 +33,7 @@ public class GameCtx
         gameMode = null;
         heart = null;
         cursor = null;
-        scoreView = null;
+        score = null;
         specialCellSpawner = null;
         specialStrainTallyView = null;
         sentMultiplierIndicator = null;

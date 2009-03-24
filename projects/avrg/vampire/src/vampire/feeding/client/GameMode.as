@@ -149,10 +149,10 @@ public class GameMode extends AppMode
         timerView.y = Constants.GAME_CTR.y;
         addSceneObject(timerView, GameCtx.uiLayer);
 
-        GameCtx.scoreView = new ScoreHelpQuitView();
-        GameCtx.scoreView.x = Constants.GAME_CTR.x;
-        GameCtx.scoreView.y = Constants.GAME_CTR.y;
-        addSceneObject(GameCtx.scoreView, GameCtx.uiLayer);
+        GameCtx.score = new ScoreHelpQuitView();
+        GameCtx.score.x = Constants.GAME_CTR.x;
+        GameCtx.score.y = Constants.GAME_CTR.y;
+        addSceneObject(GameCtx.score, GameCtx.uiLayer);
 
         if (!ClientCtx.isPrey && ClientCtx.preyBloodType >= 0) {
             GameCtx.specialStrainTallyView = new SpecialStrainTallyView(
@@ -203,7 +203,7 @@ public class GameMode extends AppMode
         } else if (e.msg is GetRoundScores) {
             // Send our final score to the server. We'll wait for the GameResultsMsg
             // to display the round over screen.
-            ClientCtx.msgMgr.sendMessage(RoundScoreMsg.create(GameCtx.scoreView.bloodCount));
+            ClientCtx.msgMgr.sendMessage(RoundScoreMsg.create(GameCtx.score.bloodCount));
 
         } else if (e.msg is RoundOverMsg) {
             onRoundOver(e.msg as RoundOverMsg);
@@ -290,7 +290,7 @@ public class GameMode extends AppMode
         // For testing purposes, end the game manually if we're in standalone mode
         if (GameCtx.timeLeft == 0 && !ClientCtx.isConnected) {
             var scores :HashMap = new HashMap();
-            scores.put(ClientCtx.localPlayerId, GameCtx.scoreView.bloodCount);
+            scores.put(ClientCtx.localPlayerId, GameCtx.score.bloodCount);
             onRoundOver(RoundOverMsg.create(scores, 1, 0.25));
             return;
         }
