@@ -36,10 +36,14 @@ public class DraggableSceneObject extends SceneObject
     public static const IX_YSNAP :int = 2;
     public static const IX_YFIX :int = 3;
 
-    public function DraggableSceneObject (ctrl :AVRGameControl, persistId :String = null)
+    public function DraggableSceneObject (ctrl :AVRGameControl, persistId :String = null,
+        sprite :Sprite = null)
     {
         _ctrl = ctrl;
-        //Don't store the positions for now
+        if (sprite != null) {
+            _displaySprite = sprite;
+        }
+        //Don't store the positions for now, but we use the persistId also for the objectName
         _persistId = persistId;
 
         registerListener(_ctrl.local, AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
@@ -60,6 +64,8 @@ public class DraggableSceneObject extends SceneObject
         _bounds = bounds;
         _bleed = bleed;
 
+        trace("bounds=" + _bounds);
+
         var locData :Dictionary = null;//(_persistId != null) ?
 //            _ctrl.player.props.get(PROP_PREFIX + _persistId) as Dictionary : null;
 
@@ -79,6 +85,11 @@ public class DraggableSceneObject extends SceneObject
         layout();
     }
 
+//    public function addChild (d :DisplayObject) :void
+//    {
+//        _displaySprite.addChild(d);
+//    }
+
     protected function handleMouseDown (evt :MouseEvent) :void
     {
         //No need to hold the shift key down while dragging.  Too confusing.
@@ -90,8 +101,15 @@ public class DraggableSceneObject extends SceneObject
             registerListener(_displaySprite, Event.ENTER_FRAME, handleFrame);
         }
 
+        registerListener(_displaySprite, MouseEvent.ROLL_OUT, handleRollOut);
+
         _mouse = new Point(_displaySprite.parent.mouseX, _displaySprite.parent.mouseY);
         _offset = new Point(_mouse.x - this.x, _mouse.y - this.y);
+    }
+
+    protected function handleRollOut (e :MouseEvent) :void
+    {
+        handleMouseUp();
     }
 
     protected function handleFrame (evt :Event) :void
@@ -103,6 +121,8 @@ public class DraggableSceneObject extends SceneObject
             _offset = null;
             return;
         }
+//        trace("mouse=(" + _displaySprite.parent.mouseX + ", " + _displaySprite.parent.mouseY + ")");
+//        trace("_offset=" + _offset);
 
         var p :Point = new Point(_displaySprite.parent.mouseX - _offset.x, _displaySprite.parent.mouseY - _offset.y);
 
@@ -169,10 +189,10 @@ public class DraggableSceneObject extends SceneObject
 //        trace("handleFrame (" + this.x + ", " + this.y + "), bounds=" + _bounds);
     }
 
-    protected function handleMouseUp (evt :MouseEvent) :void
+    protected function handleMouseUp (...ignored) :void
     {
         removeEventListener(Event.ENTER_FRAME, handleFrame);
-
+        removeEventListener(MouseEvent.ROLL_OUT, handleRollOut);
         _offset = null;
     }
 
@@ -263,8 +283,17 @@ public class DraggableSceneObject extends SceneObject
 
         //Make sure we are not outside the paintable area, no matter what.
         if( _ctrl.isConnected() && _ctrl.local.getPaintableArea() != null && _bounds != null) {
-            this.x = MathUtil.clamp( this.x, Math.abs(_bounds.left), _ctrl.local.getPaintableArea().width - Math.abs(_bounds.right));
-            this.y = MathUtil.clamp( this.y, 0 + this.height/2, _ctrl.local.getPaintableArea().height - this.height/2);
+//            trace("clamping:");
+//            trace("  bounds=" + _bounds);
+//            trace("  loc=" + this.x + ", " + this.y);
+//            trace("  _bounds.bottom=" + _bounds.bottom);
+//            trace("  clamping x ( " + (-_bounds.left) + ", " + (_ctrl.local.getPaintableArea().width - _bounds.right) + " )");
+//            trace("  clamping y ( " + (-_bounds.top) + ", " + (_ctrl.local.getPaintableArea().height - _bounds.bottom) + " )");
+//            trace("  width=" + _displaySprite.width);
+            this.x = MathUtil.clamp( this.x, -_bounds.left, _ctrl.local.getPaintableArea().width - _bounds.right);
+            this.y = MathUtil.clamp( this.y, -_bounds.top, _ctrl.local.getPaintableArea().height - _bounds.bottom);
+//            this.x = MathUtil.clamp( this.x, Math.abs(_bounds.left), _ctrl.local.getPaintableArea().width - Math.abs(_bounds.right));
+//            this.y = MathUtil.clamp( this.y, 0 + this.height/2, _ctrl.local.getPaintableArea().height - this.height/2);
         }
     }
 
@@ -285,10 +314,10 @@ public class DraggableSceneObject extends SceneObject
         return _displaySprite;
     }
 
-    public function get displaySprite () :Sprite
-    {
-        return _displaySprite;
-    }
+//    public function get displaySprite () :Sprite
+//    {
+//        return _displaySprite;
+//    }
 
     override public function get objectName () :String
     {
