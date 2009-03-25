@@ -210,7 +210,7 @@ public class Cell extends CollidableObj
         // white cells explode after a bit of time
         _movie.gotoAndStop(1);
         var thisCell :Cell = this;
-        addTask(new SerialTask(
+        addNamedTask(EXPLODE_TASK, new SerialTask(
             new TimedTask(Constants.WHITE_CELL_NORMAL_TIME.next()),
             new FunctionTask(function () :void {
                 _state = STATE_PREPARING_TO_EXPLODE;
@@ -262,10 +262,14 @@ public class Cell extends CollidableObj
     {
         super.update(dt);
 
-        var cursor :PlayerCursor = _attachedTo.object as PlayerCursor;
-        if (cursor == null) {
-            if (_state == STATE_NORMAL) {
-                orbitHeart(dt);
+        if (GameCtx.gameOver) {
+            this.removeAllTasks();
+        } else {
+            var cursor :PlayerCursor = _attachedTo.object as PlayerCursor;
+            if (cursor == null) {
+                if (_state == STATE_NORMAL) {
+                    orbitHeart(dt);
+                }
             }
         }
     }
@@ -426,6 +430,8 @@ public class Cell extends CollidableObj
     protected static const SPECIAL_CELL_AVOID_PLAYER_DISTANCE :NumRange =
         new NumRange(90, 100, Rand.STREAM_GAME);
     protected static const SPECIAL_CELL_AVOID_PLAYER_TIME :Number = 0.5;
+
+    protected static const EXPLODE_TASK :String = "Explode";
 
     protected static const CELL_MOVIES :Array = [ "cell_red", "cell_white", "cell_coop" ];
 }

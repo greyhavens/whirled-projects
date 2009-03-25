@@ -49,6 +49,10 @@ public class Heart extends SceneObject
 
     protected function beat (numBeats :int) :void
     {
+        if (GameCtx.gameOver) {
+            return;
+        }
+
         for (var ii :int = 0; ii < numBeats; ++ii) {
             dispatchEvent(new GameEvent(GameEvent.HEARTBEAT));
         }

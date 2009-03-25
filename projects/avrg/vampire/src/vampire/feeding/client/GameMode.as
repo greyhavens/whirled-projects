@@ -210,9 +210,9 @@ public class GameMode extends AppMode
             onCreateMultiplier(e.msg as CreateMultiplierMsg);
 
         } else if (e.msg is GetRoundScores) {
-            // Send our final score to the server. We'll wait for the GameResultsMsg
-            // to display the round over screen.
-            ClientCtx.msgMgr.sendMessage(RoundScoreMsg.create(GameCtx.score.bloodCount));
+            // When our blood collecting animations have completed, send our final
+            // score to the server.
+            GameCtx.gameOver = true;
 
         } else if (e.msg is RoundOverMsg) {
             onRoundOver(e.msg as RoundOverMsg);
@@ -296,12 +296,9 @@ public class GameMode extends AppMode
             addObject(countdownTicker);
         }
 
-        // For testing purposes, end the game manually if we're in standalone mode
-        if (GameCtx.timeLeft == 0 && !ClientCtx.isConnected) {
-            var scores :HashMap = new HashMap();
-            scores.put(ClientCtx.localPlayerId, GameCtx.score.bloodCount);
-            onRoundOver(RoundOverMsg.create(scores, 1, 0.25));
-            return;
+        // In offline testing mode, the game is considered over when our local timer ends
+        if (!ClientCtx.isConnected && GameCtx.timeLeft == 0) {
+            GameCtx.gameOver = true;
         }
 
         // Move the player cursor towards the mouse
@@ -312,6 +309,26 @@ public class GameMode extends AppMode
         }
 
         super.update(dt);
+
+        // If the game is over, wait for animations to complete before actually ending things
+        if (GameCtx.gameOver && this.canEndGameNow) {
+            // send our scores
+            ClientCtx.msgMgr.sendMessage(RoundScoreMsg.create(GameCtx.score.bloodCount));
+
+            // For testing purposes, end the game manually if we're in standalone mode;
+            // otherwise we'll wait for the actual RoundOverMsg to come in
+            if (!ClientCtx.isConnected) {
+                var scores :HashMap = new HashMap();
+                scores.put(ClientCtx.localPlayerId, GameCtx.score.bloodCount);
+                onRoundOver(RoundOverMsg.create(scores, 1, 0.25));
+                return;
+            }
+        }
+    }
+
+    protected function get canEndGameNow () :Boolean
+    {
+        return (!BurstSequence.sequenceExists && !GameCtx.score.isPlayingScoreAnim);
     }
 
     protected function onHeartbeat (...ignored) :void

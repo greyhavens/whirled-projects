@@ -1,6 +1,5 @@
 package vampire.feeding.client {
 
-import com.threerings.flash.MathUtil;
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.resource.SwfResource;
@@ -54,6 +53,40 @@ public class PlayerCursor extends CollidableObj
         curLoc = GameCtx.clampLoc(curLoc);
 
         // collide with cells
+        if (!GameCtx.gameOver) {
+            handleCollisions(curLoc);
+        }
+
+        // rotate towards our move direction
+        if (!curLoc.similar(_lastLoc, 0.5)) {
+            // rotate towards our move direction. 0 degrees == straight down
+            var targetRotation :Number =
+                -90 + ((curLoc.subtract(_lastLoc).angle) * (180 / Math.PI));
+
+            var curRotation :Number = this.rotation;
+            if (targetRotation - curRotation > 180) {
+                targetRotation -= 360;
+            } else if (targetRotation - curRotation < -180) {
+                targetRotation += 360;
+            }
+
+            addNamedTask(
+                "Rotate",
+                RotationTask.CreateEaseOut(
+                    targetRotation,
+                    Math.abs((targetRotation % 360) - curRotation) / ROTATE_SPEED),
+                true);
+
+        }
+
+        _lastLoc = curLoc.clone();
+
+        this.x = curLoc.x;
+        this.y = curLoc.y;
+    }
+
+    protected function handleCollisions (curLoc :Vector2) :void
+    {
         var cell :Cell = Cell.getCellCollision(this);
         if (cell != null) {
             if (cell.type == Constants.CELL_WHITE) {
@@ -103,33 +136,6 @@ public class PlayerCursor extends CollidableObj
                             Constants.GAME_CTR.x - 1 : Constants.GAME_CTR.x);
             }
         }
-
-        // rotate towards our move direction
-        if (!curLoc.similar(_lastLoc, 0.5)) {
-            // rotate towards our move direction. 0 degrees == straight down
-            var targetRotation :Number =
-                -90 + ((curLoc.subtract(_lastLoc).angle) * (180 / Math.PI));
-
-            var curRotation :Number = this.rotation;
-            if (targetRotation - curRotation > 180) {
-                targetRotation -= 360;
-            } else if (targetRotation - curRotation < -180) {
-                targetRotation += 360;
-            }
-
-            addNamedTask(
-                "Rotate",
-                RotationTask.CreateEaseOut(
-                    targetRotation,
-                    Math.abs((targetRotation % 360) - curRotation) / ROTATE_SPEED),
-                true);
-
-        }
-
-        _lastLoc = curLoc.clone();
-
-        this.x = curLoc.x;
-        this.y = curLoc.y;
     }
 
     protected function collideArtery (arteryType :int) :void

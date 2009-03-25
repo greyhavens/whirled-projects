@@ -28,6 +28,7 @@ public class GameCtx
     public static var helpLayer :Sprite;
 
     public static var timeLeft :Number;
+    public static var gameOver :Boolean;
 
     public static function init () :void
     {
@@ -45,6 +46,7 @@ public class GameCtx
         uiLayer = null;
 
         timeLeft = Constants.GAME_TIME;
+        gameOver = false;
     }
 
     // Returns a new Vector, clamped within the bounds of the game

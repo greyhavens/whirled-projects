@@ -82,7 +82,7 @@ public class BurstSequence extends SceneObject
 
     override protected function update (dt :Number) :void
     {
-        var isSequenceAlive :Boolean = ArrayUtil.findIf(_bursts,
+        var isSequenceAlive :Boolean = !GameCtx.gameOver && ArrayUtil.findIf(_bursts,
             function (burstRef :SimObjectRef) :Boolean {
                 return !burstRef.isNull;
             });

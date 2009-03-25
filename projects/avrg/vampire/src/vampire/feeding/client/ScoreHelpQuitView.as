@@ -34,6 +34,11 @@ public class ScoreHelpQuitView extends SceneObject
             });
     }
 
+    public function get isPlayingScoreAnim () :Boolean
+    {
+        return (GameCtx.gameMode.getObjectRefsInGroup("FlyingCell").length > 0);
+    }
+
     override protected function destroyed () :void
     {
         SwfResource.releaseMovieClip(_movie);
@@ -139,6 +144,15 @@ class FlyingCell extends SceneObject
     override protected function destroyed () :void
     {
         SwfResource.releaseMovieClip(_movie);
+    }
+
+    override public function getObjectGroup (groupNum :int) :String
+    {
+        if (groupNum == 0) {
+            return "FlyingCell";
+        } else {
+            return super.getObjectGroup(groupNum - 1);
+        }
     }
 
     protected var _sprite :Sprite;
