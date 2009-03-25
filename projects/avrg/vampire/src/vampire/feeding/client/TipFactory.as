@@ -34,7 +34,7 @@ public class TipFactory
             if (existingTip.type == type || existingTip.lifeTime < 5) {
                 return SimObjectRef.Null();
             } else {
-                existingTip.die();
+                existingTip.destroySelf();
             }
         }
 
@@ -84,6 +84,7 @@ import flash.display.DisplayObject;
 import com.whirled.contrib.simplegame.tasks.SerialTask;
 import com.whirled.contrib.simplegame.tasks.AlphaTask;
 import com.whirled.contrib.simplegame.tasks.SelfDestructTask;
+import com.whirled.contrib.simplegame.tasks.TimedTask;
 
 class Tip extends SceneObject
 {
@@ -103,16 +104,6 @@ class Tip extends SceneObject
         // don't appear in the wrong place
         this.alpha = 0;
         addTask(new AlphaTask(1, 0.5));
-    }
-
-    public function die () :void
-    {
-        var deadTip :DeadTip = new DeadTip(_type);
-        deadTip.x = this.x;
-        deadTip.y = this.y;
-        GameCtx.gameMode.addSceneObject(deadTip, GameCtx.uiLayer);
-
-        destroySelf();
     }
 
     public function get type () :int
@@ -146,12 +137,15 @@ class Tip extends SceneObject
 
     override protected function update (dt :Number) :void
     {
-        if (_dead) {
-            return;
-        }
-
         var owner :SceneObject = _ownerRef.object as SceneObject;
         if (owner == null || owner.displayObject == null || owner.displayObject.parent == null) {
+            if (_lifeTime < MIN_TIME) {
+                var deadTip :DeadTip = new DeadTip(_type, MIN_TIME - _lifeTime);
+                deadTip.x = this.x;
+                deadTip.y = this.y;
+                GameCtx.gameMode.addSceneObject(deadTip, GameCtx.uiLayer);
+            }
+
             destroySelf();
             return;
         }
@@ -170,15 +164,19 @@ class Tip extends SceneObject
     protected var _tf :TextField;
     protected var _ownerRef :SimObjectRef;
     protected var _lifeTime :Number = 0;
-    protected var _dead :Boolean;
+
+    protected static const MIN_TIME :Number = 2;
 }
 
 class DeadTip extends SceneObject
 {
-    public function DeadTip (type :int)
+    public function DeadTip (type :int, screenTime :Number = 0)
     {
         _tf = createTipText(type);
-        addTask(new SerialTask(new AlphaTask(0, 0.5), new SelfDestructTask()));
+        addTask(new SerialTask(
+            new TimedTask(screenTime),
+            new AlphaTask(0, 0.5),
+            new SelfDestructTask()));
     }
 
     override public function get displayObject () :DisplayObject
