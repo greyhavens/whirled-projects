@@ -13,27 +13,23 @@ public class DraggableObject extends SceneObject
         _droppedCallback = droppedCallback;
     }
 
-    public function set isDraggable (val :Boolean) :void
+    public function get dragger () :Dragger
     {
-        _isDraggable = val;
-        if (_dragger != null) {
-            _dragger.isDraggable = _isDraggable;
-        }
+        return _dragger;
     }
 
-    public function get isDraggable () :Boolean
+    protected function createDragger () :Dragger
     {
-        return _isDraggable;
+        return new Dragger(this.draggableObject, this.displayObject, _draggedCallback,
+            _droppedCallback);
     }
 
     override protected function addedToDB () :void
     {
-        super.addedToDB();
-        _dragger = new Dragger(this.draggableObject, this.displayObject, _draggedCallback,
-            _droppedCallback);
+        _dragger = createDragger();
         this.db.addObject(_dragger);
 
-        _dragger.isDraggable = _isDraggable;
+        super.addedToDB();
     }
 
     override protected function removedFromDB () :void
@@ -49,9 +45,7 @@ public class DraggableObject extends SceneObject
 
     protected var _draggedCallback :Function;
     protected var _droppedCallback :Function;
-
     protected var _dragger :Dragger;
-    protected var _isDraggable :Boolean = true;
 }
 
 }
