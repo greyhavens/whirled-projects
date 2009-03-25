@@ -60,6 +60,9 @@ public class ClientContext
     public static function init( gameControl :AVRGameControl ) :void
     {
         ctrl = gameControl;
+        if (ctrl != null && ctrl.isConnected()) {
+            ourPlayerId = ctrl.player.getPlayerId();
+        }
         msg = new BasicMessageManager();
         vampire.Util.initMessageManager(msg);
     }
