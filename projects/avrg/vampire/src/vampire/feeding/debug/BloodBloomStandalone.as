@@ -3,6 +3,7 @@ package vampire.feeding.debug {
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.util.Rand;
 
+import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 
 import vampire.avatar.VampireBody;
@@ -23,11 +24,11 @@ public class BloodBloomStandalone extends Sprite
         c = vampire.avatar.VampireBody;
     }
 
-    public function BloodBloomStandalone ()
+    public function BloodBloomStandalone (parent :DisplayObjectContainer = null)
     {
         DEBUG_REMOVE_ME();
 
-        BloodBloom.init(this, new DisconnectedControl(this));
+        BloodBloom.init(this, new DisconnectedControl(parent == null ? this : parent));
         addChild(new BloodBloom(0, new PlayerFeedingData(), function () :void {}));
         if (Constants.DEBUG_FORCE_SPECIAL_BLOOD_STRAIN) {
             ClientCtx.preyBloodType =
