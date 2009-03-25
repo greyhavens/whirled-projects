@@ -321,7 +321,9 @@ class MyColorPicker extends Sprite
         _palette.addEventListener(MouseEvent.MOUSE_MOVE,
             function (e :MouseEvent) :void {
                 var bm :BitmapData = _bitmaps[type];
-                setSwatchColor(bm.getPixel(e.localX, e.localY));
+                if (e.localX >= 0 && e.localX < bm.width && e.localY >= 0 && e.localY < bm.height) {
+                    setSwatchColor(bm.getPixel(e.localX, e.localY));
+                }
             });
 
         _palette.addEventListener(MouseEvent.CLICK,
