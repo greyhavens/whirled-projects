@@ -148,7 +148,7 @@ package vampire.client
 //                    }
 //                });
 
-            init( new Rectangle(-_displaySprite.width/2, _displaySprite.height/2, _displaySprite.width, _displaySprite.height), 0, 0, 0, 100);
+            init( new Rectangle(-_displaySprite.width/2, -_displaySprite.height/2, _displaySprite.width, _displaySprite.height), 0, 0, 0, 100);
             centerOnViewableRoom();
         }
 
