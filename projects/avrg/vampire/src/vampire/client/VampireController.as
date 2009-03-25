@@ -14,7 +14,6 @@ import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.events.ChangeActionEvent;
 import vampire.data.Codes;
 import vampire.data.VConstants;
-import vampire.net.messages.BloodBondRequestMsg;
 import vampire.net.messages.FeedConfirmMsg;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.RequestStateChangeMsg;
@@ -210,24 +209,24 @@ public class VampireController extends Controller
 //                false).toBytes() );
 //    }
 
-    public function handleAddBloodBond() :void
-    {
-        if( ClientContext.model.bloodbonded == ClientContext.model.targetPlayerId
-            || ClientContext.model.targetPlayerId <= 0) {
-            log.debug("handleAddBloodBond() " + ClientContext.currentClosestPlayerId + " already bloodbonded");
-            return;
-        }
-
-        log.debug("handleAddBloodBond() request to add " + ClientContext.model.targetPlayerId );
-
-        ClientContext.ctrl.agent.sendMessage(
-            BloodBondRequestMsg.NAME,
-            new BloodBondRequestMsg(
-                ClientContext.ourPlayerId,
-                ClientContext.model.targetPlayerId,
-                ClientContext.getPlayerName(ClientContext.model.targetPlayerId),
-                true).toBytes() );
-    }
+//    public function handleAddBloodBond() :void
+//    {
+//        if( ClientContext.model.bloodbonded == ClientContext.model.targetPlayerId
+//            || ClientContext.model.targetPlayerId <= 0) {
+//            log.debug("handleAddBloodBond() " + ClientContext.currentClosestPlayerId + " already bloodbonded");
+//            return;
+//        }
+//
+//        log.debug("handleAddBloodBond() request to add " + ClientContext.model.targetPlayerId );
+//
+//        ClientContext.ctrl.agent.sendMessage(
+//            BloodBondRequestMsg.NAME,
+//            new BloodBondRequestMsg(
+//                ClientContext.ourPlayerId,
+//                ClientContext.model.targetPlayerId,
+//                ClientContext.getPlayerName(ClientContext.model.targetPlayerId),
+//                true).toBytes() );
+//    }
 
     public function handleShowDebug() :void
     {
@@ -388,6 +387,7 @@ public class VampireController extends Controller
 
 
         //Show a popup if we aren't connected to the Lineage, and we choose a sire that is
+        trace(ClientContext.ourPlayerId + " lineage=" + ClientContext.model.lineage);
         var targetIsVampireAndLineageMember :Boolean =
             ClientContext.model.lineage.isMemberOfLineage(targetId);
         if (ClientContext.model.sire == 0 && targetIsVampireAndLineageMember) {
@@ -438,23 +438,6 @@ public class VampireController extends Controller
             return;
         }
         hierarchyView.updateHierarchy( playerId );
-    }
-
-    public function makeSire( ... ignored ) :void
-    {
-        log.info("makeSire(" + ClientContext.model.targetPlayerId + ")" );
-        if( ClientContext.model.targetPlayerId > 0) {
-
-            ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_MAKE_SIRE, ClientContext.model.targetPlayerId );
-        }
-    }
-
-    public function makeMinion( ... ignored ) :void
-    {
-        log.info("makeMinion(" + ClientContext.model.targetPlayerId + ")" );
-        if( ClientContext.model.targetPlayerId > 0) {
-            ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_MAKE_MINION, ClientContext.model.targetPlayerId );
-        }
     }
 
     public function handleShowHierarchy(_hudMC :MovieClip) :void

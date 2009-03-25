@@ -8,6 +8,7 @@ import com.whirled.contrib.avrg.DraggableSceneObject;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
+import flash.filters.DropShadowFilter;
 import flash.geom.Rectangle;
 import flash.text.AntiAliasType;
 import flash.text.TextField;
@@ -20,26 +21,16 @@ public class PopupQuery extends DraggableSceneObject
         buttonNames :Array = null, commandsOrFunctions :Array = null, extraArgs :Array = null)
     {
 
-//        trace("con, commands=" + commands);
-//        trace("con, message=" + message);
-//        trace("con, name=" + name);
         super(ctrl, name);
         _popupPanel = ClientContext.instantiateMovieClip("HUD", "popup", false);
         _popupPanel.mouseEnabled = true;
         _popupPanel.mouseChildren = true;
-        _displaySprite.addChild( _popupPanel );
+        _displaySprite.addChild(_popupPanel);
 
         _popupText = _popupPanel["popup_text"] as TextField;
+        _displaySprite.addChild(_popupText);
 
 
-        registerListener( _popupPanel["popup_close"], MouseEvent.CLICK,
-            function( e :MouseEvent ) :void {
-                destroySelf();
-            });
-
-//        commands = ["asdsf", "sdfadsf"]
-
-//        trace("con, commandArgs=" + commandArgs);
         setupText(message);
         if (buttonNames != null) {
             setupCommands(buttonNames, commandsOrFunctions, extraArgs);
@@ -64,6 +55,7 @@ public class PopupQuery extends DraggableSceneObject
     {
         _popupText.text = message;
         _popupText.y = -_popupText.textHeight/2;
+        _popupPanel.height = 20;
     }
 
     protected function setupCommands (buttonNames :Array,
@@ -75,7 +67,6 @@ public class PopupQuery extends DraggableSceneObject
         }
         var b1 :SimpleButton = _popupPanel["button_01"] as SimpleButton;
         var b2 :SimpleButton = _popupPanel["button_02"] as SimpleButton;
-        trace("b1=" + b1);
         b1.parent.removeChild(b1);
         b2.parent.removeChild(b2);
 //        trace("setup, commands" + commands);
@@ -95,14 +86,17 @@ public class PopupQuery extends DraggableSceneObject
 //            b.gotoAndStop(1);
 
             trace("adding button");
-            _popupPanel.addChild(b);
+            _displaySprite.addChild(b);
+            //If there is only one button, position it in between the two buttons.
             if (i == 0 && buttonNames.length == 1) {
                 b.x = b1.x + (b2.x - b1.x) / 2;
             }
 
-            var buttonText :TextField = buttonTextField(buttonNames[i]);
+            var buttonText :TextField = buttonTextField(buttonNames[i], b.width);
+
             buttonText.x = b.x - buttonText.width / 2;
             buttonText.y = b.y - buttonText.textHeight / 2;
+
             b.parent.addChild(buttonText);
 
 
@@ -110,16 +104,15 @@ public class PopupQuery extends DraggableSceneObject
 //            TextField(b["button_text"]).text = buttonNames[i];
 //            TextField(b["button_text"]).selectable = false;
 
-//            registerListener(b, MouseEvent.ROLL_OVER, function(...ignored) :void {
-//                b.gotoAndStop(2);
-//            });
-//            registerListener(b, MouseEvent.ROLL_OUT, function(...ignored) :void {
-//                trace("mouse out");
-//                b.gotoAndStop(1);
-//            });
-//            registerListener(b, MouseEvent.CLICK, function(...ignored) :void {
-//                b.gotoAndStop(1);
-//            });
+            registerListener(b, MouseEvent.ROLL_OVER, function(...ignored) :void {
+                buttonText.textColor = 0x990000;
+            });
+            registerListener(b, MouseEvent.ROLL_OUT, function(...ignored) :void {
+                buttonText.textColor = 0xFF0000;
+            });
+            registerListener(b, MouseEvent.MOUSE_DOWN, function(...ignored) :void {
+                buttonText.y += 1;
+            });
 
             //buttonNames[i] as String
 
@@ -150,21 +143,22 @@ public class PopupQuery extends DraggableSceneObject
         }
     }
 
-    protected function buttonTextField( buttonText :String ) :TextField
+    protected function buttonTextField( buttonText :String, buttonWidth :int ) :TextField
     {
         var buttonTextField :TextField = TextFieldUtil.createField(buttonText);
         buttonTextField.mouseEnabled = false;
         buttonTextField.selectable = false;
         buttonTextField.tabEnabled = false;
-        buttonTextField.textColor = 0x000000;
         buttonTextField.embedFonts = true;
         var format :TextFormat = getJuiceFormat();
-        format.align = TextFormatAlign.CENTER;
-        buttonTextField.setTextFormat( format );
 
         buttonTextField.antiAliasType = AntiAliasType.ADVANCED;
-        buttonTextField.width = 100;
+        buttonTextField.width = buttonWidth - 4;
         buttonTextField.height = 35;
+        buttonTextField.setTextFormat( format );
+
+        var filter :DropShadowFilter = new DropShadowFilter(1, 0, 0xFF0000, 1, 1, 0, 1);
+        buttonTextField.filters = [filter];
         return buttonTextField;
     }
 
@@ -173,7 +167,7 @@ public class PopupQuery extends DraggableSceneObject
         var format :TextFormat = new TextFormat();
         format.font = "JuiceEmbedded";
         format.size = 26;
-        format.color = 0x000000;
+        format.color = 0xFF0000;
         format.align = TextFormatAlign.CENTER;
         format.bold = true;
         return format;

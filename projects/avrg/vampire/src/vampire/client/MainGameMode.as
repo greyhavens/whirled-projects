@@ -196,7 +196,7 @@ public class MainGameMode extends AppMode
     {
 //        trace("MainGameMode, handlePlayerArrivedAtLocation");
 //        if( ClientContext.model.state == VConstants.PLAYER_STATE_MOVING_TO_FEED ) {
-            trace("Sending player arrived event");
+            trace(ClientContext.ourPlayerId + " Sending player arrived event");
             ClientContext.ctrl.agent.sendMessage( PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
 //        }
     }

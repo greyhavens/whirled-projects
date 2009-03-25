@@ -23,7 +23,6 @@ import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.MovePredIntoPositionMsg;
 import vampire.net.messages.RequestStateChangeMsg;
 import vampire.net.messages.ShareTokenMsg;
-import vampire.net.messages.TargetMovedMsg;
 
 
 
@@ -69,7 +68,7 @@ public class ServerLogic
         //Check if we are part of the Lineage (with Ubervamp as the grandsire).  Only then
         //are we allowed to collect minion xp.
         if( !allsires.contains( VConstants.UBER_VAMP_ID )) {
-            player.addFeedback("You must be part of the Lineage to earn XP from your minions");
+//            player.addFeedback("You must be part of the Lineage to earn XP from your minions");
             return;
         }
 
@@ -476,9 +475,6 @@ public class ServerLogic
                 if( msg is RequestStateChangeMsg) {
                     handleRequestActionChange( player, RequestStateChangeMsg(msg) );
                 }
-                else if( msg is TargetMovedMsg) {
-                    handleTargetMoved( player, TargetMovedMsg(msg) );
-                }
                 else if( msg is BloodBondRequestMsg) {
                     handleBloodBondRequest( player, BloodBondRequestMsg(msg) );
                 }
@@ -557,7 +553,7 @@ public class ServerLogic
 
                     case VConstants.NAMED_EVENT_QUIT:
                     var now :Number = new Date().time;
-                    player.setTime( now , true);
+                    player.setTime(now);
                     break;
 
                     case PlayerArrivedAtLocationEvent.PLAYER_ARRIVED:
@@ -611,12 +607,6 @@ public class ServerLogic
 
     }
 
-    protected static function handleTargetMoved (player :PlayerData, e :TargetMovedMsg) :void
-    {
-        log.debug(player.name + " handleTargetMoved", "target", player.targetId);
-        player.room.bloodBloomGameManager.playerQuitsGame(player.targetId);
-        player.setTargetId(0);
-    }
     protected static function handlePlayerArrivedAtLocation (player :PlayerData) :void
     {
         log.debug(player.playerId + " message " + PlayerArrivedAtLocationEvent.PLAYER_ARRIVED,
@@ -628,15 +618,15 @@ public class ServerLogic
             break;
 
             //If we are in a game or lobby, and we move, break off the game.
-            case VConstants.PLAYER_STATE_FEEDING_PREDATOR:
-            case VConstants.PLAYER_STATE_FEEDING_PREY:
-            case VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION:
-            var game :FeedingRecord = player.room.bloodBloomGameManager.getGame(player.playerId);
-            if (game != null) {
-                game.playerLeavesGame(player.playerId, true);
-                stateChange(player, VConstants.PLAYER_STATE_DEFAULT);
-            }
-            break;
+//            case VConstants.PLAYER_STATE_FEEDING_PREDATOR:
+//            case VConstants.PLAYER_STATE_FEEDING_PREY:
+//            case VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION:
+//            var game :FeedingRecord = player.room.bloodBloomGameManager.getGame(player.playerId);
+//            if (game != null) {
+//                game.playerLeavesGame(player.playerId, true);
+//                stateChange(player, VConstants.PLAYER_STATE_DEFAULT);
+//            }
+//            break;
 
             default:
             log.error(player.playerId + " Received PLAYER_ARRIVED but doing nothing");
@@ -1256,12 +1246,10 @@ public class ServerLogic
 //            log.debug(predatorId + " gained " + bloodGainedPerPredatorFormatted);
 //            pred.addFeedback( "You gained " + bloodGainedPerPredatorFormatted + " blood!");
 
-            if (preyIsPlayer && preyPlayer != null) {
 
+            if (preyIsPlayer && preyPlayer != null) {
                 //Check if we don't have a sire.  The prey vampire becomes it.
                 if (pred.sire == 0) {
-
-
                     if (ServerContext.lineage.isMemberOfLineage( preyId )) {
                         makeSire( pred,  preyPlayer.playerId );
                         pred.addFeedback( preyPlayer.name + " has become your sire ");
@@ -1289,13 +1277,13 @@ public class ServerLogic
                         }
                     }
                     else {
-                        pred.addFeedback( preyPlayer.name + " is not part of the Lineage (Minions of Übervamp).  Feed from a Lineage member to join.");
-                        preyPlayer.addFeedback( "You are not part of the Lineage (Minions of Übervamp), so " + preyPlayer.name + " cannot become your minion. "
+                        pred.addFeedback( preyPlayer.name + " is not part of the Lineage (Minions of Lilith).  Feed from a Lineage member to join.");
+                        preyPlayer.addFeedback( "You are not part of the Lineage (Minions of Lilith), so " + preyPlayer.name + " cannot become your minion. "
                             + " Feed on a member of the Lineage to join.");
                     }
                 }
                 else {
-                    log.debug("Already have sire, or prey not a vampire, so no sire creation");
+                    log.debug(pred.name + "already has a sire=" + pred.sire);
                 }
             }
             else {

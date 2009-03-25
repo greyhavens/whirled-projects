@@ -226,7 +226,7 @@ public class PlayerData extends EventHandlerManager
 
         var currentTime :Number = new Date().time;
         if( _room != null && _room.ctrl != null && _room.ctrl.isConnected()) {
-            setTime( currentTime, true );
+            setTime( currentTime );
             setIntoPlayerProps();
             if( _ctrl != null && _ctrl.isConnected() ) {
                 _ctrl.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
@@ -268,14 +268,14 @@ public class PlayerData extends EventHandlerManager
         _name = name;
     }
 
-    public function setTimeToCurrentTime() :void
+    public function setTimeToCurrentTime () :void
     {
         var currentTime :Number = new Date().time;
-        setTime( currentTime, true );
+        setTime(currentTime);
     }
 
 
-    protected function get targetPlayer() :PlayerData
+    protected function get targetPlayer () :PlayerData
     {
         if( ServerContext.server.isPlayer( targetId )) {
             return ServerContext.server.getPlayer( targetId );
@@ -283,12 +283,12 @@ public class PlayerData extends EventHandlerManager
         return null;
     }
 
-    protected function get isTargetPlayer() :Boolean
+    protected function get isTargetPlayer () :Boolean
     {
         return ServerContext.server.isPlayer( targetId );
     }
 
-    public function get avatar() :AVRGameAvatar
+    public function get avatar () :AVRGameAvatar
     {
         if( room == null || room.ctrl == null) {
             return null;
@@ -409,7 +409,6 @@ public class PlayerData extends EventHandlerManager
 //            }
 
             if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE] != state) {
-//                log.debug("Setting " + name + " action=" + state + " into room props");
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE, state);
             }
 
@@ -425,17 +424,14 @@ public class PlayerData extends EventHandlerManager
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE, time);
             }
             if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP] != xp && !isNaN(xp)) {
-//                log.debug("Setting " + playerId + " xp=" + xp + " into room props");
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, xp);
             }
 
             if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES] != invites) {
-//                log.debug("Setting " + playerId + " invites=" + invites + " into room props");
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES, invites);
             }
 
             if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE] != avatarState ) {
-//                log.debug("Setting " + playerId + " avatar state=" + avatarState + " into room props");
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE, avatarState);
             }
 
@@ -540,28 +536,23 @@ public class PlayerData extends EventHandlerManager
 
     public function setFeedingData(bytes :ByteArray) :void
     {
-        //Set immediately
         _ctrl.props.set( Codes.PLAYER_PROP_FEEDING_DATA, bytes );
     }
 
-    public function setTime (time :Number, force :Boolean = false) :void
+    public function setTime (time :Number) :void
     {
-        // update our runtime state
-        if (!force && time == _timePlayerPreviouslyQuit) {
-            return;
-        }
         _timePlayerPreviouslyQuit = time;
     }
 
-    public function addToInviteTally( addition :int = 1 ) :void
+    public function addToInviteTally (addition :int = 1) :void
     {
         _inviteTally += addition;
     }
 
-    public function setBloodBonded (bloodbonded :int, force :Boolean = false) :void
+    public function setBloodBonded (bloodbonded :int) :void
     {
         // update our runtime state
-        if (!force && bloodbonded == _bloodbonded) {
+        if (bloodbonded == _bloodbonded) {
             return;
         }
 
@@ -592,7 +583,6 @@ public class PlayerData extends EventHandlerManager
             var bloodBondedPlayer :PlayerData = ServerContext.server.getPlayer( _bloodbonded );
             if( bloodBondedPlayer != null ) {
                 _bloodbondedName = bloodBondedPlayer.name;
-//                _ctrl.props.set(Codes.PLAYER_PROP_BLOODBONDED_NAME, _bloodbondedName, true);
             }
             else {
                 log.error("Major error: setBloodBonded( " + _bloodbonded + "), but no Player, so cannot set name");

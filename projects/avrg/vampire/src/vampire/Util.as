@@ -10,7 +10,6 @@ import vampire.net.messages.NonPlayerIdsInRoomMsg;
 import vampire.net.messages.RequestStateChangeMsg;
 import vampire.net.messages.ShareTokenMsg;
 import vampire.net.messages.SuccessfulFeedMsg;
-import vampire.net.messages.TargetMovedMsg;
 
 
 public class Util
@@ -43,7 +42,6 @@ public class Util
         mgr.addMessageType(RequestStateChangeMsg);
         mgr.addMessageType(ShareTokenMsg);
         mgr.addMessageType(SuccessfulFeedMsg);
-        mgr.addMessageType(TargetMovedMsg);
     }
 }
 }
