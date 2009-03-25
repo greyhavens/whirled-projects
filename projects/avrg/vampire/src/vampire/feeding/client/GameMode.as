@@ -80,20 +80,26 @@ public class GameMode extends AppMode
         registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
 
         // Setup display layers
-        GameCtx.bgLayer = SpriteUtil.createSprite();
+        var gameParent :Sprite = new Sprite();
+        _modeSprite.addChild(gameParent);
+
+        GameCtx.helpLayer = new Sprite();
+        _modeSprite.addChild(GameCtx.helpLayer);
+
+        GameCtx.bgLayer = SpriteUtil.createSprite(false, true);
         GameCtx.cellBirthLayer = SpriteUtil.createSprite();
         GameCtx.heartLayer = SpriteUtil.createSprite();
         GameCtx.burstLayer = SpriteUtil.createSprite();
         GameCtx.cellLayer = SpriteUtil.createSprite();
         GameCtx.cursorLayer = SpriteUtil.createSprite();
         GameCtx.uiLayer = SpriteUtil.createSprite(true, true);
-        _modeSprite.addChild(GameCtx.bgLayer);
-        _modeSprite.addChild(GameCtx.cellBirthLayer);
-        _modeSprite.addChild(GameCtx.heartLayer);
-        _modeSprite.addChild(GameCtx.burstLayer);
-        _modeSprite.addChild(GameCtx.cellLayer);
-        _modeSprite.addChild(GameCtx.cursorLayer);
-        _modeSprite.addChild(GameCtx.uiLayer);
+        gameParent.addChild(GameCtx.bgLayer);
+        gameParent.addChild(GameCtx.cellBirthLayer);
+        gameParent.addChild(GameCtx.heartLayer);
+        gameParent.addChild(GameCtx.burstLayer);
+        gameParent.addChild(GameCtx.cellLayer);
+        gameParent.addChild(GameCtx.cursorLayer);
+        gameParent.addChild(GameCtx.uiLayer);
 
         if (Constants.DEBUG_SHOW_STATS) {
             var statView :StatView = new StatView();
@@ -175,6 +181,9 @@ public class GameMode extends AppMode
         }
 
         ClientCtx.playerData.incrementTimesPlayed();
+
+        // Add draggability
+        addObject(new Dragger(GameCtx.bgLayer, gameParent));
     }
 
     override protected function enter () :void

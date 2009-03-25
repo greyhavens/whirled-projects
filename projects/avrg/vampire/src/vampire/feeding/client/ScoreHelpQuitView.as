@@ -30,7 +30,7 @@ public class ScoreHelpQuitView extends SceneObject
         var helpButton :SimpleButton = _movie["button_info"];
         registerListener(helpButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                InfoView.show();
+                InfoView.show(GameCtx.helpLayer);
             });
     }
 

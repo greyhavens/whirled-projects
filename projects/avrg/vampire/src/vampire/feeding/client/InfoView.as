@@ -1,7 +1,6 @@
 package vampire.feeding.client {
 
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.simplegame.objects.SceneObject;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -11,20 +10,19 @@ import flash.events.MouseEvent;
 
 import vampire.feeding.*;
 
-public class InfoView extends SceneObject
+public class InfoView extends DraggableObject
 {
-    public static function show () :void
+    public static function show (parent :Sprite) :void
     {
         var view :InfoView = ClientCtx.mainLoop.topMode.getObjectNamed(NAME) as InfoView;
         if (view == null) {
             view = new InfoView();
             view.x = LOC.x + (view.width * 0.5);
             view.y = LOC.y + (view.height * 0.5);
-
-            var parent :Sprite = (ClientCtx.mainLoop.topMode == GameCtx.gameMode ?
-                                  GameCtx.uiLayer :
-                                  ClientCtx.mainLoop.topMode.modeSprite);
             ClientCtx.mainLoop.topMode.addSceneObject(view, parent);
+
+        } else if (view.displayObject.parent != parent) {
+            parent.addChild(view.displayObject);
         }
 
         view.visible = true;

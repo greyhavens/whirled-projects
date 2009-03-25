@@ -25,6 +25,7 @@ public class GameCtx
     public static var cellLayer :Sprite;
     public static var cursorLayer :Sprite;
     public static var uiLayer :Sprite;
+    public static var helpLayer :Sprite;
 
     public static var timeLeft :Number;
 

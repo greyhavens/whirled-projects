@@ -33,6 +33,8 @@ public class LobbyMode extends AppMode
         _panelMovie.y = 200;
         _modeSprite.addChild(_panelMovie);
 
+        addObject(new Dragger(_panelMovie));
+
         // Instructions
         var instructions0 :MovieClip = _panelMovie["instructions_basic"];
         var instructions1 :MovieClip = _panelMovie["instructions_multiplayer"];
