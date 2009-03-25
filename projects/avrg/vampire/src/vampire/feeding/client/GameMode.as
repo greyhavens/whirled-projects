@@ -5,9 +5,11 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.contrib.ColorMatrix;
+import com.whirled.contrib.avrg.RoomDragger;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.net.*;
+import com.whirled.contrib.simplegame.objects.Dragger;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
@@ -183,7 +185,7 @@ public class GameMode extends AppMode
         ClientCtx.playerData.incrementTimesPlayed();
 
         // Add draggability
-        addObject(new Dragger(GameCtx.bgLayer, gameParent));
+        addObject(new RoomDragger(ClientCtx.gameCtrl, GameCtx.bgLayer, gameParent));
     }
 
     override protected function enter () :void

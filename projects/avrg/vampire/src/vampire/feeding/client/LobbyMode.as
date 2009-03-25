@@ -1,6 +1,8 @@
 package vampire.feeding.client {
 
+import com.whirled.contrib.avrg.RoomDragger;
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.objects.Dragger;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
@@ -33,11 +35,14 @@ public class LobbyMode extends AppMode
         _panelMovie.y = 200;
         _modeSprite.addChild(_panelMovie);
 
-        addObject(new Dragger(_panelMovie));
+        var contents :MovieClip = _panelMovie["draggable"];
+
+        // Make the lobby draggable
+        addObject(new RoomDragger(ClientCtx.gameCtrl, contents, _panelMovie));
 
         // Instructions
-        var instructions0 :MovieClip = _panelMovie["instructions_basic"];
-        var instructions1 :MovieClip = _panelMovie["instructions_multiplayer"];
+        var instructions0 :MovieClip = contents["instructions_basic"];
+        var instructions1 :MovieClip = contents["instructions_multiplayer"];
         var showBasic :Boolean = (this.isPreGameLobby && ClientCtx.playerData.timesPlayed == 0);
         instructions0.visible = showBasic;
         instructions1.visible = !showBasic;
@@ -62,11 +67,11 @@ public class LobbyMode extends AppMode
                 }
             });
 
-        _tfStatus = _panelMovie["feedback_text"];
+        _tfStatus = contents["feedback_text"];
         updateButtonsAndStatus();
 
         // Total score
-        var total :MovieClip = _panelMovie["total"];
+        var total :MovieClip = contents["total"];
         if (this.isPreGameLobby) {
             total.visible = false;
         } else {
@@ -78,11 +83,11 @@ public class LobbyMode extends AppMode
         // Player list
         _playerList = new SimpleListController(
             [],
-            _panelMovie,
+            contents,
             "player",
             [ "player_name", "player_score" ],
-            "arrow_up",
-            "arrow_down");
+            _panelMovie["arrow_up"],
+            _panelMovie["arrow_down"]);
         addObject(_playerList);
         updatePlayerList();
     }
@@ -118,7 +123,9 @@ public class LobbyMode extends AppMode
         var playerId :int;
 
         // Fill in the Prey data
-        var preyInfo :MovieClip = _panelMovie["playerprey"];
+        var contents :MovieClip = _panelMovie["draggable"];
+
+        var preyInfo :MovieClip = contents["playerprey"];
         var tfName :TextField = preyInfo["player_name"];
         tfName.text = (ClientCtx.preyIsAi ?
                         ClientCtx.aiPreyName :

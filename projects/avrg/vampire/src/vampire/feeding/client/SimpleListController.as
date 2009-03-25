@@ -13,12 +13,14 @@ public class SimpleListController extends SimObject
                                           listParent :MovieClip,
                                           rowNameBase :String,
                                           columnNames :Array,
-                                          upButtonName :String = null,
-                                          downButtonName :String = null)
+                                          upButton :SimpleButton = null,
+                                          downButton :SimpleButton = null)
     {
         _data = data;
         _listParent = listParent;
         _columnNames = columnNames;
+        _upButton = upButton;
+        _downButton = downButton;
 
         // Determine how many visible rows there are in this list
         for (var ii :int = 1; ; ++ii) {
@@ -31,8 +33,7 @@ public class SimpleListController extends SimObject
             _rows.push(rowChild);
         }
 
-        if (upButtonName != null) {
-            _upButton = listParent[upButtonName];
+        if (_upButton != null) {
             registerListener(_upButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     if (_firstVisibleDataIdx > 0) {
@@ -42,8 +43,7 @@ public class SimpleListController extends SimObject
                 });
         }
 
-        if (downButtonName != null) {
-            _downButton = listParent[downButtonName];
+        if (_downButton != null) {
             registerListener(_downButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     if (_firstVisibleDataIdx + _rows.length < _data.length) {

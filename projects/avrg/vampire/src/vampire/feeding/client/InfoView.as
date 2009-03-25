@@ -1,8 +1,12 @@
 package vampire.feeding.client {
 
 import com.threerings.flash.Vector2;
+import com.whirled.contrib.avrg.RoomDragger;
+import com.whirled.contrib.simplegame.objects.DraggableObject;
+import com.whirled.contrib.simplegame.objects.Dragger;
 
 import flash.display.DisplayObject;
+import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
@@ -53,6 +57,16 @@ public class InfoView extends DraggableObject
     override public function get displayObject () :DisplayObject
     {
         return _movie;
+    }
+
+    override protected function createDragger () :Dragger
+    {
+        return new RoomDragger(ClientCtx.gameCtrl, this.draggableObject, this.displayObject);
+    }
+
+    override protected function get draggableObject () :InteractiveObject
+    {
+        return _movie["draggable"];
     }
 
     override public function get objectName () :String
