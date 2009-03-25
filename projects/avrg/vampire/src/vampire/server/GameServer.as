@@ -23,7 +23,6 @@ import flash.utils.setInterval;
 
 import vampire.data.Codes;
 import vampire.feeding.FeedingServer;
-import vampire.net.messages.NonPlayerIdsInRoomMsg;
 
 public class GameServer extends ObjectDB
 {
@@ -213,9 +212,9 @@ public class GameServer extends ObjectDB
     protected function handleMessage (evt :MessageReceivedEvent) :void
     {
         //Ignore messages not meant for individual players.
-        if( evt.name == NonPlayerIdsInRoomMsg.NAME ) {
-            return;
-        }
+//        if( evt.name == NonPlayerIdsInRoomMsg.NAME ) {
+//            return;
+//        }
 
         //Only handle the message if the originating player exists.
         try {
