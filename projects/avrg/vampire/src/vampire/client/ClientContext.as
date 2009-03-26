@@ -15,11 +15,11 @@ import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.contrib.simplegame.tasks.LocationTask;
 import com.whirled.contrib.simplegame.tasks.ScaleTask;
 
+import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.filters.GlowFilter;
-import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import vampire.Util;
@@ -49,6 +49,8 @@ public class ClientContext
     public static var currentClosestPlayerId :int;
 
     public static var controller :VampireController;
+
+    public static var tutorial :TutorialAppMode;
 
     public static var isNewPlayer :Boolean = false;
 
@@ -226,9 +228,9 @@ public class ClientContext
     }
 
     //FOr debugging positions
-    public static function drawDotAtCenter( s :Sprite ) :void
+    public static function drawDotAtCenter (s :Sprite) :void
     {
-        s.graphics.beginFill(0xffffff);
+        s.graphics.beginFill(0x00ffff);
         s.graphics.drawCircle(0,0,10);
         s.graphics.endFill();
     }
@@ -248,6 +250,38 @@ public class ClientContext
         so.scaleX = so.scaleY = 0.1;
         so.addTask( ScaleTask.CreateEaseIn(1, 1, ANIMATION_TIME));
         so.addTask( LocationTask.CreateEaseIn(finalX, finalY, ANIMATION_TIME));
+    }
+
+    public static function centerOnViewableRoom (d :DisplayObject) :void
+    {
+        //Workaround as roombounds can be bigger than the paintable area
+        if( ctrl.local.getRoomBounds()[0] > ctrl.local.getPaintableArea().width) {
+            d.x = ctrl.local.getPaintableArea().width/2;
+            d.y = ctrl.local.getPaintableArea().height/2;
+        }
+        else {
+            d.x = ctrl.local.getRoomBounds()[0]/2;
+            d.y = ctrl.local.getRoomBounds()[1]/2;
+        }
+        var bounds :Rectangle = d.getBounds(d.parent);
+        d.x += -bounds.x - bounds.width / 2;
+        d.y += -bounds.y - bounds.height / 2;
+    }
+
+    public static function placeTopRight (d :DisplayObject) :void
+    {
+        //Workaround as roombounds can be bigger than the paintable area
+        if( ctrl.local.getRoomBounds()[0] > ctrl.local.getPaintableArea().width) {
+            d.x = ctrl.local.getPaintableArea().width;
+            d.y = 0;
+        }
+        else {
+            d.x = ctrl.local.getRoomBounds()[0];
+            d.y = 0;
+        }
+        var bounds :Rectangle = d.getBounds(d.parent);
+        d.x += -bounds.x - bounds.width / 2;
+        d.y += -bounds.y - bounds.height / 2;
     }
 
     protected static const ANIMATION_TIME :Number = 0.3;
