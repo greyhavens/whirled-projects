@@ -42,7 +42,12 @@ public class BurstSequence extends SceneObject
     {
         _bursts.push(burst.ref);
         _totalBursts++;
-        _totalMultiplier *= burst.multiplier;
+        if (Constants.MULTIPLIERS_ADD && burst.multiplier > 1) {
+            _totalMultiplier += burst.multiplier;
+        } else if (!Constants.MULTIPLIERS_ADD) {
+            _totalMultiplier *= burst.multiplier;
+        }
+
         _largestMultiplier = Math.max(_largestMultiplier, burst.multiplier);
 
         _lastBurstX = burst.x;
@@ -54,7 +59,11 @@ public class BurstSequence extends SceneObject
     {
         ArrayUtil.removeFirst(_bursts, burst.ref);
         _totalBursts--;
-        _totalMultiplier /= burst.multiplier;
+        if (Constants.MULTIPLIERS_ADD && burst.multiplier > 1) {
+            _totalMultiplier -= burst.multiplier;
+        } else {
+            _totalMultiplier /= burst.multiplier;
+        }
     }
 
     public function get cellCount () :int
