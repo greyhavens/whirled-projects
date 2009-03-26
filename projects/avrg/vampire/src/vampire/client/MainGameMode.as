@@ -15,6 +15,7 @@ import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.net.MessageReceivedEvent;
 
+import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 
@@ -25,6 +26,7 @@ import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.Lineage;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingClient;
+import vampire.feeding.debug.BloodBloomStandalone;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.MovePredIntoPositionMsg;
 import vampire.net.messages.NonPlayerIdsInRoomMsg;
@@ -52,10 +54,16 @@ public class MainGameMode extends AppMode
 
         //Let's hear when the avatar arrived at a destination
 //
-
+        if (VConstants.LOCAL_DEBUG_MODE) {
+//            handleStartFeedingClient(1);
+        }
 
     }
 
+    /**
+    * Currently not used, since non-player blood is currently no longer monitored on the server.
+    *
+    */
     protected function updateNonPlayerIds(...ignored ) :void
     {
         if( _currentNonPlayerIds == null ) {
@@ -143,8 +151,9 @@ public class MainGameMode extends AppMode
         //If the game server says no more feeding, leave predator action
 
 
-
-        FeedingClient.init( modeSprite, ClientContext.ctrl );
+        if (!VConstants.LOCAL_DEBUG_MODE) {
+            FeedingClient.init( modeSprite, ClientContext.ctrl );
+        }
 
         _events.registerListener(ClientContext.ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessageReceived);
@@ -164,8 +173,9 @@ public class MainGameMode extends AppMode
 
 
         //Every X seconds, check the non-player ids, updating the server if changed.
-        var nonPlayerIdTimer :SimpleTimer = new SimpleTimer(2, updateNonPlayerIds, true, "npTimer");
-        addObject( nonPlayerIdTimer );
+        //ATM we don't care about this anymore.
+//        var nonPlayerIdTimer :SimpleTimer = new SimpleTimer(2, updateNonPlayerIds, true, "npTimer");
+//        addObject( nonPlayerIdTimer );
 
 
 
@@ -177,6 +187,10 @@ public class MainGameMode extends AppMode
             Command.bind( debug, MouseEvent.CLICK, VampireController.SHOW_DEBUG );
             modeSprite.addChild( debug );
         }
+
+        //Add the tutorial
+        ClientContext.tutorial = new TutorialAppMode();
+        ClientContext.tutorial.activateTutorial();
 
 
     }
@@ -235,28 +249,52 @@ public class MainGameMode extends AppMode
         if (_feedingGameClient != null) {
             log.warning("Received StartFeeding message while already in game");
         } else {
-            _feedingGameClient = FeedingClient.create( gameId, ClientContext.model.playerFeedingData, onGameComplete);
+
+            if (VConstants.LOCAL_DEBUG_MODE) {
+                _feedingGameClient = new BloodBloomStandalone(modeSprite);
+
+//                _feedingGameClient = new Sprite();
+//                _feedingGameClient.graphics.beginFill(0xff0000);
+//                _feedingGameClient.graphics.drawRect(0,0,300,300);
+//                _feedingGameClient.graphics.endFill();
+            }
+            else {
+                _feedingGameClient = FeedingClient.create( gameId,
+                    ClientContext.model.playerFeedingData, onGameComplete);
+            }
 
 
-            _feedingGameClientSceneobjectWrapper = new DraggableSceneObject(ClientContext.ctrl,
-                "FeedingGameClient");
-            _feedingGameClientSceneobjectWrapper.x = _feedingGameClient.x;
-            _feedingGameClientSceneobjectWrapper.y = _feedingGameClient.y;
-            _feedingGameClient.y = 0;
-            _feedingGameClient.x = 0;
-            _feedingGameClientSceneobjectWrapper.displaySprite.addChild(_feedingGameClient);
-            _feedingGameClient.mouseEnabled = true;
-            _feedingGameClientSceneobjectWrapper.init( new Rectangle(-_feedingGameClient.width/2, _feedingGameClient.height/2, _feedingGameClient.width, _feedingGameClient.height), 0, 0, 0, 100);
+//            _feedingGameClientSceneobjectWrapper = new DraggableSceneObject(ClientContext.ctrl,
+//                "FeedingGameClient", _feedingGameClient);
+//            _feedingGameClientSceneobjectWrapper.x = _feedingGameClient.x;
+//            _feedingGameClientSceneobjectWrapper.y = _feedingGameClient.y;
+//            _feedingGameClient.y = 0;
+//            _feedingGameClient.x = 0;
+//            _feedingGameClientSceneobjectWrapper.addChild(_feedingGameClient);
+//            _feedingGameClient.mouseEnabled = true;
+//            _feedingGameClientSceneobjectWrapper.init( new Rectangle(0, 0, 300, 300), 0, 0, 2, 0);
+//            _feedingGameClientSceneobjectWrapper.x = ClientContext.ctrl.local.getPaintableArea().width - 543;
+//            trace("Setting feeding client at x=" + (ClientContext.ctrl.local.getPaintableArea().width - 543));
+//            _feedingGameClient.graphics.lineStyle(2, 0xffffff);
+//            _feedingGameClient.graphics.drawRect(0, 0, _feedingGameClient.width, _feedingGameClient.height);
+//            trace("init client");
+//            trace("client loc=" + _feedingGameClient.x + ", " + _feedingGameClient.y );
+//            trace("game dim=(" + _feedingGameClient.width + ", " + _feedingGameClient.height + ")");
+//            _feedingGameClientSceneobjectWrapper.init( new Rectangle(0, 0, 528, 496),
+//                DraggableSceneObject.SNAP_NONE,
+//                0,
+//                DraggableSceneObject.SNAP_NONE,
+//                0);
 //            _feedingGameClientSceneobjectWrapper.init(new Rectangle(-10, -10, 20, 20), 0, 0, 0, 0);
 
 
 //            _feedingGameClientSceneobjectWrapper = new SimpleSceneObject(_feedingGameClient,
 //                "FeedingGameClient");
-            addObject(_feedingGameClientSceneobjectWrapper);
+//            addSceneObject(_feedingGameClientSceneobjectWrapper, modeSprite);
             //Set index 0 so the popup are above the feeding game.
-            modeSprite.addChildAt(_feedingGameClientSceneobjectWrapper.displayObject, 0)
+            modeSprite.addChildAt(_feedingGameClient, 0)
 //                modeSprite.addChild(_feedingGameClient);
-            ClientContext.animateEnlargeFromMouseClick(_feedingGameClientSceneobjectWrapper);
+//            ClientContext.animateEnlargeFromMouseClick(_feedingGameClientSceneobjectWrapper);
         }
     }
 
@@ -295,16 +333,19 @@ public class MainGameMode extends AppMode
 
             trace("got " + FeedRequestMsg.NAME);
             var fromPlayerName :String = ClientContext.getPlayerName( msg.playerId );
-            var popup :PopupQuery = new PopupQuery( ClientContext.ctrl,
+            var popup :PopupQuery = new PopupQuery(
                     "RequestFeed" + msg.playerId,
                     fromPlayerName + " would like to feed on you.",
                     ["Accept", "Deny"],
                     [VampireController.FEED_REQUEST_ACCEPT, VampireController.FEED_REQUEST_DENY],
                     [msg.playerId, msg.playerId]);
 
+            ClientContext.centerOnViewableRoom(popup.displayObject);
             if( getObjectNamed( popup.objectName) == null) {
                 addSceneObject( popup, modeSprite );
+                ClientContext.animateEnlargeFromMouseClick(popup);
             }
+
         }
         else if (e.name == MovePredIntoPositionMsg.NAME) {
 
@@ -396,19 +437,20 @@ public class MainGameMode extends AppMode
 
         trace(ClientContext.ourPlayerId + " setting avatar state from game complete");
         ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
-        if( _feedingGameClient.playerData != null ) {
-            log.info(_feedingGameClient.playerData);
+        var feedingClient :FeedingClient = FeedingClient(_feedingGameClient);
+        if( feedingClient.playerData != null ) {
+            log.info(feedingClient.playerData);
             ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_UPDATE_FEEDING_DATA,
-                _feedingGameClient.playerData.toBytes() );
+                feedingClient.playerData.toBytes() );
         }
         else {
             log.error("onGameComplete(), _feedingGameClient.playerData==null");
         }
-        _feedingGameClient.shutdown();
+        feedingClient.shutdown();
 
 
-        _feedingGameClientSceneobjectWrapper.destroySelf();
-        _feedingGameClientSceneobjectWrapper = null;
+//        _feedingGameClientSceneobjectWrapper.destroySelf();
+//        _feedingGameClientSceneobjectWrapper = null;
         //Remove game after getting the feeding data, feeding data is nulled after stage removal.
 //        if( _feedingGameClient.parent != null ){
 //            _feedingGameClient.parent.removeChild( _feedingGameClient )
@@ -416,6 +458,9 @@ public class MainGameMode extends AppMode
         _feedingGameClient = null;
         //Reset the overlay
 //        ClientContext.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
+
+        //Notify the tutorial
+        ClientContext.tutorial.feedGameOver();
 
     }
 
@@ -453,9 +498,9 @@ public class MainGameMode extends AppMode
 
     protected var _hud :HUD;
 
-    protected var _feedingGameClient :FeedingClient;
+    protected var _feedingGameClient :Sprite;
 
-    protected var _feedingGameClientSceneobjectWrapper :DraggableSceneObject;
+//    protected var _feedingGameClientSceneobjectWrapper :DraggableSceneObject;
 
     protected var _currentNonPlayerIds :Array;
 

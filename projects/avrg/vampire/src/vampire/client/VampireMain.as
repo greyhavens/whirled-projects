@@ -77,28 +77,23 @@ public class VampireMain extends Sprite
     {
         if (_addedToStage && _resourcesLoaded) {
 
-//            ClientContext.gameCtrl = new AVRGameControl( this );
             if( ClientContext.ctrl == null) {
                 ClientContext.init( new AVRGameControl( this ) );
             }
-
 
             if( !ClientContext.ctrl.isConnected() && !VConstants.LOCAL_DEBUG_MODE) {
                 trace("Not conected and not test model");
                 return;
             }
 
-
-            ClientContext.ourPlayerId = ClientContext.ctrl.player.getPlayerId();
-
+            //Init the controller with the root sprite.
             ClientContext.controller = new VampireController(this);
 
             if( VConstants.LOCAL_DEBUG_MODE ) {
                 ClientContext.game.ctx.mainLoop.pushMode( new MainGameMode() );
             }
             else {
-
-
+                //The main game mode.
                 ClientContext.game.ctx.mainLoop.pushMode( new MainGameMode() );
 
                 //Check that the player is wearing the right avatar.
@@ -109,23 +104,8 @@ public class VampireMain extends Sprite
             }
 
 
-
+            //Start the game.
             ClientContext.game.run();
-
-
-            //Show chat events
-//            EventHandlers.registerListener( ClientContext.ctrl.player,
-//                MessageReceivedEvent.MESSAGE_RECEIVED,
-//                function( e :MessageReceivedEvent) :void {
-//                    if( e.name == VConstants.NAMED_EVENT_CHAT) {
-//                        ClientContext.ctrl.local.feedback( e.value.toString() );
-//                    }
-//                });
-//
-
-
-//            addChild( new VProbe(ClientContext.gameCtrl) );
-
 
             EventHandlers.registerListener( ClientContext.ctrl.game, MessageReceivedEvent.MESSAGE_RECEIVED, printServerLogToFlashLog);
 
@@ -135,11 +115,13 @@ public class VampireMain extends Sprite
             log.info(ClientContext.ctrl.player.getPlayerId() + "sending  inviterId=" + inviterId + ", token=" + shareToken);
             //If we don't have a sire, and we are invited, send our invite token
             if( inviterId != 0 && SharedPlayerStateClient.getSire(ClientContext.ourPlayerId) == 0) {
-//                var msg :ShareTokenMessage = new ShareTokenMessage( ClientContext.ourPlayerId,
-//                    inviterId, shareToken );
-//                ClientContext.ctrl.agent.sendMessage( msg.name, msg );
                 ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_SHARE_TOKEN, inviterId );
             }
+
+
+
+            //Possible debugging
+//            addChild( new VProbe(ClientContext.gameCtrl) );
         }
     }
 
@@ -156,7 +138,6 @@ public class VampireMain extends Sprite
 
     protected function handleAdded (event :Event) :void
     {
-//        log.info("Added to stage: Initializing...");
         _addedToStage = true;
         maybeStartGame();
     }

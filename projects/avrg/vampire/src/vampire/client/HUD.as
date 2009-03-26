@@ -190,7 +190,7 @@ public class HUD extends SceneObject
                             };
 
                             var invitesNeeded :int = Logic.invitesNeededForLevel(newLevel + 1);
-                            var popup :PopupQuery = new PopupQuery( ClientContext.ctrl,
+                            var popup :PopupQuery = new PopupQuery(
                                 "NeedInvites",
                                 "You need " + Logic.invitesNeededForLevel(newLevel + 1) +
                                 " recruit" + (invitesNeeded > 1 ? "s" : "") + " for level " +
@@ -198,10 +198,14 @@ public class HUD extends SceneObject
                                 ["Recruit Now", "Recruit Later"],
                                 [recruitFunction, null]);
 
+                            ClientContext.centerOnViewableRoom(popup.displayObject);
 
                             if( mode.getObjectNamed( popup.objectName) == null) {
                                 mode.addSceneObject( popup, mode.modeSprite );
+                                ClientContext.animateEnlargeFromMouseClick(popup);
                             }
+                            
+
 
                             _isNewLevelNeedingInvitePopupShown = true;
                         }
