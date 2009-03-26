@@ -43,7 +43,8 @@ public class BurstSequence extends SceneObject
         _bursts.push(burst.ref);
         _totalBursts++;
         if (Constants.MULTIPLIERS_ADD && burst.multiplier > 1) {
-            _totalMultiplier += burst.multiplier;
+            _totalMultiplier =
+                (_totalMultiplier == 1 ? burst.multiplier : _totalMultiplier + burst.multiplier);
         } else if (!Constants.MULTIPLIERS_ADD) {
             _totalMultiplier *= burst.multiplier;
         }
@@ -60,7 +61,7 @@ public class BurstSequence extends SceneObject
         ArrayUtil.removeFirst(_bursts, burst.ref);
         _totalBursts--;
         if (Constants.MULTIPLIERS_ADD && burst.multiplier > 1) {
-            _totalMultiplier -= burst.multiplier;
+            _totalMultiplier = Math.max(_totalMultiplier - burst.multiplier, 1);
         } else {
             _totalMultiplier /= burst.multiplier;
         }
