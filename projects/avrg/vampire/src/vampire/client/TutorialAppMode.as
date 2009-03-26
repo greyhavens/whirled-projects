@@ -1,15 +1,19 @@
 package vampire.client
 {
 import com.threerings.util.HashSet;
+import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
+import flash.filters.GlowFilter;
 
 import vampire.avatar.VampireAvatarHUD;
+import vampire.data.VConstants;
 
 /**
  * Tutorial for Vampire.  Add directly to the current mainloop, don't stack it, since it has to
@@ -96,19 +100,14 @@ public class TutorialAppMode extends AppMode
         _ctrl = ClientContext.ctrl;
 
         _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
-
+        if (VConstants.LOCAL_DEBUG_MODE) {
+            _currentChapter = CHAPTER_NAVIGATING_THE_GUI;
+        }
 
         setPage(PAGE_NOONE_IN_ROOM);
+        deactivateTutorial();
     }
 
-    /**
-    * Recomputes the tutorial state given the current state
-    *
-    */
-    public function nextAction () :void
-    {
-
-    }
 
     public function deactivateTutorial (...ignored) :void
     {
@@ -124,26 +123,33 @@ public class TutorialAppMode extends AppMode
     {
         ClientContext.gameMode.ctx.mainLoop.addUpdatable(this);
         ClientContext.gameMode.modeSprite.addChild(this.modeSprite);
-        setPage(_currentPage);
         _active = true;
+        setPage(_currentPage);
     }
 
 
 
-    public function tutorialActionDone (action :String) :void
-    {
-        switch( action ) {
-
-            case PAGE_NOONE_IN_ROOM:
-
-            break;
-        }
-    }
+//    public function tutorialActionDone (action :String) :void
+//    {
+//        switch( action ) {
+//
+//            case PAGE_NOONE_IN_ROOM:
+//
+//            break;
+//        }
+//    }
 
     override public function update (dt:Number) :void
     {
         super.update(dt);
-        switch( _currentChapter ) {
+
+        //Make sure we are always above other windows.
+        var parent :DisplayObjectContainer = modeSprite.parent;
+        if (parent != null && parent.getChildIndex(modeSprite) < parent.numChildren - 1) {
+            parent.addChildAt(modeSprite, parent.numChildren - 1);
+        }
+
+        switch (_currentChapter) {
 
             case CHAPTER_LOOKING_FOR_TARGET:
             chapterLookingForTarget();
@@ -164,14 +170,26 @@ public class TutorialAppMode extends AppMode
             case PAGE_CLICK_VW:
             break;
 
-            default:
+            case PAGE_CLICK_STRAINS:
+            updateStrainButton();
             break;
+
+            case PAGE_CLICK_LINEAGE:
+            updateLineageButton();
+            break;
+
+            case PAGE_CLICK_BUILD_LINEAGE:
+            updateBuildLineageButton();
+            break;
+
+            default:
+            log.error("chapterGUINavigation", "_currentPage", _currentPage);
+            setPage(PAGE_CLICK_VW);
         }
     }
     protected function chapterLookingForTarget () :void
     {
         var isAloneInRoom :Boolean = ClientContext.getAvatarIds().length == 1;
-
 
         switch (_currentPage) {
             case PAGE_NOONE_IN_ROOM:
@@ -230,6 +248,7 @@ public class TutorialAppMode extends AppMode
 
     protected function handleClickVW () :void
     {
+        trace("asdfadsfdf");
         var target :DisplayObject = ClientContext.hud.findSafely("button_menu");
         var targetOverlay :SceneObject = createTargetSceneObject("target:VW");
         addSceneObject(targetOverlay, target.parent);
@@ -239,14 +258,17 @@ public class TutorialAppMode extends AppMode
 
     protected function handleClickStrains () :void
     {
-        var target :DisplayObject = ClientContext.hud.findSafely("button_menu");
-        var targetOverlay :SceneObject = createTargetSceneObject("target:Strains");
-        addSceneObject(targetOverlay, target.parent);
-        targetOverlay.x = target.x;
-        targetOverlay.y = target.y;
+//        var target :DisplayObject = ClientContext.hud.findSafely("button_menu");
+//        var targetOverlay :SceneObject = createTargetSceneObject("target:Strains");
+//        addSceneObject(targetOverlay, target.parent);
+//        targetOverlay.x = target.x;
+//        targetOverlay.y = target.y;
     }
 
     protected function handleClickLineage () :void
+    {
+    }
+    protected function handleClickBuildLineage () :void
     {
     }
 
@@ -279,6 +301,90 @@ public class TutorialAppMode extends AppMode
         }
     }
 
+    protected function updateStrainButton () :void
+    {
+        var sceneObjectName :String = "target:StrainButton";
+        var targetReticle :SceneObject = getObjectNamed(sceneObjectName) as SceneObject;
+
+        //Is there a help popup?
+        if (ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) != null) {
+            if (targetReticle == null) {
+                targetReticle = createTargetSceneObject(sceneObjectName);
+
+                var help :HelpPopup =
+                    ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as HelpPopup;
+                var targetDisplayObject :DisplayObject = help.findSafely("to_bloodtype");
+
+                targetReticle.x = targetDisplayObject.x;
+                targetReticle.y = targetDisplayObject.y;
+
+                addSceneObject(targetReticle, targetDisplayObject.parent);
+            }
+        }
+        else {
+
+            if (targetReticle != null && targetReticle.isLiveObject) {
+                targetReticle.destroySelf();
+            }
+        }
+    }
+
+    protected function updateLineageButton () :void
+    {
+        var sceneObjectName :String = "target:LineageButton";
+        var targetReticle :SceneObject = getObjectNamed(sceneObjectName) as SceneObject;
+
+        //Is there a help popup?
+        if (ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) != null) {
+            if (targetReticle == null) {
+                targetReticle = createTargetSceneObject(sceneObjectName);
+
+                var help :HelpPopup =
+                    ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as HelpPopup;
+                var targetDisplayObject :DisplayObject = help.findSafely("to_default");
+
+                targetReticle.x = targetDisplayObject.x;
+                targetReticle.y = targetDisplayObject.y;
+
+                addSceneObject(targetReticle, targetDisplayObject.parent);
+            }
+        }
+        else {
+
+            if (targetReticle != null && targetReticle.isLiveObject) {
+                targetReticle.destroySelf();
+            }
+        }
+    }
+
+    protected function updateBuildLineageButton () :void
+    {
+        var sceneObjectName :String = "target:BuildLineageButton";
+        var targetReticle :SceneObject = getObjectNamed(sceneObjectName) as SceneObject;
+
+        //Is there a help popup?
+        if (ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) != null) {
+            if (targetReticle == null) {
+                targetReticle = createTargetSceneObject(sceneObjectName);
+
+                var help :HelpPopup =
+                    ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as HelpPopup;
+                var targetDisplayObject :DisplayObject = help.findSafely("link_tolineage");
+
+                targetReticle.x = targetDisplayObject.x;
+                targetReticle.y = targetDisplayObject.y;
+
+                addSceneObject(targetReticle, targetDisplayObject.parent);
+            }
+        }
+        else {
+
+            if (targetReticle != null && targetReticle.isLiveObject) {
+                targetReticle.destroySelf();
+            }
+        }
+    }
+
     protected function handleEveryoneLeaves () :void
     {
     }
@@ -304,7 +410,13 @@ public class TutorialAppMode extends AppMode
 
     protected function createTargetReticle () :MovieClip
     {
-        return ClientContext.instantiateMovieClip("HUD", "reticle", true) as MovieClip;
+        var reticle :MovieClip =
+            ClientContext.instantiateMovieClip("HUD", "reticle", true) as MovieClip;
+
+        var glow :GlowFilter = new GlowFilter(0xD5EBF2);
+        reticle.filters = [glow];
+
+        return reticle;
     }
 
     protected function createTargetSceneObject (name :String) :SceneObject
@@ -324,7 +436,10 @@ public class TutorialAppMode extends AppMode
 
             if (_active) {
 
-                this["handle" + newPage]();
+                trace("has handle" + newPage + " ? " + this.hasOwnProperty("handle" + newPage));
+//                if (hasOwnProperty("handle" + newPage)) {
+                    this["handle" + newPage]();
+//                }
 
                 var wasAlreadyTutorial :Boolean = _tutorialPopup != null;
 
@@ -339,8 +454,8 @@ public class TutorialAppMode extends AppMode
 
 
                 ClientContext.placeTopRight(_tutorialPopup.displayObject);
-                _tutorialPopup.x -= 130;
-                _tutorialPopup.y += 120;
+                _tutorialPopup.x -= 110;
+                _tutorialPopup.y += 100;
 
                 addSceneObject(_tutorialPopup, modeSprite);
 
@@ -379,15 +494,28 @@ public class TutorialAppMode extends AppMode
     public function feedGameOver () :void
     {
         if (_currentChapter == CHAPTER_LOOKING_FOR_TARGET) {
-            _currentChapter == CHAPTER_NAVIGATING_THE_GUI;
             setPage(PAGE_CLICK_VW);
         }
     }
 
-    public function clickedVWButton () :void
+    public function feedGameStarted () :void
+    {
+        if (_currentChapter == CHAPTER_LOOKING_FOR_TARGET) {
+            setPage(PAGE_LOBBY);
+        }
+    }
+
+    public function clickedVWButtonOpenHelp () :void
     {
         if (_currentPage == PAGE_CLICK_VW) {
             setPage(PAGE_CLICK_STRAINS);
+        }
+    }
+
+    public function clickedVWButtonCloseHelp () :void
+    {
+        if (_currentChapter == CHAPTER_NAVIGATING_THE_GUI) {
+            setPage(PAGE_CLICK_VW);
         }
     }
 
@@ -395,6 +523,19 @@ public class TutorialAppMode extends AppMode
     {
         if (_currentPage == PAGE_CLICK_STRAINS) {
             setPage(PAGE_CLICK_LINEAGE);
+        }
+    }
+    public function clickedLineage () :void
+    {
+        if (_currentPage == PAGE_CLICK_LINEAGE) {
+            setPage(PAGE_CLICK_BUILD_LINEAGE);
+        }
+    }
+
+    public function clickedBuildLineage () :void
+    {
+        if (_currentPage == PAGE_CLICK_BUILD_LINEAGE) {
+            setPage(PAGE_CLICK_BUILD_LINEAGE);
         }
     }
 
@@ -427,6 +568,7 @@ public class TutorialAppMode extends AppMode
     public static const PAGE_CLICK_VW :String = "ClickVW";
     public static const PAGE_CLICK_STRAINS :String = "ClickStrains";
     public static const PAGE_CLICK_LINEAGE :String = "ClickLineage";
+    public static const PAGE_CLICK_BUILD_LINEAGE :String = "ClickBuildLineage";
 
     public static const CHAPTER_END :String = "Chapter: End";
 
@@ -439,9 +581,10 @@ public class TutorialAppMode extends AppMode
         [PAGE_CLICK_VW, "Hunt for strains in the blood of the populace.  Click the VW icon to see your status."],
         [PAGE_CLICK_STRAINS, "The strains you've collected are tallied under \"Strains\" on the left.  Click it for a look."],
         [PAGE_CLICK_LINEAGE, "Your other driving goal is to build up your Lineage for the coming battles.  Click \"Lineage\" at the left."],
-
-
+        [PAGE_CLICK_BUILD_LINEAGE, "As a newborn, you have no progeny yet.  Click \"Build Your Lineage\" to find out how to recruit them."],
 
     ];
+
+    protected static const log :Log = Log.getLog(TutorialAppMode);
 }
 }

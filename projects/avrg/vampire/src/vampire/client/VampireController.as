@@ -262,6 +262,8 @@ public class VampireController extends Controller
                 ClientContext.gameMode.addSceneObject(help,
                     ClientContext.game.ctx.mainLoop.topMode.modeSprite);
                 ClientContext.animateEnlargeFromMouseClick(help);
+
+                ClientContext.tutorial.clickedVWButtonOpenHelp();
             }
             else {
                 if( startFrame == null ) {

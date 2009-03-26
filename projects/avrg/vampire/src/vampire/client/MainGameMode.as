@@ -10,14 +10,12 @@ import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameRoomEvent;
-import com.whirled.contrib.avrg.DraggableSceneObject;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.Sprite;
 import flash.events.MouseEvent;
-import flash.geom.Rectangle;
 
 import vampire.avatar.AvatarGameBridge;
 import vampire.avatar.VampireAvatarHUDOverlay;
@@ -57,6 +55,8 @@ public class MainGameMode extends AppMode
         if (VConstants.LOCAL_DEBUG_MODE) {
 //            handleStartFeedingClient(1);
         }
+
+        ClientContext.controller.handleShowIntro("intro");
 
     }
 
@@ -100,7 +100,7 @@ public class MainGameMode extends AppMode
         addObject( ClientContext.model );
         ClientContext.model.setup();
 
-        if( VConstants.LOCAL_DEBUG_MODE) {
+        if (false && VConstants.LOCAL_DEBUG_MODE) {
 
             var lineage :Lineage = new Lineage();
                 lineage.setPlayerSire(1, 2);
@@ -190,7 +190,7 @@ public class MainGameMode extends AppMode
 
         //Add the tutorial
         ClientContext.tutorial = new TutorialAppMode();
-        ClientContext.tutorial.activateTutorial();
+//        ClientContext.tutorial.activateTutorial();
 
 
     }
@@ -295,6 +295,9 @@ public class MainGameMode extends AppMode
             modeSprite.addChildAt(_feedingGameClient, 0)
 //                modeSprite.addChild(_feedingGameClient);
 //            ClientContext.animateEnlargeFromMouseClick(_feedingGameClientSceneobjectWrapper);
+
+            //Notify the tutorial
+            ClientContext.tutorial.feedGameStarted();
         }
     }
 

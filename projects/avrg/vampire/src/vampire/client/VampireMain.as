@@ -89,7 +89,7 @@ public class VampireMain extends Sprite
             //Init the controller with the root sprite.
             ClientContext.controller = new VampireController(this);
 
-            if( VConstants.LOCAL_DEBUG_MODE ) {
+            if( false && VConstants.LOCAL_DEBUG_MODE ) {
                 ClientContext.game.ctx.mainLoop.pushMode( new MainGameMode() );
             }
             else {
