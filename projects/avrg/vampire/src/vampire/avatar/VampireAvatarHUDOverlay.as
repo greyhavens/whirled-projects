@@ -151,6 +151,11 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
         return getAvatar( playerId ) as VampireAvatarHUD;
     }
 
+    public function get avatars() :Array
+    {
+        return _avatars.values();
+    }
+
 
     override protected function handleMouseMove( e :MouseEvent ) :void
     {

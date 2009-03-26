@@ -646,7 +646,7 @@ public class VampireAvatarHUD extends AvatarHUD
     {
         super.update(dt);
 
-        if (hotspot != null && _ctrl.isConnected()) {
+        if (hotspot != null && hotspot.length > 1 && _ctrl != null && _ctrl.isConnected()) {
             var heightLogical :Number = hotspot[1]/_ctrl.local.getRoomBounds()[1];
 
             var p1 :Point = _ctrl.local.locationToPaintable(_location[0], _location[1], _location[2]);
@@ -917,7 +917,7 @@ public class VampireAvatarHUD extends AvatarHUD
             bloodType.visible = false;
             bloodType.mouseEnabled = false;
         }
-
+        _isShowingFeedButton = true;
 
     }
 
@@ -937,9 +937,27 @@ public class VampireAvatarHUD extends AvatarHUD
     {
         _hudSprite.graphics.clear();
         animateHideSceneObject(_targetUIScene);
+        _isShowingFeedButton = false;
     }
 
+    public function get isShowingFeedButton () :Boolean
+    {
+        return _isShowingFeedButton;
+    }
 
+    /**
+    * Accessed by the tutorial for fixing a targeting movieclip.
+    */
+    public function get targetUI () :MovieClip
+    {
+        return _target_UI;
+    }
+
+    /**
+    * Monitored by the tutorial.  The tutorial can anchor a targeting sprite
+    * to the hud.
+    */
+    protected var _isShowingFeedButton :Boolean;
 
     protected var _hudMouseEvents :EventHandlerManager = new EventHandlerManager();
 
