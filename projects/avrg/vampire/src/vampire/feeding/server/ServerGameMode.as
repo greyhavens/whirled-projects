@@ -37,7 +37,13 @@ public class ServerGameMode extends ServerMode
         ArrayUtil.removeFirst(_playersInGame, playerId);
         _ctx.props.setIn(Props.GAME_PLAYERS, playerId, null, true);
 
-        if (_state == STATE_WAITING_FOR_SCORES) {
+        if (_playersInGame.length == 0) {
+            // End the round immediately, without reporting anything (there
+            // may be other players waiting to play the game)
+            _ctx.lastRoundScore = 0;
+            _ctx.server.setMode(Constants.MODE_LOBBY);
+
+        } else if (_state == STATE_WAITING_FOR_SCORES) {
             ArrayUtil.removeFirst(_playersNeedingScoreUpdate, playerId);
             endRoundIfReady();
 
