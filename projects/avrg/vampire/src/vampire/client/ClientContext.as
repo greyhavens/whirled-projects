@@ -124,6 +124,7 @@ public class ClientContext
 
     public static function get ourEntityId () :String
     {
+        _playerEntityId = null;
         if( _playerEntityId == null ) {
             for each( var entityId :String in ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
 

@@ -137,9 +137,10 @@ public class GameModel extends SimObject//EventDispatcher
             //Ok, our avatar has changed.
             //I can't seem to update the avatar location function, so quit the game with a warning
             if (!VConstants.LOCAL_DEBUG_MODE) {
-                if( ClientContext.gameMode.getObjectNamed("Quit") == null) {
+                var quitPopupName :String = "QuitAvatarBorked";
+                if( ClientContext.gameMode.getObjectNamed(quitPopupName) == null) {
                     var popup :PopupQuery = new PopupQuery(
-                        "QuitAvatarBorked",
+                        quitPopupName,
                         "Sorry.  Vampire Whirled cannot (yet) handle a mid-game avatar change.  " +
                         "Click the vampire icon to restart..");
                     ClientContext.centerOnViewableRoom(popup.displayObject);
@@ -150,7 +151,7 @@ public class GameModel extends SimObject//EventDispatcher
                         ClientContext.controller.handleQuit();
                     });
                     ClientContext.gameMode.addObject( quitTimer );
-                    
+
                 }
             }
         }

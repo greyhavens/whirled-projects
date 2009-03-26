@@ -41,6 +41,7 @@ public class MainGameMode extends AppMode
         modeSprite.visible = true;
         log.debug("Starting " + ClassUtil.tinyClassName( this ));
 
+        ClientContext.model.setup();
         //Add intro panel if we're a new player
         if( ClientContext.isNewPlayer) {
             ClientContext.controller.handleShowIntro("intro");
@@ -98,7 +99,7 @@ public class MainGameMode extends AppMode
 
         ClientContext.model = new GameModel();
         addObject( ClientContext.model );
-        ClientContext.model.setup();
+
 
         if (VConstants.LOCAL_DEBUG_MODE) {
 
