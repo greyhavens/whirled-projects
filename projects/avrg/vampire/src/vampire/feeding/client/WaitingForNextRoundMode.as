@@ -1,5 +1,6 @@
 package vampire.feeding.client {
 
+import com.whirled.contrib.avrg.RoomDragger;
 import com.whirled.contrib.simplegame.AppMode;
 
 import flash.display.Graphics;
@@ -28,6 +29,8 @@ public class WaitingForNextRoundMode extends AppMode
         parent.addChild(tf);
 
         ClientCtx.centerInRoom(parent);
+
+        addObject(new RoomDragger(ClientCtx.gameCtrl, parent));
     }
 }
 
