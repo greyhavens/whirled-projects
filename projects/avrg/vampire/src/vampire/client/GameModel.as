@@ -136,18 +136,22 @@ public class GameModel extends SimObject//EventDispatcher
 
             //Ok, our avatar has changed.
             //I can't seem to update the avatar location function, so quit the game with a warning
+            if (!VConstants.LOCAL_DEBUG_MODE) {
+                if( ClientContext.gameMode.getObjectNamed("Quit") == null) {
+                    var popup :PopupQuery = new PopupQuery(
+                        "QuitAvatarBorked",
+                        "Sorry.  Vampire Whirled cannot (yet) handle a mid-game avatar change.  " +
+                        "Click the vampire icon to restart..");
+                    ClientContext.centerOnViewableRoom(popup.displayObject);
+                    ClientContext.gameMode.addSceneObject( popup, ClientContext.gameMode.modeSprite );
+                    ClientContext.animateEnlargeFromMouseClick(popup);
 
-            if( ClientContext.gameMode.getObjectNamed("Quit") == null) {
-                var popup :PopupQuery = new PopupQuery(ClientContext.ctrl,
-                    "Quit",
-                    "Sorry.  Vampire Whirled cannot (yet) handle a mid-game avatar change.  " +
-                    "Click the vampire icon to restart..");
-                ClientContext.gameMode.addSceneObject( popup, ClientContext.gameMode.modeSprite );
-
-                var quitTimer :SimpleTimer = new SimpleTimer(5, function() :void {
-                    ClientContext.controller.handleQuit();
-                });
-                ClientContext.gameMode.addObject( quitTimer );
+                    var quitTimer :SimpleTimer = new SimpleTimer(5, function() :void {
+                        ClientContext.controller.handleQuit();
+                    });
+                    ClientContext.gameMode.addObject( quitTimer );
+                    
+                }
             }
         }
     }
@@ -439,6 +443,12 @@ public class GameModel extends SimObject//EventDispatcher
 
     public function handleElementChanged (e :ElementChangedEvent) :void
     {
+        //Why do I have to do this?  Is there a race condidtion, where the game is shutdown
+        //but it's still receiving updates?
+        if (!ClientContext.ctrl.isConnected()) {
+            return;
+        }
+
 //        log.debug(Constants.DEBUG_MINION + " elementChanged()", "e", e);
         if( e.name == Codes.ROOM_PROP_MINION_HIERARCHY) {
 
