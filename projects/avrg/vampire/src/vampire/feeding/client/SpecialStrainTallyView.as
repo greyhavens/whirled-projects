@@ -40,7 +40,7 @@ public class SpecialStrainTallyView extends SceneObject
         var slotMovie :MovieClip = _movie[SLOT_NAMES[_strainCount]];
 
         if (animate) {
-            startLoc = _movie.globalToLocal(startLoc);
+            startLoc = _movie.globalToLocal(GameCtx.cellLayer.localToGlobal(startLoc));
             anim.x = startLoc.x;
             anim.y = startLoc.y;
             anim.animate(new Point(slotMovie.x, slotMovie.y));
