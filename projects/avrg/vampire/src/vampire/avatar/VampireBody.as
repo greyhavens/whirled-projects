@@ -11,7 +11,7 @@ import flash.filters.BitmapFilter;
 import flash.filters.ColorMatrixFilter;
 import flash.utils.ByteArray;
 
-public class VampireBody extends NewBody
+public class VampireBody extends MovieClipBody
 {
     public function VampireBody (ctrl :AvatarControl,
                                  media :MovieClip,
