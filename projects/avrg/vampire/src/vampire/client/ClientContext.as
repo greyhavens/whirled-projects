@@ -254,18 +254,22 @@ public class ClientContext
 
     public static function centerOnViewableRoom (d :DisplayObject) :void
     {
+        trace("start, x=" +d.x);
         //Workaround as roombounds can be bigger than the paintable area
         if( ctrl.local.getRoomBounds()[0] > ctrl.local.getPaintableArea().width) {
             d.x = ctrl.local.getPaintableArea().width/2;
+            trace("  1x=" +d.x);
             d.y = ctrl.local.getPaintableArea().height/2;
         }
         else {
+
             d.x = ctrl.local.getRoomBounds()[0]/2;
+            trace("  2x=" +d.x);
             d.y = ctrl.local.getRoomBounds()[1]/2;
         }
         var bounds :Rectangle = d.getBounds(d.parent);
-        d.x += -bounds.x - bounds.width / 2;
-        d.y += -bounds.y - bounds.height / 2;
+//        d.x += -bounds.x - bounds.width / 2;
+//        d.y += -bounds.y - bounds.height / 2;
     }
 
     public static function placeTopRight (d :DisplayObject) :void
@@ -279,9 +283,9 @@ public class ClientContext
             d.x = ctrl.local.getRoomBounds()[0];
             d.y = 0;
         }
-        var bounds :Rectangle = d.getBounds(d.parent);
-        d.x += -bounds.x - bounds.width / 2;
-        d.y += -bounds.y - bounds.height / 2;
+//        var bounds :Rectangle = d.getBounds(d.parent);
+//        d.x += -bounds.x - bounds.width / 2;
+//        d.y += -bounds.y - bounds.height / 2;
     }
 
     protected static const ANIMATION_TIME :Number = 0.3;
