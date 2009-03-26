@@ -181,14 +181,16 @@ public class VampireController extends Controller
 
     public function handleShowQuitPopup() :void
     {
-        var popup :PopupQuery = new PopupQuery( ClientContext.ctrl,
+        var popup :PopupQuery = new PopupQuery(
             "QuitPopup",
             "Is your thirst for blood sated?",
             ["Yes", "I still hunger"],
             [VampireController.QUIT, null]);
 
+        ClientContext.centerOnViewableRoom(popup.displayObject);
         if( ClientContext.gameMode.getObjectNamed( popup.objectName) == null) {
             ClientContext.gameMode.addSceneObject( popup, ClientContext.gameMode.modeSprite );
+            ClientContext.animateEnlargeFromMouseClick(popup);
         }
     }
 
@@ -393,7 +395,7 @@ public class VampireController extends Controller
         if (ClientContext.model.sire == 0 && targetIsVampireAndLineageMember) {
             trace("No sire and target is Lineage, show popup");
 
-            var popup :PopupQuery = new PopupQuery( ClientContext.ctrl,
+            var popup :PopupQuery = new PopupQuery(
                     "MakeSire",
                     "If you feed from this Lineage vampire, they will become your permanent sire"
                     + ", allowing you to draw power from your minions.  Are you sure?",
@@ -402,6 +404,7 @@ public class VampireController extends Controller
 
             if (ClientContext.gameMode.getObjectNamed(popup.objectName) == null) {
                 ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
+                ClientContext.animateEnlargeFromMouseClick(popup);
             }
         }
         else {
@@ -429,6 +432,7 @@ public class VampireController extends Controller
             break;
         }
 
+        ClientContext.tutorial.clickedFeedHUDButton();
 
     }
 
@@ -463,10 +467,11 @@ public class VampireController extends Controller
 
     public function handleShowPopupMessage (name :String, msg :String) :void
     {
-        var popup :PopupQuery = new PopupQuery( ClientContext.ctrl, name, msg);
+        var popup :PopupQuery = new PopupQuery(name, msg);
         var mode :AppMode = ClientContext.gameMode;
         if( mode.getObjectNamed( popup.objectName) == null) {
             mode.addSceneObject( popup, mode.modeSprite );
+            ClientContext.animateEnlargeFromMouseClick(popup);
         }
     }
 
