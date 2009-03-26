@@ -39,7 +39,7 @@ public class GameMode extends AppMode
 
         } else {
             // In single-player games, there's nobody else to volley our multipliers back
-            // to us, so we fake it by sending occasionally sending fake multipliers to ourselves
+            // to us, so we fake it by occasionally sending fake multipliers to ourselves
             if (Rand.nextNumber(Rand.STREAM_GAME) < Constants.SP_MULTIPLIER_RETURN_CHANCE) {
                 var sendMultiplierObj :SimObject = new SimObject();
                 var loc :Vector2 = new Vector2(x, y);
