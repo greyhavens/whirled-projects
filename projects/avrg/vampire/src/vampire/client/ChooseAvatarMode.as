@@ -1,11 +1,10 @@
 package vampire.client
 {
-    import com.whirled.contrib.avrg.DraggableSceneObject;
+    import com.whirled.contrib.avrg.RoomDragger;
     import com.whirled.contrib.simplegame.AppMode;
 
     import flash.display.MovieClip;
     import flash.events.MouseEvent;
-    import flash.geom.Rectangle;
 
     import vampire.data.Codes;
     import vampire.data.VConstants;
@@ -19,21 +18,18 @@ package vampire.client
 
         override protected function setup():void
         {
-
-
-            return;
-
             modeSprite.visible = false;
 
 
             var infoPanel :MovieClip = ClientContext.instantiateMovieClip("HUD", "popup_avatar", false);
 
-            var drag :DraggableSceneObject = new DraggableSceneObject(ClientContext.ctrl);
-            drag.displaySprite.addChild( infoPanel );
-            drag.init( new Rectangle(0,0,100, 100), 0, 0, 0, 0);
+//            drag.displaySprite.addChild( infoPanel );
+//            drag.init( new Rectangle(0,0,100, 100), 0, 0, 0, 0);
 
-            modeSprite.addChild( drag.displaySprite );
-            drag.centerOnViewableRoom();
+            modeSprite.addChild(infoPanel);
+            ClientContext.centerOnViewableRoom(infoPanel);
+            var drag :RoomDragger = new RoomDragger(ClientContext.ctrl, infoPanel);
+//            drag.centerOnViewableRoom();
 
             registerListener( infoPanel["choose_female"], MouseEvent.CLICK, function(...ignored) :void {
                 ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_MESSAGE_CHOOSE_FEMALE);
@@ -64,7 +60,7 @@ package vampire.client
         }
         override protected function enter():void
         {
-            if( !isFirstTimePlayer() ) {
+            if (!isFirstTimePlayer()) {
                 //Push the main game mode
                 ClientContext.game.ctx.mainLoop.popMode();
             }
@@ -80,7 +76,7 @@ package vampire.client
                 Codes.PLAYER_PROP_LAST_TIME_AWAKE ) );
 
             //The last is debugging in whirled dev
-            if( isNaN( lastTimeAwake ) || lastTimeAwake == 0 || ClientContext.ctrl.player.getPlayerId() == 1735) {
+            if (isNaN( lastTimeAwake ) || lastTimeAwake == 0 || ClientContext.ctrl.player.getPlayerId() == 1735) {
                 return true;
             }
             return false;
