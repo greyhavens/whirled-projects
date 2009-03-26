@@ -19,7 +19,7 @@
   <property name="app.enable-server-agent" value="true"/>-->
 
   <!-- if you need to include extra source files, uncomment and edit this line -->
-  <property name="app.source-extras" value="/export/whirled/contrib/src/as,/export/whirled/projects/avrg/probe/src"/>
+  <property name="app.source-extras" value="/export/whirled/contrib/src/as,/export/whirled/projects/avrg/probe/src,/export/whirled/projects/avatars/uravatar/src"/>
 	
   <!-- include the standard build script -->
   
