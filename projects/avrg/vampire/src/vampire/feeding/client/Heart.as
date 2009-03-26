@@ -13,15 +13,13 @@ public class Heart extends SceneObject
     public function Heart (heartMovie :MovieClip)
     {
         _totalBeatTime = Constants.BEAT_TIME;
+        _lastBeat = FIRST_BEAT_DELAY - _totalBeatTime;
 
         _movie = heartMovie;
     }
 
     public function deliverWhiteCell () :void
     {
-        // when white cells are delivered, the beat speeds up a bit
-        //_totalBeatTime -= Constants.BEAT_TIME_DECREASE_PER_DELIVERY;
-        //_totalBeatTime = Math.max(_totalBeatTime, Constants.BEAT_TIME_MIN);
         beat(1);
     }
 
@@ -67,6 +65,8 @@ public class Heart extends SceneObject
     protected var _liveTime :Number = 0;
 
     protected var _movie :MovieClip;
+
+    protected static const FIRST_BEAT_DELAY :Number = 1;
 }
 
 }
