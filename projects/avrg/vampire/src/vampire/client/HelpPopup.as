@@ -3,7 +3,9 @@ package vampire.client
     import com.threerings.flash.DisplayUtil;
     import com.threerings.flash.TextFieldUtil;
     import com.threerings.util.Log;
-    import com.whirled.contrib.avrg.DraggableSceneObject;
+    import com.whirled.contrib.avrg.RoomDragger;
+    import com.whirled.contrib.simplegame.objects.DraggableObject;
+    import com.whirled.contrib.simplegame.objects.Dragger;
     import com.whirled.net.ElementChangedEvent;
 
     import flash.display.DisplayObject;
@@ -13,26 +15,23 @@ package vampire.client
     import flash.display.Sprite;
     import flash.events.MouseEvent;
     import flash.filters.GlowFilter;
-    import flash.geom.Rectangle;
     import flash.text.AntiAliasType;
     import flash.text.TextField;
     import flash.text.TextFormat;
     import flash.text.TextFormatAlign;
 
     import vampire.Util;
-    import vampire.client.events.LineageUpdatedEvent;
     import vampire.data.Codes;
     import vampire.data.Logic;
-    import vampire.client.SharedPlayerStateClient;
     import vampire.data.VConstants;
     import vampire.feeding.Constants;
     import vampire.feeding.PlayerFeedingData;
 
-    public class HelpPopup extends DraggableSceneObject
+    public class HelpPopup extends DraggableObject
     {
         public function HelpPopup( startframe :String = "intro")
         {
-            super(ClientContext.ctrl);
+//            super(ClientContext.ctrl);
 
             _hudHelp = ClientContext.instantiateMovieClip("HUD", "popup_help", false);
             _displaySprite.addChild( _hudHelp );
@@ -47,10 +46,12 @@ package vampire.client
             //Wire up the links on the left panel
             registerListener( SimpleButton(findSafely("to_default")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
+                    ClientContext.tutorial.clickedLineage();
                     gotoFrame("default");
                 });
             registerListener( SimpleButton(findSafely("to_bloodtype")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
+                    ClientContext.tutorial.clickedStrains();
                     gotoFrame("bloodtype");
                 });
             registerListener( SimpleButton(findSafely("menu_tofeedingonvamps")), MouseEvent.CLICK,
@@ -63,7 +64,9 @@ package vampire.client
                 });
             registerListener( SimpleButton(findSafely("menu_tointro")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
-                    gotoFrame("intro");
+                    destroySelf();
+                    ClientContext.tutorial.activateTutorial();
+//                    gotoFrame("intro");
                 });
 
 
@@ -80,17 +83,14 @@ package vampire.client
                 function( e :MouseEvent ) :void {
                     gotoFrame("vamps");
                 });
-            registerListener( SimpleButton(findSafely("button_tomortals")), MouseEvent.CLICK,
+            registerListener( SimpleButton(findSafely("button_totutorial")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
-                    gotoFrame("mortals");
+                    destroySelf();
+                    ClientContext.tutorial.activateTutorial();
                 });
             registerListener( SimpleButton(findSafely("button_tobloodbond")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
                     gotoFrame("bloodbond");
-                });
-            registerListener( SimpleButton(findSafely("button_tomortals")), MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
-                    gotoFrame("mortals");
                 });
             registerListener( SimpleButton(findSafely("button_tobloodtype")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
@@ -105,6 +105,11 @@ package vampire.client
                     destroySelf();
                 });
             registerListener( SimpleButton(findSafely("button_recruit")), MouseEvent.CLICK,
+                function( e :MouseEvent ) :void {
+                    ClientContext.ctrl.local.showInvitePage("Join my Coven!", "" + ClientContext.ourPlayerId);
+                });
+
+            registerListener( SimpleButton(findSafely("button_torecruiting")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
                     ClientContext.ctrl.local.showInvitePage("Join my Coven!", "" + ClientContext.ourPlayerId);
                 });
@@ -148,8 +153,14 @@ package vampire.client
 //                    }
 //                });
 
-            init( new Rectangle(-_displaySprite.width/2, -_displaySprite.height/2, _displaySprite.width, _displaySprite.height), 0, 0, 0, 100);
-            centerOnViewableRoom();
+//            init( new Rectangle(-_displaySprite.width/2, -_displaySprite.height/2, _displaySprite.width, _displaySprite.height), 0, 0, 0, 100);
+//            centerOnViewableRoom();
+            ClientContext.centerOnViewableRoom(displayObject);
+        }
+
+        override public function get displayObject () :DisplayObject
+        {
+            return _displaySprite;
         }
 
 
@@ -257,11 +268,12 @@ package vampire.client
                 _lineageView.destroySelf();
 
             }
+            ClientContext.tutorial.clickedVWButtonCloseHelp();
         }
 
         override protected function addedToDB():void
         {
-
+            super.addedToDB();
             db.addObject( _lineageView );
             if( _hudHelp.currentFrame == 2 ) {
                 _hudHelp.addChild( _lineageView.displayObject );
@@ -286,7 +298,7 @@ package vampire.client
 //            return s;
 //        }
 
-        protected function findSafely (name :String) :DisplayObject
+        public function findSafely (name :String) :DisplayObject
         {
             var o :DisplayObject = DisplayUtil.findInHierarchy(_displaySprite, name);
             if (o == null) {
@@ -420,6 +432,15 @@ package vampire.client
             return NAME;
         }
 
+        override protected function get draggableObject () :InteractiveObject
+        {
+            return _displaySprite;//_movie["draggable"];
+        }
+
+        override protected function createDragger () :Dragger
+        {
+            return new RoomDragger(ClientContext.ctrl, this.draggableObject, this.displayObject);
+        }
 
         /**
         * Using the embedded font disallows dynamically changing the text.
@@ -538,7 +559,7 @@ package vampire.client
         protected static const log :Log = Log.getLog( HelpPopup );
 
         protected var _glowFilter :GlowFilter = new GlowFilter(0xffffff);
-
+        protected var _displaySprite :Sprite = new Sprite();
 
         protected static const BLOOD_STRAIN_NAMES :Array = [
             "Aries",

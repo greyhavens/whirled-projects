@@ -36,10 +36,10 @@ package vampire.client
 
             _selectedPlayerIdCenter = ClientContext.ourPlayerId;
             _hierarchy = ClientContext.model.lineage;
-            if( _hierarchy != null ) {
+            if (_hierarchy != null) {
                 updateHierarchy(_selectedPlayerIdCenter);
             }
-            else if( VConstants.LOCAL_DEBUG_MODE){
+            else if (false && VConstants.LOCAL_DEBUG_MODE) {
                 trace("SHowing test hierarchy");
                 _hierarchy = new Lineage();
                 _hierarchy.setPlayerSire(1, 2);
@@ -65,7 +65,6 @@ package vampire.client
 
         override public function set x( value :Number ) :void
         {
-            trace("Setting lineage x=" + value);
             super.x = value;
         }
 
