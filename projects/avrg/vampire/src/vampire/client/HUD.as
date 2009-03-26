@@ -5,11 +5,9 @@ import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.contrib.avrg.DraggableSceneObject;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.objects.SceneObjectPlayMovieClipOnce;
-import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
@@ -19,7 +17,6 @@ import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
-import flash.geom.Rectangle;
 import flash.text.AntiAliasType;
 import flash.text.TextField;
 import flash.text.TextFormat;
@@ -34,15 +31,17 @@ import vampire.data.Logic;
  * The main game HUD, showing e.g. blood, game notifications, and buttons to select the subgame to
  * play.
  */
-public class HUD extends DraggableSceneObject
+public class HUD extends SceneObject
 {
     public function HUD()
     {
-        super( ClientContext.ctrl, "HUD");
+//        super( ClientContext.ctrl, "HUD");
     }
 
     override protected function addedToDB() :void
     {
+        super.addedToDB();
+
         setupUI();
 
         updateOurPlayerState();
@@ -52,11 +51,14 @@ public class HUD extends DraggableSceneObject
         registerListener( ClientContext.ctrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged );
         registerListener( ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
 //        registerListener( ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
-
-
-
 //        mode.addObject(_bloodXPMouseOverSceneObject );
     }
+
+    override public function get displayObject () :DisplayObject
+    {
+        return _displaySprite;
+    }
+
 
 //    protected function get mode() :AppMode
 //    {
@@ -285,7 +287,7 @@ public class HUD extends DraggableSceneObject
         }
     }
 
-    protected function findSafely (name :String) :DisplayObject
+    public function findSafely (name :String) :DisplayObject
     {
         var o :DisplayObject = DisplayUtil.findInHierarchy(_displaySprite, name);
         if (o == null) {
@@ -304,16 +306,21 @@ public class HUD extends DraggableSceneObject
         _displaySprite.addChild( _hud );
 
         _hudMC = ClientContext.instantiateMovieClip("HUD", "HUD", true);
+
+//        _hud.graphics.beginFill(0);
+//        _hud.graphics.drawCircle(0,0,20);
+//        _hud.graphics.endFill();
         _hud.addChild( _hudMC );
         //Center the hud graphic
         _hudMC.x = -_hudMC.width/2;
         _hudMC.y = -_hudMC.height/2;
+        trace("HUD init");
+//        init( new Rectangle(-_hudMC.width/2, -_hudMC.height/2, _hudMC.width, _hudMC.height), 0, 0, 0, 100);
 
-        init( new Rectangle(-_hudMC.width/2, _hudMC.height/2, _hudMC.width, _hudMC.height), 0, 0, 0, 100);
-
-
-        this.x = _hudMC.width  ;
-        this.y = _hudMC.height;
+        //Start the HUD positioned at the top left, making sure nothing is hidden.
+        this.x = _hudMC.width / 2 + 10;
+        this.y = _hudMC.height / 2 + 10;
+//        return;
 
         _hudMC.mouseChildren = true;
         _hudMC.mouseEnabled = false;
@@ -411,7 +418,6 @@ public class HUD extends DraggableSceneObject
         }
 
         TextField(findSafely("level_field")).text = "" + ClientContext.model.level;
-        TextField(findSafely("level_field")).selectable = false;
 
         var xpNeededForCurrentLevel :Number = Logic.xpNeededForLevel(ClientContext.model.level);
         var xpNeededForNextLevel :Number = Logic.xpNeededForLevel(ClientContext.model.level + 1);
@@ -464,7 +470,7 @@ public class HUD extends DraggableSceneObject
                         msg.substring(Codes.POPUP_PREFIX.length));
                 }
                 else {
-                    _ctrl.local.feedback( msg );
+                    ClientContext.ctrl.local.feedback( msg );
                 }
             }
             _feedbackMessageQueue.splice(0);
@@ -821,6 +827,7 @@ public class HUD extends DraggableSceneObject
     protected var _xpText :TextField;
 
     protected var _isNewLevelNeedingInvitePopupShown :Boolean = false;
+    protected var _displaySprite :Sprite = new Sprite();
 
 
     /**Used for registering changed level to animate a level up movieclip*/
