@@ -59,9 +59,8 @@ public class ClientCtx
             var roomBounds :Rectangle = gameCtrl.local.getPaintableArea(false);
             if (roomBounds != null) {
                 var objBounds :Rectangle = disp.getBounds(disp);
-                disp.x = objBounds.x + ((roomBounds.width - objBounds.width) * 0.5);
-                disp.y = objBounds.y + ((roomBounds.height - objBounds.height) * 0.5);
-                BloodBloom.log.info("centerInRoom", "roomBounds", roomBounds, "objBounds", objBounds, "x", disp.x, "y", disp.y);
+                disp.x = ((roomBounds.width - objBounds.width) * 0.5) - objBounds.x;
+                disp.y = ((roomBounds.height - objBounds.height) * 0.5) - objBounds.y;
             }
         }
     }

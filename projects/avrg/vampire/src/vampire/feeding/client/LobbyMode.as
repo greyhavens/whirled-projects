@@ -36,7 +36,7 @@ public class LobbyMode extends AppMode
 
         // Make the lobby draggable
         addObject(new RoomDragger(ClientCtx.gameCtrl, contents, _panelMovie));
-        //ClientCtx.centerInRoom(_panelMovie);
+        ClientCtx.centerInRoom(_panelMovie);
 
         // Instructions
         var instructions0 :MovieClip = contents["instructions_basic"];
