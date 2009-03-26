@@ -1,5 +1,6 @@
 package vampire.feeding.client {
 
+import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
@@ -32,7 +33,7 @@ public class SentMultiplierIndicator extends SceneObject
         var anim :SentMultiplierAnim = new SentMultiplierAnim(
             multiplier,
             new Point(x, y),
-            GameCtx.uiLayer.globalToLocal(this.displayObject.localToGlobal(_flyToLoc)),
+            DisplayUtil.transformPoint(_flyToLoc, this.displayObject, GameCtx.uiLayer),
             slideUp,
             function () :void {
                 attachBonusAnim(anim);

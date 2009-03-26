@@ -1,5 +1,6 @@
 package vampire.feeding.client {
 
+import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
@@ -40,7 +41,7 @@ public class SpecialStrainTallyView extends SceneObject
         var slotMovie :MovieClip = _movie[SLOT_NAMES[_strainCount]];
 
         if (animate) {
-            startLoc = _movie.globalToLocal(GameCtx.cellLayer.localToGlobal(startLoc));
+            startLoc = DisplayUtil.transformPoint(startLoc, GameCtx.cellLayer, _movie);
             anim.x = startLoc.x;
             anim.y = startLoc.y;
             anim.animate(new Point(slotMovie.x, slotMovie.y));
