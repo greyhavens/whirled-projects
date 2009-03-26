@@ -2,91 +2,140 @@ package vampire.client
 {
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Command;
-import com.whirled.avrg.AVRGameControl;
-import com.whirled.contrib.avrg.DraggableSceneObject;
+import com.whirled.contrib.avrg.RoomDragger;
+import com.whirled.contrib.simplegame.objects.DraggableObject;
+import com.whirled.contrib.simplegame.objects.Dragger;
 
+import flash.display.DisplayObject;
+import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.filters.GlowFilter;
-import flash.geom.Rectangle;
 import flash.text.AntiAliasType;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
-import flash.text.TextLineMetrics;
 
-public class PopupQuery extends DraggableSceneObject
+public class PopupQuery extends DraggableObject
 {
-    public function PopupQuery (ctrl :AVRGameControl, name :String, message :String,
+    public function PopupQuery (name :String, message :String,
         buttonNames :Array = null, commandsOrFunctions :Array = null, extraArgs :Array = null)
     {
-
-        super(ctrl, name);
+        super();
+        _name = name;
         _popupPanel = ClientContext.instantiateMovieClip("HUD", "popup", false);
         _popupPanel.mouseEnabled = true;
         _popupPanel.mouseChildren = true;
         _displaySprite.addChild(_popupPanel);
 
-
         _popupTop = _popupPanel["top"] as MovieClip;
         _popupMiddle = _popupPanel["middle"] as MovieClip;
         _popupBottom = _popupPanel["bottom"] as MovieClip;
+        _closeButton = _popupPanel["button_close"] as SimpleButton;
+
+        //Close button shuts the popup
+        registerListener(_closeButton, MouseEvent.CLICK, function (e :MouseEvent) :void {
+            destroySelf();
+        });
 
         _popupText = _popupPanel["popup_text"] as TextField;
+        _initialTextHeight = _popupText.height;
         _popupText.multiline = true;
         _popupText.wordWrap = true;
         _displaySprite.addChild(_popupText);
 
         _buttonHeight = SimpleButton(_popupPanel["button_01"]).height;
 
-        setupText(message);
+        _isBottomButtons = buttonNames != null && buttonNames.length > 0;
 
-        if (buttonNames != null) {
+        setText(message);
+
+        if (_isBottomButtons) {
             setupCommands(buttonNames, commandsOrFunctions, extraArgs);
+            _popupTop = _popupPanel["top"] as MovieClip;
+            _closeButton.parent.removeChild(_closeButton);
         }
         else {
-            setupCommands(["Ok"], [null], null);
+            //If there are no button names, but there IS a function, bind it to the close button
+            if (commandsOrFunctions != null && commandsOrFunctions.length > 0) {
+                registerListener(_closeButton, MouseEvent.CLICK, function (e :MouseEvent) :void {
+                    commandsOrFunctions[0]();
+                });
+            }
+
+            //Remove the other buttons below the text
+            var b1 :SimpleButton = _popupPanel["button_01"] as SimpleButton;
+            var b2 :SimpleButton = _popupPanel["button_02"] as SimpleButton;
+            b1.parent.removeChild(b1);
+            b2.parent.removeChild(b2);
+
         }
+    }
 
+    override public function get objectName () :String
+    {
+        return _name;
+    }
 
-//        init( new Rectangle(-_popupPanel.width/2, _popupPanel.height/2, _popupPanel.width, _popupPanel.height), 0, 0, 0, 0);
+    override protected function createDragger () :Dragger
+    {
+        return new RoomDragger(ClientContext.ctrl, this.draggableObject, this.displayObject);
+    }
 
-
+    override protected function get draggableObject () :InteractiveObject
+    {
+        return _displaySprite;//_movie["draggable"];
     }
 
     override protected function addedToDB () :void
     {
-        ClientContext.animateEnlargeFromMouseClick(this);
+        super.addedToDB();
+//        ClientContext.animateEnlargeFromMouseClick(this);
     }
 
-    protected function setupText (message :String): void
+    public function setText (message :String): void
     {
+//        var m :String;
+//        m = "aasfd f asdf asdf asdf sag asg asdg asdg sadg asdg asdf asd fa sdf asdf asd fas dgasd gasd gAAAAAA:"
+//        +"sdfljasd f gldf gldf g  sdfg jsdlfg slfdj g slfdgj sldf sldf gl XXXXXXX";
+//        m  = "aasfd f asdf asdf asdf sag asg asdg asdg sadg asdg asdf asd fa sdf asdf asd fas dgasd gasd gAAAAAA:";
+//        m = "aasfd f asdf asdf asdf ";
+        _popupText.height = _initialTextHeight;
         _popupText.text = message;
+        _popupText.multiline = true;
+        _popupText.wordWrap = true;
         var lines :int = _popupText.numLines;
-        var lineMetrics :TextLineMetrics = _popupText.getLineMetrics(0);
-        _popupText.height = lineMetrics.height * lines + 6 ;//+ _buttonHeight + 10;//4 is the top and bottom gutters
-        _popupText.y = -_popupText.height / 2 - 10;
+        var totalLineHeight :Number = 4;
+        for (var line :int = 0; line < lines; line++) {
+            totalLineHeight += _popupText.getLineMetrics(line).height + 2;
+        }
+//        var lineMetrics :TextLineMetrics = _popupText.getLineMetrics(0);
+        _popupText.height = totalLineHeight;//+ _buttonHeight + 10;//4 is the top and bottom gutters
         //See http://livedocs.adobe.com/flash/9.0/ActionScriptLangRefV3/flash/text/TextLineMetrics.html
 
         //Make the middle panel big enough for the text and buttons, and a little more.
-        var entireMiddleHeight :Number = _popupText.height
-                                        + _buttonHeight
+        var entireMiddleHeight :Number = totalLineHeight
+                                        + (_isBottomButtons ? _buttonHeight : 0)
                                         + GAP_ABOVE_AND_BELOW_TEXT * 2
                                         + GAP_BETWEEN_BUTTON_AND_PANEL_BOTTOM;
 
-        _popupMiddle.scaleY = entireMiddleHeight / _popupMiddle.height;
-        _popupMiddle.y = _popupMiddle.height / 2;
+//        _popupMiddle.scaleY = entireMiddleHeight / _popupMiddle.height;
+        _popupMiddle.height = entireMiddleHeight;
+        _popupText.y = _popupMiddle.y
+                       -_popupMiddle.height
+//                       - _popupText.height / 2
+                       + GAP_ABOVE_AND_BELOW_TEXT// - 20;
+                       + lines / 2;
+//        _popupMiddle.y = _popupMiddle.height / 2;
 
-        _popupTop.y = _popupMiddle.y - _popupMiddle.height + _popupTop.height;
+        _popupTop.y = _popupMiddle.y - _popupMiddle.height + 1;// + _popupTop.height;
         _popupBottom.y = _popupMiddle.y;
 
-        init( new Rectangle(-_popupMiddle.width / 2,
-                            -_popupMiddle.height / 2,
-                            _popupMiddle.width,
-                            _popupMiddle.height), 0, 0, 0, 0);
-        centerOnViewableRoom();
+        //Position the close button
+        _popupText.parent.addChild(_closeButton);
+        _closeButton.y = _popupMiddle.getBounds(_popupMiddle.parent).top + 3;
     }
 
     protected function setupCommands (buttonNames :Array,
@@ -118,7 +167,8 @@ public class PopupQuery extends DraggableSceneObject
                 b.x = b1.x + (b2.x - b1.x) / 2;
             }
 
-            b.y = _popupMiddle.height / 2 - b.height / 2 - GAP_BETWEEN_BUTTON_AND_PANEL_BOTTOM;
+            b.y = _popupMiddle.height / 2;//  - b.height / 2 - GAP_BETWEEN_BUTTON_AND_PANEL_BOTTOM;
+            b.y = _popupMiddle.y - b.height / 2 - GAP_BETWEEN_BUTTON_AND_PANEL_BOTTOM;
 
             //Create and add the button text.
             var buttonText :TextField = buttonTextField(buttonNames[i], b.width - 15);
@@ -189,20 +239,31 @@ public class PopupQuery extends DraggableSceneObject
         return format;
     }
 
+    override public function get displayObject () :DisplayObject
+    {
+        return _displaySprite;
+    }
 
 
 
+    protected var _name :String;
 
+    protected var _initialTextHeight :Number;
+//    protected var _ctrl :AVRGameControl;
     protected var _popupPanel :MovieClip;
 
     protected var _popupTop :MovieClip;
     protected var _popupMiddle :MovieClip;
     protected var _popupBottom :MovieClip;
+    protected var _closeButton :SimpleButton;
 
     protected var _popupText :TextField;
     protected var _buttonHeight :Number;
-    protected static const GAP_BETWEEN_BUTTON_AND_PANEL_BOTTOM :int = 8;
-    protected static const GAP_ABOVE_AND_BELOW_TEXT :int = 15;
+    protected var _isBottomButtons :Boolean;
+
+    protected var _displaySprite :Sprite = new Sprite();
+    protected static const GAP_BETWEEN_BUTTON_AND_PANEL_BOTTOM :int = 4;
+    protected static const GAP_ABOVE_AND_BELOW_TEXT :int = 18;//15;
 
 }
 }
