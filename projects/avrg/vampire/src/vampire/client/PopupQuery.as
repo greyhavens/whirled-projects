@@ -35,6 +35,9 @@ public class PopupQuery extends DraggableObject
         _popupBottom = _popupPanel["bottom"] as MovieClip;
         _closeButton = _popupPanel["button_close"] as SimpleButton;
 
+        _buttonPanelSprite.addChild(_closeButton);
+
+
         //Close button shuts the popup
         registerListener(_closeButton, MouseEvent.CLICK, function (e :MouseEvent) :void {
             destroySelf();
@@ -72,6 +75,21 @@ public class PopupQuery extends DraggableObject
             b2.parent.removeChild(b2);
 
         }
+
+        //Set up the size of the _draggableSprite
+        _draggableSprite.graphics.clear();
+//        _displaySprite.addChildAt(_draggableSprite, 0);
+        _displaySprite.addChild(_draggableSprite);
+        _draggableSprite.graphics.beginFill(0,0);
+        _draggableSprite.graphics.drawRect(-_displaySprite.width / 2,
+                                           -_displaySprite.height / 2 + _popupTop.height * 2,
+                                           _displaySprite.width,
+                                           _displaySprite.height
+//                                                - GAP_BETWEEN_BUTTON_AND_PANEL_BOTTOM
+//                                                - _buttonHeight
+                                                );
+        _draggableSprite.graphics.endFill();
+        _displaySprite.addChildAt(_buttonPanelSprite, _displaySprite.numChildren);
     }
 
     override public function get objectName () :String
@@ -86,7 +104,7 @@ public class PopupQuery extends DraggableObject
 
     override protected function get draggableObject () :InteractiveObject
     {
-        return _displaySprite;//_movie["draggable"];
+        return _draggableSprite;
     }
 
     override protected function addedToDB () :void
@@ -134,7 +152,7 @@ public class PopupQuery extends DraggableObject
         _popupBottom.y = _popupMiddle.y;
 
         //Position the close button
-        _popupText.parent.addChild(_closeButton);
+//        _popupText.parent.addChild(_closeButton);
         _closeButton.y = _popupMiddle.getBounds(_popupMiddle.parent).top + 3;
     }
 
@@ -161,7 +179,8 @@ public class PopupQuery extends DraggableObject
             if (b == null) {
                 continue;
             }
-            _popupPanel.addChild(b);
+            _buttonPanelSprite.addChild(b);
+//            _popupPanel.addChild(b);
             //If there is only one button, position it in between the two buttons.
             if (i == 0 && buttonNames.length == 1) {
                 b.x = b1.x + (b2.x - b1.x) / 2;
@@ -262,6 +281,8 @@ public class PopupQuery extends DraggableObject
     protected var _isBottomButtons :Boolean;
 
     protected var _displaySprite :Sprite = new Sprite();
+    protected var _draggableSprite :Sprite = new Sprite();
+    protected var _buttonPanelSprite :Sprite = new Sprite();
     protected static const GAP_BETWEEN_BUTTON_AND_PANEL_BOTTOM :int = 4;
     protected static const GAP_ABOVE_AND_BELOW_TEXT :int = 18;//15;
 
