@@ -100,7 +100,7 @@ public class MainGameMode extends AppMode
         addObject( ClientContext.model );
         ClientContext.model.setup();
 
-        if (false && VConstants.LOCAL_DEBUG_MODE) {
+        if (VConstants.LOCAL_DEBUG_MODE) {
 
             var lineage :Lineage = new Lineage();
                 lineage.setPlayerSire(1, 2);

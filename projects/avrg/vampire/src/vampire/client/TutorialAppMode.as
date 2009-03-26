@@ -101,7 +101,7 @@ public class TutorialAppMode extends AppMode
 
         _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
         if (VConstants.LOCAL_DEBUG_MODE) {
-            _currentChapter = CHAPTER_NAVIGATING_THE_GUI;
+//            _currentChapter = CHAPTER_NAVIGATING_THE_GUI;
         }
 
         setPage(PAGE_NOONE_IN_ROOM);
@@ -239,21 +239,31 @@ public class TutorialAppMode extends AppMode
     {
         resetTargets();
 
-        var target :DisplayObject = ClientContext.hud.findSafely("button_feed");
-        var targetOverlay :SceneObject = createTargetSceneObject("target:HUD feed");
-        addSceneObject(targetOverlay, target.parent);
-        targetOverlay.x = target.x;
-        targetOverlay.y = target.y;
+        var targetDisplayObject :DisplayObject = ClientContext.hud.findSafely("button_feed");
+        var targetReticle :SceneObject = createTargetSceneObject("target:HUD feed");
+
+        targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
+            targetDisplayObject.parent.getChildIndex(targetDisplayObject) );
+
+        addObject(targetReticle);
+
+
+        targetReticle.x = targetDisplayObject.x;
+        targetReticle.y = targetDisplayObject.y;
     }
 
     protected function handleClickVW () :void
     {
-        trace("asdfadsfdf");
-        var target :DisplayObject = ClientContext.hud.findSafely("button_menu");
-        var targetOverlay :SceneObject = createTargetSceneObject("target:VW");
-        addSceneObject(targetOverlay, target.parent);
-        targetOverlay.x = target.x;
-        targetOverlay.y = target.y;
+        var targetDisplayObject :DisplayObject = ClientContext.hud.findSafely("button_menu");
+        var targetReticle :SceneObject = createTargetSceneObject("target:VW");
+
+        targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
+            targetDisplayObject.parent.getChildIndex(targetDisplayObject) );
+
+        addObject(targetReticle);
+
+        targetReticle.x = targetDisplayObject.x;
+        targetReticle.y = targetDisplayObject.y;
     }
 
     protected function handleClickStrains () :void
@@ -284,11 +294,18 @@ public class TutorialAppMode extends AppMode
             var sceneObjectName :String = "target:feed " + avhud.playerId;
             var targetReticle :SceneObject = getObjectNamed(sceneObjectName) as SceneObject;
 
+            var targetDisplayObject :DisplayObject = avhud.targetUI;
+
             if (avhud.isShowingFeedButton) {
                 //If there's no target, add one
                 if (targetReticle == null) {
                     targetReticle = createTargetSceneObject(sceneObjectName);
-                    addSceneObject(targetReticle, avhud.targetUI.parent);
+
+                    targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
+                    targetDisplayObject.parent.getChildIndex(targetDisplayObject) );
+
+                    addObject(targetReticle);
+
                     targetReticle.x = avhud.targetUI.x;
                     targetReticle.y = avhud.targetUI.y;
                 }
@@ -318,7 +335,11 @@ public class TutorialAppMode extends AppMode
                 targetReticle.x = targetDisplayObject.x;
                 targetReticle.y = targetDisplayObject.y;
 
-                addSceneObject(targetReticle, targetDisplayObject.parent);
+                targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
+                    targetDisplayObject.parent.getChildIndex(targetDisplayObject) - 1);
+
+                addObject(targetReticle);
+//                addSceneObject(targetReticle, targetDisplayObject.parent);
             }
         }
         else {
@@ -346,7 +367,10 @@ public class TutorialAppMode extends AppMode
                 targetReticle.x = targetDisplayObject.x;
                 targetReticle.y = targetDisplayObject.y;
 
-                addSceneObject(targetReticle, targetDisplayObject.parent);
+                targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
+                    targetDisplayObject.parent.getChildIndex(targetDisplayObject) - 1);
+
+                addObject(targetReticle);
             }
         }
         else {
@@ -374,7 +398,10 @@ public class TutorialAppMode extends AppMode
                 targetReticle.x = targetDisplayObject.x;
                 targetReticle.y = targetDisplayObject.y;
 
-                addSceneObject(targetReticle, targetDisplayObject.parent);
+                targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
+                    targetDisplayObject.parent.getChildIndex(targetDisplayObject) - 1);
+
+                addObject(targetReticle);
             }
         }
         else {

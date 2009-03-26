@@ -101,7 +101,7 @@ public class DraggableSceneObject extends SceneObject
             registerListener(_displaySprite, Event.ENTER_FRAME, handleFrame);
         }
 
-        registerListener(_displaySprite, MouseEvent.ROLL_OUT, handleRollOut);
+//        registerListener(_displaySprite, MouseEvent.ROLL_OUT, handleRollOut);
 
         _mouse = new Point(_displaySprite.parent.mouseX, _displaySprite.parent.mouseY);
         _offset = new Point(_mouse.x - this.x, _mouse.y - this.y);
@@ -247,8 +247,6 @@ public class DraggableSceneObject extends SceneObject
             return;
         }
 
-
-
         switch(_xSnap) {
             case SNAP_NONE:
                 this.x = _xFix;
@@ -301,14 +299,19 @@ public class DraggableSceneObject extends SceneObject
     {
         //Workaround as roombounds can be bigger than the paintable area
         if( _ctrl.local.getRoomBounds()[0] > _ctrl.local.getPaintableArea().width) {
-                this.x = _ctrl.local.getPaintableArea().width/2;
-                this.y = _ctrl.local.getPaintableArea().height/2;
+            this.x = _ctrl.local.getPaintableArea().width/2;
+            this.y = _ctrl.local.getPaintableArea().height/2;
         }
         else {
             this.x = _ctrl.local.getRoomBounds()[0]/2;
             this.y = _ctrl.local.getRoomBounds()[1]/2;
         }
+
+        this.x += -_bounds.x - _bounds.width / 2;
+        this.y += -_bounds.y - _bounds.height / 2;
     }
+
+
     override public function get displayObject () :DisplayObject
     {
         return _displaySprite;

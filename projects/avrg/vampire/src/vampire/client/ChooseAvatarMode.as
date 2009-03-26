@@ -23,13 +23,8 @@ package vampire.client
 
             var infoPanel :MovieClip = ClientContext.instantiateMovieClip("HUD", "popup_avatar", false);
 
-//            drag.displaySprite.addChild( infoPanel );
-//            drag.init( new Rectangle(0,0,100, 100), 0, 0, 0, 0);
-
             modeSprite.addChild(infoPanel);
             ClientContext.centerOnViewableRoom(infoPanel);
-            var drag :RoomDragger = new RoomDragger(ClientContext.ctrl, infoPanel);
-//            drag.centerOnViewableRoom();
 
             registerListener( infoPanel["choose_female"], MouseEvent.CLICK, function(...ignored) :void {
                 ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_MESSAGE_CHOOSE_FEMALE);

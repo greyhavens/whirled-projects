@@ -40,7 +40,7 @@ package vampire.client
         }
         override protected function enter():void
         {
-            if( ClientContext.isWearingValidAvatar ) {
+            if (ClientContext.isWearingValidAvatar ) {
                 ClientContext.game.ctx.mainLoop.popMode();
             }
             else {
