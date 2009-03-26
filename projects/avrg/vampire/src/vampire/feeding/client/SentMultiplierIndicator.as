@@ -32,7 +32,7 @@ public class SentMultiplierIndicator extends SceneObject
         var anim :SentMultiplierAnim = new SentMultiplierAnim(
             multiplier,
             new Point(x, y),
-            this.displayObject.localToGlobal(_flyToLoc),
+            GameCtx.uiLayer.globalToLocal(this.displayObject.localToGlobal(_flyToLoc)),
             slideUp,
             function () :void {
                 attachBonusAnim(anim);
