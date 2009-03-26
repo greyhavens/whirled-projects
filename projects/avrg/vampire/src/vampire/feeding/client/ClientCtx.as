@@ -1,5 +1,6 @@
 package vampire.feeding.client {
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashSet;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
@@ -104,6 +105,11 @@ public class ClientCtx
     public static function get isMultiplayer () :Boolean
     {
         return !isSinglePlayer;
+    }
+
+    public static function isPlayer (playerId :int) :Boolean
+    {
+        return ArrayUtil.contains(playerIds, playerId);
     }
 
     public static function quit (playerInitiated :Boolean) :void

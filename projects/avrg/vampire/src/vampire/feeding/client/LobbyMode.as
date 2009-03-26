@@ -2,7 +2,6 @@ package vampire.feeding.client {
 
 import com.whirled.contrib.avrg.RoomDragger;
 import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.objects.Dragger;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
@@ -122,14 +121,19 @@ public class LobbyMode extends AppMode
         var obj :Object;
         var playerId :int;
 
-        // Fill in the Prey data
         var contents :MovieClip = _panelMovie["draggable"];
 
+        // Fill in the Prey data
         var preyInfo :MovieClip = contents["playerprey"];
         var tfName :TextField = preyInfo["player_name"];
-        tfName.text = (ClientCtx.preyIsAi ?
-                        ClientCtx.aiPreyName :
-                        ClientCtx.getPlayerName(ClientCtx.preyId));
+        if (ClientCtx.preyIsAi || ClientCtx.isPlayer(ClientCtx.preyId)) {
+            tfName.visible = true;
+            tfName.text = (ClientCtx.preyIsAi ?
+                            ClientCtx.aiPreyName :
+                            ClientCtx.getPlayerName(ClientCtx.preyId));
+        } else {
+            tfName.visible = false;
+        }
 
         var tfScore :TextField = preyInfo["player_score"];
         if (this.isPostRoundLobby && !ClientCtx.preyIsAi) {
@@ -143,7 +147,7 @@ public class LobbyMode extends AppMode
         if (this.isPostRoundLobby) {
             _results.scores.forEach(
                 function (playerId :int, score :int) :void {
-                    if (playerId != ClientCtx.preyId) {
+                    if (playerId != ClientCtx.preyId && ClientCtx.isPlayer(playerId)) {
                         obj = {};
                         obj["player_name"] = ClientCtx.getPlayerName(playerId);
                         obj["player_score"] = score;
