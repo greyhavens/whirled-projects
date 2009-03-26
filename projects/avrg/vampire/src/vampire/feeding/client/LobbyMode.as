@@ -154,12 +154,11 @@ public class LobbyMode extends AppMode
                     }
                 });
 
-            // Anyone who joined the game while the round was in progress has a score of 0
+            // Anyone who joined the game while the round was in progress doesn't have a score
             for each (playerId in ClientCtx.playerIds) {
                 if (playerId != ClientCtx.preyId && !_results.scores.containsKey(playerId)) {
                     obj = {};
                     obj["player_name"] = ClientCtx.getPlayerName(playerId);
-                    obj["player_score"] = 0;
                     listData.push(obj);
                 }
             }
