@@ -18,21 +18,21 @@ import flash.geom.Point;
 /**
  * Manages an Avatar's visualization and animation state.
  */
-public class NewBody
+public class MovieClipBody
 {
     /** Use this to log things. */
-    public static var log :Log = Log.getLog(NewBody);
+    public static var log :Log = Log.getLog(MovieClipBody);
 
     /**
-     * Creates a NewBody that will manipulate the supplied MovieClip to animate the avatar. It will
+     * Creates a MovieClipBody that will manipulate the supplied MovieClip to animate the avatar. It will
      * use the supplied control to adjust the avatar's attachment to the floor (hotspot). The
-     * caller should attach the supplied media to the display hierarchy, the NewBody will simply
+     * caller should attach the supplied media to the display hierarchy, the MovieClipBody will simply
      * select scenes in the supplied MovieClip.
      *
      * @param width the width of the "stage" on which your MovieClip was built.
      * @param height the height above the hotspot identifier to display the avatar's name.
      */
-    public function NewBody (ctrl :AvatarControl, media :MovieClip, width :int, height :int = -1)
+    public function MovieClipBody (ctrl :AvatarControl, media :MovieClip, width :int, height :int = -1)
     {
         // register to hear when we start and stop walking
         _ctrl = ctrl;
@@ -150,7 +150,7 @@ public class NewBody
     }
 
     /**
-     * Cleans up after our NewBody, unregistering listeners, etc. Your subclass
+     * Cleans up after our MovieClipBody, unregistering listeners, etc. Your subclass
      * should also stop any timers, or do anything else needed.
      */
     public function shutdown () :void
