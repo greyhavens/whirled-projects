@@ -15,7 +15,8 @@ public class TipFactory
 
     public static const NUM_TIPS :int = 6;
 
-    public function createTip (type :int, owner :SceneObject) :SimObjectRef
+    public function createTip (type :int, owner :SceneObject, followsOwner :Boolean = true)
+        :SimObjectRef
     {
         // Have we already displayed this tip enough?
         if (MAX_TIP_COUNT[type] >= 0 && _tipCounts[type] >= MAX_TIP_COUNT[type]) {
@@ -38,7 +39,7 @@ public class TipFactory
             }
         }
 
-        var tip :Tip = new Tip(type, owner);
+        var tip :Tip = new Tip(type, owner, followsOwner);
         tip.offset.x = -tip.width * 0.5;
         tip.offset.y = -tip.height - 10;
         GameCtx.gameMode.addSceneObject(tip, GameCtx.uiLayer);
@@ -90,11 +91,12 @@ class Tip extends SceneObject
 {
     public var offset :Vector2 = new Vector2();
 
-    public function Tip (type :int, owner :SceneObject)
+    public function Tip (type :int, owner :SceneObject, followsOwner :Boolean)
     {
         _type = type;
         _tf = createTipText(type);
         _ownerRef = owner.ref;
+        _followsOwner = followsOwner;
 
         if (_ownerRef.isNull) {
             throw new Error("Tip owner isn't in an ObjectDB");
@@ -121,15 +123,6 @@ class Tip extends SceneObject
         return _tf;
     }
 
-    /*override public function getObjectGroup (groupNum :int) :String
-    {
-        switch (groupNum) {
-        case 0:     return "Tip";
-        case 1:     return "Tip_" + _type;
-        default:    return super.getObjectGroup(groupNum - 2);
-        }
-    }*/
-
     override public function get objectName () :String
     {
         return "Tip";
@@ -150,19 +143,24 @@ class Tip extends SceneObject
             return;
         }
 
-        _lifeTime += dt;
+        // Reposition the tip to be near its owner if the tip was just created, or if
+        // _followsOwner is true
+        if (_followsOwner || _lifeTime == 0) {
+            var loc :Point = owner.displayObject.parent.localToGlobal(new Point(owner.x, owner.y));
+            loc.x += offset.x;
+            loc.y += offset.y;
+            loc = this.displayObject.parent.globalToLocal(loc);
+            this.x = loc.x;
+            this.y = loc.y;
+        }
 
-        var loc :Point = owner.displayObject.parent.localToGlobal(new Point(owner.x, owner.y));
-        loc.x += offset.x;
-        loc.y += offset.y;
-        loc = this.displayObject.parent.globalToLocal(loc);
-        this.x = loc.x;
-        this.y = loc.y;
+        _lifeTime += dt;
     }
 
     protected var _type :int;
     protected var _tf :TextField;
     protected var _ownerRef :SimObjectRef;
+    protected var _followsOwner :Boolean;
     protected var _lifeTime :Number = 0;
 
     protected static const MIN_TIME :Number = 2;

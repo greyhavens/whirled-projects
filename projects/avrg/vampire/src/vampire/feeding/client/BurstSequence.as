@@ -30,7 +30,7 @@ public class BurstSequence extends SceneObject
 
     override protected function addedToDB () :void
     {
-        GameCtx.tipFactory.createTip(TipFactory.CASCADE, this);
+        GameCtx.tipFactory.createTip(TipFactory.CASCADE, this, false);
     }
 
     override public function get displayObject () :DisplayObject
