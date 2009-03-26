@@ -30,14 +30,13 @@ public class LobbyMode extends AppMode
         registerListener(ClientCtx.props, ElementChangedEvent.ELEMENT_CHANGED, onPropChanged);
 
         _panelMovie = ClientCtx.instantiateMovieClip("blood", "popup_panel");
-        _panelMovie.x = 300;
-        _panelMovie.y = 200;
         _modeSprite.addChild(_panelMovie);
 
         var contents :MovieClip = _panelMovie["draggable"];
 
         // Make the lobby draggable
         addObject(new RoomDragger(ClientCtx.gameCtrl, contents, _panelMovie));
+        //ClientCtx.centerInRoom(_panelMovie);
 
         // Instructions
         var instructions0 :MovieClip = contents["instructions_basic"];
@@ -136,9 +135,9 @@ public class LobbyMode extends AppMode
         }
 
         var tfScore :TextField = preyInfo["player_score"];
-        if (this.isPostRoundLobby && !ClientCtx.preyIsAi) {
+        if (tfName.visible && this.isPostRoundLobby && !ClientCtx.preyIsAi) {
             tfScore.visible = true;
-            tfScore.text = String(_results.scores.get(ClientCtx.preyId));
+            tfScore.text = String(int(_results.scores.get(ClientCtx.preyId)));
         } else {
             tfScore.visible = false;
         }

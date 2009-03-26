@@ -186,6 +186,9 @@ public class GameMode extends AppMode
 
         // Add draggability
         addObject(new RoomDragger(ClientCtx.gameCtrl, GameCtx.bgLayer, gameParent));
+
+        // Center the game in the room
+        ClientCtx.centerInRoom(gameParent);
     }
 
     override protected function enter () :void

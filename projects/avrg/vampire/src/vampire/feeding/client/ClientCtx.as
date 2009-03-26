@@ -9,7 +9,9 @@ import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Bitmap;
+import flash.display.DisplayObject;
 import flash.display.MovieClip;
+import flash.geom.Rectangle;
 import flash.utils.getTimer;
 
 import vampire.feeding.*;
@@ -49,6 +51,19 @@ public class ClientCtx
         aiPreyName = null;
         awardedTrophies = new HashSet();
         lastRoundResults = null;
+    }
+
+    public static function centerInRoom (disp :DisplayObject) :void
+    {
+        if (isConnected) {
+            var roomBounds :Rectangle = gameCtrl.local.getPaintableArea(false);
+            if (roomBounds != null) {
+                var objBounds :Rectangle = disp.getBounds(disp);
+                disp.x = objBounds.x + ((roomBounds.width - objBounds.width) * 0.5);
+                disp.y = objBounds.y + ((roomBounds.height - objBounds.height) * 0.5);
+                BloodBloom.log.info("centerInRoom", "roomBounds", roomBounds, "objBounds", objBounds, "x", disp.x, "y", disp.y);
+            }
+        }
     }
 
     public static function awardTrophySequence (trophyNames :Array, valueRequirements :Array,

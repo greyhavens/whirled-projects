@@ -21,6 +21,8 @@ import vampire.feeding.net.*;
 
 public class BloodBloom extends FeedingClient
 {
+    public static var log :Log = Log.getLog(BloodBloom);
+
     public static function init (hostSprite :Sprite, gameCtrl :AVRGameControl) :void
     {
         if (_inited) {
@@ -255,7 +257,6 @@ public class BloodBloom extends FeedingClient
     protected static var _inited :Boolean;
     protected static var _sg :SimpleGame;
     protected static var _resourcesLoaded :Boolean;
-    protected static var log :Log = Log.getLog(BloodBloom);
 
     [Embed(source="../../../../rsrc/feeding/blood.swf", mimeType="application/octet-stream")]
     protected static const SWF_BLOOD :Class;
