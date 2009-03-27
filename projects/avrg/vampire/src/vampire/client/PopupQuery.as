@@ -7,6 +7,7 @@ import com.whirled.contrib.simplegame.objects.DraggableObject;
 import com.whirled.contrib.simplegame.objects.Dragger;
 
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
@@ -90,6 +91,17 @@ public class PopupQuery extends DraggableObject
                                                 );
         _draggableSprite.graphics.endFill();
         _displaySprite.addChildAt(_buttonPanelSprite, _displaySprite.numChildren);
+    }
+
+    override protected function update(dt:Number) :void
+    {
+        //Make sure the popup is always on top.
+        var parent :DisplayObjectContainer = _displaySprite.parent;
+        if (parent != null) {
+            if (parent.getChildIndex(_displaySprite) != parent.numChildren - 1) {
+                 parent.setChildIndex(_displaySprite, parent.numChildren - 1);
+            }
+        }
     }
 
     override public function get objectName () :String

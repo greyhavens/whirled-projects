@@ -153,6 +153,7 @@ package vampire.client
                     gotoFrame("lineage");
                 });
 
+            removeExtraHelpPanels();
             gotoFrame(startframe);
 
             ClientContext.centerOnViewableRoom(displayObject);

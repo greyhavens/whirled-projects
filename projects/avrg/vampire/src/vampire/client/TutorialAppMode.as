@@ -124,7 +124,13 @@ public class TutorialAppMode extends AppMode
         ClientContext.gameMode.ctx.mainLoop.addUpdatable(this);
         ClientContext.gameMode.modeSprite.addChild(this.modeSprite);
         _active = true;
-        setPage(_currentPage);
+        if (_currentChapter == CHAPTER_END) {
+            _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
+            setPage(PAGE_CLICK_HUD_FEED );
+        }
+        else {
+            setPage(_currentPage);
+        }
     }
 
 
@@ -282,9 +288,10 @@ public class TutorialAppMode extends AppMode
 
     protected function chapterEnd () :void
     {
-        if (_currentPage != PAGE_FINALE) {
+        if (_currentPage != PAGE_END) {
             setPage(PAGE_FINALE);
         }
+        deactivateTutorial();
     }
 
     protected function updateTargetingRecticleInHUD (buttonName :String) :void
@@ -413,8 +420,8 @@ public class TutorialAppMode extends AppMode
         var reticle :MovieClip =
             ClientContext.instantiateMovieClip("HUD", "reticle", true) as MovieClip;
 
-        var glow :GlowFilter = new GlowFilter(0xD5EBF2);
-        reticle.filters = [glow];
+//        var glow :GlowFilter = new GlowFilter(0xD5EBF2);
+//        reticle.filters = [glow];
 
         return reticle;
     }
@@ -516,7 +523,9 @@ public class TutorialAppMode extends AppMode
     public function clickedVWButtonCloseHelp () :void
     {
         if (_currentChapter == CHAPTER_NAVIGATING_THE_GUI) {
-            setPage(PAGE_CLICK_VW);
+            resetTargets();
+            _currentChapter = CHAPTER_END;
+            deactivateTutorial();
         }
     }
 
@@ -602,6 +611,8 @@ public class TutorialAppMode extends AppMode
 
     public static const CHAPTER_END :String = "Chapter: End";
     public static const PAGE_FINALE :String = "Final";
+
+    public static const PAGE_END :String = "End";
 
     public static const TUTORIAL_ACTIONS :Array = [
         [PAGE_NOONE_IN_ROOM, "There's no one here to feed upon, but your \"Me\" tab has convenient links to friendly players..."],
