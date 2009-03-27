@@ -12,6 +12,9 @@ public class VConstants
     //ubervamp localhost == 12
     //ubervamp dev.whirled == 1877
 
+    public static const FEEDING_ROUNDS_TO_FORM_BLOODBOND :int = 6;
+
+
     /**This is like a radius in logical distance units.*/
     public static const FEEDING_LOGICAL_X_OFFSET :Number = 0.1;
     public static const FEEDING_LOGICAL_Z_OFFSET :Number = 0.01;
@@ -28,13 +31,13 @@ public class VConstants
 
 //    public static const TIME_FEEDBACK_MESSAGE_DISPLAY :Number = 4;
 
-    public static const BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME :int = 10;
+//    public static const BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME :int = 10;
 
-    public static const NON_PLAYER_TIMEOUT :Number = 20;
+//    public static const NON_PLAYER_TIMEOUT :Number = 20;
 
-    public static const CHAT_FEEDING_MIN_CHATS_PER_TIME_INTERVAL :int = 3;
+//    public static const CHAT_FEEDING_MIN_CHATS_PER_TIME_INTERVAL :int = 3;
 
-    public static const CHAT_FEEDING_TIME_INTERVAL_MILLISECS :int = 60000;//A minute
+//    public static const CHAT_FEEDING_TIME_INTERVAL_MILLISECS :int = 60000;//A minute
 
 
 
