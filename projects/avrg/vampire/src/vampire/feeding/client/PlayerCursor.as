@@ -45,44 +45,44 @@ public class PlayerCursor extends CollidableObj
     {
         super.update(dt);
 
-        // update location
-        var curLoc :Vector2 = this.loc;
-        var moveDist :Number = Constants.CURSOR_SPEED * dt;
-        curLoc.x += (_moveDirection.x * moveDist);
-        curLoc.y += (_moveDirection.y * moveDist);
-        curLoc = GameCtx.clampLoc(curLoc);
-
-        // collide with cells
         if (!GameCtx.gameOver) {
+            // update location
+            var curLoc :Vector2 = this.loc;
+            var moveDist :Number = Constants.CURSOR_SPEED * dt;
+            curLoc.x += (_moveDirection.x * moveDist);
+            curLoc.y += (_moveDirection.y * moveDist);
+            curLoc = GameCtx.clampLoc(curLoc);
+
+            // collide with cells
             handleCollisions(curLoc);
-        }
 
-        // rotate towards our move direction
-        if (!curLoc.similar(_lastLoc, 0.5)) {
-            // rotate towards our move direction. 0 degrees == straight down
-            var targetRotation :Number =
-                -90 + ((curLoc.subtract(_lastLoc).angle) * (180 / Math.PI));
+            // rotate towards our move direction
+            if (!curLoc.similar(_lastLoc, 0.5)) {
+                // rotate towards our move direction. 0 degrees == straight down
+                var targetRotation :Number =
+                    -90 + ((curLoc.subtract(_lastLoc).angle) * (180 / Math.PI));
 
-            var curRotation :Number = this.rotation;
-            if (targetRotation - curRotation > 180) {
-                targetRotation -= 360;
-            } else if (targetRotation - curRotation < -180) {
-                targetRotation += 360;
+                var curRotation :Number = this.rotation;
+                if (targetRotation - curRotation > 180) {
+                    targetRotation -= 360;
+                } else if (targetRotation - curRotation < -180) {
+                    targetRotation += 360;
+                }
+
+                addNamedTask(
+                    "Rotate",
+                    RotationTask.CreateEaseOut(
+                        targetRotation,
+                        Math.abs((targetRotation % 360) - curRotation) / ROTATE_SPEED),
+                    true);
+
             }
 
-            addNamedTask(
-                "Rotate",
-                RotationTask.CreateEaseOut(
-                    targetRotation,
-                    Math.abs((targetRotation % 360) - curRotation) / ROTATE_SPEED),
-                true);
+            _lastLoc = curLoc.clone();
 
+            this.x = curLoc.x;
+            this.y = curLoc.y;
         }
-
-        _lastLoc = curLoc.clone();
-
-        this.x = curLoc.x;
-        this.y = curLoc.y;
     }
 
     protected function handleCollisions (curLoc :Vector2) :void
