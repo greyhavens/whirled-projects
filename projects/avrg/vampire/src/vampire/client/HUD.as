@@ -457,7 +457,7 @@ public class HUD extends SceneObject
         if( _feedbackMessageQueue.length > 0 ){
             for each( var msg :String in _feedbackMessageQueue) {
                 if (msg.substr(0, Codes.POPUP_PREFIX.length) == Codes.POPUP_PREFIX) {
-                    ClientContext.controller.handleShowPopupMessage("",
+                    ClientContext.controller.handleShowPopupMessage("ServerPopup",
                         msg.substring(Codes.POPUP_PREFIX.length));
                 }
                 else {

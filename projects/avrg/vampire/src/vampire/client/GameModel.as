@@ -457,6 +457,8 @@ public class GameModel extends SimObject//EventDispatcher
 //            log.debug(Constants.DEBUG_MINION + " elementChanged", "e", e, "_hierarchy", _hierarchy);
 
             dispatchEvent( new LineageUpdatedEvent( _lineage ) );
+
+            trace(Codes.ROOM_PROP_MINION_HIERARCHY + " updated, lineage now=" + _lineage);
             return;
         }
 

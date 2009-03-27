@@ -472,10 +472,16 @@ public class VampireController extends Controller
     {
         var popup :PopupQuery = new PopupQuery(name, msg);
         var mode :AppMode = ClientContext.gameMode;
-        if( mode.getObjectNamed( popup.objectName) == null) {
-            mode.addSceneObject( popup, mode.modeSprite );
-            ClientContext.animateEnlargeFromMouseClick(popup);
+
+        if (mode.getObjectNamed( popup.objectName) != null) {
+            mode.getObjectNamed( popup.objectName).destroySelf();
         }
+
+//        if( mode.getObjectNamed( popup.objectName) == null) {
+        mode.addSceneObject(popup, mode.modeSprite);
+        ClientContext.centerOnViewableRoom(popup.displayObject);
+        ClientContext.animateEnlargeFromMouseClick(popup);
+//        }
     }
 
     public function handleAcceptFeedRequest (playerId :int) :void

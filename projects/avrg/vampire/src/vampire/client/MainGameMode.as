@@ -60,34 +60,34 @@ public class MainGameMode extends AppMode
         ClientContext.controller.handleShowIntro("intro");
 
     }
-
-    /**
-    * Currently not used, since non-player blood is currently no longer monitored on the server.
-    *
-    */
-    protected function updateNonPlayerIds(...ignored ) :void
-    {
-        if( _currentNonPlayerIds == null ) {
-            _currentNonPlayerIds = new Array();
-        }
-
-        var npIds :Array = ClientContext.getNonPlayerIds();
-        npIds.sort();
-
-        var roomId :int = ClientContext.ctrl.room.getRoomId();
-
-        if( !ArrayUtil.equals( _currentNonPlayerIds, npIds ) ) {
-            var msg :NonPlayerIdsInRoomMsg = new NonPlayerIdsInRoomMsg(
-                ClientContext.ourPlayerId, npIds, roomId );
-    //        log.debug("Sending " + msg);
-            ClientContext.ctrl.agent.sendMessage( msg.name, msg.toBytes() );
-            _currentNonPlayerIds = npIds;
-        }
-
-
-
-//        trace( ClientContext.ourPlayerId + " our inviter=" + ClientContext.ctrl.local.getInviterMemberId());
-    }
+//
+//    /**
+//    * Currently not used, since non-player blood is currently no longer monitored on the server.
+//    *
+//    */
+//    protected function updateNonPlayerIds(...ignored ) :void
+//    {
+//        if( _currentNonPlayerIds == null ) {
+//            _currentNonPlayerIds = new Array();
+//        }
+//
+//        var npIds :Array = ClientContext.getNonPlayerIds();
+//        npIds.sort();
+//
+//        var roomId :int = ClientContext.ctrl.room.getRoomId();
+//
+//        if( !ArrayUtil.equals( _currentNonPlayerIds, npIds ) ) {
+//            var msg :NonPlayerIdsInRoomMsg = new NonPlayerIdsInRoomMsg(
+//                ClientContext.ourPlayerId, npIds, roomId );
+//    //        log.debug("Sending " + msg);
+//            ClientContext.ctrl.agent.sendMessage( msg.name, msg.toBytes() );
+//            _currentNonPlayerIds = npIds;
+//        }
+//
+//
+//
+////        trace( ClientContext.ourPlayerId + " our inviter=" + ClientContext.ctrl.local.getInviterMemberId());
+//    }
 
     override protected function setup() :void
     {
@@ -105,21 +105,21 @@ public class MainGameMode extends AppMode
 
             var lineage :Lineage = new Lineage();
                 lineage.setPlayerSire(1, 2);
-                lineage.setPlayerSire(3, 1);
-                lineage.setPlayerSire(4, 1);
-                lineage.setPlayerSire(5, 1);
-                lineage.setPlayerSire(6, 5);
-                lineage.setPlayerSire(7, 6);
-                lineage.setPlayerSire(8, 6);
-                lineage.setPlayerSire(9, 1);
-                lineage.setPlayerSire(10, 1);
-                lineage.setPlayerSire(11, 1);
-                lineage.setPlayerSire(12, 1);
-                lineage.setPlayerSire(13, 1);
-                lineage.setPlayerSire(14, 1);
+//                lineage.setPlayerSire(3, 1);
+//                lineage.setPlayerSire(4, 1);
+//                lineage.setPlayerSire(5, 1);
+//                lineage.setPlayerSire(6, 5);
+//                lineage.setPlayerSire(7, 6);
+//                lineage.setPlayerSire(8, 6);
+//                lineage.setPlayerSire(9, 1);
+//                lineage.setPlayerSire(10, 1);
+//                lineage.setPlayerSire(11, 1);
+//                lineage.setPlayerSire(12, 1);
+//                lineage.setPlayerSire(13, 1);
+//                lineage.setPlayerSire(14, 1);
             var msg :LineageUpdatedEvent = new LineageUpdatedEvent(lineage, ClientContext.ourPlayerId);
             ClientContext.model.lineage = lineage;
-            ClientContext.model.dispatchEvent( msg );
+            ClientContext.model.dispatchEvent(msg);
         }
 
 
