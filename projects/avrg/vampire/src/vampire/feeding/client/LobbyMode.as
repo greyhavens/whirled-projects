@@ -1,5 +1,6 @@
 package vampire.feeding.client {
 
+import com.threerings.flash.TextFieldUtil;
 import com.whirled.contrib.avrg.RoomDragger;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.net.ElementChangedEvent;
@@ -104,13 +105,16 @@ public class LobbyMode extends AppMode
         } else {
             _startButton.visible = false;
             _tfStatus.visible = true;
+            var leaderName :String = ClientCtx.getPlayerName(ClientCtx.lobbyLeaderId);
             if (ClientCtx.playerIds.length == 1) {
                 _tfStatus.text = "All Feeders have left";
             } else if (this.isPreGameLobby) {
-                _tfStatus.text = "Waiting for the Leader to start feeding";
+                _tfStatus.text = "Waiting for " + leaderName + " to start feeding";
             } else {
-                _tfStatus.text = "Waiting for the Leader to feed again";
+                _tfStatus.text = "Waiting for " + leaderName + " to feed again";
             }
+
+            TextFieldUtil.setMaximumTextWidth(_tfStatus, _tfStatus.width);
         }
     }
 
