@@ -29,12 +29,10 @@ package vampire.client
 
     public class HelpPopup extends DraggableObject
     {
-        public function HelpPopup( startframe :String = "intro")
+        public function HelpPopup (startframe :String = "intro")
         {
-//            super(ClientContext.ctrl);
-
             _hudHelp = ClientContext.instantiateMovieClip("HUD", "popup_help", false);
-            _displaySprite.addChild( _hudHelp );
+            _displaySprite.addChild(_hudHelp);
 
             _lineageView = new LineageView();
 
@@ -44,121 +42,119 @@ package vampire.client
             _hudHelp.gotoAndStop("intro");
 
             //Wire up the links on the left panel
-            registerListener( SimpleButton(findSafely("to_default")), MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
+            registerListener(SimpleButton(findSafely("to_default")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
                     ClientContext.tutorial.clickedLineage();
                     gotoFrame("default");
                 });
-            registerListener( SimpleButton(findSafely("to_bloodtype")), MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
+            registerListener(SimpleButton(findSafely("to_bloodtype")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
                     ClientContext.tutorial.clickedStrains();
                     gotoFrame("bloodtype");
                 });
-            registerListener( SimpleButton(findSafely("menu_tofeedingonvamps")), MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
-                    gotoFrame("vamps");
+            registerListener(SimpleButton(findSafely("menu_tointro")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
+                    gotoFrame("intro");
                 });
-            registerListener( SimpleButton(findSafely("menu_tofeedinggame")), MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
+            registerListener(SimpleButton(findSafely("menu_tofeedinggame")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
                     gotoFrame("feedinggame");
                 });
-            registerListener( SimpleButton(findSafely("menu_tointro")), MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
-                    destroySelf();
-                    ClientContext.tutorial.activateTutorial();
-//                    gotoFrame("intro");
+            registerListener(SimpleButton(findSafely("menu_toinstructions")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
+                    gotoFrame("instructions");
                 });
+            registerListener(SimpleButton(findSafely("menu_toblood")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
+                    gotoFrame("blood");
+                });
+            registerListener(SimpleButton(findSafely("menu_tovamps")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
+                    gotoFrame("vamps");
+                });
+            registerListener(SimpleButton(findSafely("menu_tolineage")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
+                    gotoFrame("lineage");
+                });
+            registerListener(SimpleButton(findSafely("menu_tobloodbond")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
+                    gotoFrame("bloodbond");
+                });
+
+
 
 
             //Wire up the buttons
-            registerListener( SimpleButton(findSafely("button_tofeedinggame")), MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
+            registerListener(SimpleButton(findSafely("button_toinstructions")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
+                    gotoFrame("instructions");
+                });
+
+            registerListener(SimpleButton(findSafely("button_tofeedinggame")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
                     gotoFrame("feedinggame");
                 });
-            registerListener( SimpleButton(findSafely("button_tolineage")), MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
+            registerListener(SimpleButton(findSafely("button_tolineage")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
                     gotoFrame("lineage");
                 });
-            registerListener( SimpleButton(findSafely("button_tovamps")), MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
+            registerListener(SimpleButton(findSafely("button_tovamps")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
                     gotoFrame("vamps");
                 });
-            registerListener( SimpleButton(findSafely("button_totutorial")), MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
+            registerListener(SimpleButton(findSafely("button_totutorial")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
                     destroySelf();
                     ClientContext.tutorial.activateTutorial();
                 });
-            registerListener( SimpleButton(findSafely("button_tobloodbond")), MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
+            registerListener(SimpleButton(findSafely("button_tobloodbond")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
                     gotoFrame("bloodbond");
                 });
-            registerListener( SimpleButton(findSafely("button_tobloodtype")), MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
+            registerListener(SimpleButton(findSafely("button_tobloodtype")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
                     gotoFrame("bloodtype");
                 });
-            registerListener( SimpleButton(findSafely("button_toinstructions")), MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
-                    gotoFrame("instructions");
-                });
-            registerListener( SimpleButton(findSafely("help_close")), MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
+            registerListener(SimpleButton(findSafely("help_close")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
                     destroySelf();
                 });
-            registerListener( SimpleButton(findSafely("button_recruit")), MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
+            registerListener(SimpleButton(findSafely("button_recruit")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
                     ClientContext.tutorial.clickedRecruit();
                     ClientContext.ctrl.local.showInvitePage("Join my Coven!", "" + ClientContext.ourPlayerId);
                 });
 
-            registerListener( SimpleButton(findSafely("button_torecruiting")), MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
+            registerListener(SimpleButton(findSafely("button_torecruiting")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
                     ClientContext.tutorial.clickedRecruit();
                     ClientContext.ctrl.local.showInvitePage("Join my Coven!", "" + ClientContext.ourPlayerId);
                 });
 
-            registerListener( SimpleButton(findSafely("help_back")), MouseEvent.CLICK,
+            registerListener(SimpleButton(findSafely("help_back")), MouseEvent.CLICK,
                 backButtonPushed);
 
             _bondTextAnchor = findSafely("text_bloodbond") as TextField;
             _bloodbondIconAnchor = findSafely("bond_icon");
-            registerListener( ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+            registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
             _infoTextAnchor = findSafely("text_blood") as TextField;
 
             _getSiresButton = findSafely("link_tovamps") as SimpleButton;
             _getMinionsButton = findSafely("link_tolineage") as SimpleButton;
 
-            registerListener( _getSiresButton, MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
+            registerListener(_getSiresButton, MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
                     ClientContext.tutorial.clickedBlood();
                     gotoFrame("vamps");
                 });
-            registerListener( _getMinionsButton, MouseEvent.CLICK,
-                function( e :MouseEvent ) :void {
+            registerListener(_getMinionsButton, MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
                     ClientContext.tutorial.clickedBuildLineage();
                     gotoFrame("lineage");
                 });
 
-            gotoFrame(startframe );
+            gotoFrame(startframe);
 
-
-            //Listen for changes to the Lineage.  We will need to redraw the Lineage view.
-//            registerListener(ClientContext.model, HierarchyUpdatedEvent.HIERARCHY_UPDATED,
-//                function(...ignored) :void {
-//                    if( _hudHelp.currentLabel == "default" ) {
-//                        gotoFrame("default");
-//                    }
-//                });
-
-            //Listen for changes to the blood or xp or bloodbonded
-//            registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED,
-//                function(e :ElementChangedEvent) :void {
-//                    if( e.name == ClientContext.ourRoomKey && _hudHelp.currentLabel == "default") {
-//                        gotoFrame("default");
-//                    }
-//                });
-
-//            init( new Rectangle(-_displaySprite.width/2, -_displaySprite.height/2, _displaySprite.width, _displaySprite.height), 0, 0, 0, 100);
-//            centerOnViewableRoom();
             ClientContext.centerOnViewableRoom(displayObject);
         }
 
@@ -170,65 +166,65 @@ package vampire.client
 
         protected function elementChanged (e :ElementChangedEvent) :void
         {
-            var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
+            var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
 
-            if( playerIdUpdated == ClientContext.ourPlayerId) {
+            if (playerIdUpdated == ClientContext.ourPlayerId) {
 
-                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED
+                if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED
                     || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME) {
                     showBloodBonded();
                 }
             }
         }
 
-        protected function showBloodBonded() :void
+        protected function showBloodBonded () :void
         {
-            if( ClientContext.model.bloodbonded <= 0 ) {
+            if (ClientContext.model.bloodbonded <= 0) {
                 return;
             }
             redoBloodBondText(ClientContext.model.bloodbondedName);
         }
 
 
-        protected function addGlowFilter( obj : InteractiveObject ) :void
+        protected function addGlowFilter (obj : InteractiveObject) :void
         {
-            registerListener( obj, MouseEvent.ROLL_OVER, function(...ignored) :void {
+            registerListener(obj, MouseEvent.ROLL_OVER, function(...ignored) :void {
                 obj.filters = [_glowFilter];
             });
-            registerListener( obj, MouseEvent.ROLL_OUT, function(...ignored) :void {
+            registerListener(obj, MouseEvent.ROLL_OUT, function(...ignored) :void {
                 obj.filters = [];
             })
         }
 
 
-        protected function updateBloodStrainPage() :void
+        protected function updateBloodStrainPage () :void
         {
             var feedingData :PlayerFeedingData = ClientContext.model.playerFeedingData;
-            if( feedingData == null ) {
+            if (feedingData == null) {
                 log.error("updateBloodStrainPage, feedingData == null");
                 return;
             }
             while(_bloodTypeOverlay.numChildren) { _bloodTypeOverlay.removeChildAt(0);}
 
-            for( var i :int = 1; i < 13; i++) {
+            for(var i :int = 1; i < 13; i++) {
                 var numberAsText :String = String(i);
-                if( numberAsText.length == 1) {
+                if (numberAsText.length == 1) {
                     numberAsText = "0" + numberAsText;
                 }
                 var textFieldName :String = "indicator_" + numberAsText;
 
                 var tf :MovieClip = _hudHelp[textFieldName] as MovieClip;
-                if( tf == null ) {
+                if (tf == null) {
                     log.error(textFieldName + " is null");
                     continue;
                 }
                 tf.gotoAndStop(1);
 
-                if( Logic.getPlayerBloodStrain( ClientContext.ourPlayerId ) == i) {
+                if (Logic.getPlayerBloodStrain(ClientContext.ourPlayerId) == i) {
                     tf.gotoAndStop(3);
                 }
 
-//                if( Logic.getPlayerPreferredBloodStrain( ClientContext.ourPlayerId ) == i) {
+//                if (Logic.getPlayerPreferredBloodStrain(ClientContext.ourPlayerId) == i) {
 //                    tf.gotoAndStop(2);
 //                }
 
@@ -236,7 +232,7 @@ package vampire.client
                 var tally :TextField = TextField(tf["tally"]);
 
                 var replacementTextField :TextField = new TextField();
-                replacementTextField.text = feedingData.getStrainCount( i - 1 ) + " / " + Constants.MAX_COLLECTIONS_PER_STRAIN;
+                replacementTextField.text = feedingData.getStrainCount(i - 1) + " / " + Constants.MAX_COLLECTIONS_PER_STRAIN;
                 replacementTextField.x = tally.x;
                 replacementTextField.y = tally.y;
                 replacementTextField.textColor = 0xffffff;
@@ -246,8 +242,8 @@ package vampire.client
                 format.color = 0xffffff;
                 format.align = TextFormatAlign.LEFT;
                 format.bold = true;
-                replacementTextField.setTextFormat( format );
-                tf.addChild( replacementTextField);
+                replacementTextField.setTextFormat(format);
+                tf.addChild(replacementTextField);
 
 
                 var starsignTextField :TextField = new TextField();
@@ -260,47 +256,29 @@ package vampire.client
                 starSignformat.color = 0xffffff;
                 starSignformat.align = TextFormatAlign.RIGHT;
                 starSignformat.bold = true;
-                starsignTextField.setTextFormat( starSignformat );
-                tf.addChild( starsignTextField);
+                starsignTextField.setTextFormat(starSignformat);
+                tf.addChild(starsignTextField);
             }
         }
 
-        override public function destroySelf():void
+        override public function destroySelf ():void
         {
             super.destroySelf();
-            if( _lineageView != null && _lineageView.isLiveObject ) {
+            if (_lineageView != null && _lineageView.isLiveObject) {
                 _lineageView.destroySelf();
 
             }
             ClientContext.tutorial.clickedVWButtonCloseHelp();
         }
 
-        override protected function addedToDB():void
+        override protected function addedToDB ():void
         {
             super.addedToDB();
-            db.addObject( _lineageView );
-            if( _hudHelp.currentFrame == 2 ) {
-                _hudHelp.addChild( _lineageView.displayObject );
+            db.addObject(_lineageView);
+            if (_hudHelp.currentFrame == 2) {
+                _hudHelp.addChild(_lineageView.displayObject);
             }
         }
-
-
-//        protected function getFullCellSprite() :DisplayObject
-//        {
-//            var s :Shape = new Shape();
-//            s.graphics.beginFill(0);
-//            s.graphics.drawCircle(0, 0, 10 );
-//            s.graphics.endFill();
-//            return s;
-//        }
-//
-//        protected function getEmptyCellSprite() :DisplayObject
-//        {
-//            var s :Shape = new Shape();
-//            s.graphics.lineStyle(1);
-//            s.graphics.drawCircle(0, 0, 10 );
-//            return s;
-//        }
 
         public function findSafely (name :String) :DisplayObject
         {
@@ -311,71 +289,71 @@ package vampire.client
             return o;
         }
 
-        protected function removeExtraHelpPanels() :void
+        protected function removeExtraHelpPanels () :void
         {
-            if( _hudHelp.contains( _bloodTypeOverlay ) ) {
-                _hudHelp.removeChild( _bloodTypeOverlay );
+            if (_hudHelp.contains(_bloodTypeOverlay)) {
+                _hudHelp.removeChild(_bloodTypeOverlay);
             }
 
-            if( _hudHelp.contains( _lineageView.displayObject ) ) {
-                _hudHelp.removeChild( _lineageView.displayObject );
+            if (_hudHelp.contains(_lineageView.displayObject)) {
+                _hudHelp.removeChild(_lineageView.displayObject);
             }
 
-            if( _bondText != null && _bondText.parent != null
+            if (_bondText != null && _bondText.parent != null
                 && _bondText.parent.contains(_bondText)) {
 
-                _bondText.parent.removeChild( _bondText );
+                _bondText.parent.removeChild(_bondText);
             }
 
-            if( _infoText != null && _infoText.parent != null) {
-                _infoText.parent.removeChild( _infoText );
+            if (_infoText != null && _infoText.parent != null) {
+                _infoText.parent.removeChild(_infoText);
             }
 
 
         }
 
-        public function gotoFrame( frame :String, addFrameToHistory :Boolean = true ) :void
+        public function gotoFrame (frame :String, addFrameToHistory :Boolean = true) :void
         {
-            if( frame == null) {
+            if (frame == null) {
                 frame = "default";
             }
 
-            if( addFrameToHistory && (_frameHistory.length == 0 || _frameHistory[ _frameHistory.length - 1] != _hudHelp.currentLabel)) {
-                _frameHistory.push( _hudHelp.currentLabel );
+            if (addFrameToHistory && (_frameHistory.length == 0 || _frameHistory[ _frameHistory.length - 1] != _hudHelp.currentLabel)) {
+                _frameHistory.push(_hudHelp.currentLabel);
             }
             _hudHelp.gotoAndStop(frame);
 
             removeExtraHelpPanels();
 
-            switch( frame ) {
+            switch(frame) {
                 case "bloodtype":
                     updateBloodStrainPage();
-                    _hudHelp.addChild( _bloodTypeOverlay );
+                    _hudHelp.addChild(_bloodTypeOverlay);
                     break;
                 case "default":
 
                     //Center the lineage view on the anchor created for it.
                     var lineage_center :MovieClip = findSafely("lineage_center") as MovieClip;
-                    lineage_center.parent.addChild( _lineageView.displayObject );
+                    lineage_center.parent.addChild(_lineageView.displayObject);
                     _lineageView.x = lineage_center.x;
                     _lineageView.y = lineage_center.y;// - 20;
 
                     //Add the clickable, glowable bloodbond icon
                     var bloodbondIcon :MovieClip = ClientContext.instantiateMovieClip("HUD", "bond_icon", false);
 
-                    registerListener( bloodbondIcon, MouseEvent.CLICK,
-                        function( e :MouseEvent ) :void {
-                            if( bloodbondIcon.parent != null ) {
-                                bloodbondIcon.parent.removeChild( bloodbondIcon );
+                    registerListener(bloodbondIcon, MouseEvent.CLICK,
+                        function (e :MouseEvent) :void {
+                            if (bloodbondIcon.parent != null) {
+                                bloodbondIcon.parent.removeChild(bloodbondIcon);
                             }
                             gotoFrame("bloodbond");
                         });
 
-                    addGlowFilter( bloodbondIcon );
+                    addGlowFilter(bloodbondIcon);
                     bloodbondIcon.scaleX = bloodbondIcon.scaleY = 2;
                     bloodbondIcon.x = _bloodbondIconAnchor.x - bloodbondIcon.width/2;
                     bloodbondIcon.y = _bloodbondIconAnchor.y;
-                    _lineageView.displaySprite.addChild( bloodbondIcon );
+                    _lineageView.displaySprite.addChild(bloodbondIcon);
 
                     //Actually show your blondbond, if you have one
                     showBloodBonded();
@@ -385,7 +363,7 @@ package vampire.client
 
                     //Add the extra help bits for sires and minion recruiting, if relevant
                     //First, if there's no Lineage yet, jsut add the links
-                    if( ClientContext.model.lineage == null ) {
+                    if (ClientContext.model.lineage == null) {
                         _getSiresButton.mouseEnabled = true;
                         _getSiresButton.visible = true;
                         _getMinionsButton.mouseEnabled = true;
@@ -393,7 +371,7 @@ package vampire.client
                     }
                     else {
                         //Check if we need to show the sires link
-                        if( ClientContext.model.lineage.getSireId( ClientContext.ourPlayerId ) == 0
+                        if (ClientContext.model.lineage.getSireId(ClientContext.ourPlayerId) == 0
                             && ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) == 0) {
                             _getSiresButton.mouseEnabled = true;
                             _getSiresButton.visible = true;
@@ -407,7 +385,7 @@ package vampire.client
                             _getMinionsButton.visible = false;
                         }
                         //Check if we need to show the minions link
-//                        if( ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) == 0) {
+//                        if (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) == 0) {
 //                            _getMinionsButton.mouseEnabled = true;
 //                            _getMinionsButton.visible = true;
 //                        }
@@ -422,12 +400,12 @@ package vampire.client
             }
         }
 
-        protected function backButtonPushed(...ignored) :void
+        protected function backButtonPushed (...ignored) :void
         {
-            if( _frameHistory.length > 0) {
+            if (_frameHistory.length > 0) {
                 ClientContext.tutorial.clickedBack();
                 var previousFrame :String = _frameHistory.pop();
-                gotoFrame( previousFrame, false);
+                gotoFrame(previousFrame, false);
             }
         }
 
@@ -450,15 +428,15 @@ package vampire.client
         /**
         * Using the embedded font disallows dynamically changing the text.
         */
-        protected function redoBloodBondText( bloodbondName :String ) :void
+        protected function redoBloodBondText (bloodbondName :String) :void
         {
-            if( bloodbondName == null || bloodbondName == "") {
+            if (bloodbondName == null || bloodbondName == "") {
                 bloodbondName = "No bloodbond yet.";
             }
-            if( _bondText != null && _bondText.parent != null
+            if (_bondText != null && _bondText.parent != null
                 && _bondText.parent.contains(_bondText)) {
 
-                _bondText.parent.removeChild( _bondText );
+                _bondText.parent.removeChild(_bondText);
             }
 
             _bondText = TextFieldUtil.createField(bloodbondName);
@@ -468,23 +446,23 @@ package vampire.client
             _bondText.embedFonts = true;
             var format :TextFormat = getJuiceFormat();
             format.align = TextFormatAlign.LEFT;
-            _bondText.setTextFormat( format );
+            _bondText.setTextFormat(format);
 
             _bondText.antiAliasType = AntiAliasType.ADVANCED;
             _bondText.width = 200;
             _bondText.height = 60;
             _bondText.x = _bondTextAnchor.x;
             _bondText.y = _bondTextAnchor.y - 3;
-            _bondTextAnchor.parent.addChild( _bondText );
+            _bondTextAnchor.parent.addChild(_bondText);
 
 
-            addGlowFilter( _bondText );
+            addGlowFilter(_bondText);
             var bondTextClick :Function = function(...ignored) :void {
                 unregisterListener(_bondText, MouseEvent.CLICK, bondTextClick);
-                _bondText.parent.removeChild( _bondText );
+                _bondText.parent.removeChild(_bondText);
                 gotoFrame("bloodbond");
             }
-            registerListener( _bondText, MouseEvent.CLICK, bondTextClick );
+            registerListener(_bondText, MouseEvent.CLICK, bondTextClick);
 
         }
 
@@ -499,10 +477,10 @@ package vampire.client
             return format;
         }
 
-        protected function createInfoText() :void
+        protected function createInfoText () :void
         {
-            if( _infoText != null && _infoText.parent != null) {
-                _infoText.parent.removeChild( _infoText );
+            if (_infoText != null && _infoText.parent != null) {
+                _infoText.parent.removeChild(_infoText);
             }
 
             var xpNeededForCurrentLevel :Number = Logic.xpNeededForLevel(ClientContext.model.level);
@@ -516,17 +494,12 @@ package vampire.client
 
             var inviteText :String = level >= VConstants.MAXIMUM_VAMPIRE_LEVEL ? "Max Level" :
                 "Your Recruits/Recruits needed for next level: " + ClientContext.model.invites + "/" +
-                    Logic.invitesNeededForLevel( level + 1 );
+                    Logic.invitesNeededForLevel(level + 1);
 
             _infoText.text =
-//                "Blood: " + Util.formatNumberForFeedback(ClientContext.model.blood) + "/"
-//                + ClientContext.model.maxblood
                 "       Level: " + level
                 + "    Experience: " + Util.formatNumberForFeedback(ourXPForOurLevel) + " / " + xpGap + "\n"
-                + inviteText
-                + ""
-                ;
-//                "/" + ClientContext.model.
+                + inviteText;
             _infoText.selectable = false;
             _infoText.tabEnabled = false;
             _infoText.multiline = true;
@@ -535,14 +508,14 @@ package vampire.client
             var format :TextFormat = getJuiceFormat();
             format.align = TextFormatAlign.CENTER;
             format.size = 20;
-            _infoText.setTextFormat( format );
+            _infoText.setTextFormat(format);
 
             _infoText.antiAliasType = AntiAliasType.ADVANCED;
             _infoText.width = 450;
             _infoText.height = 60;
             _infoText.x = _infoTextAnchor.x;
             _infoText.y = _infoTextAnchor.y - 3;
-            _infoTextAnchor.parent.addChild( _infoText );
+            _infoTextAnchor.parent.addChild(_infoText);
         }
 
 
@@ -561,7 +534,7 @@ package vampire.client
         protected var _getMinionsButton :SimpleButton;
 
         public static const NAME :String = "HelpPopup";
-        protected static const log :Log = Log.getLog( HelpPopup );
+        protected static const log :Log = Log.getLog(HelpPopup);
 
         protected var _glowFilter :GlowFilter = new GlowFilter(0xffffff);
         protected var _displaySprite :Sprite = new Sprite();
