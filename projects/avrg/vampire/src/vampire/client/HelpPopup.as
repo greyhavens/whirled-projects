@@ -106,11 +106,13 @@ package vampire.client
                 });
             registerListener( SimpleButton(findSafely("button_recruit")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
+                    ClientContext.tutorial.clickedRecruit();
                     ClientContext.ctrl.local.showInvitePage("Join my Coven!", "" + ClientContext.ourPlayerId);
                 });
 
             registerListener( SimpleButton(findSafely("button_torecruiting")), MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
+                    ClientContext.tutorial.clickedRecruit();
                     ClientContext.ctrl.local.showInvitePage("Join my Coven!", "" + ClientContext.ourPlayerId);
                 });
 
@@ -127,10 +129,12 @@ package vampire.client
 
             registerListener( _getSiresButton, MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
+                    ClientContext.tutorial.clickedBlood();
                     gotoFrame("vamps");
                 });
             registerListener( _getMinionsButton, MouseEvent.CLICK,
                 function( e :MouseEvent ) :void {
+                    ClientContext.tutorial.clickedBuildLineage();
                     gotoFrame("lineage");
                 });
 
@@ -421,6 +425,7 @@ package vampire.client
         protected function backButtonPushed(...ignored) :void
         {
             if( _frameHistory.length > 0) {
+                ClientContext.tutorial.clickedBack();
                 var previousFrame :String = _frameHistory.pop();
                 gotoFrame( previousFrame, false);
             }
