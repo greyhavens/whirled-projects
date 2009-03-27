@@ -406,6 +406,7 @@ public class VampireController extends Controller
 
             if (ClientContext.gameMode.getObjectNamed(popup.objectName) == null) {
                 ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
+                ClientContext.centerOnViewableRoom(popup.displayObject);
                 ClientContext.animateEnlargeFromMouseClick(popup);
             }
         }
