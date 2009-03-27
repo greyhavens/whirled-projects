@@ -101,7 +101,7 @@ public class TutorialAppMode extends AppMode
 
         _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
         if (VConstants.LOCAL_DEBUG_MODE) {
-//            _currentChapter = CHAPTER_NAVIGATING_THE_GUI;
+            _currentChapter = CHAPTER_NAVIGATING_THE_GUI;
         }
 
         setPage(PAGE_NOONE_IN_ROOM);
@@ -159,6 +159,10 @@ public class TutorialAppMode extends AppMode
             chapterGUINavigation();
             break;
 
+            case CHAPTER_END:
+            chapterEnd();
+            break;
+
             default:
             break;
         }
@@ -171,20 +175,56 @@ public class TutorialAppMode extends AppMode
             break;
 
             case PAGE_CLICK_STRAINS:
-            updateStrainButton();
+            updateTargetingRecticleInHUD("to_bloodtype");
             break;
 
             case PAGE_CLICK_LINEAGE:
-            updateLineageButton();
+            updateTargetingRecticleInHUD("to_default");
             break;
 
             case PAGE_CLICK_BUILD_LINEAGE:
-            updateBuildLineageButton();
+            updateTargetingRecticleInHUD("link_tolineage");
+            if (ClientContext.model != null && ClientContext.model.lineage != null &&
+                (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) > 0 ||
+                ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId))) {
+
+                setPage(PAGE_CLICK_RECRUIT);
+            }
             break;
 
+            case PAGE_CLICK_RECRUIT:
+            updateTargetingRecticleInHUD("button_torecruiting");
+            updateTargetingRecticleInHUD("button_recruit");
+            break;
+
+            case PAGE_CLICK_BACK:
+            updateTargetingRecticleInHUD("help_back");
+            if (ClientContext.model != null && ClientContext.model.lineage != null &&
+                (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) > 0 ||
+                ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId))) {
+
+                setPage(PAGE_FINALE);
+            }
+            break;
+
+            case PAGE_CLICK_BLOOD:
+            updateTargetingRecticleInHUD("link_tovamps");
+            if (ClientContext.model != null && ClientContext.model.lineage != null &&
+                (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) > 0 ||
+                ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId))) {
+
+                setPage(PAGE_FINALE);
+            }
+            break;
+
+            case PAGE_CLICK_BACK2:
+            updateTargetingRecticleInHUD("help_back");
+            break;
+
+
             default:
-            log.error("chapterGUINavigation", "_currentPage", _currentPage);
-            setPage(PAGE_CLICK_VW);
+//            log.error("chapterGUINavigation", "_currentPage", _currentPage);
+//            setPage(PAGE_CLICK_VW);
         }
     }
     protected function chapterLookingForTarget () :void
@@ -232,18 +272,35 @@ public class TutorialAppMode extends AppMode
         }
     }
 
-    protected function handleNooneInTheRoom () :void
+    protected function chapterEnd () :void
     {
+        if (_currentPage != PAGE_FINALE) {
+            setPage(PAGE_FINALE);
+        }
     }
+
+//    protected function handleNooneInTheRoom () :void
+//    {
+//    }
+
+
     protected function handleClickHUDFeed () :void
     {
         resetTargets();
+
+        var feed :DisplayObject = ClientContext.hud.findSafely("button_feed");
+        var menu :DisplayObject = ClientContext.hud.findSafely("button_menu");
+        var parent :DisplayObjectContainer = feed.parent;
+
+        if (parent.getChildIndex(feed) < parent.getChildIndex(menu)) {
+            parent.swapChildren(feed, menu);
+        }
 
         var targetDisplayObject :DisplayObject = ClientContext.hud.findSafely("button_feed");
         var targetReticle :SceneObject = createTargetSceneObject("target:HUD feed");
 
         targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
-            targetDisplayObject.parent.getChildIndex(targetDisplayObject) );
+            targetDisplayObject.parent.getChildIndex(targetDisplayObject));
 
         addObject(targetReticle);
 
@@ -254,11 +311,21 @@ public class TutorialAppMode extends AppMode
 
     protected function handleClickVW () :void
     {
+
+        var feed :DisplayObject = ClientContext.hud.findSafely("button_feed");
+        var menu :DisplayObject = ClientContext.hud.findSafely("button_menu");
+        var parent :DisplayObjectContainer = feed.parent;
+
+        if (parent.getChildIndex(feed) > parent.getChildIndex(menu)) {
+            parent.swapChildren(feed, menu);
+        }
+
+
         var targetDisplayObject :DisplayObject = ClientContext.hud.findSafely("button_menu");
         var targetReticle :SceneObject = createTargetSceneObject("target:VW");
 
         targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
-            targetDisplayObject.parent.getChildIndex(targetDisplayObject) );
+            targetDisplayObject.parent.getChildIndex(targetDisplayObject));
 
         addObject(targetReticle);
 
@@ -266,21 +333,21 @@ public class TutorialAppMode extends AppMode
         targetReticle.y = targetDisplayObject.y;
     }
 
-    protected function handleClickStrains () :void
-    {
-//        var target :DisplayObject = ClientContext.hud.findSafely("button_menu");
-//        var targetOverlay :SceneObject = createTargetSceneObject("target:Strains");
-//        addSceneObject(targetOverlay, target.parent);
-//        targetOverlay.x = target.x;
-//        targetOverlay.y = target.y;
-    }
+//    protected function handleClickStrains () :void
+//    {
+////        var target :DisplayObject = ClientContext.hud.findSafely("button_menu");
+////        var targetOverlay :SceneObject = createTargetSceneObject("target:Strains");
+////        addSceneObject(targetOverlay, target.parent);
+////        targetOverlay.x = target.x;
+////        targetOverlay.y = target.y;
+//    }
 
-    protected function handleClickLineage () :void
-    {
-    }
-    protected function handleClickBuildLineage () :void
-    {
-    }
+//    protected function handleClickLineage () :void
+//    {
+//    }
+//    protected function handleClickBuildLineage () :void
+//    {
+//    }
 
     protected function handleClickTargetFeed () :void
     {
@@ -318,9 +385,11 @@ public class TutorialAppMode extends AppMode
         }
     }
 
-    protected function updateStrainButton () :void
+
+
+    protected function updateTargetingRecticleInHUD (buttonName :String) :void
     {
-        var sceneObjectName :String = "target:StrainButton";
+        var sceneObjectName :String = "target:" + buttonName;
         var targetReticle :SceneObject = getObjectNamed(sceneObjectName) as SceneObject;
 
         //Is there a help popup?
@@ -330,45 +399,13 @@ public class TutorialAppMode extends AppMode
 
                 var help :HelpPopup =
                     ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as HelpPopup;
-                var targetDisplayObject :DisplayObject = help.findSafely("to_bloodtype");
+                var targetDisplayObject :DisplayObject = help.findSafely(buttonName);
 
                 targetReticle.x = targetDisplayObject.x;
                 targetReticle.y = targetDisplayObject.y;
 
                 targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
-                    targetDisplayObject.parent.getChildIndex(targetDisplayObject) - 1);
-
-                addObject(targetReticle);
-//                addSceneObject(targetReticle, targetDisplayObject.parent);
-            }
-        }
-        else {
-
-            if (targetReticle != null && targetReticle.isLiveObject) {
-                targetReticle.destroySelf();
-            }
-        }
-    }
-
-    protected function updateLineageButton () :void
-    {
-        var sceneObjectName :String = "target:LineageButton";
-        var targetReticle :SceneObject = getObjectNamed(sceneObjectName) as SceneObject;
-
-        //Is there a help popup?
-        if (ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) != null) {
-            if (targetReticle == null) {
-                targetReticle = createTargetSceneObject(sceneObjectName);
-
-                var help :HelpPopup =
-                    ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as HelpPopup;
-                var targetDisplayObject :DisplayObject = help.findSafely("to_default");
-
-                targetReticle.x = targetDisplayObject.x;
-                targetReticle.y = targetDisplayObject.y;
-
-                targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
-                    targetDisplayObject.parent.getChildIndex(targetDisplayObject) - 1);
+                    targetDisplayObject.parent.getChildIndex(targetDisplayObject) );
 
                 addObject(targetReticle);
             }
@@ -381,44 +418,20 @@ public class TutorialAppMode extends AppMode
         }
     }
 
-    protected function updateBuildLineageButton () :void
+
+//    protected function handleEveryoneLeaves () :void
+//    {
+//    }
+//
+//    protected function handleLobby () :void
+//    {
+//    }
+
+    protected function handleEnd () :void
     {
-        var sceneObjectName :String = "target:BuildLineageButton";
-        var targetReticle :SceneObject = getObjectNamed(sceneObjectName) as SceneObject;
-
-        //Is there a help popup?
-        if (ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) != null) {
-            if (targetReticle == null) {
-                targetReticle = createTargetSceneObject(sceneObjectName);
-
-                var help :HelpPopup =
-                    ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as HelpPopup;
-                var targetDisplayObject :DisplayObject = help.findSafely("link_tolineage");
-
-                targetReticle.x = targetDisplayObject.x;
-                targetReticle.y = targetDisplayObject.y;
-
-                targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
-                    targetDisplayObject.parent.getChildIndex(targetDisplayObject) - 1);
-
-                addObject(targetReticle);
-            }
-        }
-        else {
-
-            if (targetReticle != null && targetReticle.isLiveObject) {
-                targetReticle.destroySelf();
-            }
-        }
+        deactivateTutorial();
     }
 
-    protected function handleEveryoneLeaves () :void
-    {
-    }
-
-    protected function handleLobby () :void
-    {
-    }
 
 
 
@@ -463,10 +476,14 @@ public class TutorialAppMode extends AppMode
 
             if (_active) {
 
-                trace("has handle" + newPage + " ? " + this.hasOwnProperty("handle" + newPage));
-//                if (hasOwnProperty("handle" + newPage)) {
+//                trace("has handle" + newPage + " ? " + this.hasOwnProperty("handle" + newPage));
+
+                try {
                     this["handle" + newPage]();
-//                }
+                }
+                catch (err :Error) {
+
+                }
 
                 var wasAlreadyTutorial :Boolean = _tutorialPopup != null;
 
@@ -562,7 +579,33 @@ public class TutorialAppMode extends AppMode
     public function clickedBuildLineage () :void
     {
         if (_currentPage == PAGE_CLICK_BUILD_LINEAGE) {
-            setPage(PAGE_CLICK_BUILD_LINEAGE);
+            setPage(PAGE_CLICK_RECRUIT);
+        }
+    }
+
+    public function clickedRecruit () :void
+    {
+        if (_currentPage == PAGE_CLICK_RECRUIT) {
+            setPage(PAGE_CLICK_BACK);
+        }
+    }
+
+    public function clickedBack () :void
+    {
+        trace("clickedBack, _currentPage=" + _currentPage);
+        if (_currentPage == PAGE_CLICK_BACK) {
+            setPage(PAGE_CLICK_BLOOD);
+        }
+
+        if (_currentPage == PAGE_CLICK_BACK2) {
+            setPage(PAGE_FINALE);
+        }
+    }
+
+    public function clickedBlood () :void
+    {
+        if (_currentPage == PAGE_CLICK_BLOOD) {
+            setPage(PAGE_CLICK_BACK2);
         }
     }
 
@@ -596,8 +639,13 @@ public class TutorialAppMode extends AppMode
     public static const PAGE_CLICK_STRAINS :String = "ClickStrains";
     public static const PAGE_CLICK_LINEAGE :String = "ClickLineage";
     public static const PAGE_CLICK_BUILD_LINEAGE :String = "ClickBuildLineage";
+    public static const PAGE_CLICK_RECRUIT :String = "ClickRecruit";
+    public static const PAGE_CLICK_BACK :String = "ClickBack";
+    public static const PAGE_CLICK_BLOOD :String = "ClickBlood";
+    public static const PAGE_CLICK_BACK2 :String = "ClickBack2";
 
     public static const CHAPTER_END :String = "Chapter: End";
+    public static const PAGE_FINALE :String = "Final";
 
     public static const TUTORIAL_ACTIONS :Array = [
         [PAGE_NOONE_IN_ROOM, "There's no one here to feed upon, but your \"Me\" tab has convenient links to friendly players..."],
@@ -609,7 +657,11 @@ public class TutorialAppMode extends AppMode
         [PAGE_CLICK_STRAINS, "The strains you've collected are tallied under \"Strains\" on the left.  Click it for a look."],
         [PAGE_CLICK_LINEAGE, "Your other driving goal is to build up your Lineage for the coming battles.  Click \"Lineage\" at the left."],
         [PAGE_CLICK_BUILD_LINEAGE, "As a newborn, you have no progeny yet.  Click \"Build Your Lineage\" to find out how to recruit them."],
-
+        [PAGE_CLICK_RECRUIT, "You can see how gathering new recruits will be invaluable down the line.  Click \"Recruit!\" to invite friends."],
+        [PAGE_CLICK_BACK, "You'll need to fortify your blood to benefit from your progeny.  Click the red back arrow in the upper left."],
+        [PAGE_CLICK_BLOOD, "Only ancient blood can fortify yours.  Click \"Strengthen Your Blood\" to learn about the power of vampire blood."],
+        [PAGE_CLICK_BACK2, "Your sire will be your vampiric guide, so shop around before sinking your teeth in.  Click \"back\"."],
+        [PAGE_FINALE, "So get prowling!  Hunt blood strains and recruit progeny for the coming battles of Vampire Whirled!"]
     ];
 
     protected static const log :Log = Log.getLog(TutorialAppMode);
