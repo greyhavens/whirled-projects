@@ -205,6 +205,8 @@ public class FeedingRecord extends EventCollecter
 
     protected function roundCompleteCallback() :Number
     {
+        _currentRound++;
+
         log.debug("roundCompleteCallback");
         try {
             if( _gameServer != null ) {
@@ -440,8 +442,10 @@ public class FeedingRecord extends EventCollecter
         return _predatorIndex.length - 1;
     }
 
-
-
+    public function get currentRound () :int
+    {
+        return _currentRound;
+    }
 
     protected var _room :Room;
     protected var _gameId :int;
@@ -455,6 +459,9 @@ public class FeedingRecord extends EventCollecter
     protected var _primaryPredatorId :int;
     protected var _started :Boolean = false;
     protected var _finished :Boolean = false;
+
+    protected var _currentRound :int = 0;
+
     /**
     * If the prey leaves the game, move the primary pred (standing behind her).  But don't move
     * the primary pred on game completion.
