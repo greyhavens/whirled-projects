@@ -1,13 +1,14 @@
 package vampire.client
 {
 import com.threerings.flash.DisplayUtil;
-import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.objects.SceneObjectPlayMovieClipOnce;
+import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
+import com.whirled.contrib.simplegame.tasks.AlphaTask;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
@@ -204,7 +205,7 @@ public class HUD extends SceneObject
                                 mode.addSceneObject( popup, mode.modeSprite );
                                 ClientContext.animateEnlargeFromMouseClick(popup);
                             }
-                            
+
 
 
                             _isNewLevelNeedingInvitePopupShown = true;
@@ -303,31 +304,22 @@ public class HUD extends SceneObject
 
     protected function setupUI() :void
     {
-//        if (mode == null) {
-//            throw new Error("setupUI, mode should not be null");
-//        }
         _hud = new Sprite();
         _displaySprite.addChild( _hud );
 
         _hudMC = ClientContext.instantiateMovieClip("HUD", "HUD", true);
 
-//        _hud.graphics.beginFill(0);
-//        _hud.graphics.drawCircle(0,0,20);
-//        _hud.graphics.endFill();
         _hud.addChild( _hudMC );
         //Center the hud graphic
         _hudMC.x = -_hudMC.width/2;
         _hudMC.y = -_hudMC.height/2;
-        trace("HUD init");
-//        init( new Rectangle(-_hudMC.width/2, -_hudMC.height/2, _hudMC.width, _hudMC.height), 0, 0, 0, 100);
 
         //Start the HUD positioned at the top left, making sure nothing is hidden.
         this.x = _hudMC.width / 2 + 10;
         this.y = _hudMC.height / 2 + 10;
-//        return;
 
         _hudMC.mouseChildren = true;
-        _hudMC.mouseEnabled = false;
+        _hudMC.mouseEnabled = true;
 
         _hudCap = MovieClip( findSafely("HUDcap") );
         //Store the x as the x anchor for the blood and xp bars.
@@ -347,21 +339,23 @@ public class HUD extends SceneObject
         _hudCap.parent.removeChild(_hudCap);
 
         _bloodXPMouseOverSprite = new Sprite();
-//        _bloodXPMouseOverSceneObject = new SimpleSceneObject(bloodXPMouseOverSprite, "MouseOverBloood");
-//        _bloodXPMouseOverSceneObject.x = _hudXP.x;
-//        _bloodXPMouseOverSceneObject.y = _hudXP.y;
-//        _bloodXPMouseOverSceneObject.alpha = 0;
+        _bloodXPMouseOverSceneObject = new SimpleSceneObject(_bloodXPMouseOverSprite, "MouseOverBlood");
+        _bloodXPMouseOverSceneObject.x = _hudXP.x;
+        _bloodXPMouseOverSceneObject.y = _hudXP.y;
+        _bloodXPMouseOverSceneObject.alpha = 0;
 
         Command.bind(_bloodXPMouseOverSprite, MouseEvent.CLICK, VampireController.SHOW_INTRO, "blood");
 
-//        registerListener( bloodXPMouseOverSprite, MouseEvent.ROLL_OVER, function(...ignored) :void {
-//            _bloodXPMouseOverSceneObject.addTask( AlphaTask.CreateEaseIn(1, 0.3));
-//        });
-//        registerListener( bloodXPMouseOverSprite, MouseEvent.ROLL_OUT, function(...ignored) :void {
-//            _bloodXPMouseOverSceneObject.addTask( AlphaTask.CreateEaseIn(0, 0.3));
-//        });
+        registerListener(_bloodXPMouseOverSprite, MouseEvent.ROLL_OVER, function(...ignored) :void {
+            _bloodXPMouseOverSceneObject.addTask( AlphaTask.CreateEaseIn(1, 0.3));
+        });
+        registerListener(_bloodXPMouseOverSprite, MouseEvent.ROLL_OUT, function(...ignored) :void {
+            _bloodXPMouseOverSceneObject.addTask( AlphaTask.CreateEaseIn(0, 0.3));
+        });
 
-        _hudXPParent.addChild(_bloodXPMouseOverSprite );
+        _hudXPParent.addChild(_bloodXPMouseOverSprite);
+//        _hudXP.addChild(_bloodXPMouseOverSprite);
+        db.addObject(_bloodXPMouseOverSceneObject);
 
         var hudHelp :SimpleButton = SimpleButton(findSafely("button_menu"));
         Command.bind(hudHelp, MouseEvent.CLICK, VampireController.SHOW_INTRO);
@@ -428,37 +422,30 @@ public class HUD extends SceneObject
         var xpGap :Number = xpNeededForNextLevel - xpNeededForCurrentLevel;
         var ourXPForOurLevel :Number = ClientContext.model.xp - xpNeededForCurrentLevel;
 
-        _xpText = TextFieldUtil.createField(
-            Util.formatNumberForFeedback(ourXPForOurLevel) + " / " + xpGap );
+        _xpText = new TextField();
+        _xpText.text = Util.formatNumberForFeedback(ourXPForOurLevel) + " / " + xpGap;
 
             _xpText.selectable = false;
             _xpText.tabEnabled = false;
-//            _xpText.embedFonts = true;
+            _xpText.embedFonts = true;
             _xpText.mouseEnabled = false;
 
             var lineageformat :TextFormat = new TextFormat();
-//            lineageformat.font = "JuiceEmbedded";
-            lineageformat.size = 12;
+            lineageformat.font = "JuiceEmbedded";
+            lineageformat.size = 14;
             lineageformat.align = TextFormatAlign.LEFT;
             lineageformat.bold = false;
-            lineageformat.color = 0;
+            lineageformat.color = 0xffffff;
             _xpText.width = 180;
             _xpText.height = 20;
-//            _mouseOverText.x = 100;
-//            _mouseOverText.y = 0;
             _xpText.antiAliasType = AntiAliasType.ADVANCED;
             _xpText.setTextFormat( lineageformat );
 
         _bloodXPMouseOverSprite.addChild(_xpText);
-//        Sprite(_bloodXPMouseOverSceneObject.displayObject).addChild( _xpText );
-//        Sprite(_bloodXPMouseOverSceneObject.displayObject).addChild( _xpText );
 
 
         _xpText.x = ClientContext.model.maxblood/2 - _xpText.getLineMetrics(0).width/2;
         _xpText.y = _hudCap.height / 2  - _xpText.getLineMetrics(0).height/2;
-
-//        _xpText.addEventListener( MouseEvent.ROLL_OUT
-
 
     }
 
@@ -771,6 +758,10 @@ public class HUD extends SceneObject
         //Draw the xp bar
         //Xp
         _hudXP.graphics.clear();
+        //Draw the background panel
+        _hudXP.graphics.beginFill(0x330000, 0.5);
+        _hudXP.graphics.drawRect(0, 1, maxBlood + 1, _hudCap.height - 3);
+
 //        _hudXP.graphics.beginFill(0xA9D2E3);
         _hudXP.graphics.beginFill(0x990000);
 //        _hudXP.graphics.drawRect(1, borderWidth, xpAbsoluteX, _hudCap.height/2 - borderWidth - 3);
@@ -818,7 +809,7 @@ public class HUD extends SceneObject
 //    protected var _hudBlood :Sprite;
     protected var _hudXP :Sprite;
     protected var _bloodXPMouseOverSprite :Sprite;
-//    protected var _bloodXPMouseOverSceneObject :SceneObject;
+    protected var _bloodXPMouseOverSceneObject :SceneObject;
     protected var _hudXPParent :DisplayObjectContainer;
 
 
