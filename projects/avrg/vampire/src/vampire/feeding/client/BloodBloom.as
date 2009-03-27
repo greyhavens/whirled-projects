@@ -5,6 +5,7 @@ import com.threerings.util.Log;
 import com.threerings.util.Util;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.EventHandlerManager;
+import com.whirled.contrib.LevelPackManager;
 import com.whirled.contrib.ManagedTimer;
 import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.simplegame.*;
@@ -112,6 +113,11 @@ public class BloodBloom extends FeedingClient
     override public function get playerData () :PlayerFeedingData
     {
         return ClientCtx.playerData;
+    }
+
+    protected function loadLevelPacks () :void
+    {
+        ClientCtx.gameCtrl.game.getLevelPacks();
     }
 
     protected function onPropChanged (e :PropertyChangedEvent) :void
@@ -237,7 +243,17 @@ public class BloodBloom extends FeedingClient
         rm.queueResourceLoad("sound", "sfx_got_blood",  { embeddedClass: SFX_GOT_BLOOD });
         rm.queueResourceLoad("sound", "sfx_got_special_strain",  { embeddedClass: SFX_GOT_SPECIAL_STRAIN });
         rm.queueResourceLoad("sound", "sfx_popped_special_strain",  { embeddedClass: SFX_POPPED_SPECIAL_STRAIN });
-        rm.queueResourceLoad("sound", "mus_main_theme",      { embeddedClass: MUS_MAIN_THEME, type: "music" });
+
+        if (ClientCtx.isConnected) {
+            var levelPacks :LevelPackManager = new LevelPackManager();
+            levelPacks.init(ClientCtx.gameCtrl.game.getLevelPacks());
+            var url :String = levelPacks.getMediaURL("mus_main_theme");
+            if (url != null) {
+                rm.queueResourceLoad("sound", "mus_main_theme", { url: url, type: "music", completeImmediately: true });
+            } else {
+                log.warning("Missing mus_main_theme level pack");
+            }
+        }
 
         rm.loadQueuedResources(
             function () :void {
@@ -275,9 +291,6 @@ public class BloodBloom extends FeedingClient
     protected static const SFX_GOT_SPECIAL_STRAIN :Class;
     [Embed(source="../../../../rsrc/feeding/popped_special_strain.mp3")]
     protected static const SFX_POPPED_SPECIAL_STRAIN :Class;
-
-    [Embed(source="../../../../rsrc/feeding/music.mp3")]
-    protected static const MUS_MAIN_THEME :Class;
 }
 
 }
