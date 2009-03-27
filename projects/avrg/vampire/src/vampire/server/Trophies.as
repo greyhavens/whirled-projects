@@ -81,15 +81,6 @@ public class Trophies
         }
     }
 
-
-//    protected static function isPossessingBasicAvatar (player :PlayerData, trophy :String) :void
-//    {
-//        if (!player.ctrl.holdsTrophy(trophy)) {
-//            log.debug("Awarding", "player", player.playerId, "trophy", trophy);
-//            player.ctrl.awardTrophy(trophy);
-//        }
-//    }
-
     protected static function doAward (player :PlayerData, trophy :String) :void
     {
         if (!player.ctrl.holdsTrophy(trophy)) {
