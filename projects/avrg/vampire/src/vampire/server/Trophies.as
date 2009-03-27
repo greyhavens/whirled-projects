@@ -9,10 +9,10 @@ public class Trophies
 
 
     public static const PATRON_PREFIX :String = "patron";
-    public static const PATRON_REQS :Array = [2, 3, 4, 5, 10, 25];
+    public static const PATRON_REQS :Array = [1, 2, 3, 4, 5, 10, 25];
 
     public static const INVITE_PREFIX :String = "invite";
-    public static const INVITE_REQS :Array = [2, 3, 4, 5, 10, 25];
+    public static const INVITE_REQS :Array = [1, 2, 3, 4, 5, 10, 25];
 
     // Awarded for creating a cascade of a certain size
     public static const CASCADE_TROPHIES :Array = [
@@ -63,7 +63,7 @@ public class Trophies
 
     }
 
-    public static function checkInviteTrophies( player :PlayerData ) :void
+    public static function checkInviteTrophies (player :PlayerData) :void
     {
         if( player == null ) {
             log.error("checkInviteTrophies", "player", player);
