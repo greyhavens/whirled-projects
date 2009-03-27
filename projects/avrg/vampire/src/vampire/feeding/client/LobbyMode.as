@@ -3,6 +3,7 @@ package vampire.feeding.client {
 import com.threerings.flash.TextFieldUtil;
 import com.whirled.contrib.avrg.RoomDragger;
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
@@ -40,11 +41,30 @@ public class LobbyMode extends AppMode
         ClientCtx.centerInRoom(_panelMovie);
 
         // Instructions
-        var instructions0 :MovieClip = contents["instructions_basic"];
-        var instructions1 :MovieClip = contents["instructions_multiplayer"];
-        var showBasic :Boolean = (this.isPreGameLobby && ClientCtx.playerData.timesPlayed == 0);
-        instructions0.visible = showBasic;
-        instructions1.visible = !showBasic;
+        var instructionsBasic :MovieClip = contents["instructions_basic"];
+        var instructionsMultiplayer :MovieClip = contents["instructions_multiplayer"];
+        var instructionsStrain :MovieClip = contents["instructions_strains"];
+        instructionsBasic.visible = false;
+        instructionsMultiplayer.visible = false;
+        instructionsStrain.visible = false;
+
+        if (this.isPreGameLobby && ClientCtx.playerData.timesPlayed == 0) {
+            instructionsBasic.visible = true;
+        } else if ((this.isPreGameLobby || Rand.nextBoolean(Rand.STREAM_COSMETIC)) &&
+                   ClientCtx.playerCanCollectPreyStrain) {
+            instructionsStrain.visible = true;
+        } else {
+            instructionsMultiplayer.visible = true;
+        }
+
+        // Blood Bond icon
+        var bloodBond :MovieClip = _panelMovie["blood_bond"];
+        if (ClientCtx.playerIds.length == 2 && !ClientCtx.preyIsAi) {
+            // TODO
+            bloodBond.visible = false;
+        } else {
+            bloodBond.visible = false;
+        }
 
         // Quit button
         var quitBtn :SimpleButton = _panelMovie["button_done"];

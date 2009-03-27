@@ -131,6 +131,13 @@ public class ClientCtx
         return ArrayUtil.contains(playerIds, playerId);
     }
 
+    public static function get playerCanCollectPreyStrain () :Boolean
+    {
+        return (isPredator &&
+                !preyIsAi &&
+                playerData.canCollectStrainFromPlayer(preyBloodType, preyId));
+    }
+
     public static function quit (playerInitiated :Boolean) :void
     {
         if (playerInitiated) {
