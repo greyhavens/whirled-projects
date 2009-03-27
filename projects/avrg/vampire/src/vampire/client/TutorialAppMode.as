@@ -101,7 +101,7 @@ public class TutorialAppMode extends AppMode
 
         _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
         if (VConstants.LOCAL_DEBUG_MODE) {
-//            _currentChapter = CHAPTER_NAVIGATING_THE_GUI;
+            _currentChapter = CHAPTER_NAVIGATING_THE_GUI;
         }
 
         setPage(PAGE_NOONE_IN_ROOM);
@@ -131,7 +131,7 @@ public class TutorialAppMode extends AppMode
     override public function update (dt:Number) :void
     {
         super.update(dt);
-
+        trace("update, \n  currentChapter=" + _currentChapter + "\n  currentPage" + _currentPage);
         //Make sure we are always above other windows.
         var parent :DisplayObjectContainer = modeSprite.parent;
         if (parent != null && parent.getChildIndex(modeSprite) < parent.numChildren - 1) {
@@ -177,13 +177,32 @@ public class TutorialAppMode extends AppMode
                 (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) > 0 ||
                 ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId))) {
 
-                setPage(PAGE_CLICK_RECRUIT);
+                setPage(PAGE_FINALE);
             }
+
+            if (ClientContext.model == null) {
+                log.error("chapterGUINavigation", "ClientContext.model", ClientContext.model);
+            }
+
+            else if (ClientContext.model.lineage == null) {
+                log.error("chapterGUINavigation", "ClientContext.model.lineage", ClientContext.model.lineage);
+            }
+            else {
+                if (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) > 0 ||
+                ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId)) {
+
+                    log.error("chapterGUINavigation", "ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId)", ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId));
+
+                    log.error("chapterGUINavigation", "ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId)", ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId));
+                }
+            }
+
             break;
+
+
 
             case PAGE_CLICK_RECRUIT:
             updateTargetingRecticleInHelp("button_torecruiting");
-            updateTargetingRecticleInHelp("button_recruit");
             break;
 
             case PAGE_CLICK_BACK:
@@ -361,7 +380,7 @@ public class TutorialAppMode extends AppMode
             }
         }
         else {
-
+            trace("updateTargetingRecticleInHelp, there's no help popup, buttonName="+buttonName);
             if (targetReticle != null && targetReticle.isLiveObject) {
                 targetReticle.destroySelf();
             }
@@ -489,6 +508,7 @@ public class TutorialAppMode extends AppMode
     public function clickedVWButtonOpenHelp () :void
     {
         if (_currentPage == PAGE_CLICK_VW) {
+            _currentChapter = CHAPTER_NAVIGATING_THE_GUI;
             setPage(PAGE_CLICK_STRAINS);
         }
     }
