@@ -27,6 +27,7 @@ import vampire.Util;
 import vampire.client.events.PlayerStateChangedEvent;
 import vampire.data.Codes;
 import vampire.data.Logic;
+import vampire.data.VConstants;
 
 /**
  * The main game HUD, showing e.g. blood, game notifications, and buttons to select the subgame to
@@ -186,7 +187,7 @@ public class HUD extends SceneObject
                         if (newLevel != newLevelWithInvites) {
 
                             var recruitFunction :Function = function( e :MouseEvent ) :void {
-                                ClientContext.ctrl.local.showInvitePage("Join my Coven!", "" +
+                                ClientContext.ctrl.local.showInvitePage(VConstants.INVITE_TEXT, "" +
                                     ClientContext.ourPlayerId);
                             };
 

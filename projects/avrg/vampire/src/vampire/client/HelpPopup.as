@@ -128,7 +128,7 @@ package vampire.client
             registerListener(SimpleButton(findSafely("button_torecruiting")), MouseEvent.CLICK,
                 function (e :MouseEvent) :void {
                     ClientContext.tutorial.clickedRecruit();
-                    ClientContext.ctrl.local.showInvitePage("Join my Coven!", "" + ClientContext.ourPlayerId);
+                    ClientContext.ctrl.local.showInvitePage(VConstants.INVITE_TEXT, "" + ClientContext.ourPlayerId);
                 });
 
             registerListener(SimpleButton(findSafely("help_back")), MouseEvent.CLICK,
