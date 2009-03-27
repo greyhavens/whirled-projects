@@ -644,69 +644,41 @@ public class VampireAvatarHUD extends AvatarHUD
 
     override protected function update( dt :Number ) :void
     {
-        super.update(dt);
+        try {
+            super.update(dt);
 
-        if (hotspot != null && hotspot.length > 1 && _ctrl != null && _ctrl.isConnected()) {
-            var heightLogical :Number = hotspot[1]/_ctrl.local.getRoomBounds()[1];
+            if (hotspot != null
+                    && hotspot.length > 1
+                    && _ctrl != null
+                    && _ctrl.isConnected()) {
+                var heightLogical :Number = hotspot[1]/_ctrl.local.getRoomBounds()[1];
 
-            var p1 :Point = _ctrl.local.locationToPaintable(_location[0], _location[1], _location[2]);
-            var p2 :Point = _ctrl.local.locationToPaintable(_location[0], heightLogical, _location[2]);
+                var p1 :Point = _ctrl.local.locationToPaintable(_location[0], _location[1], _location[2]);
+                var p2 :Point = _ctrl.local.locationToPaintable(_location[0], heightLogical, _location[2]);
 
-            var absoluteHeight :Number = Math.abs(p2.y - p1.y);
-            _target_UI.y = absoluteHeight / 2;
+                var absoluteHeight :Number = Math.abs(p2.y - p1.y);
+                _target_UI.y = absoluteHeight / 2;
 
 
-//            var widthLogical :Number = hotspot[0]/_ctrl.local.getRoomBounds()[0];
-//            p1 = _ctrl.local.locationToPaintable(0, _location[1], _location[2]);
-//            p2 = _ctrl.local.locationToPaintable(widthLogical, _location[1], _location[2]);
-//
-//            var absoluteWidth :Number = Math.abs(p2.x - p1.x);
+    //            var widthLogical :Number = hotspot[0]/_ctrl.local.getRoomBounds()[0];
+    //            p1 = _ctrl.local.locationToPaintable(0, _location[1], _location[2]);
+    //            p2 = _ctrl.local.locationToPaintable(widthLogical, _location[1], _location[2]);
+    //
+    //            var absoluteWidth :Number = Math.abs(p2.x - p1.x);
 
-//            _hudSprite.graphics.clear();
-//            _hudSprite.graphics.beginFill(0, 0.3);
-//
-//            _hudSprite.graphics.drawRect( -absoluteWidth/2, 0, absoluteWidth, absoluteHeight);
-//            _hudSprite.graphics.endFill();
+    //            _hudSprite.graphics.clear();
+    //            _hudSprite.graphics.beginFill(0, 0.3);
+    //
+    //            _hudSprite.graphics.drawRect( -absoluteWidth/2, 0, absoluteWidth, absoluteHeight);
+    //            _hudSprite.graphics.endFill();
 
+
+            }
 
         }
-
-
-//        _frenzyDelayRemaining -= dt;
-//
-//        _frenzyDelayRemaining = Math.max( _frenzyDelayRemaining, 0 );
-//        showFrenzyTimerIfCounting();
-
-
-//        if( _isMouseOver ) {
-//
-//            var localPoint :Point = new Point( _mouseOverSprite.mouseX,_mouseOverSprite.mouseY );
-//            var globalPoint :Point = _mouseOverSprite.localToGlobal( localPoint );
-//
-//            if( !_mouseOverSprite.hitTestPoint(globalPoint.x,globalPoint.y)) {
-//                _isMouseOver = false;
-//                if( _hudSprite.contains(_mouseOverSprite ) ) {
-//                    var serialTask :SerialTask = new SerialTask();
-//                    serialTask.addTask( new TimedTask(ANIMATION_TIME));
-//                    serialTask.addTask( new FunctionTask( function() :void {
-//                        animateHideButton(_feedButton);
-//                        animateHideButton(_frenzyButton);
-//                        animateHideButton(_bareButton);
-//                        animateHideButton(_unbareButton);
-//                    }));
-//                    serialTask.addTask( new TimedTask(ANIMATION_TIME));
-//                    serialTask.addTask( new FunctionTask( function() :void {
-//                        if( _mouseOverSprite.parent != null ) {
-//                            _mouseOverSprite.parent.removeChild( _mouseOverSprite );
-//                        }
-//                    }));
-//                    addTask( serialTask );
-//
-//
-//                }
-//            }
-//
-//        }
+        catch (err :Error) {
+            log.error(err.getStackTrace());
+        }
     }
 
 
