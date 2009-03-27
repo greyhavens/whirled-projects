@@ -101,7 +101,7 @@ public class TutorialAppMode extends AppMode
 
         _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
         if (VConstants.LOCAL_DEBUG_MODE) {
-            _currentChapter = CHAPTER_NAVIGATING_THE_GUI;
+//            _currentChapter = CHAPTER_NAVIGATING_THE_GUI;
         }
 
         setPage(PAGE_NOONE_IN_ROOM);
@@ -127,17 +127,6 @@ public class TutorialAppMode extends AppMode
         setPage(_currentPage);
     }
 
-
-
-//    public function tutorialActionDone (action :String) :void
-//    {
-//        switch( action ) {
-//
-//            case PAGE_NOONE_IN_ROOM:
-//
-//            break;
-//        }
-//    }
 
     override public function update (dt:Number) :void
     {
@@ -175,15 +164,15 @@ public class TutorialAppMode extends AppMode
             break;
 
             case PAGE_CLICK_STRAINS:
-            updateTargetingRecticleInHUD("to_bloodtype");
+            updateTargetingRecticleInHelp("to_bloodtype");
             break;
 
             case PAGE_CLICK_LINEAGE:
-            updateTargetingRecticleInHUD("to_default");
+            updateTargetingRecticleInHelp("to_default");
             break;
 
             case PAGE_CLICK_BUILD_LINEAGE:
-            updateTargetingRecticleInHUD("link_tolineage");
+            updateTargetingRecticleInHelp("link_tolineage");
             if (ClientContext.model != null && ClientContext.model.lineage != null &&
                 (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) > 0 ||
                 ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId))) {
@@ -193,12 +182,12 @@ public class TutorialAppMode extends AppMode
             break;
 
             case PAGE_CLICK_RECRUIT:
-            updateTargetingRecticleInHUD("button_torecruiting");
-            updateTargetingRecticleInHUD("button_recruit");
+            updateTargetingRecticleInHelp("button_torecruiting");
+            updateTargetingRecticleInHelp("button_recruit");
             break;
 
             case PAGE_CLICK_BACK:
-            updateTargetingRecticleInHUD("help_back");
+            updateTargetingRecticleInHelp("help_back");
             if (ClientContext.model != null && ClientContext.model.lineage != null &&
                 (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) > 0 ||
                 ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId))) {
@@ -208,7 +197,7 @@ public class TutorialAppMode extends AppMode
             break;
 
             case PAGE_CLICK_BLOOD:
-            updateTargetingRecticleInHUD("link_tovamps");
+            updateTargetingRecticleInHelp("link_tovamps");
             if (ClientContext.model != null && ClientContext.model.lineage != null &&
                 (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) > 0 ||
                 ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId))) {
@@ -218,7 +207,7 @@ public class TutorialAppMode extends AppMode
             break;
 
             case PAGE_CLICK_BACK2:
-            updateTargetingRecticleInHUD("help_back");
+            updateTargetingRecticleInHelp("help_back");
             break;
 
 
@@ -279,75 +268,36 @@ public class TutorialAppMode extends AppMode
         }
     }
 
-//    protected function handleNooneInTheRoom () :void
-//    {
-//    }
-
-
-    protected function handleClickHUDFeed () :void
+    protected function updateTargetingRecticleInHUD (buttonName :String) :void
     {
         resetTargets();
 
-        var feed :DisplayObject = ClientContext.hud.findSafely("button_feed");
-        var menu :DisplayObject = ClientContext.hud.findSafely("button_menu");
-        var parent :DisplayObjectContainer = feed.parent;
+        var sceneObjectName :String = "target: " + buttonName;
 
-        if (parent.getChildIndex(feed) < parent.getChildIndex(menu)) {
-            parent.swapChildren(feed, menu);
-        }
+        var targetDisplayObject :DisplayObject = ClientContext.hud.findSafely(buttonName);
+        var targetReticle :SceneObject = createTargetSceneObject(sceneObjectName);
 
-        var targetDisplayObject :DisplayObject = ClientContext.hud.findSafely("button_feed");
-        var targetReticle :SceneObject = createTargetSceneObject("target:HUD feed");
+        var parent :DisplayObjectContainer = targetDisplayObject.parent;
+        parent.setChildIndex(targetDisplayObject, parent.numChildren - 1);
 
         targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
             targetDisplayObject.parent.getChildIndex(targetDisplayObject));
 
         addObject(targetReticle);
 
-
         targetReticle.x = targetDisplayObject.x;
         targetReticle.y = targetDisplayObject.y;
+    }
+
+    protected function handleClickHUDFeed () :void
+    {
+        updateTargetingRecticleInHUD("button_feed");
     }
 
     protected function handleClickVW () :void
     {
-
-        var feed :DisplayObject = ClientContext.hud.findSafely("button_feed");
-        var menu :DisplayObject = ClientContext.hud.findSafely("button_menu");
-        var parent :DisplayObjectContainer = feed.parent;
-
-        if (parent.getChildIndex(feed) > parent.getChildIndex(menu)) {
-            parent.swapChildren(feed, menu);
-        }
-
-
-        var targetDisplayObject :DisplayObject = ClientContext.hud.findSafely("button_menu");
-        var targetReticle :SceneObject = createTargetSceneObject("target:VW");
-
-        targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
-            targetDisplayObject.parent.getChildIndex(targetDisplayObject));
-
-        addObject(targetReticle);
-
-        targetReticle.x = targetDisplayObject.x;
-        targetReticle.y = targetDisplayObject.y;
+        updateTargetingRecticleInHUD("button_menu");
     }
-
-//    protected function handleClickStrains () :void
-//    {
-////        var target :DisplayObject = ClientContext.hud.findSafely("button_menu");
-////        var targetOverlay :SceneObject = createTargetSceneObject("target:Strains");
-////        addSceneObject(targetOverlay, target.parent);
-////        targetOverlay.x = target.x;
-////        targetOverlay.y = target.y;
-//    }
-
-//    protected function handleClickLineage () :void
-//    {
-//    }
-//    protected function handleClickBuildLineage () :void
-//    {
-//    }
 
     protected function handleClickTargetFeed () :void
     {
@@ -387,7 +337,7 @@ public class TutorialAppMode extends AppMode
 
 
 
-    protected function updateTargetingRecticleInHUD (buttonName :String) :void
+    protected function updateTargetingRecticleInHelp (buttonName :String) :void
     {
         var sceneObjectName :String = "target:" + buttonName;
         var targetReticle :SceneObject = getObjectNamed(sceneObjectName) as SceneObject;
@@ -417,15 +367,6 @@ public class TutorialAppMode extends AppMode
             }
         }
     }
-
-
-//    protected function handleEveryoneLeaves () :void
-//    {
-//    }
-//
-//    protected function handleLobby () :void
-//    {
-//    }
 
     protected function handleEnd () :void
     {
@@ -468,15 +409,11 @@ public class TutorialAppMode extends AppMode
 
     protected function setPage (newPage :String) :void
     {
-//        if (newPage != _currentPage) {
             resetTargets();
             _currentPage = newPage;
-//            _pageChanged = true;
             _pagesSeen.add(newPage);
 
             if (_active) {
-
-//                trace("has handle" + newPage + " ? " + this.hasOwnProperty("handle" + newPage));
 
                 try {
                     this["handle" + newPage]();
@@ -592,7 +529,6 @@ public class TutorialAppMode extends AppMode
 
     public function clickedBack () :void
     {
-        trace("clickedBack, _currentPage=" + _currentPage);
         if (_currentPage == PAGE_CLICK_BACK) {
             setPage(PAGE_CLICK_BLOOD);
         }
