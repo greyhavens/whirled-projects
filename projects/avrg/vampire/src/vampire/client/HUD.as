@@ -164,7 +164,7 @@ public class HUD extends SceneObject
 //                    if( oldLevel < newLevel) {
                     if (e.oldValue < e.newValue) {
                         levelUp = new SceneObjectPlayMovieClipOnce(
-                                ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true) );
+                                ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true) );
                         levelUp.x = _hudXP.x + ClientContext.model.maxblood/2;
                         levelUp.y = _hudXP.y;
                         mode.addSceneObject( levelUp, _hudXPParent  );
@@ -172,14 +172,20 @@ public class HUD extends SceneObject
                     _currentLevel = ClientContext.model.level;
 
                     showXP( ClientContext.ourPlayerId );
+                    oldLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.oldValue),
+                        ClientContext.model.invites);
+                    newLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.newValue),
+                        ClientContext.model.invites);
+
+                    if (newLevel > oldLevel && newLevel >= 2) {
+                        ClientContext.controller.handleNewLevel(newLevel);
+                    }
+
+
 
                     //If we only need invite(s) for the next level, show a popup
                     //if we haven't already done so.
                     if (!_isNewLevelNeedingInvitePopupShown) {
-                        oldLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.oldValue),
-                            ClientContext.model.invites);
-                        newLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.newValue),
-                            ClientContext.model.invites);
                         var newLevelWithInvites :int =
                             Logic.levelGivenCurrentXpAndInvites(Number(e.newValue), 100000);
 
@@ -187,7 +193,7 @@ public class HUD extends SceneObject
                         if (newLevel != newLevelWithInvites) {
 
                             var recruitFunction :Function = function( e :MouseEvent ) :void {
-                                ClientContext.ctrl.local.showInvitePage(VConstants.INVITE_TEXT, "" +
+                                ClientContext.ctrl.local.showInvitePage(VConstants.TEXT_INVITE, "" +
                                     ClientContext.ourPlayerId);
                             };
 
@@ -238,6 +244,9 @@ public class HUD extends SceneObject
                         if (mode != null && _hudXPParent != null) {
                             mode.addSceneObject( levelUp, _hudXPParent );
                         }
+
+                        ClientContext.controller.handleNewLevel(ClientContext.model.level);
+
                     }
                     _currentLevel = ClientContext.model.level;
 
