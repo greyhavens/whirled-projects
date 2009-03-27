@@ -224,6 +224,11 @@ public class PlayerData extends EventHandlerManager
     {
         freeAllHandlers();
 
+        //Make sure the player has left any feeding games
+        if (_room != null) {
+            _room.bloodBloomGameManager.playerQuitsGame(playerId);
+        }
+
         var currentTime :Number = new Date().time;
         if( _room != null && _room.ctrl != null && _room.ctrl.isConnected()) {
             setTime( currentTime );
