@@ -228,7 +228,7 @@ public class Lineage extends SimObject
     {
         var player :Node = _playerId2Node.get( playerId ) as Node;
         if( player != null) {
-            return player.parent != null;
+            return player.parent != null && player.parent.hashCode() != 0;
         }
         return false;
     }
