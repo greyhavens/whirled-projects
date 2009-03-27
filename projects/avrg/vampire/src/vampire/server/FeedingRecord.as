@@ -205,11 +205,18 @@ public class FeedingRecord extends EventCollecter
 
     protected function roundCompleteCallback() :Number
     {
-        _currentRound++;
-
         log.debug("roundCompleteCallback");
         try {
             if( _gameServer != null ) {
+
+                var ids :Array = [_gameServer.preyId];
+                log.debug("[_feedingIds.preyId=" + _feedingIds.preyId);
+                log.debug("[_gameServer.predatorIds=" + _gameServer.predatorIds);
+
+                ids = ids.concat(_gameServer.predatorIds);
+                log.debug("ids=" + ids);
+                _feedingIds.push(ids);
+
                 var score :Number = _gameServer.lastRoundScore;
                 log.debug("Score=" + score);
                 ServerContext.server.control.doBatch( function() :void {
@@ -444,7 +451,12 @@ public class FeedingRecord extends EventCollecter
 
     public function get currentRound () :int
     {
-        return _currentRound;
+        return _feedingIds.length;
+    }
+
+    public function get feedingIds () :Array
+    {
+        return _feedingIds;
     }
 
     protected var _room :Room;
@@ -460,7 +472,13 @@ public class FeedingRecord extends EventCollecter
     protected var _started :Boolean = false;
     protected var _finished :Boolean = false;
 
-    protected var _currentRound :int = 0;
+
+
+    /**
+    * A list of arrays in the format [preyId, ...pred ids]
+    */
+    protected var _feedingIds :Array = [];
+
 
     /**
     * If the prey leaves the game, move the primary pred (standing behind her).  But don't move

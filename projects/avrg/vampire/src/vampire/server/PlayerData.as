@@ -510,7 +510,7 @@ public class PlayerData extends EventHandlerManager
 
             if( _ctrl.props.get(Codes.PLAYER_PROP_INVITES) != invites ) {
                 _ctrl.props.set(Codes.PLAYER_PROP_INVITES, invites, true);
-                Trophies.checkInviteTrophies( this );
+                Trophies.checkInviteTrophies(this);
             }
 
 
@@ -736,65 +736,65 @@ public class PlayerData extends EventHandlerManager
 
 
 
-    public function addFeedingRecord( preyId :int, predId :int ) :void
-    {
-        _feedingRecord.push([ preyId, predId]);
-    }
+//    public function addFeedingRecord( preyId :int, predId :int ) :void
+//    {
+//        _feedingRecord.push([ preyId, predId]);
+//    }
+//
+//    public function get feedingRecord() :Array
+//    {
+//        return _feedingRecord;
+//    }
+//
+//    public function clearFeedingRecord() :void
+//    {
+//        _feedingRecord.splice(0);
+//    }
+//
+//    /**
+//    * @param previousFeed NUmber of games previous.  0 is the current game.
+//    */
+//    public function getPreyInPreviousFeed (previousFeed :int) :int
+//    {
+//        if (_feedingRecord.length == 0 || _feedingRecord.length < previousFeed) {
+//            return 0;
+//        }
+//        else {
+//            return _feedingRecord[previousFeed][0];
+//        }
+//    }
+//
+//    public function purgeFeedingRecordOfAllExcept (otherPlayerId :int) :void
+//    {
+//        var index :int = 0;
+//        while( index < _feedingRecord.length) {
+//
+//            var currentRecord :Array = _feedingRecord[index] as Array;
+//            //Record ok
+//            if ((currentRecord[0] == playerId && currentRecord[1] == otherPlayerId) ||
+//                (currentRecord[1] == playerId && currentRecord[0] == otherPlayerId)) {
+//
+//                index++;
+//            }
+//            else {//Purge this record
+//                _feedingRecord.splice(index, 1);
+//            }
+//
+//        }
+//    }
 
-    public function get feedingRecord() :Array
-    {
-        return _feedingRecord;
-    }
-
-    public function clearFeedingRecord() :void
-    {
-        _feedingRecord.splice(0);
-    }
-
-    /**
-    * @param previousFeed NUmber of games previous.  0 is the current game.
-    */
-    public function getPreyInPreviousFeed (previousFeed :int) :int
-    {
-        if (_feedingRecord.length == 0 || _feedingRecord.length < previousFeed) {
-            return 0;
-        }
-        else {
-            return _feedingRecord[previousFeed][0];
-        }
-    }
-
-    public function purgeFeedingRecordOfAllExcept (otherPlayerId :int) :void
-    {
-        var index :int = 0;
-        while( index < _feedingRecord.length) {
-
-            var currentRecord :Array = _feedingRecord[index] as Array;
-            //Record ok
-            if ((currentRecord[0] == playerId && currentRecord[1] == otherPlayerId) ||
-                (currentRecord[1] == playerId && currentRecord[0] == otherPlayerId)) {
-
-                index++;
-            }
-            else {//Purge this record
-                _feedingRecord.splice(index, 1);
-            }
-
-        }
-    }
-
-    /**
-    * @param previousFeed NUmber of games previous.  0 is the current game.
-    */
-    public function getPredatorInPreviousFeed (previousFeed :int) :int
-    {
-        if (_feedingRecord.length == 0 || _feedingRecord.length < previousFeed) {
-            return 0;
-        }
-        else {
-            return _feedingRecord[previousFeed][1];
-        }
-    }
+//    /**
+//    * @param previousFeed NUmber of games previous.  0 is the current game.
+//    */
+//    public function getPredatorInPreviousFeed (previousFeed :int) :int
+//    {
+//        if (_feedingRecord.length == 0 || _feedingRecord.length < previousFeed) {
+//            return 0;
+//        }
+//        else {
+//            return _feedingRecord[previousFeed][1];
+//        }
+//    }
 
     public function isVictim() :Boolean
     {
@@ -848,7 +848,7 @@ public class PlayerData extends EventHandlerManager
     protected var _playerId :int;
 
     /**A list of the most recent feedings with this player, each element:[preyId, predId]*/
-    protected var _feedingRecord :Array = new Array();
+//    protected var _feedingRecord :Array = new Array();
 
     protected var _bloodUpdateTime :Number = 0;
     protected static const UPDATE_BLOOD_INTERVAL :Number = 3;
