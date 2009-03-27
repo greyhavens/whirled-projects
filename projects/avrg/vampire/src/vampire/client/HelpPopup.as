@@ -118,6 +118,10 @@ package vampire.client
             registerListener(SimpleButton(findSafely("help_close")), MouseEvent.CLICK,
                 function (e :MouseEvent) :void {
                     destroySelf();
+                    //If you don't have any xp, start the tutorial regardless.
+                    if (ClientContext.model.xp == 0) {
+                        ClientContext.tutorial.activateTutorial();
+                    }
                 });
             registerListener(SimpleButton(findSafely("button_recruit")), MouseEvent.CLICK,
                 function (e :MouseEvent) :void {
@@ -128,7 +132,7 @@ package vampire.client
             registerListener(SimpleButton(findSafely("button_torecruiting")), MouseEvent.CLICK,
                 function (e :MouseEvent) :void {
                     ClientContext.tutorial.clickedRecruit();
-                    ClientContext.ctrl.local.showInvitePage(VConstants.INVITE_TEXT, "" + ClientContext.ourPlayerId);
+                    ClientContext.ctrl.local.showInvitePage(VConstants.TEXT_INVITE, "" + ClientContext.ourPlayerId);
                 });
 
             registerListener(SimpleButton(findSafely("help_back")), MouseEvent.CLICK,

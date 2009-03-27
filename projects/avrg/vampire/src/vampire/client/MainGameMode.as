@@ -3,7 +3,6 @@ package vampire.client
 import com.threerings.flash.MathUtil;
 import com.threerings.flash.SimpleTextButton;
 import com.threerings.flash.Vector2;
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
@@ -27,7 +26,6 @@ import vampire.feeding.FeedingClient;
 import vampire.feeding.debug.BloodBloomStandalone;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.MovePredIntoPositionMsg;
-import vampire.net.messages.NonPlayerIdsInRoomMsg;
 
 public class MainGameMode extends AppMode
 {
@@ -58,6 +56,7 @@ public class MainGameMode extends AppMode
         }
 
         ClientContext.controller.handleShowIntro("intro");
+//        ClientContext.tutorial.activateTutorial();
 
     }
 //
@@ -341,8 +340,18 @@ public class MainGameMode extends AppMode
                     "RequestFeed" + msg.playerId,
                     fromPlayerName + " would like to feed on you.",
                     ["Accept", "Deny"],
-                    [VampireController.FEED_REQUEST_ACCEPT, VampireController.FEED_REQUEST_DENY],
-                    [msg.playerId, msg.playerId]);
+                    [
+                        function () :void {
+                            ClientContext.controller.handleAcceptFeedRequest(msg.playerId);
+                        },
+                        function () :void {
+                            ClientContext.controller.handleDenyFeedRequest(msg.playerId);
+                        },
+                    ]);
+
+
+//                    VampireController.FEED_REQUEST_ACCEPT, VampireController.FEED_REQUEST_DENY],
+//                    [msg.playerId, msg.playerId]);
 
             ClientContext.centerOnViewableRoom(popup.displayObject);
             if( getObjectNamed( popup.objectName) == null) {
