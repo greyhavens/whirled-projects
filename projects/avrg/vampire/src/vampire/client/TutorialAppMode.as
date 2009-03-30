@@ -6,11 +6,14 @@ import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
+import com.whirled.contrib.simplegame.tasks.FunctionTask;
+import com.whirled.contrib.simplegame.tasks.LocationTask;
+import com.whirled.contrib.simplegame.tasks.SerialTask;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
-import flash.filters.GlowFilter;
+import flash.geom.Point;
 
 import vampire.avatar.VampireAvatarHUD;
 import vampire.data.VConstants;
@@ -100,11 +103,12 @@ public class TutorialAppMode extends AppMode
         _ctrl = ClientContext.ctrl;
 
         _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
+        setPage(PAGE_NOONE_IN_ROOM);
+
         if (VConstants.LOCAL_DEBUG_MODE) {
             _currentChapter = CHAPTER_NAVIGATING_THE_GUI;
         }
 
-        setPage(PAGE_NOONE_IN_ROOM);
         deactivateTutorial();
     }
 
@@ -121,8 +125,12 @@ public class TutorialAppMode extends AppMode
 
     public function activateTutorial (...ignored) :void
     {
+        ClientContext.gameMode.ctx.mainLoop.removeUpdatable(this);
+
         ClientContext.gameMode.ctx.mainLoop.addUpdatable(this);
+
         ClientContext.gameMode.modeSprite.addChild(this.modeSprite);
+
         _active = true;
         if (_currentChapter == CHAPTER_END) {
             _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
@@ -131,13 +139,25 @@ public class TutorialAppMode extends AppMode
         else {
             setPage(_currentPage);
         }
+
+        if (VConstants.LOCAL_DEBUG_MODE) {
+            _currentChapter = CHAPTER_NAVIGATING_THE_GUI;
+        }
     }
 
 
     override public function update (dt:Number) :void
     {
         super.update(dt);
-        trace("update, \n  currentChapter=" + _currentChapter + "\n  currentPage" + _currentPage);
+
+        if (_targets.length > 0 && _targets[0] != null) {
+            var so :SceneObject = _targets[0] as SceneObject;
+            if (so != null) {
+                _lastTargetLocationGlobal = so.displayObject.localToGlobal(new Point(0,0));
+            }
+        }
+
+//        trace("update, \n  currentChapter=" + _currentChapter + "\n  currentPage" + _currentPage);
         //Make sure we are always above other windows.
         var parent :DisplayObjectContainer = modeSprite.parent;
         if (parent != null && parent.getChildIndex(modeSprite) < parent.numChildren - 1) {
@@ -159,6 +179,7 @@ public class TutorialAppMode extends AppMode
             break;
 
             default:
+            log.error("update, not a recognized chapter=" + _currentChapter);
             break;
         }
     }
@@ -183,7 +204,7 @@ public class TutorialAppMode extends AppMode
                 (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) > 0 ||
                 ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId))) {
 
-                setPage(PAGE_FINALE);
+                _currentChapter = CHAPTER_END;
             }
 
             if (ClientContext.model == null) {
@@ -200,6 +221,9 @@ public class TutorialAppMode extends AppMode
                     log.error("chapterGUINavigation", "ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId)", ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId));
 
                     log.error("chapterGUINavigation", "ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId)", ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId));
+
+                    _currentChapter = CHAPTER_END;
+                    break;
                 }
             }
 
@@ -217,7 +241,7 @@ public class TutorialAppMode extends AppMode
                 (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) > 0 ||
                 ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId))) {
 
-                setPage(PAGE_FINALE);
+                _currentChapter = CHAPTER_END;
             }
             break;
 
@@ -227,7 +251,7 @@ public class TutorialAppMode extends AppMode
                 (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) > 0 ||
                 ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId))) {
 
-                setPage(PAGE_FINALE);
+                _currentChapter = CHAPTER_END;
             }
             break;
 
@@ -237,8 +261,8 @@ public class TutorialAppMode extends AppMode
 
 
             default:
-//            log.error("chapterGUINavigation", "_currentPage", _currentPage);
-//            setPage(PAGE_CLICK_VW);
+            log.error("chapterGUINavigation, unrecognized", "_currentPage", _currentPage);
+            setPage(PAGE_CLICK_VW);
         }
     }
     protected function chapterLookingForTarget () :void
@@ -288,10 +312,9 @@ public class TutorialAppMode extends AppMode
 
     protected function chapterEnd () :void
     {
-        if (_currentPage != PAGE_END) {
+        if (_currentPage != PAGE_FINALE) {
             setPage(PAGE_FINALE);
         }
-        deactivateTutorial();
     }
 
     protected function updateTargetingRecticleInHUD (buttonName :String) :void
@@ -303,16 +326,43 @@ public class TutorialAppMode extends AppMode
         var targetDisplayObject :DisplayObject = ClientContext.hud.findSafely(buttonName);
         var targetReticle :SceneObject = createTargetSceneObject(sceneObjectName);
 
+
+
         var parent :DisplayObjectContainer = targetDisplayObject.parent;
         parent.setChildIndex(targetDisplayObject, parent.numChildren - 1);
-
-        targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
-            targetDisplayObject.parent.getChildIndex(targetDisplayObject));
-
         addObject(targetReticle);
 
-        targetReticle.x = targetDisplayObject.x;
-        targetReticle.y = targetDisplayObject.y;
+        moveTargetClearlyFromOldTargetLocToNew(targetReticle, targetDisplayObject);
+
+//        targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
+//            targetDisplayObject.parent.getChildIndex(targetDisplayObject));
+//
+//
+////        ClientContext.centerOnViewableRoom(targetReticle.displayObject);
+//        setTargetToLastTargetLocation(targetReticle);
+////        placeTargetToTheRightOfTutorialPopup(targetReticle);
+//        targetReticle.addTask(LocationTask.CreateEaseIn(targetDisplayObject.x, targetDisplayObject.y, 0.5));
+
+//        targetReticle.x = targetDisplayObject.x;
+//        targetReticle.y = targetDisplayObject.y;
+    }
+
+    protected function moveTargetClearlyFromOldTargetLocToNew (reticle :SceneObject,
+        target :DisplayObject) :void
+    {
+
+        target.parent.addChildAt(reticle.displayObject,
+            target.parent.numChildren);
+
+        setTargetToLastTargetLocation(reticle);
+
+        var serial :SerialTask = new SerialTask();
+        serial.addTask(LocationTask.CreateEaseIn(target.x, target.y, 0.5));
+        serial.addTask(new FunctionTask(function () :void {
+            target.parent.addChildAt(reticle.displayObject,
+            target.parent.getChildIndex(target));
+        }));
+        reticle.addTask(serial);
     }
 
     protected function handleClickHUDFeed () :void
@@ -344,13 +394,17 @@ public class TutorialAppMode extends AppMode
                 if (targetReticle == null) {
                     targetReticle = createTargetSceneObject(sceneObjectName);
 
+
                     targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
                     targetDisplayObject.parent.getChildIndex(targetDisplayObject) );
 
                     addObject(targetReticle);
 
-                    targetReticle.x = avhud.targetUI.x;
-                    targetReticle.y = avhud.targetUI.y;
+                    ClientContext.centerOnViewableRoom(targetReticle.displayObject);
+                    targetReticle.addTask(LocationTask.CreateEaseIn(avhud.targetUI.x, avhud.targetUI.y, 0.5));
+
+//                    targetReticle.x = avhud.targetUI.x;
+//                    targetReticle.y = avhud.targetUI.y;
                 }
             }
             else {//IF not, make sure there's so target on the avatar
@@ -359,6 +413,13 @@ public class TutorialAppMode extends AppMode
                 }
             }
         }
+    }
+
+    protected function setTargetToLastTargetLocation (target :SceneObject) :void
+    {
+        var local :Point = target.displayObject.parent.globalToLocal(_lastTargetLocationGlobal);
+        target.x = local.x;
+        target.y = local.y;
     }
 
 
@@ -377,17 +438,27 @@ public class TutorialAppMode extends AppMode
                     ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as HelpPopup;
                 var targetDisplayObject :DisplayObject = help.findSafely(buttonName);
 
-                targetReticle.x = targetDisplayObject.x;
-                targetReticle.y = targetDisplayObject.y;
-
-                targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
-                    targetDisplayObject.parent.getChildIndex(targetDisplayObject) );
+//                targetReticle.x = targetDisplayObject.x;
+//                targetReticle.y = targetDisplayObject.y;
 
                 addObject(targetReticle);
+
+                moveTargetClearlyFromOldTargetLocToNew(targetReticle, targetDisplayObject);
+
+//                targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
+//                    targetDisplayObject.parent.getChildIndex(targetDisplayObject) );
+//
+//
+//                setTargetToLastTargetLocation(targetReticle);
+////                ClientContext.centerOnViewableRoom(targetReticle.displayObject);
+////                trace("in updateTargetingRecticleInHelp, )" + targetReticle.displayObject.x + ", "
+////                    + targetReticle.displayObject.y + ")");
+//                targetReticle.addTask(LocationTask.CreateEaseIn(targetDisplayObject.x, targetDisplayObject.y, 1));
+
             }
         }
         else {
-            trace("updateTargetingRecticleInHelp, there's no help popup, buttonName="+buttonName);
+//            trace("updateTargetingRecticleInHelp, there's no help popup, buttonName="+buttonName);
             if (targetReticle != null && targetReticle.isLiveObject) {
                 targetReticle.destroySelf();
             }
@@ -408,6 +479,9 @@ public class TutorialAppMode extends AppMode
     protected function resetTargets () :void
     {
         for each (var so :SceneObject in _targets) {
+//            if (so.displayObject.parent != null) {
+//                so.displayObject.parent.removeChild(so.displayObject);
+//            }
             if (so.isLiveObject) {
                 so.destroySelf();
             }
@@ -419,10 +493,6 @@ public class TutorialAppMode extends AppMode
     {
         var reticle :MovieClip =
             ClientContext.instantiateMovieClip("HUD", "reticle", true) as MovieClip;
-
-//        var glow :GlowFilter = new GlowFilter(0xD5EBF2);
-//        reticle.filters = [glow];
-
         return reticle;
     }
 
@@ -432,6 +502,16 @@ public class TutorialAppMode extends AppMode
         _targets.push(s);
         return s;
     }
+
+//    protected function getTargetSceneObject() :SceneObject
+//    {
+//        for each (var so :SceneObject in _targets) {
+//            if (so.displayObject.parent == null) {
+//                return so;
+//            }
+//        }
+//        return createTargetSceneObject(null);
+//    }
 
     protected function setPage (newPage :String) :void
     {
@@ -563,7 +643,7 @@ public class TutorialAppMode extends AppMode
         }
 
         if (_currentPage == PAGE_CLICK_BACK2) {
-            setPage(PAGE_FINALE);
+            _currentChapter = CHAPTER_END;
         }
     }
 
@@ -572,6 +652,16 @@ public class TutorialAppMode extends AppMode
         if (_currentPage == PAGE_CLICK_BLOOD) {
             setPage(PAGE_CLICK_BACK2);
         }
+    }
+
+    protected function placeTargetToTheRightOfTutorialPopup (target :SceneObject) :void
+    {
+        var left :Point = _tutorialPopup.displayObject.localToGlobal(
+            new Point( _tutorialPopup.displayObject.width / 2 - 20, 0));
+
+        var leftLocal :Point = target.displayObject.parent.globalToLocal(left);
+        target.x = leftLocal.x;
+        target.y = leftLocal.y;
     }
 
     protected var _active :Boolean;
@@ -588,6 +678,8 @@ public class TutorialAppMode extends AppMode
     protected var _tutorialPopup :PopupQuery;
 
     protected var _ctrl :AVRGameControl;
+
+    protected var _lastTargetLocationGlobal :Point = new Point();
 
 
     public static const CHAPTER_LOOKING_FOR_TARGET :String = "Chapter: Looking for target";
