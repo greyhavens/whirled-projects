@@ -24,47 +24,23 @@ public class FeedingServer
      * @param preyId the occupantId of the player acting as the prey, or 0 if the prey
      * is an AI player
      *
-     * @param preyBlood the amount of blood the prey currently has, normalized to a value between
-     * 0 and 1.
-     *
      * @param preyBloodType the blood strain that the prey carries, or -1 if the prey doesn't
      * have a special blood strain.
-     *
-     * @param roundCompleteCallback this function will be called after each successful round
-     * of feeding. It must return the new amount of blood the prey has, normalized between
-     * 0 and 1.
-     *
-     * function roundCompleteCallback () :Number {
-     *    return getNewPreyBlood();
-     * }
-     *
-     * @param gameCompleteCallback this function will be called when the game ends (this will
-     * happen when enough players leave).
-     *
-     * function gameCompleteCallback () :void {}
      *
      */
     public static function create (roomId :int,
                                    predatorId :int,
                                    preyId :int,
-                                   preyBlood :Number,
                                    preyBloodType :int,
                                    aiPreyName :String,
-                                   gameStartedCallback :Function,
-                                   roundCompleteCallback :Function,
-                                   gameCompleteCallback :Function,
-                                   playerLeftCallback :Function) :FeedingServer
+                                   feedingHost :FeedingHost) :FeedingServer
     {
         return new vampire.feeding.server.Server(roomId,
                                                  predatorId,
                                                  preyId,
-                                                 preyBlood,
                                                  preyBloodType,
                                                  aiPreyName,
-                                                 gameStartedCallback,
-                                                 roundCompleteCallback,
-                                                 gameCompleteCallback,
-                                                 playerLeftCallback);
+                                                 feedingHost);
     }
 
     /**

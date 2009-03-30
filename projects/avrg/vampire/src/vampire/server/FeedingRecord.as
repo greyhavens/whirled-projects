@@ -10,9 +10,11 @@ import com.whirled.contrib.simplegame.EventCollecter;
 import vampire.data.Logic;
 import vampire.data.VConstants;
 import vampire.feeding.Constants;
+import vampire.feeding.FeedingHost;
 import vampire.feeding.FeedingServer;
 
 public class FeedingRecord extends EventCollecter
+    implements FeedingHost
 {
     public function FeedingRecord( room :Room,
                                    gameId :int,
@@ -39,6 +41,16 @@ public class FeedingRecord extends EventCollecter
         if (_room != null && _room.ctrl != null) {
             registerListener(_room.ctrl, AVRGameRoomEvent.PLAYER_LEFT, handlePlayerLeftRoom);
         }
+    }
+
+    public function formBloodBond (playerId1 :int, playerId2 :int) :void
+    {
+        ServerContext.server.getPlayer(playerId1).setBloodBonded(playerId2);
+    }
+
+    public function getBloodBondPartner (playerId :int) :int
+    {
+        return ServerContext.server.getPlayer(playerId).bloodbonded;
     }
 
     protected function handlePlayerLeftRoom (e :AVRGameRoomEvent) :void
@@ -85,7 +97,7 @@ public class FeedingRecord extends EventCollecter
 
 
         //We have disabled blood, until the game gets more interesting.
-        var preyBlood :Number = 1.0;
+        //var preyBlood :Number = 1.0;
 //        var preyBlood :Number = _room.isPlayer( _preyId ) ?
 //            _room.getPlayer( _preyId ).blood / _room.getPlayer( _preyId ).maxBlood
 //            :
@@ -100,13 +112,9 @@ public class FeedingRecord extends EventCollecter
         _gameServer = FeedingServer.create( _room.roomId,
                                                 predatorId,
                                                 gamePreyId,
-                                                preyBlood,
                                                 preyBloodType,
                                                 _preyName,
-                                                gameStartedCallback,
-                                                roundCompleteCallback,
-                                                gameFinishedCallback,
-                                                playerLeftCallback);
+                                                this);
 
         log.debug("starting gameServer", "gameId", _gameServer.gameId ,"roomId", _room.roomId, "_predators", _predators.toArray(), "gamePreyId", gamePreyId);
 
@@ -138,7 +146,7 @@ public class FeedingRecord extends EventCollecter
         }
     }
 
-    protected function playerLeftCallback (playerId :int) :void
+    public function onPlayerLeft (playerId :int) :void
     {
         if (_room.isPlayer(playerId)) {
             log.debug("playerLeftCallback", "name", _room.getPlayer( playerId ).name);
@@ -186,7 +194,7 @@ public class FeedingRecord extends EventCollecter
         _room.getPlayer( playerId ).ctrl.sendMessage("StartClient", _gameServer.gameId);
     }
 
-    protected function gameStartedCallback () :void
+    public function onGameStarted () :void
     {
         _started = true;
 
@@ -203,7 +211,7 @@ public class FeedingRecord extends EventCollecter
         }
     }
 
-    protected function roundCompleteCallback() :Number
+    public function onRoundComplete () :void
     {
         log.debug("roundCompleteCallback");
         try {
@@ -237,16 +245,14 @@ public class FeedingRecord extends EventCollecter
 //                return ServerContext.npBlood.bloodAvailableFromNonPlayer( _preyId ) /
 //                    ServerContext.npBlood.maxBloodFromNonPlayer(_preyId);
 //            }
-            return 0.1;
         }
         catch( err :Error ) {
             log.error(err.getStackTrace());
             trace(err.getStackTrace());
         }
-        return 0;
     }
 
-    protected function gameFinishedCallback(...ignored) :void
+    public function onGameComplete () :void
     {
         try {
 

@@ -20,11 +20,7 @@ public class ServerCtx
     public var nameUtil :NameUtil;
 
     public var playerIds :Array;
-    public var preyBlood :Number;
-    public var gameStartedCallback :Function;
-    public var roundCompleteCallback :Function;
-    public var gameCompleteCallback :Function;
-    public var playerLeftCallback :Function;
+    public var feedingHost :FeedingHost;
 
     public var lastRoundScore :int;
 
@@ -129,7 +125,7 @@ public class ServerCtx
         log.info("Sending msg '" + msg.name + "' to " + (toPlayer != 0 ? toPlayer : "ALL"));
     }
 
-    public function logBadMessage (senderId :int, msgName :String, reason :String = null,
+    public function logBadMessage (log :Log, senderId :int, msgName :String, reason :String = null,
                                    err :Error = null) :void
     {
         var args :Array = [

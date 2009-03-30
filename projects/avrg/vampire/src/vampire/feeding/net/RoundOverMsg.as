@@ -11,16 +11,11 @@ public class RoundOverMsg
     public static const NAME :String = "RoundOver";
 
     public var scores :HashMap; // Map<playerId, score>
-    public var preyBloodStart :Number;
-    public var preyBloodEnd :Number;
 
-    public static function create (scores :HashMap, preyBloodStart :Number,
-        preyBloodEnd :Number) :RoundOverMsg
+    public static function create (scores :HashMap) :RoundOverMsg
     {
         var msg :RoundOverMsg = new RoundOverMsg();
         msg.scores = scores;
-        msg.preyBloodStart = preyBloodStart;
-        msg.preyBloodEnd = preyBloodEnd;
 
         return msg;
     }
@@ -48,9 +43,6 @@ public class RoundOverMsg
                 ba.writeInt(score);
             });
 
-        ba.writeFloat(preyBloodStart);
-        ba.writeFloat(preyBloodEnd);
-
         return ba;
     }
 
@@ -64,9 +56,6 @@ public class RoundOverMsg
             var score :int = ba.readInt();
             scores.put(playerId, score);
         }
-
-        preyBloodStart = ba.readFloat();
-        preyBloodEnd = ba.readFloat();
     }
 
     public function get name () :String

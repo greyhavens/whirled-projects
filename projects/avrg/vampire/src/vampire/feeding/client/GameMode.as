@@ -325,7 +325,7 @@ public class GameMode extends AppMode
             if (!ClientCtx.isConnected) {
                 var scores :HashMap = new HashMap();
                 scores.put(ClientCtx.localPlayerId, GameCtx.score.bloodCount);
-                onRoundOver(RoundOverMsg.create(scores, 1, 0.25));
+                onRoundOver(RoundOverMsg.create(scores));
                 return;
             }
         }

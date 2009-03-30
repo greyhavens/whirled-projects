@@ -16,9 +16,10 @@ public class ServerLobbyMode extends ServerMode
     {
         if (msg is CloseLobbyMsg) {
             if (senderId != _ctx.lobbyLeader) {
-                _ctx.logBadMessage(senderId, msg.name, "player is not the lobby leader");
+                _ctx.logBadMessage(log, senderId, msg.name, "player is not the lobby leader");
             } else if (!_ctx.preyIsAi && _ctx.preyId == Constants.NULL_PLAYER) {
-                _ctx.logBadMessage(senderId, msg.name, "The prey has left; the game can't start.");
+                _ctx.logBadMessage(log, senderId, msg.name,
+                    "The prey has left; the game can't start.");
             } else {
                 _ctx.server.setMode(Constants.MODE_PLAYING);
             }

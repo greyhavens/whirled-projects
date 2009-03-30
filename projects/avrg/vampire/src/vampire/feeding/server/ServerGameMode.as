@@ -9,7 +9,6 @@ import com.whirled.contrib.simplegame.util.Rand;
 import vampire.data.VConstants;
 import vampire.feeding.*;
 import vampire.feeding.net.*;
-import vampire.server.ServerContext;
 
 public class ServerGameMode extends ServerMode
 {
@@ -61,10 +60,10 @@ public class ServerGameMode extends ServerMode
     {
         if (msg is RoundScoreMsg) {
             if (_state != STATE_WAITING_FOR_SCORES) {
-                _ctx.logBadMessage(senderId, msg.name, "not waiting for scores");
+                _ctx.logBadMessage(log, senderId, msg.name, "not waiting for scores");
 
             } else if (!ArrayUtil.removeFirst(_playersNeedingScoreUpdate, senderId)) {
-                _ctx.logBadMessage(senderId, msg.name,
+                _ctx.logBadMessage(log, senderId, msg.name,
                                    "unrecognized player, or player already reported score");
 
             } else {
@@ -112,20 +111,21 @@ public class ServerGameMode extends ServerMode
                 });
             _ctx.lastRoundScore = totalScore;
             // Send the final scores to the clients.
-            var preyBloodStart :Number = _ctx.preyBlood;
-            _ctx.preyBlood = _ctx.roundCompleteCallback();
-            _ctx.sendMessage(RoundOverMsg.create(_finalScores, preyBloodStart, _ctx.preyBlood));
+            _ctx.feedingHost.onRoundComplete();
+            _ctx.sendMessage(RoundOverMsg.create(_finalScores));
 
-            // If there are two people playing the game, a predator and a prey, increment
-            // their blood bond progress
-            if (_ctx.getPredatorIds().length == 1 && _ctx.preyId != Constants.NULL_PLAYER) {
-                if (_ctx.bloodBondProgress < VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND) {
-                    _ctx.bloodBondProgress++;
-                    if (_ctx.bloodBondProgress == VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND) {
-                        // Create the blood bond
-                        var predatorId :int = _ctx.getPredatorIds()[0];
-                        ServerContext.server.getPlayer(_ctx.preyId).setBloodBonded(predatorId);
-                    }
+            // If there are two people playing the game, a predator and a prey, and they
+            // aren't already blood bonded with each other, increment the blood bond progress
+            var predatorId :int = _ctx.getPredatorIds()[0];
+            if (_ctx.getPredatorIds().length == 1 &&
+                _ctx.preyId != Constants.NULL_PLAYER &&
+                _ctx.feedingHost.getBloodBondPartner(predatorId) != _ctx.preyId &&
+                _ctx.bloodBondProgress < VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND) {
+
+                _ctx.bloodBondProgress++;
+                log.info("Incrementing blood bond progress", "progress", _ctx.bloodBondProgress);
+                if (_ctx.bloodBondProgress == VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND) {
+                    _ctx.feedingHost.formBloodBond(_ctx.getPredatorIds()[0], _ctx.preyId);
                 }
             }
 

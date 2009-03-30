@@ -27,13 +27,9 @@ public class Server extends FeedingServer
     public function Server (roomId :int,
                             predatorId :int,
                             preyId :int,
-                            preyBlood :Number,
                             preyBloodType :int,
                             aiPreyName :String,
-                            gameStartedCallback :Function,
-                            roundCompleteCallback :Function,
-                            gameCompleteCallback :Function,
-                            playerLeftCallback :Function)
+                            feedingHost :FeedingHost)
     {
         if (!_inited) {
             throw new Error("FeedingGameServer.init has not been called");
@@ -44,7 +40,6 @@ public class Server extends FeedingServer
             "roomId", roomId,
             "predatorId", predatorId,
             "preyId", preyId,
-            "preyBlood", preyBlood,
             "aiPreyName", aiPreyName);
 
         _ctx.server = this;
@@ -62,13 +57,9 @@ public class Server extends FeedingServer
         }
         _ctx.preyId = preyId;
         _ctx.preyIsAi = (_ctx.preyId == Constants.NULL_PLAYER);
-        _ctx.preyBlood = preyBlood;
         _ctx.preyBloodType = preyBloodType;
         _ctx.aiPreyName = aiPreyName;
-        _ctx.gameStartedCallback = gameStartedCallback;
-        _ctx.roundCompleteCallback = roundCompleteCallback;
-        _ctx.gameCompleteCallback = gameCompleteCallback;
-        _ctx.playerLeftCallback = playerLeftCallback;
+        _ctx.feedingHost = feedingHost;
 
         _ctx.props.set(Props.ALL_PLAYERS, FeedingUtil.arrayToDict(_ctx.playerIds), true);
         _ctx.props.set(Props.LOBBY_LEADER, predatorId, true);
@@ -121,7 +112,7 @@ public class Server extends FeedingServer
         case Constants.MODE_PLAYING:
             if (!_gameStarted) {
                 _gameStarted = true;
-                _ctx.gameStartedCallback();
+                _ctx.feedingHost.onGameStarted();
             }
             newMode = new ServerGameMode(_ctx);
             break;
@@ -174,11 +165,11 @@ public class Server extends FeedingServer
         _ctx.props.setIn(Props.ALL_PLAYERS, playerId, null, true);
         updateLobbyLeader();
 
-        _ctx.playerLeftCallback(playerId);
+        _ctx.feedingHost.onPlayerLeft(playerId);
 
         if (_ctx.playerIds.length == 0) {
             // If the last predator or prey just left the game, the game is complete.
-            _ctx.gameCompleteCallback();
+            _ctx.feedingHost.onGameComplete();
 
         } else if (_serverMode != null) {
             _serverMode.playerLeft(playerId);
@@ -285,7 +276,7 @@ public class Server extends FeedingServer
     protected function logBadMessage (e :MessageReceivedEvent, reason :String, err :Error = null)
         :void
     {
-        _ctx.logBadMessage(e.senderId, _ctx.nameUtil.decodeName(e.name), reason, err);
+        _ctx.logBadMessage(log, e.senderId, _ctx.nameUtil.decodeName(e.name), reason, err);
     }
 
     protected var _ctx :ServerCtx = new ServerCtx();

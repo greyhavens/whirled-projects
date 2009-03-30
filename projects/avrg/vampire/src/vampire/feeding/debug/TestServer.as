@@ -33,7 +33,55 @@ import vampire.data.Logic;
 import vampire.data.VConstants;
 
 class TestGameController extends OneRoomGameRoom
+    implements FeedingHost
 {
+    public function onGameStarted () :void
+    {
+        log.info("onGameStarted");
+    }
+
+    public function onRoundComplete () :void
+    {
+        log.info("onRoundComplete");
+    }
+
+    public function onGameComplete () :void
+    {
+        log.info("onGameComplete");
+
+        /*var playerIds :Array = game.playerIds;
+        for each (var playerId :int in playerIds) {
+            _playerGameMap.remove(playerId);
+        }
+
+        ArrayUtil.removeFirst(_gamesInProgress, game);
+
+        if (successfullyEnded) {
+            log.info("Game successfully ended", "gameId", game.gameId,
+                     "finalScore", game.lastRoundScore);
+        } else {
+            log.info("Game ended prematurely", "gameId", game.gameId);
+        }
+
+        game.shutdown();*/
+    }
+
+    public function onPlayerLeft (playerId :int) :void
+    {
+        log.info("onPlayerLeft", "playerId", playerId);
+        _playerGameMap.remove(playerId);
+    }
+
+    public function formBloodBond (playerId1 :int, playerId2 :int) :void
+    {
+        log.info("formBloodBond", "playerId1", playerId1, "playerId2", playerId2);
+    }
+
+    public function getBloodBondPartner (playerId :int) :int
+    {
+        return 0;
+    }
+
     override protected function finishInit () :void
     {
         super.finishInit();
@@ -119,23 +167,9 @@ class TestGameController extends OneRoomGameRoom
             _roomCtrl.getRoomId(),
             predatorId,
             preyId,
-            _preyBlood,
-            // the amount of blood the prey is starting the feeding with
             preyBloodStrain,
             (preyId == Constants.NULL_PLAYER ? "AI Prey" : ""),
-            function () :void {
-                log.info("Game started", "gameId", game.gameId);
-            },
-            function () :Number {
-                return onRoundComplete(game);
-            },
-            function () :void {
-                onGameComplete(game, true);
-            },
-            function (playerId :int) :void {
-                log.info("Player left game", "gameId", game.gameId, "playerId", playerId);
-                _playerGameMap.remove(playerId);
-            });
+            this);
 
         for each (var playerId :int in players) {
             game.addPredator(playerId);
@@ -160,47 +194,10 @@ class TestGameController extends OneRoomGameRoom
         });
     }
 
-    protected function onRoundComplete (game :FeedingServer) :Number
-    {
-        log.info("Round ended", "gameId", game.gameId, "score", game.lastRoundScore);
-        // return the amount of blood the prey has left. Real games will want to return a real
-        // value here, obviously.
-        if (_preyBlood <= 0.1) {
-            _preyBlood = 0;
-        } else {
-            _preyBlood -= Rand.nextNumberRange(
-                0.1,
-                Math.min(0.5, _preyBlood),
-                Rand.STREAM_GAME);
-        }
-
-        return _preyBlood;
-    }
-
-    protected function onGameComplete (game :FeedingServer, successfullyEnded :Boolean) :void
-    {
-        var playerIds :Array = game.playerIds;
-        for each (var playerId :int in playerIds) {
-            _playerGameMap.remove(playerId);
-        }
-
-        ArrayUtil.removeFirst(_gamesInProgress, game);
-
-        if (successfullyEnded) {
-            log.info("Game successfully ended", "gameId", game.gameId,
-                     "finalScore", game.lastRoundScore);
-        } else {
-            log.info("Game ended prematurely", "gameId", game.gameId);
-        }
-
-        game.shutdown();
-    }
-
     protected var _allPlayers :Array = [];
     protected var _waitingPlayers :Array = [];
     protected var _gamesInProgress :Array = [];
     protected var _playerGameMap :HashMap = new HashMap(); // Map<playerId, FeedingGameServer>
-    protected var _preyBlood :Number = 1;
     protected var _startGameTimer :ManagedTimer;
 
     protected var _events :EventHandlerManager = new EventHandlerManager();
