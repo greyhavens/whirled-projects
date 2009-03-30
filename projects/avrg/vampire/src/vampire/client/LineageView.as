@@ -423,12 +423,16 @@ public class LineageView extends SceneObjectParent
         if (linkOnly && _hierarchy.getSireProgressionCount(playerId) > 0) {
             drawLineFrom(s, playerX, playerY, sireX, sireY);
 
-            //Experiemental, draw a horizontal line if the player has minions, no matter where they are,
-            if (!below && _selectedPlayerIdCenter != playerId && _hierarchy.getMinionCount(playerId) > 1) {
-                s.graphics.lineStyle(BLOOD_LINEAGE_LINK_THICKNESS, BLOOD_LINEAGE_LINK_COLOR);
-                s.graphics.moveTo(playerX - 20, playerY);
-                s.graphics.lineTo(playerX + 20, playerY);
-            }
+//            //Experiemental, draw a horizontal line if the player has minions, no matter where they are,
+//            if (!below && _selectedPlayerIdCenter != playerId && _hierarchy.getMinionCount(playerId) > 1) {
+//
+//
+//
+//
+//                s.graphics.lineStyle(BLOOD_LINEAGE_LINK_THICKNESS, BLOOD_LINEAGE_LINK_COLOR);
+//                s.graphics.moveTo(playerX - 20, playerY);
+//                s.graphics.lineTo(playerX + 20, playerY);
+//            }
         }
         else {
             drawPlayerNameCenteredOn(s, playerId, playerX, playerY, below, left);
@@ -460,6 +464,20 @@ public class LineageView extends SceneObjectParent
 //            trace("Creating drop for " + playerId);
         }
         drop = _player2Drop.get(playerId) as DropSceneObject;
+
+        //Experiemental, draw a horizontal line if the player has minions, no matter where they are,
+            if (!below && _selectedPlayerIdCenter != playerId && _hierarchy.getMinionCount(playerId) > 1) {
+                drop.showHBar();
+//                s.graphics.lineStyle(BLOOD_LINEAGE_LINK_THICKNESS, BLOOD_LINEAGE_LINK_COLOR);
+//                s.graphics.moveTo(playerX - 20, playerY);
+//                s.graphics.lineTo(playerX + 20, playerY);
+            }
+            else {
+                drop.hideHBar();
+            }
+
+
+
 
         //Add to visible players list
         _visiblePlayers.add(playerId);
@@ -579,8 +597,8 @@ public class LineageView extends SceneObjectParent
     protected var _visiblePlayers :HashSet = new HashSet();
 
 
-    protected static const BLOOD_LINEAGE_LINK_COLOR :int = 0xcc0000;
-    protected static const BLOOD_LINEAGE_LINK_THICKNESS :int = 3;
+    public static const BLOOD_LINEAGE_LINK_COLOR :int = 0xcc0000;
+    public static const BLOOD_LINEAGE_LINK_THICKNESS :int = 3;
 
     protected static const MAX_MINIONS_SHOWN :int = 5;
     public static const MAX_NAME_CHARS :int = 10;
@@ -609,6 +627,7 @@ import vampire.client.LineageView;
 import flash.filters.GlowFilter;
 import flash.display.InteractiveObject;
 import vampire.client.ClientContext;
+import flash.display.Shape;
 
 class DropSceneObject extends SceneObject
 {
@@ -635,10 +654,27 @@ class DropSceneObject extends SceneObject
 //        addGlowFilter(_drop);
         _drop.mouseEnabled = true;
 
+        _hBar = new Shape();
+        _hBar.graphics.lineStyle(LineageView.BLOOD_LINEAGE_LINK_THICKNESS, LineageView.BLOOD_LINEAGE_LINK_COLOR);
+        _hBar.graphics.moveTo(- 20, 0);
+        _hBar.graphics.lineTo(20, 0);
+
 
         setNameTextBelowDrop();//Default to below
 
 //        enableMouseListeners();
+    }
+
+    public function showHBar () :void
+    {
+        _displaySprite.addChildAt(_hBar, 0);
+    }
+
+    public function hideHBar () :void
+    {
+        if (_hBar.parent != null) {
+            _hBar.parent.removeChild(_hBar);
+        }
     }
 
     protected function centerLineageOnThis (...ignored) :void
@@ -737,6 +773,7 @@ class DropSceneObject extends SceneObject
 
     protected var _playerId :int;
     protected var _drop :MovieClip;
+    protected var _hBar :Shape;
     protected var _nameText :TextField;
     protected var _centerLineageFunction :Function;
     protected var _displaySprite :Sprite = new Sprite();
