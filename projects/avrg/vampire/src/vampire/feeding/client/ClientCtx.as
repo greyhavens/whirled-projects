@@ -31,10 +31,6 @@ public class ClientCtx
     public static var gameCompleteCallback :Function;
     public static var playerData :PlayerFeedingData;
     public static var playerIds :Array;
-    public static var preyId :int;
-    public static var preyBloodType :int;
-    public static var preyIsAi :Boolean;
-    public static var aiPreyName :String;
     public static var awardedTrophies :HashSet;
     public static var lastRoundResults :RoundOverMsg;
 
@@ -45,10 +41,6 @@ public class ClientCtx
         gameCompleteCallback = null;
         playerData = null;
         playerIds = null;
-        preyId = 0;
-        preyBloodType = -1;
-        preyIsAi = false;
-        aiPreyName = null;
         awardedTrophies = new HashSet();
         lastRoundResults = null;
     }
@@ -96,9 +88,38 @@ public class ClientCtx
         return true;
     }
 
+    public static function get preyId () :int
+    {
+        return (props.get(Props.PREY_ID) as int);
+    }
+
+    public static function get aiPreyName () :String
+    {
+        return (props.get(Props.AI_PREY_NAME) as String);
+    }
+
+    public static function get preyBloodType () :int
+    {
+        if (Constants.DEBUG_FORCE_SPECIAL_BLOOD_STRAIN) {
+            return 0;
+        } else {
+            return (props.get(Props.PREY_BLOOD_TYPE) as int);
+        }
+    }
+
+    public static function get preyIsAi () :Boolean
+    {
+        return (props.get(Props.PREY_IS_AI) as Boolean);
+    }
+
     public static function get lobbyLeaderId () :int
     {
         return (props.get(Props.LOBBY_LEADER) as int);
+    }
+
+    public static function get bloodBondProgress () :int
+    {
+        return (props.get(Props.BLOOD_BOND_PROGRESS) as int);
     }
 
     public static function get isLobbyLeader () :Boolean

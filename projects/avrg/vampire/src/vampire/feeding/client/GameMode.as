@@ -9,7 +9,6 @@ import com.whirled.contrib.avrg.RoomDragger;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.net.*;
-import com.whirled.contrib.simplegame.objects.Dragger;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
@@ -316,9 +315,10 @@ public class GameMode extends AppMode
         super.update(dt);
 
         // If the game is over, wait for animations to complete before actually ending things
-        if (GameCtx.gameOver && this.canEndGameNow) {
+        if (GameCtx.gameOver && this.canEndGameNow && !_sentScores) {
             // send our scores
             ClientCtx.msgMgr.sendMessage(RoundScoreMsg.create(GameCtx.score.bloodCount));
+            _sentScores = true;
 
             // For testing purposes, end the game manually if we're in standalone mode;
             // otherwise we'll wait for the actual RoundOverMsg to come in
@@ -377,6 +377,7 @@ public class GameMode extends AppMode
     protected var _countdown :MovieClip;
     protected var _lastMoveTarget :Vector2 = new Vector2();
     protected var _musicChannel :AudioChannel;
+    protected var _sentScores :Boolean;
 
     protected static var log :Log = Log.getLog(GameMode);
 

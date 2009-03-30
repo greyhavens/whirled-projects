@@ -12,6 +12,7 @@ import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 
+import vampire.data.VConstants;
 import vampire.feeding.Constants;
 import vampire.feeding.net.CloseLobbyMsg;
 import vampire.feeding.net.Props;
@@ -57,15 +58,6 @@ public class LobbyMode extends AppMode
             instructionsMultiplayer.visible = true;
         }
 
-        // Blood Bond icon
-        var bloodBond :MovieClip = _panelMovie["blood_bond"];
-        if (ClientCtx.playerIds.length == 2 && !ClientCtx.preyIsAi) {
-            // TODO
-            bloodBond.visible = false;
-        } else {
-            bloodBond.visible = false;
-        }
-
         // Quit button
         var quitBtn :SimpleButton = _panelMovie["button_done"];
         registerOneShotCallback(quitBtn, MouseEvent.CLICK,
@@ -109,6 +101,12 @@ public class LobbyMode extends AppMode
             _panelMovie["arrow_down"]);
         addObject(_playerList);
         updatePlayerList();
+
+        updateBloodBondIndicator();
+
+        // next round timer
+        var roundTimer :MovieClip = _panelMovie["round_timer"];
+        roundTimer.visible = false;
     }
 
     protected function updateButtonsAndStatus () :void
@@ -200,11 +198,28 @@ public class LobbyMode extends AppMode
         _playerList.data = listData;
     }
 
+    protected function updateBloodBondIndicator () :void
+    {
+        var bloodBond :MovieClip = _panelMovie["blood_bond"];
+        bloodBond.visible = false;
+        if (ClientCtx.playerIds.length == 2 &&
+            !ClientCtx.preyIsAi &&
+            ClientCtx.bloodBondProgress > 0) {
+
+            bloodBond.visible = true;
+            bloodBond.gotoAndStop(1 +
+                Math.min(ClientCtx.bloodBondProgress, VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND));
+        }
+    }
+
     protected function onPropChanged (e :PropertyChangedEvent) :void
     {
         if (e.name == Props.ALL_PLAYERS) {
             updateButtonsAndStatus();
             updatePlayerList();
+            updateBloodBondIndicator();
+        } else if (e.name == Props.BLOOD_BOND_PROGRESS) {
+            updateBloodBondIndicator();
         } else if (e.name == Props.LOBBY_LEADER || e.name == Props.PREY_ID) {
             updateButtonsAndStatus();
         }

@@ -49,15 +49,18 @@ public class BloodBloom extends FeedingClient
         _inited = true;
     }
 
-    public function BloodBloom (gameId :int, playerData :PlayerFeedingData,
-                                gameCompleteCallback :Function)
+    public function BloodBloom (gameId :int,
+                                playerData :PlayerFeedingData,
+                                gameCompleteCallback :Function,
+                                props :GamePropGetControl = null)
     {
         if (!_inited) {
             throw new Error("FeedingGameClient.init has not been called");
         }
 
         ClientCtx.init();
-        ClientCtx.props = new GamePropGetControl(gameId, ClientCtx.gameCtrl.room.props);
+        ClientCtx.props =
+            (props != null ? props : new GamePropGetControl(gameId, ClientCtx.gameCtrl.room.props));
         ClientCtx.playerData = playerData.clone();
         ClientCtx.gameCompleteCallback = gameCompleteCallback;
         ClientCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);
@@ -124,15 +127,7 @@ public class BloodBloom extends FeedingClient
     {
         if (e.name == Props.ALL_PLAYERS) {
             updatePlayers();
-        } else if (e.name == Props.PREY_ID) {
-            updatePreyId();
-        } else if (e.name == Props.PREY_BLOOD_TYPE) {
-            updatePreyBloodType();
-        } else if (e.name == Props.PREY_IS_AI) {
-            updatePreyIsAi();
-        } else if (e.name == Props.AI_PREY_NAME) {
-            updateAiPreyName();
-        }else if (e.name == Props.MODE) {
+        } else if (e.name == Props.MODE) {
             updateMode();
         }
     }
@@ -145,30 +140,6 @@ public class BloodBloom extends FeedingClient
         } else {
             ClientCtx.playerIds = Util.keys(playerDict);
         }
-
-        if (!ArrayUtil.contains(ClientCtx.playerIds, ClientCtx.preyId)) {
-            ClientCtx.preyId = Constants.NULL_PLAYER;
-        }
-    }
-
-    protected function updatePreyId () :void
-    {
-        ClientCtx.preyId = ClientCtx.props.get(Props.PREY_ID) as int;
-    }
-
-    protected function updatePreyBloodType () :void
-    {
-        ClientCtx.preyBloodType = ClientCtx.props.get(Props.PREY_BLOOD_TYPE) as int;
-    }
-
-    protected function updatePreyIsAi () :void
-    {
-        ClientCtx.preyIsAi = ClientCtx.props.get(Props.PREY_IS_AI) as Boolean;
-    }
-
-    protected function updateAiPreyName () :void
-    {
-        ClientCtx.aiPreyName = ClientCtx.props.get(Props.AI_PREY_NAME) as String;
     }
 
     protected function updateMode () :void
@@ -219,10 +190,6 @@ public class BloodBloom extends FeedingClient
                 onPropChanged, false, int.MAX_VALUE);
 
             updatePlayers();
-            updatePreyId();
-            updatePreyBloodType();
-            updatePreyIsAi();
-            updateAiPreyName();
             updateMode();
 
         } else {
