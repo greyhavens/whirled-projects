@@ -127,7 +127,7 @@ public class BloodBloom extends FeedingClient
     {
         if (e.name == Props.ALL_PLAYERS) {
             updatePlayers();
-        } else if (e.name == Props.MODE) {
+        } else if (e.name == Props.MODE_NAME) {
             updateMode();
         }
     }
@@ -144,7 +144,7 @@ public class BloodBloom extends FeedingClient
 
     protected function updateMode () :void
     {
-        var modeName :String = ClientCtx.props.get(Props.MODE) as String;
+        var modeName :String = ClientCtx.props.get(Props.MODE_NAME) as String;
         if (modeName != null && modeName == _curModeName) {
             log.warning("updateMode failed: we're already in this mode", "mode", modeName);
             return;

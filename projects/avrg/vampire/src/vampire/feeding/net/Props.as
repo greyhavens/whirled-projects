@@ -30,7 +30,7 @@ public class Props
     public static const LOBBY_LEADER :String = "LobbyLeader";
 
     /** state :String */
-    public static const MODE :String = "State";
+    public static const MODE_NAME :String = "ModeName";
 
     /** progress :int */
     public static const BLOOD_BOND_PROGRESS :String = "BloodBondProgress";

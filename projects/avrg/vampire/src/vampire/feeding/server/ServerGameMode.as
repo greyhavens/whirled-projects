@@ -28,6 +28,15 @@ public class ServerGameMode extends ServerMode
         _state = STATE_PLAYING;
         _timerMgr.createTimer(Constants.GAME_TIME * 1000, 1, onTimeOver).start();
 
+        // we want to keep track of the approximate amount of time remaining in the round
+        // so that we can report it to clients who join while the round is in progress
+        const TIME_UPDATE_INTERVAL :Number = 2;
+        _approxTimeRemaining = Constants.GAME_TIME;
+        _timerMgr.runForever(TIME_UPDATE_INTERVAL * 1000,
+            function (...ignored) :void {
+                _approxTimeRemaining = Math.max(_approxTimeRemaining - TIME_UPDATE_INTERVAL, 0);
+            }).start();
+
         super.run();
     }
 
@@ -86,6 +95,11 @@ public class ServerGameMode extends ServerMode
         }
 
         return super.onMsgReceived(senderId, msg);
+    }
+
+    public function get approxTimeRemaining () :Number
+    {
+        return _approxTimeRemaining;
     }
 
     override public function get modeName () :String
@@ -154,6 +168,7 @@ public class ServerGameMode extends ServerMode
     protected var _playersNeedingScoreUpdate :Array;
     protected var _finalScores :HashMap; // Map<playerId, score>
     protected var _noMoreFeeding :Boolean;
+    protected var _approxTimeRemaining :Number = 0;
 
     protected static const log :Log = Log.getLog(ServerGameMode);
 

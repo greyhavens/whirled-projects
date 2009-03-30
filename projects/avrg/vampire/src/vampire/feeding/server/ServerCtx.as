@@ -84,6 +84,16 @@ public class ServerCtx
         props.set(Props.BLOOD_BOND_PROGRESS, val, true);
     }
 
+    public function get modeName () :String
+    {
+        return props.get(Props.MODE_NAME) as String;
+    }
+
+    public function set modeName (val :String) :void
+    {
+        props.set(Props.MODE_NAME, val, true);
+    }
+
     public function getPredatorIds () :Array
     {
         var predators :Array = playerIds.slice();

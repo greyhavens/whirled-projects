@@ -21,6 +21,7 @@ public class FeedingUtil
         mgr.addMessageType(RoundStartingSoonMsg);
         mgr.addMessageType(AwardTrophyMsg);
         mgr.addMessageType(CloseLobbyMsg);
+        mgr.addMessageType(RoundTimeLeftMsg);
     }
 
     public static function arrayToDict (arr :Array) :Dictionary

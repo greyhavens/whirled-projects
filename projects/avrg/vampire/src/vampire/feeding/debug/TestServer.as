@@ -49,6 +49,8 @@ class TestGameController extends OneRoomGameRoom
     {
         log.info("onGameComplete");
 
+        // This is currently broken, if more than one game is run on the test server
+
         /*var playerIds :Array = game.playerIds;
         for each (var playerId :int in playerIds) {
             _playerGameMap.remove(playerId);

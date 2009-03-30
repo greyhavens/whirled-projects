@@ -17,7 +17,7 @@ public class ServerMode
 
     public function run () :void
     {
-        _ctx.props.set(Props.MODE, this.modeName, true);
+        _ctx.modeName = this.modeName;
     }
 
     public function shutdown () :void

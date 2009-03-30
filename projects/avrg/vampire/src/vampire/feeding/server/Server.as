@@ -63,7 +63,7 @@ public class Server extends FeedingServer
 
         _ctx.props.set(Props.ALL_PLAYERS, FeedingUtil.arrayToDict(_ctx.playerIds), true);
         _ctx.props.set(Props.LOBBY_LEADER, predatorId, true);
-        _ctx.props.set(Props.MODE, null, true);
+        _ctx.props.set(Props.MODE_NAME, null, true);
 
         _events.registerListener(
             _ctx.gameCtrl.game,
@@ -93,8 +93,8 @@ public class Server extends FeedingServer
 
     public function setMode (modeName :String) :void
     {
-        if (_ctx.props.get(Props.MODE) == modeName) {
-            log.warning("setMode failed; already in requested mode", "mode", modeName);
+        if (_ctx.modeName == modeName) {
+            log.warning("setMode failed; already in requested mode", "modeName", modeName);
             return;
         }
 
@@ -119,12 +119,12 @@ public class Server extends FeedingServer
         }
 
         if (newMode != null) {
-            log.info("Setting new mode", "mode", modeName);
+            log.info("Setting new mode", "modeName", modeName);
             _serverMode = newMode;
             _serverMode.run();
 
         } else {
-            log.warning("unrecognized mode", "mode", modeName);
+            log.warning("unrecognized mode", "modeName", modeName);
         }
     }
 
@@ -136,10 +136,6 @@ public class Server extends FeedingServer
 
     override public function addPredator (playerId :int) :Boolean
     {
-        /*if (!this.hasStarted || ArrayUtil.contains(_ctx.playerIds, playerId)) {
-            return false;
-        }*/
-
         if (_ctx.bloodBondProgress > 0) {
             _ctx.bloodBondProgress = 0;
         }
@@ -147,6 +143,15 @@ public class Server extends FeedingServer
         _ctx.playerIds.push(playerId);
         _ctx.props.setIn(Props.ALL_PLAYERS, playerId, false, true);
         updateLobbyLeader();
+
+        if (_ctx.modeName == Constants.MODE_PLAYING) {
+            // if a player is added while a game is in progress, tell them how much time is
+            // remaining (approximately) so that they can display a timer to the player
+            var gameMode :ServerGameMode = _serverMode as ServerGameMode;
+            if (gameMode != null) {
+                _ctx.sendMessage(RoundTimeLeftMsg.create(gameMode.approxTimeRemaining), playerId);
+            }
+        }
 
         return true;
     }
