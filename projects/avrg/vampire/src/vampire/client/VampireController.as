@@ -26,8 +26,6 @@ import vampire.net.messages.RequestStateChangeMsg;
 public class VampireController extends Controller
 {
     public static const CHANGE_STATE :String = "ChangeState";
-//    public static const CLOSE_MODE :String = "CloseMode";
-//    public static const PLAYER_STATE_CHANGED :String = "PlayerStateChanged";
     public static const QUIT :String = "Quit";
     public static const QUIT_POPUP :String = "ShowQuitPopup";
 
@@ -41,7 +39,6 @@ public class VampireController extends Controller
     public static const SHOW_HIERARCHY :String = "ShowHierarchy";
 
     public static const FEED :String = "Feed";
-//    public static const FEED_REQUEST :String = "FeedRequest";
     public static const FEED_REQUEST_ACCEPT :String = "AcceptFeedRequest";
     public static const FEED_REQUEST_DENY :String = "DenyFeedRequest";
 
@@ -82,90 +79,11 @@ public class VampireController extends Controller
             default:
             break;
         }
-        //If we want to go to bared mode, disable any previus targeting overlays
-//        if( state == VConstants.AVATAR_STATE_BARED  ) {
-////            ClientContext.hud.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
-//        }
-//
-//        //If we are already baring, toggle us out.
-//        if( state == VConstants.AVATAR_STATE_BARED &&
-//            ClientContext.model.state == VConstants.AVATAR_STATE_BARED) {
-//
-////            return;
-////            log.debug("  sending to server "+VConstants.GAME_MODE_NOTHING);
-//            ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
-//
-//            ClientContext.ctrl.agent.sendMessage( RequestStateChangeMsg.NAME,
-//                new RequestStateChangeMsg( ClientContext.ourPlayerId,
-//                    VConstants.AVATAR_STATE_DEFAULT).toBytes() );
-//        }
-//        else if(state == VConstants.GAME_MODE_FEED_FROM_NON_PLAYER ||
-//            state == VConstants.AVATAR_STATE_FEEDING) {
-//
-//
-//            if( ClientContext.model.state == VConstants.AVATAR_STATE_BARED ) {
-//
-//                var playerKey :String = Codes.playerRoomPropKey( ClientContext.ourPlayerId );
-//                ClientContext.ctrl.player.props.setIn( playerKey,
-//                    Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, VConstants.AVATAR_STATE_DEFAULT);
-//
-//                log.debug("  sending to server "+VConstants.AVATAR_STATE_DEFAULT);
-//                trace(ClientContext.ourPlayerId + " setting avatar state mode switch");
-//                ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
-//            }
-//
-//            trace(ClientContext.ourPlayerId + " setting avatar state mode switch");
-//            ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_FEEDING );
-//
-//        }
-//        else {
-//
-//            log.debug("  sending to server "+state);
-//            ClientContext.ctrl.agent.sendMessage( RequestStateChangeMsg.NAME,
-//                new RequestStateChangeMsg( ClientContext.ourPlayerId, state).toBytes() );
-//        }
-        //Some actions we don't need the agents permission
-//        trace("handleSwitchMode, ClientContext.model.action=" + ClientContext.model.action + ", mode=" + mode);
-//        trace("handleSwitchMode, ClientContext.model.action=" + (ClientContext.model.action == null));
-//        switch(ClientContext.model.action) {
-//            case Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
-////            case Constants.GAME_MODE_BLOODBOND:
-//            case Constants.GAME_MODE_NOTHING:
-//            case null:
-//                ClientContext.model.dispatchEvent( new ChangeActionEvent( mode ) );
-//                break;
-//            default:
-//
-//        }
 
         if( VConstants.LOCAL_DEBUG_MODE ) {
             ClientContext.model.dispatchEvent( new ChangeActionEvent( state ) );
         }
     }
-
-
-
-//    public function handleCloseMode( actionmode :BaseVampireMode) :void
-//    {
-//        switch(ClientContext.model.action) {
-//            case VConstants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
-////            case Constants.GAME_MODE_BLOODBOND:
-//            case VConstants.GAME_MODE_NOTHING:
-//            case null:
-//                ClientContext.model.dispatchEvent( new ChangeActionEvent( VConstants.GAME_MODE_NOTHING ) );
-//                break;
-//            default:
-//                ClientContext.ctrl.agent.sendMessage( RequestActionChangeMsg.NAME, new RequestActionChangeMsg( ClientContext.ourPlayerId, VConstants.GAME_MODE_NOTHING).toBytes() );
-//
-//        }
-//
-//        if( VConstants.LOCAL_DEBUG_MODE ) {
-//            ClientContext.model.dispatchEvent( new ChangeActionEvent( VConstants.GAME_MODE_NOTHING ) );
-//        }
-//
-//
-//    }
-
 
     public function handleQuit() :void
     {
@@ -193,42 +111,6 @@ public class VampireController extends Controller
             ClientContext.animateEnlargeFromMouseClick(popup);
         }
     }
-
-
-
-//    public function handleRemoveBloodBond( bloodBondedPlayerId :int) :void
-//    {
-//        if( !ClientContext.model.isPlayerInRoom( bloodBondedPlayerId ) ) {
-//            return;
-//        }
-//
-//        ClientContext.gameCtrl.agent.sendMessage(
-//            BloodBondRequestMessage.NAME,
-//            new BloodBondRequestMessage(
-//                ClientContext.ourPlayerId,
-//                bloodBondedPlayerId,
-//                ClientContext.getPlayerName(bloodBondedPlayerId),
-//                false).toBytes() );
-//    }
-
-//    public function handleAddBloodBond() :void
-//    {
-//        if( ClientContext.model.bloodbonded == ClientContext.model.targetPlayerId
-//            || ClientContext.model.targetPlayerId <= 0) {
-//            log.debug("handleAddBloodBond() " + ClientContext.currentClosestPlayerId + " already bloodbonded");
-//            return;
-//        }
-//
-//        log.debug("handleAddBloodBond() request to add " + ClientContext.model.targetPlayerId );
-//
-//        ClientContext.ctrl.agent.sendMessage(
-//            BloodBondRequestMsg.NAME,
-//            new BloodBondRequestMsg(
-//                ClientContext.ourPlayerId,
-//                ClientContext.model.targetPlayerId,
-//                ClientContext.getPlayerName(ClientContext.model.targetPlayerId),
-//                true).toBytes() );
-//    }
 
     public function handleShowDebug() :void
     {
@@ -278,83 +160,6 @@ public class VampireController extends Controller
             trace( err.getStackTrace() );
         }
     }
-
-
-
-
-
-////    public function handleFeedRequest( targetPlayerId :int, targetIsVictim :Boolean) :void
-//    public function handleFeedRequest( targetingOverlay :VampireAvatarHUDOverlay, parentSprite :Sprite, hud :HUD) :void
-//    {
-//        //If we are alrady in bared mode, first dump us out before any feeding shinannigens
-//        if( ClientContext.model.state == VConstants.AVATAR_STATE_BARED ) {
-//            var playerKey :String = Codes.playerRoomPropKey( ClientContext.ourPlayerId );
-//            ClientContext.ctrl.player.props.setIn( playerKey,
-//                Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE, VConstants.AVATAR_STATE_DEFAULT);
-//
-//            trace(ClientContext.ourPlayerId + " setting avatar state from handleFeedRequest");
-//            ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
-//
-//            ClientContext.ctrl.agent.sendMessage( RequestStateChangeMsg.NAME,
-//                new RequestStateChangeMsg( ClientContext.ourPlayerId,
-//                    VConstants.AVATAR_STATE_DEFAULT).toBytes() );
-//
-////            targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
-//            return;
-//        }
-//
-//        trace("handle handleFeedRequest");
-//
-//        //If we are a vampire we can feed, otherwise not.
-//        if( ClientContext.model.level >= VConstants.MINIMUM_VAMPIRE_LEVEL ||
-//            VConstants.LOCAL_DEBUG_MODE ) {
-//
-////                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS );
-////            if( targetingOverlay.displayMode == VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS ) {
-////                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_INFO_ALL_AVATARS );
-////            }
-////            else {
-////                targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS );
-////            }
-//
-//        }
-//        else {
-////            var targetName :String = ClientContext.model.getAvatarName(
-//            var msg :FeedRequestMsg = new FeedRequestMsg( ClientContext.ourPlayerId,
-//                0, 0,0,0);
-//            log.debug(ClientContext.ctrl + " handleSendFeedRequest() sending " + msg)
-//            ClientContext.ctrl.agent.sendMessage( FeedRequestMsg.NAME, msg.toBytes() );
-//        }
-
-
-//
-//        if( parentSprite.contains( targetingOverlay.displayObject )) {
-//
-//            targetingOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
-//
-//            parentSprite.removeChild( targetingOverlay.displayObject );
-//        }
-//        else {
-//            parentSprite.addChildAt( targetingOverlay.displayObject, 0 );
-//        }
-
-
-
-//        targetingOverlay.visible = !targetingOverlay.visible;
-//        if( targetingOverlay.visible ) {
-////            Sprite(targetingOverlay.displayObject).mouseEnabled = true;
-//            parentSprite.addChild( targetingOverlay.displayObject );
-//        }
-//        else {
-//            if( parentSprite.contains( targetingOverlay.displayObject )) {
-//                parentSprite.removeChild( targetingOverlay.displayObject );
-//            }
-////            Sprite(targetingOverlay.displayObject).mouseEnabled = false;
-//        }
-
-
-//        ClientContext.gameCtrl.agent.sendMessage( FeedRequestMessage.NAME, new FeedRequestMessage( ClientContext.ourPlayerId, 0, false).toBytes() );
-//    }
 
     public function handleSendFeedRequest (targetId :int) :void
     {
@@ -451,17 +256,7 @@ public class VampireController extends Controller
     public function handleShowHierarchy(_hudMC :MovieClip) :void
     {
         try {
-                ClientContext.controller.handleShowIntro("default");
-//            var hierarchySceneObject :SimObject =
-//                ClientContext.game.ctx.mainLoop.topMode.getObjectNamed( LineageView.NAME );
-//            if( hierarchySceneObject == null) {
-//
-////                ClientContext.game.ctx.mainLoop.topMode.addObject( new LineageView(_hudMC),
-////                    ClientContext.game.ctx.mainLoop.topMode.modeSprite);
-//            }
-//            else {
-//                hierarchySceneObject.destroySelf();
-//            }
+            ClientContext.controller.handleShowIntro("default");
         }
         catch( err :Error ) {
             trace( err.getStackTrace() );
@@ -499,27 +294,6 @@ public class VampireController extends Controller
             targetName, playerId, false);
         ClientContext.ctrl.agent.sendMessage( FeedConfirmMsg.NAME, msg.toBytes() );
     }
-
-//    public function handlePopupMoreInfo (name :String, msg :String, helpPage :String) :void
-//    {
-//        function gotoHelp () :void {
-//            handleShowIntro(helpPage);
-//        }
-//
-//        var popup :PopupQuery = new PopupQuery(name, msg, ["Help"], [gotoHelp]);
-//
-//        var mode :AppMode = ClientContext.gameMode;
-//
-//        if (mode.getObjectNamed( popup.objectName) != null) {
-//            mode.getObjectNamed( popup.objectName).destroySelf();
-//        }
-//
-//        mode.addSceneObject(popup, mode.modeSprite);
-//
-//        ClientContext.centerOnViewableRoom(popup.displayObject);
-//        ClientContext.animateEnlargeFromMouseClick(popup);
-//    }
-
 
     public function handleNewLevel (newLevel :int) :void
     {
