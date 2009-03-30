@@ -121,7 +121,7 @@ public class FeedingManager extends SimObject
                 _games.splice( index, 1);
                 gameRecord.predators.forEach( function( predatorId :int) :void {
                     if( _playerId2Game.get(predatorId) == gameRecord) {
-                        _playerId2Game.remove( predatorId );
+                        _playerId2Game.remove(predatorId);
                     }
                 });
 
@@ -222,6 +222,15 @@ public class FeedingManager extends SimObject
 //                 playerids.push(playerId);
 //             }
          });
+         return playerids;
+    }
+
+    public function get primaryPreds() :Array
+    {
+         var playerids :Array = new Array();
+         for each (var game :FeedingRecord in _games) {
+             playerids.push(game.primaryPredatorId);
+         }
          return playerids;
     }
 
