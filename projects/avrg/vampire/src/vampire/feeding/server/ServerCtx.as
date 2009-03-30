@@ -78,6 +78,16 @@ public class ServerCtx
         props.set(Props.LOBBY_LEADER, val, true);
     }
 
+    public function get bloodBondProgress () :int
+    {
+        return props.get(Props.BLOOD_BOND_PROGRESS) as int;
+    }
+
+    public function set bloodBondProgress (val :int) :void
+    {
+        props.set(Props.BLOOD_BOND_PROGRESS, val, true);
+    }
+
     public function getPredatorIds () :Array
     {
         var predators :Array = playerIds.slice();

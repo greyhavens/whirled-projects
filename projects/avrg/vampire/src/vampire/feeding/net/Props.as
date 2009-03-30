@@ -31,6 +31,9 @@ public class Props
 
     /** state :String */
     public static const MODE :String = "State";
+
+    /** progress :int */
+    public static const BLOOD_BOND_PROGRESS :String = "BloodBondProgress";
 }
 
 }

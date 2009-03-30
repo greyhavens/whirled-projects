@@ -149,6 +149,10 @@ public class Server extends FeedingServer
             return false;
         }*/
 
+        if (_ctx.bloodBondProgress > 0) {
+            _ctx.bloodBondProgress = 0;
+        }
+
         _ctx.playerIds.push(playerId);
         _ctx.props.setIn(Props.ALL_PLAYERS, playerId, false, true);
         updateLobbyLeader();
@@ -160,6 +164,10 @@ public class Server extends FeedingServer
     {
         if (playerId == _ctx.preyId) {
             _ctx.preyId = Constants.NULL_PLAYER;
+        }
+
+        if (_ctx.bloodBondProgress > 0) {
+            _ctx.bloodBondProgress = 0;
         }
 
         ArrayUtil.removeFirst(_ctx.playerIds, playerId);

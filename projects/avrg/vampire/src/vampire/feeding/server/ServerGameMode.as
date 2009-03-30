@@ -6,8 +6,10 @@ import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.net.Message;
 import com.whirled.contrib.simplegame.util.Rand;
 
+import vampire.data.VConstants;
 import vampire.feeding.*;
 import vampire.feeding.net.*;
+import vampire.server.ServerContext;
 
 public class ServerGameMode extends ServerMode
 {
@@ -113,6 +115,19 @@ public class ServerGameMode extends ServerMode
             var preyBloodStart :Number = _ctx.preyBlood;
             _ctx.preyBlood = _ctx.roundCompleteCallback();
             _ctx.sendMessage(RoundOverMsg.create(_finalScores, preyBloodStart, _ctx.preyBlood));
+
+            // If there are two people playing the game, a predator and a prey, increment
+            // their blood bond progress
+            if (_ctx.getPredatorIds().length == 1 && _ctx.preyId != Constants.NULL_PLAYER) {
+                if (_ctx.bloodBondProgress < VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND) {
+                    _ctx.bloodBondProgress++;
+                    if (_ctx.bloodBondProgress == VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND) {
+                        // Create the blood bond
+                        var predatorId :int = _ctx.getPredatorIds()[0];
+                        ServerContext.server.getPlayer(_ctx.preyId).setBloodBonded(predatorId);
+                    }
+                }
+            }
 
             _ctx.server.setMode(Constants.MODE_LOBBY);
 
