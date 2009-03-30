@@ -20,6 +20,7 @@ import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.filters.GlowFilter;
+import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import vampire.Util;
@@ -255,19 +256,25 @@ public class ClientContext
 
     public static function centerOnViewableRoom (d :DisplayObject) :void
     {
+        if (d.parent == null) {
+            log.error("centerOnViewableRoom, add to parent first", "d", d);
+//            throw new Error("centerOnViewableRoom, add to parent first");
+        }
         //Workaround as roombounds can be bigger than the paintable area
+        var middlePoint :Point = new Point();
         if( ctrl.local.getRoomBounds()[0] > ctrl.local.getPaintableArea().width) {
-            d.x = ctrl.local.getPaintableArea().width/2;
-            d.y = ctrl.local.getPaintableArea().height/2;
+            middlePoint.x = ctrl.local.getPaintableArea().width/2;
+            middlePoint.y = ctrl.local.getPaintableArea().height/2;
         }
         else {
 
-            d.x = ctrl.local.getRoomBounds()[0]/2;
-            d.y = ctrl.local.getRoomBounds()[1]/2;
+            middlePoint.x = ctrl.local.getRoomBounds()[0]/2;
+            middlePoint.y = ctrl.local.getRoomBounds()[1]/2;
         }
-        var bounds :Rectangle = d.getBounds(d.parent);
-//        d.x += -bounds.x - bounds.width / 2;
-//        d.y += -bounds.y - bounds.height / 2;
+
+        var local :Point = d.parent.globalToLocal(middlePoint);
+        d.x = local.x;
+        d.y = local.y;
     }
 
     public static function placeTopRight (d :DisplayObject) :void

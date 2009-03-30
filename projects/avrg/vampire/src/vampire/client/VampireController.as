@@ -187,9 +187,9 @@ public class VampireController extends Controller
             ["Yes", "I still hunger"],
             [VampireController.QUIT, null]);
 
-        ClientContext.centerOnViewableRoom(popup.displayObject);
         if( ClientContext.gameMode.getObjectNamed( popup.objectName) == null) {
             ClientContext.gameMode.addSceneObject( popup, ClientContext.gameMode.modeSprite );
+            ClientContext.centerOnViewableRoom(popup.displayObject);
             ClientContext.animateEnlargeFromMouseClick(popup);
         }
     }
@@ -402,8 +402,8 @@ public class VampireController extends Controller
                     "MakeSire",
                     "If you feed from this Lineage vampire, they will become your permanent sire"
                     + ", allowing you to draw power from your minions.  Are you sure?",
-                    ["Yes", "No", "More Info"],
-                    [sendFeedRequest, null, function() :void {con.handleShowIntro("lineage");}]);
+                    ["Yes",  "More Info", "No"],
+                    [sendFeedRequest, function() :void {con.handleShowIntro("lineage");}, null]);
 
             if (ClientContext.gameMode.getObjectNamed(popup.objectName) == null) {
                 ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
@@ -469,20 +469,19 @@ public class VampireController extends Controller
     }
 
 
-    public function handleShowPopupMessage (name :String, msg :String) :void
+    public function handleShowPopupMessage (name :String, msg :String, buttonNames :Array = null,
+        functionsOrCommands :Array = null) :void
     {
-        var popup :PopupQuery = new PopupQuery(name, msg);
+        var popup :PopupQuery = new PopupQuery(name, msg, buttonNames, functionsOrCommands);
         var mode :AppMode = ClientContext.gameMode;
 
         if (mode.getObjectNamed( popup.objectName) != null) {
             mode.getObjectNamed( popup.objectName).destroySelf();
         }
 
-//        if( mode.getObjectNamed( popup.objectName) == null) {
         mode.addSceneObject(popup, mode.modeSprite);
         ClientContext.centerOnViewableRoom(popup.displayObject);
         ClientContext.animateEnlargeFromMouseClick(popup);
-//        }
     }
 
     public function handleAcceptFeedRequest (playerId :int) :void
@@ -501,30 +500,31 @@ public class VampireController extends Controller
         ClientContext.ctrl.agent.sendMessage( FeedConfirmMsg.NAME, msg.toBytes() );
     }
 
-    public function handlePopupMoreInfo (name :String, msg :String, helpPage :String) :void
-    {
-        function gotoHelp () :void {
-            handleShowIntro(helpPage);
-        }
-
-        var popup :PopupQuery = new PopupQuery(name, msg, ["Help"], [gotoHelp]);
-
-        var mode :AppMode = ClientContext.gameMode;
-
-        if (mode.getObjectNamed( popup.objectName) != null) {
-            mode.getObjectNamed( popup.objectName).destroySelf();
-        }
-
-        mode.addSceneObject(popup, mode.modeSprite);
-
-        ClientContext.centerOnViewableRoom(popup.displayObject);
-        ClientContext.animateEnlargeFromMouseClick(popup);
-    }
+//    public function handlePopupMoreInfo (name :String, msg :String, helpPage :String) :void
+//    {
+//        function gotoHelp () :void {
+//            handleShowIntro(helpPage);
+//        }
+//
+//        var popup :PopupQuery = new PopupQuery(name, msg, ["Help"], [gotoHelp]);
+//
+//        var mode :AppMode = ClientContext.gameMode;
+//
+//        if (mode.getObjectNamed( popup.objectName) != null) {
+//            mode.getObjectNamed( popup.objectName).destroySelf();
+//        }
+//
+//        mode.addSceneObject(popup, mode.modeSprite);
+//
+//        ClientContext.centerOnViewableRoom(popup.displayObject);
+//        ClientContext.animateEnlargeFromMouseClick(popup);
+//    }
 
 
     public function handleNewLevel (newLevel :int) :void
     {
-        handlePopupMoreInfo("NewLevel", VConstants.TEXT_NEW_LEVEL + newLevel + "!", "blood");
+        handleShowPopupMessage("NewLevel", VConstants.TEXT_NEW_LEVEL + newLevel + "!",
+            ["More info"], [function() :void {ClientContext.controller.handleShowIntro("blood")}]);
     }
 
 
