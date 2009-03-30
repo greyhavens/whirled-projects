@@ -4,7 +4,10 @@ import com.threerings.flash.DisplayUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.contrib.avrg.RoomDragger;
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.objects.DraggableObject;
+import com.whirled.contrib.simplegame.objects.Dragger;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.objects.SceneObjectPlayMovieClipOnce;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
@@ -33,7 +36,7 @@ import vampire.data.VConstants;
  * The main game HUD, showing e.g. blood, game notifications, and buttons to select the subgame to
  * play.
  */
-public class HUD extends SceneObject
+public class HUD extends DraggableObject
 {
     public function HUD()
     {
@@ -59,6 +62,11 @@ public class HUD extends SceneObject
     override public function get displayObject () :DisplayObject
     {
         return _displaySprite;
+    }
+
+    override protected function createDragger () :Dragger
+    {
+        return new RoomDragger(ClientContext.ctrl, this.draggableObject, this.displayObject);
     }
 
 
@@ -137,6 +145,7 @@ public class HUD extends SceneObject
         //Otherwise check for player updates
         var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
         var levelUp :SceneObjectPlayMovieClipOnce;
+        var xpUp :SceneObjectPlayMovieClipOnce;
         var oldLevel :int;
         var newLevel :int;
 
@@ -163,11 +172,11 @@ public class HUD extends SceneObject
 
 //                    if( oldLevel < newLevel) {
                     if (e.oldValue < e.newValue) {
-                        levelUp = new SceneObjectPlayMovieClipOnce(
+                        xpUp = new SceneObjectPlayMovieClipOnce(
                                 ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true) );
-                        levelUp.x = _hudXP.x + ClientContext.model.maxblood/2;
-                        levelUp.y = _hudXP.y;
-                        mode.addSceneObject( levelUp, _hudXPParent  );
+                        xpUp.x = _hudXP.x + ClientContext.model.maxblood/2;
+                        xpUp.y = _hudXP.y;
+                        mode.addSceneObject(xpUp, _hudXPParent);
                     }
                     _currentLevel = ClientContext.model.level;
 
@@ -179,6 +188,12 @@ public class HUD extends SceneObject
 
                     if (newLevel > oldLevel && newLevel >= 2) {
                         ClientContext.controller.handleNewLevel(newLevel);
+
+                        levelUp = new SceneObjectPlayMovieClipOnce(
+                                ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true) );
+                        levelUp.x = _hudXP.x + ClientContext.model.maxblood/2;
+                        levelUp.y = _hudXP.y;
+                        mode.addSceneObject(levelUp, _hudXPParent);
                     }
 
 
@@ -325,8 +340,8 @@ public class HUD extends SceneObject
         _hudMC.y = -_hudMC.height/2;
 
         //Start the HUD positioned at the top left, making sure nothing is hidden.
-        this.x = _hudMC.width / 2 + 10;
-        this.y = _hudMC.height / 2 + 10;
+        this.x = _hudMC.width / 2 + 60;
+        this.y = _hudMC.height / 2 + 50;
 
         _hudMC.mouseChildren = true;
         _hudMC.mouseEnabled = true;
@@ -798,6 +813,15 @@ public class HUD extends SceneObject
         _bloodXPMouseOverSprite.x = _hudXP.x;
         _bloodXPMouseOverSprite.y = _hudXP.y;
         createXPText();
+
+        //Shine
+        var shine :MovieClip = findSafely("shine_blood") as MovieClip;
+        if (shine != null) {
+            shine.width = maxBlood - 10;
+            _bloodXPMouseOverSprite.parent.addChildAt(shine,
+                _bloodXPMouseOverSprite.parent.numChildren - 2);
+//            shine.parent.setChildIndex(shine, shine.parent.getChildIndex(_hudXP) - 1);
+        }
     }
 
     //Debugging purposes
