@@ -105,6 +105,7 @@ package vampire.client
             registerListener(SimpleButton(findSafely("button_totutorial")), MouseEvent.CLICK,
                 function (e :MouseEvent) :void {
                     destroySelf();
+                    showTututorialOnClose = false;
                     ClientContext.tutorial.activateTutorial();
                 });
             registerListener(SimpleButton(findSafely("button_tobloodbond")), MouseEvent.CLICK,
@@ -119,8 +120,9 @@ package vampire.client
                 function (e :MouseEvent) :void {
                     destroySelf();
                     //If you don't have any xp, start the tutorial regardless.
-                    if (ClientContext.model.xp == 0) {
+                    if (ClientContext.model.xp == 0 && showTututorialOnClose) {
                         ClientContext.tutorial.activateTutorial();
+                        showTututorialOnClose = false;
                     }
                 });
             registerListener(SimpleButton(findSafely("button_recruit")), MouseEvent.CLICK,
@@ -160,7 +162,7 @@ package vampire.client
             removeExtraHelpPanels();
             gotoFrame(startframe);
 
-            ClientContext.centerOnViewableRoom(displayObject);
+
         }
 
         override public function get displayObject () :DisplayObject
@@ -454,8 +456,8 @@ package vampire.client
             _bondText.setTextFormat(format);
 
             _bondText.antiAliasType = AntiAliasType.ADVANCED;
-            _bondText.width = 200;
-            _bondText.height = 60;
+            _bondText.width = _bondText.textWidth + 10;
+            _bondText.height = 30;
             _bondText.x = _bondTextAnchor.x;
             _bondText.y = _bondTextAnchor.y - 3;
             _bondTextAnchor.parent.addChild(_bondText);
@@ -543,6 +545,8 @@ package vampire.client
 
         protected var _glowFilter :GlowFilter = new GlowFilter(0xffffff);
         protected var _displaySprite :Sprite = new Sprite();
+
+        public static var showTututorialOnClose :Boolean = true;
 
         protected static const BLOOD_STRAIN_NAMES :Array = [
             "Aries",
