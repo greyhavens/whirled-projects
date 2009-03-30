@@ -47,8 +47,8 @@ public class GameModel extends SimObject//EventDispatcher
 
         _currentEntityId = ClientContext.ourEntityId;
 
-        registerListener( _propsCtrl, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged);
-        registerListener( _propsCtrl, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
+        registerListener(_propsCtrl, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged);
+        registerListener(_propsCtrl, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
 
         //Monitor and adjust for avatar changes
         registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, handleAvatarChanged);
@@ -61,8 +61,8 @@ public class GameModel extends SimObject//EventDispatcher
         //Let's hear when the avatar arrived at a destination
          var setCallback :Function = ClientContext.ctrl.room.getEntityProperty(
             AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
-        if( setCallback != null) {
-            setCallback( avatarArrivedAtDestination );
+        if(setCallback != null) {
+            setCallback(avatarArrivedAtDestination);
         }
         else {
             log.error("!!!!!! This avatar is CRUSTY and old, missing AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK");
@@ -78,12 +78,12 @@ public class GameModel extends SimObject//EventDispatcher
 
 //
 //        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_MOVED,
-//            function ( e :AVRGameRoomEvent) :void {
+//            function (e :AVRGameRoomEvent) :void {
 //                trace("GameModel heard " + AVRGameRoomEvent.PLAYER_MOVED + " " + e);
 //            });
 //
 //        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED,
-//            function ( e :AVRGameRoomEvent) :void {
+//            function (e :AVRGameRoomEvent) :void {
 //                trace("GameModel heard " + AVRGameRoomEvent.SIGNAL_RECEIVED + " " + e);
 //            });
 
@@ -93,31 +93,31 @@ public class GameModel extends SimObject//EventDispatcher
 //        _events.registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
 
 
-//        _nonPlayerLocations = new NonPlayerMonitor( ClientContext.gameCtrl.room );
+//        _nonPlayerLocations = new NonPlayerMonitor(ClientContext.gameCtrl.room);
 
 
 //        _avatarManager = new VampireAvatarHUDManager(ClientContext.ctrl);
 //
 //
-//        this.db.addObject( _avatarManager );
+//        this.db.addObject(_avatarManager);
 
 
         //If the room props are already present, update the HUD now.
-        if( SharedPlayerStateClient.isProps( ClientContext.ourPlayerId ) ) {
+        if(SharedPlayerStateClient.isProps(ClientContext.ourPlayerId)) {
             playerEnteredRoom();
         }
 
 
-        _events.registerListener( ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED,
+        _events.registerListener(ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED,
             function(e:MessageReceivedEvent):void{
                 trace(ClientContext.ctrl.player.getPlayerId() + ", got " + e);
-            } );
+            });
 
 
 
         //Every second, update who is our closest player.  Used for targeting e.g. feeding.
 //        _proximityTimer = new Timer(Constants.TIME_INTERVAL_PROXIMITY_CHECK, 0);
-//        _events.registerListener( _proximityTimer, TimerEvent.TIMER, checkProximity );
+//        _events.registerListener(_proximityTimer, TimerEvent.TIMER, checkProximity);
 //        _proximityTimer.start();
 
     }
@@ -128,8 +128,8 @@ public class GameModel extends SimObject//EventDispatcher
         //Let's hear when the avatar arrived at a destination
         var setAvatarArrivedCallback :Function = ClientContext.ctrl.room.getEntityProperty(
             AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
-        if( setAvatarArrivedCallback != null) {
-            setAvatarArrivedCallback( avatarArrivedAtDestination );
+        if(setAvatarArrivedCallback != null) {
+            setAvatarArrivedCallback(avatarArrivedAtDestination);
         }
         else {
             log.error("!!!!!! This avatar is CRUSTY and old, missing AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK");
@@ -138,19 +138,19 @@ public class GameModel extends SimObject//EventDispatcher
             //I can't seem to update the avatar location function, so quit the game with a warning
             if (!VConstants.LOCAL_DEBUG_MODE) {
                 var quitPopupName :String = "QuitAvatarBorked";
-                if( ClientContext.gameMode.getObjectNamed(quitPopupName) == null) {
+                if(ClientContext.gameMode.getObjectNamed(quitPopupName) == null) {
                     var popup :PopupQuery = new PopupQuery(
                         quitPopupName,
                         "Sorry.  Vampire Whirled cannot (yet) handle a mid-game avatar change.  " +
                         "Click the vampire icon to restart..");
+                    ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
                     ClientContext.centerOnViewableRoom(popup.displayObject);
-                    ClientContext.gameMode.addSceneObject( popup, ClientContext.gameMode.modeSprite );
                     ClientContext.animateEnlargeFromMouseClick(popup);
 
                     var quitTimer :SimpleTimer = new SimpleTimer(5, function() :void {
                         ClientContext.controller.handleQuit();
                     });
-                    ClientContext.gameMode.addObject( quitTimer );
+                    ClientContext.gameMode.addObject(quitTimer);
 
                 }
             }
@@ -159,19 +159,19 @@ public class GameModel extends SimObject//EventDispatcher
 
     protected function avatarArrivedAtDestination(...ignored) :void
     {
-        if( !ClientContext.ctrl.isConnected()) {
+        if(!ClientContext.ctrl.isConnected()) {
             trace("avatarArrivedAtDestination, ctrl null, setting callback null");
             var setCallback :Function = ClientContext.ctrl.room.getEntityProperty(
             AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
-            if( setCallback != null) {
-                setCallback( null );
+            if(setCallback != null) {
+                setCallback(null);
             }
             return;
         }
 
 
 //        trace("dispatchEvent PlayerArrivedAtLocationEvent");
-        dispatchEvent( new PlayerArrivedAtLocationEvent() );
+        dispatchEvent(new PlayerArrivedAtLocationEvent());
 
     }
 
@@ -179,31 +179,31 @@ public class GameModel extends SimObject//EventDispatcher
     /**
     * If we change avatars, make sure to update the movement notification function
     */
-    protected function handleAvatarChanged( e :AVRGameRoomEvent ) :void
+    protected function handleAvatarChanged(e :AVRGameRoomEvent) :void
     {
 //        trace("handleAvatarChanged");
-        var playerAvatarChangedId :int = int( e.value );
+        var playerAvatarChangedId :int = int(e.value);
 
         //We are care about our own avatar
-        if( playerAvatarChangedId != ClientContext.ourPlayerId ) {
+        if(playerAvatarChangedId != ClientContext.ourPlayerId) {
             return;
         }
 
         //Get our entityId
         var currentEntityId :String;
 
-        for each( var entityId :String in ClientContext.ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
+        for each(var entityId :String in ClientContext.ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
 
-            var entityUserId :int = int(ClientContext.ctrl.room.getEntityProperty( EntityControl.PROP_MEMBER_ID, entityId));
+            var entityUserId :int = int(ClientContext.ctrl.room.getEntityProperty(EntityControl.PROP_MEMBER_ID, entityId));
 
-            if( entityUserId == ClientContext.ctrl.player.getPlayerId() ) {
+            if(entityUserId == ClientContext.ctrl.player.getPlayerId()) {
                 currentEntityId = entityId;
                 break;
             }
 
         }
 
-        if( currentEntityId != _currentEntityId) {
+        if(currentEntityId != _currentEntityId) {
 
             //Update the clientcontext cached version
             ClientContext.clearOurEntityId();
@@ -220,7 +220,7 @@ public class GameModel extends SimObject//EventDispatcher
 //
 //        trace("  _currentEntityId=" + _currentEntityId);
 
-//        if( currentEntityId != _currentEntityId) {
+//        if(currentEntityId != _currentEntityId) {
 //
 //            _updateAvatar = true;
 //            //Update the clientcontext cached version
@@ -232,7 +232,7 @@ public class GameModel extends SimObject//EventDispatcher
 //
 //
 //        //Update the avatar functions on the second event.
-//        if( _updateAvatar ) {
+//        if(_updateAvatar) {
 //            _updateAvatar = false;
 //            //Update avatar dependent stuff
 //            resetAvatarArrivedFunction();
@@ -241,20 +241,20 @@ public class GameModel extends SimObject//EventDispatcher
 
     }
 
-    override protected function update( dt :Number ) :void
+    override protected function update(dt :Number) :void
     {
-//        _avatarManager.update( dt );
+//        _avatarManager.update(dt);
     }
 
 //    /**
 //    * The player avatar tells the model who is closest.
 //    */
-//    protected function handleSignalReceived( e :AVRGameRoomEvent) :void
+//    protected function handleSignalReceived(e :AVRGameRoomEvent) :void
 //    {
 //        trace("model.handleSignalReceived(), e=" + e);
-//        if( e.name == VConstants.SIGNAL_CLOSEST_ENTITY) {
+//        if(e.name == VConstants.SIGNAL_CLOSEST_ENTITY) {
 //            var args :Array = e.value as Array;
-//            if( args != null && args.length >= 2 && args[0] == ClientContext.ourPlayerId) {
+//            if(args != null && args.length >= 2 && args[0] == ClientContext.ourPlayerId) {
 //                closestUserId = int(args[1]);
 //                trace("model.handleSignalReceived(), Closest id=" + closestUserId);
 //            }
@@ -262,53 +262,53 @@ public class GameModel extends SimObject//EventDispatcher
 //    }
 
 
-//    protected function checkProximity( ...ignored) :void
+//    protected function checkProximity(...ignored) :void
 //    {
-//        var av :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo( ClientContext.ourPlayerId);
-//        if( av == null) {
+//        var av :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo(ClientContext.ourPlayerId);
+//        if(av == null) {
 //            return;
 //        }
-//        var mylocation :Point = new Point( av.x, av.y );
+//        var mylocation :Point = new Point(av.x, av.y);
 //        var closestOtherPlayerId :int = -1;
 //        var closestOtherPlayerDistance :Number = Number.MAX_VALUE;
 //
-//        for each( var playerid :int in ClientContext.ctrl.room.getPlayerIds()) {
-//            if( playerid == ClientContext.ourPlayerId) {
+//        for each(var playerid :int in ClientContext.ctrl.room.getPlayerIds()) {
+//            if(playerid == ClientContext.ourPlayerId) {
 //                continue;
 //            }
-//            av = ClientContext.ctrl.room.getAvatarInfo( playerid );
-//            var otherPlayerPoint :Point = new Point( av.x, av.y );
-//            var distance :Number = Point.distance( mylocation, otherPlayerPoint);
-//            if( distance < closestOtherPlayerDistance) {
+//            av = ClientContext.ctrl.room.getAvatarInfo(playerid);
+//            var otherPlayerPoint :Point = new Point(av.x, av.y);
+//            var distance :Number = Point.distance(mylocation, otherPlayerPoint);
+//            if(distance < closestOtherPlayerDistance) {
 //                closestOtherPlayerId = playerid;
 //                closestOtherPlayerDistance = distance;
 //            }
 //        }
 //
-////        if( closestOtherPlayerId > 0) {
+////        if(closestOtherPlayerId > 0) {
 //            ClientContext.currentClosestPlayerId = closestOtherPlayerId;
-//            dispatchEvent( new ClosestPlayerChangedEvent( closestOtherPlayerId ) );
+//            dispatchEvent(new ClosestPlayerChangedEvent(closestOtherPlayerId));
 ////        }
 //    }
-    public function playerEnteredRoom( ...ignored ) :void
+    public function playerEnteredRoom(...ignored) :void
     {
         //Reset avatar locations
 //        ClientContext.ctrl.room.getEntityProperty(
-//            AvatarGameBridge.ENTITY_PROPERTY_RESET_LOCATIONS, ClientContext.ourEntityId );
+//            AvatarGameBridge.ENTITY_PROPERTY_RESET_LOCATIONS, ClientContext.ourEntityId);
 
         trace(VConstants.DEBUG_MINION + " Player entered room");
 
-        if( lineage == null) {
+        if(lineage == null) {
 
             _lineage = loadHierarchyFromProps();
             trace(VConstants.DEBUG_MINION + " loadHierarchyFromProps()=" + _lineage);
-            dispatchEvent( new LineageUpdatedEvent( _lineage ) );
+            dispatchEvent(new LineageUpdatedEvent(_lineage));
 
-//            var bytes :ByteArray = ClientContext.gameCtrl.room.props.get( Codes.ROOM_PROP_MINION_HIERARCHY ) as ByteArray;
-//            if( bytes != null) {
+//            var bytes :ByteArray = ClientContext.gameCtrl.room.props.get(Codes.ROOM_PROP_MINION_HIERARCHY) as ByteArray;
+//            if(bytes != null) {
 //                _hierarchy = new MinionHierarchy();
-//                _hierarchy.fromBytes( bytes );
-//                dispatchEvent( new HierarchyUpdatedEvent( hierarchy ) );
+//                _hierarchy.fromBytes(bytes);
+//                dispatchEvent(new HierarchyUpdatedEvent(hierarchy));
 //            }
         }
         else {
@@ -326,30 +326,30 @@ public class GameModel extends SimObject//EventDispatcher
     {
         log.debug(VConstants.DEBUG_MINION + " loadHierarchyFromProps()");
         var hierarchy :Lineage = new Lineage();
-//        var playerIds :Array = ClientContext.gameCtrl.room.props.get( Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS ) as Array;
+//        var playerIds :Array = ClientContext.gameCtrl.room.props.get(Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS) as Array;
 
 //        log.debug(Constants.DEBUG_MINION + " loadHierarchyFromProps()", "playerIds", playerIds);
 
-//        if( playerIds == null) {
+//        if(playerIds == null) {
 //            log.error(VConstants.DEBUG_MINION +  " playerIds=" + playerIds);
 //            return hierarchy;
 //        }
 
         var dict :Dictionary = ClientContext.ctrl.room.props.get(Codes.ROOM_PROP_MINION_HIERARCHY) as Dictionary;
 
-        if( dict != null) {
+        if(dict != null) {
 
             var playerId :int;
             for (var key:Object in dict) {//Where key==playerId
 
                 playerId = int(key);
-//            for each( var playerId :int in playerIds) {
-                if( dict[playerId] != null) {
+//            for each(var playerId :int in playerIds) {
+                if(dict[playerId] != null) {
                     var data :Array = dict[playerId] as Array;
                     var playerName :String = data[0];
                     var sireId :int = int(data[1]);
-                    hierarchy.setPlayerSire( playerId, sireId );
-                    hierarchy.setPlayerName( playerId, playerName );
+                    hierarchy.setPlayerSire(playerId, sireId);
+                    hierarchy.setPlayerName(playerId, playerName);
                 }
 
             }
@@ -369,29 +369,29 @@ public class GameModel extends SimObject//EventDispatcher
 
 
         switch (e.name) {
-            case Codes.ROOM_PROP_MINION_HIERARCHY:// ) {//|| e.name == Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS) {
+            case Codes.ROOM_PROP_MINION_HIERARCHY://) {//|| e.name == Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS) {
             _lineage = loadHierarchyFromProps();
-            dispatchEvent( new LineageUpdatedEvent( _lineage ) );
+            dispatchEvent(new LineageUpdatedEvent(_lineage));
             break;
 
             case Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE:
             var p :Array = playersFeeding;
-            dispatchEvent( new PlayersFeedingEvent( p ) );
+            dispatchEvent(new PlayersFeedingEvent(p));
             break;
 
             default:
             break;
         }
-//        else if( e.name == Codes.ROOM_PROP_NON_PLAYERS ) {
+//        else if(e.name == Codes.ROOM_PROP_NON_PLAYERS) {
 //            updateNonPlayersIds();
 //
 //        }
 
-//            if( e.newValue is ByteArray) {
+//            if(e.newValue is ByteArray) {
 //                _hierarchy = new MinionHierarchy();
-//                _hierarchy.fromBytes( ByteArray(e.newValue) );
+//                _hierarchy.fromBytes(ByteArray(e.newValue));
 //                trace("\n      " + Constants.DEBUG_MINION + " !!!!!!!!!!!Hierarch data arrived in room=" + _hierarchy.toString());
-//                dispatchEvent( new HierarchyUpdatedEvent( _hierarchy ) );
+//                dispatchEvent(new HierarchyUpdatedEvent(_hierarchy));
 //
 //            }
 //            else {
@@ -402,13 +402,13 @@ public class GameModel extends SimObject//EventDispatcher
 
 //        //Otherwise check for player updates
 //
-//        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
-//        if( !isNaN( playerIdUpdated )) {
-////            _playerStates.put( playerIdUpdated, SharedPlayerStateServer.fromBytes(ByteArray(e.newValue)) );
-////            log.debug("Updated state=" + _playerStates.get( playerIdUpdated));
+//        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
+//        if(!isNaN(playerIdUpdated)) {
+////            _playerStates.put(playerIdUpdated, SharedPlayerStateServer.fromBytes(ByteArray(e.newValue)));
+////            log.debug("Updated state=" + _playerStates.get(playerIdUpdated));
 //            log.debug("  Dispatching event=" + PlayerStateChangedEvent.NAME);
-////            dispatchEvent( new Event( VampireController.PLAYER_STATE_CHANGED ) );
-//            dispatchEvent( new PlayerStateChangedEvent( playerIdUpdated ) );
+////            dispatchEvent(new Event(VampireController.PLAYER_STATE_CHANGED));
+//            dispatchEvent(new PlayerStateChangedEvent(playerIdUpdated));
 //        }
 //        else {
 //            log.warning("  Failed to update PropertyChangedEvent" + e);
@@ -442,7 +442,7 @@ public class GameModel extends SimObject//EventDispatcher
 
 
 
-    public function handleElementChanged (e :ElementChangedEvent) :void
+    protected function handleElementChanged (e :ElementChangedEvent) :void
     {
         //Why do I have to do this?  Is there a race condidtion, where the game is shutdown
         //but it's still receiving updates?
@@ -451,49 +451,49 @@ public class GameModel extends SimObject//EventDispatcher
         }
 
 //        log.debug(Constants.DEBUG_MINION + " elementChanged()", "e", e);
-        if( e.name == Codes.ROOM_PROP_MINION_HIERARCHY) {
+        if(e.name == Codes.ROOM_PROP_MINION_HIERARCHY) {
 
             _lineage = loadHierarchyFromProps();
 //            log.debug(Constants.DEBUG_MINION + " elementChanged", "e", e, "_hierarchy", _hierarchy);
 
-            dispatchEvent( new LineageUpdatedEvent( _lineage ) );
+            dispatchEvent(new LineageUpdatedEvent(_lineage));
 
             trace(Codes.ROOM_PROP_MINION_HIERARCHY + " updated, lineage now=" + _lineage);
             return;
         }
 
         //Otherwise check for player updates
-        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
+        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
 
 
-        if( !isNaN( playerIdUpdated )) {
+        if(!isNaN(playerIdUpdated)) {
 
             //If a state change comes in, inform the avatar
-            if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE) {
+            if(e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE) {
 
                 var entityAvatarId :String = ClientContext.getPlayerEntityId(playerIdUpdated);
 
                 var setStateFunction :Function = ClientContext.ctrl.room.getEntityProperty(
                     AvatarGameBridge.ENTITY_PROPERTY_SETSTATE_FUNCTION, entityAvatarId) as Function;
 
-                if( setStateFunction != null ) {
+                if(setStateFunction != null) {
                     log.debug("From room props " + playerIdUpdated + ", action=" + ClientContext.model.state +
                         ", setStateFunction() " + e.newValue.toString());
-                    setStateFunction( e.newValue.toString() );
+                    setStateFunction(e.newValue.toString());
                 }
                 else {
                     log.error("handleElementChanged, setStateFunction==null, crusty avatar??", "e",
-                        e, "entityAvatarId", entityAvatarId, "playerIdUpdated", playerIdUpdated );
+                        e, "entityAvatarId", entityAvatarId, "playerIdUpdated", playerIdUpdated);
                 }
 
             }
 
 
-            if( playerIdUpdated == ClientContext.ourPlayerId ) {
+            if(playerIdUpdated == ClientContext.ourPlayerId) {
 
                 switch (e.index) {
                     case Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE:
-                    dispatchEvent( new ChangeActionEvent( e.newValue.toString() ) );
+                    dispatchEvent(new ChangeActionEvent(e.newValue.toString()));
                     break;
 
 //                    case Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_ID:
@@ -514,33 +514,33 @@ public class GameModel extends SimObject//EventDispatcher
         return ClientContext.ctrl.room.getPlayerIds();
     }
 
-    public function isPlayerInRoom( playerId :int ) :Boolean
+    public function isPlayerInRoom(playerId :int) :Boolean
     {
-        return ArrayUtil.contains( playerIdsInRoom(), playerId );
+        return ArrayUtil.contains(playerIdsInRoom(), playerId);
     }
 
-    public function isPlayer( userId :int ) :Boolean
+    public function isPlayer(userId :int) :Boolean
     {
-        return ArrayUtil.contains( playerIdsInRoom(), userId );
+        return ArrayUtil.contains(playerIdsInRoom(), userId);
     }
 
     public function get bloodbonded() :int
     {
-        if( VConstants.LOCAL_DEBUG_MODE) {
+        if(VConstants.LOCAL_DEBUG_MODE) {
            return 1;
         }
         else {
-            return SharedPlayerStateClient.getBloodBonded( ClientContext.ourPlayerId );
+            return SharedPlayerStateClient.getBloodBonded(ClientContext.ourPlayerId);
         }
     }
 
     public function get bloodbondedName() :String
     {
-        if( VConstants.LOCAL_DEBUG_MODE) {
+        if(VConstants.LOCAL_DEBUG_MODE) {
             return "Bloodbond name";
         }
         else {
-            var name :String = SharedPlayerStateClient.getBloodBondedName( ClientContext.ourPlayerId );
+            var name :String = SharedPlayerStateClient.getBloodBondedName(ClientContext.ourPlayerId);
             return name != null && name.length > 0 ? name : "No bloodbond yet.";
         }
 
@@ -548,27 +548,27 @@ public class GameModel extends SimObject//EventDispatcher
 
 //    public function get minions() :Array
 //    {
-//        return SharedPlayerStateClient.getMinions( ClientContext.ourPlayerId );
+//        return SharedPlayerStateClient.getMinions(ClientContext.ourPlayerId);
 //    }
 
     public function get blood() :Number
     {
-        return SharedPlayerStateClient.getBlood( ClientContext.ourPlayerId );
+        return SharedPlayerStateClient.getBlood(ClientContext.ourPlayerId);
     }
 
     public function get bloodType() :int
     {
-        return SharedPlayerStateClient.getBloodType( ClientContext.ourPlayerId );
+        return SharedPlayerStateClient.getBloodType(ClientContext.ourPlayerId);
     }
 
     public function get maxblood() :Number
     {
-        return SharedPlayerStateClient.getMaxBlood( ClientContext.ourPlayerId );
+        return SharedPlayerStateClient.getMaxBlood(ClientContext.ourPlayerId);
     }
 
     public function get level() :int
     {
-        return SharedPlayerStateClient.getLevel( ClientContext.ourPlayerId );
+        return SharedPlayerStateClient.getLevel(ClientContext.ourPlayerId);
     }
 
     public function get sire() :int
@@ -581,13 +581,13 @@ public class GameModel extends SimObject//EventDispatcher
 
     public function get invites() :int
     {
-        return SharedPlayerStateClient.getInvites( ClientContext.ourPlayerId );
+        return SharedPlayerStateClient.getInvites(ClientContext.ourPlayerId);
     }
 
     public function get location() :Array
     {
-        var avatar :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo( ClientContext.ourPlayerId );
-        if( avatar != null ) {
+        var avatar :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo(ClientContext.ourPlayerId);
+        if(avatar != null) {
             return [avatar.x, avatar.y, avatar.z, avatar.orientation];
         }
         return null;
@@ -596,7 +596,7 @@ public class GameModel extends SimObject//EventDispatcher
     public function getLocation (playerId :int) :Array
     {
         var avatar :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo(playerId);
-        if( avatar != null ) {
+        if(avatar != null) {
             return [avatar.x, avatar.y, avatar.z, avatar.orientation];
         }
         return null;
@@ -614,21 +614,21 @@ public class GameModel extends SimObject//EventDispatcher
 
     public function get xp() :Number
     {
-        return SharedPlayerStateClient.getXP( ClientContext.ourPlayerId );
+        return SharedPlayerStateClient.getXP(ClientContext.ourPlayerId);
     }
 
     public function get time() :int
     {
-        return SharedPlayerStateClient.getTime( ClientContext.ourPlayerId );
+        return SharedPlayerStateClient.getTime(ClientContext.ourPlayerId);
     }
 
     public function get name() :String
     {
-        if( VConstants.LOCAL_DEBUG_MODE) {
+        if(VConstants.LOCAL_DEBUG_MODE) {
             return "Player Name";
         }
         else {
-            return ClientContext.ctrl.room.getAvatarInfo( ClientContext.ourPlayerId).name;
+            return ClientContext.ctrl.room.getAvatarInfo(ClientContext.ourPlayerId).name;
         }
     }
 
@@ -638,9 +638,9 @@ public class GameModel extends SimObject//EventDispatcher
         //Set the avatar target.  That way, when the avatar arrived at it's destination, it
         //will set it's orientation the same as the target's orientation.
         var setTargetFunction :Function = ClientContext.ctrl.room.getEntityProperty(
-            AvatarGameBridge.ENTITY_PROPERTY_SET_STAND_BEHIND_ID_FUNCTION, ClientContext.ourEntityId ) as Function;
-        if( setTargetFunction != null ) {
-            setTargetFunction( targetId );
+            AvatarGameBridge.ENTITY_PROPERTY_SET_STAND_BEHIND_ID_FUNCTION, ClientContext.ourEntityId) as Function;
+        if(setTargetFunction != null) {
+            setTargetFunction(targetId);
         }
         else {
             log.error("Cannot set avatar stand behind target as the function is null, targetId=" + targetId);
@@ -649,12 +649,12 @@ public class GameModel extends SimObject//EventDispatcher
 //
 //    public function get targetPlayerId() :int
 //    {
-//        return SharedPlayerStateClient.getTargetPlayer(  ClientContext.ourPlayerId );
+//        return SharedPlayerStateClient.getTargetPlayer( ClientContext.ourPlayerId);
 //    }
 
     public function get state() :String
     {
-        return SharedPlayerStateClient.getCurrentState( ClientContext.ourPlayerId );
+        return SharedPlayerStateClient.getCurrentState(ClientContext.ourPlayerId);
     }
 
     public function isNewPlayer() :Boolean
@@ -681,7 +681,7 @@ public class GameModel extends SimObject//EventDispatcher
     public function get hotspot () :Array
     {
         var hotspot :Array = ClientContext.ctrl.room.getEntityProperty(
-            EntityControl.PROP_HOTSPOT, ClientContext.ourEntityId ) as Array;
+            EntityControl.PROP_HOTSPOT, ClientContext.ourEntityId) as Array;
         return hotspot;
     }
 
@@ -698,12 +698,12 @@ public class GameModel extends SimObject//EventDispatcher
 
     public function get playerFeedingData () :PlayerFeedingData
     {
-        if( VConstants.LOCAL_DEBUG_MODE ) {
+        if(VConstants.LOCAL_DEBUG_MODE) {
             var dummy :PlayerFeedingData = new PlayerFeedingData();
-            dummy.collectStrainFromPlayer( 1, 1 );
-            dummy.collectStrainFromPlayer( 3, 3 );
-            dummy.collectStrainFromPlayer( 3, 3 );
-            dummy.collectStrainFromPlayer( 3, 4 );
+            dummy.collectStrainFromPlayer(1, 1);
+            dummy.collectStrainFromPlayer(3, 3);
+            dummy.collectStrainFromPlayer(3, 3);
+            dummy.collectStrainFromPlayer(3, 4);
             return dummy
         }
 
@@ -714,7 +714,7 @@ public class GameModel extends SimObject//EventDispatcher
             try {
                 pfd.fromBytes(bytes);
             }
-            catch( err :Error ) {
+            catch(err :Error) {
                 log.error(err.getStackTrace());
                 return new PlayerFeedingData();
             }
@@ -733,20 +733,28 @@ public class GameModel extends SimObject//EventDispatcher
 //    }
 
 
-    public function get playersFeeding() :Array
+    public function get playersFeeding () :Array
     {
         var feedingPlayers :Array =
-            ClientContext.ctrl.room.props.get( Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE ) as Array;
+            ClientContext.ctrl.room.props.get(Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE) as Array;
 
         return feedingPlayers == null ? [] : feedingPlayers;
     }
 
+    public function get primaryPreds () :Array
+    {
+        var preds :Array =
+            ClientContext.ctrl.room.props.get(Codes.ROOM_PROP_PRIMARY_PREDS) as Array;
+
+        return preds == null ? [] : preds;
+    }
 
 
-    public function setAvatarState( state :String ) :void
+
+    public function setAvatarState (state :String) :void
     {
         log.debug(ClientContext.ourPlayerId + " setAvatarState", "state", state);
-        ClientContext.ctrl.player.setAvatarState( state );
+        ClientContext.ctrl.player.setAvatarState(state);
     }
 
 

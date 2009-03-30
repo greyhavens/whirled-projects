@@ -12,6 +12,7 @@ public class Codes
 
     public static const ROOM_PROP_MINION_HIERARCHY :String = "hierarchy";
     public static const ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE :String = "noFeedingPlayers";
+    public static const ROOM_PROP_PRIMARY_PREDS :String = "primaryPreds";
     public static const ROOM_PROP_FEEDBACK :String = "feedback";
 
 
@@ -111,6 +112,8 @@ public class Codes
     public static const TASK_ACQUIRE_MINION_SCORE :Number = 0.8;
 
     public static const POPUP_PREFIX :String = "POPUP";
+
+    public static const POPUP_MESSAGE_SEP :String = "#";
 
 }
 }

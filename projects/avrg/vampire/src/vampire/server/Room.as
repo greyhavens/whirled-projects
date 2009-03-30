@@ -168,6 +168,18 @@ public class Room extends SimObject
                 log.debug("Room " + roomId + ", Setting busy players=" + playerIdsFeedingNow);
                 _ctrl.props.set( Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE, playerIdsFeedingNow);
             }
+
+            //Update the primary predIds, for the tutorial
+            var primaryPreds :Array = bloodBloomGameManager.primaryPreds;
+            primaryPreds.sort();
+            var primaryPredsPrevious :Array =
+                _ctrl.props.get(Codes.ROOM_PROP_PRIMARY_PREDS) as Array;
+
+            if( !ArrayUtil.equals(primaryPreds, primaryPredsPrevious)) {
+                log.debug("Room " + roomId + ", Setting primary preds=" + primaryPreds);
+                _ctrl.props.set(Codes.ROOM_PROP_PRIMARY_PREDS, primaryPreds);
+            }
+
         }
         catch (e :Error) {
             log.error("Tick error", e);

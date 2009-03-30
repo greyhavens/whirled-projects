@@ -1,5 +1,6 @@
 package vampire.client
 {
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
@@ -313,7 +314,10 @@ public class TutorialAppMode extends AppMode
             }
             break;
 
-            case PAGE_LOBBY:
+            case PAGE_LOBBY_PRIMARY_PRED:
+            break;
+
+            case PAGE_LOBBY_SECOND_PRED:
             break;
 
             default:
@@ -582,13 +586,6 @@ public class TutorialAppMode extends AppMode
         }
     }
 
-    public function clickedFeedAvatarButton () :void
-    {
-        if (_currentPage == PAGE_CLICK_TARGET_FEED) {
-            setPage(PAGE_LOBBY);
-        }
-    }
-
     public function feedGameOver () :void
     {
         if (_currentChapter == CHAPTER_LOOKING_FOR_TARGET) {
@@ -599,7 +596,12 @@ public class TutorialAppMode extends AppMode
     public function feedGameStarted () :void
     {
         if (_currentChapter == CHAPTER_LOOKING_FOR_TARGET) {
-            setPage(PAGE_LOBBY);
+            if (ArrayUtil.contains(ClientContext.model.primaryPreds, ClientContext.ourPlayerId)) {
+                setPage(PAGE_LOBBY_PRIMARY_PRED);
+            }
+            else {
+                setPage(PAGE_LOBBY_SECOND_PRED);
+            }
         }
     }
 
@@ -699,7 +701,10 @@ public class TutorialAppMode extends AppMode
     public static const PAGE_EVERYONE_LEAVES :String = "EveryoneLeaves";
     public static const PAGE_CLICK_HUD_FEED :String = "ClickHUDFeed";
     public static const PAGE_CLICK_TARGET_FEED :String = "ClickTargetFeed";
-    public static const PAGE_LOBBY :String = "Lobby";
+    public static const PAGE_LOBBY_PRIMARY_PRED :String = "LobbyPrimPred";
+    public static const PAGE_LOBBY_SECOND_PRED :String = "LobbySecondPred";
+//    public static const PAGE_FEEDING :String = "Feeding";
+
 
     public static const CHAPTER_NAVIGATING_THE_GUI :String = "Chapter: GUI Navigation";
 
@@ -722,7 +727,9 @@ public class TutorialAppMode extends AppMode
         [PAGE_CLICK_HUD_FEED, "Click \"Feed\" to see everyone's delicious blood, in all all their varied strains."],
         [PAGE_EVERYONE_LEAVES, "The herd is skittish.  Try chatting up your feast to make them comfortable with their succulent role."],
         [PAGE_CLICK_TARGET_FEED, "Click the Feed button on some tasty morsel and pull up to your feast."],
-        [PAGE_LOBBY, "You can wait for any vampires with you to join in your feast, or just \"Start Feeding\""],
+        [PAGE_LOBBY_PRIMARY_PRED, "You can wait for any vampires with you to join in your feast, or just \"Start Feeding\""],
+        [PAGE_LOBBY_SECOND_PRED, "Wait until the primary predator starts feeding..."],
+//        [PAGE_FEEDING, "Feed!"],
         [PAGE_CLICK_VW, "Hunt for strains in the blood of the populace.  Click the VW icon to see your status."],
         [PAGE_CLICK_STRAINS, "The strains you've collected are tallied under \"Strains\" on the left.  Click it for a look."],
         [PAGE_CLICK_LINEAGE, "Your other driving goal is to build up your Lineage for the coming battles.  Click \"Lineage\" at the left."],
