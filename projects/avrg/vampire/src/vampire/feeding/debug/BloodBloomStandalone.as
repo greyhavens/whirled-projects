@@ -11,6 +11,8 @@ import vampire.avatar.VampireBody;
 import vampire.data.VConstants;
 import vampire.feeding.*;
 import vampire.feeding.client.*;
+import vampire.feeding.net.GamePropControl;
+import vampire.feeding.net.Props;
 import vampire.feeding.server.*;
 
 [SWF(width="1000", height="500", frameRate="30")]
@@ -48,11 +50,14 @@ public class BloodBloomStandalone extends Sprite
 
     protected function startGame () :void
     {
-        addChild(new BloodBloom(0, new PlayerFeedingData(), function () :void {}));
-        if (Constants.DEBUG_FORCE_SPECIAL_BLOOD_STRAIN) {
-            ClientCtx.preyBloodType =
-                Rand.nextIntRange(0, VConstants.UNIQUE_BLOOD_STRAINS, Rand.STREAM_COSMETIC);
-        }
+        var dummyProps :GamePropControl = new GamePropControl(0, new LocalPropertySubControl());
+        dummyProps.set(Props.AI_PREY_NAME, "AI Prey");
+        dummyProps.set(
+            Props.PREY_BLOOD_TYPE,
+            Rand.nextIntRange(0, VConstants.UNIQUE_BLOOD_STRAINS, Rand.STREAM_COSMETIC));
+        dummyProps.set(Props.PREY_IS_AI, true);
+
+        addChild(new BloodBloom(0, new PlayerFeedingData(), function () :void {}, dummyProps));
     }
 
     protected var _timerMgr :TimerManager = new TimerManager();
