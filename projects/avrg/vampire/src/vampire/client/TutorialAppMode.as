@@ -131,6 +131,17 @@ public class TutorialAppMode extends AppMode
 
         ClientContext.gameMode.modeSprite.addChild(this.modeSprite);
 
+        //The first reticl starts in the middle
+        if( ClientContext.ctrl.local.getRoomBounds()[0] > ClientContext.ctrl.local.getPaintableArea().width) {
+            _lastTargetLocationGlobal.x = ClientContext.ctrl.local.getPaintableArea().width/2;
+            _lastTargetLocationGlobal.y = ClientContext.ctrl.local.getPaintableArea().height/2;
+        }
+        else {
+            _lastTargetLocationGlobal.x = ClientContext.ctrl.local.getRoomBounds()[0]/2;
+            _lastTargetLocationGlobal.y = ClientContext.ctrl.local.getRoomBounds()[1]/2;
+        }
+
+
         _active = true;
         if (_currentChapter == CHAPTER_END) {
             _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
