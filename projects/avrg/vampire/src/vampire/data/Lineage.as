@@ -1,12 +1,12 @@
 package vampire.data
 {
-    import com.threerings.util.HashMap;
-    import com.threerings.util.HashSet;
-    import com.threerings.util.Log;
-    import com.threerings.util.StringBuilder;
-    import com.whirled.contrib.simplegame.SimObject;
+import com.threerings.util.HashMap;
+import com.threerings.util.HashSet;
+import com.threerings.util.Log;
+import com.threerings.util.StringBuilder;
+import com.whirled.contrib.simplegame.SimObject;
 
-    import flash.utils.ByteArray;
+import flash.utils.ByteArray;
 
 
 
@@ -248,6 +248,14 @@ public class Lineage extends SimObject
     */
     public function isMemberOfLineage(playerId :int) :Boolean
     {
+        if (VConstants.LOCAL_DEBUG_MODE) {
+            trace("here, playerid=" + playerId);
+            if (playerId == 2) {
+                return true;
+            }
+            return getAllSiresAndGrandSires(playerId).contains(2);
+        }
+
         if (Logic.isProgenitor(playerId)) {
             return true;
         }
