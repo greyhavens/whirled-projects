@@ -757,6 +757,16 @@ public class GameModel extends SimObject//EventDispatcher
         ClientContext.ctrl.player.setAvatarState(state);
     }
 
+    public function get roomAvatarIds () :Array
+    {
+        return ClientContext.ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR);
+    }
+
+    public function get playerIds () :Array
+    {
+        return ClientContext.ctrl.room.getPlayerIds();
+    }
+
 
     protected var _currentEntityId :String;
 
