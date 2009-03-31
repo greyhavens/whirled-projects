@@ -45,7 +45,9 @@ public class FeedingRecord extends EventCollecter
 
     public function formBloodBond (playerId1 :int, playerId2 :int) :void
     {
+        log.debug("formBloodBond", "playerId1", playerId1, "playerId2", playerId2);
         ServerContext.server.getPlayer(playerId1).setBloodBonded(playerId2);
+        ServerContext.server.getPlayer(playerId2).setBloodBonded(playerId1);
     }
 
     public function getBloodBondPartner (playerId :int) :int
