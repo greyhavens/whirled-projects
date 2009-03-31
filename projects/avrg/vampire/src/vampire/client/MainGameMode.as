@@ -104,18 +104,18 @@ public class MainGameMode extends AppMode
 
             var lineage :Lineage = new Lineage();
                 lineage.setPlayerSire(1, 2);
-//                lineage.setPlayerSire(3, 1);
-//                lineage.setPlayerSire(4, 1);
-//                lineage.setPlayerSire(5, 1);
-//                lineage.setPlayerSire(6, 5);
-//                lineage.setPlayerSire(7, 6);
-//                lineage.setPlayerSire(8, 6);
-//                lineage.setPlayerSire(9, 1);
-//                lineage.setPlayerSire(10, 1);
-//                lineage.setPlayerSire(11, 1);
-//                lineage.setPlayerSire(12, 1);
-//                lineage.setPlayerSire(13, 1);
-//                lineage.setPlayerSire(14, 1);
+                lineage.setPlayerSire(3, 1);
+                lineage.setPlayerSire(4, 1);
+                lineage.setPlayerSire(5, 1);
+                lineage.setPlayerSire(6, 5);
+                lineage.setPlayerSire(7, 6);
+                lineage.setPlayerSire(8, 6);
+                lineage.setPlayerSire(9, 1);
+                lineage.setPlayerSire(10, 1);
+                lineage.setPlayerSire(11, 1);
+                lineage.setPlayerSire(12, 1);
+                lineage.setPlayerSire(13, 1);
+                lineage.setPlayerSire(14, 1);
             var msg :LineageUpdatedEvent = new LineageUpdatedEvent(lineage, ClientContext.ourPlayerId);
             ClientContext.model.lineage = lineage;
             ClientContext.model.dispatchEvent(msg);
@@ -165,6 +165,7 @@ public class MainGameMode extends AppMode
 
         _hud = new HUD();
         addSceneObject( _hud, modeSprite );
+//        ClientContext.centerOnViewableRoom(_hud.displayObject);
         ClientContext.hud = _hud;
 
 
@@ -252,49 +253,13 @@ public class MainGameMode extends AppMode
 
             if (VConstants.LOCAL_DEBUG_MODE) {
                 _feedingGameClient = new BloodBloomStandalone(modeSprite);
-
-//                _feedingGameClient = new Sprite();
-//                _feedingGameClient.graphics.beginFill(0xff0000);
-//                _feedingGameClient.graphics.drawRect(0,0,300,300);
-//                _feedingGameClient.graphics.endFill();
             }
             else {
                 _feedingGameClient = FeedingClient.create( gameId,
                     ClientContext.model.playerFeedingData, onGameComplete);
             }
 
-
-//            _feedingGameClientSceneobjectWrapper = new DraggableSceneObject(ClientContext.ctrl,
-//                "FeedingGameClient", _feedingGameClient);
-//            _feedingGameClientSceneobjectWrapper.x = _feedingGameClient.x;
-//            _feedingGameClientSceneobjectWrapper.y = _feedingGameClient.y;
-//            _feedingGameClient.y = 0;
-//            _feedingGameClient.x = 0;
-//            _feedingGameClientSceneobjectWrapper.addChild(_feedingGameClient);
-//            _feedingGameClient.mouseEnabled = true;
-//            _feedingGameClientSceneobjectWrapper.init( new Rectangle(0, 0, 300, 300), 0, 0, 2, 0);
-//            _feedingGameClientSceneobjectWrapper.x = ClientContext.ctrl.local.getPaintableArea().width - 543;
-//            trace("Setting feeding client at x=" + (ClientContext.ctrl.local.getPaintableArea().width - 543));
-//            _feedingGameClient.graphics.lineStyle(2, 0xffffff);
-//            _feedingGameClient.graphics.drawRect(0, 0, _feedingGameClient.width, _feedingGameClient.height);
-//            trace("init client");
-//            trace("client loc=" + _feedingGameClient.x + ", " + _feedingGameClient.y );
-//            trace("game dim=(" + _feedingGameClient.width + ", " + _feedingGameClient.height + ")");
-//            _feedingGameClientSceneobjectWrapper.init( new Rectangle(0, 0, 528, 496),
-//                DraggableSceneObject.SNAP_NONE,
-//                0,
-//                DraggableSceneObject.SNAP_NONE,
-//                0);
-//            _feedingGameClientSceneobjectWrapper.init(new Rectangle(-10, -10, 20, 20), 0, 0, 0, 0);
-
-
-//            _feedingGameClientSceneobjectWrapper = new SimpleSceneObject(_feedingGameClient,
-//                "FeedingGameClient");
-//            addSceneObject(_feedingGameClientSceneobjectWrapper, modeSprite);
-            //Set index 0 so the popup are above the feeding game.
             modeSprite.addChildAt(_feedingGameClient, 0)
-//                modeSprite.addChild(_feedingGameClient);
-//            ClientContext.animateEnlargeFromMouseClick(_feedingGameClientSceneobjectWrapper);
 
             //Notify the tutorial
             ClientContext.tutorial.feedGameStarted();
@@ -337,7 +302,7 @@ public class MainGameMode extends AppMode
             trace("got " + FeedRequestMsg.NAME);
             var fromPlayerName :String = ClientContext.getPlayerName( msg.playerId );
             var popup :PopupQuery = new PopupQuery(
-                    "RequestFeed" + msg.playerId,
+                    VampireController.POPUP_PREFIX_FEED_REQUEST + msg.playerId,
                     fromPlayerName + " would like to feed on you.",
                     ["Accept", "Deny"],
                     [
@@ -349,13 +314,9 @@ public class MainGameMode extends AppMode
                         },
                     ]);
 
-
-//                    VampireController.FEED_REQUEST_ACCEPT, VampireController.FEED_REQUEST_DENY],
-//                    [msg.playerId, msg.playerId]);
-
-            ClientContext.centerOnViewableRoom(popup.displayObject);
             if( getObjectNamed( popup.objectName) == null) {
                 addSceneObject( popup, modeSprite );
+                ClientContext.centerOnViewableRoom(popup.displayObject);
                 ClientContext.animateEnlargeFromMouseClick(popup);
             }
 
