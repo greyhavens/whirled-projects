@@ -1,6 +1,7 @@
 package {
 
 import com.whirled.contrib.EventHandlerManager;
+import com.whirled.contrib.TimeBuffer;
 
 import flash.display.Graphics;
 import flash.display.Sprite;
