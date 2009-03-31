@@ -6,6 +6,8 @@ package vampire.client
     import flash.display.MovieClip;
     import flash.events.MouseEvent;
 
+    import vampire.data.VConstants;
+
     public class WearingAvatarCheckMode extends AppMode
     {
         public function WearingAvatarCheckMode()
@@ -40,7 +42,7 @@ package vampire.client
         }
         override protected function enter():void
         {
-            if (ClientContext.isWearingValidAvatar ) {
+            if (ClientContext.isWearingValidAvatar || VConstants.LOCAL_DEBUG_MODE) {
                 ClientContext.game.ctx.mainLoop.popMode();
             }
             else {
@@ -50,7 +52,7 @@ package vampire.client
 
         protected function tryStarting() :void
         {
-            if( ClientContext.isWearingValidAvatar ) {
+            if (ClientContext.isWearingValidAvatar) {
                 ClientContext.game.ctx.mainLoop.popMode();
             }
             else {

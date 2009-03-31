@@ -1,6 +1,5 @@
 package vampire.client
 {
-    import com.whirled.contrib.avrg.RoomDragger;
     import com.whirled.contrib.simplegame.AppMode;
 
     import flash.display.MovieClip;
@@ -55,7 +54,7 @@ package vampire.client
         }
         override protected function enter():void
         {
-            if (!isFirstTimePlayer()) {
+            if (!isFirstTimePlayer() || VConstants.LOCAL_DEBUG_MODE) {
                 //Push the main game mode
                 ClientContext.game.ctx.mainLoop.popMode();
             }
