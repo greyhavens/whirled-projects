@@ -4,7 +4,6 @@ import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
-import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.avrg.RoomDragger;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
@@ -79,6 +78,10 @@ public class GameMode extends AppMode
         super.setup();
 
         registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
+
+        if (!Constants.DEBUG_DISABLE_ROOM_OVERLAY) {
+            addSceneObject(new RoomOverlay(), _modeSprite);
+        }
 
         // Setup display layers
         var gameParent :Sprite = new Sprite();
@@ -330,7 +333,9 @@ public class GameMode extends AppMode
 
     protected function get canEndGameNow () :Boolean
     {
-        return (!BurstSequence.sequenceExists && !GameCtx.score.isPlayingScoreAnim);
+        return (!BurstSequence.sequenceExists &&
+                !GameCtx.score.isPlayingScoreAnim &&
+                !RoomOverlay.exists);
     }
 
     protected function onHeartbeat (...ignored) :void
@@ -348,7 +353,6 @@ public class GameMode extends AppMode
     }
 
     protected var _playerType :int;
-    protected var _gameOver :Boolean;
     protected var _arteries :Array;
     protected var _sparkles :MovieClip;
     protected var _countdown :MovieClip;
