@@ -135,7 +135,8 @@ public class ServerGameMode extends ServerMode
                 _ctx.bloodBondProgress < VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND) {
 
                 _ctx.bloodBondProgress++;
-                log.info("Incrementing blood bond progress", "progress", _ctx.bloodBondProgress);
+                log.info("Incrementing blood bond progress", "progress", _ctx.bloodBondProgress
+                    + "/" + VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND);
                 if (_ctx.bloodBondProgress == VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND) {
                     _ctx.feedingHost.formBloodBond(_ctx.getPredatorIds()[0], _ctx.preyId);
                 }
