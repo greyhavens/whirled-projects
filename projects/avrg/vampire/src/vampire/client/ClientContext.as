@@ -60,7 +60,7 @@ public class ClientContext
     protected static var _playerRoomKey :String;
 
 
-    public static function init( gameControl :AVRGameControl ) :void
+    public static function init (gameControl :AVRGameControl) :void
     {
         ctrl = gameControl;
         if (ctrl != null && ctrl.isConnected()) {
@@ -99,7 +99,7 @@ public class ClientContext
         return "Player " + playerId.toString();
     }
 
-    public static function isPlayerProps() :Boolean
+    public static function isPlayerProps () :Boolean
     {
         return model.time > 0;
     }
@@ -126,12 +126,12 @@ public class ClientContext
     public static function get ourEntityId () :String
     {
         _playerEntityId = null;
-        if( _playerEntityId == null ) {
-            for each( var entityId :String in ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
+        if(_playerEntityId == null) {
+            for each(var entityId :String in ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
 
-                var entityUserId :int = int(ctrl.room.getEntityProperty( EntityControl.PROP_MEMBER_ID, entityId));
+                var entityUserId :int = int(ctrl.room.getEntityProperty(EntityControl.PROP_MEMBER_ID, entityId));
 
-                if( entityUserId == ctrl.player.getPlayerId() ) {
+                if(entityUserId == ctrl.player.getPlayerId()) {
                     _playerEntityId = entityId;
                     break;
                 }
@@ -144,8 +144,8 @@ public class ClientContext
 
     public static function get ourRoomKey () :String
     {
-        if( _playerRoomKey == null ) {
-            _playerRoomKey = Codes.playerRoomPropKey( ClientContext.ourPlayerId );
+        if(_playerRoomKey == null) {
+            _playerRoomKey = Codes.playerRoomPropKey(ClientContext.ourPlayerId);
         }
 
         return _playerRoomKey;
@@ -158,13 +158,13 @@ public class ClientContext
     }
 
 
-    public static function getPlayerEntityId ( playerId :int ) :String
+    public static function getPlayerEntityId (playerId :int) :String
     {
-        for each( var entityId :String in ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
+        for each(var entityId :String in ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
 
-            var entityUserId :int = int(ctrl.room.getEntityProperty( EntityControl.PROP_MEMBER_ID, entityId));
+            var entityUserId :int = int(ctrl.room.getEntityProperty(EntityControl.PROP_MEMBER_ID, entityId));
 
-            if( entityUserId == playerId ) {
+            if(entityUserId == playerId) {
                 return entityId;
             }
 
@@ -173,42 +173,42 @@ public class ClientContext
     }
 
 
-    public static function get avatarNumberInRoom() :int
+    public static function get avatarNumberInRoom () :int
     {
         return ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR).length
     }
 
 
-    public static function getNonPlayerIds() :Array
+    public static function getNonPlayerIds () :Array
     {
 
         var playerIds :Array = ctrl.room.getPlayerIds();
         var nonPlayerIds :Array = new Array();
 
-        for each( var entityId :String in ctrl.room.getEntityIds( EntityControl.TYPE_AVATAR) ) {
-            var userId :int = int(ctrl.room.getEntityProperty( EntityControl.PROP_MEMBER_ID, entityId));
+        for each(var entityId :String in ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
+            var userId :int = int(ctrl.room.getEntityProperty(EntityControl.PROP_MEMBER_ID, entityId));
 
-            if( !ArrayUtil.contains( playerIds, userId ) ) {
-                nonPlayerIds.push( userId );
+            if(!ArrayUtil.contains(playerIds, userId)) {
+                nonPlayerIds.push(userId);
             }
         }
         return nonPlayerIds;
     }
 
-    public static function getAvatarIds( excludeOurId :Boolean = false) :Array
+    public static function getAvatarIds (excludeOurId :Boolean = false) :Array
     {
         var avatarIds :Array = new Array();
 
-        for each( var entityId :String in ctrl.room.getEntityIds( EntityControl.TYPE_AVATAR) ) {
-            var userId :int = int(ctrl.room.getEntityProperty( EntityControl.PROP_MEMBER_ID, entityId));
-            if( !(excludeOurId && ourPlayerId == userId)) {
-                avatarIds.push( userId );
+        for each(var entityId :String in ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
+            var userId :int = int(ctrl.room.getEntityProperty(EntityControl.PROP_MEMBER_ID, entityId));
+            if(!(excludeOurId && ourPlayerId == userId)) {
+                avatarIds.push(userId);
             }
         }
         return avatarIds;
     }
 
-    public static function get isWearingValidAvatar() :Boolean
+    public static function get isWearingValidAvatar () :Boolean
     {
         var isLegal :Object = ClientContext.ctrl.room.getEntityProperty(
             AvatarGameBridge.ENTITY_PROPERTY_IS_LEGAL_AVATAR, ClientContext.ourEntityId);
@@ -216,7 +216,7 @@ public class ClientContext
         return isLegal != null && Boolean(isLegal);
     }
 
-    public static function isAdmin( playerId :int ) :Boolean
+    public static function isAdmin (playerId :int) :Boolean
     {
         return playerId == 23340 || //Ragbeard
                playerId == 1769  || //Capital-T-Tim
@@ -237,7 +237,7 @@ public class ClientContext
         s.graphics.endFill();
     }
 
-    public static function animateEnlargeFromMouseClick( so :SceneObject ) :void
+    public static function animateEnlargeFromMouseClick (so :SceneObject) :void
     {
 
         var finalX :int = so.x;
@@ -250,8 +250,8 @@ public class ClientContext
         so.y = mouseY;
 
         so.scaleX = so.scaleY = 0.1;
-        so.addTask( ScaleTask.CreateEaseIn(1, 1, ANIMATION_TIME));
-        so.addTask( LocationTask.CreateEaseIn(finalX, finalY, ANIMATION_TIME));
+        so.addTask(ScaleTask.CreateEaseIn(1, 1, ANIMATION_TIME));
+        so.addTask(LocationTask.CreateEaseIn(finalX, finalY, ANIMATION_TIME));
     }
 
     public static function centerOnViewableRoom (d :DisplayObject) :void
@@ -262,25 +262,25 @@ public class ClientContext
         }
         //Workaround as roombounds can be bigger than the paintable area
         var middlePoint :Point = new Point();
-        if( ctrl.local.getRoomBounds()[0] > ctrl.local.getPaintableArea().width) {
+//        if(ctrl.local.getRoomBounds()[0] > ctrl.local.getPaintableArea().width) {
             middlePoint.x = ctrl.local.getPaintableArea().width/2;
             middlePoint.y = ctrl.local.getPaintableArea().height/2;
-        }
-        else {
+//        }
+//        else {
+//
+//            middlePoint.x = ctrl.local.getRoomBounds()[0]/2;
+//            middlePoint.y = ctrl.local.getRoomBounds()[1]/2;
+//        }
 
-            middlePoint.x = ctrl.local.getRoomBounds()[0]/2;
-            middlePoint.y = ctrl.local.getRoomBounds()[1]/2;
-        }
-
-        var local :Point = d.parent.globalToLocal(middlePoint);
-        d.x = local.x;
-        d.y = local.y;
+//        var local :Point = d.parent.globalToLocal(middlePoint);
+        d.x = middlePoint.x;
+        d.y = middlePoint.y;
     }
 
     public static function placeTopRight (d :DisplayObject) :void
     {
         //Workaround as roombounds can be bigger than the paintable area
-        if( ctrl.local.getRoomBounds()[0] > ctrl.local.getPaintableArea().width) {
+        if(ctrl.local.getRoomBounds()[0] > ctrl.local.getPaintableArea().width) {
             d.x = ctrl.local.getPaintableArea().width;
             d.y = 0;
         }
