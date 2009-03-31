@@ -14,8 +14,10 @@ package vampire.avatar
     import com.whirled.contrib.simplegame.tasks.SerialTask;
     import com.whirled.net.ElementChangedEvent;
 
+    import flash.display.DisplayObject;
     import flash.display.InteractiveObject;
     import flash.display.MovieClip;
+    import flash.display.SimpleButton;
     import flash.display.Sprite;
     import flash.events.MouseEvent;
     import flash.geom.Point;
@@ -51,9 +53,9 @@ public class VampireAvatarHUD extends AvatarHUD
         _hudSprite = new Sprite();
         _displaySprite.addChild( _hudSprite );
 
-        registerListener( _hudSprite, MouseEvent.CLICK, function(...ignored) :void {
-            trace(playerId + " clicked ");
-        });
+//        registerListener( _hudSprite, MouseEvent.CLICK, function(...ignored) :void {
+//            trace(playerId + " clicked ");
+//        });
 
         if (ClientContext.model.bloodbonded == userId) {
             addBloodBondIcon();
@@ -183,6 +185,26 @@ public class VampireAvatarHUD extends AvatarHUD
 //            _feedButton.alpha = 0;
 //            _frenzyButton.alpha = 0;
         });
+
+
+        var buttonFresh :SimpleButton = _target_UI["button_fresh"] as SimpleButton;
+        var buttonJoin :SimpleButton = _target_UI["button_join"] as SimpleButton;
+        var buttonLineage :SimpleButton = _target_UI["button_lineage"] as SimpleButton;
+
+//        Command.bind(buttonFresh, MouseEvent.CLICK, VampireController.SHOW_INTRO, "lineage");
+        registerListener(buttonFresh, MouseEvent.CLICK, function (...ignored) :void {
+            ClientContext.controller.handleShowIntro("lineage");
+        });
+
+        registerListener(buttonJoin, MouseEvent.CLICK, function (...ignored) :void {
+            ClientContext.controller.handleShowIntro("lineage");
+        });
+
+        registerListener(buttonLineage, MouseEvent.CLICK, function (...ignored) :void {
+            ClientContext.controller.handleShowIntro("default", playerId);
+        })
+
+
 
 
 
@@ -489,6 +511,8 @@ public class VampireAvatarHUD extends AvatarHUD
 
     protected function handleElementChanged (e :ElementChangedEvent) :void
     {
+        var oldLevel :int;
+        var newLevel :int;
         var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
 
         //Some things we update regardless whether they are our attributes or not
@@ -513,7 +537,16 @@ public class VampireAvatarHUD extends AvatarHUD
 //                }
 //            }
 //
-//            if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
+            if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
+
+                if (e.newValue > e.oldValue) {
+                    var levelUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+                        ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true) );
+                    if (mode != null && levelUp != null) {
+                        mode.addSceneObject(levelUp, _displaySprite);
+                    }
+                }
+
 //                updateBlood();
 //                //Animate feedback for blood gain
 //                if( e.oldValue < e.newValue) {
@@ -526,7 +559,7 @@ public class VampireAvatarHUD extends AvatarHUD
 //                        mode.addObject( levelUp, _displaySprite );
 //                    }
 //                }
-//            }
+            }
 
             if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
 
@@ -890,6 +923,47 @@ public class VampireAvatarHUD extends AvatarHUD
             bloodType.mouseEnabled = false;
         }
         _isShowingFeedButton = true;
+
+
+        //Show the appropriate button
+        //First detach them all
+        var buttonFresh :SimpleButton = _target_UI["button_fresh"] as SimpleButton;
+        var buttonJoin :SimpleButton = _target_UI["button_join"] as SimpleButton;
+        var buttonLineage :SimpleButton = _target_UI["button_lineage"] as SimpleButton;
+
+        for each (var d :DisplayObject in [buttonFresh, buttonJoin, buttonLineage]) {
+            if (d != null && d.parent != null) {
+                d.parent.removeChild(d);
+            }
+        }
+
+        var isPlayerPartOfLineage :Boolean =
+            ClientContext.model.lineage.isMemberOfLineage(ClientContext.ourPlayerId);
+        var isAvatarPartOfLineage :Boolean =
+            ClientContext.model.lineage.isMemberOfLineage(playerId);
+
+//        trace("setDisplayModeSelectableForFeed");
+//        trace("isPlayerPartOfLineage=" + isPlayerPartOfLineage);
+//        trace("isAvatarPartOfLineage=" + isAvatarPartOfLineage + ", id=" + playerId);
+
+        if (isPlayerPartOfLineage) {
+            var avatarHasNoSire :Boolean = !ClientContext.model.lineage.isSireExisting(playerId);
+            if (avatarHasNoSire) {
+                _target_UI.addChild(buttonFresh);
+            }
+            else {
+                _target_UI.addChild(buttonLineage);
+            }
+        }
+        else {
+            if (isAvatarPartOfLineage) {
+                _target_UI.addChild(buttonJoin);
+            }
+            else {
+                _target_UI.addChild(buttonLineage);
+            }
+        }
+
 
     }
 
