@@ -1,11 +1,12 @@
 package vampire.client
 {
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
+import com.whirled.EntityControl;
 import com.whirled.contrib.avrg.AvatarHUD;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 
 import flash.display.MovieClip;
@@ -165,7 +166,7 @@ public class VampireController extends Controller
             help = ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as HelpPopup;
             if (help != null) {
                 if (centerLineage != 0) {
-                    help.lineageView.updateHierarchy(centerLineage);
+                    help.centerLineageOnPlayer(centerLineage);
                 }
             }
 
@@ -196,21 +197,21 @@ public class VampireController extends Controller
             ClientContext.ctrl.agent.sendMessage( FeedRequestMsg.NAME, msg.toBytes() );
 
             //Show feedback if it's a player.
+            if (ArrayUtil.contains(ClientContext.model.playerIds, targetId)) {
+                var popup :PopupQuery = new PopupQuery(
+                    null,
+                    "Waiting for " + targetName + "'s permission to feed...");
+                ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
+                ClientContext.centerOnViewableRoom(popup.displayObject);
+                ClientContext.animateEnlargeFromMouseClick(popup);
 
-            var popup :PopupQuery = new PopupQuery(
-                null,
-                "Waiting for " + targetName + "'s permission...");
-            ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
-            ClientContext.centerOnViewableRoom(popup.displayObject);
-            ClientContext.animateEnlargeFromMouseClick(popup);
-
-            var quitTimer :SimpleTimer = new SimpleTimer(3, function() :void {
-                if (popup.isLiveObject) {
-                    popup.destroySelf();
-                }
-            });
-            ClientContext.gameMode.addObject(quitTimer);
-
+                var quitTimer :SimpleTimer = new SimpleTimer(3, function() :void {
+                    if (popup.isLiveObject) {
+                        popup.destroySelf();
+                    }
+                });
+                ClientContext.gameMode.addObject(quitTimer);
+            }
 
 
 
@@ -268,8 +269,26 @@ public class VampireController extends Controller
             break;
 
             default:
-            ClientContext.avatarOverlay.setDisplayMode(
-                VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS);
+
+            if (ClientContext.ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR).length <= 1) {
+                var popup :PopupQuery = new PopupQuery(
+                    null,
+                    "This room is empty! Try hunting in a different room.");
+                ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
+                ClientContext.centerOnViewableRoom(popup.displayObject);
+                ClientContext.animateEnlargeFromMouseClick(popup);
+
+                var quitTimer :SimpleTimer = new SimpleTimer(3, function() :void {
+                    if (popup.isLiveObject) {
+                        popup.destroySelf();
+                    }
+                });
+                ClientContext.gameMode.addObject(quitTimer);
+            }
+            else {
+                ClientContext.avatarOverlay.setDisplayMode(
+                    VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS);
+            }
             break;
         }
 
