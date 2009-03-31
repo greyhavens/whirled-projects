@@ -90,7 +90,9 @@ public class LineageView extends SceneObjectParent
         if (_hierarchy == null) {
             log.error("updateHierarchyEvent(), but hierarchy is null :-(");
         }
-        updateHierarchy(_selectedPlayerIdCenter);
+//        if (_hierarchy.isPlayer(_selectedPlayerIdCenter)) {
+            updateHierarchy(_selectedPlayerIdCenter);
+//        }
     }
 
     public function updateHierarchy (playerIdToCenter :int) :void
@@ -114,15 +116,25 @@ public class LineageView extends SceneObjectParent
     }
     protected function centerLinageOnPlayer (playerIdToCenter :int) :void
     {
+//        trace("centerLinageOnPlayer, centerLinageOnPlayer=" + centerLinageOnPlayer +
+//            ", _hierarchy=" + _hierarchy);
+
+
         if (_hierarchy == null) {
             _hierarchy = new Lineage();
             _hierarchy.setPlayerSire(playerIdToCenter, 0);
         }
 
-        if (_selectedPlayerIdCenter == playerIdToCenter &&
-            _hierarchy.getMinionCount(playerIdToCenter) <= 5) {
-            return;
-        }
+
+
+//        if (_selectedPlayerIdCenter == playerIdToCenter
+//            && _previousHierarchyPage == _hierarchyPage ) {
+////            _hierarchy.getMinionCount(playerIdToCenter) <= 5) {
+//
+//            trace("  doing nothing");
+//            return;
+//        }
+
 
 
         _isLayoutMoving = true;
@@ -136,6 +148,9 @@ public class LineageView extends SceneObjectParent
         if (_selectedPlayerIdCenter != playerIdToCenter) {
             _hierarchyPage = 0;
         }
+
+//        _previousHierarchyPage = _hierarchyPage;
+
         _selectedPlayerIdCenter = playerIdToCenter;
 
         var playerX :int = 0;//150;
@@ -352,7 +367,7 @@ public class LineageView extends SceneObjectParent
                         var buttonDownSO :SceneObject = new SimpleSceneObject(button_hiararchy);
 
                         buttonDownSO.x = locations[i].x - button_hiararchy.width;
-                        buttonDownSO.y = locations[i].y + 1.5*yInc;
+                        buttonDownSO.y = locations[i].y + yInc + buttonDownSO.width / 2 + 12;
                         addSceneObject(buttonDownSO, s);
                         _volatileUIComponents.push(buttonDownSO);
 //                        s.addChild(button_hiararchy);
@@ -527,8 +542,8 @@ public class LineageView extends SceneObjectParent
 
         tf.antiAliasType = AntiAliasType.ADVANCED;
 
-        tf.width = tf.textWidth + 40;
-        tf.height = tf.textHeight  + 10;
+        tf.width = tf.textWidth + 5;
+        tf.height = tf.textHeight  + 5;
 
 
         tf.x = centerX - tf.width / 2;
@@ -584,6 +599,7 @@ public class LineageView extends SceneObjectParent
     protected var _isLayoutMoving :Boolean = false;
 
     protected var _hierarchyPage :int = 0;//If there are too many minions, scroll by 'pages'
+//    protected var _previousHierarchyPage :int = 0;//For unnecessary updating
     protected var _selfReference :LineageView;
 
     protected var _glowFilter :GlowFilter = new GlowFilter(0xffffff);
@@ -738,7 +754,7 @@ class DropSceneObject extends SceneObject
     {
         _drop.scaleX = _drop.scaleY = 2;
         _nameText.x = - _nameText.width / 2;
-        _nameText.y = 20 - _nameText.height / 2;
+        _nameText.y = 25 - _nameText.height / 2;
     }
     public function setNameTextLeftOfDrop () :void
     {
@@ -752,7 +768,7 @@ class DropSceneObject extends SceneObject
     {
         _drop.scaleX = -2.5;
         _drop.scaleY = 2.5;
-        _nameText.x = 0;//(10 + _nameText.width/2);
+        _nameText.x = 5;//(10 + _nameText.width/2);
         _nameText.y = - _nameText.height / 2;
     }
 

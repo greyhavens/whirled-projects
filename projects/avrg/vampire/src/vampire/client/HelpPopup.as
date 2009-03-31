@@ -165,6 +165,11 @@ package vampire.client
 
         }
 
+//        public function get lineageView () :LineageView
+//        {
+//            return _lineageView;
+//        }
+
         override public function get displayObject () :DisplayObject
         {
             return _displaySprite;
@@ -344,6 +349,7 @@ package vampire.client
                     lineage_center.parent.addChild(_lineageView.displayObject);
                     _lineageView.x = lineage_center.x;
                     _lineageView.y = lineage_center.y;// - 20;
+                    centerLineageOnPlayer(ClientContext.ourPlayerId);
 
                     //Add the clickable, glowable bloodbond icon
                     var bloodbondIcon :MovieClip = ClientContext.instantiateMovieClip("HUD", "bond_icon", false);
@@ -370,27 +376,32 @@ package vampire.client
 
                     //Add the extra help bits for sires and minion recruiting, if relevant
                     //First, if there's no Lineage yet, jsut add the links
-                    if (ClientContext.model.lineage == null) {
-                        _getSiresButton.mouseEnabled = true;
-                        _getSiresButton.visible = true;
-                        _getMinionsButton.mouseEnabled = true;
-                        _getMinionsButton.visible = true;
-                    }
-                    else {
+//                            _getSiresButton.mouseEnabled = false;
+//                            _getSiresButton.visible = false;
+//                            _getMinionsButton.mouseEnabled = false;
+//                            _getMinionsButton.visible = false;
+//                    if (ClientContext.model.lineage == null) {
+//                        _getSiresButton.mouseEnabled = true;
+//                        _getSiresButton.visible = true;
+//                        _getMinionsButton.mouseEnabled = true;
+//                        _getMinionsButton.visible = true;
+//                    }
+//                    else {
                         //Check if we need to show the sires link
-                        if (ClientContext.model.lineage.getSireId(ClientContext.ourPlayerId) == 0
-                            && ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) == 0) {
-                            _getSiresButton.mouseEnabled = true;
-                            _getSiresButton.visible = true;
-                            _getMinionsButton.mouseEnabled = true;
-                            _getMinionsButton.visible = true;
-                        }
-                        else {
-                            _getSiresButton.mouseEnabled = false;
-                            _getSiresButton.visible = false;
-                            _getMinionsButton.mouseEnabled = false;
-                            _getMinionsButton.visible = false;
-                        }
+//                        if (ClientContext.model.lineage.getSireId(ClientContext.ourPlayerId) == 0
+//                            && ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) == 0
+//                            && _lineageView.) {
+//                            _getSiresButton.mouseEnabled = true;
+//                            _getSiresButton.visible = true;
+//                            _getMinionsButton.mouseEnabled = true;
+//                            _getMinionsButton.visible = true;
+//                        }
+//                        else {
+//                            _getSiresButton.mouseEnabled = false;
+//                            _getSiresButton.visible = false;
+//                            _getMinionsButton.mouseEnabled = false;
+//                            _getMinionsButton.visible = false;
+//                        }
                         //Check if we need to show the minions link
 //                        if (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) == 0) {
 //                            _getMinionsButton.mouseEnabled = true;
@@ -400,11 +411,31 @@ package vampire.client
 //                            _getMinionsButton.mouseEnabled = false;
 //                            _getMinionsButton.visible = false;
 //                        }
-                    }
+//                    }
 
                 default:
                     break;
             }
+        }
+
+        public function centerLineageOnPlayer (playerId :int) :void
+        {
+            if (ClientContext.ourPlayerId == playerId &&
+                ClientContext.model.lineage.getSireId(ClientContext.ourPlayerId) == 0
+                && ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) == 0) {
+
+                _getSiresButton.mouseEnabled = true;
+                _getSiresButton.visible = true;
+                _getMinionsButton.mouseEnabled = true;
+                _getMinionsButton.visible = true;
+            }
+            else {
+                _getSiresButton.mouseEnabled = false;
+                _getSiresButton.visible = false;
+                _getMinionsButton.mouseEnabled = false;
+                _getMinionsButton.visible = false;
+            }
+            _lineageView.updateHierarchy(playerId);
         }
 
         protected function backButtonPushed (...ignored) :void
