@@ -205,5 +205,5 @@ class TestGameController extends OneRoomGameRoom
     protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _timerMgr :TimerManager = new TimerManager();
 
-    protected static const MIN_PLAYERS :int = 2;
+    protected static const MIN_PLAYERS :int = 1;
 }

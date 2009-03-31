@@ -39,12 +39,15 @@ public class GameObjects
 
     public static function createCorruptionBurst (fromObj :CollidableObj) :CorruptionBurst
     {
+        var wasAttachedToCursor :Boolean;
         var isBlackBurst :Boolean = true;
         if (fromObj is Cell) {
-            isBlackBurst = !((fromObj as Cell).isWhiteCell);
+            var cell :Cell = Cell(fromObj);
+            isBlackBurst = !cell.isWhiteCell;
+            wasAttachedToCursor = cell.isAttachedToCursor;
         }
 
-        var obj :CorruptionBurst = new CorruptionBurst(isBlackBurst);
+        var obj :CorruptionBurst = new CorruptionBurst(isBlackBurst, wasAttachedToCursor);
 
         var loc :Point =
             fromObj.displayObject.parent.localToGlobal(new Point(fromObj.x, fromObj.y));

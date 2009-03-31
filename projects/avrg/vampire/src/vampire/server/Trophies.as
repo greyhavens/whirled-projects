@@ -14,12 +14,15 @@ public class Trophies
     public static const INVITE_PREFIX :String = "invite";
     public static const INVITE_REQS :Array = [1, 2, 3, 4, 5, 10, 25];
 
-    // Awarded for going a whole feeding without corruption
+    // Go a whole feeding without corruption
     public static const PUREBLOOD :String = "Pureblood";
 
-    // Awarded for delivering 4 white cells at once
+    // Deliver 4 white cells at once
     public static const CONSTANT_GARDENER :String = "ConstantGardener";
     public static const CONSTANT_GARDENER_REQ :int = 4;
+
+    // Detonate a white cell you're carrying without corrupting red cells
+    public static const NECESSARY_EVIL :String = "NecessaryEvil";
 
     // Awarded for creating a cascade of a certain size
     public static const CASCADE_TROPHIES :Array = [

@@ -148,6 +148,11 @@ public class Cell extends CollidableObj
         }
     }
 
+    public function get isAttachedToCursor () :Boolean
+    {
+        return (!_attachedTo.isNull);
+    }
+
     protected function attachTip (type :int) :void
     {
         if (!_attachedTip.isNull) {

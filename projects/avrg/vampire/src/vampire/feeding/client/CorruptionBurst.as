@@ -3,15 +3,18 @@ package vampire.feeding.client {
 import com.whirled.contrib.simplegame.tasks.*;
 
 import vampire.feeding.*;
+import vampire.server.Trophies;
 
 public class CorruptionBurst extends CellBurst
 {
-    public function CorruptionBurst (isBlackBurst :Boolean)
+    public function CorruptionBurst (isBlackBurst :Boolean, cellWasAttachedToCursor :Boolean)
     {
         super(
             isBlackBurst ? Constants.BURST_BLACK : Constants.BURST_WHITE,
             isBlackBurst ? Constants.BLACK_BURST_RADIUS_MIN : Constants.WHITE_BURST_RADIUS_MIN,
             isBlackBurst ? Constants.BLACK_BURST_RADIUS_MAX : Constants.WHITE_BURST_RADIUS_MAX);
+
+        _cellWasAttachedToCursor = cellWasAttachedToCursor;
     }
 
     override protected function beginBurst () :void
@@ -23,6 +26,12 @@ public class CorruptionBurst extends CellBurst
 
         addTask(new SerialTask(
             new TimedTask(Constants.BURST_COMPLETE_TIME),
+            new FunctionTask(function () :void {
+                // Detonate a white cell you're carrying without corrupting red cells
+                if (_cellWasAttachedToCursor && !_corruptionSpread) {
+                    ClientCtx.awardTrophy(Trophies.NECESSARY_EVIL);
+                }
+            }),
             new SelfDestructTask()));
 
         ClientCtx.audio.playSoundNamed("sfx_white_burst");
@@ -43,6 +52,7 @@ public class CorruptionBurst extends CellBurst
 
         if (collided != null) {
             GameObjects.createCorruptionBurst(collided);
+            _corruptionSpread = true;
         }
     }
 
@@ -53,6 +63,11 @@ public class CorruptionBurst extends CellBurst
         default:    return super.getObjectGroup(groupNum - 1);
         }
     }
+
+    // We track whether the cell that caused the burst was attached to the player cursor
+    // in order to award the "Necessary Evil" trophy
+    protected var _cellWasAttachedToCursor :Boolean;
+    protected var _corruptionSpread :Boolean;
 
     protected static const GROUP_NAME :String = "WhiteBurst";
 }
