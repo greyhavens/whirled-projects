@@ -194,7 +194,8 @@ public class VConstants
     */
     public static const PLAYER_ID_NON_PLAYER :int = 0;
 
-    public static const INVITE_TEXT :String = "Join my Bloodline!";
+    public static const TEXT_INVITE :String = "Join my Bloodline!";
+    public static const TEXT_NEW_LEVEL :String = "You have achieved level ";
 
 
 //    public static const FEEDING_AVATAR_OFFSET :Vector2 = new Vector2(15, -5);
