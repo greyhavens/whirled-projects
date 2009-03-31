@@ -147,7 +147,7 @@ public class BurstSequence extends SceneObject
         ClientCtx.awardTrophySequence(
             Trophies.CASCADE_TROPHIES,
             Trophies.CASCADE_REQS,
-            _totalBursts);
+            this.totalValue);
 
         ClientCtx.awardTrophySequence(
             Trophies.MULTIPLIER_TROPHIES,
