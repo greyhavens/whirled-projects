@@ -1,5 +1,6 @@
 package vampire.avatar
 {
+    import com.threerings.flash.DisplayUtil;
     import com.threerings.util.ArrayUtil;
     import com.threerings.util.Command;
     import com.whirled.avrg.AVRGameControl;
@@ -165,7 +166,14 @@ public class VampireAvatarHUD extends AvatarHUD
 //        return false;
 //    }
 
-
+    public function findSafely (name :String) :DisplayObject
+    {
+        var o :DisplayObject = DisplayUtil.findInHierarchy(_displaySprite, name);
+        if (o == null) {
+            throw new Error("Cannot find object: " + name);
+        }
+        return o;
+    }
 
     protected function setupUITarget() :void
     {
@@ -322,72 +330,6 @@ public class VampireAvatarHUD extends AvatarHUD
         }
     }
 
-//    protected function setupUIYourAvatar() :void
-//    {
-//
-//        //Detach the bare buttons only used on our own avatar
-//        for each(var unusedButton :DisplayObject in [_target_UI.button_feed,
-//            _target_UI.button_frenzy, _target_UI.frenzy_countdown, _target_UI.waiting_sign]) {
-//
-//            unusedButton.parent.removeChild(unusedButton);
-//        }
-//
-//
-//
-//        _bareButton = new SceneButton(_target_UI.button_bare);
-//        _unbareButton = new SceneButton(_target_UI.button_revert);
-//        _bareButton.mouseEnabled = true;
-//        _bareButton.y = FEED_BUTTON_Y;
-//        _unbareButton.y = _bareButton.y;
-//
-//        _bareButton.alpha = 0;
-//        _unbareButton.alpha = 0;
-//
-//
-//        _bareButton.registerButtonListener(MouseEvent.CLICK, function (...ignored) :void {
-//            _bareButton.alpha = 0;
-//            if(_bareButton.button.parent != null) {
-//                _bareButton.button.parent.removeChild(_bareButton.button);
-//            }
-//            _hudSprite.addChild(_unbareButton.displayObject);
-//            _unbareButton.alpha = 1;
-//            ClientContext.controller.handleSwitchMode(VConstants.GAME_MODE_BARED);
-//        });
-//
-//        _unbareButton.registerButtonListener(MouseEvent.CLICK, function (...ignored) :void {
-//            _unbareButton.alpha = 0;
-//            if(_unbareButton.button.parent != null) {
-//                _unbareButton.button.parent.removeChild(_unbareButton.button);
-//            }
-//            _hudSprite.addChild(_bareButton.displayObject);
-//            _bareButton.alpha = 1;
-//            _ctrl.player.setAvatarState(VConstants.GAME_MODE_NOTHING);
-//            ClientContext.controller.handleSwitchMode(VConstants.GAME_MODE_NOTHING);
-//        });
-//
-//        //Add a mouse move listener to the blood.  This triggers showing the feed buttons
-//
-//        var showMenuFunction :Function = function(...ignored) :void {
-//            _isMouseOver = true;
-//            _hudSprite.addChildAt(_mouseOverSprite, 0);
-//
-//            if(ClientContext.model.action == VConstants.GAME_MODE_BARED) {
-//                showUnBareButton();
-//            }
-//            else {
-//                showBareButton();
-//            }
-//
-//        }
-//
-//        //Make sure that if any part of the menu is moused over, show the action buttons
-//        registerListener(_blood, MouseEvent.ROLL_OVER, showMenuFunction);
-//        registerListener(_bloodMouseDetector, MouseEvent.ROLL_OVER, showMenuFunction);
-//        registerListener(_bloodMouseDetector, MouseEvent.MOUSE_MOVE, showMenuFunction);
-//
-//        updateBlood();
-//
-//    }
 
     protected function addGlowFilter(obj : InteractiveObject) :void
     {
@@ -405,108 +347,7 @@ public class VampireAvatarHUD extends AvatarHUD
         setupUI();
         setDisplayModeInvisible();
 
-//        if(ClientContext.ourPlayerId == playerId) {
-//            mode.addObject(_bareButton);
-//            mode.addObject(_unbareButton);
-//        }
-//        else {
-//            mode.addObject(_frenzyButton);
-//            mode.addObject(_feedButton);
-//
-//            mode.addObject(_glowTimer);
-//        }
     }
-
-//    override protected function destroyed():void
-//    {
-//        var allButtons :Array = [_feedButton, _frenzyButton, _bareButton, _unbareButton];
-//        for each(var b :SceneButton in allButtons) {
-//            if(b != null && b.isLiveObject) {
-//                b.destroySelf()
-//            }
-//        }
-//
-//        if(_glowTimer != null && _glowTimer.isLiveObject) {
-//            _glowTimer.destroySelf()
-//        }
-//
-//    }
-//    protected function decrementTime() :void
-//    {
-//        _frenzyDelayRemaining -= 1;
-//    }
-
-
-//    protected function getPotentialPredatorIds() :HashSet
-//    {
-//
-//        if(VConstants.LOCAL_DEBUG_MODE) {
-//            var a :HashSet = new HashSet();
-//            a.add(1);
-//            a.add(2);
-//            return a;
-//        }
-//
-//        var preds :HashSet = new HashSet();
-//
-//        var playerIds :Array = _ctrl.room.getPlayerIds();
-//        for each(var playerId :int in playerIds) {
-//            if(SharedPlayerStateClient.isVampire(playerId)
-//                && SharedPlayerStateClient.getCurrentAction(playerId) != VConstants.GAME_MODE_BARED) {
-//                preds.add(playerId);
-//            }
-//        }
-//
-//        return preds;
-//
-//    }
-
-//    protected function getValidPlayerIdTargets() :HashSet
-//    {
-//
-//        if(VConstants.LOCAL_DEBUG_MODE) {
-//            var a :HashSet = new HashSet();
-//            a.add(1);
-//            a.add(2);
-//            return a;
-//        }
-//
-//        var validIds :HashSet = new HashSet();
-//
-//        if(!ClientContext.model.isVampire()) {
-//            return validIds;
-//        }
-//
-//        var playerIds :Array = _ctrl.room.getPlayerIds();
-//
-//        var validCHatTargets :Array = ClientContext.model.validNonPlayerTargetsFromChatting;
-//
-//        //Add the nonplayers
-//        validCHatTargets.forEach(function(playerId :int, ...ignored) :void {
-//            if(!ArrayUtil.contains(playerIds, playerId)) {
-//                if(isNaN(SharedPlayerStateClient.getBlood(playerId)) || SharedPlayerStateClient.getBlood(playerId) > 1) {
-//                    validIds.add(playerId);
-//                }
-//            }
-//        });
-//
-//        //Add players in 'bare' mode
-//        for each(var playerId :int in playerIds) {
-//
-//            if(playerId == _ctrl.player.getPlayerId()) {
-//                continue;
-//            }
-//
-//            var action :String = SharedPlayerStateClient.getCurrentAction(playerId);
-//            if(action != null && action == VConstants.GAME_MODE_BARED
-//                && SharedPlayerStateClient.getBlood(playerId) > 1) {
-//
-//                validIds.add(playerId);
-//            }
-//        }
-//
-//        return validIds;
-//    }
 
 
 
