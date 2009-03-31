@@ -153,7 +153,8 @@ public class BloodBloom extends FeedingClient
         log.info("Changing mode", "mode", modeName);
 
         if (modeName == Constants.MODE_LOBBY) {
-            ClientCtx.mainLoop.unwindToMode(new LobbyMode(ClientCtx.lastRoundResults));
+            ClientCtx.mainLoop.unwindToMode(
+                new LobbyMode(LobbyMode.LOBBY, ClientCtx.lastRoundResults));
 
         } else if (modeName == Constants.MODE_PLAYING) {
             var gamePlayers :Array = Util.keys(ClientCtx.props.get(Props.GAME_PLAYERS));
@@ -161,7 +162,7 @@ public class BloodBloom extends FeedingClient
                 ClientCtx.mainLoop.unwindToMode(new GameMode());
             } else {
                 log.info("A round is being played, but we're not in it.");
-                ClientCtx.mainLoop.unwindToMode(new WaitingForNextRoundMode());
+                ClientCtx.mainLoop.unwindToMode(new LobbyMode(LobbyMode.WAIT_FOR_NEXT_ROUND));
             }
         }
 

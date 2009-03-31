@@ -11,7 +11,7 @@ public class RoundTimeLeftMsg
 
     public var seconds :int;
 
-    public static function create (secondsRemaining :int) :RoundTimeLeftMsg
+    public static function create (secondsRemaining :int = 0) :RoundTimeLeftMsg
     {
         var msg :RoundTimeLeftMsg = new RoundTimeLeftMsg();
         msg.seconds = secondsRemaining;

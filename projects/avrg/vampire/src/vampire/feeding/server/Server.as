@@ -144,15 +144,6 @@ public class Server extends FeedingServer
         _ctx.props.setIn(Props.ALL_PLAYERS, playerId, false, true);
         updateLobbyLeader();
 
-        if (_ctx.modeName == Constants.MODE_PLAYING) {
-            // if a player is added while a game is in progress, tell them how much time is
-            // remaining (approximately) so that they can display a timer to the player
-            var gameMode :ServerGameMode = _serverMode as ServerGameMode;
-            if (gameMode != null) {
-                _ctx.sendMessage(RoundTimeLeftMsg.create(gameMode.approxTimeRemaining), playerId);
-            }
-        }
-
         return true;
     }
 

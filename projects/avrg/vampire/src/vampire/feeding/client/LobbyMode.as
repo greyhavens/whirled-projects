@@ -1,8 +1,11 @@
 package vampire.feeding.client {
 
 import com.threerings.flash.TextFieldUtil;
+import com.threerings.util.Log;
+import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.avrg.RoomDragger;
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
@@ -17,11 +20,16 @@ import vampire.feeding.Constants;
 import vampire.feeding.net.CloseLobbyMsg;
 import vampire.feeding.net.Props;
 import vampire.feeding.net.RoundOverMsg;
+import vampire.feeding.net.RoundTimeLeftMsg;
 
 public class LobbyMode extends AppMode
 {
-    public function LobbyMode (roundResults :RoundOverMsg = null) :void
+    public static const LOBBY :int = 0;
+    public static const WAIT_FOR_NEXT_ROUND :int = 1;
+
+    public function LobbyMode (type :int, roundResults :RoundOverMsg = null) :void
     {
+        _type = type;
         _results = roundResults;
     }
 
@@ -31,6 +39,7 @@ public class LobbyMode extends AppMode
 
         registerListener(ClientCtx.props, PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
         registerListener(ClientCtx.props, ElementChangedEvent.ELEMENT_CHANGED, onPropChanged);
+        registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
 
         _panelMovie = ClientCtx.instantiateMovieClip("blood", "popup_panel");
         _modeSprite.addChild(_panelMovie);
@@ -83,12 +92,12 @@ public class LobbyMode extends AppMode
 
         // Total score
         var total :MovieClip = contents["total"];
-        if (this.isPreGameLobby) {
-            total.visible = false;
-        } else {
+        if (this.isPostRoundLobby) {
             total.visible = true;
             var tfTotal :TextField = total["player_score"];
             tfTotal.text = String(_results.totalScore);
+        } else {
+            total.visible = false;
         }
 
         // Player list
@@ -104,14 +113,47 @@ public class LobbyMode extends AppMode
 
         updateBloodBondIndicator();
 
-        // next round timer
+        showRoundTimer(false);
+        if (this.isWaitingForNextRound) {
+            // ask the server to tell us how much time is remaining in the current round (it
+            // will respond with a RoundTimeLeftMsg with the value)
+            ClientCtx.msgMgr.sendMessage(RoundTimeLeftMsg.create());
+
+            // grayscale-ize the panel
+            _panelMovie.filters = [ new ColorMatrix().makeGrayscale().createFilter() ];
+        }
+    }
+
+    protected function showRoundTimer (show :Boolean, remainingTime :Number = 0) :void
+    {
         var roundTimer :MovieClip = _panelMovie["round_timer"];
-        roundTimer.visible = false;
+        roundTimer.visible = show;
+
+        if (show && remainingTime > 0 && !_showedRoundTimer) {
+            var elapsedTime :Number = Constants.GAME_TIME - remainingTime;
+            var curFrame :int = (roundTimer.totalFrames * (elapsedTime / Constants.GAME_TIME)) + 1;
+            curFrame = Math.min(curFrame, roundTimer.totalFrames);
+
+            roundTimer.gotoAndStop(curFrame);
+
+            log.info("showRoundTimer", "time", remainingTime, "curFrame", curFrame);
+
+            var obj :SimObject = new SimObject();
+            obj.addTask(new ShowFramesTask(roundTimer, curFrame, -1, remainingTime));
+            addObject(obj);
+
+            _showedRoundTimer = true;
+        }
     }
 
     protected function updateButtonsAndStatus () :void
     {
-        if (ClientCtx.preyId == Constants.NULL_PLAYER && !ClientCtx.preyIsAi) {
+        if (this.isWaitingForNextRound) {
+            _startButton.visible = false;
+            _tfStatus.visible = true;
+            _tfStatus.text = "You will join when the current feeding ends";
+
+        } else if (ClientCtx.preyId == Constants.NULL_PLAYER && !ClientCtx.preyIsAi) {
             _startButton.visible = false;
             _tfStatus.visible = true;
             _tfStatus.text = "Your Feast has wandered off";
@@ -202,7 +244,8 @@ public class LobbyMode extends AppMode
     {
         var bloodBond :MovieClip = _panelMovie["blood_bond"];
         bloodBond.visible = false;
-        if (ClientCtx.playerIds.length == 2 &&
+        if (this.isLobby &&
+            ClientCtx.playerIds.length == 2 &&
             !ClientCtx.preyIsAi &&
             ClientCtx.bloodBondProgress > 0) {
 
@@ -225,14 +268,31 @@ public class LobbyMode extends AppMode
         }
     }
 
+    protected function onMsgReceived (e :ClientMsgEvent) :void
+    {
+        if (this.isWaitingForNextRound && e.msg is RoundTimeLeftMsg) {
+            showRoundTimer(true, RoundTimeLeftMsg(e.msg).seconds);
+        }
+    }
+
     protected function get isPostRoundLobby () :Boolean
     {
-        return (_results != null);
+        return (_type == LOBBY && _results != null);
     }
 
     protected function get isPreGameLobby () :Boolean
     {
-        return (!isPostRoundLobby);
+        return (_type == LOBBY && _results == null);
+    }
+
+    protected function get isLobby () :Boolean
+    {
+        return (_type == LOBBY);
+    }
+
+    protected function get isWaitingForNextRound () :Boolean
+    {
+        return (_type == WAIT_FOR_NEXT_ROUND);
     }
 
     protected var _panelMovie :MovieClip;
@@ -240,7 +300,11 @@ public class LobbyMode extends AppMode
     protected var _tfStatus :TextField;
     protected var _playerList :SimpleListController;
 
+    protected var _type :int;
     protected var _results :RoundOverMsg;
+    protected var _showedRoundTimer :Boolean;
+
+    protected static const log :Log = Log.getLog(LobbyMode);
 }
 
 }

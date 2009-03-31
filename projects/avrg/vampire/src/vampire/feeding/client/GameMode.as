@@ -230,7 +230,7 @@ public class GameMode extends AppMode
     {
         ClientCtx.lastRoundResults = results;
         if (!ClientCtx.isConnected) {
-            ClientCtx.mainLoop.changeMode(new LobbyMode(results));
+            ClientCtx.mainLoop.changeMode(new LobbyMode(LobbyMode.LOBBY, results));
         }
     }
 

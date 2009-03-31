@@ -6,6 +6,8 @@ import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.net.Message;
 import com.whirled.contrib.simplegame.util.Rand;
 
+import flash.utils.getTimer;
+
 import vampire.data.VConstants;
 import vampire.feeding.*;
 import vampire.feeding.net.*;
@@ -27,15 +29,7 @@ public class ServerGameMode extends ServerMode
 
         _state = STATE_PLAYING;
         _timerMgr.createTimer(Constants.GAME_TIME * 1000, 1, onTimeOver).start();
-
-        // we want to keep track of the approximate amount of time remaining in the round
-        // so that we can report it to clients who join while the round is in progress
-        const TIME_UPDATE_INTERVAL :Number = 2;
-        _approxTimeRemaining = Constants.GAME_TIME;
-        _timerMgr.runForever(TIME_UPDATE_INTERVAL * 1000,
-            function (...ignored) :void {
-                _approxTimeRemaining = Math.max(_approxTimeRemaining - TIME_UPDATE_INTERVAL, 0);
-            }).start();
+        _startTime = flash.utils.getTimer();
 
         super.run();
     }
@@ -94,12 +88,16 @@ public class ServerGameMode extends ServerMode
             return true;
         }
 
-        return super.onMsgReceived(senderId, msg);
-    }
+        // Players waiting for the next round to start might ask how much
+        // time is remaining in the game. Respond with an approximate time.
+        if (msg is RoundTimeLeftMsg) {
+            var dt :Number = (flash.utils.getTimer() - _startTime) / 1000;
+            var timeRemaining :Number = Math.max(Constants.GAME_TIME - dt, 0);
+            _ctx.sendMessage(RoundTimeLeftMsg.create(timeRemaining), senderId);
+            return true;
+        }
 
-    public function get approxTimeRemaining () :Number
-    {
-        return _approxTimeRemaining;
+        return super.onMsgReceived(senderId, msg);
     }
 
     override public function get modeName () :String
@@ -168,7 +166,7 @@ public class ServerGameMode extends ServerMode
     protected var _playersNeedingScoreUpdate :Array;
     protected var _finalScores :HashMap; // Map<playerId, score>
     protected var _noMoreFeeding :Boolean;
-    protected var _approxTimeRemaining :Number = 0;
+    protected var _startTime :int;
 
     protected static const log :Log = Log.getLog(ServerGameMode);
 
