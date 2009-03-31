@@ -199,199 +199,86 @@ public class ServerLogic
 
 
 
-    public static function checkBloodBondFormation (gameRecord :FeedingRecord) :void
-    {
-        if (gameRecord == null || gameRecord.feedingIds == null) {
-            log.debug("checkBloodBondFormation", "gameRecord", gameRecord);
-            return;
-        }
-
-        var preyId :int = gameRecord.preyId;
-//        var predatorIds :Array = gameRecord.predators.toArray();
-
-        if (!isPlayer(preyId)) {
-            log.debug("checkBloodBondFormation", "preyId", preyId);
-            return;
-        }
-
-        var validRounds :int = 0;
-        var lastPredId :int = 0;
-
-        log.debug("checkBloodBondFormation", "feedingIds", gameRecord.feedingIds);
-        //Count backwards through the rounds.  If any are invalid, break.
-        for (var ii :int = gameRecord.feedingIds.length - 1; ii >= 0; ii--) {
-            var roundIds :Array = gameRecord.feedingIds[ii] as Array;
-            log.debug("checkBloodBondFormation", "looking at round", ii);
-            if (roundIds == null || roundIds.length != 2) {
-                log.debug("checkBloodBondFormation", "roundIds == null || roundIds.length != 2");
-                break;
-            }
-
-            var predId :int = roundIds[1];
-            if (lastPredId == 0) {
-                log.debug("checkBloodBondFormation", "setting lastPredId", predId);
-                lastPredId = predId;
-            }
-
-            if (predId != lastPredId) {
-                log.debug("checkBloodBondFormation", "predId", predId, "lastPredId", lastPredId);
-                break;
-            }
-            validRounds++;
-        }
-        log.debug("checkBloodBondFormation", "validRounds", validRounds);
-
-        if (lastPredId == 0) {
-            log.debug("checkBloodBondFormation", "lastPredId", lastPredId);
-            return;
-        }
-
-        if (!isPlayer(lastPredId)) {
-            log.debug("checkBloodBondFormation", "isPlayer(lastPredId)", isPlayer(lastPredId));
-            return;
-        }
-
-        var prey :PlayerData = getPlayer(preyId);
-        var pred :PlayerData = getPlayer(lastPredId);
-        if (prey.bloodbonded == lastPredId) {
-            log.debug("checkBloodBondFormation", "prey.bloodbonded", prey.bloodbonded);
-            return;
-        }
-
-
-        //If we are one away, notify the players.
-        if (validRounds == VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND - 1) {
-            var feedback1 :String = "You have almost created a bloodbond!  To cement the bond, "
-                + " play one more round.";
-
-            prey.addFeedback(Codes.POPUP_PREFIX + feedback1);
-            pred.addFeedback(Codes.POPUP_PREFIX + feedback1);
-        }
-        //If we have enough, create the bloodbond
-        else if (validRounds == VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND) {
-            prey.setBloodBonded(pred.playerId);//This also sets the name
-            pred.setBloodBonded(prey.playerId);
-            log.debug("Creating new bloodbond=" + pred.name + " + " + prey.name);
-            prey.addFeedback(Codes.POPUP_PREFIX + "You are now bloodbonded with " + pred.name);
-            pred.addFeedback(Codes.POPUP_PREFIX + "You are now bloodbonded with " + prey.name);
-            ServerContext.server.addGlobalFeedback(prey.name + " is now bloodbonded with " + pred.name);
-            gameRecord.feedingIds.splice(0);
-        }
-
-
-//
-//
-//        var prey :PlayerData = ServerContext.server.getPlayer(preyId);
-//        var predId :int = predatorIds[0];
-//        var pred :PlayerData = ServerContext.server.getPlayer(predId);
-//
-//        if (!isPlayer(predId)) {
+//    public static function checkBloodBondFormation (gameRecord :FeedingRecord) :void
+//    {
+//        if (gameRecord == null || gameRecord.feedingIds == null) {
+//            log.debug("checkBloodBondFormation", "gameRecord", gameRecord);
 //            return;
 //        }
 //
-//        //If there is more than one predator, clear the feeding records of all vamps and return
-//        if (predatorIds.length > 1) {
+//        var preyId :int = gameRecord.preyId;
+////        var predatorIds :Array = gameRecord.predators.toArray();
 //
-//            for each (predId in predatorIds) {
-//                if (isPlayer(predId)) {
-//                    pred = ServerContext.server.getPlayer(predId);
-//                    pred.clearFeedingRecord();
-//                }
+//        if (!isPlayer(preyId)) {
+//            log.debug("checkBloodBondFormation", "preyId", preyId);
+//            return;
+//        }
+//
+//        var validRounds :int = 0;
+//        var lastPredId :int = 0;
+//
+//        log.debug("checkBloodBondFormation", "feedingIds", gameRecord.feedingIds);
+//        //Count backwards through the rounds.  If any are invalid, break.
+//        for (var ii :int = gameRecord.feedingIds.length - 1; ii >= 0; ii--) {
+//            var roundIds :Array = gameRecord.feedingIds[ii] as Array;
+//            log.debug("checkBloodBondFormation", "looking at round", ii);
+//            if (roundIds == null || roundIds.length != 2) {
+//                log.debug("checkBloodBondFormation", "roundIds == null || roundIds.length != 2");
+//                break;
 //            }
-//            prey.clearFeedingRecord();
-//            return;
-//        }
 //
-//        //If we have other vampires in our feeding record, clear it
-//        prey.purgeFeedingRecordOfAllExcept(predId);
-//        pred.purgeFeedingRecordOfAllExcept(preyId);
-//
-//
-//        //Add the feeding data to all the players
-//        prey.addFeedingRecord(preyId, predId);
-//        pred.addFeedingRecord(preyId, predId);
-//
-//        //The first feed, do nothing.
-//        if (prey.feedingRecord.length == 1 || pred.feedingRecord.length == 1) {
-//            return;
-//        }
-//
-//        var feedingRecordPrey :Array = prey.feedingRecord;
-//        var feedingRecordPred :Array = pred.feedingRecord;
-//
-//        //The arrays should be the same size and equal.  If not we have a problem.
-//        if (feedingRecordPrey.length != feedingRecordPred.length ||
-//            !ArrayUtil.equals(feedingRecordPrey, feedingRecordPred)) {
-//
-//            log.error("checkBloodBondFormation, feeding records not identical",
-//                "feedingRecordPrey", feedingRecordPrey,
-//                "feedingRecordPred", feedingRecordPred);
-//            return;
-//        }
-//
-//        //Now check if the records arranged [pred, prey], [prey, pred],...
-//        //If not, remove all except the last.
-//        var id1 :int = feedingRecordPrey[0][0];
-//        var id2 :int = feedingRecordPrey[0][1];
-//        var recordsOk :Boolean = true;
-//        for each (var record :Array in feedingRecordPrey) {
-//            if (record[0] == id1 && record[1] == id2) {
-//                var temp :int = id1;
-//                id1 = id2;
-//                id2 = temp;
-//                continue;
+//            var predId :int = roundIds[1];
+//            if (lastPredId == 0) {
+//                log.debug("checkBloodBondFormation", "setting lastPredId", predId);
+//                lastPredId = predId;
 //            }
-//            else {
-//                recordsOk = false;
+//
+//            if (predId != lastPredId) {
+//                log.debug("checkBloodBondFormation", "predId", predId, "lastPredId", lastPredId);
+//                break;
 //            }
+//            validRounds++;
 //        }
 //
-//        if (!recordsOk) {
-//            feedingRecordPrey.splice(0, feedingRecordPrey.length - 1);
-//            feedingRecordPred.splice(0, feedingRecordPred.length - 1);
+//        log.debug("checkBloodBondFormation", "validRounds", validRounds);
+//
+//        if (lastPredId == 0) {
+//            log.debug("checkBloodBondFormation", "lastPredId", lastPredId);
 //            return;
 //        }
 //
-//        switch (feedingRecordPrey.length) {
-//            case 1://Nothing yet
-//            break;
+//        if (!isPlayer(lastPredId)) {
+//            log.debug("checkBloodBondFormation", "isPlayer(lastPredId)", isPlayer(lastPredId));
+//            return;
+//        }
 //
-//            case 2://Show a popup with instructions for feeding
-//            var feedback2 :String = "You have almost created a bloodbond!  To cement the bond, "
-//                + prey.name + " must now feed on " + pred.name + ", followed by " + pred.name
-//                + " feeding on " + prey.name;
+//        var prey :PlayerData = getPlayer(preyId);
+//        var pred :PlayerData = getPlayer(lastPredId);
+//        if (prey.bloodbonded == lastPredId) {
+//            log.debug("checkBloodBondFormation", "prey.bloodbonded", prey.bloodbonded);
+//            return;
+//        }
 //
-//            prey.addFeedback(Codes.POPUP_PREFIX + feedback2);
-//            pred.addFeedback(Codes.POPUP_PREFIX + feedback2);
-//            break;
 //
-//            case 3://Show a popup with instructions for feeding
-//            var feedback3 :String = "You have almost created a bloodbond!  To finally cement the "
-//                + "bond, "
-//                + prey.name + " must now feed on " + pred.name;
+//        //If we are one away, notify the players.
+//        if (validRounds == VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND - 1) {
+//            var feedback1 :String = "You have almost created a bloodbond!  To cement the bond, "
+//                + " play one more round.";
 //
-//            prey.addFeedback(Codes.POPUP_PREFIX + feedback3);
-//            pred.addFeedback(Codes.POPUP_PREFIX + feedback3);
-//            break;
-//
-//            case 4://Everything checks out, create the bloodbonds
-//            //Break previous bonds
+//            prey.addFeedback(Codes.POPUP_PREFIX + feedback1);
+//            pred.addFeedback(Codes.POPUP_PREFIX + feedback1);
+//        }
+//        //If we have enough, create the bloodbond
+//        else if (validRounds == VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND) {
 //            prey.setBloodBonded(pred.playerId);//This also sets the name
 //            pred.setBloodBonded(prey.playerId);
 //            log.debug("Creating new bloodbond=" + pred.name + " + " + prey.name);
 //            prey.addFeedback(Codes.POPUP_PREFIX + "You are now bloodbonded with " + pred.name);
 //            pred.addFeedback(Codes.POPUP_PREFIX + "You are now bloodbonded with " + prey.name);
 //            ServerContext.server.addGlobalFeedback(prey.name + " is now bloodbonded with " + pred.name);
-//            //Reset the tallies.
-//            feedingRecordPrey.splice(0);
-//            feedingRecordPred.splice(0);
-//            break;
-//
-//            default:
-//            log.error("checkBloodBondFormation", "feedingRecordPrey.length",
-//                feedingRecordPrey.length);
+//            gameRecord.feedingIds.splice(0);
 //        }
-    }
+//    }
 
     /**
     * Returns actual damage.  If feeding, always have 1 left over.
@@ -1320,9 +1207,9 @@ public class ServerLogic
 
 
         //Check for blood bonds
-        if (preyIsPlayer) {
-            checkBloodBondFormation(gameRecord);
-        }
+//        if (preyIsPlayer) {
+//            checkBloodBondFormation(gameRecord);
+//        }
 
         //Then handle experience.  ATM everyone gets xp=score
         var xpGained :Number = gameRecord.gameServer.lastRoundScore;

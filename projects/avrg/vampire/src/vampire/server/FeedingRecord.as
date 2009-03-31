@@ -67,12 +67,22 @@ public class FeedingRecord extends EventCollecter
 
         if (_gameServer != null) {// && ArrayUtil.contains(_gameServer.playerIds, playerId)) {
             log.debug("playerLeavesGame", "playerId", playerId);
-            if (_room.isPlayer(playerId)) {
+
+            //If we rely on checking the room for the presence of a player, we could
+            //encounter a race condition, since this function could be called from a
+            //player quitting the game.  The room would then remove the player,
+            //and if we checked the room, the player would not be there, leading us
+            //to believe that it's an AI player.
+            if (ArrayUtil.contains(_gameServer.playerIds, playerId)) {
                 _gameServer.playerLeft(playerId);
+
             }
             else {
                 _gameServer.playerLeft(Constants.NULL_PLAYER);
             }
+
+//            if (_room.isPlayer(playerId)) {
+//            }
         }
 
         removePlayer(playerId);
@@ -217,13 +227,13 @@ public class FeedingRecord extends EventCollecter
         try {
             if( _gameServer != null ) {
 
-                var ids :Array = [_gameServer.preyId];
-                log.debug("[_feedingIds.preyId=" + _feedingIds.preyId);
-                log.debug("[_gameServer.predatorIds=" + _gameServer.predatorIds);
+//                var ids :Array = [_gameServer.preyId];
+//                log.debug("[_feedingIds.preyId=" + _feedingIds.preyId);
+//                log.debug("[_gameServer.predatorIds=" + _gameServer.predatorIds);
 
-                ids = ids.concat(_gameServer.predatorIds);
-                log.debug("ids=" + ids);
-                _feedingIds.push(ids);
+//                ids = ids.concat(_gameServer.predatorIds);
+//                log.debug("ids=" + ids);
+//                _feedingIds.push(ids);
 
                 var score :Number = _gameServer.lastRoundScore;
                 log.debug("Score=" + score);
@@ -455,15 +465,15 @@ public class FeedingRecord extends EventCollecter
         return _predatorIndex.length - 1;
     }
 
-    public function get currentRound () :int
-    {
-        return _feedingIds.length;
-    }
-
-    public function get feedingIds () :Array
-    {
-        return _feedingIds;
-    }
+//    public function get currentRound () :int
+//    {
+//        return _feedingIds.length;
+//    }
+//
+//    public function get feedingIds () :Array
+//    {
+//        return _feedingIds;
+//    }
 
     protected var _room :Room;
     protected var _gameId :int;
@@ -480,10 +490,10 @@ public class FeedingRecord extends EventCollecter
 
 
 
-    /**
-    * A list of arrays in the format [preyId, ...pred ids]
-    */
-    protected var _feedingIds :Array = [];
+//    /**
+//    * A list of arrays in the format [preyId, ...pred ids]
+//    */
+//    protected var _feedingIds :Array = [];
 
 
     /**
