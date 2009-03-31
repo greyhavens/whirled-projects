@@ -16,11 +16,13 @@ public class Trophies
 
     // Awarded for creating a cascade of a certain size
     public static const CASCADE_TROPHIES :Array = [
-        "cascade20",
-        "cascade40",
-        "cascade60",
+        "cascade25",
+        "cascade50",
+        "cascade100",
+        "cascade200",
+        "cascade400",
     ];
-    public static const CASCADE_REQS :Array = [ 20, 40, 60 ];
+    public static const CASCADE_REQS :Array = [ 25, 50, 100, 200, 400 ];
 
     // Awarded for creating a cascade with a certain multiplier value
     public static const MULTIPLIER_TROPHIES :Array = [
