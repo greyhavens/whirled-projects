@@ -6,6 +6,7 @@ import com.whirled.contrib.avrg.AvatarHUD;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.objects.SimpleTimer;
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
@@ -133,16 +134,20 @@ public class VampireController extends Controller
     }
 
 
-    public function handleShowIntro( startFrame :String = null) :void
+    public function handleShowIntro(startFrame :String = null, centerLineage :int = 0) :void
     {
         try {
-            var help :SceneObject =
-                ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as SceneObject;
+            var help :HelpPopup =
+                ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as HelpPopup;
 
             if( help == null) {
                 help = new HelpPopup(startFrame);
                 ClientContext.gameMode.addSceneObject(help,
                     ClientContext.game.ctx.mainLoop.topMode.modeSprite);
+
+                help.x = ClientContext.ctrl.local.getPaintableArea().width/2;
+                help.y = ClientContext.ctrl.local.getPaintableArea().height/2;
+
                 ClientContext.animateEnlargeFromMouseClick(help);
 
                 ClientContext.tutorial.clickedVWButtonOpenHelp();
@@ -152,9 +157,18 @@ public class VampireController extends Controller
                     help.destroySelf();
                 }
                 else {
-                    HelpPopup(help).gotoFrame( startFrame );
+                    help.gotoFrame(startFrame);
                 }
             }
+
+
+            help = ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as HelpPopup;
+            if (help != null) {
+                if (centerLineage != 0) {
+                    help.lineageView.updateHierarchy(centerLineage);
+                }
+            }
+
         }
         catch( err :Error ) {
             trace( err.getStackTrace() );
@@ -182,9 +196,27 @@ public class VampireController extends Controller
             ClientContext.ctrl.agent.sendMessage( FeedRequestMsg.NAME, msg.toBytes() );
 
             //Show feedback if it's a player.
-            if (ClientContext.model.isPlayer(targetId)) {
-                ClientContext.ctrl.local.feedback("Request for feed sent");
-            }
+
+            var popup :PopupQuery = new PopupQuery(
+                null,
+                "Waiting for " + targetName + "'s permission...");
+            ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
+            ClientContext.centerOnViewableRoom(popup.displayObject);
+            ClientContext.animateEnlargeFromMouseClick(popup);
+
+            var quitTimer :SimpleTimer = new SimpleTimer(3, function() :void {
+                if (popup.isLiveObject) {
+                    popup.destroySelf();
+                }
+            });
+            ClientContext.gameMode.addObject(quitTimer);
+
+
+
+
+//            if (ClientContext.model.isPlayer(targetId)) {
+//                ClientContext.ctrl.local.feedback("Request for feed sent");
+//            }
 
 
             //Set the avatar target to stand behind.
@@ -196,7 +228,7 @@ public class VampireController extends Controller
 
 
         //Show a popup if we aren't connected to the Lineage, and we choose a sire that is
-        trace(ClientContext.ourPlayerId + " lineage=" + ClientContext.model.lineage);
+//        trace(ClientContext.ourPlayerId + " lineage=" + ClientContext.model.lineage);
         var targetIsVampireAndLineageMember :Boolean =
             ClientContext.model.lineage.isMemberOfLineage(targetId);
         if (ClientContext.model.sire == 0 && targetIsVampireAndLineageMember) {
@@ -247,9 +279,9 @@ public class VampireController extends Controller
 
     public function handleHierarchyCenterSelected(playerId :int, hierarchyView :LineageView) :void
     {
-        if( hierarchyView._hierarchy == null){// || hierarchyView._hierarchy.getMinionCount( playerId ) == 0) {
-            return;
-        }
+//        if( hierarchyView._hierarchy == null){// || hierarchyView._hierarchy.getMinionCount( playerId ) == 0) {
+//            return;
+//        }
         hierarchyView.updateHierarchy( playerId );
     }
 
