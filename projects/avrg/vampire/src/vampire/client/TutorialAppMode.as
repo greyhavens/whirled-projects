@@ -153,7 +153,7 @@ public class TutorialAppMode extends AppMode
         }
 
         if (VConstants.LOCAL_DEBUG_MODE) {
-            _currentChapter = CHAPTER_NAVIGATING_THE_GUI;
+//            _currentChapter = CHAPTER_NAVIGATING_THE_GUI;
         }
     }
 
@@ -402,7 +402,7 @@ public class TutorialAppMode extends AppMode
             var sceneObjectName :String = "target:feed " + avhud.playerId;
             var targetReticle :SceneObject = getObjectNamed(sceneObjectName) as SceneObject;
 
-            var targetDisplayObject :DisplayObject = avhud.targetUI;
+            var targetDisplayObject :DisplayObject = avhud.targetUI["button_feed"];
 
             if (avhud.isShowingFeedButton) {
                 //If there's no target, add one
@@ -411,7 +411,7 @@ public class TutorialAppMode extends AppMode
 
 
                     targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
-                    targetDisplayObject.parent.getChildIndex(targetDisplayObject) );
+                    targetDisplayObject.parent.getChildIndex(targetDisplayObject));
 
                     addObject(targetReticle);
 
@@ -724,7 +724,7 @@ public class TutorialAppMode extends AppMode
 
     public static const TUTORIAL_ACTIONS :Array = [
         [PAGE_NOONE_IN_ROOM, "There's no one here to feed upon, but your \"Me\" tab has convenient links to friendly players..."],
-        [PAGE_CLICK_HUD_FEED, "Click \"Feed\" to see everyone's delicious blood, in all all their varied strains."],
+        [PAGE_CLICK_HUD_FEED, "Click \"Hunt\" to see everyone's delicious blood, in all all their varied strains."],
         [PAGE_EVERYONE_LEAVES, "The herd is skittish.  Try chatting up your feast to make them comfortable with their succulent role."],
         [PAGE_CLICK_TARGET_FEED, "Click the Feed button on some tasty morsel and pull up to your feast."],
         [PAGE_LOBBY_PRIMARY_PRED, "You can wait for any vampires with you to join in your feast, or just \"Start Feeding\""],
