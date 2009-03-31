@@ -23,7 +23,7 @@ public class StatView extends SceneObject
     {
         super.update(dt);
         var fpsString :String = "FPS=" + ClientCtx.mainLoop.fps.toFixed(1);
-        TextBits.initTextField(_tf, fpsString, 1.5, 0, 0x0000ff);
+        TextBits.initTextField(_tf, fpsString, 2, 0, 0xffffff);
     }
 
     protected var _tf :TextField;
