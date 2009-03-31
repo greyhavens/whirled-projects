@@ -22,7 +22,7 @@ import flash.text.TextFormatAlign;
 public class PopupQuery extends DraggableObject
 {
     public function PopupQuery (name :String, message :String,
-        buttonNames :Array = null, commandsOrFunctions :Array = null, extraArgs :Array = null)
+        buttonNames :Array = null, commandsOrFunctions :Array = null)
     {
         super();
         _name = name;
@@ -57,9 +57,9 @@ public class PopupQuery extends DraggableObject
         setText(message);
 
         if (_isBottomButtons) {
-            setupCommands(buttonNames, commandsOrFunctions, extraArgs);
+            setupCommands(buttonNames, commandsOrFunctions);
             _popupTop = _popupPanel["top"] as MovieClip;
-            _closeButton.parent.removeChild(_closeButton);
+//            _closeButton.parent.removeChild(_closeButton);
         }
         else {
             //If there are no button names, but there IS a function, bind it to the close button
@@ -168,8 +168,7 @@ public class PopupQuery extends DraggableObject
         _closeButton.y = _popupMiddle.getBounds(_popupMiddle.parent).top + 3;
     }
 
-    protected function setupCommands (buttonNames :Array,
-        commandsOrFunctions :Array, extraArgs :Array): void
+    protected function setupCommands (buttonNames :Array, commandsOrFunctions :Array): void
     {
 
         if (buttonNames == null || buttonNames.length == 0) {
@@ -217,18 +216,13 @@ public class PopupQuery extends DraggableObject
                 buttonText.y += 1;
             });
 
-
+            //Bind a command or function to the button
             if (commandsOrFunctions[i] != null) {
                 if (commandsOrFunctions[i] is Function) {
                     registerListener( b, MouseEvent.CLICK, commandsOrFunctions[i]);
                 }
                 else {
-                    if( extraArgs != null &&  i < extraArgs.length) {
-                        Command.bind( b, MouseEvent.CLICK, commandsOrFunctions[i], extraArgs[i]);
-                    }
-                    else {
-                        Command.bind( b, MouseEvent.CLICK, commandsOrFunctions[i]);
-                    }
+                    Command.bind( b, MouseEvent.CLICK, commandsOrFunctions[i]);
                 }
             }
 
