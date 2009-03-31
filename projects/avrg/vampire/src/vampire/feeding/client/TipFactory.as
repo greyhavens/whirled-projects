@@ -79,7 +79,6 @@ import flash.text.TextField;
 
 import vampire.feeding.client.*;
 import com.threerings.flash.Vector2;
-import com.threerings.whirled.data.SceneCodes;
 import flash.geom.Point;
 import flash.display.DisplayObject;
 import com.whirled.contrib.simplegame.tasks.SerialTask;
