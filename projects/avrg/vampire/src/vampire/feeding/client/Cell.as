@@ -219,7 +219,7 @@ public class Cell extends CollidableObj
                 _movie, 1, ShowFramesTask.LAST_FRAME, Constants.WHITE_CELL_EXPLODE_TIME),
             new FunctionTask(function () :void {
                 GameObjects.createCorruptionBurst(thisCell);
-                GameCtx.gameMode.whiteCellBurst();
+                GameCtx.gameMode.onWhiteCellBurst();
             })));
 
         // fade in

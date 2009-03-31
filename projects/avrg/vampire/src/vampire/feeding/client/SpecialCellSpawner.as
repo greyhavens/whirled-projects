@@ -21,7 +21,6 @@ public class SpecialCellSpawner extends SimObject
             } else if (_elapsedTime >= _nextSpawnTime) {
                 var cell :Cell =
                     GameObjects.createCell(Constants.CELL_SPECIAL, true, ClientCtx.preyBloodType);
-                dispatchEvent(new GameEvent(GameEvent.SPECIAL_CELL_SPAWNED, cell));
                 _nextSpawnTime = -1;
             }
         }

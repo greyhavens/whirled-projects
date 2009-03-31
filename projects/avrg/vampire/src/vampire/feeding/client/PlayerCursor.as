@@ -11,6 +11,7 @@ import flash.display.Sprite;
 import flash.geom.Point;
 
 import vampire.feeding.*;
+import vampire.server.Trophies;
 
 public class PlayerCursor extends CollidableObj
 {
@@ -141,10 +142,10 @@ public class PlayerCursor extends CollidableObj
     protected function collideArtery (arteryType :int) :void
     {
         // get rid of cells
-        var hadWhiteCell :Boolean;
+        var numWhiteCells :int;
         for each (var cellRef :SimObjectRef in _attachedWhiteCells) {
             if (!cellRef.isNull) {
-                hadWhiteCell = true;
+                numWhiteCells++;
                 cellRef.object.destroySelf();
             }
         }
@@ -154,8 +155,13 @@ public class PlayerCursor extends CollidableObj
         _lastArtery = arteryType;
 
         // Deliver a white cell to the heart
-        if (hadWhiteCell) {
+        if (numWhiteCells > 0) {
             GameCtx.gameMode.deliverWhiteCell(arteryType);
+        }
+
+        // Award a trophy for delivering a bunch of white cells
+        if (numWhiteCells >= Trophies.CONSTANT_GARDENER_REQ) {
+            ClientCtx.awardTrophy(Trophies.CONSTANT_GARDENER);
         }
     }
 

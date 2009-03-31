@@ -18,6 +18,7 @@ import flash.text.TextField;
 
 import vampire.feeding.*;
 import vampire.feeding.net.*;
+import vampire.server.Trophies;
 
 public class GameMode extends AppMode
 {
@@ -68,9 +69,15 @@ public class GameMode extends AppMode
         _sparkles.gotoAndPlay(2);
     }
 
-    public function whiteCellBurst () :void
+    public function onHeartbeat () :void
     {
-        dispatchEvent(new GameEvent(GameEvent.WHITE_CELL_BURST));
+        // spawn new red cells
+        spawnCells(Constants.CELL_RED, Constants.BEAT_CELL_BIRTH_COUNT.next());
+    }
+
+    public function onWhiteCellBurst () :void
+    {
+        GameCtx.gotCorruption = true;
     }
 
     override protected function setup () :void
@@ -134,7 +141,6 @@ public class GameMode extends AppMode
 
         GameCtx.heart = new Heart(heartMovie["heart"]);
         GameCtx.gameMode.addObject(GameCtx.heart);
-        registerListener(GameCtx.heart, GameEvent.HEARTBEAT, onHeartbeat);
 
         // spawn white cells on a timer separate from the heartbeat
         var whiteCellSpawner :SimObject = new SimObject();
@@ -315,10 +321,16 @@ public class GameMode extends AppMode
         super.update(dt);
 
         // If the game is over, wait for animations to complete before actually ending things
-        if (GameCtx.gameOver && this.canEndGameNow && !_sentScores) {
+        if (GameCtx.gameOver && this.canEndGameNow && !_performedEndGameLogic) {
             // send our scores
             ClientCtx.msgMgr.sendMessage(RoundScoreMsg.create(GameCtx.score.bloodCount));
-            _sentScores = true;
+
+            // award trophies
+            if (!GameCtx.gotCorruption) {
+                ClientCtx.awardTrophy(Trophies.PUREBLOOD);
+            }
+
+            _performedEndGameLogic = true;
 
             // For testing purposes, end the game manually if we're in standalone mode;
             // otherwise we'll wait for the actual RoundOverMsg to come in
@@ -338,12 +350,6 @@ public class GameMode extends AppMode
                 !RoomOverlay.exists);
     }
 
-    protected function onHeartbeat (...ignored) :void
-    {
-        // spawn new red cells
-        spawnCells(Constants.CELL_RED, Constants.BEAT_CELL_BIRTH_COUNT.next());
-    }
-
     protected function spawnCells (cellType :int, count :int) :void
     {
         count = Math.min(count, Constants.MAX_CELL_COUNT[cellType] - Cell.getCellCount(cellType));
@@ -358,7 +364,7 @@ public class GameMode extends AppMode
     protected var _countdown :MovieClip;
     protected var _lastMoveTarget :Vector2 = new Vector2();
     protected var _musicChannel :AudioChannel;
-    protected var _sentScores :Boolean;
+    protected var _performedEndGameLogic :Boolean;
 
     protected static var log :Log = Log.getLog(GameMode);
 

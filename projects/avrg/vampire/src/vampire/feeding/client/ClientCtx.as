@@ -2,6 +2,7 @@ package vampire.feeding.client {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashSet;
+import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.MainLoop;
@@ -74,6 +75,8 @@ public class ClientCtx
         if (!awardedTrophies.contains(trophyName)) {
             msgMgr.sendMessage(AwardTrophyMsg.create(trophyName));
             awardedTrophies.add(trophyName);
+
+            log.info("Awarded trophy '" + trophyName + "'");
         }
     }
 
@@ -226,6 +229,8 @@ public class ClientCtx
 
         return movie;
     }
+
+    protected static const log :Log = Log.getLog(ClientCtx);
 }
 
 }

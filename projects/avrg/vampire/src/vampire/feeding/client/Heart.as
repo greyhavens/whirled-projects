@@ -52,7 +52,7 @@ public class Heart extends SceneObject
         }
 
         for (var ii :int = 0; ii < numBeats; ++ii) {
-            dispatchEvent(new GameEvent(GameEvent.HEARTBEAT));
+            GameCtx.gameMode.onHeartbeat();
         }
 
         // only show the animation once
