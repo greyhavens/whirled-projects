@@ -1191,8 +1191,8 @@ public class ServerLogic
                         }
                     }
                     else {
-                        pred.addFeedback(preyPlayer.name + " is not part of the Lineage (Minions of Lilith).  Feed from a Lineage member to join.");
-                        preyPlayer.addFeedback("You are not part of the Lineage (Minions of Lilith), so " + pred.name + " cannot become your minion. "
+                        pred.addFeedback(preyPlayer.name + " is not part of the Lineage (Progeny of Lilith).  Feed from a Lineage member to join.");
+                        preyPlayer.addFeedback("You are not part of the Lineage (Progeny of Lilith), so " + pred.name + " cannot become your progeny. "
                             + " Feed on a member of the Lineage to join.");
                     }
                 }
