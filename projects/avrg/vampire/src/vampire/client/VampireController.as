@@ -48,28 +48,28 @@ public class VampireController extends Controller
 
     public function VampireController(panel :Sprite)
     {
-        setControlledPanel( panel );
+        setControlledPanel(panel);
     }
 
-    public function handleChangeState( state :String ) :void
+    public function handleChangeState(state :String) :void
     {
         log.debug("handleChangeState("+state+")");
 
-        switch( state ) {
+        switch(state) {
             case VConstants.PLAYER_STATE_BARED:
 //            case VConstants.PLAYER_STATE_FEEDING_PREY:
 
             //If we are already bared, toggle us out of bared state to the default state.
-            if( ClientContext.model.state == VConstants.PLAYER_STATE_BARED) {
-                ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
-                ClientContext.ctrl.agent.sendMessage( RequestStateChangeMsg.NAME,
-                    new RequestStateChangeMsg( ClientContext.ourPlayerId,
-                        VConstants.PLAYER_STATE_DEFAULT).toBytes() );
+            if(ClientContext.model.state == VConstants.PLAYER_STATE_BARED) {
+                ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
+                ClientContext.ctrl.agent.sendMessage(RequestStateChangeMsg.NAME,
+                    new RequestStateChangeMsg(ClientContext.ourPlayerId,
+                        VConstants.PLAYER_STATE_DEFAULT).toBytes());
             }
             else {//Otherwise, put us in bared mode
-                ClientContext.ctrl.agent.sendMessage( RequestStateChangeMsg.NAME,
-                    new RequestStateChangeMsg( ClientContext.ourPlayerId,
-                        VConstants.PLAYER_STATE_BARED).toBytes() );
+                ClientContext.ctrl.agent.sendMessage(RequestStateChangeMsg.NAME,
+                    new RequestStateChangeMsg(ClientContext.ourPlayerId,
+                        VConstants.PLAYER_STATE_BARED).toBytes());
             }
             break;
 
@@ -82,18 +82,18 @@ public class VampireController extends Controller
             break;
         }
 
-        if( VConstants.LOCAL_DEBUG_MODE ) {
-            ClientContext.model.dispatchEvent( new ChangeActionEvent( state ) );
+        if(VConstants.LOCAL_DEBUG_MODE) {
+            ClientContext.model.dispatchEvent(new ChangeActionEvent(state));
         }
     }
 
     public function handleQuit() :void
     {
         trace(ClientContext.ourPlayerId + " setting avatar state from quit");
-        ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
-        ClientContext.ctrl.player.props.set( Codes.PLAYER_PROP_LAST_TIME_AWAKE, new Date().time );
+        ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
+        ClientContext.ctrl.player.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, new Date().time);
 
-        ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_QUIT );
+        ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_QUIT);
 
         ClientContext.quit();
     }
@@ -104,11 +104,11 @@ public class VampireController extends Controller
         var popup :PopupQuery = new PopupQuery(
             "QuitPopup",
             "Is your thirst for blood sated?",
-            ["Yes", "I still hunger"],
+            ["Yes", "No"],
             [VampireController.QUIT, null]);
 
-        if( ClientContext.gameMode.getObjectNamed( popup.objectName) == null) {
-            ClientContext.gameMode.addSceneObject( popup, ClientContext.gameMode.modeSprite );
+        if(ClientContext.gameMode.getObjectNamed(popup.objectName) == null) {
+            ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
             ClientContext.centerOnViewableRoom(popup.displayObject);
             ClientContext.animateEnlargeFromMouseClick(popup);
         }
@@ -118,10 +118,10 @@ public class VampireController extends Controller
     {
         try {
             var hierarchySceneObject :SimObject =
-                ClientContext.game.ctx.mainLoop.topMode.getObjectNamed( DebugMode.NAME );
+                ClientContext.game.ctx.mainLoop.topMode.getObjectNamed(DebugMode.NAME);
 
-            if( hierarchySceneObject == null) {
-                ClientContext.game.ctx.mainLoop.topMode.addSceneObject( new DebugMode(),
+            if(hierarchySceneObject == null) {
+                ClientContext.game.ctx.mainLoop.topMode.addSceneObject(new DebugMode(),
                     ClientContext.game.ctx.mainLoop.topMode.modeSprite);
             }
 
@@ -129,8 +129,8 @@ public class VampireController extends Controller
                 hierarchySceneObject.destroySelf();
             }
         }
-        catch( err :Error ) {
-            trace( err.getStackTrace() );
+        catch(err :Error) {
+            trace(err.getStackTrace());
         }
     }
 
@@ -141,7 +141,7 @@ public class VampireController extends Controller
             var help :HelpPopup =
                 ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as HelpPopup;
 
-            if( help == null) {
+            if(help == null) {
                 help = new HelpPopup(startFrame);
                 ClientContext.gameMode.addSceneObject(help,
                     ClientContext.game.ctx.mainLoop.topMode.modeSprite);
@@ -154,7 +154,7 @@ public class VampireController extends Controller
                 ClientContext.tutorial.clickedVWButtonOpenHelp();
             }
             else {
-                if( startFrame == null ) {
+                if(startFrame == null) {
                     help.destroySelf();
                 }
                 else {
@@ -171,8 +171,8 @@ public class VampireController extends Controller
             }
 
         }
-        catch( err :Error ) {
-            trace( err.getStackTrace() );
+        catch(err :Error) {
+            trace(err.getStackTrace());
         }
     }
 
@@ -180,8 +180,8 @@ public class VampireController extends Controller
     {
         function sendFeedRequest () :void {
             var targetLocation :Array;
-            var targetAvatar :AvatarHUD = ClientContext.avatarOverlay.getAvatar( targetId );
-            if( targetAvatar != null ) {
+            var targetAvatar :AvatarHUD = ClientContext.avatarOverlay.getAvatar(targetId);
+            if(targetAvatar != null) {
                 targetLocation = targetAvatar.location;
             }
             else {
@@ -190,11 +190,11 @@ public class VampireController extends Controller
 
 
             var targetName :String = ClientContext.model.getAvatarName(targetId);
-            var msg :FeedRequestMsg = new FeedRequestMsg( ClientContext.ourPlayerId, targetId,
+            var msg :FeedRequestMsg = new FeedRequestMsg(ClientContext.ourPlayerId, targetId,
                 targetName, targetLocation[0], targetLocation[1], targetLocation[2]);
 
             log.debug(ClientContext.ctrl + " handleSendFeedRequest() sending " + msg)
-            ClientContext.ctrl.agent.sendMessage( FeedRequestMsg.NAME, msg.toBytes() );
+            ClientContext.ctrl.agent.sendMessage(FeedRequestMsg.NAME, msg.toBytes());
 
             //Show feedback if it's a player.
             if (ArrayUtil.contains(ClientContext.model.playerIds, targetId)) {
@@ -239,7 +239,7 @@ public class VampireController extends Controller
             var popup :PopupQuery = new PopupQuery(
                     "MakeSire",
                     "If you feed from this Lineage vampire, they will become your permanent sire"
-                    + ", allowing you to draw power from your minions.  Are you sure?",
+                    + ", allowing you to draw power from your progeny.  Are you sure?",
                     ["Yes",  "More Info", "No"],
                     [sendFeedRequest, function() :void {con.handleShowIntro("lineage");}, null]);
 
@@ -261,11 +261,11 @@ public class VampireController extends Controller
     {
         var model :GameModel = ClientContext.model;
 
-        switch( ClientContext.avatarOverlay.displayMode ) {
+        switch(ClientContext.avatarOverlay.displayMode) {
 
             //Toggle between showing targets and nothing.
             case VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS:
-            ClientContext.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF);
+            ClientContext.avatarOverlay.setDisplayMode(VampireAvatarHUDOverlay.DISPLAY_MODE_OFF);
             break;
 
             default:
@@ -298,10 +298,10 @@ public class VampireController extends Controller
 
     public function handleHierarchyCenterSelected(playerId :int, hierarchyView :LineageView) :void
     {
-//        if( hierarchyView._hierarchy == null){// || hierarchyView._hierarchy.getMinionCount( playerId ) == 0) {
+//        if(hierarchyView._hierarchy == null){// || hierarchyView._hierarchy.getMinionCount(playerId) == 0) {
 //            return;
 //        }
-        hierarchyView.updateHierarchy( playerId );
+        hierarchyView.updateHierarchy(playerId);
     }
 
     public function handleShowHierarchy(_hudMC :MovieClip) :void
@@ -309,8 +309,8 @@ public class VampireController extends Controller
         try {
             ClientContext.controller.handleShowIntro("default");
         }
-        catch( err :Error ) {
-            trace( err.getStackTrace() );
+        catch(err :Error) {
+            trace(err.getStackTrace());
         }
     }
 
@@ -321,8 +321,8 @@ public class VampireController extends Controller
         var popup :PopupQuery = new PopupQuery(name, msg, buttonNames, functionsOrCommands);
         var mode :AppMode = ClientContext.gameMode;
 
-        if (mode.getObjectNamed( popup.objectName) != null) {
-            mode.getObjectNamed( popup.objectName).destroySelf();
+        if (mode.getObjectNamed(popup.objectName) != null) {
+            mode.getObjectNamed(popup.objectName).destroySelf();
         }
 
         mode.addSceneObject(popup, mode.modeSprite);
@@ -335,7 +335,19 @@ public class VampireController extends Controller
         var targetName :String = ClientContext.model.getAvatarName(playerId);
         var msg :FeedConfirmMsg = new FeedConfirmMsg(ClientContext.ourPlayerId,
             targetName, playerId, true);
-        ClientContext.ctrl.agent.sendMessage( FeedConfirmMsg.NAME, msg.toBytes() );
+        ClientContext.ctrl.agent.sendMessage(FeedConfirmMsg.NAME, msg.toBytes());
+
+        //If you accept one feed request, you accept all concurrent feed request,
+        //ans destroy the feed request popups
+        for each (var playerId :int in ClientContext.model.playerIds) {
+            var popupName :String = POPUP_PREFIX_FEED_REQUEST + playerId;
+            if (ClientContext.gameMode.getObjectNamed(popupName) != null) {
+                ClientContext.gameMode.getObjectNamed(popupName).destroySelf();
+
+                msg = new FeedConfirmMsg(ClientContext.ourPlayerId, targetName, playerId, true);
+                ClientContext.ctrl.agent.sendMessage(FeedConfirmMsg.NAME, msg.toBytes());
+            }
+        }
     }
 
     public function handleDenyFeedRequest (playerId :int) :void
@@ -343,7 +355,7 @@ public class VampireController extends Controller
         var targetName :String = ClientContext.model.getAvatarName(playerId);
         var msg :FeedConfirmMsg = new FeedConfirmMsg(ClientContext.ourPlayerId,
             targetName, playerId, false);
-        ClientContext.ctrl.agent.sendMessage( FeedConfirmMsg.NAME, msg.toBytes() );
+        ClientContext.ctrl.agent.sendMessage(FeedConfirmMsg.NAME, msg.toBytes());
     }
 
     public function handleNewLevel (newLevel :int) :void
@@ -353,7 +365,9 @@ public class VampireController extends Controller
     }
 
 
-    protected static const log :Log = Log.getLog( VampireController );
+    protected static const log :Log = Log.getLog(VampireController);
+
+    public static const POPUP_PREFIX_FEED_REQUEST :String = "RequestFeed";
 
 
 }
