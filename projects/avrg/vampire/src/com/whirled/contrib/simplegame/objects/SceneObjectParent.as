@@ -1,11 +1,11 @@
 package com.whirled.contrib.simplegame.objects
 {
-    import com.threerings.util.ArrayUtil;
-    import com.whirled.contrib.simplegame.SimObject;
+import com.threerings.util.ArrayUtil;
+import com.whirled.contrib.simplegame.SimObject;
 
-    import flash.display.DisplayObject;
-    import flash.display.DisplayObjectContainer;
-    import flash.display.Sprite;
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
+import flash.display.Sprite;
 
 
 /**
@@ -14,18 +14,13 @@ package com.whirled.contrib.simplegame.objects
  */
 public class SceneObjectParent extends SceneObject
 {
-    public function SceneObjectParent ()
-    {
-        super();
-    }
-
     override protected function addedToDB () :void
     {
         super.addedToDB();
         for each (var sim :SimObject in _yetToAddToDB) {
             db.addObject(sim);
         }
-        _yetToAddToDB.splice(0);
+        _yetToAddToDB = null;
     }
 
     protected function addSimObject (s :SimObject) :void
