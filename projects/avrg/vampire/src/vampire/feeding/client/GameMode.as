@@ -220,9 +220,6 @@ public class GameMode extends AppMode
 
         } else if (e.msg is RoundOverMsg) {
             onRoundOver(e.msg as RoundOverMsg);
-
-        } else if (e.msg is NoMoreFeedingMsg) {
-            onNoMoreFeeding(true);
         }
     }
 
@@ -347,26 +344,6 @@ public class GameMode extends AppMode
         count = Math.min(count, Constants.MAX_CELL_COUNT[cellType] - Cell.getCellCount(cellType));
         for (var ii :int = 0; ii < count; ++ii) {
             GameObjects.createCell(cellType, true);
-        }
-    }
-
-    protected function onNoMoreFeeding (animate :Boolean) :void
-    {
-        var color :ColorMatrix = new ColorMatrix();
-        var greyscale :ColorMatrix = new ColorMatrix().makeGrayscale();
-
-        if (animate) {
-            var animObj :SimObject = new SimObject();
-            animObj.addTask(new SerialTask(
-                new ParallelTask(
-                    new ColorMatrixBlendTask(color, greyscale, 4, GameCtx.bgLayer),
-                    new ColorMatrixBlendTask(color, greyscale, 4, GameCtx.heartLayer)),
-                new SelfDestructTask()));
-            addObject(animObj);
-
-        } else {
-            GameCtx.bgLayer.filters = [ greyscale.createFilter() ];
-            GameCtx.heartLayer.filters = [ greyscale.createFilter() ];
         }
     }
 

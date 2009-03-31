@@ -16,7 +16,6 @@ public class FeedingUtil
         mgr.addMessageType(GameEndedMsg);
         mgr.addMessageType(RoundOverMsg);
         mgr.addMessageType(ClientQuitMsg);
-        mgr.addMessageType(NoMoreFeedingMsg);
         mgr.addMessageType(ClientBootedMsg);
         mgr.addMessageType(RoundStartingSoonMsg);
         mgr.addMessageType(AwardTrophyMsg);
