@@ -24,6 +24,12 @@ public class Trophies
     // Detonate a white cell you're carrying without corrupting red cells
     public static const NECESSARY_EVIL :String = "NecessaryEvil";
 
+    // Near-miss a bunch of red cells in a short amount of time
+    public static const THREAD_THE_NEEDLE :String = "ThreadTheNeedle";
+    public static const THREAD_CELLS :int = 15;
+    public static const THREAD_DIST :Number = 11;
+    public static const THREAD_TIME :Number = 5;
+
     // Awarded for creating a cascade of a certain size
     public static const CASCADE_TROPHIES :Array = [
         "cascade25",
