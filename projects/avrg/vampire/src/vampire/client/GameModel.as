@@ -18,7 +18,6 @@ import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
 import vampire.avatar.AvatarGameBridge;
-import vampire.client.events.ChangeActionEvent;
 import vampire.client.events.LineageUpdatedEvent;
 import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.client.events.PlayersFeedingEvent;
@@ -139,35 +138,27 @@ public class GameModel extends SimObject
 
         if(!isNaN(playerIdUpdated)) {
 
-            //If a state change comes in, inform the avatar
-            if(e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE) {
+//            //If a state change comes in, inform the avatar
+//            if(e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE) {
+//
+//                var entityAvatarId :String = ClientContext.getPlayerEntityId(playerIdUpdated);
+//
+//                var setStateFunction :Function = ClientContext.ctrl.room.getEntityProperty(
+//                    AvatarGameBridge.ENTITY_PROPERTY_SETSTATE_FUNCTION, entityAvatarId) as Function;
+//
+//                if(setStateFunction != null) {
+//                    log.debug("From room props " + playerIdUpdated + ", action=" + ClientContext.model.state +
+//                        ", setStateFunction() " + e.newValue.toString());
+//                    setStateFunction(e.newValue.toString());
+//                }
+//                else {
+//                    log.error("handleElementChanged, setStateFunction==null, crusty avatar??", "e",
+//                        e, "entityAvatarId", entityAvatarId, "playerIdUpdated", playerIdUpdated);
+//                }
+//
+//            }
 
-                var entityAvatarId :String = ClientContext.getPlayerEntityId(playerIdUpdated);
 
-                var setStateFunction :Function = ClientContext.ctrl.room.getEntityProperty(
-                    AvatarGameBridge.ENTITY_PROPERTY_SETSTATE_FUNCTION, entityAvatarId) as Function;
-
-                if(setStateFunction != null) {
-                    log.debug("From room props " + playerIdUpdated + ", action=" + ClientContext.model.state +
-                        ", setStateFunction() " + e.newValue.toString());
-                    setStateFunction(e.newValue.toString());
-                }
-                else {
-                    log.error("handleElementChanged, setStateFunction==null, crusty avatar??", "e",
-                        e, "entityAvatarId", entityAvatarId, "playerIdUpdated", playerIdUpdated);
-                }
-
-            }
-
-
-            if(playerIdUpdated == ClientContext.ourPlayerId) {
-
-                switch (e.index) {
-                    case Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE:
-                    dispatchEvent(new ChangeActionEvent(e.newValue.toString()));
-                    break;
-                }
-            }
 
         }
     }

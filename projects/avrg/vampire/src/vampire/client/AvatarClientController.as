@@ -10,10 +10,12 @@ package vampire.client
     import com.whirled.avrg.AVRGameRoomEvent;
     import com.whirled.contrib.simplegame.SimObject;
     import com.whirled.contrib.simplegame.objects.SimpleTimer;
+    import com.whirled.net.ElementChangedEvent;
     import com.whirled.net.MessageReceivedEvent;
 
     import vampire.avatar.AvatarGameBridge;
     import vampire.client.events.PlayerArrivedAtLocationEvent;
+    import vampire.data.Codes;
     import vampire.data.VConstants;
     import vampire.net.messages.MovePredIntoPositionMsg;
 
@@ -32,14 +34,49 @@ public class AvatarClientController extends SimObject
     {
         //If the avatar is changed, reset the callbacks.
         registerListener(_ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, handleAvatarChanged);
-
         //If we start moving, and we are in bared mode, change to default mode.
         registerListener(_ctrl.room, AVRGameRoomEvent.PLAYER_MOVED, handlePlayerMoved);
-
         registerListener(_ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessageReceived);
+        //Listen for avatar state changes.
+//        registerListener(_ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
 
         resetAvatarCallbackFunctions();
+    }
+
+//    protected function handleElementChanged (e :ElementChangedEvent) :void
+//    {
+//        //Why do I have to do this?  Is there a race condidtion, where the game is shutdown
+//        //but it's still receiving updates?
+//        if (!_ctrl.isConnected()) {
+//            return;
+//        }
+//
+//        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
+//
+//        if (playerIdUpdated == _ctrl.player.getPlayerId()) {
+//
+//            //If a state change comes in, inform the avatar
+//            if(e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE) {
+//
+//                var setStateFunction :Function = _ctrl.room.getEntityProperty(
+//                    AvatarGameBridge.ENTITY_PROPERTY_SETSTATE_FUNCTION, ourEntityId) as Function;
+//
+//                _ctrl.player.setAvatarState(e.newValue.toString());
+//            }
+//        }
+//    }
+
+
+    protected function get ourEntityId () :String
+    {
+        for each(var entityId :String in _ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
+            var entityUserId :int = int(_ctrl.room.getEntityProperty(EntityControl.PROP_MEMBER_ID, entityId));
+            if(entityUserId == _ctrl.player.getPlayerId()) {
+                return entityId;
+            }
+        }
+        return null;
     }
 
     override protected function destroyed () :void
