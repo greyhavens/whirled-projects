@@ -259,10 +259,10 @@ public class PlayerData extends EventHandlerManager
         _xp = Math.min(_xp, Logic.maxXPGivenXPAndInvites(_xp, invites));
     }
 
-    public function setAvatarState (s :String) :void
-    {
-        _avatarState = s;
-    }
+//    public function setAvatarState (s :String) :void
+//    {
+//        _avatarState = s;
+//    }
     public function setState (action :String) :void
     {
         if (action != _state) {
@@ -439,9 +439,9 @@ public class PlayerData extends EventHandlerManager
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES, invites);
             }
 
-            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE] != avatarState) {
-                room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE, avatarState);
-            }
+//            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE] != avatarState) {
+//                room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE, avatarState);
+//            }
 
             //Copy the feedback to the room
             for each (var msg :String in _feedback) {
@@ -665,10 +665,10 @@ public class PlayerData extends EventHandlerManager
         return _bloodbondedName;
     }
 
-    public function get avatarState () :String
-    {
-        return _avatarState;
-    }
+//    public function get avatarState () :String
+//    {
+//        return _avatarState;
+//    }
 
     public function get sire () :int
     {
@@ -836,7 +836,7 @@ public class PlayerData extends EventHandlerManager
     protected var _xp :Number;
     protected var _state :String;
 
-    protected var _avatarState :String = "Default";
+//    protected var _avatarState :String = "Default";
 
     protected var _bloodbonded :int;
     protected var _bloodbondedName :String;

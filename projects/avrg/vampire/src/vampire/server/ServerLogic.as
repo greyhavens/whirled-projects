@@ -5,6 +5,7 @@ import com.threerings.flash.MathUtil;
 import com.threerings.flash.Vector2;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
+import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
 import com.whirled.contrib.simplegame.net.Message;
@@ -1292,16 +1293,19 @@ public class ServerLogic
 
         }
 
-        var currentAvatarState :String = player.avatarState;
+//        var currentAvatarState :String = player.avatarState;
+        var currentAvatarState :String = player.avatar != null ? player.avatar.state : "Default";
 
         if (newAvatarState != currentAvatarState) {
             log.debug(player.name + " updateAvatarState(" + newAvatarState + "), when action=" + playerState);
-            player.setAvatarState(newAvatarState);
+            player.ctrl.setAvatarState(newAvatarState);
+//            player.setAvatarState(newAvatarState);
         }
         else {
             log.debug(player.name + " updateAvatarState(" + newAvatarState + "), but not changing since we are=" + currentAvatarState);
         }
     }
+
 
 
 
