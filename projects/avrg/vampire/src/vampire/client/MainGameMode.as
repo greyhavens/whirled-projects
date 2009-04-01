@@ -25,23 +25,19 @@ import vampire.data.VConstants;
 import vampire.feeding.FeedingClient;
 import vampire.feeding.debug.BloodBloomStandalone;
 import vampire.net.messages.FeedRequestMsg;
+import vampire.net.messages.GameStartedMsg;
 import vampire.net.messages.MovePredIntoPositionMsg;
 
 public class MainGameMode extends AppMode
 {
-    public function MainGameMode()
-    {
-        super();
-    }
-
-    override protected function enter() :void
+    override protected function enter () :void
     {
         modeSprite.visible = true;
-        log.debug("Starting " + ClassUtil.tinyClassName( this ));
+        log.debug("Starting " + ClassUtil.tinyClassName(this));
 
         ClientContext.model.setup();
         //Add intro panel if we're a new player
-        if( ClientContext.isNewPlayer) {
+        if(ClientContext.isNewPlayer) {
             ClientContext.controller.handleShowIntro("intro");
             ClientContext.isNewPlayer = false;
         }
@@ -58,15 +54,19 @@ public class MainGameMode extends AppMode
         ClientContext.controller.handleShowIntro("intro");
 //        ClientContext.tutorial.activateTutorial();
 
+        //Notify the agent that we are now wearing the right avatar, and can receive popup messages
+        ClientContext.ctrl.agent.sendMessage(GameStartedMsg.NAME,
+            new GameStartedMsg(ClientContext.ourPlayerId).toBytes());
+
     }
 //
 //    /**
 //    * Currently not used, since non-player blood is currently no longer monitored on the server.
 //    *
 //    */
-//    protected function updateNonPlayerIds(...ignored ) :void
+//    protected function updateNonPlayerIds(...ignored) :void
 //    {
-//        if( _currentNonPlayerIds == null ) {
+//        if(_currentNonPlayerIds == null) {
 //            _currentNonPlayerIds = new Array();
 //        }
 //
@@ -75,20 +75,20 @@ public class MainGameMode extends AppMode
 //
 //        var roomId :int = ClientContext.ctrl.room.getRoomId();
 //
-//        if( !ArrayUtil.equals( _currentNonPlayerIds, npIds ) ) {
+//        if(!ArrayUtil.equals(_currentNonPlayerIds, npIds)) {
 //            var msg :NonPlayerIdsInRoomMsg = new NonPlayerIdsInRoomMsg(
-//                ClientContext.ourPlayerId, npIds, roomId );
+//                ClientContext.ourPlayerId, npIds, roomId);
 //    //        log.debug("Sending " + msg);
-//            ClientContext.ctrl.agent.sendMessage( msg.name, msg.toBytes() );
+//            ClientContext.ctrl.agent.sendMessage(msg.name, msg.toBytes());
 //            _currentNonPlayerIds = npIds;
 //        }
 //
 //
 //
-////        trace( ClientContext.ourPlayerId + " our inviter=" + ClientContext.ctrl.local.getInviterMemberId());
+////        trace(ClientContext.ourPlayerId + " our inviter=" + ClientContext.ctrl.local.getInviterMemberId());
 //    }
 
-    override protected function setup() :void
+    override protected function setup () :void
     {
         //Set the game mode where all game objects are added.
         ClientContext.gameMode = this;
@@ -97,7 +97,7 @@ public class MainGameMode extends AppMode
         super.setup();
 
         ClientContext.model = new GameModel();
-        addObject( ClientContext.model );
+        addObject(ClientContext.model);
 
 
         if (VConstants.LOCAL_DEBUG_MODE) {
@@ -124,12 +124,12 @@ public class MainGameMode extends AppMode
 
 
         //If this player hasn't played before, automatically show the help.
-        if( ClientContext.model.isNewPlayer() ) {
-//            addObject(  new HelpPopup(), modeSprite );
+        if(ClientContext.model.isNewPlayer()) {
+//            addObject( new HelpPopup(), modeSprite);
         }
 
 //        _feedingGameDraggableSprite = new DraggableSceneObject(ClientContext.ctrl);
-//        modeSprite.addChild( _feedingGameDraggableSprite.displayObject );
+//        modeSprite.addChild(_feedingGameDraggableSprite.displayObject);
 
         //If we start moving, and we are in bared mode, change to default mode.
         registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_MOVED, handlePlayerMoved);
@@ -152,41 +152,41 @@ public class MainGameMode extends AppMode
 
 
         if (!VConstants.LOCAL_DEBUG_MODE) {
-            FeedingClient.init( modeSprite, ClientContext.ctrl );
+            FeedingClient.init(modeSprite, ClientContext.ctrl);
         }
 
         _events.registerListener(ClientContext.ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessageReceived);
 
         //Create the overlay for individual avatars
-        ClientContext.avatarOverlay = new VampireAvatarHUDOverlay( ClientContext.ctrl );
-        addSceneObject( ClientContext.avatarOverlay, modeSprite );
+        ClientContext.avatarOverlay = new VampireAvatarHUDOverlay(ClientContext.ctrl);
+        addSceneObject(ClientContext.avatarOverlay, modeSprite);
         //And pass to the server player arrival events, if we are moving to feed.
 
         _hud = new HUD();
-        addSceneObject( _hud, modeSprite );
+        addSceneObject(_hud, modeSprite);
 //        ClientContext.centerOnViewableRoom(_hud.displayObject);
         ClientContext.hud = _hud;
 
 
         trace(ClientContext.ourPlayerId + " setting avatar state from game beginning");
-        ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
+        ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
 
 
         //Every X seconds, check the non-player ids, updating the server if changed.
         //ATM we don't care about this anymore.
 //        var nonPlayerIdTimer :SimpleTimer = new SimpleTimer(2, updateNonPlayerIds, true, "npTimer");
-//        addObject( nonPlayerIdTimer );
+//        addObject(nonPlayerIdTimer);
 
 
 
 
 
         //Add a debug panel for admins
-        if( ClientContext.isAdmin(ClientContext.ourPlayerId) || VConstants.LOCAL_DEBUG_MODE ) {
+        if(ClientContext.isAdmin(ClientContext.ourPlayerId) || VConstants.LOCAL_DEBUG_MODE) {
             var debug :SimpleTextButton = new SimpleTextButton("debug");
-            Command.bind( debug, MouseEvent.CLICK, VampireController.SHOW_DEBUG );
-            modeSprite.addChild( debug );
+            Command.bind(debug, MouseEvent.CLICK, VampireController.SHOW_DEBUG);
+            modeSprite.addChild(debug);
         }
 
         //Add the tutorial
@@ -196,23 +196,23 @@ public class MainGameMode extends AppMode
 
     }
 
-    protected function handlePlayerMoved( e :AVRGameRoomEvent ) :void
+    protected function handlePlayerMoved (e :AVRGameRoomEvent) :void
     {
-        var playerMovedId :int = int( e.value );
-        if( playerMovedId == ClientContext.ourPlayerId) {
-            if( ClientContext.model.state == VConstants.AVATAR_STATE_BARED ) {
-                ClientContext.controller.handleChangeState( VConstants.AVATAR_STATE_DEFAULT );
-                ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
+        var playerMovedId :int = int(e.value);
+        if(playerMovedId == ClientContext.ourPlayerId) {
+            if(ClientContext.model.state == VConstants.AVATAR_STATE_BARED) {
+                ClientContext.controller.handleChangeState(VConstants.AVATAR_STATE_DEFAULT);
+                ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
             }
         }
     }
 
-    protected function handlePlayerArrivedAtLocation( e :PlayerArrivedAtLocationEvent ) :void
+    protected function handlePlayerArrivedAtLocation (e :PlayerArrivedAtLocationEvent) :void
     {
 //        trace("MainGameMode, handlePlayerArrivedAtLocation");
-//        if( ClientContext.model.state == VConstants.PLAYER_STATE_MOVING_TO_FEED ) {
+//        if(ClientContext.model.state == VConstants.PLAYER_STATE_MOVING_TO_FEED) {
             trace(ClientContext.ourPlayerId + " Sending player arrived event");
-            ClientContext.ctrl.agent.sendMessage( PlayerArrivedAtLocationEvent.PLAYER_ARRIVED );
+            ClientContext.ctrl.agent.sendMessage(PlayerArrivedAtLocationEvent.PLAYER_ARRIVED);
 //        }
     }
 
@@ -221,24 +221,24 @@ public class MainGameMode extends AppMode
     * Therefore, we must listen to changes in the avatar and check if we have gone into
     * bared mode.
     */
-    protected function handleAvatarChanged( e :AVRGameRoomEvent ) :void
+    protected function handleAvatarChanged (e :AVRGameRoomEvent) :void
     {
-        var playerAvatarChangedId :int = int( e.value );
+        var playerAvatarChangedId :int = int(e.value);
 
         //We are only allowed to change our own avatar.
-        if( playerAvatarChangedId != ClientContext.ourPlayerId ) {
+        if(playerAvatarChangedId != ClientContext.ourPlayerId) {
             return;
         }
 
         //Do as if we have pushed the 'Bared" button.
-        var avatar :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo( playerAvatarChangedId );
-        if( avatar != null) {
+        var avatar :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo(playerAvatarChangedId);
+        if(avatar != null) {
 
             var isBared :Boolean = ClientContext.model.state == VConstants.PLAYER_STATE_BARED ||
                 ClientContext.model.state == VConstants.PLAYER_STATE_FEEDING_PREY;
             //If we change our avatar to bared, but we are not in the bared player state.
-            if( !isBared && avatar.state == VConstants.AVATAR_STATE_BARED ) {
-                ClientContext.controller.handleChangeState( VConstants.PLAYER_STATE_BARED );
+            if(!isBared && avatar.state == VConstants.AVATAR_STATE_BARED) {
+                ClientContext.controller.handleChangeState(VConstants.PLAYER_STATE_BARED);
             }
         }
     }
@@ -255,7 +255,7 @@ public class MainGameMode extends AppMode
                 _feedingGameClient = new BloodBloomStandalone(modeSprite);
             }
             else {
-                _feedingGameClient = FeedingClient.create( gameId,
+                _feedingGameClient = FeedingClient.create(gameId,
                     ClientContext.model.playerFeedingData, onGameComplete);
             }
 
@@ -275,7 +275,7 @@ public class MainGameMode extends AppMode
         }
         else if (e.name == VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING) {
 
-            var moveTimer :SimpleTimer = new SimpleTimer( 2.5, function() :void {
+            var moveTimer :SimpleTimer = new SimpleTimer(2.5, function() :void {
 
                 var location :Array = ClientContext.model.location;
                 var hotspot :Array = ClientContext.model.hotspot;
@@ -288,19 +288,19 @@ public class MainGameMode extends AppMode
                     var xDistance :Number = xDirection * widthLogical / 3;
 
                     ctrl.player.setAvatarLocation(
-                        MathUtil.clamp( location[0] + xDistance, 0, 1),
+                        MathUtil.clamp(location[0] + xDistance, 0, 1),
                         location[1],
-                        MathUtil.clamp( location[2] - 0.1, 0, 1), location[3]);
+                        MathUtil.clamp(location[2] - 0.1, 0, 1), location[3]);
                 }
             }, false);
-            addObject( moveTimer );
+            addObject(moveTimer);
         }
         else if (e.name == FeedRequestMsg.NAME) {
             var msg :FeedRequestMsg =
-                ClientContext.msg.deserializeMessage( e.name, e.value) as FeedRequestMsg;
+                ClientContext.msg.deserializeMessage(e.name, e.value) as FeedRequestMsg;
 
             trace("got " + FeedRequestMsg.NAME);
-            var fromPlayerName :String = ClientContext.getPlayerName( msg.playerId );
+            var fromPlayerName :String = ClientContext.getPlayerName(msg.playerId);
             var popup :PopupQuery = new PopupQuery(
                     VampireController.POPUP_PREFIX_FEED_REQUEST + msg.playerId,
                     fromPlayerName + " would like to feed on you.",
@@ -314,8 +314,8 @@ public class MainGameMode extends AppMode
                         },
                     ]);
 
-            if( getObjectNamed( popup.objectName) == null) {
-                addSceneObject( popup, modeSprite );
+            if(getObjectNamed(popup.objectName) == null) {
+                addSceneObject(popup, modeSprite);
                 ClientContext.centerOnViewableRoom(popup.displayObject);
                 ClientContext.animateEnlargeFromMouseClick(popup);
             }
@@ -323,9 +323,9 @@ public class MainGameMode extends AppMode
         }
         else if (e.name == MovePredIntoPositionMsg.NAME) {
 
-            function convertStandardRads2GameDegrees( rad :Number ) :Number
+            function convertStandardRads2GameDegrees(rad :Number) :Number
             {
-                return MathUtil.toDegrees( MathUtil.normalizeRadians(rad + Math.PI / 2) );
+                return MathUtil.toDegrees(MathUtil.normalizeRadians(rad + Math.PI / 2));
             }
 
 
@@ -366,14 +366,14 @@ public class MainGameMode extends AppMode
 //            _hudSprite.graphics.clear();
 //            _hudSprite.graphics.beginFill(0, 0.3);
 //
-//            _hudSprite.graphics.drawRect( -absoluteWidth/2, 0, absoluteWidth, absoluteHeight);
+//            _hudSprite.graphics.drawRect(-absoluteWidth/2, 0, absoluteWidth, absoluteHeight);
 //            _hudSprite.graphics.endFill();
 
 
 
-            var angleRadians :Number = new Vector2( targetLocation[0] - avatar.x,
+            var angleRadians :Number = new Vector2(targetLocation[0] - avatar.x,
                 targetLocation[2] - avatar.z).angle;
-            var degs :Number = convertStandardRads2GameDegrees( angleRadians );
+            var degs :Number = convertStandardRads2GameDegrees(angleRadians);
 
             targetX = targetLocation[0] +
                 VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[movemsg.predIndex][0] *
@@ -387,14 +387,14 @@ public class MainGameMode extends AppMode
 
             //If the avatar is already at the location, the client will dispatch a
             //PlayerArrivedAtLocation event, as the location doesn't change.
-//            if( targetX == avatar.x &&
+//            if(targetX == avatar.x &&
 //                targetY == avatar.y &&
-//                targetZ == avatar.z ) {
+//                targetZ == avatar.z) {
 //                log.error("Player already at location, changing to feed mode");
-//                handlePlayerArrivedAtLocation( player );
+//                handlePlayerArrivedAtLocation(player);
 //            }
 //            else {
-                ClientContext.ctrl.player.setAvatarLocation( targetX, targetY, targetZ, degs);
+                ClientContext.ctrl.player.setAvatarLocation(targetX, targetY, targetZ, degs);
 //            }
         }
 
@@ -410,12 +410,12 @@ public class MainGameMode extends AppMode
         log.info(ClientContext.ourPlayerId + " onGameComplete(), Feeding complete, setting avatar state to default");//, "completedSuccessfully", completedSuccessfully);
 
         trace(ClientContext.ourPlayerId + " setting avatar state from game complete");
-        ClientContext.model.setAvatarState( VConstants.AVATAR_STATE_DEFAULT );
+        ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
         var feedingClient :FeedingClient = FeedingClient(_feedingGameClient);
-        if( feedingClient.playerData != null ) {
+        if(feedingClient.playerData != null) {
             log.info(feedingClient.playerData);
-            ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_EVENT_UPDATE_FEEDING_DATA,
-                feedingClient.playerData.toBytes() );
+            ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_UPDATE_FEEDING_DATA,
+                feedingClient.playerData.toBytes());
         }
         else {
             log.error("onGameComplete(), _feedingGameClient.playerData==null");
@@ -426,12 +426,12 @@ public class MainGameMode extends AppMode
 //        _feedingGameClientSceneobjectWrapper.destroySelf();
 //        _feedingGameClientSceneobjectWrapper = null;
         //Remove game after getting the feeding data, feeding data is nulled after stage removal.
-//        if( _feedingGameClient.parent != null ){
-//            _feedingGameClient.parent.removeChild( _feedingGameClient )
+//        if(_feedingGameClient.parent != null){
+//            _feedingGameClient.parent.removeChild(_feedingGameClient)
 //        }
         _feedingGameClient = null;
         //Reset the overlay
-//        ClientContext.avatarOverlay.setDisplayMode( VampireAvatarHUDOverlay.DISPLAY_MODE_OFF );
+//        ClientContext.avatarOverlay.setDisplayMode(VampireAvatarHUDOverlay.DISPLAY_MODE_OFF);
 
         //Notify the tutorial
         ClientContext.tutorial.feedGameOver();
@@ -445,7 +445,7 @@ public class MainGameMode extends AppMode
 
 
 
-    override protected function exit() :void
+    override protected function exit () :void
     {
         modeSprite.visible = false;
         log.warning("!!! " + ClassUtil.tinyClassName(this) + "exiting.  Is this what we want??");
@@ -453,20 +453,20 @@ public class MainGameMode extends AppMode
         //Remove the avatar callback
         var setCallback :Function = ClientContext.ctrl.room.getEntityProperty(
         AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
-        if( setCallback != null) {
-            setCallback( null );
+        if(setCallback != null) {
+            setCallback(null);
         }
     }
 
-    override protected function destroy() :void
+    override protected function destroy () :void
     {
         super.destroy();
 
         //Remove the avatar callback
         var setCallback :Function = ClientContext.ctrl.room.getEntityProperty(
         AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
-        if( setCallback != null) {
-            setCallback( null );
+        if(setCallback != null) {
+            setCallback(null);
         }
     }
 
@@ -479,6 +479,6 @@ public class MainGameMode extends AppMode
     protected var _currentNonPlayerIds :Array;
 
 
-    protected static const log :Log = Log.getLog( MainGameMode );
+    protected static const log :Log = Log.getLog(MainGameMode);
 }
 }

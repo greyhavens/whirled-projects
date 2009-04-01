@@ -15,6 +15,7 @@ import com.whirled.contrib.EventHandlerManager;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
+import vampire.Util;
 import vampire.data.Codes;
 import vampire.data.Logic;
 import vampire.data.VConstants;
@@ -63,8 +64,12 @@ public class PlayerData extends EventHandlerManager
         if(isNaN(_xp)) {
             setXP(0);
         }
-
         log.debug("Getting xp=" + _xp);
+
+
+
+
+
 
         //For now we ignore blood.
         //Get blood
@@ -166,11 +171,9 @@ public class PlayerData extends EventHandlerManager
         setBlood(blood + amount); // note: setBlood clamps this to [0, maxBlood]
     }
 
-    public function addFeedback(msg :String) :void
+    public function addFeedback (msg :String) :void
     {
-        if(_room != null) {
-            _room.addFeedback(msg, playerId);
-        }
+        _feedback.push(msg);
     }
 
     public function get ctrl () :PlayerSubControlServer
@@ -439,6 +442,12 @@ public class PlayerData extends EventHandlerManager
             if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE] != avatarState) {
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE, avatarState);
             }
+
+            //Copy the feedback to the room
+            for each (var msg :String in _feedback) {
+                room.addFeedback(msg, playerId);
+            }
+            _feedback.splice(0);
 
         }
         catch(err :Error) {
@@ -853,6 +862,8 @@ public class PlayerData extends EventHandlerManager
     protected var _room :Room;
     protected var _ctrl :PlayerSubControlServer;
     protected var _playerId :int;
+
+    protected var _feedback :Array = [];
 
     /**A list of the most recent feedings with this player, each element:[preyId, predId]*/
 //    protected var _feedingRecord :Array = new Array();

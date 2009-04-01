@@ -3,7 +3,6 @@ package vampire.server
 
 import com.threerings.flash.MathUtil;
 import com.threerings.flash.Vector2;
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
@@ -20,6 +19,7 @@ import vampire.data.VConstants;
 import vampire.net.messages.BloodBondRequestMsg;
 import vampire.net.messages.FeedConfirmMsg;
 import vampire.net.messages.FeedRequestMsg;
+import vampire.net.messages.GameStartedMsg;
 import vampire.net.messages.MovePredIntoPositionMsg;
 import vampire.net.messages.RequestStateChangeMsg;
 import vampire.net.messages.ShareTokenMsg;
@@ -84,11 +84,11 @@ public class ServerLogic
             else {//Add to offline database
                 ServerContext.ctrl.loadOfflinePlayer(sireId,
                     function (props :OfflinePlayerPropertyControl) :void {
-                        var currentXP :Number = Number(props.get(Codes.PLAYER_PROP_XP));
-
-                        if (!isNaN(currentXP) && currentXP >= Logic.xpNeededForLevel(VConstants.MINIMUM_VAMPIRE_LEVEL)) {
-                            props.set(Codes.PLAYER_PROP_XP, currentXP + awardXP);
+                        var currentXP :Number = Number(props.get(Codes.PLAYER_PROP_XP_SLEEP));
+                        if (isNaN(currentXP)) {
+                            currentXP = 0;
                         }
+                        props.set(Codes.PLAYER_PROP_XP_SLEEP, currentXP + awardXP);
                     },
                     function (failureCause :Object) :void {
                         log.warning("Eek! Sending message to offline player failed!", "cause", failureCause);
@@ -128,10 +128,11 @@ public class ServerLogic
             //Add to offline database
             ServerContext.ctrl.loadOfflinePlayer(player.bloodbonded,
                 function (props :OfflinePlayerPropertyControl) :void {
-                    var currentXP :Number = Number(props.get(Codes.PLAYER_PROP_XP));
-                    if (!isNaN(currentXP)) {
-                        props.set(Codes.PLAYER_PROP_XP, currentXP + xpBonus);
+                    var currentXP :Number = Number(props.get(Codes.PLAYER_PROP_XP_SLEEP));
+                    if (isNaN(currentXP)) {
+                        currentXP = 0;
                     }
+                    props.set(Codes.PLAYER_PROP_XP_SLEEP, currentXP + xpBonus);
                 },
                 function (failureCause :Object) :void {
                     log.warning("Eek! Sending message to offline player failed!", "cause", failureCause);
@@ -403,6 +404,11 @@ public class ServerLogic
                     var requestingPlayer :PlayerData = getPlayer(feedConfirm.predatorId);
                     handleFeedConfirmMessage(requestingPlayer, feedConfirm);
                 }
+                else if (msg is GameStartedMsg) {
+                    var gameStarted :GameStartedMsg = GameStartedMsg(msg);
+                    var playerStarted :PlayerData = getPlayer(gameStarted.playerId);
+                    handleGameStartedMessage(playerStarted, gameStarted);
+                }
                 else {
 //                    log.debug("Cannot handle Message ", "player", playerId, "type", value);
 //                    log.debug("  Classname=" + ClassUtil.getClassName(value));
@@ -582,8 +588,20 @@ public class ServerLogic
         }
     }
 
+    public static function handleGameStartedMessage (player :PlayerData, e :GameStartedMsg) :void
+    {
+        var xpGainedWhileAsleep :Number = Number(player.ctrl.props.get(Codes.PLAYER_PROP_XP_SLEEP));
+        log.debug("Getting xpGainedWhileAsleep=" + xpGainedWhileAsleep);
+        if (!isNaN(xpGainedWhileAsleep) && xpGainedWhileAsleep > 0) {
+            addXP(player.playerId, xpGainedWhileAsleep);
+            player.addFeedback(Codes.POPUP_PREFIX + "You gained " + Util.formatNumberForFeedback(xpGainedWhileAsleep) +
+                " experience from your bloodbond and progeny while you were asleep!");
 
-    public static function handleShareTokenMessage(player :PlayerData, e :ShareTokenMsg) :void
+        }
+        player.ctrl.props.set(Codes.PLAYER_PROP_XP_SLEEP, 0);
+    }
+
+    public static function handleShareTokenMessage (player :PlayerData, e :ShareTokenMsg) :void
     {
         var inviterId :int = e.inviterId;
         log.debug(player.playerId + " received inviter id=" + inviterId);
@@ -596,7 +614,7 @@ public class ServerLogic
             log.warning("handleShareTokenMessage, but our sire != 0", "e", e);
         }
     }
-    public static function handleFeedRequestMessage(player :PlayerData, e :FeedRequestMsg) :void
+    public static function handleFeedRequestMessage (player :PlayerData, e :FeedRequestMsg) :void
     {
         log.debug("handleFeedRequestMessage");
         var game :FeedingRecord;
@@ -1166,7 +1184,7 @@ public class ServerLogic
                 if (pred.sire == 0) {
                     if (ServerContext.lineage.isMemberOfLineage(preyId)) {
                         makeSire(pred,  preyPlayer.playerId);
-                        pred.addFeedback(preyPlayer.name + " has become your sire ");
+                        pred.addFeedback(Codes.POPUP_PREFIX + preyPlayer.name + " has become your sire ");
 
                         //Award coins to the sire
                         preyPlayer.ctrl.completeTask(Codes.TASK_ACQUIRE_MINION_ID,
@@ -1180,7 +1198,7 @@ public class ServerLogic
                                 && srv.getPlayer(sireId).room != null) {
 
                                 //Tell the sire she's got children
-                                srv.getPlayer(sireId).room.addFeedback(
+                                srv.getPlayer(sireId).room.addFeedback(Codes.POPUP_PREFIX +
                                     pred.name + " has become your minion ", sireId);
 
                                 //Award coins to the sire(s)

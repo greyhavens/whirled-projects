@@ -26,6 +26,9 @@ public class Codes
     /** Current amount of blood*/
     public static const PLAYER_PROP_XP :String = NetConstants.makePersistent("xp");
 
+    /** XP gained while asleep */
+    public static const PLAYER_PROP_XP_SLEEP :String = NetConstants.makePersistent("xp_sleep");
+
     /** Blood type.  Used for bonuses in BloodBloom.*/
     public static const PLAYER_PROP_BlOOD_TYPE :String = NetConstants.makePersistent("bloodType");
 
