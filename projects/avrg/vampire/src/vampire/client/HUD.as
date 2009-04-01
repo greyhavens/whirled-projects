@@ -28,7 +28,6 @@ import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 
 import vampire.Util;
-import vampire.client.events.PlayerStateChangedEvent;
 import vampire.data.Codes;
 import vampire.data.Logic;
 import vampire.data.VConstants;
@@ -674,12 +673,6 @@ public class HUD extends DraggableObject
 
 
 
-    protected function playerUpdated(e :PlayerStateChangedEvent) :void
-    {
-        if(e.playerId == ClientContext.ourPlayerId) {
-            updateOurPlayerState();
-        }
-    }
 
     protected function updateOurPlayerState(...ignored) :void
     {

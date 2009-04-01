@@ -6,6 +6,7 @@ import com.threerings.util.Log;
 import com.whirled.EntityControl;
 import com.whirled.contrib.avrg.AvatarHUD;
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.ObjectMessage;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 
@@ -219,7 +220,10 @@ public class VampireController extends Controller
             //Set the avatar target to stand behind.
             //That way, when the avatar arrived at it's destination, it
             //will set it's orientation the same as the target's orientation.
-            ClientContext.model.setStandBehindTarget(targetId);
+//            ClientContext.model.standBehindTarget = targetId;
+            ClientContext.gameMode.sendMessageToNamedObject(
+                new ObjectMessage(AvatarClientController.GAME_MESSAGE_TARGETID, targetId),
+                AvatarClientController.NAME);
         }
 
 

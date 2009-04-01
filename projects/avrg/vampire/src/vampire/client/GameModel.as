@@ -5,21 +5,16 @@ import com.threerings.util.Log;
 import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.AgentSubControl;
 import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.net.ElementChangedEvent;
-import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.PropertyGetSubControl;
 
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
-import vampire.avatar.AvatarGameBridge;
 import vampire.client.events.LineageUpdatedEvent;
-import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.client.events.PlayersFeedingEvent;
 import vampire.data.Codes;
 import vampire.data.Lineage;
@@ -281,20 +276,22 @@ public class GameModel extends SimObject
         }
     }
 
-
-    public function setStandBehindTarget (targetId :int) :void
-    {
-        //Set the avatar target.  That way, when the avatar arrived at it's destination, it
-        //will set it's orientation the same as the target's orientation.
-        var setTargetFunction :Function = ClientContext.ctrl.room.getEntityProperty(
-            AvatarGameBridge.ENTITY_PROPERTY_SET_STAND_BEHIND_ID_FUNCTION, ClientContext.ourEntityId) as Function;
-        if(setTargetFunction != null) {
-            setTargetFunction(targetId);
-        }
-        else {
-            log.error("Cannot set avatar stand behind target as the function is null, targetId=" + targetId);
-        }
-    }
+//    /**
+//     * Set the avatar target.  That way, when the avatar arrived at it's destination, it
+//     * will set it's orientation the same as the target's orientation.
+//     */
+//    public function set standBehindTarget (targetId :int) :void
+//    {
+//        _avatarStandBehindTargetId = targetId;
+////        var setTargetFunction :Function = ClientContext.ctrl.room.getEntityProperty(
+////            AvatarGameBridge.ENTITY_PROPERTY_SET_STAND_BEHIND_ID_FUNCTION, ClientContext.ourEntityId) as Function;
+////        if(setTargetFunction != null) {
+////            setTargetFunction(targetId);
+////        }
+////        else {
+////            log.error("Cannot set avatar stand behind target as the function is null, targetId=" + targetId);
+////        }
+//    }
 
     public function get state() :String
     {
@@ -403,6 +400,8 @@ public class GameModel extends SimObject
     protected var _lineage :Lineage;
     protected var _agentCtrl :AgentSubControl;
     protected var _propsCtrl :PropertyGetSubControl;
+
+
 
 
     protected static var log :Log = Log.getLog(GameModel);

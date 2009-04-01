@@ -24,8 +24,8 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import vampire.Util;
-import vampire.avatar.AvatarGameBridge;
 import vampire.avatar.VampireAvatarHUDOverlay;
+import vampire.avatar.VampireBody;
 import vampire.data.Codes;
 import vampire.data.VConstants;
 
@@ -194,7 +194,7 @@ public class ClientContext
     public static function get isWearingValidAvatar () :Boolean
     {
         var isLegal :Object = ClientContext.ctrl.room.getEntityProperty(
-            AvatarGameBridge.ENTITY_PROPERTY_IS_LEGAL_AVATAR, ClientContext.ourEntityId);
+            VampireBody.ENTITY_PROPERTY_IS_LEGAL_AVATAR, ClientContext.ourEntityId);
 
         return isLegal != null && Boolean(isLegal);
     }

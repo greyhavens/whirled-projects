@@ -2,17 +2,17 @@ package vampire.client
 {
     import com.threerings.flash.MathUtil;
     import com.threerings.flash.Vector2;
-    import com.threerings.util.ClassUtil;
     import com.threerings.util.Log;
     import com.whirled.EntityControl;
     import com.whirled.avrg.AVRGameAvatar;
     import com.whirled.avrg.AVRGameControl;
     import com.whirled.avrg.AVRGameRoomEvent;
+    import com.whirled.contrib.simplegame.ObjectMessage;
     import com.whirled.contrib.simplegame.SimObject;
     import com.whirled.contrib.simplegame.objects.SimpleTimer;
     import com.whirled.net.MessageReceivedEvent;
 
-    import vampire.avatar.AvatarGameBridge;
+    import vampire.avatar.AvatarEndMovementNotifier;
     import vampire.data.VConstants;
     import vampire.net.messages.MovePredIntoPositionMsg;
     import vampire.net.messages.PlayerArrivedAtLocationMsg;
@@ -28,6 +28,11 @@ public class AvatarClientController extends SimObject
         _ctrl = ctrl;
     }
 
+    override public function get objectName () :String
+    {
+        return NAME;
+    }
+
     override protected function addedToDB () :void
     {
         //If the avatar is changed, reset the callbacks.
@@ -41,6 +46,21 @@ public class AvatarClientController extends SimObject
 
         resetAvatarCallbackFunctions();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //    protected function handleElementChanged (e :ElementChangedEvent) :void
 //    {
@@ -84,7 +104,7 @@ public class AvatarClientController extends SimObject
         //so just to make sure, set our callback on the avatar to null
         if (_ctrl != null && _ctrl.isConnected()) {
             var setAvatarArrivedCallback :Function = _ctrl.room.getEntityProperty(
-                AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
+                AvatarEndMovementNotifier.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
 
             if(setAvatarArrivedCallback != null) {
                 setAvatarArrivedCallback(null);
@@ -285,7 +305,7 @@ public class AvatarClientController extends SimObject
 //        trace("resetAvatarArrivedFunction, ClientContext.ourEntityId=" + ClientContext.ourEntityId);
         //Let's hear when the avatar arrived at a destination
         var setAvatarArrivedCallback :Function = _ctrl.room.getEntityProperty(
-            AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
+            AvatarEndMovementNotifier.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
 
 
 
@@ -325,28 +345,107 @@ public class AvatarClientController extends SimObject
         }
     }
 
-    protected function avatarArrivedAtDestination (...ignored) :void
+    protected function avatarArrivedAtDestination (playerId :int, location :Array) :void
     {
-        trace(ClassUtil.getClassName(this) + "GameModel.avatarArrivedAtDestination");
-        if(!_ctrl.isConnected()) {
-            trace("avatarArrivedAtDestination, ctrl null, setting callback null");
-            var setCallback :Function = _ctrl.room.getEntityProperty(
-            AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
-            if(setCallback != null) {
-                setCallback(null);
-            }
+        if (!_ctrl.isConnected()) {
             return;
         }
+//        trace(ClassUtil.getClassName(this) + "GameModel.avatarArrivedAtDestination");
+//        if(!_ctrl.isConnected()) {
+//            trace("avatarArrivedAtDestination, ctrl null, setting callback null");
+//            var setCallback :Function = _ctrl.room.getEntityProperty(
+//            AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK,
+//                ClientContext.ourEntityId) as Function;
+//            if(setCallback != null) {
+//                setCallback(null);
+//            }
+//            return;
+//        }
 
-        trace(_ctrl.player.getPlayerId() + " Sending player arrived event");
-        _ctrl.agent.sendMessage(PlayerArrivedAtLocationMsg.NAME, new PlayerArrivedAtLocationMsg(_ctrl.player.getPlayerId()).toBytes());
-//        trace("dispatchEvent PlayerArrivedAtLocationEvent");
-//        dispatchEvent(new PlayerArrivedAtLocationEvent());
+        //If our player moved, inform the server.
+        if (playerId == _ctrl.player.getPlayerId()) {
+            trace(_ctrl.player.getPlayerId() + " Sending player arrived event");
+            _ctrl.agent.sendMessage(PlayerArrivedAtLocationMsg.NAME,
+                new PlayerArrivedAtLocationMsg(_ctrl.player.getPlayerId()).toBytes());
 
+
+    //        trace("dispatchEvent PlayerArrivedAtLocationEvent");
+    //        dispatchEvent(new PlayerArrivedAtLocationEvent());
+
+            //And if this is our avatar, and we have a target to stand behind,
+            //make sure we are in the same orientation.
+            //And adjust our angle to our targets, if we have a target
+            //If our location is the same as our targets, we have the same orientation
+            //otherwise, we want to face our target
+            if(_avatarIdToStandBehind != 0) {
+
+                var targetEntityId :String = getEntityId(_avatarIdToStandBehind);
+
+                var targetLocation :Array = _ctrl.room.getEntityProperty(
+                    EntityControl.PROP_LOCATION_LOGICAL, targetEntityId) as Array;
+
+                //If we are not the first predator, standing slightly behind the target, make
+                //sure we are facing the same orientation as th target.  If we aren't the first
+                //pred, face the target
+                var distance :Number = MathUtil.distance(location[0], location[2], targetLocation[0], targetLocation[2]);
+                if(distance <= MINIMUM_FIRST_TARGET_DISTANCE) {
+                    var targetorientation :Number = Number(_ctrl.room.getEntityProperty(
+                        EntityControl.PROP_ORIENTATION, targetEntityId));
+                    _ctrl.player.setAvatarLocation(location[0], location[1], location[2], targetorientation);
+                }
+                else {
+                    var faceTargetOrientation :Number = targetLocation[0] < location[0] ? 270 : 90;
+                    _ctrl.player.setAvatarLocation(location[0], location[1], location[2], faceTargetOrientation);
+                }
+
+                //Reset our target
+                _avatarIdToStandBehind = 0;
+            }
+        }
+
+    }
+
+    public function getEntityId (playerId :int) :String
+    {
+        for each(var entityId :String in _ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
+
+            var entityUserId :int = int(_ctrl.room.getEntityProperty(EntityControl.PROP_MEMBER_ID, entityId));
+
+            if(entityUserId == playerId) {
+                return entityId;
+            }
+
+        }
+        return null;
+    }
+
+    override protected function receiveMessage (msg:ObjectMessage) :void
+    {
+        if (msg.name == GAME_MESSAGE_TARGETID) {
+            _avatarIdToStandBehind = int(msg.data);
+        }
     }
 
     protected var _ctrl :AVRGameControl;
     protected var _currentEntityId :String;
+
+    /**
+    * When the avatar moves to stand behind a target, upon arrival the avatar should stand
+    * in the same orientation.
+    */
+    protected var _avatarIdToStandBehind :int;
     protected static const log :Log = Log.getLog(AvatarClientController);
+
+    public static const NAME :String = "AvatarClientController";
+    public static const GAME_MESSAGE_TARGETID :String = "GameMessage: TargetId";
+
+    /**
+    * When our avatar arrives at it's destination, and it has a target, check how far away
+    * we are from the target location.  If we are below this distance, we must be the first
+    * predator (standing directly behind the target).  If we are greater than this distance,
+    * we must have our orientation changed to face the target.
+    */
+    public static const MINIMUM_FIRST_TARGET_DISTANCE :Number = MathUtil.distance(0, 0, VConstants.FEEDING_LOGICAL_X_OFFSET, VConstants.FEEDING_LOGICAL_Z_OFFSET) + 0.01;
+
 }
 }

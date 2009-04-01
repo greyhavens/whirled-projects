@@ -16,10 +16,8 @@ import com.whirled.net.MessageReceivedEvent;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
-import vampire.avatar.AvatarGameBridge;
 import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.events.LineageUpdatedEvent;
-import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.Lineage;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingClient;
