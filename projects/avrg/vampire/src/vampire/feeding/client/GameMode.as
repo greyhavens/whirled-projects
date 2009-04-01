@@ -198,8 +198,10 @@ public class GameMode extends AppMode
             addObject(new ThreadTheNeedleWatcher());
         }
 
+        // (Since the game now covers the room with an opaque backdrop when a feeding is
+        // happening, it doesn't really make sense to allow the game to be dragged)
         // Add draggability
-        addObject(new RoomDragger(ClientCtx.gameCtrl, GameCtx.bgLayer, gameParent));
+        //addObject(new RoomDragger(ClientCtx.gameCtrl, GameCtx.bgLayer, gameParent));
 
         // Center the game in the room
         ClientCtx.centerInRoom(gameParent);
