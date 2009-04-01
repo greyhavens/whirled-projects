@@ -3,6 +3,7 @@ package loopbacktest {
 import flash.text.AntiAliasType;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
+import flash.text.TextFieldType;
 import flash.text.TextFormat;
 
 public class TextBits
@@ -12,6 +13,31 @@ public class TextBits
     {
         var tf :TextField = new TextField();
         initTextField(tf, text, textScale, maxWidth, textColor, align);
+
+        return tf;
+    }
+
+    public static function createInputText (width :int, height :int, textScale :Number = 1,
+        textColor :uint = 0, initialText :String = "") :TextField
+    {
+        var tf :TextField = new TextField();
+        tf.type = TextFieldType.INPUT;
+        tf.mouseEnabled = true;
+        tf.selectable = true;
+        tf.multiline = true;
+        tf.wordWrap = false;
+        tf.border = true;
+        tf.width = width / textScale;
+        tf.height = height / textScale;
+        tf.scaleX = tf.scaleY = textScale;
+
+        var format :TextFormat = tf.defaultTextFormat;
+        if (textColor > 0) {
+            format.color = textColor;
+        }
+        tf.setTextFormat(format);
+
+        tf.text = initialText;
 
         return tf;
     }

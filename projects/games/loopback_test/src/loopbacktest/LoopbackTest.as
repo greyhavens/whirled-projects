@@ -7,6 +7,7 @@ import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
+import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
@@ -29,51 +30,91 @@ public class LoopbackTest extends Sprite
         g.drawRect(0, 0, 700, 500);
         g.endFill();
 
+        _layoutSprite = new Sprite();
+        _layoutSprite.x = 10;
+        _layoutSprite.y = 10;
+        addChild(_layoutSprite);
+
         // status text
         _status = new TextField();
         setStatusText("LoopbackTest");
         addChild(_status);
 
-        // buttons
-        _buttonSprite = new Sprite();
-        _buttonSprite.x = 10;
-        _buttonSprite.y = 10;
-        addChild(_buttonSprite);
+        // text entry
+        layoutElement(TextBits.createText("Name:", 1.2));
+        _nameField = TextBits.createInputText(100, 18, 1.2, 0, "MyProp");
+        layoutElement(_nameField);
+        layoutElement(TextBits.createText("Val:", 1.2), 10);
+        _valueField = TextBits.createInputText(100, 18, 1.2, 0, "MyVal");
+        layoutElement(_valueField);
+        layoutElement(TextBits.createText("Key:", 1.2), 10);
+        _keyField = TextBits.createInputText(100, 18, 1.2, 0, "666");
+        layoutElement(_keyField);
+        layoutElement(TextBits.createText("Test Val:", 1.2), 10);
+        _testField = TextBits.createInputText(100, 18, 1.2, 0, "MyVal");
+        layoutElement(_testField);
+        createNewLayoutRow(10);
 
+        // Send Message
         var sendMsgBtn :SimpleTextButton = new SimpleTextButton("Send message");
-        layoutButton(sendMsgBtn);
+        layoutElement(sendMsgBtn);
         sendMsgBtn.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
-                _gameCtrl.net.sendMessage("Hello!", null);
+                _gameCtrl.net.sendMessage(getEnteredName(), getEnteredVal());
             });
 
-        var propVal :int;
+        // Set Prop
         var setPropBtn :SimpleTextButton = new SimpleTextButton("Set Prop");
-        layoutButton(setPropBtn);
+        layoutElement(setPropBtn);
         setPropBtn.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
-                _gameCtrl.net.set("MyProp", propVal++, false);
+                _gameCtrl.net.set(getEnteredName(), getEnteredVal(), false);
             });
 
-        var immediatePropVal :int;
+        // Delete Prop
+        var deletePropBtn :SimpleTextButton = new SimpleTextButton("Delete Prop");
+        layoutElement(deletePropBtn);
+        deletePropBtn.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                _gameCtrl.net.set(getEnteredName(), null, false);
+            });
+
+        // Set Prop Immediate
         var setPropImmediateBtn :SimpleTextButton = new SimpleTextButton("Set Prop Immediate");
-        layoutButton(setPropImmediateBtn);
+        layoutElement(setPropImmediateBtn);
         setPropImmediateBtn.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
-                _gameCtrl.net.set("MyImmediateProp", immediatePropVal--, true);
+                _gameCtrl.net.set(getEnteredName(), getEnteredVal(), true);
             });
 
-        var elemVal :int;
+        // Test and Set
+        var testAndSetBtn :SimpleTextButton = new SimpleTextButton("Test and Set");
+        layoutElement(testAndSetBtn);
+        testAndSetBtn.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                _gameCtrl.net.testAndSet(getEnteredName(), getEnteredVal(), getTestVal());
+            });
+
+        // Set Element
         var setElemBtn :SimpleTextButton = new SimpleTextButton("Set Element");
-        layoutButton(setElemBtn);
+        layoutElement(setElemBtn);
         setElemBtn.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
-                _gameCtrl.net.setIn("Dictionary", 666, elemVal++);
+                _gameCtrl.net.setIn(getEnteredName(), getEnteredKey(), getEnteredVal());
             });
 
+        // Delete Element
+        var delElemBtn :SimpleTextButton = new SimpleTextButton("Delete Element");
+        layoutElement(delElemBtn);
+        delElemBtn.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                _gameCtrl.net.setIn(getEnteredName(), getEnteredKey(), null);
+            });
+
+        // Batch Transaction
         var batchVal :int;
         var batchBtn :SimpleTextButton = new SimpleTextButton("Batch Transaction");
-        layoutButton(batchBtn);
+        layoutElement(batchBtn);
         batchBtn.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 _gameCtrl.net.doBatch(function () :void {
@@ -84,23 +125,28 @@ public class LoopbackTest extends Sprite
             });
     }
 
-    protected function layoutButton (button :SimpleTextButton) :void
+    protected function layoutElement (disp :DisplayObject, indent :Number = 0) :void
     {
-        if (_buttonX + button.width > BUTTON_SPRITE_WIDTH) {
-            _buttonX = 0;
-            _buttonY = _buttonSprite.height + BUTTON_OFFSET_Y;
+        if (_layoutX + disp.width + indent > LAYOUT_SPRITE_WIDTH) {
+            createNewLayoutRow();
         }
 
-        button.x = _buttonX;
-        button.y = _buttonY;
-        _buttonSprite.addChild(button);
+        disp.x = _layoutX + indent;
+        disp.y = _layoutY;
+        _layoutSprite.addChild(disp);
 
-        _buttonX += button.width + BUTTON_OFFSET_X;
+        _layoutX += disp.width + indent + ELEMENT_OFFSET_X;
+    }
+
+    protected function createNewLayoutRow (yOffset :Number = 0) :void
+    {
+        _layoutX = 0;
+        _layoutY = _layoutSprite.height + ELEMENT_OFFSET_Y + yOffset;
     }
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
     {
-        setStatusText(formatStatus("MsgReceived", "name", e.name));
+        setStatusText(formatStatus("MsgReceived", "name", e.name, "val", e.value));
     }
 
     protected function onPropChanged (e :PropertyChangedEvent) :void
@@ -120,6 +166,28 @@ public class LoopbackTest extends Sprite
         TextBits.initTextField(_status, text, 1.5, 0, 0, "left");
         _status.x = 10;
         _status.y = this.height - 40;
+    }
+
+    protected function getEnteredName () :String
+    {
+        return _nameField.text;
+    }
+
+    protected function getEnteredVal () :Object
+    {
+        var text :String = _valueField.text;
+        return (text == null || text.length == 0 || text == "null" ? null : text);
+    }
+
+    protected function getTestVal () :Object
+    {
+        var text :String = _testField.text;
+        return (text == null || text.length == 0 || text == "null" ? null : text);
+    }
+
+    protected function getEnteredKey () :int
+    {
+        return int(_keyField.text);
     }
 
     protected static function formatStatus (...args) :String
@@ -153,14 +221,19 @@ public class LoopbackTest extends Sprite
     protected var _gameCtrl :GameControl;
     protected var _status :TextField;
 
-    protected var _buttonSprite :Sprite;
-    protected var _buttonX :Number = 0;
-    protected var _buttonY :Number = 0;
+    protected var _nameField :TextField;
+    protected var _valueField :TextField;
+    protected var _keyField :TextField;
+    protected var _testField :TextField;
 
-    protected static const BUTTON_SPRITE_WIDTH :Number = 680;
-    protected static const BUTTON_SPRITE_HEIGHT :Number = 480;
-    protected static const BUTTON_OFFSET_X :Number = 5;
-    protected static const BUTTON_OFFSET_Y :Number = 5;
+    protected var _layoutSprite :Sprite;
+    protected var _layoutX :Number = 0;
+    protected var _layoutY :Number = 0;
+
+    protected static const LAYOUT_SPRITE_WIDTH :Number = 680;
+    protected static const LAYOUT_SPRITE_HEIGHT :Number = 480;
+    protected static const ELEMENT_OFFSET_X :Number = 5;
+    protected static const ELEMENT_OFFSET_Y :Number = 5;
 }
 
 }
