@@ -41,9 +41,6 @@ public class GameModel extends SimObject
         _agentCtrl = ClientContext.ctrl.agent;
         _propsCtrl = ClientContext.ctrl.room.props;
 
-
-        _currentEntityId = ClientContext.ourEntityId;
-
         registerListener(_propsCtrl, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged);
         registerListener(_propsCtrl, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
 
@@ -411,10 +408,6 @@ public class GameModel extends SimObject
         return ClientContext.ctrl.room.getPlayerIds();
     }
 
-
-    protected var _currentEntityId :String;
-
-    public var currentSelectedTarget :int = 0;
 
     protected var _lineage :Lineage;
     protected var _agentCtrl :AgentSubControl;
