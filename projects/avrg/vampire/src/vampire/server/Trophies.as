@@ -7,10 +7,12 @@ public class Trophies
     public static const BASIC_AVATAR_MALE :String = "basicAvatarMale";
     public static const BASIC_AVATAR_FEMALE :String = "basicAvatarFemale";
 
-
+    //The number of progeny
     public static const PATRON_PREFIX :String = "patron";
     public static const PATRON_REQS :Array = [1, 2, 3, 4, 5, 10, 25];
 
+    //The number of invites accepted.  This intersects with the progeny trophies.
+    //The difference: you can make someone your progeny without inviting them.
     public static const INVITE_PREFIX :String = "invite";
     public static const INVITE_REQS :Array = [1, 2, 3, 4, 5, 10, 25];
 
@@ -63,9 +65,9 @@ public class Trophies
     }
 
 
-    public static function checkMinionTrophies ( player :PlayerData ) :void
+    public static function checkMinionTrophies (player :PlayerData) :void
     {
-        if( player == null ) {
+        if(player == null) {
             log.error("checkMinionTrophies", "player", player);
             return;
         }
@@ -73,8 +75,8 @@ public class Trophies
 
         log.debug("handlePlayerGainsMinion", "player", player.playerId, "minionCount", minionCount);
 
-        for each( var minionReq :int in PATRON_REQS) {
-            if( minionCount >= minionReq ) {
+        for each(var minionReq :int in PATRON_REQS) {
+            if(minionCount >= minionReq) {
                 doAward(player, PATRON_PREFIX + minionReq);
             }
         }
@@ -83,7 +85,7 @@ public class Trophies
 
     public static function checkInviteTrophies (player :PlayerData) :void
     {
-        if( player == null ) {
+        if(player == null) {
             log.error("checkInviteTrophies", "player", player);
             return;
         }
@@ -92,8 +94,8 @@ public class Trophies
         log.debug("checkInviteTrophies", "player", player.playerId, "inviteCount", inviteCount);
 
 
-        for each( var inviteReq :int in INVITE_REQS) {
-            if( inviteCount >= inviteReq ) {
+        for each(var inviteReq :int in INVITE_REQS) {
+            if(inviteCount >= inviteReq) {
                 doAward(player, INVITE_PREFIX + inviteReq);
             }
         }
@@ -107,6 +109,6 @@ public class Trophies
         }
     }
 
-    protected static const log :Log = Log.getLog( Trophies );
+    protected static const log :Log = Log.getLog(Trophies);
 }
 }
