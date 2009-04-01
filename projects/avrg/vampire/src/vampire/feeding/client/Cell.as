@@ -56,15 +56,20 @@ public class Cell extends CollidableObj
         return tf;
     }
 
+    public static function getCellRefs (cellType :int = -1) :Array
+    {
+        return GameCtx.gameMode.getObjectRefsInGroup(getGroupName(cellType));
+    }
+
     public static function getCellCount (cellType :int = -1) :int
     {
-        return GameCtx.gameMode.getObjectRefsInGroup(getGroupName(cellType)).length;
+        return getCellRefs(cellType).length;
     }
 
     public static function getCellCollision (obj :CollidableObj, cellType :int = -1) :Cell
     {
         // returns the first cell that collides with the given circle
-        var cells :Array = GameCtx.gameMode.getObjectRefsInGroup(getGroupName(cellType));
+        var cells :Array = getCellRefs(cellType);
 
         for each (var cellRef :SimObjectRef in cells) {
             var cell :Cell = cellRef.object as Cell;
@@ -383,7 +388,7 @@ public class Cell extends CollidableObj
         return _type == Constants.CELL_WHITE;
     }
 
-    protected function get canCollide () :Boolean
+    public function get canCollide () :Boolean
     {
         return true;
     }

@@ -192,6 +192,12 @@ public class GameMode extends AppMode
 
         ClientCtx.playerData.incrementTimesPlayed();
 
+        // ThreadTheNeedleWatcher continuously checks whether the player has won
+        // the Thread The Needle trophy
+        if (!ClientCtx.hasAwardedTrophies([ Trophies.THREAD_THE_NEEDLE ])) {
+            addObject(new ThreadTheNeedleWatcher());
+        }
+
         // Add draggability
         addObject(new RoomDragger(ClientCtx.gameCtrl, GameCtx.bgLayer, gameParent));
 

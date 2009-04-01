@@ -113,6 +113,7 @@ public class PlayerCursor extends CollidableObj
             } else {
                 // create a cell burst
                 GameObjects.createRedBurst(cell);
+                dispatchEvent(new GameEvent(GameEvent.HIT_RED_CELL));
             }
         }
 
