@@ -55,8 +55,6 @@ public class ClientContext
 
     public static var isNewPlayer :Boolean = false;
 
-
-    protected static var _playerEntityId :String;
     protected static var _playerRoomKey :String;
 
 
@@ -125,21 +123,13 @@ public class ClientContext
 
     public static function get ourEntityId () :String
     {
-        _playerEntityId = null;
-        if(_playerEntityId == null) {
-            for each(var entityId :String in ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
-
-                var entityUserId :int = int(ctrl.room.getEntityProperty(EntityControl.PROP_MEMBER_ID, entityId));
-
-                if(entityUserId == ctrl.player.getPlayerId()) {
-                    _playerEntityId = entityId;
-                    break;
-                }
-
+        for each(var entityId :String in ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
+            var entityUserId :int = int(ctrl.room.getEntityProperty(EntityControl.PROP_MEMBER_ID, entityId));
+            if(entityUserId == ctrl.player.getPlayerId()) {
+                return entityId;
             }
         }
-
-        return _playerEntityId;
+        return null;
     }
 
     public static function get ourRoomKey () :String
@@ -150,13 +140,6 @@ public class ClientContext
 
         return _playerRoomKey;
     }
-
-
-    public static function clearOurEntityId () :void
-    {
-        _playerEntityId = null;
-    }
-
 
     public static function getPlayerEntityId (playerId :int) :String
     {
