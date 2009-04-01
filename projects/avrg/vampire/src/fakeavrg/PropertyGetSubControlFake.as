@@ -33,25 +33,25 @@ package fakeavrg
 
         public function setAt (propName :String, index :int, value :Object, immediate :Boolean = false) :void
         {
-            if( _dict.get(propName) == null || !(_dict.get(propName) is Array )) {
-                _dict.put(propName, new Array() );
+            if(_dict.get(propName) == null || !(_dict.get(propName) is Array)) {
+                _dict.put(propName, new Array());
             }
 
             var e :ElementChangedEvent = new ElementChangedEvent(
                                 ElementChangedEvent.ELEMENT_CHANGED,
                                 propName,
                                 value,
-                                (_dict.get( propName) as Array)[index],
+                                (_dict.get(propName) as Array)[index],
                                 index);
 
 
             (_dict.get(propName) as Array)[ index ] = value;
-            dispatchEvent( e );
+            dispatchEvent(e);
         }
 
         public function setIn (propName :String, key :int, value :Object, immediate :Boolean = false) :void
         {
-            if( _dict.get(propName) == null || !(_dict.get(propName) is Dictionary )) {
+            if(_dict.get(propName) == null || !(_dict.get(propName) is Dictionary)) {
                 _dict.put(propName, new Dictionary());
             }
 
@@ -59,11 +59,11 @@ package fakeavrg
                                 ElementChangedEvent.ELEMENT_CHANGED,
                                 propName,
                                 value,
-                                (_dict.get( propName) as Dictionary)[ key ],
+                                (_dict.get(propName) as Dictionary)[ key ],
                                 key);
 
             Dictionary(_dict.get(propName))[key] = value;
-            dispatchEvent( e );
+            dispatchEvent(e);
         }
 
         public function set (propName :String, value :Object, immediate :Boolean = false) :void
@@ -72,15 +72,15 @@ package fakeavrg
                                 PropertyChangedEvent.PROPERTY_CHANGED,
                                 propName,
                                 value,
-                                _dict.get( propName) );
+                                _dict.get(propName));
 
-            _dict.put( propName, value);
-            dispatchEvent( e );
+            _dict.put(propName, value);
+            dispatchEvent(e);
         }
 
         override public function dispatchEvent (event :Event) :Boolean
         {
-            return _eventDispatcher.dispatchEvent( event );
+            return _eventDispatcher.dispatchEvent(event);
         }
 
         override public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void
@@ -91,7 +91,7 @@ package fakeavrg
 
         override public function hasEventListener(type:String):Boolean
         {
-            return _eventDispatcher.hasEventListener( type );
+            return _eventDispatcher.hasEventListener(type);
         }
 
         override public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void
@@ -101,7 +101,7 @@ package fakeavrg
 
         override public function willTrigger(type:String):Boolean
         {
-            return _eventDispatcher.willTrigger( type );
+            return _eventDispatcher.willTrigger(type);
         }
 
 

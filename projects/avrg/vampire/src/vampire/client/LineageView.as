@@ -128,7 +128,7 @@ public class LineageView extends SceneObjectParent
 
 
 //        if (_selectedPlayerIdCenter == playerIdToCenter
-//            && _previousHierarchyPage == _hierarchyPage ) {
+//            && _previousHierarchyPage == _hierarchyPage) {
 ////            _hierarchy.getMinionCount(playerIdToCenter) <= 5) {
 //
 //            trace("  doing nothing");
@@ -274,7 +274,7 @@ public class LineageView extends SceneObjectParent
 
 
             //Delete minions before the first entry in the 'page'
-            minionIds = minionIds.slice(startMinionViewIndex );
+            minionIds = minionIds.slice(startMinionViewIndex);
 
         }
         var locations :Array = computeMinionLocations(startX, startY, minionIds.length);

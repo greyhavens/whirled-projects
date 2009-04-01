@@ -649,7 +649,7 @@ public class GameModel extends SimObject//EventDispatcher
 //
 //    public function get targetPlayerId() :int
 //    {
-//        return SharedPlayerStateClient.getTargetPlayer( ClientContext.ourPlayerId);
+//        return SharedPlayerStateClient.getTargetPlayer(ClientContext.ourPlayerId);
 //    }
 
     public function get state() :String

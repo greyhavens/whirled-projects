@@ -101,7 +101,7 @@ public class DraggableSprite extends Sprite
         var yTodo :Boolean = false;
 
 
-        if( _painted == null ) {
+        if(_painted == null) {
             log.error("_painted==null");
             updateRoom ();
         }
@@ -253,8 +253,8 @@ public class DraggableSprite extends Sprite
         }
 
         //Make sure we are not outside the paintable area, no matter what.
-        this.x = MathUtil.clamp( this.x, Math.abs(_bounds.left), _ctrl.local.getPaintableArea().width - Math.abs(_bounds.right));
-        this.y = MathUtil.clamp( this.y, 0 + this.height/2, _ctrl.local.getPaintableArea().height - this.height/2);
+        this.x = MathUtil.clamp(this.x, Math.abs(_bounds.left), _ctrl.local.getPaintableArea().width - Math.abs(_bounds.right));
+        this.y = MathUtil.clamp(this.y, 0 + this.height/2, _ctrl.local.getPaintableArea().height - this.height/2);
     }
 
 //    public function shutdown :

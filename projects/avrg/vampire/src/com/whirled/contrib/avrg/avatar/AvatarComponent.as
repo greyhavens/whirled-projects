@@ -29,7 +29,7 @@ public class AvatarComponent
 
     protected function propertyProvider(key :String) :Object
     {
-        switch( key ) {
+        switch(key) {
 
             case ENTITY_PROPERTY_IS_LEGAL_AVATAR:
                 return true;
@@ -48,12 +48,12 @@ public class AvatarComponent
 
     protected function handleEntityMoved (e :ControlEvent) :void
     {
-        if( !_ctrl.hasControl()) {
+        if(!_ctrl.hasControl()) {
             return;
         }
 
         //We only care about avatars.
-        if( _ctrl.getEntityProperty( EntityControl.PROP_TYPE, e.name) != EntityControl.TYPE_AVATAR) {
+        if(_ctrl.getEntityProperty(EntityControl.PROP_TYPE, e.name) != EntityControl.TYPE_AVATAR) {
             return;
         }
 
@@ -128,7 +128,7 @@ public class AvatarComponent
     protected function getEntityId (userId :int) :String
     {
         for each (var entityId :String in _ctrl.getEntityIds(EntityControl.TYPE_AVATAR)) {
-            var entityUserId :int = int(_ctrl.getEntityProperty( EntityControl.PROP_MEMBER_ID, entityId));
+            var entityUserId :int = int(_ctrl.getEntityProperty(EntityControl.PROP_MEMBER_ID, entityId));
             if (userId == entityUserId) {
                 return entityId
             }

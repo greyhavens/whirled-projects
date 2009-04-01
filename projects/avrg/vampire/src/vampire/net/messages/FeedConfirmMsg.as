@@ -25,8 +25,8 @@ package vampire.net.messages
         override public function toBytes (bytes :ByteArray = null) :ByteArray
         {
             var bytes :ByteArray = super.toBytes(bytes);
-            bytes.writeBoolean( _isAllowedToFeed );
-            bytes.writeInt( _predId );
+            bytes.writeBoolean(_isAllowedToFeed);
+            bytes.writeInt(_predId);
             bytes.writeUTF(_preyName);
             return bytes;
         }
@@ -53,7 +53,7 @@ package vampire.net.messages
 
         override public function toString() :String
         {
-            return ClassUtil.tinyClassName( this ) + ": prey="
+            return ClassUtil.tinyClassName(this) + ": prey="
                 + _playerId
                 + ", predId=" + predatorId
                 + ", preyName=" + preyName

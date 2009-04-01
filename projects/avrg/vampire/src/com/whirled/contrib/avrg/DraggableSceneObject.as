@@ -130,7 +130,7 @@ public class DraggableSceneObject extends SceneObject
         var yTodo :Boolean = false;
 
 
-        if( _painted == null ) {
+        if(_painted == null) {
             log.error("_painted==null");
             updateRoom ();
         }
@@ -280,25 +280,25 @@ public class DraggableSceneObject extends SceneObject
         }
 
         //Make sure we are not outside the paintable area, no matter what.
-        if( _ctrl.isConnected() && _ctrl.local.getPaintableArea() != null && _bounds != null) {
+        if(_ctrl.isConnected() && _ctrl.local.getPaintableArea() != null && _bounds != null) {
 //            trace("clamping:");
 //            trace("  bounds=" + _bounds);
 //            trace("  loc=" + this.x + ", " + this.y);
 //            trace("  _bounds.bottom=" + _bounds.bottom);
-//            trace("  clamping x ( " + (-_bounds.left) + ", " + (_ctrl.local.getPaintableArea().width - _bounds.right) + " )");
-//            trace("  clamping y ( " + (-_bounds.top) + ", " + (_ctrl.local.getPaintableArea().height - _bounds.bottom) + " )");
+//            trace("  clamping x (" + (-_bounds.left) + ", " + (_ctrl.local.getPaintableArea().width - _bounds.right) + ")");
+//            trace("  clamping y (" + (-_bounds.top) + ", " + (_ctrl.local.getPaintableArea().height - _bounds.bottom) + ")");
 //            trace("  width=" + _displaySprite.width);
-            this.x = MathUtil.clamp( this.x, -_bounds.left, _ctrl.local.getPaintableArea().width - _bounds.right);
-            this.y = MathUtil.clamp( this.y, -_bounds.top, _ctrl.local.getPaintableArea().height - _bounds.bottom);
-//            this.x = MathUtil.clamp( this.x, Math.abs(_bounds.left), _ctrl.local.getPaintableArea().width - Math.abs(_bounds.right));
-//            this.y = MathUtil.clamp( this.y, 0 + this.height/2, _ctrl.local.getPaintableArea().height - this.height/2);
+            this.x = MathUtil.clamp(this.x, -_bounds.left, _ctrl.local.getPaintableArea().width - _bounds.right);
+            this.y = MathUtil.clamp(this.y, -_bounds.top, _ctrl.local.getPaintableArea().height - _bounds.bottom);
+//            this.x = MathUtil.clamp(this.x, Math.abs(_bounds.left), _ctrl.local.getPaintableArea().width - Math.abs(_bounds.right));
+//            this.y = MathUtil.clamp(this.y, 0 + this.height/2, _ctrl.local.getPaintableArea().height - this.height/2);
         }
     }
 
     public function centerOnViewableRoom() :void
     {
         //Workaround as roombounds can be bigger than the paintable area
-        if( _ctrl.local.getRoomBounds()[0] > _ctrl.local.getPaintableArea().width) {
+        if(_ctrl.local.getRoomBounds()[0] > _ctrl.local.getPaintableArea().width) {
             this.x = _ctrl.local.getPaintableArea().width/2;
             this.y = _ctrl.local.getPaintableArea().height/2;
         }

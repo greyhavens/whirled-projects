@@ -4,7 +4,7 @@ package com.whirled.contrib.simplegame.objects
 
     public class SceneButton extends SimpleSceneObject
     {
-        public function SceneButton( button :SimpleButton, name :String = null)
+        public function SceneButton(button :SimpleButton, name :String = null)
         {
             super(button, name);
             _button = button;
@@ -15,16 +15,16 @@ package com.whirled.contrib.simplegame.objects
             return _button;
         }
 
-        public function registerButtonListener( eventname :String, f :Function ) :void
+        public function registerButtonListener(eventname :String, f :Function) :void
         {
-            registerListener( _button, eventname, f);
+            registerListener(_button, eventname, f);
         }
 
         public function get mouseEnabled() :Boolean
         {
             return _button.mouseEnabled;
         }
-        public function set mouseEnabled( m :Boolean ) :void
+        public function set mouseEnabled(m :Boolean) :void
         {
             _button.mouseEnabled = m;
         }

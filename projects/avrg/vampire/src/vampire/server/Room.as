@@ -89,21 +89,21 @@ public class Room extends SimObject
 
         maybeLoadControl();
 
-        var playername :String = _ctrl.getAvatarInfo( player.playerId) != null ? _ctrl.getAvatarInfo( player.playerId).name : "" + player.playerId;
+        var playername :String = _ctrl.getAvatarInfo(player.playerId) != null ? _ctrl.getAvatarInfo(player.playerId).name : "" + player.playerId;
 
         log.info("Setting " + playername + " props into room, player=" + player);
 
-//        _players.put( player.playerId, player );
+//        _players.put(player.playerId, player);
 //        player.setIntoRoomProps();
 
         //Let the avatars know who is who, so they don't spam us with movement updates
-//        ctrl.sendSignal( VConstants.SIGNAL_PLAYER_IDS, playerIds );
+//        ctrl.sendSignal(VConstants.SIGNAL_PLAYER_IDS, playerIds);
 
     }
 
     public function playerLeft (player :PlayerData) :void
     {
-//        _entityLocations.remove( player.playerId );
+//        _entityLocations.remove(player.playerId);
 
         if (!_players.remove(player.playerId)) {
             log.warning("Departing player did not exist in room", "roomId", this.roomId,
@@ -117,10 +117,10 @@ public class Room extends SimObject
         }
 
         //Let the avatars know who is who, so they don't spam us with movement updates
-//        ctrl.sendSignal( VConstants.SIGNAL_PLAYER_IDS, playerIds );
+//        ctrl.sendSignal(VConstants.SIGNAL_PLAYER_IDS, playerIds);
 
         //Broadcast the players in the room
-//        _ctrl.sendSignal(Constants.ROOM_SIGNAL_ENTITYID_REPONSE, _players.toArray().map( function( p :PlayerData) :int { return p.playerId}));
+//        _ctrl.sendSignal(Constants.ROOM_SIGNAL_ENTITYID_REPONSE, _players.toArray().map(function(p :PlayerData) :int { return p.playerId}));
 
 
 //        _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, null, true);
@@ -147,13 +147,13 @@ public class Room extends SimObject
         }
 
         try {
-//            roomDB.update( dt );
+//            roomDB.update(dt);
             //Update PlayerData objects. This means setting them into room props and player props.
-            _players.forEach( function( playerId :int, p :PlayerData) :void{ p.update(dt)});
+            _players.forEach(function(playerId :int, p :PlayerData) :void{ p.update(dt)});
 
             //Send feedback messages.
-            if( _feedbackMessageQueue.length > 0 ) {
-                _ctrl.props.set( Codes.ROOM_PROP_FEEDBACK, _feedbackMessageQueue.slice() );
+            if(_feedbackMessageQueue.length > 0) {
+                _ctrl.props.set(Codes.ROOM_PROP_FEEDBACK, _feedbackMessageQueue.slice());
                 _feedbackMessageQueue.splice(0);
             }
 
@@ -162,11 +162,11 @@ public class Room extends SimObject
             //Sort for comparion
             playerIdsFeedingNow.sort();
             var playerIdsFeedingPrevious :Array =
-                _ctrl.props.get( Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE ) as Array;
+                _ctrl.props.get(Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE) as Array;
 
-            if( !ArrayUtil.equals( playerIdsFeedingNow, playerIdsFeedingPrevious)) {
+            if(!ArrayUtil.equals(playerIdsFeedingNow, playerIdsFeedingPrevious)) {
                 log.debug("Room " + roomId + ", Setting busy players=" + playerIdsFeedingNow);
-                _ctrl.props.set( Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE, playerIdsFeedingNow);
+                _ctrl.props.set(Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE, playerIdsFeedingNow);
             }
 
             //Update the primary predIds, for the tutorial
@@ -175,7 +175,7 @@ public class Room extends SimObject
             var primaryPredsPrevious :Array =
                 _ctrl.props.get(Codes.ROOM_PROP_PRIMARY_PREDS) as Array;
 
-            if( !ArrayUtil.equals(primaryPreds, primaryPredsPrevious)) {
+            if(!ArrayUtil.equals(primaryPreds, primaryPredsPrevious)) {
                 log.debug("Room " + roomId + ", Setting primary preds=" + primaryPreds);
                 _ctrl.props.set(Codes.ROOM_PROP_PRIMARY_PREDS, primaryPreds);
             }
@@ -204,7 +204,7 @@ public class Room extends SimObject
         if (_ctrl == null) {
             _ctrl = ServerContext.ctrl.getRoom(_roomId);
 
-            if( _ctrl == null ) {
+            if(_ctrl == null) {
                 log.warning("maybeLoadControl(), but RoomSubControl is still null!!!");
             }
 
@@ -213,21 +213,21 @@ public class Room extends SimObject
 //            _ctrl.props.set(Codes.ROOM_PROP_MINION_HIERARCHY, ServerContext.minionHierarchy.toBytes());
 //            log.debug("Export my state to new control", "state", _state);
 
-//            _nonplayerMonitor = new NonPlayerMonitor( _ctrl );
-//            _locationTracker = new LocationTracker( this );
+//            _nonplayerMonitor = new NonPlayerMonitor(_ctrl);
+//            _locationTracker = new LocationTracker(this);
             registerListener(_ctrl, AVRGameRoomEvent.ROOM_UNLOADED, destroy);
 //            registerListener(_ctrl, AVRGameRoomEvent.PLAYER_MOVED, handlePlayerMoved);
 //            registerListener(_ctrl, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
 
-            _bloodBloomGameManager = new FeedingManager( this );
-//            _roomDB.addObject( bloodBloomGameManager );
+            _bloodBloomGameManager = new FeedingManager(this);
+//            _roomDB.addObject(bloodBloomGameManager);
 
         }
     }
 
     public function destroy (...ignored) :void
     {
-        if( isLiveObject ) {
+        if(isLiveObject) {
             destroySelf();
         }
     }
@@ -236,7 +236,7 @@ public class Room extends SimObject
     override protected function destroyed () :void
     {
         try {
-//            if( _roomDB != null ) {
+//            if(_roomDB != null) {
 //                _roomDB.shutdown();
 //            }
 //            if (_players.size() != 0) {
@@ -246,7 +246,7 @@ public class Room extends SimObject
 ////                trace("Unloaded room", "roomId", roomId);
 //            }
 ////            if(_players != null) {
-////                _players.forEach(function( playerId :int, player :PlayerData) :void {
+////                _players.forEach(function(playerId :int, player :PlayerData) :void {
 ////                    player.r
 ////                });
 ////            }
@@ -265,7 +265,7 @@ public class Room extends SimObject
 
     public function getPlayer (playerId :int) :PlayerData
     {
-        return _players.get( playerId ) as PlayerData;
+        return _players.get(playerId) as PlayerData;
     }
 
     public function get playerIds () :Array
@@ -283,7 +283,7 @@ public class Room extends SimObject
     public function addFeedback (msg :String, playerId :int = 0) :void
     {
         log.debug(playerId + " " + msg);
-        _feedbackMessageQueue.push( [playerId, msg] );
+        _feedbackMessageQueue.push([playerId, msg]);
     }
 
     public function get bloodBloomGameManager () :FeedingManager

@@ -16,46 +16,46 @@ package vampire.client
 */
 public class SharedPlayerStateClient
 {
-    protected static const log :Log = Log.getLog( SharedPlayerStateClient );
+    protected static const log :Log = Log.getLog(SharedPlayerStateClient);
 
     public static function getBlood (playerId :int) :Number
     {
         var blood :Number = Number(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD));
-        if( !isNaN(blood) && blood >= 1 ) {
+        if(!isNaN(blood) && blood >= 1) {
             return blood;
         }
         //Check if we are a non player.  They might not have any blood value set in the room props yet
         //If not, then they have max blood.
-        if( !isPlayer( playerId )) {
+        if(!isPlayer(playerId)) {
             return VConstants.MAX_BLOOD_NONPLAYERS;
         }
         return blood;
     }
 
-    public static function isPlayer( playerId :int ) :Boolean
+    public static function isPlayer(playerId :int) :Boolean
     {
-        return ArrayUtil.contains( ClientContext.ctrl.room.getPlayerIds(), playerId );
+        return ArrayUtil.contains(ClientContext.ctrl.room.getPlayerIds(), playerId);
     }
 
     public static function getMaxBlood (playerId :int) :Number
     {
-        return VConstants.MAX_BLOOD_FOR_LEVEL( getLevel(playerId) );
+        return VConstants.MAX_BLOOD_FOR_LEVEL(getLevel(playerId));
     }
 
     public static function getLevel (playerId :int) :int
     {
-        return Math.max(1, Logic.levelGivenCurrentXpAndInvites( getXP( playerId ), getInvites(playerId)));
+        return Math.max(1, Logic.levelGivenCurrentXpAndInvites(getXP(playerId), getInvites(playerId)));
     }
 
     public static function getBloodType (playerId :int) :int
     {
-        return Logic.getPlayerBloodStrain( playerId );
+        return Logic.getPlayerBloodStrain(playerId);
     }
 
     public static function getXP (playerId :int) :Number
     {
         var xp :Number = Number(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP));
-        if( isNaN( xp )) {
+        if(isNaN(xp)) {
             return 0;
         }
         return xp;
@@ -114,7 +114,7 @@ public class SharedPlayerStateClient
 
     public static function getCurrentState (playerId :int) :String
     {
-        if( playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE) !== undefined) {
+        if(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE) !== undefined) {
             return String(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE));
         }
         else {
@@ -150,7 +150,7 @@ public class SharedPlayerStateClient
     }
 
 
-    public static function isProps( playerId :int ) :Boolean
+    public static function isProps(playerId :int) :Boolean
     {
         return ClientContext.ctrl.room.props.get(Codes.playerRoomPropKey(playerId)) != null;
     }
@@ -166,10 +166,10 @@ public class SharedPlayerStateClient
         return -1;
     }
 
-    public static function toStringForPlayer( playerId :int ) :String
+    public static function toStringForPlayer(playerId :int) :String
     {
-        return playerId + ", blood=" + getBlood( playerId ) + ", level=" + getLevel( playerId ) + ", action=" + getCurrentState( playerId ) + ", bloodbonded=" + getBloodBonded( playerId ) + ", bloodbondname=" + getBloodBondedName(playerId) + ", time=" + new Date(getTime( playerId )).toTimeString()
-//            + ", closestUserId=" + getClosestUserData( playerId )
+        return playerId + ", blood=" + getBlood(playerId) + ", level=" + getLevel(playerId) + ", action=" + getCurrentState(playerId) + ", bloodbonded=" + getBloodBonded(playerId) + ", bloodbondname=" + getBloodBondedName(playerId) + ", time=" + new Date(getTime(playerId)).toTimeString()
+//            + ", closestUserId=" + getClosestUserData(playerId)
             ;
     }
 

@@ -322,7 +322,7 @@ public class Lineage extends SimObject
 
         for each(var playerid :int in players) {
             bytes.writeInt(playerid);
-            bytes.writeInt(getSireId(playerid) );
+            bytes.writeInt(getSireId(playerid));
             bytes.writeUTF(_playerId2Name.containsKey(playerid) ?  _playerId2Name.get(playerid) :"");
         }
         bytes.compress();//Yes, compress.  Watch out on the client, that they don't uncompress it twice.

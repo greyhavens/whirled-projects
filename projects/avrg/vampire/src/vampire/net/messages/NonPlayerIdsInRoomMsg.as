@@ -27,8 +27,8 @@ public class NonPlayerIdsInRoomMsg extends BaseGameMsg
         _npIds = new Array();
 
         var count :int = bytes.readInt();
-        while( count > 0 ) {
-            _npIds.push( bytes.readInt() );
+        while(count > 0) {
+            _npIds.push(bytes.readInt());
             count--;
         }
 
@@ -38,12 +38,12 @@ public class NonPlayerIdsInRoomMsg extends BaseGameMsg
     {
         var bytes :ByteArray = super.toBytes(bytes);
 
-        bytes.writeInt( _roomId );
+        bytes.writeInt(_roomId);
 
-        bytes.writeInt( _npIds.length );
+        bytes.writeInt(_npIds.length);
 
-        for each( var id :int in _npIds ) {
-            bytes.writeInt( id );
+        for each(var id :int in _npIds) {
+            bytes.writeInt(id);
         }
         return bytes;
     }
@@ -65,7 +65,7 @@ public class NonPlayerIdsInRoomMsg extends BaseGameMsg
 
     override public function toString() :String
     {
-        return ClassUtil.tinyClassName( this ) + ": player=" + _playerId + ", ids=" + _npIds + ", room=" + _roomId;
+        return ClassUtil.tinyClassName(this) + ": player=" + _playerId + ", ids=" + _npIds + ", room=" + _roomId;
     }
 
     protected var _npIds :Array;

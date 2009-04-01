@@ -125,7 +125,7 @@ public class MainGameMode extends AppMode
 
         //If this player hasn't played before, automatically show the help.
         if(ClientContext.model.isNewPlayer()) {
-//            addObject( new HelpPopup(), modeSprite);
+//            addObject(new HelpPopup(), modeSprite);
         }
 
 //        _feedingGameDraggableSprite = new DraggableSceneObject(ClientContext.ctrl);

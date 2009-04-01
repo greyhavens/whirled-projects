@@ -22,12 +22,12 @@ public class Util
     */
     public static function formatNumberForFeedback (n :Number) :String
     {
-        if( n >= 1) {
-            return "" + int( Math.floor( n ));
+        if(n >= 1) {
+            return "" + int(Math.floor(n));
         }
         else {
             var nString :String = "" + n;
-            return nString.substring( 0, Math.min( nString.indexOf(".") + 3, nString.length));
+            return nString.substring(0, Math.min(nString.indexOf(".") + 3, nString.length));
         }
     }
 

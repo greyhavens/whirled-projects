@@ -9,7 +9,7 @@ package fakeavrg
     {
         public function AVRServerGameControlFake(d :DisplayObject)
         {
-            var fakeserverobject :ServerObjectFake = new ServerObjectFake( d );
+            var fakeserverobject :ServerObjectFake = new ServerObjectFake(d);
             super(fakeserverobject);
         }
 

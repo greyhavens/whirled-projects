@@ -20,13 +20,13 @@ package vampire.client
             modeSprite.visible = false;
 
             var infoPanel :MovieClip = ClientContext.instantiateMovieClip("HUD", "popup_avatar", false);
-            modeSprite.addChild( infoPanel );
+            modeSprite.addChild(infoPanel);
 
 
-            registerListener( infoPanel["button_ok"], MouseEvent.CLICK, function(...ignored) :void {
+            registerListener(infoPanel["button_ok"], MouseEvent.CLICK, function(...ignored) :void {
                 tryStarting();
             });
-            registerListener( infoPanel["avatar_close"], MouseEvent.CLICK, function(...ignored) :void {
+            registerListener(infoPanel["avatar_close"], MouseEvent.CLICK, function(...ignored) :void {
                 ClientContext.ctrl.player.deactivateGame();
             });
 
@@ -34,7 +34,7 @@ package vampire.client
             infoPanel.x = ClientContext.ctrl.local.getPaintableArea().width/2;//ClientContext.ctrl.local.getRoomBounds()[0]/2;
             infoPanel.y = ClientContext.ctrl.local.getPaintableArea().height/2;//ClientContext.ctrl.local.getRoomBounds()[1]/2;
 
-            registerListener( ClientContext.ctrl.local, AVRGameControlEvent.SIZE_CHANGED, function(...ignored) :void {
+            registerListener(ClientContext.ctrl.local, AVRGameControlEvent.SIZE_CHANGED, function(...ignored) :void {
                 infoPanel.x = ClientContext.ctrl.local.getPaintableArea().width/2;
                 infoPanel.y = ClientContext.ctrl.local.getPaintableArea().height/2;
             });

@@ -56,7 +56,7 @@ public class GameServer extends ObjectDB
     public function GameServer ()
     {
         log.info("Vampire Server initializing...");
-        if( ServerContext.ctrl == null ) {
+        if(ServerContext.ctrl == null) {
             log.error("AVRServerGameControl should of been initialized already");
             return;
         }
@@ -68,20 +68,20 @@ public class GameServer extends ObjectDB
         registerListener(_ctrl.game, AVRGameControlEvent.PLAYER_QUIT_GAME, playerQuitGame);
         registerListener(_ctrl.game, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
 
-//        ServerContext.msg = new VMessageManager( _ctrl );
+//        ServerContext.msg = new VMessageManager(_ctrl);
 
         _startTime = getTimer();
         _lastTickTime = _startTime;
         setInterval(tick, SERVER_TICK_UPDATE_MILLISECONDS);
 
-        ServerContext.lineage = new LineageServer( this );
-        addObject( ServerContext.lineage );
+        ServerContext.lineage = new LineageServer(this);
+        addObject(ServerContext.lineage);
 
 //        ServerContext.npBlood = new NonPlayerAvatarsBloodMonitor();
-//        addObject( ServerContext.npBlood );
+//        addObject(ServerContext.npBlood);
 
         //Tim's bloodbond game server
-        FeedingServer.init( _ctrl );
+        FeedingServer.init(_ctrl);
     }
 
     /**
@@ -92,12 +92,12 @@ public class GameServer extends ObjectDB
     {
         var timedTask :TimedTask = new TimedTask(UPDATE_PLAYER_TIME);
         var updatePlayerTimeTask :FunctionTask = new FunctionTask(updatePlayersCurrentTime);
-        var serialTask :SerialTask = new SerialTask( timedTask, updatePlayerTimeTask );
+        var serialTask :SerialTask = new SerialTask(timedTask, updatePlayerTimeTask);
         var repeatingTask :RepeatingTask = new RepeatingTask(serialTask);
 
         var timerObject :SimObject = new SimObject();
-        addObject( timerObject );
-        timerObject.addTask( repeatingTask );
+        addObject(timerObject);
+        timerObject.addTask(repeatingTask);
     }
 
 
@@ -109,10 +109,10 @@ public class GameServer extends ObjectDB
     protected function updatePlayersCurrentTime (...ignored) :void
     {
         log.debug("updatePlayersCurrentTime " + ServerContext.time);
-        _players.forEach( function( playerId :int, player :PlayerData) :void {
+        _players.forEach(function(playerId :int, player :PlayerData) :void {
             //Update the players time, unless they are a new player (time==0)
-            if( player.time != 0) {
-                player.setTime( ServerContext.time );
+            if(player.time != 0) {
+                player.setTime(ServerContext.time);
             }
         });
     }
@@ -133,10 +133,10 @@ public class GameServer extends ObjectDB
 
             try {
                 room = new Room(roomId);
-                _rooms.put(roomId, room );
-                addObject( room );
+                _rooms.put(roomId, room);
+                addObject(room);
             }
-            catch(err :Error ) {
+            catch(err :Error) {
                 log.error("Attempted to get a room with no players.  Throws error.  Use isRoom()");
             }
         }
@@ -145,7 +145,7 @@ public class GameServer extends ObjectDB
 
     public function isRoom (roomId :int) :Boolean
     {
-        return _rooms.containsKey( roomId );
+        return _rooms.containsKey(roomId);
     }
 
     public function getPlayer (playerId :int) :PlayerData
@@ -159,11 +159,11 @@ public class GameServer extends ObjectDB
     */
     protected function removeStaleRooms () :void
     {
-        for each( var roomId :int in _rooms.keys()) {
-            var room :Room = _rooms.get( roomId ) as Room;
-            if( room == null || room.isStale ) {
+        for each(var roomId :int in _rooms.keys()) {
+            var room :Room = _rooms.get(roomId) as Room;
+            if(room == null || room.isStale) {
                 log.debug("Removed room from VServer " + roomId);
-                _rooms.remove( roomId );
+                _rooms.remove(roomId);
             }
         }
     }
@@ -187,10 +187,10 @@ public class GameServer extends ObjectDB
         removeStaleRooms();
 
         //Add the global messages to each room
-        _rooms.forEach( function( roomId :int, room :Room) :void {
+        _rooms.forEach(function(roomId :int, room :Room) :void {
 
-                for each( var globalMessage :String in _globalFeedback) {
-                    room.addFeedback( globalMessage, 0);
+                for each(var globalMessage :String in _globalFeedback) {
+                    room.addFeedback(globalMessage, 0);
                 }
             });
 
@@ -212,7 +212,7 @@ public class GameServer extends ObjectDB
     protected function handleMessage (evt :MessageReceivedEvent) :void
     {
         //Ignore messages not meant for individual players.
-//        if( evt.name == NonPlayerIdsInRoomMsg.NAME ) {
+//        if(evt.name == NonPlayerIdsInRoomMsg.NAME) {
 //            return;
 //        }
 
@@ -229,7 +229,7 @@ public class GameServer extends ObjectDB
                 ServerLogic.handleMessage(player, evt.name, evt.value);
             });
         }
-        catch( err :Error ) {
+        catch(err :Error) {
             log.error(err + "\n" + err.getStackTrace());
         }
     }
@@ -249,16 +249,16 @@ public class GameServer extends ObjectDB
             }
 
 
-    //        log.info("!!!!!Before player created", "player time", _ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
-            log.info("!!!!!Before player created", "player time", new Date(_ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
+    //        log.info("!!!!!Before player created", "player time", _ctrl.getPlayer(playerId).props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
+            log.info("!!!!!Before player created", "player time", new Date(_ctrl.getPlayer(playerId).props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
 
             var pctrl :PlayerSubControlServer = _ctrl.getPlayer(playerId);
             if (pctrl == null) {
                 throw new Error("Could not get PlayerSubControlServer for player!");
             }
     //
-    //        log.info("!!!!!After player created", "player time", _ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
-            log.info("!!!!!AFter player control created", "player time", new Date(_ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
+    //        log.info("!!!!!After player created", "player time", _ctrl.getPlayer(playerId).props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
+            log.info("!!!!!AFter player control created", "player time", new Date(_ctrl.getPlayer(playerId).props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
 
 
             var hierarchyChanged :Boolean = false;
@@ -268,13 +268,13 @@ public class GameServer extends ObjectDB
                 _players.put(playerId, player);
                 //Keep a record of player ids to distinguish players and non-players
                 //even when the players are not actively playing.
-//                ServerContext.npBlood.addNewPlayer( playerId );
+//                ServerContext.npBlood.addNewPlayer(playerId);
             });
 
 
             log.debug("Sucessfully created Player object.");
         }
-        catch( err :Error ) {
+        catch(err :Error) {
             log.error(err + "\n" + err.getStackTrace());
         }
     }
@@ -302,19 +302,19 @@ public class GameServer extends ObjectDB
 
             log.info("Player quit the game", "player", player);
         }
-        catch( err :Error ) {
+        catch(err :Error) {
             log.error(err + "\n" + err.getStackTrace());
         }
     }
 
     public function addGlobalFeedback (msg :String) :void
     {
-        _globalFeedback.push( msg );
+        _globalFeedback.push(msg);
     }
 
     public function isPlayer (playerId :int) :Boolean
     {
-        return _players.containsKey( playerId );
+        return _players.containsKey(playerId);
     }
 
 

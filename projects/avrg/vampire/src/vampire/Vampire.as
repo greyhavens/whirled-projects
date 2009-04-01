@@ -18,7 +18,7 @@ public class Vampire extends Sprite
     {
         trace("Vampire()");
         
-        addChild( new VampireMain() );
+        addChild(new VampireMain());
         
 //        _game = new Game(new AVRGameControl(this));
 //        this.addChild(_game);

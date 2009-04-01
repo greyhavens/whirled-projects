@@ -41,7 +41,7 @@ package fakeavrg
          */
         override public function getEntityProperty (key :String, entityId :String = null) :Object
         {
-            var index :int = ArrayUtil.indexOf( FakeAVRGContext.entityIds, entityId );
+            var index :int = ArrayUtil.indexOf(FakeAVRGContext.entityIds, entityId);
             return FakeAVRGContext.playerIds[index];
         }
 
@@ -58,7 +58,7 @@ package fakeavrg
         {
         }
 
-        override public function getAvatarInfo( playerId :int ) :AVRGameAvatar
+        override public function getAvatarInfo(playerId :int) :AVRGameAvatar
         {
             var avatar :AVRGameAvatar = new AVRGameAvatar();
             avatar.x = 100;

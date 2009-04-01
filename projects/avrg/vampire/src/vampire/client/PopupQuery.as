@@ -88,7 +88,7 @@ public class PopupQuery extends DraggableObject
                                            _displaySprite.height
 //                                                - GAP_BETWEEN_BUTTON_AND_PANEL_BOTTOM
 //                                                - _buttonHeight
-                                                );
+                                               );
         _draggableSprite.graphics.endFill();
         _displaySprite.addChildAt(_buttonPanelSprite, _displaySprite.numChildren);
     }
@@ -178,7 +178,7 @@ public class PopupQuery extends DraggableObject
         var b2 :SimpleButton = _popupPanel["button_02"] as SimpleButton;
         b1.parent.removeChild(b1);
         b2.parent.removeChild(b2);
-        if( buttonNames == null) {
+        if(buttonNames == null) {
             return;
         }
 
@@ -219,21 +219,21 @@ public class PopupQuery extends DraggableObject
             //Bind a command or function to the button
             if (commandsOrFunctions[i] != null) {
                 if (commandsOrFunctions[i] is Function) {
-                    registerListener( b, MouseEvent.CLICK, commandsOrFunctions[i]);
+                    registerListener(b, MouseEvent.CLICK, commandsOrFunctions[i]);
                 }
                 else {
-                    Command.bind( b, MouseEvent.CLICK, commandsOrFunctions[i]);
+                    Command.bind(b, MouseEvent.CLICK, commandsOrFunctions[i]);
                 }
             }
 
             //Also make the buttons shut the popup
-            registerListener( b, MouseEvent.CLICK, function(e :MouseEvent) :void {
+            registerListener(b, MouseEvent.CLICK, function(e :MouseEvent) :void {
                 destroySelf();
             });
         }
     }
 
-    protected function buttonTextField( buttonText :String, buttonWidth :int ) :TextField
+    protected function buttonTextField(buttonText :String, buttonWidth :int) :TextField
     {
         var buttonTextField :TextField = TextFieldUtil.createField(buttonText);
         buttonTextField.mouseEnabled = false;
@@ -245,7 +245,7 @@ public class PopupQuery extends DraggableObject
         buttonTextField.antiAliasType = AntiAliasType.ADVANCED;
         buttonTextField.width = buttonWidth - 4;
         buttonTextField.height = 35;
-        buttonTextField.setTextFormat( format );
+        buttonTextField.setTextFormat(format);
 
         //Poor mans bold font
         var filter :GlowFilter = new GlowFilter(0xFF0000, 1.0, 1.3, 1.1, 4);

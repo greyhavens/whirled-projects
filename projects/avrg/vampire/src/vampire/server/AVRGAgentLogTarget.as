@@ -12,7 +12,7 @@ package vampire.server
     public class AVRGAgentLogTarget implements LogTarget
     {
         
-        public function AVRGAgentLogTarget( ctrl :AVRServerGameControl )
+        public function AVRGAgentLogTarget(ctrl :AVRServerGameControl)
         {
             _ctrl = ctrl;
             _messageCache = new StringBuilder();
@@ -21,8 +21,8 @@ package vampire.server
         
         public function sendLogs(...ignored) :void
         {
-            if( _isLogs ) {
-                _ctrl.game.sendMessage( SERVER_LOG, _messageCache.toString() );
+            if(_isLogs) {
+                _ctrl.game.sendMessage(SERVER_LOG, _messageCache.toString());
                 _messageCache = new StringBuilder();
                 _isLogs = false;
             }
@@ -30,7 +30,7 @@ package vampire.server
         
         public function log(msg:String):void
         {
-            _ctrl.game.sendMessage( SERVER_LOG, msg );
+            _ctrl.game.sendMessage(SERVER_LOG, msg);
 //            _messageCache.append("\n\t\t>>>>>SERVER " + msg);
 //            _isLogs = true;
         }

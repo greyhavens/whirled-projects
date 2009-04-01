@@ -4,7 +4,7 @@ package vampire.client.events
 
     public class AvatarUpdatedEvent extends Event
     {
-        public function AvatarUpdatedEvent( userId :int, location :Array, hotspot :Array )
+        public function AvatarUpdatedEvent(userId :int, location :Array, hotspot :Array)
         {
             super(LOCATION_CHANGED, false, false);
             _playerId = userId;

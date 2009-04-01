@@ -23,8 +23,8 @@ package vampire.net.messages
         override public function toBytes (bytes :ByteArray = null) :ByteArray
         {
             var bytes :ByteArray = super.toBytes(bytes);
-            bytes.writeInt( _inviterId );
-            bytes.writeUTF( (_shareToken == null ? "" : _shareToken) );
+            bytes.writeInt(_inviterId);
+            bytes.writeUTF((_shareToken == null ? "" : _shareToken));
             return bytes;
         }
         
@@ -44,7 +44,7 @@ package vampire.net.messages
         
         override public function toString() :String
         {
-            return ClassUtil.tinyClassName( this ) + ": player=" + _playerId + ", inviterId=" + _inviterId + ", shareToken=" + _shareToken;
+            return ClassUtil.tinyClassName(this) + ": player=" + _playerId + ", inviterId=" + _inviterId + ", shareToken=" + _shareToken;
         }
         
         protected var _shareToken :String;

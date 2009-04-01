@@ -11,7 +11,7 @@ package vampire.server
     
 public class LocationTracker extends SimObjectThane
 {
-    public function LocationTracker( room :Room )
+    public function LocationTracker(room :Room)
     {
         _room = room;
         
@@ -28,34 +28,34 @@ public class LocationTracker extends SimObjectThane
         _room = null;
     }
     
-    protected function handlePlayerEntered( e :AVRGameRoomEvent ) :void
+    protected function handlePlayerEntered(e :AVRGameRoomEvent) :void
     {
         var playerId :int = int(e.value);
-        if( _room.getPlayer( playerId ) ) {
-            var player :Player = _room.getPlayer( playerId );
-            _entityLocations.put( playerId, player.location ); 
+        if(_room.getPlayer(playerId)) {
+            var player :Player = _room.getPlayer(playerId);
+            _entityLocations.put(playerId, player.location); 
         }
         log.debug("handlePlayerEntered(" + e + ") " + this);
         
-        _room.players.forEach( function( id :int, p :Player):void {
+        _room.players.forEach(function(id :int, p :Player):void {
             p.handleAvatarMoved(playerId);
         });
     }
     
-    protected function handlePlayerLeft( e :AVRGameRoomEvent ) :void
+    protected function handlePlayerLeft(e :AVRGameRoomEvent) :void
     {
-        _entityLocations.remove( int(e.value) );
+        _entityLocations.remove(int(e.value));
         log.debug("handlePlayerLeft(" + e + ") " + this);
     }
     
-    protected function handlePlayerMoved( e :AVRGameRoomEvent ) :void
+    protected function handlePlayerMoved(e :AVRGameRoomEvent) :void
     {
         var playerId :int = int(e.value);
-        if( _room.getPlayer( playerId ) ) {
-            var player :Player = _room.getPlayer( playerId );
-            _entityLocations.put( playerId, player.location );
+        if(_room.getPlayer(playerId)) {
+            var player :Player = _room.getPlayer(playerId);
+            _entityLocations.put(playerId, player.location);
             
-            _room.players.forEach( function( id :int, p :Player):void {
+            _room.players.forEach(function(id :int, p :Player):void {
                 p.handleAvatarMoved(playerId);
             }); 
         }
@@ -66,89 +66,89 @@ public class LocationTracker extends SimObjectThane
     /**
     * Game avatars are used to signal non-player movements
     */
-    protected function handleSignalReceived( e :AVRGameRoomEvent ) :void
+    protected function handleSignalReceived(e :AVRGameRoomEvent) :void
     {
 //        log.debug("handleSignalReceived() " + e);
         //Record all non-players movements.
-        if( e.name == VConstants.SIGNAL_AVATAR_MOVED ) {
+        if(e.name == VConstants.SIGNAL_AVATAR_MOVED) {
             var data :Array = e.value as Array;
             var userId :int = int(data[0]);
             var location :Array = data[1] as Array;
             
-            if( location == null ) {
-                _entityLocations.remove( userId );
+            if(location == null) {
+                _entityLocations.remove(userId);
             }
             else {
-                _entityLocations.put( userId, location );
+                _entityLocations.put(userId, location);
             }
             
-            _room.players.forEach( function( id :int, p :Player):void {
+            _room.players.forEach(function(id :int, p :Player):void {
                 p.handleAvatarMoved(userId);
             }); 
         }
         log.debug("handleSignalReceived(" + e + ") " + this);
     }
     
-    public function getLocation( userId :int ) :Array
+    public function getLocation(userId :int) :Array
     {
-        if( _room.getPlayer( userId ) ) {
-            return _room.getPlayer( userId ).location;
+        if(_room.getPlayer(userId)) {
+            return _room.getPlayer(userId).location;
         }
-        if( _entityLocations.containsKey( userId )) {
-            return _entityLocations.get( userId ) as Array;
+        if(_entityLocations.containsKey(userId)) {
+            return _entityLocations.get(userId) as Array;
         }
         return null;
     }
     
-    public function getClosestVictim( p :Player ) :int
+    public function getClosestVictim(p :Player) :int
     {
-        function invalidVictim( id :int) :Boolean
+        function invalidVictim(id :int) :Boolean
         {
             return _room.getPlayer(id) 
-                && _room.getPlayer(id).action != VConstants.GAME_MODE_BARED;
+                && _room.getPlayer(id).state != VConstants.AVATAR_STATE_BARED;
         }
         return getClosestUserId(p, invalidVictim);
     }
-    public function getClosestUserId( player :Player, filter :Function = null ) :int
+    public function getClosestUserId(player :Player, filter :Function = null) :int
     {
         var currentDistance :Number = Number.MAX_VALUE;
         var currentClosestUserId :int = -1;
         var playerLocation :Array = player.location;
         log.debug("getClosestUserId, Checking non-players");
-        _entityLocations.forEach( function(userId :int, location :Array) :void {
+        _entityLocations.forEach(function(userId :int, location :Array) :void {
             
-            if( filter != null && filter( userId )) {
+            if(filter != null && filter(userId)) {
                 log.debug("   " + userId + " filtered");
                 return;
             }
             
-            if( userId == player.playerId ) {
+            if(userId == player.playerId) {
                 return;
             }
-            var distance :Number = distanceLocations( playerLocation, location );
+            var distance :Number = distanceLocations(playerLocation, location);
             log.debug("  " + userId + " distance=" + distance);
-            if( distance < currentDistance) {
+            if(distance < currentDistance) {
                 currentDistance = distance;
                 currentClosestUserId = userId;
             }
         });
         log.debug("Checking players");
-        _room.players.forEach( function( id :int, otherPlayer :Player) :void {
+        _room.players.forEach(function(id :int, otherPlayer :Player) :void {
             
             var userId :int = otherPlayer.playerId;
             
-            if( filter != null && filter( userId )) {
+            if(filter != null && filter(userId)) {
                 log.debug("   " + userId + " filtered");
                 return;
             }
             
-            if( otherPlayer.playerId == userId ) {
+            if(otherPlayer.playerId == userId) {
                 return;
             }
             var location :Array = otherPlayer.location;
-            var distance :Number = distanceLocations( playerLocation, location );
+            var distance :Number = distanceLocations(playerLocation, location);
             log.debug("  " + userId + " distance=" + distance);
-            if( distance < currentDistance) {
+            if(distance < currentDistance) {
                 currentDistance = distance;
                 currentClosestUserId = userId;
             }
@@ -160,20 +160,20 @@ public class LocationTracker extends SimObjectThane
     public function get nonPlayerAvatarIds() :Array
     {
         var ids :Array = new Array();
-        _entityLocations.forEach( function(userId :int, loc :Array) :void {
-            if( !_room.getPlayer( userId ) ) {
-                ids.push( userId );
+        _entityLocations.forEach(function(userId :int, loc :Array) :void {
+            if(!_room.getPlayer(userId)) {
+                ids.push(userId);
             }
         });
         return ids;
     }
     
-    protected function distanceLocations( loc1 :Array, loc2 :Array ) :Number
+    protected function distanceLocations(loc1 :Array, loc2 :Array) :Number
     {
-        if( loc1 == null || loc2 == null) {
+        if(loc1 == null || loc2 == null) {
             return Number.MAX_VALUE;
         }
-        return MathUtil.distance( loc1[0], loc1[2], loc2[0], loc2[2] );
+        return MathUtil.distance(loc1[0], loc1[2], loc2[0], loc2[2]);
     }
     
     override public function toString() :String
@@ -184,7 +184,7 @@ public class LocationTracker extends SimObjectThane
     
     protected var _entityLocations :HashMap = new HashMap();
     protected var _room :Room;
-    protected static const log :Log = Log.getLog( LocationTracker );
+    protected static const log :Log = Log.getLog(LocationTracker);
 
 }
 }

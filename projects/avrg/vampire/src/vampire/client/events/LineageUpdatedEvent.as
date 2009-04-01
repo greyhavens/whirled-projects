@@ -6,7 +6,7 @@ package vampire.client.events
 
     public class LineageUpdatedEvent extends Event
     {
-        public function LineageUpdatedEvent( h:Lineage, playerWithNewMinion :int = 0)
+        public function LineageUpdatedEvent(h:Lineage, playerWithNewMinion :int = 0)
         {
             super(LINEAGE_UPDATED, false, false);
             _lineage = h;

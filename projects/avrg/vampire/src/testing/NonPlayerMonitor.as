@@ -26,10 +26,10 @@ package vampire.avatar
  */
 public class NonPlayerMonitor extends EventCollecter
 {
-    public function NonPlayerMonitor( roomCtrl :RoomSubControlBase )
+    public function NonPlayerMonitor(roomCtrl :RoomSubControlBase)
     {
         _room = roomCtrl;
-        registerListener( _room, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived );
+        registerListener(_room, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
     }
     
     
@@ -39,13 +39,13 @@ public class NonPlayerMonitor extends EventCollecter
     public function handleSignalReceived (e :ControlEvent) :void
     {
         var data :Array;
-        switch( e.name ) {
+        switch(e.name) {
             
             case VConstants.SIGNAL_PLAYER_IDS:
                 //Remove any non-players that are now players
                 var playerIds :Array = e.value as Array;
-                playerIds.forEach( function( playerId :int, ...ignored) :void {
-                    _nonPlayerLocations.remove( playerId );
+                playerIds.forEach(function(playerId :int, ...ignored) :void {
+                    _nonPlayerLocations.remove(playerId);
                 });
                 break;
             case VConstants.SIGNAL_AVATAR_MOVED:
@@ -54,17 +54,17 @@ public class NonPlayerMonitor extends EventCollecter
                 var location :Array = data[1] as Array;
                 var hotspot :Array = data[2] as Array;
                 
-                if( location != null ) {
-                    if( !ArrayUtil.equals( _nonPlayerLocations.get( playerId ), location ) ) {
-                        _nonPlayerLocations.put( playerId, location );
-                        _nonPlayerHotspots.put( playerId, hotspot );
-                        dispatchEvent( new AvatarUpdatedEvent(playerId) );
+                if(location != null) {
+                    if(!ArrayUtil.equals(_nonPlayerLocations.get(playerId), location)) {
+                        _nonPlayerLocations.put(playerId, location);
+                        _nonPlayerHotspots.put(playerId, hotspot);
+                        dispatchEvent(new AvatarUpdatedEvent(playerId));
                     } 
                 }
                 else {
-                    _nonPlayerLocations.remove( playerId );
-                    _nonPlayerHotspots.remove( playerId );
-                    dispatchEvent( new AvatarUpdatedEvent(playerId) );
+                    _nonPlayerLocations.remove(playerId);
+                    _nonPlayerHotspots.remove(playerId);
+                    dispatchEvent(new AvatarUpdatedEvent(playerId));
                 }
                 log.debug("handleSignalReceived() e=" + e + "\n" + toString());
                 break;
@@ -84,15 +84,15 @@ public class NonPlayerMonitor extends EventCollecter
         return _nonPlayerLocations.keys();
     }
     
-    public function isNonPlayer( playerId :int ) :Boolean
+    public function isNonPlayer(playerId :int) :Boolean
     {
-        return _nonPlayerLocations.containsKey( playerId );
+        return _nonPlayerLocations.containsKey(playerId);
     }
     
     override public function toString() :String
     {
         var sb :StringBuilder = new StringBuilder("Nonplayer Locations:");
-        for each( var id :int in _nonPlayerLocations.keys() ) {
+        for each(var id :int in _nonPlayerLocations.keys()) {
             sb.append(id + ", loc=" + _nonPlayerLocations.get(id) + ", hot=" + _nonPlayerHotspots.get(id) + "\n");
         }
         return sb.toString();
@@ -103,7 +103,7 @@ public class NonPlayerMonitor extends EventCollecter
     protected var _nonPlayerHotspots :HashMap = new HashMap();
     
     protected var _room :RoomSubControlBase;
-    protected static const log :Log = Log.getLog( NonPlayerMonitor );
+    protected static const log :Log = Log.getLog(NonPlayerMonitor);
 
 }
 }

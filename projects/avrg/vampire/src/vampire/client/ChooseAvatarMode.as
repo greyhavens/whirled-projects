@@ -25,17 +25,17 @@ package vampire.client
             modeSprite.addChild(infoPanel);
             ClientContext.centerOnViewableRoom(infoPanel);
 
-            registerListener( infoPanel["choose_female"], MouseEvent.CLICK, function(...ignored) :void {
-                ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_MESSAGE_CHOOSE_FEMALE);
+            registerListener(infoPanel["choose_female"], MouseEvent.CLICK, function(...ignored) :void {
+                ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_MESSAGE_CHOOSE_FEMALE);
                 ClientContext.game.ctx.mainLoop.popMode();
             });
 
-            registerListener( infoPanel["choose_male"], MouseEvent.CLICK, function(...ignored) :void {
-                ClientContext.ctrl.agent.sendMessage( VConstants.NAMED_MESSAGE_CHOOSE_MALE);
+            registerListener(infoPanel["choose_male"], MouseEvent.CLICK, function(...ignored) :void {
+                ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_MESSAGE_CHOOSE_MALE);
                 ClientContext.game.ctx.mainLoop.popMode();
             });
 
-            registerListener( infoPanel["avatar_close"], MouseEvent.CLICK, function(...ignored) :void {
+            registerListener(infoPanel["avatar_close"], MouseEvent.CLICK, function(...ignored) :void {
                 ClientContext.ctrl.player.deactivateGame();
             });
 
@@ -47,7 +47,7 @@ package vampire.client
 //            drag.x = ClientContext.ctrl.local.getPaintableArea().width/2;
 //            drag.y = ClientContext.ctrl.local.getPaintableArea().height/2;
 
-//            registerListener( ClientContext.ctrl.local, AVRGameControlEvent.SIZE_CHANGED, function(...ignored) :void {
+//            registerListener(ClientContext.ctrl.local, AVRGameControlEvent.SIZE_CHANGED, function(...ignored) :void {
 //                infoPanel.x = ClientContext.ctrl.local.getPaintableArea().width/2;
 //                infoPanel.y = ClientContext.ctrl.local.getPaintableArea().height/2;
 //            });
@@ -67,10 +67,10 @@ package vampire.client
         protected function isFirstTimePlayer() :Boolean
         {
             var lastTimeAwake :Number = Number(ClientContext.ctrl.player.props.get(
-                Codes.PLAYER_PROP_LAST_TIME_AWAKE ) );
+                Codes.PLAYER_PROP_LAST_TIME_AWAKE));
 
             //The last is debugging in whirled dev
-            if (isNaN( lastTimeAwake ) || lastTimeAwake == 0 || ClientContext.ctrl.player.getPlayerId() == 1735) {
+            if (isNaN(lastTimeAwake) || lastTimeAwake == 0 || ClientContext.ctrl.player.getPlayerId() == 1735) {
                 return true;
             }
             return false;

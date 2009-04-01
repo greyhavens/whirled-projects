@@ -8,9 +8,10 @@ public class VConstants
     /**
     * If you're not related to the ubervamp
     */
-    public static const UBER_VAMP_ID :int = 1877;
+    public static const UBER_VAMP_ID :int = 12;
     //ubervamp localhost == 12
     //ubervamp dev.whirled == 1877
+    //uvervamp Whirled == 383387
 
     public static const FEEDING_ROUNDS_TO_FORM_BLOODBOND :int = 6;
 
@@ -177,7 +178,7 @@ public class VConstants
 
     public static var LOCAL_DEBUG_MODE :Boolean = false;
 
-    public static function MAX_BLOOD_FOR_LEVEL( level :int ) :Number
+    public static function MAX_BLOOD_FOR_LEVEL(level :int) :Number
     {
         return 100 + ((level - 1) * 10);
     }
@@ -203,7 +204,7 @@ public class VConstants
 //    public static const COLOR_SCHEME_VAMPIRE :String = "vampireColors";
 //    public static const COLOR_SCHEME_HUMAN :String = "humanColors";
 
-    protected static const p4 :Number = Math.cos( Math.PI/4);
+    protected static const p4 :Number = Math.cos(Math.PI/4);
     public static const PREDATOR_LOCATIONS_RELATIVE_TO_PREY :Array = [
         [  0, 0,  VConstants.FEEDING_LOGICAL_Z_OFFSET], //Behind
         [  1, 0,  0], //Left

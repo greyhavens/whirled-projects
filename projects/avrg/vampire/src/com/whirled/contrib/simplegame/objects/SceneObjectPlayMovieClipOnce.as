@@ -10,17 +10,17 @@ package com.whirled.contrib.simplegame.objects
         public function SceneObjectPlayMovieClipOnce(mc :MovieClip, name :String = null)
         {
             super(mc, name);
-            if( mc == null) {
+            if(mc == null) {
                 throw new Error(ClassUtil.tinyClassName(this) + " movieclip is null");
             }
             _mc = mc;
             _mc.gotoAndStop(1);
-            registerListener( _mc, Event.ENTER_FRAME, handleEnterFrame);
+            registerListener(_mc, Event.ENTER_FRAME, handleEnterFrame);
         }
 
         protected function handleEnterFrame(...ignored) :void
         {
-            if( _mc.currentFrame >= _mc.totalFrames) {
+            if(_mc.currentFrame >= _mc.totalFrames) {
                 destroySelf();
             }
         }

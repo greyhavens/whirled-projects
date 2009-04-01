@@ -8,11 +8,11 @@ package vampire.server
     {
         public function Server()
         {
-            ServerContext.init( new AVRServerGameControl( this ) );
+            ServerContext.init(new AVRServerGameControl(this));
 
             //Plug the client broadcaster to the Log
-//            ServerContext.serverLogBroadcast = new AVRGAgentLogTarget( ServerContext.ctrl );
-//            Log.addTarget( ServerContext.serverLogBroadcast );
+//            ServerContext.serverLogBroadcast = new AVRGAgentLogTarget(ServerContext.ctrl);
+//            Log.addTarget(ServerContext.serverLogBroadcast);
             Log.setLevel("", Log.DEBUG);
             //Log.setLevel("vampire.avatar.NonPlayerMonitor", Log.DEBUG);
 //            Log.setLevel("vampire.server.Room", Log.DEBUG);

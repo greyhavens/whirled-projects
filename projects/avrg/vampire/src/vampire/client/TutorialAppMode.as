@@ -133,7 +133,7 @@ public class TutorialAppMode extends AppMode
         ClientContext.gameMode.modeSprite.addChild(this.modeSprite);
 
         //The first reticl starts in the middle
-        if( ClientContext.ctrl.local.getRoomBounds()[0] > ClientContext.ctrl.local.getPaintableArea().width) {
+        if(ClientContext.ctrl.local.getRoomBounds()[0] > ClientContext.ctrl.local.getPaintableArea().width) {
             _lastTargetLocationGlobal.x = ClientContext.ctrl.local.getPaintableArea().width/2;
             _lastTargetLocationGlobal.y = ClientContext.ctrl.local.getPaintableArea().height/2;
         }
@@ -146,7 +146,7 @@ public class TutorialAppMode extends AppMode
         _active = true;
         if (_currentChapter == CHAPTER_END) {
             _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
-            setPage(PAGE_CLICK_HUD_FEED );
+            setPage(PAGE_CLICK_HUD_FEED);
         }
         else {
             setPage(_currentPage);
@@ -461,12 +461,12 @@ public class TutorialAppMode extends AppMode
                 moveTargetClearlyFromOldTargetLocToNew(targetReticle, targetDisplayObject);
 
 //                targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
-//                    targetDisplayObject.parent.getChildIndex(targetDisplayObject) );
+//                    targetDisplayObject.parent.getChildIndex(targetDisplayObject));
 //
 //
 //                setTargetToLastTargetLocation(targetReticle);
 ////                ClientContext.centerOnViewableRoom(targetReticle.displayObject);
-////                trace("in updateTargetingRecticleInHelp, )" + targetReticle.displayObject.x + ", "
+////                trace("in updateTargetingRecticleInHelp,)" + targetReticle.displayObject.x + ", "
 ////                    + targetReticle.displayObject.y + ")");
 //                targetReticle.addTask(LocationTask.CreateEaseIn(targetDisplayObject.x, targetDisplayObject.y, 1));
 
@@ -670,7 +670,7 @@ public class TutorialAppMode extends AppMode
     protected function placeTargetToTheRightOfTutorialPopup (target :SceneObject) :void
     {
         var left :Point = _tutorialPopup.displayObject.localToGlobal(
-            new Point( _tutorialPopup.displayObject.width / 2 - 20, 0));
+            new Point(_tutorialPopup.displayObject.width / 2 - 20, 0));
 
         var leftLocal :Point = target.displayObject.parent.globalToLocal(left);
         target.x = leftLocal.x;

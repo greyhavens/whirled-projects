@@ -12,7 +12,7 @@ package vampire.net.messages
                                             targetLocationX :Number = 0,
                                             targetLocationY :Number = 0,
                                             targetLocationZ :Number = 0
-                                            )
+                                           )
         {
             super(playerId);
             _targetPlayerId = targetPlayerId;
@@ -35,11 +35,11 @@ package vampire.net.messages
         override public function toBytes (bytes :ByteArray = null) :ByteArray
         {
             var bytes :ByteArray = super.toBytes(bytes);
-            bytes.writeInt( _targetPlayerId );
+            bytes.writeInt(_targetPlayerId);
             bytes.writeUTF(_targetPlayerName);
-            bytes.writeFloat( _targetX );
-            bytes.writeFloat( _targetY );
-            bytes.writeFloat( _targetZ );
+            bytes.writeFloat(_targetX);
+            bytes.writeFloat(_targetY);
+            bytes.writeFloat(_targetZ);
             return bytes;
         }
 
@@ -55,7 +55,7 @@ package vampire.net.messages
 
         override public function toString() :String
         {
-            return ClassUtil.tinyClassName( this ) + ": player=" + _playerId + ", eating " + targetName;
+            return ClassUtil.tinyClassName(this) + ": player=" + _playerId + ", eating " + targetName;
         }
 
         public function get targetX () :Number

@@ -25,7 +25,7 @@ public class SuccessfulFeedMsg extends BaseGameMsg
     override public function toBytes (bytes :ByteArray = null) :ByteArray
     {
         var bytes :ByteArray = super.toBytes(bytes);
-        bytes.writeInt( _eatenId );
+        bytes.writeInt(_eatenId);
         return bytes;
     }
 
@@ -46,7 +46,7 @@ public class SuccessfulFeedMsg extends BaseGameMsg
 
     override public function toString() :String
     {
-        return ClassUtil.tinyClassName( this ) + ": player=" + _playerId + ", _eatenId=" + _eatenId;
+        return ClassUtil.tinyClassName(this) + ": player=" + _playerId + ", _eatenId=" + _eatenId;
     }
 
     protected var _eatenId :int;

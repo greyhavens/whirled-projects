@@ -1,0 +1,147 @@
+package vampire.avatar
+{
+import com.threerings.util.HashMap;
+import com.whirled.AvatarControl;
+import com.whirled.ControlEvent;
+
+import flash.events.Event;
+
+/**
+ * Currently the Whirled AVRG API does not notify the client when
+ * 1) A player avatar arrives at a destination.
+ * 2) Any non-player avatar movement.
+ *
+ * This class notifies the client when avatars stop moving.  Unfortunately, it
+ * has to be compiled into an avatar, as avatars can listen to these events.
+ */
+public class AvatarEndMovementNotifier
+{
+    public function AvatarEndMovementNotifier(ctrl :AvatarControl)
+    {
+        _ctrl = ctrl;
+
+        //Only the controlling instance updates, listens to events, and has custom properties.
+        if(_ctrl.hasControl()) {
+            _ctrl.registerPropertyProvider(propertyProvider);
+
+            _events.registerListener(_ctrl, ControlEvent.ENTITY_MOVED, handleEntityMoved);
+            _events.registerListener(_ctrl, ControlEvent.ENTITY_LEFT, handleEntityLeft);
+            _events.registerListener(_ctrl, ControlEvent.ENTITY_ENTERED, handleEntityEntered);
+        }
+
+        _events.registerListener(_ctrl, Event.UNLOAD, handleUnload);
+    }
+
+    protected function propertyProvider(key :String) :Object
+    {
+        switch(key) {
+
+            case ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK:
+                return setArrivedCallback as Object;
+
+           default:
+                return null;
+        }
+    }
+
+    protected function handleUnload(...ignored) :void
+    {
+        _events.freeAllHandlers();
+        _avatarArrivedCallback = null;
+        _ctrl = null;
+    }
+
+    protected function handleEntityLeft (e :ControlEvent) :void
+    {
+        var userIdMoved :int = int(_ctrl.getEntityProperty(EntityControl.PROP_MEMBER_ID, e.name));
+        _locations.remove(userIdMoved);
+    }
+
+    protected function handleEntityEntered (e :ControlEvent) :void
+    {
+        var userIdMoved :int = int(_ctrl.getEntityProperty(EntityControl.PROP_MEMBER_ID, e.name));
+        if (userIdMoved == playerId) {
+            _locations.clear();
+        }
+    }
+    protected function handleEntityMoved (e :ControlEvent) :void
+    {
+        if(!_ctrl.hasControl()) {
+            return;
+        }
+
+        //We only care about avatars.
+        if(_ctrl.getEntityProperty(EntityControl.PROP_TYPE, e.name) != EntityControl.TYPE_AVATAR) {
+            return;
+        }
+
+        var userIdMoved :int = int(_ctrl.getEntityProperty(EntityControl.PROP_MEMBER_ID, e.name));
+
+        var userHotspot :Array = _ctrl.getEntityProperty(EntityControl.PROP_HOTSPOT, e.name) as Array;
+
+        //e.value == null means the avatar has arrived at it's location.
+        if (e.value == null) {//Only compute closest avatars when this avatar has arrived at location
+
+            //Notify listeners that we have arrived at our destination
+            var actualLocation :Array = _locations.get(userIdMoved) as Array;
+            if(actualLocation == null) {
+                actualLocation = _ctrl.getEntityProperty(EntityControl.PROP_LOCATION_LOGICAL, e.name) as Array;
+                //Make sure it's a copy
+                if(actualLocation) {
+                    actualLocation = actualLocation.slice();
+                }
+            }
+
+            if(_avatarArrivedCallback != null) {
+                _avatarArrivedCallback(userIdMoved, actualLocation);
+            }
+        }
+        else {
+
+            //Because when the entity arrives, the locaiton info is stale,
+            //this holds a record of the correct location.
+            var entityLocation :Array = e.value as Array;
+            _locations.put(userIdMoved, entityLocation.slice());
+        }
+
+
+    }
+
+    protected function get playerId() :int
+    {
+        return int(_ctrl.getEntityProperty(EntityControl.PROP_MEMBER_ID));
+    }
+
+    protected function getEntityId(userId :int) :String
+    {
+        for each(var entityId :String in _ctrl.getEntityIds(EntityControl.TYPE_AVATAR)) {
+            var entityUserId :int = int(_ctrl.getEntityProperty(EntityControl.PROP_MEMBER_ID, entityId));
+            if(userId == entityUserId) {
+                return entityId
+            }
+        }
+        return null;
+    }
+
+    protected function setArrivedCallback(callback :Function) :void
+    {
+        _avatarArrivedCallback = callback;
+    }
+
+    protected var _locations :HashMap = new HashMap();
+    protected var _ctrl :AvatarControl;
+    protected var _avatarArrivedCallback :Function;
+
+
+    protected var _events :EventHandlerManager = new EventHandlerManager();
+
+
+    /**
+    * Provide a function that takes as an argument another function.  We store the function
+    * argument and call it when we arrive a a destination.
+    */
+    public static const ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK :String = "ArrivedCallback";
+
+    protected static const log :Log = Log.getLog(AvatarEndMovementNotifier);
+}
+}

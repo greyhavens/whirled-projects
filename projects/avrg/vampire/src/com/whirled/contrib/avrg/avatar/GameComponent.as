@@ -34,7 +34,7 @@ public class GameComponent extends EventCollecter
 
         var setAvatarMovedCallback :Function = ClientContext.ctrl.room.getEntityProperty(
             AvatarComponent.ENTITY_PROPERTY_SET_AVATAR_MOVED_CALLBACK, ourEntityId) as Function;
-        if( setAvatarMovedCallback != null) {
+        if(setAvatarMovedCallback != null) {
             setAvatarMovedCallback(avatarStartedMove);
         }
     }
@@ -53,7 +53,7 @@ public class GameComponent extends EventCollecter
 
         var setAvatarMovedCallback :Function = ClientContext.ctrl.room.getEntityProperty(
             AvatarComponent.ENTITY_PROPERTY_SET_AVATAR_MOVED_CALLBACK, ourEntityId) as Function;
-        if( setAvatarMovedCallback != null) {
+        if(setAvatarMovedCallback != null) {
             setAvatarMovedCallback(null);
         }
     }

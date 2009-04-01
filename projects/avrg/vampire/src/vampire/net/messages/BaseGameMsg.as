@@ -26,10 +26,10 @@ package vampire.net.messages
 
         public function toBytes (bytes :ByteArray = null) :ByteArray
         {
-            if( bytes == null) {
+            if(bytes == null) {
                 bytes = new ByteArray();
             }
-            bytes.writeInt( _playerId);
+            bytes.writeInt(_playerId);
             return bytes;
         }
 
@@ -40,7 +40,7 @@ package vampire.net.messages
 
         public function toString() :String
         {
-            return ClassUtil.tinyClassName( this ) + ": From player " + _playerId + " ";
+            return ClassUtil.tinyClassName(this) + ": From player " + _playerId + " ";
         }
 
         protected var _playerId :int;

@@ -23,25 +23,25 @@ public class NonPlayerAvatarsBloodMonitor extends SimObject
     {
         //When a player starts, we remove them from nonplayers.
         registerListener(ServerContext.ctrl.game, AVRGameControlEvent.PLAYER_JOINED_GAME,
-            function( e:AVRGameControlEvent ) :void {
-                _playerIdsThatHavePlayedEver.add( int(e.value ) );
-                _nonplayerBlood.remove( int(e.value ) );
-                _nonplayer2RoomId.remove( int(e.value ) );
+            function(e:AVRGameControlEvent) :void {
+                _playerIdsThatHavePlayedEver.add(int(e.value));
+                _nonplayerBlood.remove(int(e.value));
+                _nonplayer2RoomId.remove(int(e.value));
             });
 
-        registerListener(ServerContext.msg, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage );
+        registerListener(ServerContext.msg, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
     }
 
-    protected function handleMessage( e :MessageReceivedEvent ) :void
+    protected function handleMessage(e :MessageReceivedEvent) :void
     {
-        if( e.value is NonPlayerIdsInRoomMsg ) {
+        if(e.value is NonPlayerIdsInRoomMsg) {
             var msg :NonPlayerIdsInRoomMsg = e.value as NonPlayerIdsInRoomMsg;
-            if( msg != null) {
+            if(msg != null) {
 
                 var roomId :int = msg.roomId;
-                for each( var nonPlayerId :int in msg.nonPlayerIds) {
-                    _nonplayer2RoomId.put( nonPlayerId, roomId );
-                    if( !_nonplayerBlood.containsKey(nonPlayerId)) {
+                for each(var nonPlayerId :int in msg.nonPlayerIds) {
+                    _nonplayer2RoomId.put(nonPlayerId, roomId);
+                    if(!_nonplayerBlood.containsKey(nonPlayerId)) {
                         _nonplayerBlood.put(nonPlayerId, maxBloodFromNonPlayer(nonPlayerId))
                     }
                     log.debug("Non player assigned to room=" + roomId);
@@ -65,72 +65,72 @@ public class NonPlayerAvatarsBloodMonitor extends SimObject
     /**
     * Make sure you have already checked that the user is a non-player.
     */
-    public function bloodAvailableFromNonPlayer( userId :int) :Number
+    public function bloodAvailableFromNonPlayer(userId :int) :Number
     {
         //If a player quits the game, they have 0 blood.  Stops cheats.
-        if( _playerIdsThatHavePlayedEver.contains( userId ) ) {
+        if(_playerIdsThatHavePlayedEver.contains(userId)) {
             return 0;
         }
 
-        if( _nonplayerBlood.containsKey( userId )) {
-            return _nonplayerBlood.get( userId ) as Number;
+        if(_nonplayerBlood.containsKey(userId)) {
+            return _nonplayerBlood.get(userId) as Number;
         }
 
         return VConstants.MAX_BLOOD_NONPLAYERS;
     }
 
-    public function maxBloodFromNonPlayer( userId :int) :Number
+    public function maxBloodFromNonPlayer(userId :int) :Number
     {
         return VConstants.MAX_BLOOD_NONPLAYERS;
     }
 
-    public function isNonPlayerCapableOfBeingEaten( userId :int ) :Boolean
+    public function isNonPlayerCapableOfBeingEaten(userId :int) :Boolean
     {
-        if( _nonplayerBlood.containsKey( userId ) ) {
-            return _nonplayerBlood.get( userId ) >= VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
+        if(_nonplayerBlood.containsKey(userId)) {
+            return _nonplayerBlood.get(userId) >= VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
         }
         return true;
     }
 
-//    public function damageNonPlayer( blood :Number, userId :int) :void
+//    public function damageNonPlayer(blood :Number, userId :int) :void
 //    {
 //        var currentBlood :Number = VConstants.MAX_BLOOD_NONPLAYERS;
 //
-//        if( _nonplayerBlood.containsKey( userId )) {
-//            currentBlood =  _nonplayerBlood.get( userId ) as Number;
+//        if(_nonplayerBlood.containsKey(userId)) {
+//            currentBlood =  _nonplayerBlood.get(userId) as Number;
 //        }
 //
 //        currentBlood -= blood;
-//        currentBlood = Math.max( 0, currentBlood );
+//        currentBlood = Math.max(0, currentBlood);
 //
-//        _nonplayerBlood.put( userId, currentBlood );
+//        _nonplayerBlood.put(userId, currentBlood);
 //    }
 
-//    public function playerFeedsFromNonPlayer( player :Player, victimId :int, bloodLost :int) :void
+//    public function playerFeedsFromNonPlayer(player :Player, victimId :int, bloodLost :int) :void
 //    {
-//        if( _nonplayerBlood.containsKey( victimId )) {
-//            _nonplayerBlood.put( victimId, Math.max( Number(_nonplayerBlood.get(victimId)) - bloodLost, 0));
+//        if(_nonplayerBlood.containsKey(victimId)) {
+//            _nonplayerBlood.put(victimId, Math.max(Number(_nonplayerBlood.get(victimId)) - bloodLost, 0));
 //        }
 //        else {
-//            _nonplayerBlood.put( victimId, Constants.MAX_BLOOD_NONPLAYERS - bloodLost);
+//            _nonplayerBlood.put(victimId, Constants.MAX_BLOOD_NONPLAYERS - bloodLost);
 //        }
 //
 //        //Update the room location of the nonplayer if necessary
-//        if( player.room != null) {
-//            if( player.room.hashCode() != _nonplayer2RoomId.get( victimId )) {
-//                removeNonPlayerFromAllRooms( victimId );
+//        if(player.room != null) {
+//            if(player.room.hashCode() != _nonplayer2RoomId.get(victimId)) {
+//                removeNonPlayerFromAllRooms(victimId);
 //            }
 //            //Put the nonplayer in the new room
-////            player.room.nonPlayerAvatarIds.add( victimId );
-//            _nonplayer2RoomId.put( victimId, player.room.hashCode());
+////            player.room.nonPlayerAvatarIds.add(victimId);
+//            _nonplayer2RoomId.put(victimId, player.room.hashCode());
 //
 ////            setIntoRoomProperties(player.room);
 //        }
 //    }
 
-    public function damageNonPlayer( victimId :int, damage :int, roomId :int) :Number
+    public function damageNonPlayer(victimId :int, damage :int, roomId :int) :Number
     {
-        var currentBlood :Number = _nonplayerBlood.containsKey( victimId ) ?
+        var currentBlood :Number = _nonplayerBlood.containsKey(victimId) ?
             _nonplayerBlood.get(victimId) : VConstants.MAX_BLOOD_NONPLAYERS;
 
         var bloodLost :Number = currentBlood - 1 >= damage ? damage : currentBlood - 1;
@@ -138,53 +138,53 @@ public class NonPlayerAvatarsBloodMonitor extends SimObject
         log.debug("nonplayerLosesBlood", "victimId", victimId, "damage", damage,
             "currentBlood", currentBlood, "bloodLost", bloodLost);
 
-        _nonplayerBlood.put( victimId, Math.max( currentBlood - bloodLost, 1));
-        log.debug("Putting " + victimId + "=" + _nonplayerBlood.get( victimId ));
+        _nonplayerBlood.put(victimId, Math.max(currentBlood - bloodLost, 1));
+        log.debug("Putting " + victimId + "=" + _nonplayerBlood.get(victimId));
 
-        _nonplayer2RoomId.put( victimId, roomId );
+        _nonplayer2RoomId.put(victimId, roomId);
 
         return bloodLost;
-//        if( _nonplayerBlood.containsKey( victimId )) {
-//            _nonplayerBlood.put( victimId, Math.max( Number(_nonplayerBlood.get(victimId)) - bloodLost, 0));
+//        if(_nonplayerBlood.containsKey(victimId)) {
+//            _nonplayerBlood.put(victimId, Math.max(Number(_nonplayerBlood.get(victimId)) - bloodLost, 0));
 //        }
 //        else {
-//            _nonplayerBlood.put( victimId, VConstants.MAX_BLOOD_NONPLAYERS - bloodLost);
+//            _nonplayerBlood.put(victimId, VConstants.MAX_BLOOD_NONPLAYERS - bloodLost);
 //        }
 
     }
 
-//    protected function setIntoRoomProperties( room :Room ) :void
+//    protected function setIntoRoomProperties(room :Room) :void
 //    {
 //        var data :Array = new Array();
-////        room.nonPlayerAvatarIds.forEach( function( nonplayerId :int) :void {
-////            if( _nonplayerBlood.containsKey( nonplayerId )) {
-////                data.put( nonplayerId);
-////                data.put( _nonplayerBlood.get(nonplayerId));
+////        room.nonPlayerAvatarIds.forEach(function(nonplayerId :int) :void {
+////            if(_nonplayerBlood.containsKey(nonplayerId)) {
+////                data.put(nonplayerId);
+////                data.put(_nonplayerBlood.get(nonplayerId));
 ////            }
 ////        });
 //
-////        if( !ArrayUtil.equals(room.ctrl.props.get( Codes.ROOM_PROP_BLOOD_NON_PLAYERS ), data)) {
-////            room.ctrl.props.get( Codes.ROOM_PROP_BLOOD_NON_PLAYERS, data);
+////        if(!ArrayUtil.equals(room.ctrl.props.get(Codes.ROOM_PROP_BLOOD_NON_PLAYERS), data)) {
+////            room.ctrl.props.get(Codes.ROOM_PROP_BLOOD_NON_PLAYERS, data);
 ////        }
 //
 //    }
 
 
-//    protected function removeNonPlayerFromAllRooms( nonplayerId :int ) :void
+//    protected function removeNonPlayerFromAllRooms(nonplayerId :int) :void
 //    {
 //        //Remove the nonplayer from its old room
-////        if( ServerContext.vserver.isRoom( _nonplayer2RoomId.get( nonplayerId ))) {
-////            var room :Room = ServerContext.vserver.getRoom( _nonplayer2RoomId.get( nonplayerId ));
-////            room.nonPlayerAvatarIds.remove( nonplayerId );
+////        if(ServerContext.vserver.isRoom(_nonplayer2RoomId.get(nonplayerId))) {
+////            var room :Room = ServerContext.vserver.getRoom(_nonplayer2RoomId.get(nonplayerId));
+////            room.nonPlayerAvatarIds.remove(nonplayerId);
 ////        }
-////        _nonplayer2RoomId.remove( nonplayerId );
+////        _nonplayer2RoomId.remove(nonplayerId);
 //    }
 
     //Allow the non-players to regenerate blood and update room props
-    override protected  function update( dt :Number ) :void
+    override protected  function update(dt :Number) :void
     {
         _bloodUpdateTime += dt;
-        if( _bloodUpdateTime < UPDATE_BLOOD_INTERVAL) {
+        if(_bloodUpdateTime < UPDATE_BLOOD_INTERVAL) {
             return;
         }
         _bloodUpdateTime = 0;
@@ -192,13 +192,13 @@ public class NonPlayerAvatarsBloodMonitor extends SimObject
         var keys :Array = _nonplayerBlood.keys();
         var userId :int;
         var roomId :int;
-        for each( userId in keys) {
+        for each(userId in keys) {
 
             //Update the blood before trying to put it in a room.
-            var blood :Number = _nonplayerBlood.get( userId );
-            if( isNaN( blood ) ) {
+            var blood :Number = _nonplayerBlood.get(userId);
+            if(isNaN(blood)) {
                 blood = maxBloodFromNonPlayer(userId);
-                _nonplayerBlood.put( userId, blood);
+                _nonplayerBlood.put(userId, blood);
             }
 
             //Regenerate //if we aren't being eaten.
@@ -207,31 +207,31 @@ public class NonPlayerAvatarsBloodMonitor extends SimObject
 
             //If we've played, but are currently offline, our blood is 1, so as to stop
             //players drinking it without our permission.
-            if( _playerIdsThatHavePlayedEver.contains(userId) &&
+            if(_playerIdsThatHavePlayedEver.contains(userId) &&
                 !ServerContext.server.isPlayer(userId)) {
 
                 blood = 1;
             }
 
-            _nonplayerBlood.put( userId, blood );
+            _nonplayerBlood.put(userId, blood);
 
 
 
             //If we're not assigned a room, we can't update the room props.
-            if( !_nonplayer2RoomId.containsKey( userId )) {
+            if(!_nonplayer2RoomId.containsKey(userId)) {
                 continue;
             }
 
-            roomId = _nonplayer2RoomId.get( userId );
+            roomId = _nonplayer2RoomId.get(userId);
 
-            if( !ServerContext.server.isRoom( roomId )) {
+            if(!ServerContext.server.isRoom(roomId)) {
                 continue;
             }
 
-            var room :Room = ServerContext.server.getRoom( roomId );
+            var room :Room = ServerContext.server.getRoom(roomId);
 
             //Skip if the room is wonky
-            if( room == null || room.ctrl == null || !room.ctrl.isConnected() || room.isStale) {
+            if(room == null || room.ctrl == null || !room.ctrl.isConnected() || room.isStale) {
                 continue;
             }
 
@@ -243,33 +243,33 @@ public class NonPlayerAvatarsBloodMonitor extends SimObject
                 dict = new Dictionary();
             }
 
-            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD] != blood ) {
+            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD] != blood) {
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD, blood);
             }
 
-            if( blood >= VConstants.MAX_BLOOD_NONPLAYERS) {//If they have regained all blood, remove from counter.
-                _nonplayerBlood.remove( userId );
-                _nonplayer2RoomId.remove( userId );
+            if(blood >= VConstants.MAX_BLOOD_NONPLAYERS) {//If they have regained all blood, remove from counter.
+                _nonplayerBlood.remove(userId);
+                _nonplayer2RoomId.remove(userId);
             }
         }
     }
 
-    public function isUserNonPlayer( userId :int ) :Boolean
+    public function isUserNonPlayer(userId :int) :Boolean
     {
-        return !_playerIdsThatHavePlayedEver.contains( userId );
+        return !_playerIdsThatHavePlayedEver.contains(userId);
     }
 
-    public function addNewPlayer( playerId :int ) :void
+    public function addNewPlayer(playerId :int) :void
     {
-        _playerIdsThatHavePlayedEver.add( playerId );
+        _playerIdsThatHavePlayedEver.add(playerId);
     }
 
     /**
     * Rooms call this when they receive location information
     */
-    public function setUserRoom( userId :int, roomId :int ) :void
+    public function setUserRoom(userId :int, roomId :int) :void
     {
-        _nonplayer2RoomId.put( userId, roomId );
+        _nonplayer2RoomId.put(userId, roomId);
     }
 
     override public function toString() :String
@@ -294,7 +294,7 @@ public class NonPlayerAvatarsBloodMonitor extends SimObject
     protected static const UPDATE_BLOOD_INTERVAL :Number = 2;
 
     protected static const NAME :String = "NonAvatarPlayersBloodMonitor";
-    protected static const log :Log = Log.getLog( NonPlayerAvatarsBloodMonitor );
+    protected static const log :Log = Log.getLog(NonPlayerAvatarsBloodMonitor);
 
 }
 }
