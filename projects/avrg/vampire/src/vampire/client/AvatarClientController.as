@@ -41,49 +41,9 @@ public class AvatarClientController extends SimObject
         registerListener(_ctrl.room, AVRGameRoomEvent.PLAYER_MOVED, handlePlayerMoved);
         registerListener(_ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessageReceived);
-        //Listen for avatar state changes.
-//        registerListener(_ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
 
         resetAvatarCallbackFunctions();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    protected function handleElementChanged (e :ElementChangedEvent) :void
-//    {
-//        //Why do I have to do this?  Is there a race condidtion, where the game is shutdown
-//        //but it's still receiving updates?
-//        if (!_ctrl.isConnected()) {
-//            return;
-//        }
-//
-//        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
-//
-//        if (playerIdUpdated == _ctrl.player.getPlayerId()) {
-//
-//            //If a state change comes in, inform the avatar
-//            if(e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE) {
-//
-//                var setStateFunction :Function = _ctrl.room.getEntityProperty(
-//                    AvatarGameBridge.ENTITY_PROPERTY_SETSTATE_FUNCTION, ourEntityId) as Function;
-//
-//                _ctrl.player.setAvatarState(e.newValue.toString());
-//            }
-//        }
-//    }
 
 
     protected function get ourEntityId () :String
@@ -115,6 +75,8 @@ public class AvatarClientController extends SimObject
 
     protected function handleMessageReceived (e :MessageReceivedEvent) :void
     {
+        //After feeding, our avatar moves a little forward and closer to the screen,
+        //so as not to be hidden if the avatars are similar.
         if (e.name == VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING) {
 
             var moveTimer :SimpleTimer = new SimpleTimer(2.5, function() :void {
@@ -124,7 +86,6 @@ public class AvatarClientController extends SimObject
                 if (location != null && hotspot != null) {
 
                     var xDirection :Number = location[3] > 0 && location[3] <= 180 ? 1 : -1;
-
                     var widthLogical :Number = hotspot[0]/_ctrl.local.getRoomBounds()[0];
 
                     var xDistance :Number = xDirection * widthLogical / 3;
@@ -137,6 +98,8 @@ public class AvatarClientController extends SimObject
             }, false);
             db.addObject(moveTimer);
         }
+        //Before we start feeding, we move our avatar to stand directly behind the
+        //target avatar.
         else if (e.name == MovePredIntoPositionMsg.NAME) {
 
             function convertStandardRads2GameDegrees(rad :Number) :Number
@@ -153,37 +116,16 @@ public class AvatarClientController extends SimObject
             var targetLocation :Array = movemsg.preyLocation;//ClientContext.model.getLocation(movemsg.preyId);
             var avatar :AVRGameAvatar = ClientContext.model.avatar;
 
-
-
-            trace("MovePredIntoPositionMsg");
-            trace("targetLocation=" + targetLocation);
-//            trace("movemsg.preyId=" + movemsg.preyId);
-//            trace("avatar=" + avatar);
-
             var targetX :Number;
             var targetY :Number;
             var targetZ :Number;
 
             //TODO: add the hotspot width /2, then test.
             var hotspot :Array = ClientContext.model.hotspot;
-            trace("hotspot=" + hotspot);
             var widthLogical :Number = hotspot[0]/_ctrl.local.getRoomBounds()[0];
 
             var distanceLogicalAwayFromPrey :Number = widthLogical / 3;
 
-//            var p1 :Point = ctrl.local.locationToPaintable(0, targetLocation[1],
-//                targetLocation[2]);
-//            var p2 :Point = ctrl.local.locationToPaintable(widthLogical, targetLocation[1],
-//                targetLocation[2]);
-////
-//            var absoluteWidth :Number = Math.abs(p2.x - p1.x);
-//            var absoluteDistanceFrom
-
-//            _hudSprite.graphics.clear();
-//            _hudSprite.graphics.beginFill(0, 0.3);
-//
-//            _hudSprite.graphics.drawRect(-absoluteWidth/2, 0, absoluteWidth, absoluteHeight);
-//            _hudSprite.graphics.endFill();
 
 
 
@@ -201,17 +143,7 @@ public class AvatarClientController extends SimObject
                 VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[movemsg.predIndex][2] *
                 distanceLogicalAwayFromPrey;
 
-            //If the avatar is already at the location, the client will dispatch a
-            //PlayerArrivedAtLocation event, as the location doesn't change.
-//            if(targetX == avatar.x &&
-//                targetY == avatar.y &&
-//                targetZ == avatar.z) {
-//                log.error("Player already at location, changing to feed mode");
-//                handlePlayerArrivedAtLocation(player);
-//            }
-//            else {
                 ClientContext.ctrl.player.setAvatarLocation(targetX, targetY, targetZ, degs);
-//            }
         }
 
 
@@ -240,7 +172,6 @@ public class AvatarClientController extends SimObject
     */
     protected function checkForAvatarSwitch (e :AVRGameRoomEvent) :void
     {
-//        trace("handleAvatarChanged");
         var playerAvatarChangedId :int = int(e.value);
 
         //We are care about our own avatar
@@ -301,47 +232,21 @@ public class AvatarClientController extends SimObject
 
     protected function resetAvatarCallbackFunctions () :void
     {
-        trace("resetting avatar callbacks");
-//        trace("resetAvatarArrivedFunction, ClientContext.ourEntityId=" + ClientContext.ourEntityId);
         //Let's hear when the avatar arrived at a destination
         var setAvatarArrivedCallback :Function = _ctrl.room.getEntityProperty(
             AvatarEndMovementNotifier.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
-
-
-
 
         if(setAvatarArrivedCallback != null) {
             setAvatarArrivedCallback(avatarArrivedAtDestination);
         }
         else {
-            log.error("!!!!!! This avatar is CRUSTY and old, missing AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK");
+            log.error("The avatar did not provide the property=" +
+                AvatarEndMovementNotifier.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK);
 
-            trace("trying again after some time");
             var t :SimpleTimer = new SimpleTimer(1, function () :void {
                 resetAvatarCallbackFunctions();
             });
             db.addObject(t);
-//
-//            //Ok, our avatar has changed.
-//            //I can't seem to update the avatar location function, so quit the game with a warning
-//            if (!VConstants.LOCAL_DEBUG_MODE) {
-//                var quitPopupName :String = "QuitAvatarBorked";
-//                if(ClientContext.gameMode.getObjectNamed(quitPopupName) == null) {
-//                    var popup :PopupQuery = new PopupQuery(
-//                        quitPopupName,
-//                        "Sorry.  Vampire Whirled cannot (yet) handle a mid-game avatar change.  " +
-//                        "Click the vampire icon to restart..");
-//                    ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
-//                    ClientContext.centerOnViewableRoom(popup.displayObject);
-//                    ClientContext.animateEnlargeFromMouseClick(popup);
-//
-//                    var quitTimer :SimpleTimer = new SimpleTimer(5, function() :void {
-//                        ClientContext.controller.handleQuit();
-//                    });
-//                    ClientContext.gameMode.addObject(quitTimer);
-//
-//                }
-//            }
         }
     }
 
@@ -350,33 +255,15 @@ public class AvatarClientController extends SimObject
         if (!_ctrl.isConnected()) {
             return;
         }
-//        trace(ClassUtil.getClassName(this) + "GameModel.avatarArrivedAtDestination");
-//        if(!_ctrl.isConnected()) {
-//            trace("avatarArrivedAtDestination, ctrl null, setting callback null");
-//            var setCallback :Function = _ctrl.room.getEntityProperty(
-//            AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK,
-//                ClientContext.ourEntityId) as Function;
-//            if(setCallback != null) {
-//                setCallback(null);
-//            }
-//            return;
-//        }
 
         //If our player moved, inform the server.
         if (playerId == _ctrl.player.getPlayerId()) {
-            trace(_ctrl.player.getPlayerId() + " Sending player arrived event");
+            var locationFromProps :Array = ClientContext.model.location;
             _ctrl.agent.sendMessage(PlayerArrivedAtLocationMsg.NAME,
                 new PlayerArrivedAtLocationMsg(_ctrl.player.getPlayerId()).toBytes());
 
-
-    //        trace("dispatchEvent PlayerArrivedAtLocationEvent");
-    //        dispatchEvent(new PlayerArrivedAtLocationEvent());
-
             //And if this is our avatar, and we have a target to stand behind,
             //make sure we are in the same orientation.
-            //And adjust our angle to our targets, if we have a target
-            //If our location is the same as our targets, we have the same orientation
-            //otherwise, we want to face our target
             if(_avatarIdToStandBehind != 0) {
 
                 var targetEntityId :String = getEntityId(_avatarIdToStandBehind);
