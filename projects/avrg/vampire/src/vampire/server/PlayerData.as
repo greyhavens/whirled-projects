@@ -483,9 +483,9 @@ public class PlayerData extends EventHandlerManager
                 _ctrl.props.set(Codes.PLAYER_PROP_XP, xp, true);
             }
 
-//            if(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE) != time) {
-//                _ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, time, true);
-//            }
+            if(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE) != time) {
+                _ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, time, true);
+            }
 
             if(_ctrl.props.get(Codes.PLAYER_PROP_SIRE) != sire) {
                 _ctrl.props.set(Codes.PLAYER_PROP_SIRE, sire, true);
@@ -713,18 +713,18 @@ public class PlayerData extends EventHandlerManager
     //This update comes from the server and only occurs a few times per second.
     public function update(dt :Number) :void
     {
-        _bloodUpdateTime += dt;
-        if(_bloodUpdateTime >= UPDATE_BLOOD_INTERVAL) {
-            //Vampires lose blood
-            if(blood > 1) {
-                ServerLogic.damage(this, dt * VConstants.VAMPIRE_BLOOD_LOSS_RATE, false);
-                //But not below 1
-                if(blood < 1) {
-                    setBlood(1);
-                }
-            }
-            _bloodUpdateTime = 0;
-        }
+//        _bloodUpdateTime += dt;
+//        if(_bloodUpdateTime >= UPDATE_BLOOD_INTERVAL) {
+//            //Vampires lose blood
+//            if(blood > 1) {
+//                ServerLogic.damage(this, dt * VConstants.VAMPIRE_BLOOD_LOSS_RATE, false);
+//                //But not below 1
+//                if(blood < 1) {
+//                    setBlood(1);
+//                }
+//            }
+//            _bloodUpdateTime = 0;
+//        }
 
         //Change the avatar state depending on our current player state
 //        ServerLogic.updateAvatarState(this);

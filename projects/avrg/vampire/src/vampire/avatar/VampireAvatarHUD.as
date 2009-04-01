@@ -498,9 +498,9 @@ public class VampireAvatarHUD extends AvatarHUD
         return _target_UI.waiting_sign;
     }
 
-    override protected function drawMouseSelectionGraphics () :void
+    protected function drawMouseSelectionGraphics () :void
     {
-        super.drawMouseSelectionGraphics();
+//        super.drawMouseSelectionGraphics();
         //Draw an invisible box to detect mouse movement/clicks
 
         if(_hudSprite != null && _hotspot != null && hotspot.length >= 2// && !isNaN(_zScaleFactor)

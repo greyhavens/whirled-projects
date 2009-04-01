@@ -885,33 +885,7 @@ public class ServerLogic
                     player.playerId, player.targetId, predLocIndex, targetLocation);
 
                player.ctrl.sendMessage(msg.name, msg.toBytes());
-
-//                //If we are the first predator, we go directly behind the prey
-//                //Otherwise, take a a place
-//                targetX = targetLocation[0] +
-//                    VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][0] *
-//                    VConstants.FEEDING_LOGICAL_X_OFFSET;
-//                targetY = targetLocation[1] +
-//                    VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][1] *
-//                    VConstants.FEEDING_LOGICAL_X_OFFSET;
-//                targetZ = targetLocation[2] +
-//                    VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[predLocIndex][2] *
-//                    VConstants.FEEDING_LOGICAL_X_OFFSET;
-//
-//                //If the avatar is already at the location, the client will dispatch a
-//                //PlayerArrivedAtLocation event, as the location doesn't change.
-//                if (targetX == avatar.x &&
-//                    targetY == avatar.y &&
-//                    targetZ == avatar.z) {
-//                    log.error("Player already at location, changing to feed mode");
-//                    handlePlayerArrivedAtLocation(player);
-//                }
-//                else {
-//                    player.ctrl.setAvatarLocation(targetX, targetY, targetZ, degs);
-//                }
-
-
-                break;
+               break;
 
             case VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION:
 

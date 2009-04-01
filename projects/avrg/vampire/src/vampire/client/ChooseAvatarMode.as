@@ -19,7 +19,6 @@ package vampire.client
         {
             modeSprite.visible = false;
 
-
             var infoPanel :MovieClip = ClientContext.instantiateMovieClip("HUD", "popup_avatar", false);
 
             modeSprite.addChild(infoPanel);
@@ -39,18 +38,7 @@ package vampire.client
                 ClientContext.ctrl.player.deactivateGame();
             });
 
-
             infoPanel.gotoAndStop(1);
-//            infoPanel.x = infoPanel.width/2 + 20;//ClientContext.ctrl.local.getRoomBounds()[0]/2;
-//            infoPanel.y = infoPanel.height/2 + 20;;//ClientContext.ctrl.local.getRoomBounds()[1]/2;
-
-//            drag.x = ClientContext.ctrl.local.getPaintableArea().width/2;
-//            drag.y = ClientContext.ctrl.local.getPaintableArea().height/2;
-
-//            registerListener(ClientContext.ctrl.local, AVRGameControlEvent.SIZE_CHANGED, function(...ignored) :void {
-//                infoPanel.x = ClientContext.ctrl.local.getPaintableArea().width/2;
-//                infoPanel.y = ClientContext.ctrl.local.getPaintableArea().height/2;
-//            });
         }
         override protected function enter():void
         {

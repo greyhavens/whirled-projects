@@ -263,7 +263,8 @@ public class GameModel extends SimObject
 
     public function get time() :int
     {
-        return SharedPlayerStateClient.getTime(ClientContext.ourPlayerId);
+        return int(ClientContext.ctrl.player.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE));
+//        SharedPlayerStateClient.getTime(ClientContext.ourPlayerId);
     }
 
     public function get name() :String
@@ -301,11 +302,6 @@ public class GameModel extends SimObject
     public function isNewPlayer() :Boolean
     {
         return time <= 1;
-    }
-
-    public function isVampire() :Boolean
-    {
-        return VConstants.LOCAL_DEBUG_MODE || level >= VConstants.MINIMUM_VAMPIRE_LEVEL;
     }
 
     public function get lineage() :Lineage

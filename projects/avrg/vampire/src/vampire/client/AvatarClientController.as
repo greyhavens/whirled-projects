@@ -326,13 +326,19 @@ public class AvatarClientController extends SimObject
     public static const NAME :String = "AvatarClientController";
     public static const GAME_MESSAGE_TARGETID :String = "GameMessage: TargetId";
 
+    /**This is like a radius in logical distance units.*/
+    protected static const FEEDING_LOGICAL_X_OFFSET :Number = 0.1;
+    protected static const FEEDING_LOGICAL_Z_OFFSET :Number = 0.01;
+
     /**
     * When our avatar arrives at it's destination, and it has a target, check how far away
     * we are from the target location.  If we are below this distance, we must be the first
     * predator (standing directly behind the target).  If we are greater than this distance,
     * we must have our orientation changed to face the target.
     */
-    public static const MINIMUM_FIRST_TARGET_DISTANCE :Number = MathUtil.distance(0, 0, VConstants.FEEDING_LOGICAL_X_OFFSET, VConstants.FEEDING_LOGICAL_Z_OFFSET) + 0.01;
+    protected static const MINIMUM_FIRST_TARGET_DISTANCE :Number = MathUtil.distance(0, 0,
+        FEEDING_LOGICAL_X_OFFSET, FEEDING_LOGICAL_Z_OFFSET) + 0.01;
+
 
 }
 }

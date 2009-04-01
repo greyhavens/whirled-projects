@@ -8,50 +8,14 @@ public class VConstants
     /**
     * If you're not related to the ubervamp
     */
-    public static const UBER_VAMP_ID :int = 12;
+    public static const UBER_VAMP_ID :int = 1877;
     //ubervamp localhost == 12
     //ubervamp dev.whirled == 1877
     //uvervamp Whirled == 383387
 
-    public static const FEEDING_ROUNDS_TO_FORM_BLOODBOND :int = 6;
-
-
-    /**This is like a radius in logical distance units.*/
-    public static const FEEDING_LOGICAL_X_OFFSET :Number = 0.1;
-    public static const FEEDING_LOGICAL_Z_OFFSET :Number = 0.01;
-
-
-    /**
-     * A vampire feeding from another vampire only gets a small amount of the blood lost.
-     * For vampires of equal level, the feeder only gets this fraction of the blood
-     * lost from the 'victim'.
-     */
-    public static const BLOOD_GAIN_FRACTION_FROM_V2V_FEEDING_WHEN_EQUAL_LEVEL :Number = 0.5;
+    public static const FEEDING_ROUNDS_TO_FORM_BLOODBOND :int = 2;
 
     public static const UNIQUE_BLOOD_STRAINS :int = 12;
-
-//    public static const TIME_FEEDBACK_MESSAGE_DISPLAY :Number = 4;
-
-//    public static const BLOODBLOOM_MULTIPLAYER_COUNTDOWN_TIME :int = 10;
-
-//    public static const NON_PLAYER_TIMEOUT :Number = 20;
-
-//    public static const CHAT_FEEDING_MIN_CHATS_PER_TIME_INTERVAL :int = 3;
-
-//    public static const CHAT_FEEDING_TIME_INTERVAL_MILLISECS :int = 60000;//A minute
-
-
-
-    /**
-    * The hourly loss of blood as a fraction of the maximum amount of blood of a vampire.
-    */
-    public static const BLOOD_LOSS_DAILY_RATE_WHILE_SLEEPING :Number = 10;// / 48;//After two days you lose all your blood
-
-    /**
-    * When a vampire is fed upon, it loses this fraction of total blood.
-    * This is only really used to create bloodbonds.
-    */
-    public static const BLOOD_FRACTION_LOST_PER_FEED :Number = 0.25;
 
     /**
     * The fraction of xp gained from feeding that your bloodbond also gets.
@@ -78,50 +42,12 @@ public class VConstants
     public static const XP_GAINED_FROM_FEEDING_PER_BLOOD_UNIT :Number = 1;
 
     /**
-    * Blood regenerated per second.  0.05 and maxblood=30 means 10 minutes until replenishment
-    */
-    public static const THRALL_BLOOD_REGENERATION_RATE :Number = 0.04;//Blood per second
-
-    /**
-    * Blood lost per second.
-    */
-    public static const VAMPIRE_BLOOD_LOSS_RATE :Number = 0.025;//Blood per second
-
-
-    /**
     * Max blood non-players
     */
     public static const MAX_BLOOD_NONPLAYERS :Number = 80;
 
-    /**
-    * B
-    */
-    public static const BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED :Number = 30;
-
-
-    /**
-    * The level when you are allowed to 'turn' (become a vampire) and also the
-    * level cap of a non-vampire.  That means vampires start at this level++,
-    * because you go up a level when you become a vampire.
-    */
-//    public static const MAXIMUM_LEVEL_FOR_NON_VAMPIRE :int = 1;
-
-    /**
-    * After a vampire awakes (starts the game after some time),
-    * her blood is reduced proportionally to the time sleeping,
-    * to a minimum needed to move around.
-    */
-    public static const MINIMUM_BLOOD_AFTER_SLEEPING :int = 5;
-
-
-    public static const MINIMUM_VAMPIRE_LEVEL :int = 1;
-
     /**We cap the max level for now.*/
     public static const MAXIMUM_VAMPIRE_LEVEL :int = 10;
-//    public static function get MINIMUM_VAMPIRE_LEVEL() :int
-//    {
-//        return MAXIMUM_LEVEL_FOR_NON_VAMPIRE + 1;
-//    }
 
     //Possible avatar states
     public static const AVATAR_STATE_DEFAULT :String = "Default";
@@ -198,15 +124,9 @@ public class VConstants
     public static const TEXT_INVITE :String = "Join my Bloodline!";
     public static const TEXT_NEW_LEVEL :String = "You have achieved level ";
 
-
-//    public static const FEEDING_AVATAR_OFFSET :Vector2 = new Vector2(15, -5);
-
-//    public static const COLOR_SCHEME_VAMPIRE :String = "vampireColors";
-//    public static const COLOR_SCHEME_HUMAN :String = "humanColors";
-
     protected static const p4 :Number = Math.cos(Math.PI/4);
     public static const PREDATOR_LOCATIONS_RELATIVE_TO_PREY :Array = [
-        [  0, 0,  VConstants.FEEDING_LOGICAL_Z_OFFSET], //Behind
+        [  0, 0,  0.01], //Behind
         [  1, 0,  0], //Left
         [ -1, 0,  0], //right
         [ p4, 0, p4], //North east
@@ -222,5 +142,7 @@ public class VConstants
         [ -6, 0,  0],
         [  6, 0,  0]
     ];
+
+
 }
 }

@@ -132,23 +132,12 @@ public class SharedPlayerStateClient
         return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE);
     }
 
-//    public static function getMinions (playerId :int) :Array
-//    {
-//        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_MINIONS) as Array;
-//    }
-
     protected static function playerData (playerId :int, ix :int) :*
     {
         var dict :Dictionary =
             ClientContext.ctrl.room.props.get(Codes.playerRoomPropKey(playerId)) as Dictionary;
         return (dict != null) ? dict[ix] : undefined;
     }
-
-    public static function isVampire(playerId :int) :Boolean
-    {
-        return getLevel(playerId) >= VConstants.MINIMUM_VAMPIRE_LEVEL;
-    }
-
 
     public static function isProps(playerId :int) :Boolean
     {
@@ -168,8 +157,12 @@ public class SharedPlayerStateClient
 
     public static function toStringForPlayer(playerId :int) :String
     {
-        return playerId + ", blood=" + getBlood(playerId) + ", level=" + getLevel(playerId) + ", action=" + getCurrentState(playerId) + ", bloodbonded=" + getBloodBonded(playerId) + ", bloodbondname=" + getBloodBondedName(playerId) + ", time=" + new Date(getTime(playerId)).toTimeString()
-//            + ", closestUserId=" + getClosestUserData(playerId)
+        return playerId +
+        ", blood=" + getBlood(playerId) +
+        ", level=" + getLevel(playerId) +
+        ", action=" + getCurrentState(playerId) +
+        ", bloodbonded=" + getBloodBonded(playerId) +
+        ", bloodbondname=" + getBloodBondedName(playerId)
             ;
     }
 
