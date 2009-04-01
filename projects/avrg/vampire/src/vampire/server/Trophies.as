@@ -8,11 +8,27 @@ public class Trophies
     public static const BASIC_AVATAR_FEMALE :String = "basicAvatarFemale";
 
     //The number of progeny
+    //    01 - Sire
+    //    02 - Guide
+    //    03 - Mentor
+    //    04 - Teacher
+    //    05 - Leader
+    //    10 - Elder
+    //    25 - Patriarch
     public static const PATRON_PREFIX :String = "patron";
     public static const PATRON_REQS :Array = [1, 2, 3, 4, 5, 10, 25];
 
     //The number of invites accepted.  This intersects with the progeny trophies.
     //The difference: you can make someone your progeny without inviting them.
+    //    "Evangelist"
+    //
+    //    01 - Evangelist
+    //    02 - Usher
+    //    03 - Shepherd
+    //    04 - Preacher
+    //    05 - Missionary
+    //    10 - Consul
+    //    25 - Ambassador
     public static const INVITE_PREFIX :String = "invite";
     public static const INVITE_REQS :Array = [1, 2, 3, 4, 5, 10, 25];
 
@@ -33,6 +49,9 @@ public class Trophies
     public static const THREAD_TIME :Number = 5;
 
     // Awarded for creating a cascade of a certain size
+    //Trophy names in Whirled:
+    //    25 - 25-Cell Cascade
+    //    50 - 50-Cell Cascade etc
     public static const CASCADE_TROPHIES :Array = [
         "cascade25",
         "cascade50",
@@ -43,6 +62,10 @@ public class Trophies
     public static const CASCADE_REQS :Array = [ 25, 50, 100, 200, 400 ];
 
     // Awarded for creating a cascade with a certain multiplier value
+    // Awarded for creating a cascade of a certain size
+    //Trophy names in Whirled:
+    //    03 - 3x Multiplier
+    //    10 - 10x Multiplier etc
     public static const MULTIPLIER_TROPHIES :Array = [
         "multiplier03",
         "multiplier10",
@@ -52,6 +75,19 @@ public class Trophies
     public static const MULTIPLIER_REQS :Array = [ 3, 10, 20, 30 ];
 
     // Awarded for collecting special blood strains
+    //    00 - Apex Predator
+    //    01 - Sheep Shearer
+    //    02 - Bull Fighter
+    //    03 - Double Trouble
+    //    04 - Cure for Cancer
+    //    05 - Lion Hunter
+    //    06 - Deflowerer
+    //    07 - Obstruction of Justice
+    //    08 - Antivenom
+    //    09 - Bow Breaker
+    //    10 - Mythbuster
+    //    11 - Blight
+    //    12 - Angler
     public static const TROPHY_HUNTER_ALL :String = "hunterAll";
     public static const HUNTER_COLLECTION_REQUIREMENT :int = 3;
     public static function getHunterTrophyName (bloodStrain :int) :String
