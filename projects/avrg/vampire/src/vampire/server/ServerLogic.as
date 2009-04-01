@@ -5,7 +5,6 @@ import com.threerings.flash.MathUtil;
 import com.threerings.flash.Vector2;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
-import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
 import com.whirled.contrib.simplegame.net.Message;
@@ -13,7 +12,6 @@ import com.whirled.contrib.simplegame.net.Message;
 import flash.utils.ByteArray;
 
 import vampire.Util;
-import vampire.client.events.PlayerArrivedAtLocationEvent;
 import vampire.data.Codes;
 import vampire.data.Logic;
 import vampire.data.VConstants;
@@ -22,6 +20,7 @@ import vampire.net.messages.FeedConfirmMsg;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.GameStartedMsg;
 import vampire.net.messages.MovePredIntoPositionMsg;
+import vampire.net.messages.PlayerArrivedAtLocationMsg;
 import vampire.net.messages.RequestStateChangeMsg;
 import vampire.net.messages.ShareTokenMsg;
 
@@ -410,6 +409,11 @@ public class ServerLogic
                     var playerStarted :PlayerData = getPlayer(gameStarted.playerId);
                     handleGameStartedMessage(playerStarted, gameStarted);
                 }
+                else if (msg is PlayerArrivedAtLocationMsg) {
+                    var playerArrived :PlayerData =
+                        getPlayer(PlayerArrivedAtLocationMsg(msg).playerId);
+                    handlePlayerArrivedAtLocation(playerArrived);
+                }
                 else {
 //                    log.debug("Cannot handle Message ", "player", playerId, "type", value);
 //                    log.debug("  Classname=" + ClassUtil.getClassName(value));
@@ -477,9 +481,9 @@ public class ServerLogic
                     player.setTime(now);
                     break;
 
-                    case PlayerArrivedAtLocationEvent.PLAYER_ARRIVED:
-                    handlePlayerArrivedAtLocation(player);
-                    break;
+//                    case PlayerArrivedAtLocationMsg.PLAYER_ARRIVED:
+//                    handlePlayerArrivedAtLocation(player);
+//                    break;
 
                     case VConstants.NAMED_EVENT_UPDATE_FEEDING_DATA:
                     var bytes :ByteArray = value as ByteArray;
@@ -530,7 +534,7 @@ public class ServerLogic
 
     protected static function handlePlayerArrivedAtLocation (player :PlayerData) :void
     {
-        log.debug(player.playerId + " message " + PlayerArrivedAtLocationEvent.PLAYER_ARRIVED,
+        log.debug(player.playerId + " message " + PlayerArrivedAtLocationMsg.NAME,
             "player", player.playerId, "state", player.state);
 
         switch (player.state) {

@@ -8,6 +8,7 @@ import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.GameStartedMsg;
 import vampire.net.messages.MovePredIntoPositionMsg;
 import vampire.net.messages.NonPlayerIdsInRoomMsg;
+import vampire.net.messages.PlayerArrivedAtLocationMsg;
 import vampire.net.messages.RequestStateChangeMsg;
 import vampire.net.messages.ShareTokenMsg;
 import vampire.net.messages.SuccessfulFeedMsg;
@@ -41,6 +42,7 @@ public class Util
         mgr.addMessageType(GameStartedMsg);
         mgr.addMessageType(MovePredIntoPositionMsg);
         mgr.addMessageType(NonPlayerIdsInRoomMsg);
+        mgr.addMessageType(PlayerArrivedAtLocationMsg);
         mgr.addMessageType(RequestStateChangeMsg);
         mgr.addMessageType(ShareTokenMsg);
         mgr.addMessageType(SuccessfulFeedMsg);

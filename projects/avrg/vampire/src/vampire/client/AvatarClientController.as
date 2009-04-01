@@ -10,14 +10,12 @@ package vampire.client
     import com.whirled.avrg.AVRGameRoomEvent;
     import com.whirled.contrib.simplegame.SimObject;
     import com.whirled.contrib.simplegame.objects.SimpleTimer;
-    import com.whirled.net.ElementChangedEvent;
     import com.whirled.net.MessageReceivedEvent;
 
     import vampire.avatar.AvatarGameBridge;
-    import vampire.client.events.PlayerArrivedAtLocationEvent;
-    import vampire.data.Codes;
     import vampire.data.VConstants;
     import vampire.net.messages.MovePredIntoPositionMsg;
+    import vampire.net.messages.PlayerArrivedAtLocationMsg;
 
 
 /**
@@ -341,7 +339,7 @@ public class AvatarClientController extends SimObject
         }
 
         trace(_ctrl.player.getPlayerId() + " Sending player arrived event");
-        _ctrl.agent.sendMessage(PlayerArrivedAtLocationEvent.PLAYER_ARRIVED);
+        _ctrl.agent.sendMessage(PlayerArrivedAtLocationMsg.NAME, new PlayerArrivedAtLocationMsg(_ctrl.player.getPlayerId()).toBytes());
 //        trace("dispatchEvent PlayerArrivedAtLocationEvent");
 //        dispatchEvent(new PlayerArrivedAtLocationEvent());
 
