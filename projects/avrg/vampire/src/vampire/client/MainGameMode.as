@@ -116,7 +116,7 @@ public class MainGameMode extends AppMode
         }
 
         //Add the tutorial
-        ClientContext.tutorial = new TutorialAppMode();
+        ClientContext.tutorial = new Tutorial();
 //        ClientContext.tutorial.activateTutorial();
 
 

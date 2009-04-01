@@ -14,9 +14,9 @@ import vampire.data.Codes;
 import vampire.data.Logic;
 import vampire.data.VConstants;
 
-public class DebugMode extends DraggableSceneObject
+public class DebugPanel extends DraggableSceneObject
 {
-    public function DebugMode()
+    public function DebugPanel()
     {
         super(ClientContext.ctrl);
         setup();

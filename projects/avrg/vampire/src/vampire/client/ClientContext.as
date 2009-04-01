@@ -51,7 +51,7 @@ public class ClientContext
 
     public static var controller :VampireController;
 
-    public static var tutorial :TutorialAppMode;
+    public static var tutorial :Tutorial;
 
     public static var isNewPlayer :Boolean = false;
 

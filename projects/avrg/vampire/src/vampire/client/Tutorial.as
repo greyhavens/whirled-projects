@@ -93,9 +93,9 @@ import vampire.data.VConstants;
 
  *
  */
-public class TutorialAppMode extends AppMode
+public class Tutorial extends AppMode
 {
-    public function TutorialAppMode ()
+    public function Tutorial ()
     {
         super();
         _active = true;
@@ -743,6 +743,6 @@ public class TutorialAppMode extends AppMode
         [PAGE_FINALE, "So get prowling!  Hunt blood strains and recruit progeny for the coming battles of Vampire Whirled!"]
     ];
 
-    protected static const log :Log = Log.getLog(TutorialAppMode);
+    protected static const log :Log = Log.getLog(Tutorial);
 }
 }
