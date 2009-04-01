@@ -13,7 +13,6 @@ import flash.display.MovieClip;
 import flash.display.Sprite;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
-import vampire.client.events.ChangeActionEvent;
 import vampire.data.Codes;
 import vampire.data.VConstants;
 import vampire.net.messages.FeedConfirmMsg;
@@ -46,12 +45,12 @@ public class VampireController extends Controller
 
     public static const HIERARCHY_CENTER_SELECTED :String = "HierarchyCenterSelected";
 
-    public function VampireController(panel :Sprite)
+    public function VampireController (panel :Sprite)
     {
         setControlledPanel(panel);
     }
 
-    public function handleChangeState(state :String) :void
+    public function handleChangeState (state :String) :void
     {
         log.debug("handleChangeState("+state+")");
 
@@ -60,7 +59,7 @@ public class VampireController extends Controller
 //            case VConstants.PLAYER_STATE_FEEDING_PREY:
 
             //If we are already bared, toggle us out of bared state to the default state.
-            if(ClientContext.model.state == VConstants.PLAYER_STATE_BARED) {
+            if (ClientContext.model.state == VConstants.PLAYER_STATE_BARED) {
                 ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
                 ClientContext.ctrl.agent.sendMessage(RequestStateChangeMsg.NAME,
                     new RequestStateChangeMsg(ClientContext.ourPlayerId,
@@ -82,12 +81,9 @@ public class VampireController extends Controller
             break;
         }
 
-        if(VConstants.LOCAL_DEBUG_MODE) {
-            ClientContext.model.dispatchEvent(new ChangeActionEvent(state));
-        }
     }
 
-    public function handleQuit() :void
+    public function handleQuit () :void
     {
         trace(ClientContext.ourPlayerId + " setting avatar state from quit");
         ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
@@ -99,7 +95,7 @@ public class VampireController extends Controller
     }
 
 
-    public function handleShowQuitPopup() :void
+    public function handleShowQuitPopup () :void
     {
         var popup :PopupQuery = new PopupQuery(
             "QuitPopup",
@@ -107,20 +103,20 @@ public class VampireController extends Controller
             ["Yes", "No"],
             [VampireController.QUIT, null]);
 
-        if(ClientContext.gameMode.getObjectNamed(popup.objectName) == null) {
+        if (ClientContext.gameMode.getObjectNamed(popup.objectName) == null) {
             ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
             ClientContext.centerOnViewableRoom(popup.displayObject);
             ClientContext.animateEnlargeFromMouseClick(popup);
         }
     }
 
-    public function handleShowDebug() :void
+    public function handleShowDebug () :void
     {
         try {
             var hierarchySceneObject :SimObject =
                 ClientContext.game.ctx.mainLoop.topMode.getObjectNamed(DebugMode.NAME);
 
-            if(hierarchySceneObject == null) {
+            if (hierarchySceneObject == null) {
                 ClientContext.game.ctx.mainLoop.topMode.addSceneObject(new DebugMode(),
                     ClientContext.game.ctx.mainLoop.topMode.modeSprite);
             }
@@ -135,13 +131,13 @@ public class VampireController extends Controller
     }
 
 
-    public function handleShowIntro(startFrame :String = null, centerLineage :int = 0) :void
+    public function handleShowIntro (startFrame :String = null, centerLineage :int = 0) :void
     {
         try {
             var help :HelpPopup =
                 ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as HelpPopup;
 
-            if(help == null) {
+            if (help == null) {
                 help = new HelpPopup(startFrame);
                 ClientContext.gameMode.addSceneObject(help,
                     ClientContext.game.ctx.mainLoop.topMode.modeSprite);
@@ -154,7 +150,7 @@ public class VampireController extends Controller
                 ClientContext.tutorial.clickedVWButtonOpenHelp();
             }
             else {
-                if(startFrame == null) {
+                if (startFrame == null) {
                     help.destroySelf();
                 }
                 else {
@@ -181,7 +177,7 @@ public class VampireController extends Controller
         function sendFeedRequest () :void {
             var targetLocation :Array;
             var targetAvatar :AvatarHUD = ClientContext.avatarOverlay.getAvatar(targetId);
-            if(targetAvatar != null) {
+            if (targetAvatar != null) {
                 targetLocation = targetAvatar.location;
             }
             else {
@@ -257,7 +253,7 @@ public class VampireController extends Controller
 
     }
 
-    public function handleFeed() :void
+    public function handleFeed () :void
     {
         var model :GameModel = ClientContext.model;
 
@@ -296,15 +292,15 @@ public class VampireController extends Controller
 
     }
 
-    public function handleHierarchyCenterSelected(playerId :int, hierarchyView :LineageView) :void
+    public function handleHierarchyCenterSelected (playerId :int, hierarchyView :LineageView) :void
     {
-//        if(hierarchyView._hierarchy == null){// || hierarchyView._hierarchy.getMinionCount(playerId) == 0) {
+//        if (hierarchyView._hierarchy == null){// || hierarchyView._hierarchy.getMinionCount(playerId) == 0) {
 //            return;
 //        }
         hierarchyView.updateHierarchy(playerId);
     }
 
-    public function handleShowHierarchy(_hudMC :MovieClip) :void
+    public function handleShowHierarchy (_hudMC :MovieClip) :void
     {
         try {
             ClientContext.controller.handleShowIntro("default");
