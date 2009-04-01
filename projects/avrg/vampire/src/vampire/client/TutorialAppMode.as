@@ -409,14 +409,16 @@ public class TutorialAppMode extends AppMode
                 if (targetReticle == null) {
                     targetReticle = createTargetSceneObject(sceneObjectName);
 
-
-                    targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
-                    targetDisplayObject.parent.getChildIndex(targetDisplayObject));
-
                     addObject(targetReticle);
+                    moveTargetClearlyFromOldTargetLocToNew(targetReticle, targetDisplayObject);
 
-                    ClientContext.centerOnViewableRoom(targetReticle.displayObject);
-                    targetReticle.addTask(LocationTask.CreateEaseIn(avhud.targetUI.x, avhud.targetUI.y, 0.5));
+//                    targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
+//                    targetDisplayObject.parent.getChildIndex(targetDisplayObject));
+//
+//
+//                    ClientContext.centerOnViewableRoom(targetReticle.displayObject);
+//                    targetReticle.addTask(LocationTask.CreateEaseIn(
+//                        targetDisplayObject.x, targetDisplayObject.y, 0.5));
 
 //                    targetReticle.x = avhud.targetUI.x;
 //                    targetReticle.y = avhud.targetUI.y;
