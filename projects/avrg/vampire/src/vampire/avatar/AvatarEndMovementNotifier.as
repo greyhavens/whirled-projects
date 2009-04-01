@@ -1,28 +1,31 @@
 package vampire.avatar
 {
 import com.threerings.util.HashMap;
+import com.threerings.util.Log;
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
+import com.whirled.EntityControl;
+import com.whirled.contrib.EventHandlerManager;
 
 import flash.events.Event;
 
 /**
  * Currently the Whirled AVRG API does not notify the client when
  * 1) A player avatar arrives at a destination.
- * 2) Any non-player avatar movement.
+ * 2) Any non-player avatar moves.
  *
  * This class notifies the client when avatars stop moving.  Unfortunately, it
- * has to be compiled into an avatar, as avatars can listen to these events.
+ * has to be compiled into an avatar, as only Avatar (Entitys) can listen to these events.
  */
 public class AvatarEndMovementNotifier
 {
-    public function AvatarEndMovementNotifier(ctrl :AvatarControl)
+    public function AvatarEndMovementNotifier (ctrl :AvatarControl)
     {
         _ctrl = ctrl;
 
         //Only the controlling instance updates, listens to events, and has custom properties.
         if(_ctrl.hasControl()) {
-            _ctrl.registerPropertyProvider(propertyProvider);
+//            _ctrl.registerPropertyProvider(propertyProvider);
 
             _events.registerListener(_ctrl, ControlEvent.ENTITY_MOVED, handleEntityMoved);
             _events.registerListener(_ctrl, ControlEvent.ENTITY_LEFT, handleEntityLeft);
@@ -32,7 +35,24 @@ public class AvatarEndMovementNotifier
         _events.registerListener(_ctrl, Event.UNLOAD, handleUnload);
     }
 
-    protected function propertyProvider(key :String) :Object
+    /**
+    * This is public, so it can be chained to another classes property provider.
+    * E.g.
+    *
+    *       protected function propertyProvider (key :String) :Object
+    *        {
+    *            switch(key) {
+    *
+    *                case ENTITY_PROPERTY_IS_LEGAL_AVATAR:
+    *                    return true;
+    *
+    *               default://The rest of the properties are provided by the movement notifier.
+    *                    return _movementNotifier.propertyProvider(key);
+    *            }
+    *        }
+    *
+    */
+    public function propertyProvider (key :String) :Object
     {
         switch(key) {
 
@@ -44,7 +64,7 @@ public class AvatarEndMovementNotifier
         }
     }
 
-    protected function handleUnload(...ignored) :void
+    protected function handleUnload (...ignored) :void
     {
         _events.freeAllHandlers();
         _avatarArrivedCallback = null;
@@ -66,12 +86,12 @@ public class AvatarEndMovementNotifier
     }
     protected function handleEntityMoved (e :ControlEvent) :void
     {
-        if(!_ctrl.hasControl()) {
-            return;
+        if (!_ctrl.hasControl()) {
+            return
         }
 
         //We only care about avatars.
-        if(_ctrl.getEntityProperty(EntityControl.PROP_TYPE, e.name) != EntityControl.TYPE_AVATAR) {
+        if (_ctrl.getEntityProperty(EntityControl.PROP_TYPE, e.name) != EntityControl.TYPE_AVATAR) {
             return;
         }
 
@@ -107,12 +127,12 @@ public class AvatarEndMovementNotifier
 
     }
 
-    protected function get playerId() :int
+    protected function get playerId () :int
     {
         return int(_ctrl.getEntityProperty(EntityControl.PROP_MEMBER_ID));
     }
 
-    protected function getEntityId(userId :int) :String
+    protected function getEntityId (userId :int) :String
     {
         for each(var entityId :String in _ctrl.getEntityIds(EntityControl.TYPE_AVATAR)) {
             var entityUserId :int = int(_ctrl.getEntityProperty(EntityControl.PROP_MEMBER_ID, entityId));
@@ -123,7 +143,7 @@ public class AvatarEndMovementNotifier
         return null;
     }
 
-    protected function setArrivedCallback(callback :Function) :void
+    protected function setArrivedCallback (callback :Function) :void
     {
         _avatarArrivedCallback = callback;
     }
@@ -141,6 +161,7 @@ public class AvatarEndMovementNotifier
     * argument and call it when we arrive a a destination.
     */
     public static const ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK :String = "ArrivedCallback";
+
 
     protected static const log :Log = Log.getLog(AvatarEndMovementNotifier);
 }
