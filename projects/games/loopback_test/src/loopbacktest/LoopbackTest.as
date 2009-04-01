@@ -70,6 +70,18 @@ public class LoopbackTest extends Sprite
             function (...ignored) :void {
                 _gameCtrl.net.setIn("Dictionary", 666, elemVal++);
             });
+
+        var batchVal :int;
+        var batchBtn :SimpleTextButton = new SimpleTextButton("Batch Transaction");
+        layoutButton(batchBtn);
+        batchBtn.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                _gameCtrl.net.doBatch(function () :void {
+                    for (var ii :int = 0; ii < 3; ++ii){
+                        _gameCtrl.net.set("BatchProp", batchVal++, false);
+                    }
+                })
+            });
     }
 
     protected function layoutButton (button :SimpleTextButton) :void
