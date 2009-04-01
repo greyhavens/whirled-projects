@@ -49,8 +49,8 @@ public class PlayerData extends EventHandlerManager
         _state = VConstants.AVATAR_STATE_DEFAULT;
 
         //Get last time awake
-        log.debug("Getting ", "time", new Date(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
-        _timePlayerPreviouslyQuit = Number(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE));
+//        log.debug("Getting ", "time", new Date(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
+//        _timePlayerPreviouslyQuit = Number(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE));
 
         //Debugging
         //WhirledDev, 1734==Dion, 1735==Ragbears's Evil Twin
@@ -483,9 +483,9 @@ public class PlayerData extends EventHandlerManager
                 _ctrl.props.set(Codes.PLAYER_PROP_XP, xp, true);
             }
 
-            if(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE) != time) {
-                _ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, time, true);
-            }
+//            if(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE) != time) {
+//                _ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, time, true);
+//            }
 
             if(_ctrl.props.get(Codes.PLAYER_PROP_SIRE) != sire) {
                 _ctrl.props.set(Codes.PLAYER_PROP_SIRE, sire, true);

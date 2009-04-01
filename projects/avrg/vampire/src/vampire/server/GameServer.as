@@ -50,6 +50,7 @@ public class GameServer extends ObjectDB
             || playerId == 14137    // coriolis
             || playerId == 14134    // sunshine
             || playerId == 23340    //me (ragbeard)
+
             ;
     }
 
@@ -84,38 +85,38 @@ public class GameServer extends ObjectDB
         FeedingServer.init(_ctrl);
     }
 
-    /**
-    * Update the players time.  Every couple of seconds, set the players time.
-    * Then we can compute the time interval between games, to calculate blood loss.
-    */
-    protected function setupPlayerTimeUpdater () :void
-    {
-        var timedTask :TimedTask = new TimedTask(UPDATE_PLAYER_TIME);
-        var updatePlayerTimeTask :FunctionTask = new FunctionTask(updatePlayersCurrentTime);
-        var serialTask :SerialTask = new SerialTask(timedTask, updatePlayerTimeTask);
-        var repeatingTask :RepeatingTask = new RepeatingTask(serialTask);
+//    /**
+//    * Update the players time.  Every couple of seconds, set the players time.
+//    * Then we can compute the time interval between games, to calculate blood loss.
+//    */
+//    protected function setupPlayerTimeUpdater () :void
+//    {
+//        var timedTask :TimedTask = new TimedTask(UPDATE_PLAYER_TIME);
+//        var updatePlayerTimeTask :FunctionTask = new FunctionTask(updatePlayersCurrentTime);
+//        var serialTask :SerialTask = new SerialTask(timedTask, updatePlayerTimeTask);
+//        var repeatingTask :RepeatingTask = new RepeatingTask(serialTask);
+//
+//        var timerObject :SimObject = new SimObject();
+//        addObject(timerObject);
+//        timerObject.addTask(repeatingTask);
+//    }
 
-        var timerObject :SimObject = new SimObject();
-        addObject(timerObject);
-        timerObject.addTask(repeatingTask);
-    }
 
 
-
-    /**
-    * Update the current time of all the players.  This is handled seperately because it's not
-    * critical and only occurs every couple of seconds.
-    */
-    protected function updatePlayersCurrentTime (...ignored) :void
-    {
-        log.debug("updatePlayersCurrentTime " + ServerContext.time);
-        _players.forEach(function(playerId :int, player :PlayerData) :void {
-            //Update the players time, unless they are a new player (time==0)
-            if(player.time != 0) {
-                player.setTime(ServerContext.time);
-            }
-        });
-    }
+//    /**
+//    * Update the current time of all the players.  This is handled seperately because it's not
+//    * critical and only occurs every couple of seconds.
+//    */
+//    protected function updatePlayersCurrentTime (...ignored) :void
+//    {
+//        log.debug("updatePlayersCurrentTime " + ServerContext.time);
+//        _players.forEach(function(playerId :int, player :PlayerData) :void {
+//            //Update the players time, unless they are a new player (time==0)
+//            if(player.time != 0) {
+//                player.setTime(ServerContext.time);
+//            }
+//        });
+//    }
 
 
     /**
@@ -211,11 +212,6 @@ public class GameServer extends ObjectDB
     */
     protected function handleMessage (evt :MessageReceivedEvent) :void
     {
-        //Ignore messages not meant for individual players.
-//        if(evt.name == NonPlayerIdsInRoomMsg.NAME) {
-//            return;
-//        }
-
         //Only handle the message if the originating player exists.
         try {
             var player :PlayerData = getPlayer(evt.senderId);
