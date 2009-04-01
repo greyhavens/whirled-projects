@@ -34,13 +34,10 @@ import vampire.feeding.PlayerFeedingData;
  */
 
 [Event(name="Hierarchy Updated", type="vampire.client.events.LineageUpdatedEvent")]
-public class GameModel extends SimObject//EventDispatcher
-    //implements Updatable
+public class GameModel extends SimObject
 {
     public function setup () :void
     {
-//        _playerStates = new HashMap();
-
         _agentCtrl = ClientContext.ctrl.agent;
         _propsCtrl = ClientContext.ctrl.room.props;
 
@@ -50,290 +47,33 @@ public class GameModel extends SimObject//EventDispatcher
         registerListener(_propsCtrl, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged);
         registerListener(_propsCtrl, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
 
-        //Monitor and adjust for avatar changes
-        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, handleAvatarChanged);
 
 
         //Update the HUD when the room props come in.
         registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, playerEnteredRoom);
 
 
-        //Let's hear when the avatar arrived at a destination
-         var setCallback :Function = ClientContext.ctrl.room.getEntityProperty(
-            AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
-        if(setCallback != null) {
-            setCallback(avatarArrivedAtDestination);
-        }
-        else {
-            log.error("!!!!!! This avatar is CRUSTY and old, missing AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK");
-        }
-
-
-        //Reset the entityId if something about the avatar changes
-        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, handleAvatarChanged);
-
-        resetAvatarCallbackFunctions();
-
-
-
-//
-//        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_MOVED,
-//            function (e :AVRGameRoomEvent) :void {
-//                trace("GameModel heard " + AVRGameRoomEvent.PLAYER_MOVED + " " + e);
-//            });
-//
-//        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED,
-//            function (e :AVRGameRoomEvent) :void {
-//                trace("GameModel heard " + AVRGameRoomEvent.SIGNAL_RECEIVED + " " + e);
-//            });
-
-
-
-        //Update the closest userId (might not be a player)
-//        _events.registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
-
-
-//        _nonPlayerLocations = new NonPlayerMonitor(ClientContext.gameCtrl.room);
-
-
-//        _avatarManager = new VampireAvatarHUDManager(ClientContext.ctrl);
-//
-//
-//        this.db.addObject(_avatarManager);
-
-
         //If the room props are already present, update the HUD now.
         if(SharedPlayerStateClient.isProps(ClientContext.ourPlayerId)) {
             playerEnteredRoom();
         }
-
-
-        _events.registerListener(ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED,
-            function(e:MessageReceivedEvent):void{
-                trace(ClientContext.ctrl.player.getPlayerId() + ", got " + e);
-            });
-
-
-
-        //Every second, update who is our closest player.  Used for targeting e.g. feeding.
-//        _proximityTimer = new Timer(Constants.TIME_INTERVAL_PROXIMITY_CHECK, 0);
-//        _events.registerListener(_proximityTimer, TimerEvent.TIMER, checkProximity);
-//        _proximityTimer.start();
-
     }
 
-    protected function resetAvatarCallbackFunctions() :void
-    {
-//        trace("resetAvatarArrivedFunction, ClientContext.ourEntityId=" + ClientContext.ourEntityId);
-        //Let's hear when the avatar arrived at a destination
-        var setAvatarArrivedCallback :Function = ClientContext.ctrl.room.getEntityProperty(
-            AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
-        if(setAvatarArrivedCallback != null) {
-            setAvatarArrivedCallback(avatarArrivedAtDestination);
-        }
-        else {
-            log.error("!!!!!! This avatar is CRUSTY and old, missing AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK");
-
-            //Ok, our avatar has changed.
-            //I can't seem to update the avatar location function, so quit the game with a warning
-            if (!VConstants.LOCAL_DEBUG_MODE) {
-                var quitPopupName :String = "QuitAvatarBorked";
-                if(ClientContext.gameMode.getObjectNamed(quitPopupName) == null) {
-                    var popup :PopupQuery = new PopupQuery(
-                        quitPopupName,
-                        "Sorry.  Vampire Whirled cannot (yet) handle a mid-game avatar change.  " +
-                        "Click the vampire icon to restart..");
-                    ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
-                    ClientContext.centerOnViewableRoom(popup.displayObject);
-                    ClientContext.animateEnlargeFromMouseClick(popup);
-
-                    var quitTimer :SimpleTimer = new SimpleTimer(5, function() :void {
-                        ClientContext.controller.handleQuit();
-                    });
-                    ClientContext.gameMode.addObject(quitTimer);
-
-                }
-            }
-        }
-    }
-
-    protected function avatarArrivedAtDestination(...ignored) :void
-    {
-        if(!ClientContext.ctrl.isConnected()) {
-            trace("avatarArrivedAtDestination, ctrl null, setting callback null");
-            var setCallback :Function = ClientContext.ctrl.room.getEntityProperty(
-            AvatarGameBridge.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
-            if(setCallback != null) {
-                setCallback(null);
-            }
-            return;
-        }
-
-
-//        trace("dispatchEvent PlayerArrivedAtLocationEvent");
-        dispatchEvent(new PlayerArrivedAtLocationEvent());
-
-    }
-
-
-    /**
-    * If we change avatars, make sure to update the movement notification function
-    */
-    protected function handleAvatarChanged(e :AVRGameRoomEvent) :void
-    {
-//        trace("handleAvatarChanged");
-        var playerAvatarChangedId :int = int(e.value);
-
-        //We are care about our own avatar
-        if(playerAvatarChangedId != ClientContext.ourPlayerId) {
-            return;
-        }
-
-        //Get our entityId
-        var currentEntityId :String;
-
-        for each(var entityId :String in ClientContext.ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR)) {
-
-            var entityUserId :int = int(ClientContext.ctrl.room.getEntityProperty(EntityControl.PROP_MEMBER_ID, entityId));
-
-            if(entityUserId == ClientContext.ctrl.player.getPlayerId()) {
-                currentEntityId = entityId;
-                break;
-            }
-
-        }
-
-        if(currentEntityId != _currentEntityId) {
-
-            //Update the clientcontext cached version
-            ClientContext.clearOurEntityId();
-
-            //Change our id for future reference.
-            _currentEntityId = currentEntityId;
-
-            resetAvatarCallbackFunctions();
-        }
-
-
-
-//        trace("  currentEntityId=" + currentEntityId);
-//
-//        trace("  _currentEntityId=" + _currentEntityId);
-
-//        if(currentEntityId != _currentEntityId) {
-//
-//            _updateAvatar = true;
-//            //Update the clientcontext cached version
-//            ClientContext.clearOurEntityId();
-//
-//            //Change our id for future reference.
-//            _currentEntityId = currentEntityId;
-//        }
-//
-//
-//        //Update the avatar functions on the second event.
-//        if(_updateAvatar) {
-//            _updateAvatar = false;
-//            //Update avatar dependent stuff
-//            resetAvatarArrivedFunction();
-//
-//        }
-
-    }
-
-    override protected function update(dt :Number) :void
-    {
-//        _avatarManager.update(dt);
-    }
-
-//    /**
-//    * The player avatar tells the model who is closest.
-//    */
-//    protected function handleSignalReceived(e :AVRGameRoomEvent) :void
-//    {
-//        trace("model.handleSignalReceived(), e=" + e);
-//        if(e.name == VConstants.SIGNAL_CLOSEST_ENTITY) {
-//            var args :Array = e.value as Array;
-//            if(args != null && args.length >= 2 && args[0] == ClientContext.ourPlayerId) {
-//                closestUserId = int(args[1]);
-//                trace("model.handleSignalReceived(), Closest id=" + closestUserId);
-//            }
-//        }
-//    }
-
-
-//    protected function checkProximity(...ignored) :void
-//    {
-//        var av :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo(ClientContext.ourPlayerId);
-//        if(av == null) {
-//            return;
-//        }
-//        var mylocation :Point = new Point(av.x, av.y);
-//        var closestOtherPlayerId :int = -1;
-//        var closestOtherPlayerDistance :Number = Number.MAX_VALUE;
-//
-//        for each(var playerid :int in ClientContext.ctrl.room.getPlayerIds()) {
-//            if(playerid == ClientContext.ourPlayerId) {
-//                continue;
-//            }
-//            av = ClientContext.ctrl.room.getAvatarInfo(playerid);
-//            var otherPlayerPoint :Point = new Point(av.x, av.y);
-//            var distance :Number = Point.distance(mylocation, otherPlayerPoint);
-//            if(distance < closestOtherPlayerDistance) {
-//                closestOtherPlayerId = playerid;
-//                closestOtherPlayerDistance = distance;
-//            }
-//        }
-//
-////        if(closestOtherPlayerId > 0) {
-//            ClientContext.currentClosestPlayerId = closestOtherPlayerId;
-//            dispatchEvent(new ClosestPlayerChangedEvent(closestOtherPlayerId));
-////        }
-//    }
     public function playerEnteredRoom(...ignored) :void
     {
-        //Reset avatar locations
-//        ClientContext.ctrl.room.getEntityProperty(
-//            AvatarGameBridge.ENTITY_PROPERTY_RESET_LOCATIONS, ClientContext.ourEntityId);
-
-        trace(VConstants.DEBUG_MINION + " Player entered room");
-
         if(lineage == null) {
-
             _lineage = loadHierarchyFromProps();
-            trace(VConstants.DEBUG_MINION + " loadHierarchyFromProps()=" + _lineage);
             dispatchEvent(new LineageUpdatedEvent(_lineage));
-
-//            var bytes :ByteArray = ClientContext.gameCtrl.room.props.get(Codes.ROOM_PROP_MINION_HIERARCHY) as ByteArray;
-//            if(bytes != null) {
-//                _hierarchy = new MinionHierarchy();
-//                _hierarchy.fromBytes(bytes);
-//                dispatchEvent(new HierarchyUpdatedEvent(hierarchy));
-//            }
         }
         else {
             log.warning("Player entered room, but no minion hierarchy to load.");
         }
-    }
-    public function shutdown () :void
-    {
-//        _events.freeAllHandlers();
-//        _avatarManager.shutdown();
-//        _proximityTimer.stop();
     }
 
     protected function loadHierarchyFromProps() :Lineage
     {
         log.debug(VConstants.DEBUG_MINION + " loadHierarchyFromProps()");
         var hierarchy :Lineage = new Lineage();
-//        var playerIds :Array = ClientContext.gameCtrl.room.props.get(Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS) as Array;
-
-//        log.debug(Constants.DEBUG_MINION + " loadHierarchyFromProps()", "playerIds", playerIds);
-
-//        if(playerIds == null) {
-//            log.error(VConstants.DEBUG_MINION +  " playerIds=" + playerIds);
-//            return hierarchy;
-//        }
 
         var dict :Dictionary = ClientContext.ctrl.room.props.get(Codes.ROOM_PROP_MINION_HIERARCHY) as Dictionary;
 
@@ -343,7 +83,6 @@ public class GameModel extends SimObject//EventDispatcher
             for (var key:Object in dict) {//Where key==playerId
 
                 playerId = int(key);
-//            for each(var playerId :int in playerIds) {
                 if(dict[playerId] != null) {
                     var data :Array = dict[playerId] as Array;
                     var playerName :String = data[0];
@@ -364,10 +103,6 @@ public class GameModel extends SimObject//EventDispatcher
 
     protected function handlePropChanged (e :PropertyChangedEvent) :void
     {
-        //Check if it is non-player properties changed??
-//        log.debug(VConstants.DEBUG_MINION + " propChanged", "e", e);
-
-
         switch (e.name) {
             case Codes.ROOM_PROP_MINION_HIERARCHY://) {//|| e.name == Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS) {
             _lineage = loadHierarchyFromProps();
@@ -382,62 +117,6 @@ public class GameModel extends SimObject//EventDispatcher
             default:
             break;
         }
-//        else if(e.name == Codes.ROOM_PROP_NON_PLAYERS) {
-//            updateNonPlayersIds();
-//
-//        }
-
-//            if(e.newValue is ByteArray) {
-//                _hierarchy = new MinionHierarchy();
-//                _hierarchy.fromBytes(ByteArray(e.newValue));
-//                trace("\n      " + Constants.DEBUG_MINION + " !!!!!!!!!!!Hierarch data arrived in room=" + _hierarchy.toString());
-//                dispatchEvent(new HierarchyUpdatedEvent(_hierarchy));
-//
-//            }
-//            else {
-//                log.error("propChanged " + Codes.ROOM_PROP_MINION_HIERARCHY + " but not a ByteArray");
-//            }
-
-
-
-//        //Otherwise check for player updates
-//
-//        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
-//        if(!isNaN(playerIdUpdated)) {
-////            _playerStates.put(playerIdUpdated, SharedPlayerStateServer.fromBytes(ByteArray(e.newValue)));
-////            log.debug("Updated state=" + _playerStates.get(playerIdUpdated));
-//            log.debug("  Dispatching event=" + PlayerStateChangedEvent.NAME);
-////            dispatchEvent(new Event(VampireController.PLAYER_STATE_CHANGED));
-//            dispatchEvent(new PlayerStateChangedEvent(playerIdUpdated));
-//        }
-//        else {
-//            log.warning("  Failed to update PropertyChangedEvent" + e);
-//        }
-
-
-
-
-//        var playerKey :String = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + player.playerId;
-//
-//        switch (e.name) {
-//
-//            case
-//
-//            case Codes.PLAYER_SHARED_STATE_KEY:
-//                var newState :SharedState = SharedState.fromBytes(ByteArray(e.newValue));
-//                this.setState(newState);
-//                break;
-//
-//            case Constants.PROP_SCORES:
-//                var newScores :ScoreTable = ScoreTable.fromBytes(ByteArray(e.newValue),
-//                    Constants.SCORETABLE_MAX_ENTRIES);
-//                this.setScores(newScores);
-//                break;
-//
-//            default:
-//                log.warning("unrecognized property changed: " + e.name);
-//                break;
-//        }
     }
 
 
@@ -450,15 +129,10 @@ public class GameModel extends SimObject//EventDispatcher
             return;
         }
 
-//        log.debug(Constants.DEBUG_MINION + " elementChanged()", "e", e);
         if(e.name == Codes.ROOM_PROP_MINION_HIERARCHY) {
 
             _lineage = loadHierarchyFromProps();
-//            log.debug(Constants.DEBUG_MINION + " elementChanged", "e", e, "_hierarchy", _hierarchy);
-
             dispatchEvent(new LineageUpdatedEvent(_lineage));
-
-            trace(Codes.ROOM_PROP_MINION_HIERARCHY + " updated, lineage now=" + _lineage);
             return;
         }
 
@@ -495,18 +169,10 @@ public class GameModel extends SimObject//EventDispatcher
                     case Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE:
                     dispatchEvent(new ChangeActionEvent(e.newValue.toString()));
                     break;
-
-//                    case Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_ID:
-//                    setAvatarTarget(int(e.newValue));
-//                    break;
                 }
             }
 
         }
-        else {
-//            log.warning("  Failed to update ElementChangedEvent" + e);
-        }
-
     }
 
     public function playerIdsInRoom() :Array
@@ -545,11 +211,6 @@ public class GameModel extends SimObject//EventDispatcher
         }
 
     }
-
-//    public function get minions() :Array
-//    {
-//        return SharedPlayerStateClient.getMinions(ClientContext.ourPlayerId);
-//    }
 
     public function get blood() :Number
     {
@@ -646,11 +307,6 @@ public class GameModel extends SimObject//EventDispatcher
             log.error("Cannot set avatar stand behind target as the function is null, targetId=" + targetId);
         }
     }
-//
-//    public function get targetPlayerId() :int
-//    {
-//        return SharedPlayerStateClient.getTargetPlayer(ClientContext.ourPlayerId);
-//    }
 
     public function get state() :String
     {
@@ -723,16 +379,6 @@ public class GameModel extends SimObject//EventDispatcher
         return pfd;
     }
 
-//    public function get validNonPlayerTargetsFromChatting() :Array
-//    {
-//        var targets :Array = ClientContext.ctrl.room.getEntityProperty(
-//            AvatarGameBridge.ENTITY_PROPERTY_CHAT_TARGETS, ClientContext.ourEntityId) as Array;
-//
-//        trace("validNonPlayerTargetsFromChatting targets != null: " + (targets != null));
-//        return targets;
-//    }
-
-
     public function get playersFeeding () :Array
     {
         var feedingPlayers :Array =
@@ -748,8 +394,6 @@ public class GameModel extends SimObject//EventDispatcher
 
         return preds == null ? [] : preds;
     }
-
-
 
     public function setAvatarState (state :String) :void
     {
@@ -769,17 +413,6 @@ public class GameModel extends SimObject//EventDispatcher
 
 
     protected var _currentEntityId :String;
-
-//    /**
-//    * When you change avatars, the AVRGameRoomEvent.AVATAR_CHANGED is dispatched twice.  Once,
-//    * when the old avatar is removed, and once when the new avatar is loaded.  However, there is
-//    * no way to listen specifically for the second, since your entityID is changed on the first
-//    * event.
-//    *
-//    * So use the boolean, on the first event, set it to true, then on the second, reload the
-//    * avatar functions.
-//    */
-//    protected var _updateAvatar :Boolean = false;
 
     public var currentSelectedTarget :int = 0;
 
