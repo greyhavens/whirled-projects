@@ -124,8 +124,13 @@ public class PlayerData extends EventHandlerManager
 //            log.debug("We have not played before, so not computing blood reduction");
 //        }
 
-        log.info("Logging in", "playerId", playerId, "blood", blood, "maxBlood",
-                 maxBlood, "level", level, "sire", sire);//, "time", new Date(time).toTimeString()
+        log.info("Logging in", "playerId", playerId,
+//                "blood", blood,
+//                "maxBlood",  maxBlood,
+                "xp",  xp,
+                "level", level,
+                "sire", sire
+                );//, "time", new Date(time).toTimeString()
 
         //Create feeding data if there is none
         var feedingData :PlayerFeedingData = new PlayerFeedingData();

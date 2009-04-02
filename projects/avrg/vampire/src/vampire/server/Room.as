@@ -91,7 +91,7 @@ public class Room extends SimObject
 
         var playername :String = _ctrl.getAvatarInfo(player.playerId) != null ? _ctrl.getAvatarInfo(player.playerId).name : "" + player.playerId;
 
-        log.info("Setting " + playername + " props into room, player=" + player);
+//        log.info("Setting " + playername + " props into room, player=" + player);
 
 //        _players.put(player.playerId, player);
 //        player.setIntoRoomProps();

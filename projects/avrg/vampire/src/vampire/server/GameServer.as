@@ -244,17 +244,14 @@ public class GameServer extends ObjectDB
                 return;
             }
 
-
-    //        log.info("!!!!!Before player created", "player time", _ctrl.getPlayer(playerId).props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
-            log.info("!!!!!Before player created", "player time", new Date(_ctrl.getPlayer(playerId).props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
+//            log.info("!!!!!Before player created", "player time", new Date(_ctrl.getPlayer(playerId).props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
 
             var pctrl :PlayerSubControlServer = _ctrl.getPlayer(playerId);
             if (pctrl == null) {
                 throw new Error("Could not get PlayerSubControlServer for player!");
             }
     //
-    //        log.info("!!!!!After player created", "player time", _ctrl.getPlayer(playerId).props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
-            log.info("!!!!!AFter player control created", "player time", new Date(_ctrl.getPlayer(playerId).props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
+//            log.info("!!!!!AFter player control created", "player time", new Date(_ctrl.getPlayer(playerId).props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
 
 
             var hierarchyChanged :Boolean = false;

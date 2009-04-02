@@ -22,6 +22,7 @@ import vampire.net.messages.GameStartedMsg;
 import vampire.net.messages.MovePredIntoPositionMsg;
 import vampire.net.messages.PlayerArrivedAtLocationMsg;
 import vampire.net.messages.RequestStateChangeMsg;
+import vampire.net.messages.SendGlobalMsg;
 import vampire.net.messages.ShareTokenMsg;
 
 
@@ -414,6 +415,10 @@ public class ServerLogic
                         getPlayer(PlayerArrivedAtLocationMsg(msg).playerId);
                     handlePlayerArrivedAtLocation(playerArrived);
                 }
+                else if (msg is SendGlobalMsg) {
+                    var globalMessage :String = SendGlobalMsg(msg).message;
+                    ServerContext.server.addGlobalFeedback(globalMessage);
+                }
                 else {
 //                    log.debug("Cannot handle Message ", "player", playerId, "type", value);
 //                    log.debug("  Classname=" + ClassUtil.getClassName(value));
@@ -559,7 +564,6 @@ public class ServerLogic
 //            break;
 
             default:
-            log.error(player.playerId + " Received PLAYER_ARRIVED but doing nothing");
             break;
         }
     }
