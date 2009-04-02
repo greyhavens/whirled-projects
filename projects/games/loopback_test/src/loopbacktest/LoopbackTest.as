@@ -22,7 +22,8 @@ public class LoopbackTest extends Sprite
 {
     public function LoopbackTest ()
     {
-        _gameCtrl = new LoopbackGameControl(this, false);
+        _gameCtrl = new LoopbackGameControl(this, false, false);
+        _localServer = new ServerController(this);
 
         // Handle events
         _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
@@ -287,6 +288,8 @@ public class LoopbackTest extends Sprite
         }
         return msg;
     }
+
+    protected var _localServer :ServerController;
 
     protected var _gameCtrl :GameControl;
     protected var _status :TextField;
