@@ -2,6 +2,7 @@ package vampire.client
 {
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Command;
+import com.threerings.util.Log;
 import com.whirled.contrib.avrg.RoomDragger;
 import com.whirled.contrib.simplegame.objects.DraggableObject;
 import com.whirled.contrib.simplegame.objects.Dragger;
@@ -27,6 +28,10 @@ public class PopupQuery extends DraggableObject
         super();
         _name = name;
         _popupPanel = ClientContext.instantiateMovieClip("HUD", "popup", false);
+        if (_popupPanel == null) {//Sometimes on quit this throws an exception.
+            log.error("PopupQuery(...)", "_popupPanel", _popupPanel);
+            return;
+        }
         _popupPanel.mouseEnabled = true;
         _popupPanel.mouseChildren = true;
         _displaySprite.addChild(_popupPanel);
@@ -291,6 +296,8 @@ public class PopupQuery extends DraggableObject
     protected var _buttonPanelSprite :Sprite = new Sprite();
     protected static const GAP_BETWEEN_BUTTON_AND_PANEL_BOTTOM :int = 4;
     protected static const GAP_ABOVE_AND_BELOW_TEXT :int = 18;//15;
+
+    protected static const log :Log = Log.getLog(PopupQuery);
 
 }
 }
