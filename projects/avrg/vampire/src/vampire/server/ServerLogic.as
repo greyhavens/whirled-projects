@@ -511,16 +511,16 @@ public class ServerLogic
                     case VConstants.NAMED_MESSAGE_CHOOSE_FEMALE:
                     log.debug(VConstants.NAMED_MESSAGE_CHOOSE_FEMALE + " awarding female");
                     player.ctrl.awardPrize(Trophies.BASIC_AVATAR_FEMALE);
-                    player.setTime(1);
-//                    player.ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, 1);
+//                    player.setTime(1);
+                    player.ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, 1);
 //                    player.setTimeToCurrentTime();
                     break;
 
                     case VConstants.NAMED_MESSAGE_CHOOSE_MALE:
                     log.debug(VConstants.NAMED_MESSAGE_CHOOSE_MALE + " awarding male");
                     player.ctrl.awardPrize(Trophies.BASIC_AVATAR_MALE);
-                    player.setTime(1);
-//                    player.ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, 1);
+//                    player.setTime(1);
+                    player.ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, 1);
 //                    player.setTimeToCurrentTime();
                     break;
 

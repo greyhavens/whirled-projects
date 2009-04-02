@@ -26,11 +26,13 @@ package vampire.client
 
             registerListener(infoPanel["choose_female"], MouseEvent.CLICK, function(...ignored) :void {
                 ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_MESSAGE_CHOOSE_FEMALE);
+                ClientContext.ctrl.player.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, 1);
                 ClientContext.game.ctx.mainLoop.popMode();
             });
 
             registerListener(infoPanel["choose_male"], MouseEvent.CLICK, function(...ignored) :void {
                 ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_MESSAGE_CHOOSE_MALE);
+                ClientContext.ctrl.player.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, 1);
                 ClientContext.game.ctx.mainLoop.popMode();
             });
 

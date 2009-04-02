@@ -50,7 +50,7 @@ public class PlayerData extends EventHandlerManager
 
         //Get last time awake
 //        log.debug("Getting ", "time", new Date(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
-        _timePlayerPreviouslyQuit = Number(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE));
+//        _timePlayerPreviouslyQuit = Number(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE));
 
         //Get experience
         _xp = Number(_ctrl.props.get(Codes.PLAYER_PROP_XP));
@@ -100,7 +100,7 @@ public class PlayerData extends EventHandlerManager
         setState(VConstants.AVATAR_STATE_DEFAULT);
 
         //If we have previously been awake, reduce our blood proportionally to the time since we last played.
-        log.debug("Getting time=" + time);
+//        log.debug("Getting time=" + time);
 //        if(time > 1) {
 //            var date :Date = new Date();
 //            var now :Number = date.time;
@@ -125,7 +125,7 @@ public class PlayerData extends EventHandlerManager
 //        }
 
         log.info("Logging in", "playerId", playerId, "blood", blood, "maxBlood",
-                 maxBlood, "level", level, "sire", sire, "time", new Date(time).toTimeString());
+                 maxBlood, "level", level, "sire", sire);//, "time", new Date(time).toTimeString()
 
         //Create feeding data if there is none
         var feedingData :PlayerFeedingData = new PlayerFeedingData();
@@ -207,7 +207,7 @@ public class PlayerData extends EventHandlerManager
             + ", targetId=" + targetId
             + ", sire=" + sire
             + ", xp=" + xp
-            + ", time=" + new Date(time).toTimeString()
+//            + ", time=" + new Date(time).toTimeString()
             + "]";
     }
 
@@ -476,9 +476,9 @@ public class PlayerData extends EventHandlerManager
                 _ctrl.props.set(Codes.PLAYER_PROP_XP, xp, true);
             }
 
-            if(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE) != time) {
-                _ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, time, true);
-            }
+//            if(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE) != time) {
+//                _ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, time, true);
+//            }
 
             if(_ctrl.props.get(Codes.PLAYER_PROP_SIRE) != sire) {
                 _ctrl.props.set(Codes.PLAYER_PROP_SIRE, sire, true);
@@ -547,10 +547,12 @@ public class PlayerData extends EventHandlerManager
         _ctrl.props.set(Codes.PLAYER_PROP_FEEDING_DATA, bytes);
     }
 
-    public function setTime (time :Number) :void
-    {
-        _timePlayerPreviouslyQuit = time;
-    }
+//    public function setTime (time :Number) :void
+//    {
+//        _timePlayerPreviouslyQuit = time;
+//        //Set immediately
+//        _ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, time);
+//    }
 
     public function addToInviteTally (addition :int = 1) :void
     {
@@ -689,10 +691,10 @@ public class PlayerData extends EventHandlerManager
     }
 
 
-    public function get time () :Number
-    {
-        return _timePlayerPreviouslyQuit;
-    }
+//    public function get time () :Number
+//    {
+//        return _timePlayerPreviouslyQuit;
+//    }
 
     public function get location () :Array
     {
@@ -839,7 +841,7 @@ public class PlayerData extends EventHandlerManager
     /**Hold max 25 player ids for recording minions for trophies.*/
     protected var _minionsForTrophies :Array = new Array();
 
-    protected var _timePlayerPreviouslyQuit :Number;
+//    protected var _timePlayerPreviouslyQuit :Number;
 
     protected var _targetId :int;
     protected var _targetLocation :Array;
