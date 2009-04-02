@@ -1,5 +1,6 @@
 package loopbacktest {
 
+import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.SimpleTextButton;
 import com.whirled.game.GameControl;
 import com.whirled.game.loopback.LoopbackGameControl;
@@ -123,6 +124,43 @@ public class LoopbackTest extends Sprite
                     }
                 })
             });
+
+        // Get properties
+        var listPropsBtn :SimpleTextButton = new SimpleTextButton("List Props");
+        layoutElement(listPropsBtn);
+        listPropsBtn.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                var propString :String = "Properties:\n";
+                var needsNewline :Boolean = false;
+                for each (var propName :String in _gameCtrl.net.getPropertyNames()) {
+                    if (needsNewline) {
+                        propString += "\n";
+                    }
+                    propString += propName + ": " + _gameCtrl.net.get(propName);
+                    needsNewline = true;
+                }
+                setStatusText(propString);
+            });
+
+        // Set User Cookie
+        var setCookieBtn :SimpleTextButton = new SimpleTextButton("Set Cookie");
+        layoutElement(setCookieBtn);
+        setCookieBtn.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                var success :Boolean = _gameCtrl.player.setCookie(getEnteredVal());
+                setStatusText("setCookie", "val", getEnteredVal(), "success", success);
+            });
+
+        // Get User Cookie
+        var getCookieBtn :SimpleTextButton = new SimpleTextButton("Get Cookie");
+        layoutElement(getCookieBtn);
+        getCookieBtn.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                _gameCtrl.player.getCookie(
+                    function (cookie :Object, occupantId :int) :void {
+                        setStatusText("Got Cookie", "val", cookie, "occupantId", occupantId);
+                    });
+            });
     }
 
     protected function layoutElement (disp :DisplayObject, indent :Number = 0) :void
@@ -146,26 +184,24 @@ public class LoopbackTest extends Sprite
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
     {
-        setStatusText(formatStatus("MsgReceived", "name", e.name, "val", e.value));
+        setStatusText("MsgReceived", "name", e.name, "val", e.value);
     }
 
     protected function onPropChanged (e :PropertyChangedEvent) :void
     {
-        setStatusText(formatStatus("PropChanged", "name", e.name, "newVal", e.newValue,
-            "oldVal", e.oldValue));
+        setStatusText("PropChanged", "name", e.name, "newVal", e.newValue, "oldVal", e.oldValue);
     }
 
     protected function onElemChanged (e :ElementChangedEvent) :void
     {
-        setStatusText(formatStatus("ElemChanged", "name", e.name, "key", e.key,
-            "newVal", e.newValue, "oldVal", e.oldValue));
+        setStatusText("ElemChanged", "name", e.name, "key", e.key, "newVal", e.newValue,
+            "oldVal", e.oldValue);
     }
 
-    protected function setStatusText (text :String) :void
+    protected function setStatusText (...args) :void
     {
-        TextBits.initTextField(_status, text, 1.5, 0, 0, "left");
-        _status.x = 10;
-        _status.y = this.height - 40;
+        TextBits.initTextField(_status, formatStatus(args), 1.5, 0, 0, "left");
+        DisplayUtil.positionBounds(_status, 10, 500 - _status.height - 5);
     }
 
     protected function getEnteredName () :String
@@ -190,7 +226,7 @@ public class LoopbackTest extends Sprite
         return int(_keyField.text);
     }
 
-    protected static function formatStatus (...args) :String
+    protected static function formatStatus (args :Array) :String
     {
         var msg :String = "";
         if (args.length > 0) {
