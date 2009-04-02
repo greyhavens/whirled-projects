@@ -225,7 +225,8 @@ public class VampireController extends Controller
         var targetIsVampireAndLineageMemberAndOnline :Boolean =
             ClientContext.model.lineage.isMemberOfLineage(targetId)
             && ClientContext.model.isPlayer(targetId);
-        if (ClientContext.model.sire == 0 && targetIsVampireAndLineageMemberAndOnline) {
+        if (ClientContext.model.lineage.isMemberOfLineage(ClientContext.ourPlayerId)
+            && targetIsVampireAndLineageMemberAndOnline) {
 
             var con :VampireController = ClientContext.controller;
 

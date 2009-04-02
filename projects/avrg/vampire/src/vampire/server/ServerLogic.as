@@ -1169,7 +1169,7 @@ public class ServerLogic
 
             if (preyIsPlayer && preyPlayer != null) {
                 //Check if we don't have a sire.  The prey vampire becomes it.
-                if (pred.sire == 0) {
+                if (!ServerContext.lineage.isMemberOfLineage(pred.playerId)) {
                     if (ServerContext.lineage.isMemberOfLineage(preyId)) {
                         makeSire(pred,  preyPlayer.playerId);
                         pred.addFeedback(Codes.POPUP_PREFIX + preyPlayer.name + " has become your sire!");
