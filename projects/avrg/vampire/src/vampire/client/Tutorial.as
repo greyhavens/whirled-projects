@@ -164,7 +164,7 @@ public class Tutorial extends AppMode
 
         if (_targets.length > 0 && _targets[0] != null) {
             var so :SceneObject = _targets[0] as SceneObject;
-            if (so != null) {
+            if (so != null && so.displayObject != null) {
                 _lastTargetLocationGlobal = so.displayObject.localToGlobal(new Point(0,0));
             }
         }
