@@ -92,7 +92,6 @@ public class VampireAvatarHUD extends AvatarHUD
 
     protected function removeBloodbondIcon () :void
     {
-        trace("avatar " + playerId + " removing bb icon");
         if (_bloodBondIcon != null) {
             if (_bloodBondIcon.parent != null) {
                 _bloodBondIcon.parent.removeChild(_bloodBondIcon);
@@ -374,7 +373,6 @@ public class VampireAvatarHUD extends AvatarHUD
             }
             //Animate a bloodbond animation
             else if(e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
-                trace("avatar " + playerId + " bloodbond updated to " + e.newValue);
                 if(e.newValue != 0) {
                     var bloodBondMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
                             ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true));
