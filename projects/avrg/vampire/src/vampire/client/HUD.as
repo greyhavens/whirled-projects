@@ -152,9 +152,6 @@ public class HUD extends DraggableObject
 //                }
                 if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
 
-
-
-//                    if(oldLevel < newLevel) {
                     if (e.oldValue < e.newValue) {
                         xpUp = new SceneObjectPlayMovieClipOnce(
                                 ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true));
@@ -170,7 +167,7 @@ public class HUD extends DraggableObject
                     newLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.newValue),
                         ClientContext.model.invites);
 
-                    if (newLevel > oldLevel && newLevel >= 2) {
+                    if (newLevel > oldLevel && newLevel >= 2 && e.oldValue > 0) {
                         ClientContext.controller.handleNewLevel(newLevel);
 
                         levelUp = new SceneObjectPlayMovieClipOnce(
@@ -259,9 +256,6 @@ public class HUD extends DraggableObject
                         bloodBondMovie.x = _hudXP.x + ClientContext.model.maxblood/2;
                         bloodBondMovie.y = _hudXP.y;
 
-                        trace("mode=" + mode);
-                        trace("bloodBondMovie=" + bloodBondMovie);
-                        trace("_hudXPParent=" + _hudXPParent);
                         if (mode != null) {
                             mode.addSceneObject(bloodBondMovie, _hudXPParent);
                         }
