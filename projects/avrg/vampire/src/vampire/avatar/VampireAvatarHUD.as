@@ -601,7 +601,7 @@ public class VampireAvatarHUD extends AvatarHUD
             }
         }
         else {
-            if (isAvatarPartOfLineage) {
+            if (isAvatarPartOfLineage && ClientContext.model.isPlayer(playerId)) {
                 _target_UI.addChild(buttonJoin);
             }
             else {

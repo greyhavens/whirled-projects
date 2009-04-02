@@ -210,17 +210,9 @@ public class VampireController extends Controller
                 ClientContext.gameMode.addObject(quitTimer);
             }
 
-
-
-//            if (ClientContext.model.isPlayer(targetId)) {
-//                ClientContext.ctrl.local.feedback("Request for feed sent");
-//            }
-
-
             //Set the avatar target to stand behind.
             //That way, when the avatar arrived at it's destination, it
             //will set it's orientation the same as the target's orientation.
-//            ClientContext.model.standBehindTarget = targetId;
             ClientContext.gameMode.sendMessageToNamedObject(
                 new ObjectMessage(AvatarClientController.GAME_MESSAGE_TARGETID, targetId),
                 AvatarClientController.NAME);
@@ -230,9 +222,10 @@ public class VampireController extends Controller
 
         //Show a popup if we aren't connected to the Lineage, and we choose a sire that is
 //        trace(ClientContext.ourPlayerId + " lineage=" + ClientContext.model.lineage);
-        var targetIsVampireAndLineageMember :Boolean =
-            ClientContext.model.lineage.isMemberOfLineage(targetId);
-        if (ClientContext.model.sire == 0 && targetIsVampireAndLineageMember) {
+        var targetIsVampireAndLineageMemberAndOnline :Boolean =
+            ClientContext.model.lineage.isMemberOfLineage(targetId)
+            && ClientContext.model.isPlayer(targetId);
+        if (ClientContext.model.sire == 0 && targetIsVampireAndLineageMemberAndOnline) {
 
             var con :VampireController = ClientContext.controller;
 
