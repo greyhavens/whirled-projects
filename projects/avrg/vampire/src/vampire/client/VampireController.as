@@ -46,6 +46,8 @@ public class VampireController extends Controller
 
     public static const HIERARCHY_CENTER_SELECTED :String = "HierarchyCenterSelected";
 
+    public static const RECRUIT :String = "Recruit";
+
     public function VampireController (panel :Sprite)
     {
         setControlledPanel(panel);
@@ -86,9 +88,9 @@ public class VampireController extends Controller
 
     public function handleQuit () :void
     {
-        trace(ClientContext.ourPlayerId + " setting avatar state from quit");
+//        trace(ClientContext.ourPlayerId + " setting avatar state from quit");
         ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
-        ClientContext.ctrl.player.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, new Date().time);
+//        ClientContext.ctrl.player.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, 1, true);//new Date().time);
 
         ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_QUIT);
 
@@ -225,7 +227,7 @@ public class VampireController extends Controller
         var targetIsVampireAndLineageMemberAndOnline :Boolean =
             ClientContext.model.lineage.isMemberOfLineage(targetId)
             && ClientContext.model.isPlayer(targetId);
-        if (ClientContext.model.lineage.isMemberOfLineage(ClientContext.ourPlayerId)
+        if (!ClientContext.model.lineage.isMemberOfLineage(ClientContext.ourPlayerId)
             && targetIsVampireAndLineageMemberAndOnline) {
 
             var con :VampireController = ClientContext.controller;
@@ -356,6 +358,10 @@ public class VampireController extends Controller
     {
         handleShowPopupMessage("NewLevel", VConstants.TEXT_NEW_LEVEL + newLevel + "!",
             ["More info"], [function() :void {ClientContext.controller.handleShowIntro("blood")}]);
+    }
+    public function handleRecruit () :void
+    {
+        ClientContext.ctrl.local.showInvitePage(VConstants.TEXT_INVITE, ClientContext.model.name);
     }
 
 
