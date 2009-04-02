@@ -1168,7 +1168,7 @@ public class ServerLogic
                 if (pred.sire == 0) {
                     if (ServerContext.lineage.isMemberOfLineage(preyId)) {
                         makeSire(pred,  preyPlayer.playerId);
-                        pred.addFeedback(Codes.POPUP_PREFIX + preyPlayer.name + " has become your sire ");
+                        pred.addFeedback(Codes.POPUP_PREFIX + preyPlayer.name + " has become your sire!");
 
                         //Award coins to the sire
                         preyPlayer.ctrl.completeTask(Codes.TASK_ACQUIRE_MINION_ID,
@@ -1183,7 +1183,7 @@ public class ServerLogic
 
                                 //Tell the sire she's got children
                                 srv.getPlayer(sireId).room.addFeedback(Codes.POPUP_PREFIX +
-                                    pred.name + " has become your minion ", sireId);
+                                    pred.name + " has become your progeny! ", sireId);
 
                                 //Award coins to the sire(s)
                                 preyPlayer.ctrl.completeTask(Codes.TASK_ACQUIRE_MINION_ID,
