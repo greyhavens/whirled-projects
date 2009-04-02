@@ -3,6 +3,7 @@ package loopbacktest {
 import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.SimpleTextButton;
 import com.whirled.game.GameControl;
+import com.whirled.game.StateChangedEvent;
 import com.whirled.game.UserChatEvent;
 import com.whirled.game.loopback.LoopbackGameControl;
 import com.whirled.net.ElementChangedEvent;
@@ -11,6 +12,7 @@ import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.text.TextField;
@@ -20,7 +22,7 @@ public class LoopbackTest extends Sprite
 {
     public function LoopbackTest ()
     {
-        _gameCtrl = new LoopbackGameControl(this);
+        _gameCtrl = new LoopbackGameControl(this, false);
 
         // Handle events
         _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
@@ -43,6 +45,26 @@ public class LoopbackTest extends Sprite
         _gameCtrl.game.addEventListener(UserChatEvent.USER_CHAT,
             function (e :UserChatEvent) :void {
                 setStatusText("UserChat", "speaker", e.speaker, "msg", e.message);
+            });
+
+        _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED,
+            function (e :StateChangedEvent) :void {
+                setStatusText("Game started");
+            });
+
+        _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED,
+            function (e :StateChangedEvent) :void {
+                setStatusText("Game ended");
+            });
+
+        _gameCtrl.game.addEventListener(StateChangedEvent.ROUND_STARTED,
+            function (e :StateChangedEvent) :void {
+                setStatusText("Round started", "roundId", _gameCtrl.game.getRound());
+            });
+
+        _gameCtrl.game.addEventListener(StateChangedEvent.ROUND_ENDED,
+            function (e :StateChangedEvent) :void {
+                setStatusText("Round ended", "roundId", _gameCtrl.game.getRound());
             });
 
         // background
@@ -77,67 +99,43 @@ public class LoopbackTest extends Sprite
         layoutElement(_testField);
         createNewLayoutRow(10);
 
-        // Send Message
-        var sendMsgBtn :SimpleTextButton = new SimpleTextButton("Send message");
-        layoutElement(sendMsgBtn);
-        sendMsgBtn.addEventListener(MouseEvent.CLICK,
+        createButton("Send message",
             function (...ignored) :void {
                 _gameCtrl.net.sendMessage(getEnteredName(), getEnteredVal());
             });
 
-        // Set Prop
-        var setPropBtn :SimpleTextButton = new SimpleTextButton("Set Prop");
-        layoutElement(setPropBtn);
-        setPropBtn.addEventListener(MouseEvent.CLICK,
+        createButton("Set Prop",
             function (...ignored) :void {
                 _gameCtrl.net.set(getEnteredName(), getEnteredVal(), false);
             });
 
-        // Delete Prop
-        var deletePropBtn :SimpleTextButton = new SimpleTextButton("Delete Prop");
-        layoutElement(deletePropBtn);
-        deletePropBtn.addEventListener(MouseEvent.CLICK,
+        createButton("Delete Prop",
             function (...ignored) :void {
                 _gameCtrl.net.set(getEnteredName(), null, false);
             });
 
-        // Set Prop Immediate
-        var setPropImmediateBtn :SimpleTextButton = new SimpleTextButton("Set Prop Immediate");
-        layoutElement(setPropImmediateBtn);
-        setPropImmediateBtn.addEventListener(MouseEvent.CLICK,
+        createButton("Set Prop Immediate",
             function (...ignored) :void {
                 _gameCtrl.net.set(getEnteredName(), getEnteredVal(), true);
             });
 
-        // Test and Set
-        var testAndSetBtn :SimpleTextButton = new SimpleTextButton("Test and Set");
-        layoutElement(testAndSetBtn);
-        testAndSetBtn.addEventListener(MouseEvent.CLICK,
+        createButton("Test and Set",
             function (...ignored) :void {
                 _gameCtrl.net.testAndSet(getEnteredName(), getEnteredVal(), getTestVal());
             });
 
-        // Set Element
-        var setElemBtn :SimpleTextButton = new SimpleTextButton("Set Element");
-        layoutElement(setElemBtn);
-        setElemBtn.addEventListener(MouseEvent.CLICK,
+        createButton("Set Element",
             function (...ignored) :void {
                 _gameCtrl.net.setIn(getEnteredName(), getEnteredKey(), getEnteredVal());
             });
 
-        // Delete Element
-        var delElemBtn :SimpleTextButton = new SimpleTextButton("Delete Element");
-        layoutElement(delElemBtn);
-        delElemBtn.addEventListener(MouseEvent.CLICK,
+        createButton("Delete Element",
             function (...ignored) :void {
                 _gameCtrl.net.setIn(getEnteredName(), getEnteredKey(), null);
             });
 
-        // Batch Transaction
         var batchVal :int;
-        var batchBtn :SimpleTextButton = new SimpleTextButton("Batch Transaction");
-        layoutElement(batchBtn);
-        batchBtn.addEventListener(MouseEvent.CLICK,
+        createButton("Batch Transaction",
             function (...ignored) :void {
                 _gameCtrl.net.doBatch(function () :void {
                     for (var ii :int = 0; ii < 3; ++ii){
@@ -146,10 +144,7 @@ public class LoopbackTest extends Sprite
                 })
             });
 
-        // Get properties
-        var listPropsBtn :SimpleTextButton = new SimpleTextButton("List Props");
-        layoutElement(listPropsBtn);
-        listPropsBtn.addEventListener(MouseEvent.CLICK,
+        createButton("List Props",
             function (...ignored) :void {
                 var propString :String = "Properties:\n";
                 var needsNewline :Boolean = false;
@@ -163,19 +158,13 @@ public class LoopbackTest extends Sprite
                 setStatusText(propString);
             });
 
-        // Set User Cookie
-        var setCookieBtn :SimpleTextButton = new SimpleTextButton("Set Cookie");
-        layoutElement(setCookieBtn);
-        setCookieBtn.addEventListener(MouseEvent.CLICK,
+        createButton("Set Cookie",
             function (...ignored) :void {
                 var success :Boolean = _gameCtrl.player.setCookie(getEnteredVal());
                 setStatusText("setCookie", "val", getEnteredVal(), "success", success);
             });
 
-        // Get User Cookie
-        var getCookieBtn :SimpleTextButton = new SimpleTextButton("Get Cookie");
-        layoutElement(getCookieBtn);
-        getCookieBtn.addEventListener(MouseEvent.CLICK,
+        createButton("Get Cookie",
             function (...ignored) :void {
                 _gameCtrl.player.getCookie(
                     function (cookie :Object, occupantId :int) :void {
@@ -183,13 +172,45 @@ public class LoopbackTest extends Sprite
                     });
             });
 
-        // Chat
-        var chatBtn :SimpleTextButton = new SimpleTextButton("System Message");
-        layoutElement(chatBtn);
-        chatBtn.addEventListener(MouseEvent.CLICK,
+        createButton("System Message",
             function (...ignored) :void {
                 _gameCtrl.game.systemMessage(getEnteredVal().toString());
             });
+
+        createButton("Player Ready",
+            function (...ignored) :void {
+                _gameCtrl.game.playerReady();
+            });
+
+        createButton("Restart Game",
+            function (...ignored) :void {
+                setStatusText("Restarting game in 2 seconds");
+                _gameCtrl.game.restartGameIn(2);
+            });
+
+        createButton("End game (winner)",
+            function (...ignored) :void {
+                _gameCtrl.game.endGameWithWinners([ _gameCtrl.game.getMyId() ], [], 0);
+            });
+
+        createButton("End game (loser)",
+            function (...ignored) :void {
+                _gameCtrl.game.endGameWithWinners([], [ _gameCtrl.game.getMyId() ], 0);
+            });
+
+        createButton("End round",
+            function (...ignored) :void {
+                setStatusText("Starting next round in 2 seconds");
+                _gameCtrl.game.endRound(2);
+            });
+    }
+
+    protected function createButton (buttonText :String, callback :Function) :SimpleButton
+    {
+        var btn :SimpleTextButton = new SimpleTextButton(buttonText);
+        layoutElement(btn);
+        btn.addEventListener(MouseEvent.CLICK, callback);
+        return btn;
     }
 
     protected function layoutElement (disp :DisplayObject, indent :Number = 0) :void
