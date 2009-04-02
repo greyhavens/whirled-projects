@@ -110,7 +110,7 @@ public class MainGameMode extends AppMode
 
         //Add a debug panel for admins
         if(ClientContext.isAdmin(ClientContext.ourPlayerId) || VConstants.LOCAL_DEBUG_MODE) {
-            var debug :SimpleTextButton = new SimpleTextButton("debug");
+            var debug :SimpleTextButton = new SimpleTextButton("Admin");
             Command.bind(debug, MouseEvent.CLICK, VampireController.SHOW_DEBUG);
             modeSprite.addChild(debug);
         }

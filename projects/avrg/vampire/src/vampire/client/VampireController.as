@@ -115,10 +115,10 @@ public class VampireController extends Controller
     {
         try {
             var hierarchySceneObject :SimObject =
-                ClientContext.game.ctx.mainLoop.topMode.getObjectNamed(DebugPanel.NAME);
+                ClientContext.game.ctx.mainLoop.topMode.getObjectNamed(AdminPanel.NAME);
 
             if (hierarchySceneObject == null) {
-                ClientContext.game.ctx.mainLoop.topMode.addSceneObject(new DebugPanel(),
+                ClientContext.game.ctx.mainLoop.topMode.addSceneObject(new AdminPanel(),
                     ClientContext.game.ctx.mainLoop.topMode.modeSprite);
             }
 
