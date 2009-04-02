@@ -467,16 +467,11 @@ public class VampireAvatarHUD extends AvatarHUD
                     && _ctrl != null
                     && _ctrl.isConnected()) {
 
-                trace("vampire update");
                 var heightLogical :Number = hotspot[1]/_ctrl.local.getRoomBounds()[1];
-                trace(" hotspot=" + hotspot);
-                trace(" _ctrl.local.getRoomBounds()=" + _ctrl.local.getRoomBounds());
-                trace(" heightLogical=" + heightLogical);
                 var p1 :Point = _ctrl.local.locationToPaintable(_location[0], _location[1], _location[2]);
                 var p2 :Point = _ctrl.local.locationToPaintable(_location[0], heightLogical, _location[2]);
 
                 var absoluteHeight :Number = Math.abs(p2.y - p1.y);
-                trace(" absoluteHeight=" + absoluteHeight);
                 _target_UI.y = absoluteHeight / 2;
 
             }
