@@ -619,10 +619,17 @@ public class ServerLogic
     {
         var inviterId :int = e.inviterId;
         log.debug(player.playerId + " received inviter id=" + inviterId);
-        if (player.sire != 0) {
+        if (player.sire == 0) {
             log.info(player.playerId + " setting sire=" + inviterId);
+
             makeSire(player, inviterId);
-//            setSire(inviterId);
+            player.addFeedback(Codes.POPUP_PREFIX + e.shareToken + " has invited you to " +
+                "Vampire Whirled and is now your sire!");
+
+            if (isPlayer(inviterId)) {
+                getPlayer(inviterId).addFeedback(Codes.POPUP_PREFIX +
+                    player.name + " has become your progeny!");
+            }
         }
         else {
             log.warning("handleShareTokenMessage, but our sire != 0", "e", e);

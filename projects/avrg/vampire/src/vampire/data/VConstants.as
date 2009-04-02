@@ -8,12 +8,12 @@ public class VConstants
     /**
     * If you're not related to the ubervamp
     */
-    public static const UBER_VAMP_ID :int = 1877;
+    public static const UBER_VAMP_ID :int = 12;
     //ubervamp localhost == 12
-    //ubervamp dev.whirled == 1877
+    //ubervamp dev.whirled == 1877, 382856
     //uvervamp Whirled == 383387
 
-    public static const FEEDING_ROUNDS_TO_FORM_BLOODBOND :int = 2;
+    public static const FEEDING_ROUNDS_TO_FORM_BLOODBOND :int = 6;
 
     public static const UNIQUE_BLOOD_STRAINS :int = 12;
 

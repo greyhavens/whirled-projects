@@ -226,6 +226,10 @@ public class Lineage extends SimObject
 
     public function isSireExisting(playerId :int) :Boolean
     {
+        if (playerId == VConstants.UBER_VAMP_ID) {
+            return true;
+        }
+
         var player :Node = _playerId2Node.get(playerId) as Node;
         if(player != null) {
             return player.parent != null && player.parent.hashCode() != 0;

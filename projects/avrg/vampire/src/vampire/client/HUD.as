@@ -30,7 +30,6 @@ import flash.text.TextFormatAlign;
 import vampire.Util;
 import vampire.data.Codes;
 import vampire.data.Logic;
-import vampire.data.VConstants;
 
 /**
  * The main game HUD, showing e.g. blood, game notifications, and buttons to select the subgame to
@@ -188,10 +187,10 @@ public class HUD extends DraggableObject
 
                         if (newLevel != newLevelWithInvites) {
 
-                            var recruitFunction :Function = function(e :MouseEvent) :void {
-                                ClientContext.ctrl.local.showInvitePage(VConstants.TEXT_INVITE, "" +
-                                    ClientContext.ourPlayerId);
-                            };
+//                            var recruitFunction :Function = function(e :MouseEvent) :void {
+//                                ClientContext.ctrl.local.showInvitePage(VConstants.TEXT_INVITE, "" +
+//                                    ClientContext.ourPlayerId);
+//                            };
 
                             var invitesNeeded :int = Logic.invitesNeededForLevel(newLevel + 1);
                             var popup :PopupQuery = new PopupQuery(
@@ -200,7 +199,7 @@ public class HUD extends DraggableObject
                                 " recruit" + (invitesNeeded > 1 ? "s" : "") + " for level " +
                                 (newLevel + 1),
                                 ["Recruit Now", "Recruit Later"],
-                                [recruitFunction, null]);
+                                [VampireController.RECRUIT, null]);
 
 
                             if(mode.getObjectNamed(popup.objectName) == null) {

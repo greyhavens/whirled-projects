@@ -10,7 +10,7 @@ public class Server extends ServerObject
     {
         ServerContext.init(new AVRServerGameControl(this));
 
-        Log.setLevel("", Log.INFO);
+        Log.setLevel("", Log.DEBUG);
 
         //Start the game server
         var v :GameServer = new GameServer();

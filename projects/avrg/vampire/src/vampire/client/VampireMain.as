@@ -1,6 +1,5 @@
 package vampire.client {
 import com.threerings.util.Log;
-import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.EventHandlers;
 import com.whirled.contrib.simplegame.Config;
@@ -10,10 +9,9 @@ import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.Sprite;
 import flash.events.Event;
-import flash.events.MouseEvent;
 
-import vampire.client.SharedPlayerStateClient;
 import vampire.data.VConstants;
+import vampire.net.messages.ShareTokenMsg;
 import vampire.server.AVRGAgentLogTarget;
 
 [SWF(width="700", height="500")]
@@ -112,10 +110,11 @@ public class VampireMain extends Sprite
             //If there is a share token, send the invitee to the server
             var inviterId :int = ClientContext.ctrl.local.getInviterMemberId();
             var shareToken :String = ClientContext.ctrl.local.getInviteToken();
-            log.info(ClientContext.ctrl.player.getPlayerId() + "sending  inviterId=" + inviterId + ", token=" + shareToken);
             //If we don't have a sire, and we are invited, send our invite token
             if(inviterId != 0 && SharedPlayerStateClient.getSire(ClientContext.ourPlayerId) == 0) {
-                ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_SHARE_TOKEN, inviterId);
+                log.info(ClientContext.ctrl.player.getPlayerId() + " sending  inviterId=" + inviterId + ", token=" + shareToken);
+                ClientContext.ctrl.agent.sendMessage(ShareTokenMsg.NAME,
+                    new ShareTokenMsg(ClientContext.ourPlayerId, inviterId, shareToken).toBytes());
             }
 
 
