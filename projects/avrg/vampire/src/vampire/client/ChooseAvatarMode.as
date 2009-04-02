@@ -57,8 +57,10 @@ package vampire.client
             var lastTimeAwake :Number = Number(ClientContext.ctrl.player.props.get(
                 Codes.PLAYER_PROP_LAST_TIME_AWAKE));
 
+            trace(ClientContext.ourPlayerId + " lastTimeAwake=" + lastTimeAwake);
+
             //The last is debugging in whirled dev
-            if (isNaN(lastTimeAwake) || lastTimeAwake == 0 || ClientContext.ctrl.player.getPlayerId() == 1735) {
+            if (isNaN(lastTimeAwake) || lastTimeAwake == 0) {
                 return true;
             }
             return false;

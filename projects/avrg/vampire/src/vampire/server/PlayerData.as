@@ -50,14 +50,7 @@ public class PlayerData extends EventHandlerManager
 
         //Get last time awake
 //        log.debug("Getting ", "time", new Date(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE)).toTimeString());
-//        _timePlayerPreviouslyQuit = Number(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE));
-
-        //Debugging
-        //WhirledDev, 1734==Dion, 1735==Ragbears's Evil Twin
-        if(_playerId == 1) {
-//            setTime(0);
-        }
-
+        _timePlayerPreviouslyQuit = Number(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE));
 
         //Get experience
         _xp = Number(_ctrl.props.get(Codes.PLAYER_PROP_XP));
@@ -234,7 +227,7 @@ public class PlayerData extends EventHandlerManager
 
         var currentTime :Number = new Date().time;
         if(_room != null && _room.ctrl != null && _room.ctrl.isConnected()) {
-            setTime(currentTime);
+//            setTime(currentTime);
             setIntoPlayerProps();
             if(_ctrl != null && _ctrl.isConnected()) {
                 _ctrl.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
@@ -276,11 +269,11 @@ public class PlayerData extends EventHandlerManager
         _name = name;
     }
 
-    public function setTimeToCurrentTime () :void
-    {
-        var currentTime :Number = new Date().time;
-        setTime(currentTime);
-    }
+//    public function setTimeToCurrentTime () :void
+//    {
+//        var currentTime :Number = new Date().time;
+//        setTime(currentTime);
+//    }
 
 
     protected function get targetPlayer () :PlayerData

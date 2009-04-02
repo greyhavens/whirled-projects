@@ -477,8 +477,9 @@ public class ServerLogic
                     break;
 
                     case VConstants.NAMED_EVENT_QUIT:
-                    var now :Number = new Date().time;
-                    player.setTime(now);
+                    //We no longer track the time sleeping.
+//                    var now :Number = new Date().time;
+//                    player.setTime(now);
                     break;
 
 //                    case PlayerArrivedAtLocationMsg.PLAYER_ARRIVED:
@@ -508,15 +509,19 @@ public class ServerLogic
                     break;
 
                     case VConstants.NAMED_MESSAGE_CHOOSE_FEMALE:
-                    trace(VConstants.NAMED_MESSAGE_CHOOSE_FEMALE + " awarding female");
+                    log.debug(VConstants.NAMED_MESSAGE_CHOOSE_FEMALE + " awarding female");
                     player.ctrl.awardPrize(Trophies.BASIC_AVATAR_FEMALE);
-                    player.setTimeToCurrentTime();
+                    player.setTime(1);
+//                    player.ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, 1);
+//                    player.setTimeToCurrentTime();
                     break;
 
                     case VConstants.NAMED_MESSAGE_CHOOSE_MALE:
-                    trace(VConstants.NAMED_MESSAGE_CHOOSE_MALE + " awarding male");
+                    log.debug(VConstants.NAMED_MESSAGE_CHOOSE_MALE + " awarding male");
                     player.ctrl.awardPrize(Trophies.BASIC_AVATAR_MALE);
-                    player.setTimeToCurrentTime();
+                    player.setTime(1);
+//                    player.ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, 1);
+//                    player.setTimeToCurrentTime();
                     break;
 
 
