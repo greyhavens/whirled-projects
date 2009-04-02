@@ -3,6 +3,7 @@ package loopbacktest {
 import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.SimpleTextButton;
 import com.whirled.game.GameControl;
+import com.whirled.game.UserChatEvent;
 import com.whirled.game.loopback.LoopbackGameControl;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
@@ -20,9 +21,29 @@ public class LoopbackTest extends Sprite
     public function LoopbackTest ()
     {
         _gameCtrl = new LoopbackGameControl(this);
-        _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, onMsgReceived);
-        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
-        _gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, onElemChanged);
+
+        // Handle events
+        _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
+            function (e :MessageReceivedEvent) :void {
+                setStatusText("MsgReceived", "name", e.name, "val", e.value);
+            });
+
+        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED,
+            function (e :PropertyChangedEvent) :void {
+                setStatusText("PropChanged", "name", e.name, "newVal", e.newValue,
+                              "oldVal", e.oldValue);
+            });
+
+        _gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED,
+            function (e :ElementChangedEvent) :void {
+                setStatusText("ElemChanged", "name", e.name, "key", e.key, "newVal", e.newValue,
+                    "oldVal", e.oldValue);
+            });
+
+        _gameCtrl.game.addEventListener(UserChatEvent.USER_CHAT,
+            function (e :UserChatEvent) :void {
+                setStatusText("UserChat", "speaker", e.speaker, "msg", e.message);
+            });
 
         // background
         var g :Graphics = this.graphics;
@@ -161,6 +182,14 @@ public class LoopbackTest extends Sprite
                         setStatusText("Got Cookie", "val", cookie, "occupantId", occupantId);
                     });
             });
+
+        // Chat
+        var chatBtn :SimpleTextButton = new SimpleTextButton("System Message");
+        layoutElement(chatBtn);
+        chatBtn.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                _gameCtrl.game.systemMessage(getEnteredVal().toString());
+            });
     }
 
     protected function layoutElement (disp :DisplayObject, indent :Number = 0) :void
@@ -180,22 +209,6 @@ public class LoopbackTest extends Sprite
     {
         _layoutX = 0;
         _layoutY = _layoutSprite.height + ELEMENT_OFFSET_Y + yOffset;
-    }
-
-    protected function onMsgReceived (e :MessageReceivedEvent) :void
-    {
-        setStatusText("MsgReceived", "name", e.name, "val", e.value);
-    }
-
-    protected function onPropChanged (e :PropertyChangedEvent) :void
-    {
-        setStatusText("PropChanged", "name", e.name, "newVal", e.newValue, "oldVal", e.oldValue);
-    }
-
-    protected function onElemChanged (e :ElementChangedEvent) :void
-    {
-        setStatusText("ElemChanged", "name", e.name, "key", e.key, "newVal", e.newValue,
-            "oldVal", e.oldValue);
     }
 
     protected function setStatusText (...args) :void
