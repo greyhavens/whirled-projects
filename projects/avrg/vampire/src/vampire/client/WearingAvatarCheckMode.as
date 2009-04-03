@@ -67,7 +67,7 @@ public class WearingAvatarCheckMode extends AppMode
 
     override protected function enter():void
     {
-        if (false &&ClientContext.isWearingValidAvatar){// || VConstants.LOCAL_DEBUG_MODE) {
+        if (ClientContext.isWearingValidAvatar){// || VConstants.LOCAL_DEBUG_MODE) {
             ClientContext.game.ctx.mainLoop.popMode();
         }
         else {
