@@ -215,6 +215,21 @@ public class LoopbackTest extends Sprite
                 setStatusText("Starting next round in 2 seconds");
                 _gameCtrl.game.endRound(2);
             });
+
+        createButton("Set Frame Rate",
+            function (...ignored) :void {
+                _gameCtrl.local.setFrameRate(int(getEnteredVal()));
+            });
+
+        createButton("Set Stage Quality",
+            function (...ignored) :void {
+                _gameCtrl.local.setStageQuality(String(getEnteredVal()));
+            });
+
+        createButton("Get Size",
+            function (...ignored) :void {
+                setStatusText("Get Size", "size", _gameCtrl.local.getSize());
+            });
     }
 
     protected function createButton (buttonText :String, callback :Function) :SimpleButton
