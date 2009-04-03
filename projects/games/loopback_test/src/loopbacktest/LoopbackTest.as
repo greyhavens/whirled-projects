@@ -2,6 +2,7 @@ package loopbacktest {
 
 import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.SimpleTextButton;
+import com.threerings.util.StringUtil;
 import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.game.UserChatEvent;
@@ -170,6 +171,8 @@ public class LoopbackTest extends Sprite
                 setStatusText(propString);
             });
 
+        createNewLayoutRow(30);
+
         createButton("Set Cookie",
             function (...ignored) :void {
                 var success :Boolean = _gameCtrl.player.setCookie(getEnteredVal());
@@ -188,6 +191,8 @@ public class LoopbackTest extends Sprite
             function (...ignored) :void {
                 _gameCtrl.game.systemMessage(getEnteredVal().toString());
             });
+
+        createNewLayoutRow(30);
 
         createButton("Player Ready",
             function (...ignored) :void {
@@ -216,9 +221,11 @@ public class LoopbackTest extends Sprite
                 _gameCtrl.game.endRound(2);
             });
 
+        createNewLayoutRow(30);
+
         createButton("Set Frame Rate",
             function (...ignored) :void {
-                _gameCtrl.local.setFrameRate(int(getEnteredVal()));
+                _gameCtrl.local.setFrameRate(getEnteredNumber());
             });
 
         createButton("Set Stage Quality",
@@ -231,14 +238,40 @@ public class LoopbackTest extends Sprite
                 setStatusText("Get Size", "size", _gameCtrl.local.getSize());
             });
 
+        createNewLayoutRow(30);
+
         createButton("Start Ticker",
             function (...ignored) :void {
-                _gameCtrl.services.startTicker(getEnteredName(), int(getEnteredVal()));
+                _gameCtrl.services.startTicker(getEnteredName(), getEnteredNumber());
             });
 
         createButton("Stop Ticker",
             function (...ignored) :void {
                 _gameCtrl.services.stopTicker(getEnteredName());
+            });
+
+        createButton("Get Dictionary Letters",
+            function (...ignored) :void {
+                _gameCtrl.services.getDictionaryLetters("en-US", null, 30,
+                    function (letters :Array) :void {
+                        setStatusText("getDictionaryLetters", "letters", letters.toString());
+                    });
+            });
+
+        createButton("Get Dictionary Words",
+            function (...ignored) :void {
+                _gameCtrl.services.getDictionaryWords("en-US", null, 10,
+                    function (words :Array) :void {
+                        setStatusText("getDictionaryWords", "words", words.toString());
+                    });
+            });
+
+        createButton("Check Dictionary Word",
+            function (...ignored) :void {
+                _gameCtrl.services.checkDictionaryWord("en-US", null, String(getEnteredVal()),
+                    function (word :String, result :Boolean) :void {
+                        setStatusText("checkDictionaryWord", "word", word, "result", result);
+                    });
             });
     }
 
@@ -246,7 +279,14 @@ public class LoopbackTest extends Sprite
     {
         var btn :SimpleTextButton = new SimpleTextButton(buttonText);
         layoutElement(btn);
-        btn.addEventListener(MouseEvent.CLICK, callback);
+        btn.addEventListener(MouseEvent.CLICK,
+            function () :void {
+                try {
+                    callback();
+                } catch (e :Error) {
+                    setStatusText("Error!", e);
+                }
+            });
         return btn;
     }
 
@@ -284,6 +324,12 @@ public class LoopbackTest extends Sprite
     {
         var text :String = _valueField.text;
         return (text == null || text.length == 0 || text == "null" ? null : text);
+    }
+
+    protected function getEnteredNumber () :Number
+    {
+        var val :Object = getEnteredVal();
+        return StringUtil.parseNumber(String(val));
     }
 
     protected function getTestVal () :Object
