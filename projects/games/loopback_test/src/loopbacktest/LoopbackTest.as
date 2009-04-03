@@ -14,6 +14,7 @@ import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
+import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 
@@ -66,6 +67,16 @@ public class LoopbackTest extends Sprite
         _gameCtrl.game.addEventListener(StateChangedEvent.ROUND_ENDED,
             function (e :StateChangedEvent) :void {
                 setStatusText("Round ended", "roundId", _gameCtrl.game.getRound());
+            });
+
+        _gameCtrl.local.addEventListener(KeyboardEvent.KEY_DOWN,
+            function (e :KeyboardEvent) :void {
+                setStatusText("Key Down", "code", e.keyCode);
+            });
+
+        _gameCtrl.local.addEventListener(KeyboardEvent.KEY_UP,
+            function (e :KeyboardEvent) :void {
+                setStatusText("Key Up", "code", e.keyCode);
             });
 
         // background
