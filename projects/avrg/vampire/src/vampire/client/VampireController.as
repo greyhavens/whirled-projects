@@ -361,6 +361,7 @@ public class VampireController extends Controller
     }
     public function handleRecruit () :void
     {
+        log.debug("Recruiting...");
         ClientContext.ctrl.local.showInvitePage(VConstants.TEXT_INVITE, ClientContext.model.name);
     }
 

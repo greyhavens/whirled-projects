@@ -70,19 +70,19 @@ public class MainGameMode extends AppMode
         if (VConstants.LOCAL_DEBUG_MODE) {
 
             var lineage :Lineage = new Lineage();
-                lineage.setPlayerSire(1, 2);
-                lineage.setPlayerSire(3, 1);
-                lineage.setPlayerSire(4, 1);
-                lineage.setPlayerSire(5, 1);
-                lineage.setPlayerSire(6, 5);
-                lineage.setPlayerSire(7, 6);
-                lineage.setPlayerSire(8, 6);
-                lineage.setPlayerSire(9, 1);
-                lineage.setPlayerSire(10, 1);
-                lineage.setPlayerSire(11, 1);
-                lineage.setPlayerSire(12, 1);
-                lineage.setPlayerSire(13, 1);
-                lineage.setPlayerSire(14, 1);
+//                lineage.setPlayerSire(1, 2);
+//                lineage.setPlayerSire(3, 1);
+//                lineage.setPlayerSire(4, 1);
+//                lineage.setPlayerSire(5, 1);
+//                lineage.setPlayerSire(6, 5);
+//                lineage.setPlayerSire(7, 6);
+//                lineage.setPlayerSire(8, 6);
+//                lineage.setPlayerSire(9, 1);
+//                lineage.setPlayerSire(10, 1);
+//                lineage.setPlayerSire(11, 1);
+//                lineage.setPlayerSire(12, 1);
+//                lineage.setPlayerSire(13, 1);
+//                lineage.setPlayerSire(14, 1);
             var msg :LineageUpdatedEvent = new LineageUpdatedEvent(lineage, ClientContext.ourPlayerId);
             ClientContext.model.lineage = lineage;
             ClientContext.model.dispatchEvent(msg);
@@ -125,7 +125,7 @@ public class MainGameMode extends AppMode
 
     protected function handleStartFeedingClient (gameId :int) :void
     {
-        log.info("Received StartClient message", "gameId", gameId);
+//        log.info("Received StartClient message", "gameId", gameId);
 
         if (_feedingGameClient != null) {
             log.warning("Received StartFeeding message while already in game");
@@ -159,7 +159,7 @@ public class MainGameMode extends AppMode
             var msg :FeedRequestMsg =
                 ClientContext.msg.deserializeMessage(e.name, e.value) as FeedRequestMsg;
 
-            trace("got " + FeedRequestMsg.NAME);
+//            trace("got " + FeedRequestMsg.NAME);
             var fromPlayerName :String = ClientContext.getPlayerName(msg.playerId);
             var popup :PopupQuery = new PopupQuery(
                     VampireController.POPUP_PREFIX_FEED_REQUEST + msg.playerId,

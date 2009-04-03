@@ -243,9 +243,9 @@ public class Tutorial extends AppMode
 
 
 
-//            case PAGE_CLICK_RECRUIT:
-//            updateTargetingRecticleInHelp("button_torecruiting");
-//            break;
+            case PAGE_CLICK_RECRUIT:
+            updateTargetingRecticleInHelp("button_torecruiting");
+            break;
 
             case PAGE_CLICK_BACK:
             updateTargetingRecticleInHelp("help_back");
@@ -640,16 +640,16 @@ public class Tutorial extends AppMode
     public function clickedBuildLineage () :void
     {
         if (_currentPage == PAGE_CLICK_BUILD_LINEAGE) {
-            setPage(PAGE_CLICK_BACK);
+            setPage(PAGE_CLICK_RECRUIT);
         }
     }
 
-//    public function clickedRecruit () :void
-//    {
-//        if (_currentPage == PAGE_CLICK_RECRUIT) {
-//            setPage(PAGE_CLICK_BACK);
-//        }
-//    }
+    public function clickedRecruit () :void
+    {
+        if (_currentPage == PAGE_CLICK_RECRUIT) {
+            setPage(PAGE_CLICK_BACK);
+        }
+    }
 
     public function clickedBack () :void
     {
@@ -714,7 +714,7 @@ public class Tutorial extends AppMode
     public static const PAGE_CLICK_STRAINS :String = "ClickStrains";
     public static const PAGE_CLICK_LINEAGE :String = "ClickLineage";
     public static const PAGE_CLICK_BUILD_LINEAGE :String = "ClickBuildLineage";
-//    public static const PAGE_CLICK_RECRUIT :String = "ClickRecruit";
+    public static const PAGE_CLICK_RECRUIT :String = "ClickRecruit";
     public static const PAGE_CLICK_BACK :String = "ClickBack";
     public static const PAGE_CLICK_BLOOD :String = "ClickBlood";
     public static const PAGE_CLICK_BACK2 :String = "ClickBack2";
@@ -735,7 +735,7 @@ public class Tutorial extends AppMode
         [PAGE_CLICK_STRAINS, "The strains you've collected are tallied under \"Strains\" on the left.  Click it for a look."],
         [PAGE_CLICK_LINEAGE, "Your other driving goal is to build up your Lineage for the coming battles.  Click \"Lineage\" at the left."],
         [PAGE_CLICK_BUILD_LINEAGE, "As a newborn, you have no progeny yet.  Click \"Build Your Lineage\" to find out how to recruit them."],
-//        [PAGE_CLICK_RECRUIT, "You can see how gathering new recruits will be invaluable down the line.  Click \"Recruit!\" to invite friends."],
+        [PAGE_CLICK_RECRUIT, "You can see how gathering new recruits will be invaluable down the line.  Click \"Recruit!\" to invite friends."],
         [PAGE_CLICK_BACK, "You'll need to fortify your blood to benefit from your progeny.  Click the red back arrow in the upper left."],
         [PAGE_CLICK_BLOOD, "Only ancient blood can fortify yours.  Click \"Strengthen Your Blood\" to learn about the power of vampire blood."],
         [PAGE_CLICK_BACK2, "Your sire will be your vampiric guide, so shop around before sinking your teeth in.  Click \"back\"."],

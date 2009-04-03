@@ -134,11 +134,11 @@ package vampire.client
             //RECRUIT RIP
 //            var recruitButton :DisplayObject = findSafely("button_torecruiting");
 //            ClientUtil.detach(recruitButton);
-//            registerListener(SimpleButton(findSafely("button_torecruiting")), MouseEvent.CLICK,
-//                function (e :MouseEvent) :void {
-//                    ClientContext.tutorial.clickedRecruit();
-//                    ClientContext.controller.handleRecruit();
-//                });
+            registerListener(SimpleButton(findSafely("button_torecruiting")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
+                    ClientContext.tutorial.clickedRecruit();
+                    ClientContext.controller.handleRecruit();
+                });
 
             registerListener(SimpleButton(findSafely("help_back")), MouseEvent.CLICK,
                 backButtonPushed);
