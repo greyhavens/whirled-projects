@@ -253,7 +253,6 @@ public class BrawlerController extends Controller
      */
     public function coinsAwarded (event :CoinsAwardedEvent) :void
     {
-        control.local.feedback("You received "+event.amount+" coins!");
         //control.local.feedback("[DEBUG] Performance Rate: "+event.percentile+"%");
         control.player.removeEventListener(CoinsAwardedEvent.COINS_AWARDED, coinsAwarded);
         _control.game.playerReady();
