@@ -53,13 +53,12 @@ public class Trophies
     //    25 - 25-Cell Cascade
     //    50 - 50-Cell Cascade etc
     public static const CASCADE_TROPHIES :Array = [
-        "cascade25",
         "cascade50",
         "cascade100",
         "cascade200",
         "cascade400",
     ];
-    public static const CASCADE_REQS :Array = [ 25, 50, 100, 200, 400 ];
+    public static const CASCADE_REQS :Array = [ 50, 100, 200, 400 ];
 
     // Awarded for creating a cascade with a certain multiplier value
     // Awarded for creating a cascade of a certain size
