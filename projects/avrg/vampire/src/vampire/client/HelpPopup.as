@@ -125,17 +125,20 @@ package vampire.client
                         showTututorialOnClose = false;
                     }
                 });
-            registerListener(SimpleButton(findSafely("button_recruit")), MouseEvent.CLICK,
-                function (e :MouseEvent) :void {
-                    ClientContext.tutorial.clickedRecruit();
-                    ClientContext.controller.handleRecruit();
-                });
+//            registerListener(SimpleButton(findSafely("button_recruit")), MouseEvent.CLICK,
+//                function (e :MouseEvent) :void {
+//                    ClientContext.tutorial.clickedRecruit();
+//                    ClientContext.controller.handleRecruit();
+//                });
 
-            registerListener(SimpleButton(findSafely("button_torecruiting")), MouseEvent.CLICK,
-                function (e :MouseEvent) :void {
-                    ClientContext.tutorial.clickedRecruit();
-                    ClientContext.controller.handleRecruit();
-                });
+            //RECRUIT RIP
+//            var recruitButton :DisplayObject = findSafely("button_torecruiting");
+//            ClientUtil.detach(recruitButton);
+//            registerListener(SimpleButton(findSafely("button_torecruiting")), MouseEvent.CLICK,
+//                function (e :MouseEvent) :void {
+//                    ClientContext.tutorial.clickedRecruit();
+//                    ClientContext.controller.handleRecruit();
+//                });
 
             registerListener(SimpleButton(findSafely("help_back")), MouseEvent.CLICK,
                 backButtonPushed);
@@ -159,7 +162,6 @@ package vampire.client
                     gotoFrame("lineage");
                 });
 
-            removeExtraHelpPanels();
             gotoFrame(startframe);
 
 
@@ -191,10 +193,15 @@ package vampire.client
 
         protected function showBloodBonded () :void
         {
-            if (ClientContext.model.bloodbonded <= 0) {
-                return;
+            if (VConstants.LOCAL_DEBUG_MODE) {
+                redoBloodBondText("Test bb name");
             }
-            redoBloodBondText(ClientContext.model.bloodbondedName);
+            else {
+                if (ClientContext.model.bloodbonded <= 0) {
+                    return;
+                }
+                redoBloodBondText(ClientContext.model.bloodbondedName);
+            }
         }
 
 
