@@ -16,11 +16,8 @@ import flash.events.MouseEvent;
 import flash.text.TextField;
 
 import vampire.data.VConstants;
-import vampire.feeding.Constants;
-import vampire.feeding.net.CloseLobbyMsg;
-import vampire.feeding.net.Props;
-import vampire.feeding.net.RoundOverMsg;
-import vampire.feeding.net.RoundTimeLeftMsg;
+import vampire.feeding.*;
+import vampire.feeding.net.*;
 
 public class LobbyMode extends AppMode
 {
@@ -148,33 +145,82 @@ public class LobbyMode extends AppMode
 
     protected function updateButtonsAndStatus () :void
     {
+        var statusText :String;
         if (this.isWaitingForNextRound) {
             _startButton.visible = false;
-            _tfStatus.visible = true;
-            _tfStatus.text = "You will join when the current feeding ends";
+            statusText = "You will join when the current feeding ends.";
 
         } else if (ClientCtx.preyId == Constants.NULL_PLAYER && !ClientCtx.preyIsAi) {
             _startButton.visible = false;
-            _tfStatus.visible = true;
-            _tfStatus.text = "Your Feast has wandered off";
+            statusText = "Your Feast has wandered off.";
 
         } else if (ClientCtx.isLobbyLeader) {
             _startButton.visible = true;
-            _tfStatus.visible = false;
 
         } else {
             _startButton.visible = false;
-            _tfStatus.visible = true;
             var leaderName :String = ClientCtx.getPlayerName(ClientCtx.lobbyLeaderId);
             if (ClientCtx.playerIds.length == 1) {
-                _tfStatus.text = "All Feeders have left";
+                statusText = "All Feeders have left.";
             } else if (this.isPreGameLobby) {
-                _tfStatus.text = "Waiting for " + leaderName + " to start feeding";
+                statusText = "Waiting for " + leaderName + " to start feeding.";
             } else {
-                _tfStatus.text = "Waiting for " + leaderName + " to feed again";
+                statusText = "Waiting for " + leaderName + " to feed again.";
             }
 
             TextFieldUtil.setMaximumTextWidth(_tfStatus, _tfStatus.width);
+        }
+
+        if (this.isBloodBondForming) {
+            var partnerId :int = (ClientCtx.playerIds[0] != ClientCtx.localPlayerId ?
+                                  ClientCtx.playerIds[0] :
+                                  ClientCtx.playerIds[1]);
+            var partnerName :String = ClientCtx.getPlayerName(partnerId);
+
+            switch (ClientCtx.bloodBondProgress) {
+            case VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND - 3:
+                if (statusText == null) {
+                    statusText = "Three more feedings will forge a " +
+                                    "Blood Bond with " + partnerName + ".";
+                } else {
+                    statusText += "\nThree more will forge a Blood Bond."
+                }
+                break;
+
+            case VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND - 2:
+                if (statusText == null) {
+                    statusText = "Two more feedings will forge a " +
+                                    "Blood Bond with " + partnerName + ".";
+                } else {
+                    statusText += "\nTwo more will forge a Blood Bond."
+                }
+                break;
+
+            case VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND - 1:
+                if (statusText == null) {
+                    statusText = "One more feeding will forge a " +
+                                    "Blood Bond with " + partnerName + ".";
+                } else {
+                    statusText += "\nOne more will forge a Blood Bond."
+                }
+                break;
+
+            case VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND:
+                if (statusText == null) {
+                    statusText = "You and " + partnerName + " have forged a Blood Bond!";
+                } else {
+                    statusText = "You and " + partnerName + " have forged a Blood Bond!" +
+                                 "\nWaiting to feed again.";
+                }
+                break;
+            }
+        }
+
+        if (statusText != null) {
+            _tfStatus.text = statusText;
+            _tfStatus.visible = true;
+        } else {
+            _tfStatus.visible = false;
         }
     }
 
@@ -244,15 +290,16 @@ public class LobbyMode extends AppMode
     {
         var bloodBond :MovieClip = _panelMovie["blood_bond"];
         bloodBond.visible = false;
-        if (this.isLobby &&
-            ClientCtx.playerIds.length == 2 &&
-            !ClientCtx.preyIsAi &&
-            ClientCtx.bloodBondProgress > 0) {
-
+        if (this.isBloodBondForming && ClientCtx.bloodBondProgress > 0) {
             bloodBond.visible = true;
             bloodBond.gotoAndStop(1 +
                 Math.min(ClientCtx.bloodBondProgress, VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND));
         }
+    }
+
+    protected function get isBloodBondForming () :Boolean
+    {
+        return (this.isLobby && ClientCtx.playerIds.length == 2 && !ClientCtx.preyIsAi);
     }
 
     protected function onPropChanged (e :PropertyChangedEvent) :void
