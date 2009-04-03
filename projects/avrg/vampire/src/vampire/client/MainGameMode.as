@@ -21,7 +21,7 @@ import vampire.client.events.LineageUpdatedEvent;
 import vampire.data.Lineage;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingClient;
-import vampire.feeding.debug.BloodBloomStandalone;
+//import vampire.feeding.debug.BloodBloomStandalone;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.GameStartedMsg;
 import vampire.net.messages.MovePredIntoPositionMsg;
@@ -131,13 +131,15 @@ public class MainGameMode extends AppMode
             log.warning("Received StartFeeding message while already in game");
         } else {
 
-            if (VConstants.LOCAL_DEBUG_MODE) {
+            /*if (VConstants.LOCAL_DEBUG_MODE) {
                 _feedingGameClient = new BloodBloomStandalone(modeSprite);
             }
             else {
                 _feedingGameClient = FeedingClient.create(gameId,
                     ClientContext.model.playerFeedingData, onGameComplete);
-            }
+            }*/
+            _feedingGameClient = FeedingClient.create(gameId,
+                    ClientContext.model.playerFeedingData, onGameComplete);
 
             modeSprite.addChildAt(_feedingGameClient, 0)
 
