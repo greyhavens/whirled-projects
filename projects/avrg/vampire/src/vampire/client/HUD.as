@@ -773,7 +773,7 @@ public class HUD extends DraggableObject
         }
         //Border
         _hudXP.graphics.lineStyle(borderWidth, 0);
-        _hudXP.graphics.drawRect(0, borderWidth - 1, maxBlood + borderWidth - 1, BLOOD_BAR_HEIGHT - (borderWidth * 2 - 2));
+        _hudXP.graphics.drawRect(0, borderWidth - 2, maxBlood + borderWidth - 1, BLOOD_BAR_HEIGHT - (borderWidth * 2 - 2));
 
 //        _hudCap.x = maxBlood - borderWidth + 1;
 
