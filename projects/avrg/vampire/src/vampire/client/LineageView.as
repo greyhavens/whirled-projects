@@ -207,6 +207,10 @@ public class LineageView extends SceneObjectParent
                 so.x = -150;
                 so.y = 0;
                 so.alpha = 0;
+
+                if (so.displayObject.parent != null) {
+                    so.displayObject.parent.setChildIndex(so.displayObject, 0);
+                }
             }
         });
 
