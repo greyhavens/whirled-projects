@@ -230,6 +230,16 @@ public class LoopbackTest extends Sprite
             function (...ignored) :void {
                 setStatusText("Get Size", "size", _gameCtrl.local.getSize());
             });
+
+        createButton("Start Ticker",
+            function (...ignored) :void {
+                _gameCtrl.services.startTicker(getEnteredName(), int(getEnteredVal()));
+            });
+
+        createButton("Stop Ticker",
+            function (...ignored) :void {
+                _gameCtrl.services.stopTicker(getEnteredName());
+            });
     }
 
     protected function createButton (buttonText :String, callback :Function) :SimpleButton
