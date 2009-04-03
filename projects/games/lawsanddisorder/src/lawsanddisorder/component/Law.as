@@ -91,7 +91,7 @@ public class Law extends CardContainer
         // get the verb
         var verb :int = cards[1].type;
 
-        // get the player who recieves if verb is gives
+        // get the player who receives if verb is gives
         var toPlayer :Player = null;
         if (verb == Card.GIVES) {
             // SUBJECT VERB:GIVES SUBECT OBJECT

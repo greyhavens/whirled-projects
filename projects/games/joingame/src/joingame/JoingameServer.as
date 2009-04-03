@@ -403,7 +403,7 @@ package joingame
                 }
             }
             else {
-                log.info("Message recieved but not handled: " + event.value );
+                log.info("Message received but not handled: " + event.value );
             }
             
             //            AppContext.messageManager.addEventListener( DeltaRequestMessage.NAME, handleDeltaRequest);
@@ -994,7 +994,7 @@ package joingame
         
 //        public static const ALL_PLAYERS_READY :String = "Server:All Players Ready";
 //        public static const PLAYER_READY :String = "Server:Player Ready";
-//        public static const PLAYER_RECEIVED_START_GAME_STATE :String = "Server:Player Recieved Start Game State";
+//        public static const PLAYER_RECEIVED_START_GAME_STATE :String = "Server:Player Received Start Game State";
 //        public static const START_PLAY :String = "Server:Start Play";
 //        public static const GAME_OVER :String = "Server:Game Over";   
         

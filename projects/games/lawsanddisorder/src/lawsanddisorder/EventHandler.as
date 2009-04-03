@@ -219,7 +219,7 @@ public class EventHandler extends EventDispatcher
     }
 
     /**
-     * Handler for recieving game end events
+     * Handler for receiving game end events
      */
     protected function gameEnded (event :StateChangedEvent) :void
     {

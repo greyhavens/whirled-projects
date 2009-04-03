@@ -165,7 +165,7 @@ public class LawsAndDisorder extends Sprite
             _initJobsData = true;
         }
 
-        // once all data messages are recieved, disconnect this listener and finish setup
+        // once all data messages are received, disconnect this listener and finish setup
         if (_initMoniesData && _initHandsData && _initJobsData) {
             _initMoniesData = false;
             _initHandsData = false;

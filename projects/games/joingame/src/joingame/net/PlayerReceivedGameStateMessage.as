@@ -13,6 +13,6 @@ package joingame.net
         }
         
         
-        public static const NAME :String = "Server:Player Recieved Start Game State";        
+        public static const NAME :String = "Server:Player Received Start Game State";        
     }
 }

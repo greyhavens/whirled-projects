@@ -15,7 +15,7 @@ package joingame
         protected var _horizontalJoins :HashMap;//player -> array indexed by the join length
         protected var _verticalJoins :HashMap;//player -> array indexed by the join length
         protected var _killList :HashMap;
-        protected var _totalDamageRecieved :HashMap;
+        protected var _totalDamageReceived :HashMap;
         protected var _damageInflictedOnPlayer :HashMap;
         
         public function Database()
@@ -24,7 +24,7 @@ package joingame
             _horizontalJoins = new HashMap();
             _verticalJoins = new HashMap();
             _killList = new HashMap();
-            _totalDamageRecieved = new HashMap();
+            _totalDamageReceived = new HashMap();
             _damageInflictedOnPlayer = new HashMap();
         }
         
@@ -34,7 +34,7 @@ package joingame
             _horizontalJoins.clear();
             _verticalJoins.clear();
             _killList.clear();
-            _totalDamageRecieved.clear();
+            _totalDamageReceived.clear();
             _damageInflictedOnPlayer.clear();
         }
         

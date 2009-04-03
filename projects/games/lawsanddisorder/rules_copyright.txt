@@ -157,7 +157,7 @@ JUDGE
   - pay $2: destroy a law
 
 BANKER
-  - recieve double the money from one law being made (free & passive)
+  - receive double the money from one law being made (free & passive)
 
 THEIF
   - pay $2: look at a players hand and steal one card
