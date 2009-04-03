@@ -80,7 +80,7 @@ public class ServerLogic
                 var sire :PlayerData = ServerContext.server.getPlayer(sireId);
                 addXP(sire.playerId, awardXP);
                 log.debug("awarding sire " + sire.name + ", xp=" + awardXP);
-                sire.addFeedback("You gained " + Util.formatNumberForFeedback(awardXP) + " experience from minion " + player.name);
+                sire.addFeedback("You gained " + Util.formatNumberForFeedback(awardXP) + " experience from progeny " + player.name);
             }
             else {//Add to offline database
                 ServerContext.ctrl.loadOfflinePlayer(sireId,
@@ -1194,7 +1194,7 @@ public class ServerLogic
 
                                 //Tell the sire she's got children
                                 srv.getPlayer(sireId).room.addFeedback(Codes.POPUP_PREFIX +
-                                    pred.name + " has become your progeny! ", sireId);
+                                    pred.name + " has joined your Lineage! ", sireId);
 
                                 //Award coins to the sire(s)
                                 preyPlayer.ctrl.completeTask(Codes.TASK_ACQUIRE_MINION_ID,
