@@ -8,7 +8,7 @@ public class VConstants
     /**
     * If you're not related to the ubervamp
     */
-    public static const UBER_VAMP_ID :int = 12;
+    public static const UBER_VAMP_ID :int = 383387;
     //ubervamp localhost == 12
     //ubervamp dev.whirled == 1877, 382856
     //uvervamp Whirled == 383387
