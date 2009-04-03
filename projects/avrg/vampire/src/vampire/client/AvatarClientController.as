@@ -240,8 +240,8 @@ public class AvatarClientController extends SimObject
             setAvatarArrivedCallback(avatarArrivedAtDestination);
         }
         else {
-            log.error("The avatar did not provide the property=" +
-                AvatarEndMovementNotifier.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK);
+//            log.error("The avatar did not provide the property=" +
+//                AvatarEndMovementNotifier.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK);
 
             var t :SimpleTimer = new SimpleTimer(1, function () :void {
                 resetAvatarCallbackFunctions();
