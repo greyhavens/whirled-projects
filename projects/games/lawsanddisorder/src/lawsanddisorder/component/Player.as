@@ -212,6 +212,10 @@ public class Player extends Component
         }
         _ctx.eventHandler.setData(MONIES_DATA, monies + moniesNum, id);
         _monies = monies + moniesNum;
+        
+        if (moniesNum > 0 && this == _ctx.player) {
+            Content.playSound(Content.SFX_COINS_GAINED);
+        }
     }
 
     /**
@@ -220,6 +224,9 @@ public class Player extends Component
     public function loseMonies (moniesNum :int) :void
     {
         getMonies(moniesNum * -1);
+        if (moniesNum > 0 && this == _ctx.player) {
+            Content.playSound(Content.SFX_COINS_LOST);
+        }
     }
 
     /**

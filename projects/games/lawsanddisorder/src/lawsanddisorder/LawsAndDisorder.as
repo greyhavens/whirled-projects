@@ -84,6 +84,7 @@ public class LawsAndDisorder extends Sprite
      */
     protected function unload (event :Event = null) :void
     {
+        Content.stopMusic();
         if (_ctx.state != null) {
             _ctx.state.unload();
         }

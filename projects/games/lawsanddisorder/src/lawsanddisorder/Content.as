@@ -13,28 +13,43 @@ public class Content
 {
     [Embed(source="../../rsrc/symbols.swf#monieback")]
     public static const MONIE_BACK :Class;
-
     [Embed(source="../../rsrc/symbols.swf#cardback")]
     public static const CARD_BACK :Class;
-    
-    /** Embed the font used for everything */
     [Embed(source="../../rsrc/TrajanDark.ttf", fontFamily="lawsfont")]
     protected static var LAWS_FONT :Class;
-    
     [Embed(source="../../rsrc/sound/theme_loop.mp3")]
     protected static const THEME_MUSIC_CLASS :Class;
-    
     [Embed(source="../../rsrc/sound/gavel.mp3")]
     protected static const SFX_GAVEL_CLASS :Class;
-    
     [Embed(source="../../rsrc/sound/focus_ding.mp3")]
     protected static const SFX_FOCUS_DING_CLASS :Class;
 
+    /** Theme music for the game.  Volume controls are in Whirled */
     public static const THEME_MUSIC :Sound = new THEME_MUSIC_CLASS() as Sound;
+    
+    /** Sound played when any player creates a new law */
     public static const SFX_LAW_CREATED :Sound = new SFX_GAVEL_CLASS() as Sound;
+    
+    /** Sound played when your turn starts or your input is required */
     public static const SFX_FOCUS_DING :Sound = new SFX_FOCUS_DING_CLASS() as Sound;
+    
+    /** Sound played when any player uses their power */
     public static const SFX_POWER_USED :Sound = new SFX_GAVEL_CLASS() as Sound;
+    
+    /** Sound played when the game is almost over, and again when the game ends. */
     public static const SFX_GAME_OVER :Sound = new SFX_GAVEL_CLASS() as Sound;
+    
+    /** Sound played when you get coins */
+    public static const SFX_COINS_GAINED :Sound = new SFX_GAVEL_CLASS() as Sound;
+    
+    /** Sound played when you lose coins */
+    public static const SFX_COINS_LOST :Sound = new SFX_GAVEL_CLASS() as Sound;
+    
+    /** Sound played when one or more cards is added to your hand */
+    public static const SFX_CARDS_GAINED :Sound = new SFX_FOCUS_DING_CLASS() as Sound;
+    
+    /** Sound played when one or more cards is removed from your hand */
+    public static const SFX_CARDS_LOST :Sound = new SFX_FOCUS_DING_CLASS() as Sound;
     
     /**
      * Return a string like "a card" or "3 cards".
@@ -96,13 +111,13 @@ public class Content
     }
     
     /**
-     * Plays a sound effect a single time.  Will stop any sfx currently running.
+     * Plays a sound effect a single time.  Will NOT stop any sfx currently running.
      */
     public static function playSound (sound :Sound) :void
     {
-        if (_sfxChannel != null) {
-            _sfxChannel.stop();
-        }
+        //if (_sfxChannel != null) {
+        //    _sfxChannel.stop();
+        //}
         _sfxChannel = sound.play(0, 0);
     }
 

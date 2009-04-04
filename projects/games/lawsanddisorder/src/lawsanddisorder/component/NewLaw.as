@@ -79,6 +79,33 @@ public class NewLaw extends CardContainer
     }
     
     /**
+     * Return the OBJECT card for a law represented by an array of cards.
+     */
+    public function getObject (cardList :Array = null) :Card
+    {
+        if (cardList[2].group == Card.OBJECT) {
+            return cardList[2];
+        } else if (cardList[3].group == Card.OBJECT) {
+            return cardList[3];
+        } else {
+            _ctx.error("There is no object in NewLaw.getObject: " + cardList);
+            return null;
+        }
+    }
+    
+    /**
+     * Return the WHEN card for a law represented by an array of cards, or null if there is none.
+     */
+    public function getWhen (cardList :Array = null) :Card
+    {
+        if (cardList[cardList.length - 1].group == Card.WHEN) {
+            return cardList[cardList.length - 1];
+        } else {
+            return null;
+        }
+    }
+    
+    /**
      * Determine which player, if any, a law represented by an array of cards will benefit.
      */
     public function isGoodFor (cardList :Array = null) :Player

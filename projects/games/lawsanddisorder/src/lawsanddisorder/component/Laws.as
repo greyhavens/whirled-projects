@@ -115,14 +115,96 @@ public class Laws extends Component
     }
 
     /**
-     * Choose and return a law at random.
+     * Choose and return a random law.
      */
     public function getRandomLaw () :Law
     {
+        if (laws.length == 0) {
+            return null;
+        }
         var numLaws :int = Math.min(laws.length,MAX_LAWS);
         var randomIndex :int = Math.round(Math.random() * (numLaws - 1)) + oldestLawId;
-        //var randomIndex :int = Math.round(Math.random() * (laws.length-1));
         return laws[randomIndex];
+    }
+    
+    /**
+     * Return the (type=) "best" or "worst" law for a given player.
+     */
+    public function getLawByValue (player :Player, type :String) :Law
+    {
+        var chosenLaw :Law = null;
+        var chosenLawValue :int = 0;
+        for (var ii :int = oldestLawId; ii < laws.length; ii++) {
+            var lawValue :int = calculateLawValue(player, laws[ii].cards);
+            if (chosenLaw == null || (type == "best" && lawValue > chosenLawValue)
+                || (type == "worst" && lawValue < chosenLawValue)) {
+                chosenLaw = laws[ii];
+                chosenLawValue = lawValue;
+            }
+        }
+        
+        if (chosenLaw == null) {
+            _ctx.error("chosenLaw null in Laws.getRandomLaw for type " + type);
+            return null;
+        }
+        return chosenLaw;
+    }
+    
+    /**
+     * Return a value from 0 to 262 with avg ~80 that determines how good this law is for a given 
+     * player.  Return 0 (worst possible) if the law hurts that player.
+     */
+    public function calculateLawValue (player :Player, cardList :Array) :int
+    {
+        var gainingPlayer :Player = _ctx.board.newLaw.isGoodFor(cardList);
+        var losingPlayer :Player = _ctx.board.newLaw.isBadFor(cardList);
+        
+        // laws that hurt yourself are automatically the worst ever (value 0)
+        if (losingPlayer == player) {
+            return 0;
+        }
+        
+        var weight :int = 25;
+        if (gainingPlayer == player && losingPlayer != null) {
+            weight = 175;
+        } else if (gainingPlayer == player) {
+            weight = 140;
+        } else if (gainingPlayer != null && losingPlayer != null) {
+            weight = ((100 - gainingPlayer.getWinningPercentile()) + (losingPlayer.getWinningPercentile())) / 2;
+        } else if (gainingPlayer != null) {
+            // sometimes make laws that help players who are in the bottom 20%
+            weight = Math.max(0, 20 - gainingPlayer.getWinningPercentile());
+        } else if (losingPlayer != null) {
+            weight = losingPlayer.getWinningPercentile();
+        }
+        
+        // adjust the weight: 2 cards at the start of your turn is better than 1 monie now
+        var object :Card = _ctx.board.newLaw.getObject(cardList);
+        var when :Card = _ctx.board.newLaw.getWhen(cardList);
+        var powerMultiplier :int = object.value;
+        if (object.type == Card.CARD) {
+            powerMultiplier *= 2;
+        }
+        if (when != null) {
+            powerMultiplier += 2;
+        }
+        
+        // after multiplier, weight range is 0 - 262 with avg ~80
+        weight *= (powerMultiplier + 9)/10;
+        
+        /* _ctx.log("\nweight for " + cardList + " is " + weight + " with mult " + ((powerMultiplier + 9)/10));
+        if (gainingPlayer != null) {
+            if (gainingPlayer == this) {
+                _ctx.log("gaining player is me.");
+            } else {
+                _ctx.log("gaining player.winning: " + gainingPlayer.getWinningPercentile());
+            }
+        } 
+        if (losingPlayer != null) {
+            _ctx.log("losingPlayer.winning: " + losingPlayer.getWinningPercentile());
+        }  */
+        
+        return weight;
     }
     
     /**

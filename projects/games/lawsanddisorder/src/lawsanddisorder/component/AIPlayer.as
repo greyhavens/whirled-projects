@@ -77,11 +77,18 @@ public class AIPlayer extends Opponent
     
     /**
      * Select a law to do something with.
-     * TODO need strategy, must switch on what we are doing (or move to job).
+     * type can be one of "best", "worst", "random"
      */
-    public function selectLaw () :Law
+    protected function selectLaw (type :String = "random") :Law
     {
-        return _ctx.board.laws.getRandomLaw();
+        // if ai is 100% dumb, always return a random law.  If ai is 50% dumb, return a random
+        // law half the time.  If ai is 5% dumb, pick randomly 5 in 100 times.
+        // TODO dumber ais could pick slightly-worse laws instead of random ones 
+        if (type == "random" || getRandChance(100, dumbnessFactor)) {
+            return _ctx.board.laws.getRandomLaw();
+        }
+        
+        return _ctx.board.laws.getLawByValue(this, type);
     }
     
     /**
@@ -183,8 +190,8 @@ public class AIPlayer extends Opponent
             }
             var weight :int = (playerWeight + (cardCount -1) * 25)/10;
             
-            _ctx.log("\nweight for " + selectedCard + " is " + weight + " #" + cardCount);
-            _ctx.log("player with job.getWinningPercentile() is " + playerWithJob.getWinningPercentile());
+            //_ctx.log("\nweight for " + selectedCard + " is " + weight + " #" + cardCount);
+            //_ctx.log("player with job.getWinningPercentile() is " + playerWithJob.getWinningPercentile());
             
             if (weight > 0) {
                 playOptions.push(function (): void { changeJobs(selectedCard); });
@@ -232,51 +239,7 @@ public class AIPlayer extends Opponent
                 cardList.push(when);
             }
             
-            var gainingPlayer :Player = _ctx.board.newLaw.isGoodFor(cardList);
-            var losingPlayer :Player = _ctx.board.newLaw.isBadFor(cardList);
-            
-            // don't ever play a law that hurts yourself
-            if (losingPlayer == this) {
-                continue;
-            }
-            
-            var weight :int = 25;
-            if (gainingPlayer == this && losingPlayer != null) {
-                weight = 175;
-            } else if (gainingPlayer == this) {
-                weight = 140;
-            } else if (gainingPlayer != null && losingPlayer != null) {
-                weight = ((100 - gainingPlayer.getWinningPercentile()) + (losingPlayer.getWinningPercentile())) / 2;
-            } else if (gainingPlayer != null) {
-                // sometimes make laws that help players who are in the bottom 20%
-                weight = Math.max(0, 20 - gainingPlayer.getWinningPercentile());
-            } else if (losingPlayer != null) {
-                weight = losingPlayer.getWinningPercentile();
-            }
-            
-            // adjust the weight: 2 cards at the start of your turn is better than 1 monie now
-            var powerMultiplier :int = object.value;
-            if (object.type == Card.CARD) {
-                powerMultiplier *= 2;
-            }
-            if (when != null) {
-                powerMultiplier += 2;
-            }
-            // after multiplier, weight range is 0 - 262 with avg ~80
-            weight *= (powerMultiplier + 9)/10;
-
-            _ctx.log("\nweight for " + cardList + " is " + weight + " with mult " + ((powerMultiplier + 9)/10));
-            if (gainingPlayer != null) {
-                if (gainingPlayer == this) {
-                    _ctx.log("gaining player is me.");
-                } else {
-                    _ctx.log("gaining player.winning: " + gainingPlayer.getWinningPercentile());
-                }
-            } 
-            if (losingPlayer != null) {
-                _ctx.log("losingPlayer.winning: " + losingPlayer.getWinningPercentile());
-            } 
-            
+            var weight :int = _ctx.board.laws.calculateLawValue(this, cardList);
             if (weight > 0) {
                 playOptions.push(function (): void { createLaw(cardList); });
                 playOptionWeights.push(weight);
@@ -302,7 +265,8 @@ public class AIPlayer extends Opponent
             
             switch (job.id) {
             case Job.JUDGE:
-                targetLaw = selectLaw();
+                targetLaw = selectLaw("best");
+                _ctx.log("Judge is " + dumbnessFactor + " dumb and chose this law to enact: " + targetLaw);
                 weight = 50;
                 break;
 
@@ -331,12 +295,13 @@ public class AIPlayer extends Opponent
 
             case Job.TRADER:
                 // base weight on how many cards you already have?
-                weight = 50;
+                weight = 90;
                 break;
 
             case Job.PRIEST:
-                targetLaw = selectLaw();
+                targetLaw = selectLaw("worst");
                 targetCard = hand.pickRandom(Card.SUBJECT);
+                _ctx.log("Priest is " + dumbnessFactor + " dumb and chose this law to change:" + targetLaw);
                 _ctx.log("PRIEST targetcard: " + targetCard);
                 // ai players only ever switch the first SUBJECT in a law
                 var subjectInLaw :Card = targetLaw.cards[0];
@@ -406,11 +371,11 @@ public class AIPlayer extends Opponent
     }
     
     /**
-     * Returns true 1/denominator of the time, and false the rest of the time
+     * Returns true numerator/denominator of the time, and false the rest of the time
      */
-    protected function getRandChance (denominator :int) :Boolean
+    protected function getRandChance (denominator :int, numerator :int = 1) :Boolean
     {
-        var result :int = Math.round(Math.random() * denominator);
+        var result :int = Math.round(Math.random() * (denominator/numerator));
         if (result == 0) {
             return true;
         }
