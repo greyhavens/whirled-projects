@@ -224,7 +224,8 @@ public class EventHandler extends EventDispatcher
     protected function gameEnded (event :StateChangedEvent) :void
     {
         _ctx.gameStarted = false;
-        Content.stopMusic();
+        Content.playSound(Content.SFX_GAME_OVER);
+        //Content.stopMusic();
         dispatchEvent(new Event(GAME_ENDED));
     }
 

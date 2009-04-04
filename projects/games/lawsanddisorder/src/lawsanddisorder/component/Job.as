@@ -257,6 +257,12 @@ public class Job extends Component
                 return;
 
             case PRIEST:
+            	if (targetCard == null || targetLaw == null) {
+            		_ctx.error("null pointer in Job.usePowerAI PRIEST.  targetCard:" 
+            			+ targetCard + ", targetLaw: " + targetLaw);
+            		doneUsingPower();
+            		return;
+            	}
                 // select a subject to exchange and a law to exchange it with
                 _ctx.state.selectedLaw = targetLaw;
                 _ctx.state.selectedCard = targetCard;

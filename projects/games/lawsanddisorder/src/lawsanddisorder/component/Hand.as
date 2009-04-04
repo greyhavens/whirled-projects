@@ -64,11 +64,11 @@ public class Hand extends CardContainer
     /**
      * Play a sound when adding cards to your hand.
      */
-    override public function addCards (
-        cardArray :Array, distribute :Boolean = true, insertIndex :int = -1) :void
+    override public function addCards (cardArray :Array, distribute :Boolean = true, 
+    	insertIndex :int = -1, playSound :Boolean = true) :void
     {
         super.addCards(cardArray, distribute, insertIndex);
-        if (cardArray.length > 0 && player == _ctx.player) {
+        if (playSound && cardArray.length > 0 && player == _ctx.player) {
             Content.playSound(Content.SFX_CARDS_GAINED);
         }
     }
@@ -76,10 +76,11 @@ public class Hand extends CardContainer
     /**
      * Play a sound when removing cards from your hand.
      */
-    override public function removeCards (cardArray :Array, distribute :Boolean = true) :void
+    override public function removeCards (cardArray :Array, distribute :Boolean = true, 
+    	playSound :Boolean = true) :void
     {
         super.removeCards(cardArray, distribute);
-        if (cardArray.length > 0 && player == _ctx.player) {
+        if (playSound && cardArray.length > 0 && player == _ctx.player) {
             Content.playSound(Content.SFX_CARDS_LOST);
         }
     }

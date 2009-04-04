@@ -23,6 +23,12 @@ public class Content
     protected static const SFX_GAVEL_CLASS :Class;
     [Embed(source="../../rsrc/sound/focus_ding.mp3")]
     protected static const SFX_FOCUS_DING_CLASS :Class;
+    [Embed(source="../../rsrc/sound/coinflip.mp3")]
+    protected static const SFX_COIN_CLASS :Class;
+    [Embed(source="../../rsrc/sound/carddrop.mp3")]
+    protected static const SFX_CARD_CLASS :Class;
+    [Embed(source="../../rsrc/sound/shuffling.mp3")]
+    protected static const SFX_SHUFFLING_CLASS :Class;
 
     /** Theme music for the game.  Volume controls are in Whirled */
     public static const THEME_MUSIC :Sound = new THEME_MUSIC_CLASS() as Sound;
@@ -34,22 +40,28 @@ public class Content
     public static const SFX_FOCUS_DING :Sound = new SFX_FOCUS_DING_CLASS() as Sound;
     
     /** Sound played when any player uses their power */
-    public static const SFX_POWER_USED :Sound = new SFX_GAVEL_CLASS() as Sound;
+    public static const SFX_POWER_USED :Sound = null;
     
-    /** Sound played when the game is almost over, and again when the game ends. */
-    public static const SFX_GAME_OVER :Sound = new SFX_GAVEL_CLASS() as Sound;
+    /** Sound played when the game begins and music starts. */
+    public static const SFX_GAME_START :Sound = new SFX_SHUFFLING_CLASS() as Sound;
+    
+    /** Sound played when the game is almost over. */
+    public static const SFX_DECK_NEAR_EMPTY :Sound = new SFX_SHUFFLING_CLASS() as Sound;
+    
+    /** Sound played when the game ends and the music stops. */
+    public static const SFX_GAME_OVER :Sound = new SFX_SHUFFLING_CLASS() as Sound;
     
     /** Sound played when you get coins */
-    public static const SFX_COINS_GAINED :Sound = new SFX_GAVEL_CLASS() as Sound;
+    public static const SFX_COINS_GAINED :Sound = new SFX_COIN_CLASS() as Sound;
     
     /** Sound played when you lose coins */
-    public static const SFX_COINS_LOST :Sound = new SFX_GAVEL_CLASS() as Sound;
+    public static const SFX_COINS_LOST :Sound = new SFX_COIN_CLASS() as Sound;
     
     /** Sound played when one or more cards is added to your hand */
-    public static const SFX_CARDS_GAINED :Sound = new SFX_FOCUS_DING_CLASS() as Sound;
+    public static const SFX_CARDS_GAINED :Sound = new SFX_CARD_CLASS() as Sound;
     
     /** Sound played when one or more cards is removed from your hand */
-    public static const SFX_CARDS_LOST :Sound = new SFX_FOCUS_DING_CLASS() as Sound;
+    public static const SFX_CARDS_LOST :Sound = new SFX_CARD_CLASS() as Sound;
     
     /**
      * Return a string like "a card" or "3 cards".
@@ -115,9 +127,9 @@ public class Content
      */
     public static function playSound (sound :Sound) :void
     {
-        //if (_sfxChannel != null) {
-        //    _sfxChannel.stop();
-        //}
+    	if (sound == null) {
+    		return;
+    	}
         _sfxChannel = sound.play(0, 0);
     }
 

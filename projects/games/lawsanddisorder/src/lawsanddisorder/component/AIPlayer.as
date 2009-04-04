@@ -311,6 +311,7 @@ public class AIPlayer extends Opponent
                     break;
                 }
                 weight = 50;
+                break;
 
             case Job.DOCTOR:
                 targetLaw = selectLaw();
@@ -326,6 +327,7 @@ public class AIPlayer extends Opponent
                     // ai has no when cards
                     break;
                 }
+                break;
             }
         
             _ctx.log("\nweight for " + job + " ability with " + targetLaw + ", " 

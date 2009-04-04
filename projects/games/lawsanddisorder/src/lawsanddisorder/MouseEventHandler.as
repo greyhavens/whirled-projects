@@ -177,7 +177,7 @@ public class MouseEventHandler
         card.addEventListener(MouseEvent.MOUSE_MOVE, draggingCard);
         activeCard = card;
 
-        card.cardContainer.removeCards(new Array(card), false);
+        card.cardContainer.removeCards(new Array(card), false, false);
         card.x = _ctx.board.mouseX - 25;
         card.y = _ctx.board.mouseY - 10;
         _ctx.board.addChild(card);
@@ -283,12 +283,12 @@ public class MouseEventHandler
                 var handCardIndex :int = _ctx.player.hand.getCardIndexByPoint(mousePosition);
                 if (card.cardContainer == _ctx.player.hand) {
                     // moved card around inside hand, do not distribute
-                    _ctx.player.hand.addCards(new Array(card), false, handCardIndex);
+                    _ctx.player.hand.addCards(new Array(card), false, handCardIndex, false);
                 }
                 else {
                     // moved card from newlaw to hand, do not distribute
-                    card.cardContainer.removeCards(new Array(card), false);
-                    _ctx.player.hand.addCards(new Array(card), false, handCardIndex);
+                    card.cardContainer.removeCards(new Array(card), false, false);
+                    _ctx.player.hand.addCards(new Array(card), false, handCardIndex, false);
                 }
                 return;
             }
@@ -316,7 +316,7 @@ public class MouseEventHandler
                 }
                 else {
                     // added card from hand to newlaw, do not distribute
-                    card.cardContainer.removeCards(new Array(card), false);
+                    card.cardContainer.removeCards(new Array(card), false, false);
                     _ctx.board.newLaw.addCards(new Array(card), false, newLawCardIndex);
                 }
                 return;
@@ -434,7 +434,7 @@ public class MouseEventHandler
             card.cardContainer = _ctx.player.hand;
         }
         _ctx.board.removeCard(card);
-        card.cardContainer.addCards(new Array(card), false);
+        card.cardContainer.addCards(new Array(card), false, -1, false);
     }
 
     /**

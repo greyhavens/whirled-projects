@@ -120,7 +120,7 @@ public class LawsAndDisorder extends Sprite
         }
         
         Content.playMusic(Content.THEME_MUSIC);
-
+        Content.playSound(Content.SFX_GAME_START);
         _ctx.notice("Welcome to Laws & Disorder!");
         _ctx.gameStarted = true;
         //_ctx.log("in l&d, turn holder: " + _ctx.control.game.getTurnHolderId());

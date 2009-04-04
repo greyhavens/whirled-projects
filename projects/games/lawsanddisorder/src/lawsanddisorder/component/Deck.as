@@ -39,7 +39,6 @@ public class Deck extends Component
      */
     public function Deck (ctx :Context)
     {
-        ctx.log("Deck created.");
         super(ctx);
 
         _ctx.eventHandler.addDataListener(DECK_DATA, deckChanged);
@@ -208,7 +207,7 @@ public class Deck extends Component
     
     protected function deckNearEmpty (...ignored) :void
     {
-        Content.playSound(Content.SFX_GAME_OVER);
+        Content.playSound(Content.SFX_DECK_NEAR_EMPTY);
         _ctx.notice("Only 5 cards left in the deck, the game will end soon!");
     }
 

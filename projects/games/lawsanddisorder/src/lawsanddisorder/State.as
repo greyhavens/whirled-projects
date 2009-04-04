@@ -1,11 +1,11 @@
 ﻿package lawsanddisorder {
 
+import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.events.MouseEvent;
-import flash.display.DisplayObject;
+import flash.events.TimerEvent;
 import flash.geom.Point;
 import flash.utils.Timer;
-import flash.events.TimerEvent;
 
 import lawsanddisorder.component.*;
 
@@ -244,7 +244,7 @@ public class State
         }
         else if (mode != MODE_DEFAULT) {
             if (displayNotices) {
-               _ctx.notice("Busy performing another action.");
+               _ctx.notice("You can't do that now.  " + lastReminderMessage);
             }
         }
         else if (!_ctx.player.isMyTurn) {
@@ -311,6 +311,7 @@ public class State
             }
             return;
         }
+        lastReminderMessage = message;
         
         // play a reminder noise when not your turn, even in single player mode.
         if (!_ctx.board.players.isMyTurn()) {
@@ -465,6 +466,9 @@ public class State
 
     /** Player from whose hands the cards must be selected */
     public var selectCardsTargetPlayer :Player = null;
+    
+    /** The last notification message the player saw */
+    protected var lastReminderMessage :String = null;
 
     /** Normal mode; not waiting on player for anything */
     public static const MODE_DEFAULT :int = 0;
