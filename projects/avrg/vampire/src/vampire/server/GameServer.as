@@ -320,7 +320,7 @@ public class GameServer extends ObjectDB
 
     protected var _globalFeedback :Array = new Array();
 
-    public static const SERVER_TICK_UPDATE_MILLISECONDS :int = 300;
+    public static const SERVER_TICK_UPDATE_MILLISECONDS :int = 1000;
     public static const UPDATE_PLAYER_TIME :int = 5000;
 
 }
