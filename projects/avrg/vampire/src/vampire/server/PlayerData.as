@@ -296,7 +296,8 @@ public class PlayerData extends EventHandlerManager
 
     public function get avatar () :AVRGameAvatar
     {
-        if(room == null || room.ctrl == null) {
+        if(room == null || room.ctrl == null || !room.ctrl.isConnected() ||
+            !room.ctrl.isPlayerHere(playerId)) {
             return null;
         }
         return room.ctrl.getAvatarInfo(playerId);
