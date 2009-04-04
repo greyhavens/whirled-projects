@@ -171,7 +171,7 @@ public class LoopbackTest extends Sprite
                 setStatusText(propString);
             });
 
-        createNewLayoutRow(30);
+        createNewLayoutRow(15);
 
         createButton("Set Cookie",
             function (...ignored) :void {
@@ -192,7 +192,7 @@ public class LoopbackTest extends Sprite
                 _gameCtrl.game.systemMessage(getEnteredVal().toString());
             });
 
-        createNewLayoutRow(30);
+        createNewLayoutRow(15);
 
         createButton("Player Ready",
             function (...ignored) :void {
@@ -221,7 +221,7 @@ public class LoopbackTest extends Sprite
                 _gameCtrl.game.endRound(2);
             });
 
-        createNewLayoutRow(30);
+        createNewLayoutRow(15);
 
         createButton("Set Frame Rate",
             function (...ignored) :void {
@@ -238,7 +238,7 @@ public class LoopbackTest extends Sprite
                 setStatusText("Get Size", "size", _gameCtrl.local.getSize());
             });
 
-        createNewLayoutRow(30);
+        createNewLayoutRow(15);
 
         createButton("Start Ticker",
             function (...ignored) :void {
@@ -249,6 +249,8 @@ public class LoopbackTest extends Sprite
             function (...ignored) :void {
                 _gameCtrl.services.stopTicker(getEnteredName());
             });
+
+        createNewLayoutRow(15);
 
         createButton("Get Dictionary Letters",
             function (...ignored) :void {
@@ -272,6 +274,34 @@ public class LoopbackTest extends Sprite
                     function (word :String, result :Boolean) :void {
                         setStatusText("checkDictionaryWord", "word", word, "result", result);
                     });
+            });
+
+        createNewLayoutRow(15);
+
+        createButton("Create Bag",
+            function (...ignored) :void {
+                var name :String = getEnteredName();
+                var vals :Array = String(getEnteredVal()).split(",");
+                _gameCtrl.services.bags.create(name, vals);
+                setStatusText("Bag created", "name", name, "numVals", vals.length, "vals", vals);
+            });
+
+        createButton("Add To Bag",
+            function (...ignored) :void {
+                var name :String = getEnteredName();
+                var vals :Array = String(getEnteredVal()).split(",");
+                _gameCtrl.services.bags.addTo(name, vals);
+                setStatusText("Added to bag", "name", name, "numVals", vals.length, "vals", vals);
+            });
+
+        createButton("Pick From Bag",
+            function (...ignored) :void {
+                _gameCtrl.services.bags.pick(getEnteredName(), getEnteredNumber(), "BagProp");
+            });
+
+        createButton("Deal From Bag",
+            function (...ignored) :void {
+                _gameCtrl.services.bags.deal(getEnteredName(), getEnteredNumber(), "BagProp");
             });
     }
 
