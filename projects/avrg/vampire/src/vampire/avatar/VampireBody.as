@@ -119,19 +119,19 @@ public class VampireBody extends MovieClipBody
             selectFrame(movie, [ "neck", "shirt" ], _curConfig.topNumber);
             selectFrame(movie, [ "hips", "shirt" ], _curConfig.topNumber);
             selectFrame(movie, [ "breasts", "shirt" ], _curConfig.topNumber);
-            selectFrame(movie, [ "breasts", "breasts" ], _curConfig.topNumber);
+            selectFrame(movie, [ "breasts", "skin" ], _curConfig.topNumber);
             selectFrame(movie, [ "bicepL", "shirt" ], _curConfig.topNumber);
             selectFrame(movie, [ "bicepR", "shirt" ], _curConfig.topNumber);
-            selectFrame(movie, [ "bicepL", "bicepL" ], _curConfig.topNumber);
-            selectFrame(movie, [ "bicepR", "bicepR" ], _curConfig.topNumber);
+            selectFrame(movie, [ "bicepL", "skin" ], _curConfig.topNumber);
+            selectFrame(movie, [ "bicepR", "skin" ], _curConfig.topNumber);
             selectFrame(movie, [ "forearmL", "shirt" ], _curConfig.topNumber);
             selectFrame(movie, [ "forearmR", "shirt" ], _curConfig.topNumber);
-            selectFrame(movie, [ "forearmL", "forearmL" ], _curConfig.topNumber);
-            selectFrame(movie, [ "forearmR", "forearmR" ], _curConfig.topNumber);
+            selectFrame(movie, [ "forearmL", "skin" ], _curConfig.topNumber);
+            selectFrame(movie, [ "forearmR", "skin" ], _curConfig.topNumber);
             selectFrame(movie, [ "handL", "shirt" ], _curConfig.topNumber);
             selectFrame(movie, [ "handR", "shirt" ], _curConfig.topNumber);
-            selectFrame(movie, [ "handL", "handL" ], _curConfig.topNumber);
-            selectFrame(movie, [ "handR", "handR" ], _curConfig.topNumber);
+            selectFrame(movie, [ "handL", "skin" ], _curConfig.topNumber);
+            selectFrame(movie, [ "handR", "skin" ], _curConfig.topNumber);
 
             // Hair
             selectFrame(movie, [ "head", "scalp", "scalp" ], _curConfig.hairNumber);
@@ -144,8 +144,8 @@ public class VampireBody extends MovieClipBody
             // Shoes
             selectFrame(movie, [ "footL", "shoes" ], _curConfig.shoesNumber);
             selectFrame(movie, [ "footR", "shoes" ], _curConfig.shoesNumber);
-            selectFrame(movie, [ "footL", "foot" ], _curConfig.shoesNumber);
-            selectFrame(movie, [ "footR", "foot" ], _curConfig.shoesNumber);
+            selectFrame(movie, [ "footL", "skin" ], _curConfig.shoesNumber);
+            selectFrame(movie, [ "footR", "skin" ], _curConfig.shoesNumber);
             selectFrame(movie, [ "calfL", "shoes" ], _curConfig.shoesNumber);
             selectFrame(movie, [ "calfR", "shoes" ], _curConfig.shoesNumber);
         }
@@ -165,20 +165,20 @@ public class VampireBody extends MovieClipBody
             // Skin color
             applyFilter(movie, [ "head", "head" ], skinFilter);
             applyFilter(movie, [ "head", "ear" ], skinFilter);
-            applyFilter(movie, [ "neck", "neck" ], skinFilter);
-            applyFilter(movie, [ "bicepL", "bicepL" ], skinFilter);
-            applyFilter(movie, [ "bicepR", "bicepR" ], skinFilter);
-            applyFilter(movie, [ "forearmL", "forearmL" ], skinFilter);
-            applyFilter(movie, [ "forearmR", "forearmR" ], skinFilter);
-            applyFilter(movie, [ "handL", "handL" ], skinFilter);
-            applyFilter(movie, [ "handR", "handR" ], skinFilter);
-            applyFilter(movie, [ "breasts", "breasts" ], skinFilter);
-            applyFilter(movie, [ "torso", "torso" ], skinFilter);
-            applyFilter(movie, [ "hips", "hips" ], skinFilter);
-            applyFilter(movie, [ "calfL", "calfL" ], skinFilter);
-            applyFilter(movie, [ "calfR", "calfR" ], skinFilter);
-            applyFilter(movie, [ "footL", "foot" ], skinFilter);
-            applyFilter(movie, [ "footR", "foot" ], skinFilter);
+            applyFilter(movie, [ "neck", "skin" ], skinFilter);
+            applyFilter(movie, [ "bicepL", "skin" ], skinFilter);
+            applyFilter(movie, [ "bicepR", "skin" ], skinFilter);
+            applyFilter(movie, [ "forearmL", "skin" ], skinFilter);
+            applyFilter(movie, [ "forearmR", "skin" ], skinFilter);
+            applyFilter(movie, [ "handL", "skin" ], skinFilter);
+            applyFilter(movie, [ "handR", "skin" ], skinFilter);
+            applyFilter(movie, [ "breasts", "skin" ], skinFilter);
+            applyFilter(movie, [ "torso", "skin" ], skinFilter);
+            applyFilter(movie, [ "hips", "skin" ], skinFilter);
+            applyFilter(movie, [ "calfL", "skin" ], skinFilter);
+            applyFilter(movie, [ "calfR", "skin" ], skinFilter);
+            applyFilter(movie, [ "footL", "skin" ], skinFilter);
+            applyFilter(movie, [ "footR", "skin" ], skinFilter);
 
             // Hair color
             applyFilter(movie, [ "head", "scalp", "scalp", ], hairFilter);
