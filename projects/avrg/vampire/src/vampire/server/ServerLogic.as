@@ -499,19 +499,19 @@ public class ServerLogic
                     }
                     break;
 
-                    case VConstants.NAMED_EVENT_SHARE_TOKEN:
-                    var inviterId :int = int(value);
-                    log.debug(playerId + " received inviter id=" + inviterId);
-                    if (player.sire == 0) {
-                        log.info(playerId + " setting sire=" + inviterId);
-                        makeSire(player, inviterId);
-                        //Tally the successful invites for trophies
-                        playerInvitedByPlayer(playerId, inviterId);
-                    }
-                    else {
-                        log.warning("handleShareTokenMessage, but our sire is already != 0");
-                    }
-                    break;
+//                    case VConstants.NAMED_EVENT_SHARE_TOKEN:
+//                    var inviterId :int = int(value);
+//                    log.debug(playerId + " received inviter id=" + inviterId);
+//                    if (player.sire == 0) {
+//                        log.info(playerId + " setting sire=" + inviterId);
+//                        makeSire(player, inviterId);
+//                        //Tally the successful invites for trophies
+//                        playerInvitedByPlayer(playerId, inviterId);
+//                    }
+//                    else {
+//                        log.warning("handleShareTokenMessage, but our sire is already != 0");
+//                    }
+//                    break;
 
                     case VConstants.NAMED_MESSAGE_CHOOSE_FEMALE:
                     log.debug(VConstants.NAMED_MESSAGE_CHOOSE_FEMALE + " awarding female");
@@ -587,7 +587,7 @@ public class ServerLogic
         if (ServerContext.server.isPlayer(inviterId)) {
             var inviter :PlayerData = ServerContext.server.getPlayer(inviterId);
             inviter.addToInviteTally();
-            Trophies.checkInviteTrophies(inviter);
+//            Trophies.checkInviteTrophies(inviter);
         }
         else {
             //Add to offline database
@@ -609,7 +609,11 @@ public class ServerLogic
         if (!isNaN(xpGainedWhileAsleep) && xpGainedWhileAsleep > 0) {
             addXP(player.playerId, xpGainedWhileAsleep);
             player.addFeedback(Codes.POPUP_PREFIX + "You gained " + Util.formatNumberForFeedback(xpGainedWhileAsleep) +
-                " experience from your bloodbond and progeny while you were asleep!");
+                " experience from your " +
+                (player.bloodbonded != 0 ? "bloodbond " : "") +
+                (player.bloodbonded != 0 && ServerContext.lineage.getMinionCount(player.playerId) > 0 ? "and " : "") +
+                (ServerContext.lineage.getMinionCount(player.playerId) > 0 ? "progeny " : "") +
+                "while you were asleep!");
 
         }
         player.ctrl.props.set(Codes.PLAYER_PROP_XP_SLEEP, 0);
@@ -630,6 +634,9 @@ public class ServerLogic
                 getPlayer(inviterId).addFeedback(Codes.POPUP_PREFIX +
                     player.name + " has become your progeny!");
             }
+
+            //Tally the successful invites for trophies
+            playerInvitedByPlayer(player.playerId, inviterId);
         }
         else {
             log.warning("handleShareTokenMessage, but our sire != 0", "e", e);
@@ -638,6 +645,11 @@ public class ServerLogic
     public static function handleFeedRequestMessage (player :PlayerData, e :FeedRequestMsg) :void
     {
         log.debug("handleFeedRequestMessage");
+
+        if (player == null) {
+            return;
+        }
+
         var game :FeedingRecord;
 
         //If we're bared, return us the the default state.
@@ -717,6 +729,11 @@ public class ServerLogic
             return;
         }
 
+        if (player.room == null || player.room.ctrl == null || !player.room.ctrl.isConnected()) {
+            log.error("handleFeedConfirmMessage", "player.room", player.room);
+            return;
+        }
+
         var prey :PlayerData = getPlayer(e.playerId);
         if (prey == null) {
             log.error("handleFeedConfirmMessage", "prey", player);
@@ -757,6 +774,9 @@ public class ServerLogic
 
     public static function makeSire(player :PlayerData, targetPlayerId :int) :void
     {
+        if (player == null) {
+            return;
+        }
         if (targetPlayerId == player.sire) {
             return;
         }
@@ -839,6 +859,8 @@ public class ServerLogic
         var playerId :int = player.playerId;
         var room :Room = player.room;
 
+
+
         switch (newState) {
             case VConstants.PLAYER_STATE_BARED:
 
@@ -884,8 +906,8 @@ public class ServerLogic
 //                }
 
                 if (game == null) {
-                    log.error("actionChange(" + newState + ") but no game. We should have already registered.");
-                    log.error("no game hmmm.  here is the bbmanager:" + room.bloodBloomGameManager);
+                    log.error("stateChange(" + newState + ") but no game. We should have already registered.");
+//                    log.error("no game hmmm.  here is the bbmanager:" + room.bloodBloomGameManager);
                     break;
                 }
                 var targetLocation :Array = player.targetLocation;
@@ -1261,6 +1283,9 @@ public class ServerLogic
     */
     public static function updateAvatarState (player :PlayerData) :void
     {
+        if (player == null || player.avatar == null) {
+            return;
+        }
         var newAvatarState :String = VConstants.AVATAR_STATE_DEFAULT;
         var playerState :String = player.state;
 
