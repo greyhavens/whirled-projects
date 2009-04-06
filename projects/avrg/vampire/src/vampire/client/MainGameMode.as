@@ -207,7 +207,8 @@ public class MainGameMode extends AppMode
             log.info(feedingClient.playerData);
 
             ClientContext.ctrl.agent.sendMessage(FeedingDataMsg.NAME,
-                new FeedingDataMsg(ClientContext.ourPlayerId, feedingClient.playerData.toBytes()));
+                new FeedingDataMsg(ClientContext.ourPlayerId,
+                feedingClient.playerData.toBytes()).toBytes());
 
 //            ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_UPDATE_FEEDING_DATA,
 //                feedingClient.playerData.toBytes());
