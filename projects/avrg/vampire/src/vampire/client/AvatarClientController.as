@@ -16,7 +16,7 @@ package vampire.client
     import vampire.avatar.AvatarEndMovementNotifier;
     import vampire.data.VConstants;
     import vampire.net.messages.MovePredIntoPositionMsg;
-    import vampire.net.messages.MovePredatorAfterFeedingMsg;
+    import vampire.net.messages.MovePredAfterFeedingMsg;
     import vampire.net.messages.PlayerArrivedAtLocationMsg;
 
 
@@ -81,8 +81,8 @@ public class AvatarClientController extends SimObject
 
         if (msg != null) {
 
-            if (msg is MovePredatorAfterFeedingMsg) {
-                handleMovePredatorAFterFeedingMsg();
+            if (msg is MovePredAfterFeedingMsg) {
+                handleMovePredAfterFeedingMsg();
             }
             else if (msg is MovePredIntoPositionMsg) {
                 handleMovePredIntoPositionMsg(MovePredIntoPositionMsg(msg));
@@ -164,7 +164,7 @@ public class AvatarClientController extends SimObject
 
     }
 
-    protected function handleMovePredatorAFterFeedingMsg (...ignored) :void
+    protected function handleMovePredAfterFeedingMsg (...ignored) :void
     {
         var moveTimer :SimpleTimer = new SimpleTimer(2.5, function() :void {
             var location :Array = ClientContext.model.location;

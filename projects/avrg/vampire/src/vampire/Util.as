@@ -9,8 +9,8 @@ import vampire.net.messages.FeedConfirmMsg;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.FeedingDataMsg;
 import vampire.net.messages.GameStartedMsg;
+import vampire.net.messages.MovePredAfterFeedingMsg;
 import vampire.net.messages.MovePredIntoPositionMsg;
-import vampire.net.messages.MovePredatorAfterFeedingMsg;
 import vampire.net.messages.NonPlayerIdsInRoomMsg;
 import vampire.net.messages.PlayerArrivedAtLocationMsg;
 import vampire.net.messages.RequestStateChangeMsg;
@@ -49,7 +49,7 @@ public class Util
         mgr.addMessageType(FeedRequestMsg);
         mgr.addMessageType(GameStartedMsg);
         mgr.addMessageType(MovePredIntoPositionMsg);
-        mgr.addMessageType(MovePredatorAfterFeedingMsg);
+        mgr.addMessageType(MovePredAfterFeedingMsg);
         mgr.addMessageType(NonPlayerIdsInRoomMsg);
         mgr.addMessageType(PlayerArrivedAtLocationMsg);
         mgr.addMessageType(RequestStateChangeMsg);

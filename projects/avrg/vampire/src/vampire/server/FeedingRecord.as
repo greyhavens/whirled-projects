@@ -12,7 +12,7 @@ import vampire.data.VConstants;
 import vampire.feeding.Constants;
 import vampire.feeding.FeedingHost;
 import vampire.feeding.FeedingServer;
-import vampire.net.messages.MovePredatorAfterFeedingMsg;
+import vampire.net.messages.MovePredAfterFeedingMsg;
 
 public class FeedingRecord extends EventCollecter
     implements FeedingHost
@@ -153,8 +153,8 @@ public class FeedingRecord extends EventCollecter
     {
         if (!_primaryPredMoved) {
             var primaryPred :PlayerData = _room.getPlayer(primaryPredatorId);
-            primaryPred.ctrl.sendMessage(MovePredatorAfterFeedingMsg.NAME,
-                new MovePredatorAfterFeedingMsg().toBytes());
+            primaryPred.ctrl.sendMessage(MovePredAfterFeedingMsg.NAME,
+                new MovePredAfterFeedingMsg().toBytes());
 //                VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING);
             _primaryPredMoved = true;
         }
@@ -274,8 +274,8 @@ public class FeedingRecord extends EventCollecter
             if (!_primaryPredMoved && _room != null
                 && _room.getPlayer(primaryPredatorId) != null) {
                 var primaryPred :PlayerData = _room.getPlayer(primaryPredatorId);
-                primaryPred.ctrl.sendMessage(MovePredatorAfterFeedingMsg.NAME,
-                    new MovePredatorAfterFeedingMsg().toBytes());
+                primaryPred.ctrl.sendMessage(MovePredAfterFeedingMsg.NAME,
+                    new MovePredAfterFeedingMsg().toBytes());
 //                primaryPred.ctrl.sendMessage(VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING);
             }
             if (_gameServer != null) {
