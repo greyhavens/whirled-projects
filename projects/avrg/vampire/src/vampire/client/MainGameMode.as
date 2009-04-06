@@ -18,6 +18,7 @@ import vampire.data.VConstants;
 import vampire.debug.LineageDebug;
 import vampire.feeding.FeedingClient;
 import vampire.net.messages.FeedRequestMsg;
+import vampire.net.messages.FeedingDataMsg;
 import vampire.net.messages.GameStartedMsg;
 import vampire.net.messages.ShareTokenMsg;
 
@@ -203,8 +204,12 @@ public class MainGameMode extends AppMode
         var feedingClient :FeedingClient = FeedingClient(_feedingGameClient);
         if(feedingClient.playerData != null) {
             log.info(feedingClient.playerData);
-            ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_UPDATE_FEEDING_DATA,
-                feedingClient.playerData.toBytes());
+
+            ClientContext.ctrl.agent.sendMessage(FeedingDataMsg.NAME,
+                new FeedingDataMsg(ClientContext.ourPlayerId, feedingClient.playerData.toBytes()));
+
+//            ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_UPDATE_FEEDING_DATA,
+//                feedingClient.playerData.toBytes());
         }
         else {
             log.error("onGameComplete(), _feedingGameClient.playerData==null");

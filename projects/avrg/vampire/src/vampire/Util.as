@@ -2,9 +2,12 @@ package vampire
 {
 import com.whirled.contrib.simplegame.net.MessageManager;
 
+import vampire.net.messages.AvatarChosenMsg;
 import vampire.net.messages.BloodBondRequestMsg;
+import vampire.net.messages.DebugMsg;
 import vampire.net.messages.FeedConfirmMsg;
 import vampire.net.messages.FeedRequestMsg;
+import vampire.net.messages.FeedingDataMsg;
 import vampire.net.messages.GameStartedMsg;
 import vampire.net.messages.MovePredIntoPositionMsg;
 import vampire.net.messages.NonPlayerIdsInRoomMsg;
@@ -37,8 +40,11 @@ public class Util
 
     public static function initMessageManager (mgr :MessageManager) :void
     {
+        mgr.addMessageType(AvatarChosenMsg);
         mgr.addMessageType(BloodBondRequestMsg);
+        mgr.addMessageType(DebugMsg);
         mgr.addMessageType(FeedConfirmMsg);
+        mgr.addMessageType(FeedingDataMsg);
         mgr.addMessageType(FeedRequestMsg);
         mgr.addMessageType(GameStartedMsg);
         mgr.addMessageType(MovePredIntoPositionMsg);

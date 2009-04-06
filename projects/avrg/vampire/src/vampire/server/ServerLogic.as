@@ -15,6 +15,7 @@ import vampire.Util;
 import vampire.data.Codes;
 import vampire.data.Logic;
 import vampire.data.VConstants;
+import vampire.net.messages.AvatarChosenMsg;
 import vampire.net.messages.BloodBondRequestMsg;
 import vampire.net.messages.DebugMsg;
 import vampire.net.messages.FeedConfirmMsg;
@@ -392,6 +393,9 @@ public class ServerLogic
                 if (msg is RequestStateChangeMsg) {
                     handleRequestActionChange(player, RequestStateChangeMsg(msg));
                 }
+                else if (msg is AvatarChosenMsg) {
+                    handleAvatarChosenMessage(player, AvatarChosenMsg(msg));
+                }
                 else if (msg is BloodBondRequestMsg) {
                     handleBloodBondRequest(player, BloodBondRequestMsg(msg));
                 }
@@ -468,26 +472,6 @@ public class ServerLogic
                         player.setFeedingData(bytes);
                     }
                     break;
-
-                    case VConstants.NAMED_MESSAGE_CHOOSE_FEMALE:
-                    log.debug(VConstants.NAMED_MESSAGE_CHOOSE_FEMALE + " awarding female");
-                    player.ctrl.awardPrize(Trophies.BASIC_AVATAR_FEMALE);
-//                    player.setTime(1);
-                    player.ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, 1);
-//                    player.setTimeToCurrentTime();
-                    break;
-
-                    case VConstants.NAMED_MESSAGE_CHOOSE_MALE:
-                    log.debug(VConstants.NAMED_MESSAGE_CHOOSE_MALE + " awarding male");
-                    player.ctrl.awardPrize(Trophies.BASIC_AVATAR_MALE);
-//                    player.setTime(1);
-                    player.ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, 1);
-//                    player.setTimeToCurrentTime();
-                    break;
-
-
-                    default:
-//                    log.debug("Message not handled", "name", name);
                 }
             }
 
@@ -498,6 +482,18 @@ public class ServerLogic
 
     }
 
+    protected static function handleAvatarChosenMessage (player :PlayerData,
+        msg :AvatarChosenMsg) :void
+    {
+        log.debug(msg);
+        if (msg.isFemale) {
+            player.ctrl.awardPrize(Trophies.BASIC_AVATAR_FEMALE);
+        }
+        else {
+            player.ctrl.awardPrize(Trophies.BASIC_AVATAR_MALE);
+        }
+        player.ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, 1);
+    }
     protected static function handlePlayerArrivedAtLocation (player :PlayerData) :void
     {
         log.debug(player.playerId + " message " + PlayerArrivedAtLocationMsg.NAME,
