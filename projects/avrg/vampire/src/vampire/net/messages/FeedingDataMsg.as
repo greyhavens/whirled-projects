@@ -4,7 +4,7 @@ package vampire.net.messages
 
 public class FeedingDataMsg extends BaseGameMsg
 {
-    public function FeedingDataMsg(playerId:int, feedingData :ByteArray = null)
+    public function FeedingDataMsg(playerId:int = 0, feedingData :ByteArray = null)
     {
         super(playerId);
         _feedingData = feedingData;
