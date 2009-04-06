@@ -417,7 +417,7 @@ public class VampireAvatarHUD extends AvatarHUD
 
         //Show relevant strain info
         var bloodType :MovieClip = _target_UI["strain"] as MovieClip;
-        bloodType.gotoAndStop(Logic.getPlayerBloodStrain(playerId));
+        bloodType.gotoAndStop(Logic.getPlayerBloodStrain(playerId) + 1);
         var pdf :PlayerFeedingData = ClientContext.model.playerFeedingData;
         if (pdf.canCollectStrainFromPlayer(Logic.getPlayerBloodStrain(playerId), playerId)){
             bloodType.visible = true;
