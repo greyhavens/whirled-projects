@@ -64,17 +64,6 @@ public class VampireAvatarHUD extends AvatarHUD
 
     }
 
-//    protected function updateLineageInfo(e :LineageUpdatedEvent) :void
-//    {
-//        var currentMinions :int = e.lineage.getAllMinionsAndSubminions(playerId).size();
-//        var currentSire :int = e.lineage.getSireId(playerId);
-//        if(currentMinions > _localMinionCount || currentSire != _localSire) {
-//            _localMinionCount = currentMinions;
-//            _localSire = currentSire;
-//            updateInfoHud();
-//        }
-//    }
-
     protected function addBloodBondIcon () :void
     {
         if (_bloodBondIcon == null) {
@@ -179,7 +168,6 @@ public class VampireAvatarHUD extends AvatarHUD
         _hudSprite.addChild(_target_UI);
 
         //Listen for changes in the hierarchy
-//        registerListener(ClientContext.model, LineageUpdatedEvent.LINEAGE_UPDATED, updateInfoHud);
         registerListener(ClientContext.model, PlayersFeedingEvent.PLAYERS_FEEDING,
             handleUnavailablePlayerListChanged);
 
@@ -189,10 +177,6 @@ public class VampireAvatarHUD extends AvatarHUD
             ClientContext.controller.handleSendFeedRequest(playerId);
 
             ClientContext.avatarOverlay.setDisplayMode(VampireAvatarHUDOverlay.DISPLAY_MODE_OFF);
-//            showBloodBarOnly();
-//            _isMouseOver = false;
-//            _feedButton.alpha = 0;
-//            _frenzyButton.alpha = 0;
         });
 
 
@@ -200,7 +184,6 @@ public class VampireAvatarHUD extends AvatarHUD
         var buttonJoin :SimpleButton = _target_UI["button_join"] as SimpleButton;
         var buttonLineage :SimpleButton = _target_UI["button_lineage"] as SimpleButton;
 
-//        Command.bind(buttonFresh, MouseEvent.CLICK, VampireController.SHOW_INTRO, "lineage");
         registerListener(buttonFresh, MouseEvent.CLICK, function (...ignored) :void {
             ClientContext.controller.handleShowIntro("lineage");
         });
@@ -213,108 +196,10 @@ public class VampireAvatarHUD extends AvatarHUD
             ClientContext.controller.handleShowIntro("default", playerId);
         })
 
-
-
-
-
-
-        //HUD bits and bobs
-//        _hierarchyIcon = ClientContext.instantiateButton("HUD", "button_hierarchy_no_mouse");
-//        _hierarchyIcon.mouseEnabled = true;
-//        _hierarchyIcon.scaleX = _hierarchyIcon.scaleY = 0.8;
-
-
-//        _preyStrainDroplet = ClientContext.instantiateMovieClip("HUD", "prey_strain", false);
-//        _preyStrainDroplet.scaleX = _preyStrainDroplet.scaleY = 2;
-
-
-//        _preyStrain = ClientContext.instantiateMovieClip("HUD", "type", false);
-
-
-//        //Add a mouse move listener to the blood.  This triggers showing the feed buttons
-//        var showMenuFunction :Function = function(...ignored) :void {
-//            _isMouseOver = true;
-//
-//
-//            if(VConstants.LOCAL_DEBUG_MODE) {
-//                _hudSprite.addChildAt(_mouseOverSprite, 0);
-//                showFeedAndFrenzyButton();
-//                return;
-//            }
-//            var isPlayer :Boolean = ArrayUtil.contains(_ctrl.room.getPlayerIds(), playerId);
-//
-//            //Only show feed buttons if there is sufficient blood
-//            if((!isPlayer && !isChattedEnoughForTargeting) || SharedPlayerStateClient.getBlood(playerId) <= 1) {
-////                trace(" doing nothing because:");
-////                trace("   isPlayer=" + isPlayer);
-////                trace("   isChattedEnoughForTargeting=" + isChattedEnoughForTargeting);
-////                trace("   SharedPlayerStateClient.getBlood(" + playerId + ") <= 1)=" + (SharedPlayerStateClient.getBlood(playerId) <= 1));
-////                trace("   SharedPlayerStateClient.getBlood(" + playerId + ")=" + SharedPlayerStateClient.getBlood(playerId));
-//                return;
-//            }
-//
-//
-//            var action :String = SharedPlayerStateClient.getCurrentAction(playerId);
-//            //Show feed buttons if we are a player in bared mode, or a non-player
-//            if(!isPlayer || (action != null && action == VConstants.GAME_MODE_BARED)) {
-//
-//                _hudSprite.addChildAt(_mouseOverSprite, 0);
-//                //Make sure the frenzy button is only shown if there are more than 2 predators.
-//                //This misses the case where there are two preds, and a non player, and the preds
-//                //are feeding from each other.
-//                if(getPotentialPredatorIds().size() > 1 && ClientContext.avatarNumberInRoom > 2) {
-//                    showFeedAndFrenzyButton();
-//                }
-//                else {
-//                    showFeedButtonOnly();
-//                }
-//            }
-//            else {
-////                trace(" more doing nothing because:");
-////                trace("   action=" + action);
-//            }
-//
-//        }
-
-        //Make sure that if any part of the menu is moused over, show the action buttons
-//        registerListener(_blood, MouseEvent.ROLL_OVER, showMenuFunction);
-//        registerListener(_hierarchyIcon, MouseEvent.ROLL_OVER, showMenuFunction);
-//        registerListener(_bloodBondIcon, MouseEvent.ROLL_OVER, showMenuFunction);
-//        registerListener(_preyStrain, MouseEvent.ROLL_OVER, showMenuFunction);
-//        registerListener(_bloodMouseDetector, MouseEvent.ROLL_OVER, showMenuFunction);
-//        registerListener(_bloodMouseDetector, MouseEvent.MOUSE_MOVE, showMenuFunction);
-
-
-//        _hudSprite.addChild(_hierarchyIcon);
-
-//        if(Logic.getPlayerPreferredBloodStrain(ClientContext.ourPlayerId) == playerId) {
-//            _hudSprite.addChild(_preyStrainDroplet);
-//            _preyStrainDroplet.y -= 15;
-//        }
-
-
-
-//        addGlowFilter(_preyStrainDroplet);
-
-        //Go to the help page when you click on the icon
-//        Command.bind(_hierarchyIcon, MouseEvent.CLICK, VampireController.SHOW_INTRO, "default");
-//        Command.bind(_preyStrainDroplet, MouseEvent.CLICK,
-//            VampireController.SHOW_INTRO, "bloodtype");
         Command.bind(MovieClip(_target_UI["strain"]), MouseEvent.CLICK,
             VampireController.SHOW_INTRO, "bloodtype");
 
         addGlowFilter(MovieClip(_target_UI["strain"]));
-
-//        Command.bind(_blood, MouseEvent.CLICK, VampireController.SHOW_INTRO, "feedinggame");
-
-
-        //Add a glow if we are a valid target
-//        _glowTimer = new SimpleTimer(1, glowBloodBarIfValidTarget, true);
-
-
-
-        updateInfoHud();
-
     }
 
     /**
@@ -420,32 +305,6 @@ public class VampireAvatarHUD extends AvatarHUD
 //        _blood.gotoAndStop(int(currentBlood*100.0/maxBlood));
 //
 //    }
-    protected function updateInfoHud (...ignored) :void
-    {
-        //If it's our avatar HUD, don't show any extra details.
-        if(ClientContext.ourPlayerId == playerId) {
-            return;
-        }
-
-//        updateBlood();
-
-//        var isHierarch :Boolean = VConstants.LOCAL_DEBUG_MODE
-//            || (ClientContext.model.lineage != null &&
-//                ClientContext.model.lineage.isPlayerSireOrMinionOfPlayer(playerId,
-//                ClientContext.ourPlayerId));
-
-
-//        var isBloodBond :Boolean = VConstants.LOCAL_DEBUG_MODE ||
-//            (SharedPlayerStateClient.getBloodBonded(ClientContext.ourPlayerId) == playerId);
-//
-////        _hierarchyIcon.visible = isHierarch;
-//        _bloodBondIcon.visible = isBloodBond;
-//
-//
-////        _hierarchyIcon.x = 16;
-//        _bloodBondIcon.x = -16;
-
-    }
 
     override public function get isPlayer () :Boolean
     {
