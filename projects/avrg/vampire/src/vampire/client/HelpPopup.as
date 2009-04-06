@@ -538,7 +538,7 @@ package vampire.client
 
 
             var inviteText :String = level >= VConstants.MAXIMUM_VAMPIRE_LEVEL ? "Max Level" :
-                "Your Recruits/Recruits needed for next level: " + ClientContext.model.invites + "/" +
+                "Your Invites/Invites needed for next level: " + ClientContext.model.invites + "/" +
                     Logic.invitesNeededForLevel(level + 1);
 
             _infoText.text =
