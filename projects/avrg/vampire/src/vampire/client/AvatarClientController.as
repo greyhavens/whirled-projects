@@ -16,7 +16,7 @@ package vampire.client
     import vampire.avatar.AvatarEndMovementNotifier;
     import vampire.data.VConstants;
     import vampire.net.messages.MovePredIntoPositionMsg;
-    import vampire.net.messages.MovePredatorAFterFeedingMsg;
+    import vampire.net.messages.MovePredatorAfterFeedingMsg;
     import vampire.net.messages.PlayerArrivedAtLocationMsg;
 
 
@@ -81,7 +81,7 @@ public class AvatarClientController extends SimObject
 
         if (msg != null) {
 
-            if (msg is MovePredatorAFterFeedingMsg) {
+            if (msg is MovePredatorAfterFeedingMsg) {
                 handleMovePredatorAFterFeedingMsg();
             }
             else if (msg is MovePredIntoPositionMsg) {
