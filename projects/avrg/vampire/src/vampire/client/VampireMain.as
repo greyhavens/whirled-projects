@@ -19,25 +19,7 @@ public class VampireMain extends Sprite
 {
     public function VampireMain()
     {
-
-//        Log.setLevel("com.threerings", Log.ERROR);
-//        Log.setLevel("", Log.ERROR);
-//        Log.setLevel("vampire.client", Log.DEBUG);
-        Log.setLevel("", Log.DEBUG);
-//        Log.setLevel("vampire.client.MainGameMode", Log.DEBUG);
-//        Log.setLevel(ClassUtil.getClassName(GameModel), Log.DEBUG);
-//        Log.setLevel(ClassUtil.getClassName(AvatarManager), Log.DEBUG);
-//        Log.setLevel(ClassUtil.getClassName(PlayerAvatar), Log.DEBUG);
-//        Log.setLevel(ClassUtil.getClassName(TargetingOverlayAvatars), Log.DEBUG);
-
-//        trace("VampireMain()");
-        /* Register mode classes so that they can be instatiated just by name*/
-//        registerClassAlias("vampire.client.modes.BloodBondMode", BloodBondMode);
-//        registerClassAlias("vampire.client.modes.FeedMode", FeedMode);
-//        registerClassAlias("vampire.client.modes.FightMode", FightMode);
-//        registerClassAlias("vampire.client.modes.HierarchyMode", HierarchyMode);
-
-//        trace("  registered classes");
+        Log.setLevel("", Log.ERROR);
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
@@ -50,8 +32,6 @@ public class VampireMain extends Sprite
         ClientContext.game = new SimpleGame(config);
 
         loadResources();
-
-//        _resourcesLoaded = false;
     }
 
     protected function loadResources () :void
@@ -87,7 +67,7 @@ public class VampireMain extends Sprite
             //Init the controller with the root sprite.
             ClientContext.controller = new VampireController(this);
 
-            if(false && VConstants.LOCAL_DEBUG_MODE) {
+            if (VConstants.LOCAL_DEBUG_MODE) {
                 ClientContext.game.ctx.mainLoop.pushMode(new MainGameMode());
             }
             else {
@@ -105,8 +85,6 @@ public class VampireMain extends Sprite
             //Start the game.
             ClientContext.game.run();
 
-            EventHandlers.registerListener(ClientContext.ctrl.game, MessageReceivedEvent.MESSAGE_RECEIVED, printServerLogToFlashLog);
-
             //If there is a share token, send the invitee to the server
             var inviterId :int = ClientContext.ctrl.local.getInviterMemberId();
             var shareToken :String = ClientContext.ctrl.local.getInviteToken();
@@ -116,11 +94,6 @@ public class VampireMain extends Sprite
                 ClientContext.ctrl.agent.sendMessage(ShareTokenMsg.NAME,
                     new ShareTokenMsg(ClientContext.ourPlayerId, inviterId, shareToken).toBytes());
             }
-
-
-
-            //Possible debugging
-//            addChild(new VProbe(ClientContext.gameCtrl));
         }
     }
 
@@ -148,15 +121,6 @@ public class VampireMain extends Sprite
         ClientContext.game.shutdown();
         EventHandlers.freeAllHandlers();
     }
-
-
-    protected function printServerLogToFlashLog(e :MessageReceivedEvent) :void
-    {
-        if(e.name == AVRGAgentLogTarget.SERVER_LOG && (ClientContext.ourPlayerId == 23340 || ClientContext.ourPlayerId == 1769)) {
-            trace(e.value);
-        }
-    }
-
 
     protected var _addedToStage :Boolean = false;
     protected var _resourcesLoaded :Boolean = false;
