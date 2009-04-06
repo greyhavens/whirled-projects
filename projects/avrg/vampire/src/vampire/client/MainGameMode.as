@@ -1,16 +1,11 @@
 package vampire.client
 {
-import com.threerings.flash.MathUtil;
 import com.threerings.flash.SimpleTextButton;
-import com.threerings.flash.Vector2;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
-import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
-import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.Sprite;
@@ -20,11 +15,10 @@ import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.client.events.LineageUpdatedEvent;
 import vampire.data.Lineage;
 import vampire.data.VConstants;
+import vampire.debug.LineageDebug;
 import vampire.feeding.FeedingClient;
-//import vampire.feeding.debug.BloodBloomStandalone;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.GameStartedMsg;
-import vampire.net.messages.MovePredIntoPositionMsg;
 
 public class MainGameMode extends AppMode
 {
@@ -70,6 +64,7 @@ public class MainGameMode extends AppMode
         if (VConstants.LOCAL_DEBUG_MODE) {
 
             var lineage :Lineage = new Lineage();
+            LineageDebug.addRandomPlayersToLineage(lineage, 10);
 //                lineage.setPlayerSire(1, 2);
 //                lineage.setPlayerSire(3, 1);
 //                lineage.setPlayerSire(4, 1);
@@ -86,6 +81,9 @@ public class MainGameMode extends AppMode
             var msg :LineageUpdatedEvent = new LineageUpdatedEvent(lineage, ClientContext.ourPlayerId);
             ClientContext.model.lineage = lineage;
             ClientContext.model.dispatchEvent(msg);
+
+            var lineagedebug :LineageDebug = new LineageDebug();
+            addObject(lineagedebug);
         }
 
 
@@ -207,6 +205,8 @@ public class MainGameMode extends AppMode
         ClientContext.tutorial.feedGameOver();
 
     }
+
+
 
     protected var _hud :HUD;
     protected var _avatarController :AvatarClientController;
