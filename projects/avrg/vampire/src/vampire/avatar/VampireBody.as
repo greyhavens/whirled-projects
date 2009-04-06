@@ -7,15 +7,19 @@ import com.whirled.contrib.ColorMatrix;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
+import flash.display.Sprite;
 import flash.filters.BitmapFilter;
 import flash.filters.ColorMatrixFilter;
 import flash.utils.ByteArray;
 
 public class VampireBody extends MovieClipBody
 {
+    public static const UPSELL :int = 0;
+    public static const CONFIGURABLE :int = 1;
+
     public function VampireBody (ctrl :AvatarControl,
                                  media :MovieClip,
-                                 isConfigurable :Boolean,
+                                 configPanelType :int,
                                  hairNames :Array,
                                  topNames :Array,
                                  shoeNames :Array,
@@ -23,13 +27,15 @@ public class VampireBody extends MovieClipBody
     {
         super(ctrl, media, width, height);
 
+        _configPanelType = configPanelType;
+
         _hairNames = hairNames;
         _topNames = topNames;
         _shoeNames = shoeNames;
 
         // Entity memory-based configuration
         loadConfig();
-        if (isConfigurable && _ctrl.hasControl()) {
+        if (_ctrl.hasControl()) {
             _ctrl.registerCustomConfig(createConfigPanel);
 
         }
@@ -62,17 +68,25 @@ public class VampireBody extends MovieClipBody
         }
     }
 
-    protected function createConfigPanel () :VampatarConfigPanel
+    protected function createConfigPanel () :Sprite
     {
-        return new VampatarConfigPanel(
-            _hairNames,
-            _topNames,
-            _shoeNames,
-            _curConfig,
-            function (newConfig :VampatarConfig) :void {
-                saveConfig(newConfig);
-                applyConfig(newConfig);
-            });
+        switch (_configPanelType) {
+        case CONFIGURABLE:
+            return new VampatarConfigPanel(
+                _hairNames,
+                _topNames,
+                _shoeNames,
+                _curConfig,
+                function (newConfig :VampatarConfig) :void {
+                    saveConfig(newConfig);
+                    applyConfig(newConfig);
+                });
+
+        case UPSELL:
+            return new VampatarUpsellPanel("http://www.google.com");
+        }
+
+        return null;
     }
 
     protected function loadConfig () :void
@@ -282,6 +296,7 @@ public class VampireBody extends MovieClipBody
     }
 
     protected var _curConfig :VampatarConfig;
+    protected var _configPanelType :int;
     protected var _hairNames :Array;
     protected var _topNames :Array;
     protected var _shoeNames :Array;
