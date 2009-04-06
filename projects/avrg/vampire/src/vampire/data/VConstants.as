@@ -4,11 +4,12 @@
 
 public class VConstants
 {
+     public static var LOCAL_DEBUG_MODE :Boolean = false;
 
     /**
     * If you're not related to the ubervamp
     */
-    public static const UBER_VAMP_ID :int = 383387;
+    public static const UBER_VAMP_ID :int = 12;
     //ubervamp localhost == 12
     //ubervamp dev.whirled == 1877, 382856
     //uvervamp Whirled == 383387
@@ -31,7 +32,9 @@ public class VConstants
     * Blood shared among all sires = 0.1*50 = 5
     * Each sire gets 5/10=0.5 blood.
     */
-    public static const XP_GAIN_FRACTION_SHARED_WITH_SIRES :Number = 0.1;
+    public static const XP_GAIN_FRACTION_SHARED_WITH_IMMEDIATE_SIRE :Number = 0.01;
+
+    public static const XP_GAIN_FRACTION_SHARED_WITH_GRANDSIRES :Number = 0.001;
 
     /**
     * For every unit of blood gained from feeding, how much experience is gained.
@@ -61,7 +64,7 @@ public class VConstants
     public static const PLAYER_STATE_FEEDING_PREY :String = "FeedingPrey";
 
 
-    public static var LOCAL_DEBUG_MODE :Boolean = false;
+    public static const NOTIFICATION_TIME_XP :Number = 60 ;//* 10;
 
     /**
     * If the vampire 'feeds' on non-players, this is the player Id to use.
@@ -71,6 +74,9 @@ public class VConstants
 
     public static const TEXT_INVITE :String = "Join my Bloodline!";
     public static const TEXT_NEW_LEVEL :String = "You have achieved level ";
+    public static const TEXT_CONFIM_SIRE :String = "If you feed from this Lineage vampire, " +
+        "they will become your permanent sire, allowing you to draw power from your progeny.  " +
+        "Are you sure?";
 
     protected static const p4 :Number = Math.cos(Math.PI/4);
     public static const PREDATOR_LOCATIONS_RELATIVE_TO_PREY :Array = [
@@ -89,6 +95,21 @@ public class VConstants
         [  5, 0,  0],
         [ -6, 0,  0],
         [  6, 0,  0]
+    ];
+
+    public static const BLOOD_STRAIN_NAMES :Array = [
+        "Aries",
+        "Taurus",
+        "Gemini",
+        "Cancer",
+        "Leo",
+        "Virgo",
+        "Libra",
+        "Scorpio",
+        "Sagittarius",
+        "Capricorn",
+        "Aquarius",
+        "Pisces"
     ];
 
 
