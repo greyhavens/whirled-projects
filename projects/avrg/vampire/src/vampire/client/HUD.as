@@ -196,7 +196,7 @@ public class HUD extends DraggableObject
                             var popup :PopupQuery = new PopupQuery(
                                 "NeedInvites",
                                 "You need " + Logic.invitesNeededForLevel(newLevel + 1) +
-                                " recruit" + (invitesNeeded > 1 ? "s" : "") + " for level " +
+                                " invite" + (invitesNeeded > 1 ? "s" : "") + " for level " +
                                 (newLevel + 1),
                                 ["Recruit Now", "Recruit Later"],
                                 [VampireController.RECRUIT, null]);
