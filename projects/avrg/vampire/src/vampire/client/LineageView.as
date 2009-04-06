@@ -136,6 +136,13 @@ public class LineageView extends SceneObjectParent
 //        }
 
 
+//        _player2Drop.forEach(function (playerId :int, so :DropSceneObject) :void {
+//            if (so.isLiveObject) {
+//                so.destroySelf();
+//            }
+//        });
+//        _player2Drop.clear();
+
 
         _isLayoutMoving = true;
         for each (var ui :SceneObject in _volatileUIComponents) {
@@ -201,6 +208,11 @@ public class LineageView extends SceneObjectParent
 
         //Move the invisible drops away
         _player2Drop.forEach(function (playerId :int, so :DropSceneObject) :void {
+
+//            if (so.isLiveObject) {
+//                so.destroySelf();
+//            }
+
             if (!_visiblePlayers.contains(playerId)) {
                 so.disableMouseListeners();
                 so.removeAllTasks();
@@ -290,7 +302,7 @@ public class LineageView extends SceneObjectParent
             var buttonLeftSO :SceneObject = new SimpleSceneObject(button_page_left);
             addSceneObject(buttonLeftSO, s);
             _volatileUIComponents.push(buttonLeftSO);
-            buttonLeftSO.x = locations[0].x - 10;
+            buttonLeftSO.x = locations[0].x - 25;
             buttonLeftSO.y = startY + yInc;
 //            s.addChild(button_page_left);
             registerListener(button_page_left, MouseEvent.CLICK, showPreviousPage);
@@ -299,7 +311,7 @@ public class LineageView extends SceneObjectParent
 
 //            Command.bind(button_page_left, MouseEvent.CLICK, showPreviousPage);
             //The text
-            var textPageLeft :TextField = getTextFieldCenteredOn("More", locations[0].x - 10, startY + yInc - 40, true, left);
+            var textPageLeft :TextField = getTextFieldCenteredOn("More", locations[0].x - 25, startY + yInc - 40, true, left);
             textPageLeft.mouseEnabled = true;
             var textLeftSO :SceneObject = new SimpleSceneObject(textPageLeft);
             _volatileUIComponents.push(textLeftSO);
@@ -313,7 +325,7 @@ public class LineageView extends SceneObjectParent
         if (startMinionViewIndex + MAX_MINIONS_SHOWN < minionCount) {
             var button_page_right :SimpleButton = ClientContext.instantiateButton("HUD", "button_hierarchy_no_mouse");
             var buttonRightSO :SceneObject = new SimpleSceneObject(button_page_right);
-            buttonRightSO.x = locations[locations.length - 1].x + 10;
+            buttonRightSO.x = locations[locations.length - 1].x + 25;
             buttonRightSO.y = startY + yInc;
             addSceneObject(buttonRightSO, s);
             _volatileUIComponents.push(buttonRightSO);
@@ -322,7 +334,7 @@ public class LineageView extends SceneObjectParent
 //            Command.bind(button_page_right, MouseEvent.CLICK, showNextPage);
             addGlowFilter(button_page_right);
             //The text
-            var textPageRight :TextField = getTextFieldCenteredOn("More", locations[locations.length - 1].x + 10, startY + yInc - 40, true, left);
+            var textPageRight :TextField = getTextFieldCenteredOn("More", locations[locations.length - 1].x + 25, startY + yInc - 40, true, left);
             var textRightSO :SceneObject = new SimpleSceneObject(textPageRight);
             _volatileUIComponents.push(textRightSO);
             addSceneObject(textRightSO, s);
@@ -531,6 +543,10 @@ public class LineageView extends SceneObjectParent
             drop.enableMouseListeners();
         }));
         drop.addTask(addListenersAfterAPause);
+        if (drop.displayObject.parent != null) {
+            drop.displayObject.parent.setChildIndex(drop.displayObject,
+                drop.displayObject.parent.numChildren - 1);
+        }
 
     }
 
