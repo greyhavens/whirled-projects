@@ -14,7 +14,6 @@ import flash.display.MovieClip;
 import flash.display.Sprite;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
-import vampire.data.Codes;
 import vampire.data.VConstants;
 import vampire.net.messages.FeedConfirmMsg;
 import vampire.net.messages.FeedRequestMsg;
@@ -229,10 +228,9 @@ public class VampireController extends Controller
 
             var popup :PopupQuery = new PopupQuery(
                     "MakeSire",
-                    "If you feed from this Lineage vampire, they will become your permanent sire"
-                    + ", allowing you to draw power from your progeny.  Are you sure?",
-                    ["Yes",  "More Info", "No"],
-                    [sendFeedRequest, function() :void {con.handleShowIntro("lineage");}, null]);
+                    VConstants.TEXT_CONFIM_SIRE,
+                    ["Yes", "No", "More Info"],
+                    [sendFeedRequest, null, function() :void {con.handleShowIntro("lineage");}]);
 
             if (ClientContext.gameMode.getObjectNamed(popup.objectName) == null) {
                 ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
