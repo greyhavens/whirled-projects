@@ -180,12 +180,17 @@ public class HUD extends DraggableObject
 
                     //If we only need invite(s) for the next level, show a popup
                     //if we haven't already done so.
-                    if (!_isNewLevelNeedingInvitePopupShown) {
-                        var newLevelWithInvites :int =
-                            Logic.levelGivenCurrentXpAndInvites(Number(e.newValue), 100000);
+                    var level1moreXP :int = Logic.levelGivenCurrentXpAndInvites(
+                        Number(e.newValue) + 1, ClientContext.model.invites);
+                    var level1moreXPAndInvites :int = Logic.levelGivenCurrentXpAndInvites(
+                        Number(e.newValue) + 1, 100000);
+                    if (level1moreXPAndInvites > level1moreXP) {
+//                        var newLevelWithInvites :int =
+//                            Logic.levelGivenCurrentXpAndInvites(Number(e.newValue), 100000);
 
 
-                        if (newLevel != newLevelWithInvites) {
+//                        if (newLevel > newLevelWithInvites &&
+//                            !(isNaN(Number(e.oldValue)) || e.oldValue == 0)) {
 
 //                            var recruitFunction :Function = function(e :MouseEvent) :void {
 //                                ClientContext.ctrl.local.showInvitePage(VConstants.TEXT_INVITE, "" +
@@ -210,8 +215,8 @@ public class HUD extends DraggableObject
 
 
 
-                            _isNewLevelNeedingInvitePopupShown = true;
-                        }
+//                            _isNewLevelNeedingInvitePopupShown = true;
+//                        }
                     }
 
 
@@ -828,7 +833,7 @@ public class HUD extends DraggableObject
     protected var _bloodText :TextField;
     protected var _xpText :TextField;
 
-    protected var _isNewLevelNeedingInvitePopupShown :Boolean = false;
+//    protected var _isNewLevelNeedingInvitePopupShown :Boolean = false;
     protected var _displaySprite :Sprite = new Sprite();
 
 
