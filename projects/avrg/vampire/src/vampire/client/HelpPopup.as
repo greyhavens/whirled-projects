@@ -225,8 +225,8 @@ package vampire.client
             }
             while(_bloodTypeOverlay.numChildren) { _bloodTypeOverlay.removeChildAt(0);}
 
-            for(var i :int = 1; i < 13; i++) {
-                var numberAsText :String = String(i);
+            for(var i :int = 0; i < 12; i++) {
+                var numberAsText :String = String(i + 1);
                 if (numberAsText.length == 1) {
                     numberAsText = "0" + numberAsText;
                 }
@@ -251,7 +251,7 @@ package vampire.client
                 var tally :TextField = TextField(tf["tally"]);
 
                 var replacementTextField :TextField = new TextField();
-                replacementTextField.text = feedingData.getStrainCount(i - 1) + " / " + Constants.MAX_COLLECTIONS_PER_STRAIN;
+                replacementTextField.text = feedingData.getStrainCount(i) + " / " + Constants.MAX_COLLECTIONS_PER_STRAIN;
                 replacementTextField.x = tally.x;
                 replacementTextField.y = tally.y;
                 replacementTextField.textColor = 0xffffff;
@@ -266,7 +266,7 @@ package vampire.client
 
 
                 var starsignTextField :TextField = new TextField();
-                starsignTextField.text = BLOOD_STRAIN_NAMES[i - 1];
+                starsignTextField.text = BLOOD_STRAIN_NAMES[i];
                 starsignTextField.x = tally.x - 130;
                 starsignTextField.y = tally.y;
 
