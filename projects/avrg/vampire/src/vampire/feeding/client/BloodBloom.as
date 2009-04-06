@@ -4,6 +4,7 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Util;
 import com.whirled.avrg.AVRGameControl;
+import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.LevelPackManager;
 import com.whirled.contrib.ManagedTimer;
@@ -71,7 +72,11 @@ public class BloodBloom extends FeedingClient
                 _addedToStage = true;
                 maybeFinishInit();
             });
-        _events.registerListener(this, Event.REMOVED_FROM_STAGE,
+        _events.registerListener(this, Event.UNLOAD,
+            function (...ignored) :void {
+                shutdown();
+            });
+        _events.registerListener(ClientCtx.gameCtrl.player, AVRGamePlayerEvent.LEFT_ROOM,
             function (...ignored) :void {
                 shutdown();
             });

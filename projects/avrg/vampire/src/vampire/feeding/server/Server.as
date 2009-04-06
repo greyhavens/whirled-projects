@@ -2,6 +2,7 @@ package vampire.feeding.server {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
+import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.EventHandlerManager;
@@ -69,6 +70,8 @@ public class Server extends FeedingServer
             _ctx.gameCtrl.game,
             MessageReceivedEvent.MESSAGE_RECEIVED,
             onMsgReceived);
+
+        _events.registerListener(_ctx.roomCtrl, AVRGameRoomEvent.PLAYER_LEFT, onPlayerLeftRoom);
 
         setMode(Constants.MODE_LOBBY);
     }
@@ -218,6 +221,15 @@ public class Server extends FeedingServer
                     break;
                 }
             }
+        }
+    }
+
+    protected function onPlayerLeftRoom (e :AVRGameRoomEvent) :void
+    {
+        var playerId :int = e.value as int;
+        if (ArrayUtil.contains(_ctx.playerIds, playerId)) {
+            log.info("Removing player from feeding (player left room)", "playerId", playerId);
+            playerLeft(playerId);
         }
     }
 
