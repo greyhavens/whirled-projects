@@ -26,66 +26,75 @@ import flash.utils.ByteArray;
 
 public class Lineage extends SimObject
 {
-    public function setPlayerSire(playerId :int, sireId :int) :void
+    public function setPlayerSire (playerId :int, sireId :int) :void
     {
 //        log.debug(Constants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + ")");
 
-        if(playerId == sireId) {
+        if (playerId == sireId) {
             log.error("setPlayerSire(" + playerId + ", sireId=" + sireId + "), same!!!");
             return;
         }
 
-        if(playerId < 1) {
-            log.error("setPlayerSire(), playerId < 1",  "playerId", playerId, "sireId", sireId);
+        if (playerId == 0) {
+            log.error("setPlayerSire",  "playerId", playerId, "sireId", sireId);
+            return;
+        }
+
+        //Ignore if we already have the given sire
+        if (getSireId(playerId) == sireId) {
             return;
         }
 
         //Id the sire is our minion, disallow, since that would create a loop.
         var oldMinions :HashSet = getAllMinionsAndSubminions(playerId);
-        if(oldMinions.contains(sireId)) {
+        if (oldMinions.contains(sireId)) {
             log.error("setPlayerSire, sire is already a minion. Not changing.",  "playerId", playerId, "sireId", sireId);
             return;
         }
 
-
-        if(!_playerId2Node.containsKey(playerId)) {
+        //If the player is new, add the new player node.
+        if (!_playerId2Node.containsKey(playerId)) {
             _playerId2Node.put(playerId, new Node(playerId));
         }
 
-        if(sireId > 0 && !_playerId2Node.containsKey(sireId)) {
+        //If the sire doesn't exist, leave now.
+        if (sireId == 0) {
+            return;
+        }
+        //If the sire doesn't exist, add them.
+        if (!_playerId2Node.containsKey(sireId)) {
             _playerId2Node.put(sireId, new Node(sireId));
         }
 
         var player :Node = _playerId2Node.get(playerId) as Node;
 
-
-
-//        log.debug(Constants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + "), _playerId2Node.keys=" + _playerId2Node.keys());
-
         var sire :Node = getNode(sireId);
+        //Set the sire.
         player.parent = sire;
+        sire.childrenIds.add(player.hashCode());
 
-        recomputeMinions();
 
-        var sires :HashSet = getAllSiresAndGrandSires(sireId);
-
-        if(sires.contains(playerId)) {
-            log.warning(VConstants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + "), circle found, removeing all children");
-            //Break the children
-            player.childrenIds.forEach(function(minionId :int) :void {
-                var child :Node = _playerId2Node.get(minionId) as Node;
-                if(child != null) {
-                    child.parent = null;
-
-                }
-            });
-
-            sires = getAllSiresAndGrandSires(sireId);
-            if(sires.contains(playerId)) {
-                log.error(VConstants.DEBUG_MINION + " DAMMIT, found a loop, removed children, but loop remains WTF, hierarchy=" + toString());
-            }
-
-        }
+//        recomputeMinions();
+//
+//        var sires :HashSet = getAllSiresAndGrandSires(sireId);
+//
+//        if (sires.contains(playerId)) {
+//            log.warning(VConstants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + "), circle found, removeing all children");
+//            //Break the children
+//            player.childrenIds.forEach(function(minionId :int) :void {
+//                var child :Node = _playerId2Node.get(minionId) as Node;
+//                if (child != null) {
+//                    child.parent = null;
+//
+//                }
+//            });
+//
+//            sires = getAllSiresAndGrandSires(sireId);
+//            if (sires.contains(playerId)) {
+//                log.error(VConstants.DEBUG_MINION + " DAMMIT, found a loop, removed children, but loop remains WTF, hierarchy=" + toString());
+//            }
+//
+//        }
 
 
 
@@ -93,7 +102,7 @@ public class Lineage extends SimObject
 
     protected function getNode(playerId :int) :Node
     {
-        if(_playerId2Node.containsKey(playerId)) {
+        if (_playerId2Node.containsKey(playerId)) {
             return _playerId2Node.get(playerId) as Node;
         }
         return null;
@@ -111,7 +120,7 @@ public class Lineage extends SimObject
         });
 
         _playerId2Node.forEach(function(playerId :int, node :Node) :void {
-            if(node.parent != null) {
+            if (node.parent != null) {
                 node.parent.childrenIds.add(playerId);
             }
         });
@@ -119,7 +128,7 @@ public class Lineage extends SimObject
 
     protected function getMapOfSiresAndMinions(playerId :int, results :HashMap = null) :HashMap
     {
-        if(results == null) {
+        if (results == null) {
             results = new HashMap();
         }
 
@@ -133,11 +142,11 @@ public class Lineage extends SimObject
 
         function addHashData(playerData :HashSet, results :HashMap) :void
         {
-            if(playerData == null || results == null) {
+            if (playerData == null || results == null) {
                 return;
             }
             playerData.forEach(function(playerIdForSubTree :int) :void {
-                if(!results.containsKey(playerIdForSubTree)) {
+                if (!results.containsKey(playerIdForSubTree)) {
                     results.put(playerIdForSubTree, [getPlayerName(playerIdForSubTree), getSireId(playerIdForSubTree)]);
                 }
             });
@@ -149,21 +158,21 @@ public class Lineage extends SimObject
 
     public function getAllMinionsAndSubminions(playerId :int, minions :HashSet = null) :HashSet
     {
-        if(minions == null) {
+        if (minions == null) {
             minions = new HashSet();
         }
 
         var player :Node = _playerId2Node.get(playerId) as Node;
 
-        if(player == null) {
+        if (player == null) {
             return minions;
         }
 
         var minionSet :HashSet = player.childrenIds;
-        if(minionSet != null) {
+        if (minionSet != null) {
             minionSet.forEach(function(minionId :int) :void
                 {
-                    if(!minions.contains(minionId)) {
+                    if (!minions.contains(minionId)) {
                         minions.add(minionId);
                         getAllMinionsAndSubminions(minionId, minions);
                     }
@@ -176,7 +185,7 @@ public class Lineage extends SimObject
     public function getSireId(playerId :int) :int
     {
         var player :Node = _playerId2Node.get(playerId) as Node;
-        if(player != null && player.parent != null) {
+        if (player != null && player.parent != null) {
             return player.parent.hashCode();
         }
         return 0;
@@ -185,7 +194,7 @@ public class Lineage extends SimObject
     public function getMinionIds(playerId :int) :HashSet
     {
         var player :Node = _playerId2Node.get(playerId) as Node;
-        if(player != null) {
+        if (player != null) {
             return player.childrenIds;
         }
         return new HashSet();
@@ -194,7 +203,7 @@ public class Lineage extends SimObject
     public function getMinionCount(playerId :int) :int
     {
         var player :Node = _playerId2Node.get(playerId) as Node;
-        if(player != null) {
+        if (player != null) {
             return player.childrenIds.size();
         }
         return 0;
@@ -216,7 +225,7 @@ public class Lineage extends SimObject
         while(parentId > 0) {
             sires.add(parentId);
             parentId = getSireId(parentId);
-            if(sires.contains(parentId)) {
+            if (sires.contains(parentId)) {
                 log.error("getAllSiresAndGrandSires, circle found.");
                 break;
             }
@@ -231,7 +240,7 @@ public class Lineage extends SimObject
         }
 
         var player :Node = _playerId2Node.get(playerId) as Node;
-        if(player != null) {
+        if (player != null) {
             return player.parent != null && player.parent.hashCode() != 0;
         }
         return false;
@@ -240,7 +249,7 @@ public class Lineage extends SimObject
     public function isHavingMinions(playerId :int) :Boolean
     {
         var player :Node = _playerId2Node.get(playerId) as Node;
-        if(player != null) {
+        if (player != null) {
             return player.childrenIds.size() > 0;
         }
         return false;
@@ -275,7 +284,7 @@ public class Lineage extends SimObject
             sb.append("\n");
             sb.append(".      id=" + playerId + ", name= " + (isPlayerName(playerId) ? getPlayerName(playerId) : "no key"));
             sb.append("        sire=" + getSireId(playerId));
-            if(isHavingMinions(playerId)) {
+            if (isHavingMinions(playerId)) {
                 sb.append("         minions=" + player.childrenIds.toArray());
                 sb.append("         subminions=" + getAllMinionsAndSubminions(playerId).toArray());
             }
@@ -378,7 +387,7 @@ public class Lineage extends SimObject
 
     public function setPlayerName(playerId :int, name :String) :Boolean
     {
-        if(name != null && name != "") {
+        if (name != null && name != "") {
             _playerId2Name.put(playerId, name);
             log.debug(VConstants.DEBUG_MINION + " setPlayerName()", "playerId", playerId, "name", name);
             return true;
@@ -405,7 +414,7 @@ public class Lineage extends SimObject
 
     public function isPlayerSireOrMinionOfPlayer(queryPlayerId :int, playerId :int) :Boolean
     {
-        if(queryPlayerId == playerId) {
+        if (queryPlayerId == playerId) {
             log.warning("isPlayerSireOrMinionOfPlayer(" + queryPlayerId + "==" + playerId + ")");
             return false;
         }
@@ -417,7 +426,7 @@ public class Lineage extends SimObject
     public function isMinionOf(maybeMinion :int, maybeSire :int) :Boolean
     {
         var sire :Node = _playerId2Node.get(maybeSire) as Node;
-        if(sire != null) {
+        if (sire != null) {
             return sire.childrenIds.contains(maybeMinion);
         }
         return false;
