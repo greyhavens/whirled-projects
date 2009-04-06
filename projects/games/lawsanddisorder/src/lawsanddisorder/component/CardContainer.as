@@ -28,7 +28,7 @@ public class CardContainer extends Component
      *      when creating a new law and inserting 3-5 cards at insertIndex -1. fix
      */
     public function addCards (cardArray :Array, distribute :Boolean = true, insertIndex :int = -1, 
-    	playSound :Boolean = true) :void
+        playSound :Boolean = true) :void
     {
         if (insertIndex < 0 || insertIndex > cards.length) {
             insertIndex = cards.length;
@@ -48,10 +48,10 @@ public class CardContainer extends Component
      */
     protected function addCard (card :Card, insertIndex :int = -1) :void
     {
-    	if (card == null) {
-    		_ctx.error("Card is null in CardContainer.addCard");
-    		return;
-    	}
+        if (card == null) {
+            _ctx.error("Card is null in CardContainer.addCard");
+            return;
+        }
         // always add physical card object to the front regardless of insertIndex
         addChild(card);
         
@@ -78,7 +78,7 @@ public class CardContainer extends Component
      * and synchronize the distributed data.
      */
     public function removeCards (cardArray :Array, distribute :Boolean = true, 
-    	playSound :Boolean = true) :void
+        playSound :Boolean = true) :void
     {
         for (var i :int = 0; i < cardArray.length; i++) {
             var card :Card = cardArray[i];
@@ -95,10 +95,10 @@ public class CardContainer extends Component
      */
     protected function removeCard (card :Card) :void
     {
-    	if (card == null) {
-    		_ctx.error("Card is null in CardContainer.removeCard");
-    		return;
-    	}
+        if (card == null) {
+            _ctx.error("Card is null in CardContainer.removeCard");
+            return;
+        }
         if (contains(card)) {
             removeChild(card);
         }

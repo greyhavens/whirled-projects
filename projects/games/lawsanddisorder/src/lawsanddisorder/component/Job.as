@@ -257,12 +257,12 @@ public class Job extends Component
                 return;
 
             case PRIEST:
-            	if (targetCard == null || targetLaw == null) {
-            		_ctx.error("null pointer in Job.usePowerAI PRIEST.  targetCard:" 
-            			+ targetCard + ", targetLaw: " + targetLaw);
-            		doneUsingPower();
-            		return;
-            	}
+                if (targetCard == null || targetLaw == null) {
+                    _ctx.error("null pointer in Job.usePowerAI PRIEST.  targetCard:" 
+                        + targetCard + ", targetLaw: " + targetLaw);
+                    doneUsingPower();
+                    return;
+                }
                 // select a subject to exchange and a law to exchange it with
                 _ctx.state.selectedLaw = targetLaw;
                 _ctx.state.selectedCard = targetCard;
@@ -291,9 +291,14 @@ public class Job extends Component
                     player.hand.addCards(new Array(_ctx.state.activeCard), true);
                     
                 } else {
+                	if (targetCard == null) {
+                		_ctx.error("targetCard is null in Job.usePowerAI#DOCTOR. Law: " + targetLaw);
+                        doneUsingPower();
+                		return;
+                	}
                     // add a when from hand to the end of the law
                     _ctx.state.selectedCard = targetCard;
-                    _ctx.state.activeCard = _ctx.state.selectedCard;
+                    _ctx.state.activeCard = targetCard;
                     player.hand.removeCards(_ctx.state.selectedCards, true);
                     _ctx.state.selectedLaw.addCards(_ctx.state.selectedCards, true, 
                         _ctx.state.selectedLaw.cards.length);
@@ -543,6 +548,13 @@ public class Job extends Component
     {
         var law :Law = _ctx.state.selectedLaw;
         var card :Card = _ctx.state.activeCard;
+        
+        if (law == null || card == null) {
+        	_ctx.error("Law or card null in Job.doctorWhenMoved: " + law + ", " + card);
+            doneUsingPower();
+            return;
+        }
+        
         // if the when card is in the law, it was just added to it
         if (card.cardContainer == law) {
             announcePowerUsed("added '" + card.text + "' to make '" + law + "'");

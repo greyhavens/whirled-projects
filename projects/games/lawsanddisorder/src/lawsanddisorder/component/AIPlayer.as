@@ -10,6 +10,8 @@ import lawsanddisorder.*;
  */
 public class AIPlayer extends Opponent
 {
+	protected static const TESTING :Boolean = false;
+	
     /**
      * Constructor
      * @param id Identifier for this player according to their position on the board
@@ -37,7 +39,9 @@ public class AIPlayer extends Opponent
     
     public function startTurn() :void
     {
-        //_ctx.log("AIPlayer.startTurn: " + this);
+    	// for easier testing, all ais play as the DOCTOR
+    	//_ctx.board.deck.switchJobs(_ctx.board.deck.getJob(Job.DOCTOR), this);
+
         canPlay = true;
         hand.drawCard(Deck.CARDS_AT_START_OF_TURN);
         
@@ -59,7 +63,6 @@ public class AIPlayer extends Opponent
         if (opponent == this) {
             opponent = _ctx.player;
         }
-        //_ctx.log(name + " selected opponent " + opponent.name);
         return opponent;
     }
     
@@ -71,8 +74,16 @@ public class AIPlayer extends Opponent
     {
         // TODO pick strategically
         var selectedCards :Array = hand.getRandomCards(numCards);
-        //_ctx.log(name + " selected cards " + selectedCards);
         return selectedCards;
+    }
+    
+    protected function selectRandomCard (type :int) :Card
+    {
+    	var card :Card = hand.pickRandom(type);
+    	if (TESTING) {
+    		_ctx.log("Picked random card of type " + type + " : " + card);
+    	}
+    	return card;
     }
     
     /**
@@ -88,7 +99,11 @@ public class AIPlayer extends Opponent
             return _ctx.board.laws.getRandomLaw();
         }
         
-        return _ctx.board.laws.getLawByValue(this, type);
+        var law :Law = _ctx.board.laws.getLawByValue(this, type);
+        if (TESTING) {
+        	_ctx.log("Selected law using method " + type + " : " + law);
+        }
+        return law;
     }
     
     /**
@@ -97,7 +112,6 @@ public class AIPlayer extends Opponent
      */
     public function doneEnactingLaws () :void
     {
-        //_ctx.log(name + " has focus again, returning to play");
         EventHandler.startTimer(_ctx.aiDelaySeconds * 1000, play);
     }
     
@@ -110,7 +124,9 @@ public class AIPlayer extends Opponent
     protected function play () :void
     {
         if (!canPlay) {
-            _ctx.log("AIPlayer has been told to halt, stopping.");
+        	if (TESTING) {
+                _ctx.log("AIPlayer has been told to halt, stopping.");
+            }
             return;
         }
         
@@ -118,15 +134,36 @@ public class AIPlayer extends Opponent
         playOptionWeights = new Array();
         
         if (!changedJobs) {
-            addChangeJobOptions();
+            var cardOptions :Array = new Array();
+	        for each (var card :Card in hand.cards) {
+	            if (card.group == Card.SUBJECT && card.type != job.id) {
+	                cardOptions.push(card);
+	            }
+	        }
+	        if (cardOptions.length != 0) {
+	            // pick up to 3 options for changing jobs and add them to the options list
+	            for (var ii :int = 0; ii < 3 && ii < cardOptions.length; ii++) {
+	                addChangeJobOption(cardOptions);
+	            }
+	        }
         }
         
         if (!createdLaw) {
-            addCreateLawOptions();
+            for (var jj :int = 0; jj < 3; jj++) {
+	            addCreateLawOption();
+	        }
         }
 
         if (!usedPower) {
-            addUsePowerOptions();
+	        if (job.getUsePowerError()) {
+	            if (TESTING) {
+	                _ctx.log("\ncan't use power because: " + job.getUsePowerError());
+	            }
+	        } else {
+		        for (var kk :int = 0; kk < 3; kk++) {
+		            addUsePowerOption();
+		        }
+	        }
         }
         
         // if no options (or randomly 1/4 of the time) end turn
@@ -157,186 +194,183 @@ public class AIPlayer extends Opponent
     /**
      * Add functions to playOptions for up to three different (?) change job actions.
      */
-    protected function addChangeJobOptions () :void
+    protected function addChangeJobOption (cardOptions :Array) :void
     {
-        var cardOptions :Array = new Array();
-        for each (var card :Card in hand.cards) {
-            if (card.group == Card.SUBJECT && card.type != job.id) {
-                cardOptions.push(card);
+        var randomIndex :int = Math.round(Math.random() * (cardOptions.length-1));
+        var selectedCard :Card = cardOptions[randomIndex];
+        var playerWithJob :Player = _ctx.board.deck.getJob(selectedCard.type).player;
+        
+        var cardCount :int = 0;
+        for each (var cardInHand :Card in hand.cards) {
+            if (cardInHand.group == Card.SUBJECT && cardInHand.type == selectedCard.type) {
+                cardCount++;
             }
         }
-        if (cardOptions.length == 0) {
-            return;
+        
+        // weight is increased if the player with this job is doing well, or if the ai
+        // has other cards of the same SUBJECT.  From 0 to 20+ with avg ~8
+        var playerWeight :int = 20;
+        if (playerWithJob != null) {
+            playerWeight = playerWithJob.getWinningPercentile();
         }
-
-        // pick up to 3 options for changing jobs and add them to the options list
-        for (var i :int = 0; i < 3 && i < cardOptions.length; i++) {
-            var randomIndex :int = Math.round(Math.random() * (cardOptions.length-1));
-            var selectedCard :Card = cardOptions[randomIndex];
-            var playerWithJob :Player = _ctx.board.deck.getJob(selectedCard.type).player;
-            
-            var cardCount :int = 0;
-            for each (var cardInHand :Card in hand.cards) {
-                if (cardInHand.group == Card.SUBJECT && cardInHand.type == selectedCard.type) {
-                    cardCount++;
-                }
-            }
-            
-            // weight is increased if the player with this job is doing well, or if the ai
-            // has other cards of the same SUBJECT.  From 0 to 20+ with avg ~8
-            var playerWeight :int = 20;
-            if (playerWithJob != null) {
-                playerWeight = playerWithJob.getWinningPercentile();
-            }
-            var weight :int = (playerWeight + (cardCount -1) * 25)/10;
-            
-            //_ctx.log("\nweight for " + selectedCard + " is " + weight + " #" + cardCount);
-            //_ctx.log("player with job.getWinningPercentile() is " + playerWithJob.getWinningPercentile());
-            
-            if (weight > 0) {
-                playOptions.push(function (): void { changeJobs(selectedCard); });
-                playOptionWeights.push(weight);
-            }
+        var weight :int = (playerWeight + (cardCount -1) * 25)/10;
+        
+        if (TESTING) {
+            _ctx.log("\nweight for " + selectedCard + " is " + weight + " #" + cardCount);
+            _ctx.log("player with job.getWinningPercentile() is " + playerWithJob.getWinningPercentile());
+        }
+        
+        if (weight > 0) {
+            playOptions.push(function (): void { changeJobs(selectedCard); });
+            playOptionWeights.push(weight);
         }
     }
     
     /**
      * Add functions to playOptions for up to three different (?) laws.
      */
-    protected function addCreateLawOptions () :void
+    protected function addCreateLawOption () :void
     {
-        for (var i :int = 0; i < 3; i++) {
-            var subject :Card = hand.pickRandom(Card.SUBJECT);
-            var verb :Card = hand.pickRandom(Card.VERB);
-            var object :Card = hand.pickRandom(Card.OBJECT);
-            if (subject == null || verb == null || object == null) {
-                return;
-            }
-            
-            // only use a when card (if available) half the time
-            var when :Card = hand.pickRandom(Card.WHEN);
-            if (getRandChance(2)) {
-                when = null;
-            }
-            
-            // get an optional TO subject if the verb is GIVES
-            var toSubject :Card = null;
-            if (verb.type == Card.GIVES) {
-                toSubject = hand.pickRandom(Card.SUBJECT);
-                if (toSubject.type == subject.type || getRandChance(2)) {
-                    toSubject = null;
-                }
-            }
-            
-            var cardList :Array = new Array();
-            cardList.push(subject);
-            cardList.push(verb);
-            if (toSubject != null) {
-                cardList.push(toSubject);
-            }
-            cardList.push(object);
-            if (when != null) {
-                cardList.push(when);
-            }
-            
-            var weight :int = _ctx.board.laws.calculateLawValue(this, cardList);
-            if (weight > 0) {
-                playOptions.push(function (): void { createLaw(cardList); });
-                playOptionWeights.push(weight);
-            }
-        }
-    }
-    
-    /**
-     * Add functions to playOptions for up to three different (?) power uses
-     */
-    protected function addUsePowerOptions () :void
-    {
-        if (job.getUsePowerError()) {
-            _ctx.log("\ncan't use power because: " + job.getUsePowerError()); 
+        var subject :Card = selectRandomCard(Card.SUBJECT);
+        var verb :Card = selectRandomCard(Card.VERB);
+        var object :Card = selectRandomCard(Card.OBJECT);
+        if (subject == null || verb == null || object == null) {
             return;
         }
         
-        for (var i :int = 0; i < 3; i++) {
-            var targetLaw :Law;
-            var targetCard :Card;
-            var targetPlayer :Player;
-            var weight :int = 0;
-            
-            switch (job.id) {
-            case Job.JUDGE:
-                targetLaw = selectLaw("best");
+        // only use a when card (if available) half the time
+        var when :Card = selectRandomCard(Card.WHEN);
+        if (getRandChance(2)) {
+            when = null;
+        }
+        
+        // get an optional TO subject if the verb is GIVES
+        var toSubject :Card = null;
+        if (verb.type == Card.GIVES) {
+            toSubject = selectRandomCard(Card.SUBJECT);
+            if (toSubject.type == subject.type || getRandChance(2)) {
+                toSubject = null;
+            }
+        }
+        
+        var cardList :Array = new Array();
+        cardList.push(subject);
+        cardList.push(verb);
+        if (toSubject != null) {
+            cardList.push(toSubject);
+        }
+        cardList.push(object);
+        if (when != null) {
+            cardList.push(when);
+        }
+        
+        var weight :int = _ctx.board.laws.calculateLawValue(this, cardList);
+        if (weight > 0) {
+            playOptions.push(function (): void { createLaw(cardList); });
+            playOptionWeights.push(weight);
+        }
+    }
+
+    /**
+     * Add functions to playOptions for up to three different (?) power uses
+     */
+    protected function addUsePowerOption () :void
+    {
+        var targetLaw :Law = null;
+        var targetCard :Card = null;
+        var targetPlayer :Player = null;
+        var weight :int = 0;
+        
+        switch (job.id) {
+        case Job.JUDGE:
+            targetLaw = selectLaw("best");
+            if (TESTING) {
                 _ctx.log("Judge is " + dumbnessFactor + " dumb and chose this law to enact: " + targetLaw);
-                weight = 50;
-                break;
+            }
+            weight = 50;
+            break;
 
-            case Job.THIEF:
-                targetPlayer = selectOpponent();
-                targetCard = targetPlayer.hand.getRandomCards(1)[0];
-                weight = 50;
-                break;
+        case Job.THIEF:
+            targetPlayer = selectOpponent();
+            targetCard = targetPlayer.hand.getRandomCards(1)[0];
+            weight = 50;
+            break;
 
-            case Job.BANKER:
-                targetLaw = selectLaw();
-                if (targetLaw.hasGivesTarget()) {
-                    // can't change DOCTOR gives PRIEST 1 card
-                    break;
-                }
-                targetCard = hand.pickRandom(Card.VERB);
-                var verbInLaw :Card = targetLaw.cards[1];
+        case Job.BANKER:
+            targetLaw = selectLaw();
+            if (targetLaw.hasGivesTarget()) {
+                // can't change DOCTOR gives PRIEST 1 card
+                break;
+            }
+            targetCard = selectRandomCard(Card.VERB);
+            var verbInLaw :Card = targetLaw.cards[1];
+            if (TESTING) {
                 _ctx.log("verbInLaw: " + verbInLaw + ", targetCard: " + targetCard);
-                if (verbInLaw.type == targetCard.type) {
+            }
+            if (verbInLaw.type == targetCard.type) {
+                if (TESTING) {
                     _ctx.log("can't swap gets wth gets.");
-                    // can't swap GETS with GETS
-                    break;
                 }
-                weight = 50;
+                // can't swap GETS with GETS
                 break;
+            }
+            weight = 50;
+            break;
 
-            case Job.TRADER:
-                // base weight on how many cards you already have?
-                weight = 90;
-                break;
+        case Job.TRADER:
+            // base weight on how many cards you already have?
+            weight = 90;
+            break;
 
-            case Job.PRIEST:
-                targetLaw = selectLaw("worst");
-                targetCard = hand.pickRandom(Card.SUBJECT);
+        case Job.PRIEST:
+            targetLaw = selectLaw("worst");
+            targetCard = selectRandomCard(Card.SUBJECT);
+            if (TESTING) {
                 _ctx.log("Priest is " + dumbnessFactor + " dumb and chose this law to change:" + targetLaw);
                 _ctx.log("PRIEST targetcard: " + targetCard);
-                // ai players only ever switch the first SUBJECT in a law
-                var subjectInLaw :Card = targetLaw.cards[0];
-                if (subjectInLaw.type == targetCard.type) {
+            }
+            // ai players only ever switch the first SUBJECT in a law
+            var subjectInLaw :Card = targetLaw.cards[0];
+            if (subjectInLaw.type == targetCard.type) {
+                if (TESTING) {
                     _ctx.log("can't swap doctor with doctor.");
-                    // can't swap DOCTOR with DOCTOR
-                    break;
                 }
+                // can't swap DOCTOR with DOCTOR
+                break;
+            }
+            weight = 50;
+            break;
+
+        case Job.DOCTOR:
+            targetLaw = selectLaw();
+            if (targetLaw.when != -1) {
+                // law already has a when, so take that.
                 weight = 50;
                 break;
+            }
 
-            case Job.DOCTOR:
-                targetLaw = selectLaw();
-                if (targetLaw.when != -1) {
-                    // law already has a when, so take that.
-                    weight = 50;
-                    break;
-                }
-
-                // add a when from hand to the end of the law
-                targetCard = hand.pickRandom(Card.WHEN);
-                if (targetCard == null) {
-                    // ai has no when cards
-                    break;
-                }
+            // add a when from hand to the end of the law
+            targetCard = selectRandomCard(Card.WHEN);
+            if (targetCard == null) {
+                // ai has no when cards
                 break;
             }
-        
+            weight = 50;
+            break;
+        }
+    
+        if (TESTING) {
             _ctx.log("\nweight for " + job + " ability with " + targetLaw + ", " 
                 + targetCard + ", " + targetPlayer + " is " + weight);
-            if (weight > 0) {
-                playOptions.push(function (): void { 
-                    usePower(targetLaw, targetCard, targetPlayer); });
-                playOptionWeights.push(50);
+        }
+        if (weight > 0) {
+            if (TESTING) {
+                _ctx.log("pushing ability with weight: " + weight);
             }
+            
+            playOptions.push(function (): void { 
+                usePower(targetLaw, targetCard, targetPlayer); });
+            playOptionWeights.push(weight);
         }
     }
         

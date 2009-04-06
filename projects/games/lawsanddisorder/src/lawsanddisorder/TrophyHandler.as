@@ -34,7 +34,7 @@ public class TrophyHandler
     /**
      * Constructor - fetch persistant data from the server cookie
      */
-    public function TrophyHandler(ctx :Context)
+    public function TrophyHandler (ctx :Context)
     {
         _ctx = ctx;
         _ctx.eventHandler.addDataListener(Deck.JOBS_DATA, jobsChanged);
@@ -44,23 +44,6 @@ public class TrophyHandler
         
         // set up counters for this game
         _jobsHeld = new Array(6).map(function (): Boolean { return false; });
-        
-        // dummy array of the job powers this player has ever used
-        var powersUsed :Array = [];
-        for (var jobId :int = 0; jobId < 6; jobId++) {
-            powersUsed.push(UserCookie.getIntParameter("", 0));
-        }
-        
-        var cookieDef :Array = [
-            // version 1
-            UserCookie.getVersionParameter(),
-            UserCookie.getIntParameter(NUM_LAWS_PLAYED, 0),
-            UserCookie.getArrayParameter(POWERS_USED, powersUsed)
-        ];
-         
-        UserCookie.getCookie(_ctx.control, function (cookie :UserCookie) :void {
-                _cookie = cookie;
-            }, cookieDef);
     }
 
     /**
@@ -96,14 +79,14 @@ public class TrophyHandler
             return;
         }
         
-        if (_cookie.get(POWERS_USED, player.job.id) > 0) {
+        if (CookieHandler.cookie.get(CookieHandler.POWERS_USED, player.job.id) > 0) {
             return;
         }
         
-        _cookie.set(POWERS_USED, 1, player.job.id);
+        CookieHandler.cookie.set(CookieHandler.POWERS_USED, 1, player.job.id);
         
         for (var jobId :int = 0; jobId < 6; jobId++) {
-            if (_cookie.get(POWERS_USED, jobId) == 0) {
+            if (CookieHandler.cookie.get(CookieHandler.POWERS_USED, jobId) == 0) {
                 return;
             }
         }
@@ -125,8 +108,8 @@ public class TrophyHandler
         var law :Law = new Law(_ctx, -1);
         law.setSerializedCards(_ctx.board.newLaw.getSerializedCards());
         
-        var newNumLaws :int = (_cookie.get(NUM_LAWS_PLAYED) as int) + 1;
-        _cookie.set(NUM_LAWS_PLAYED, newNumLaws);
+        var newNumLaws :int = (CookieHandler.cookie.get(CookieHandler.NUM_LAWS_PLAYED) as int) + 1;
+        CookieHandler.cookie.set(CookieHandler.NUM_LAWS_PLAYED, newNumLaws);
         
         _lawsCreated++;
         if (_lawsCreated == 5) {
@@ -191,19 +174,10 @@ public class TrophyHandler
     /** Context */
     protected var _ctx :Context;
     
-    /** Persistant data across multiple games for the player */
-    protected var _cookie :UserCookie;
-    
     /** Array of jobs held in this game, each index is a jobId, values are boolean */
     protected var _jobsHeld :Array /* of Boolean */;
     
     /** Count of laws created in this game */
     protected var _lawsCreated :int = 0;
-    
-    /** Cookie Id for the array of jobs whose powers have been used across all games */
-    protected static var POWERS_USED :String = "powersUsed";
-    
-    /** Cookie Id for the count of laws ever created by this player across all games */
-    protected static var NUM_LAWS_PLAYED :String = "numLawsPlayed";
 }
 }

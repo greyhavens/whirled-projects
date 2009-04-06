@@ -17,10 +17,6 @@ import lawsanddisorder.component.*;
 /**
  * Main game class handles game setup and players joining/leaving.
  * 
- * TODO logic & bugs:
- * move config options from the game lobby to inside the game for single player
- * improve ai handling of job powers
- * 
  * TODO interface:
  * make splash screen a 3 screen click through
  * card mouseover tooltips, esp job powers?
@@ -37,7 +33,7 @@ public class LawsAndDisorder extends Sprite
     public static const GAME_ENDING :String = "gameEnding";
     
     /** Game version for testing/debugging purposes */
-    public static const VERSION :String = "0.517";
+    public static const VERSION :String = "0.518";
 
     /**
      * Constructor.  Set up game control, context, and board.  Add listeners for game events, and
@@ -69,14 +65,34 @@ public class LawsAndDisorder extends Sprite
         _ctx.control.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
         _ctx.control.game.addEventListener(StateChangedEvent.CONTROL_CHANGED, controlChanged);
         addEventListener(Event.REMOVED_FROM_STAGE, unload);
-
+        
+        // collect player's information from a cookie.  Will call gotCookie when complete.
+        CookieHandler.init(_ctx, gotCookie);
+    }
+    
+    /**
+     * Called when CookieHandler.init() completes and user's preferences can be fetched.
+     */ 
+    protected function gotCookie () :void
+    {
+    	// fetch configuration from multiplayer game params or cookies
+    	_ctx.gatherConfig();
+    	
         // if we're a watcher, assume the game has already started and fetch data
         if (_ctx.control.game.seating.getMyPosition() == -1) {
             gameStarted();
             _ctx.board.refreshData();
         }
 
-        _ctx.control.game.playerReady();
+        // if we are playing a single player game, show the 1p/multi select splash screen first.
+        if (_ctx.control.game.seating.getPlayerIds().length == 1) {
+        	splashScreen = new SplashScreen(_ctx);
+        	addChild(splashScreen);
+            
+        // if playing a multiplayer game, just get started
+        } else {
+            _ctx.control.game.playerReady();
+        }
     }
 
     /**
@@ -205,16 +221,7 @@ public class LawsAndDisorder extends Sprite
      */
     protected function occupantLeft (event :OccupantChangedEvent) :void
     {
-        // player left before game started; start game over and hope that works
-        /*if (!_ctx.gameStarted && event.player) {
-            if (_ctx != null) {
-                _ctx.notice("Player left before the game started.  Attempting to start over.");
-            }
-            if (_ctx.control.game.amInControl()) {
-                gameStarted();
-            }
-        }
-        else */if (event.player) {
+        if (event.player) {
             _ctx.board.players.playerLeft(event.occupantId);
         }
     }
@@ -234,5 +241,8 @@ public class LawsAndDisorder extends Sprite
     protected var _initMoniesData :Boolean = false;
     protected var _initHandsData :Boolean = false;
     protected var _initJobsData :Boolean = false;
+
+    /** Displays a introductory splash screen overlay */
+    protected var splashScreen :SplashScreen;
 }
 }

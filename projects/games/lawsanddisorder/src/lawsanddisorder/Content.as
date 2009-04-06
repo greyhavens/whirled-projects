@@ -127,9 +127,12 @@ public class Content
      */
     public static function playSound (sound :Sound) :void
     {
-    	if (sound == null) {
-    		return;
-    	}
+        if (Context.sfxEnabled == false) {
+            return;
+        }
+        if (sound == null) {
+            return;
+        }
         _sfxChannel = sound.play(0, 0);
     }
 
@@ -138,6 +141,9 @@ public class Content
      */
     public static function playMusic (sound :Sound) :void
     {
+    	if (Context.musicEnabled == false) {
+    		return;
+    	}
         if (_musicChannel != null) {
             _musicChannel.stop();
         }

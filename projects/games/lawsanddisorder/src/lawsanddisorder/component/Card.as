@@ -175,20 +175,6 @@ public class Card extends Component
             return 0x660066;
         }
         return 0x000000;
-        /*
-        if (_group == SUBJECT) {
-            return 0x093663;
-        }
-        else if (_group == VERB) {
-            return 0xc01d1d;
-        }
-        else if (_group == OBJECT) {
-            return 0xbe9813;
-        }
-        else {
-            return 0x720e72;
-        }
-        */
     }
 
     /**
@@ -438,9 +424,6 @@ public class Card extends Component
 
     /** Display a box around the card when highlighted */
     protected var highlightSprite :Sprite;
-
-    ///** Display a box around the card when highlighted and in text form */
-    //protected var highlightSpriteText :Sprite;
 
     /** Is the card highlighted? */
     protected var _highlighted :Boolean = false;

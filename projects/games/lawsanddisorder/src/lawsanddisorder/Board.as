@@ -1,5 +1,6 @@
 ﻿package lawsanddisorder {
 
+import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -86,12 +87,6 @@ public class Board extends Sprite
         endTurnButton.x = 9;
         endTurnButton.y = 270;
         addChild(endTurnButton);
-
-        // show the splash screen over the entire board
-        helpScreen = new SPLASH_SCREEN();
-        helpScreen.addEventListener(MouseEvent.CLICK, helpScreenClicked);
-        helpScreen.buttonMode = true;
-        addChild(helpScreen);
         
         // version
         var version :TextField = new TextField();
@@ -119,22 +114,12 @@ public class Board extends Sprite
     }
 
     /**
-     * Player clicked the splash screen; remove it and signal game start
-     */
-    protected function helpScreenClicked (event :MouseEvent) :void
-    {
-        if (contains(helpScreen)) {
-           removeChild(helpScreen);
-        }
-    }
-
-    /**
      * Player clicked the help button, display the help screen
      */
     protected function helpButtonClicked (event :MouseEvent) :void
     {
-        if (!contains(helpScreen)) {
-           addChild(helpScreen);
+        if (!contains(SplashScreen.helpScreen)) {
+           addChild(SplashScreen.helpScreen);
         }
     }
 
@@ -185,9 +170,6 @@ public class Board extends Sprite
         }
     }
 
-    /** Displays a help screen overlay */
-    protected var helpScreen :Sprite;
-
     /** Displays in-game messages to the player */
     public var notices :Notices;
 
@@ -224,9 +206,5 @@ public class Board extends Sprite
     /** Background image for the entire board */
     [Embed(source="../../rsrc/components.swf#bg")]
     protected static const BOARD_BACKGROUND :Class;
-
-    /** Background image for the entire board */
-    [Embed(source="../../rsrc/components.swf#splash")]
-    protected static const SPLASH_SCREEN :Class;
 }
 }

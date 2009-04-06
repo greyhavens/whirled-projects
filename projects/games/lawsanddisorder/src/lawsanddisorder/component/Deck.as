@@ -73,7 +73,7 @@ public class Deck extends Component
         }
         
         // set to false for a smaller test deck
-        if (false) { 
+        if (true) { 
     
             // Change the size of the deck based on the number of players
             for (var i :int = 0; i < numDecks; i++) {
