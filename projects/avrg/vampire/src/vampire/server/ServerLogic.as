@@ -115,7 +115,7 @@ public class ServerLogic
     * When a player gains blood, his sires all share a portion of the gain
     *
     */
-    public static function awardBloodBondedXpEarned(player :PlayerData, xp :Number) :void
+    protected static function awardBloodBondedXpEarned(player :PlayerData, xp :Number) :void
     {
         log.debug("awardBloodBondedXpEarned(" + player.name + ", xp=" + xp);
         if (player.bloodbonded <= 0) {
@@ -147,62 +147,62 @@ public class ServerLogic
     }
 
 
-     /**
-    * When a player gains blood, his sires all share a portion of the gain
-    *
-    */
-    public static function awardBloodBondedBloodEarned(player :PlayerData, blood :Number) :void
-    {
-        log.debug("awardBloodBondedBloodEarned(" + player.name + ", blood=" + blood);
-        if (player.bloodbonded <= 0) {
-            return;
-        }
-        var bloodBondedPlayer :PlayerData =ServerContext.server.getPlayer(player.bloodbonded);
-        var bloodBonus :Number = blood * VConstants.BLOOD_BOND_FEEDING_XP_BONUS;
-        var bloodBonusFormatted :String = Util.formatNumberForFeedback(Math.abs(bloodBonus));
+//     /**
+//    * When a player gains blood, his sires all share a portion of the gain
+//    *
+//    */
+//    protected static function awardBloodBondedBloodEarned(player :PlayerData, blood :Number) :void
+//    {
+//        log.debug("awardBloodBondedBloodEarned(" + player.name + ", blood=" + blood);
+//        if (player.bloodbonded <= 0) {
+//            return;
+//        }
+//        var bloodBondedPlayer :PlayerData =ServerContext.server.getPlayer(player.bloodbonded);
+//        var bloodBonus :Number = blood * VConstants.BLOOD_BOND_FEEDING_XP_BONUS;
+//        var bloodBonusFormatted :String = Util.formatNumberForFeedback(Math.abs(bloodBonus));
+//
+//        if (bloodBondedPlayer != null) {
+//            bloodBondedPlayer.addBlood(bloodBonus);
+//            bloodBondedPlayer.addFeedback("You " + (blood > 0 ? "gained ":"lost ") + bloodBonusFormatted + " blood from your bloodbond.");
+//            log.debug("awarding bloodbond " + bloodBondedPlayer.name + ", blood=" + bloodBonus);
+//        }
+//        else {
+//            //Add to offline database
+//            ServerContext.ctrl.loadOfflinePlayer(player.bloodbonded,
+//                function (props :OfflinePlayerPropertyControl) :void {
+//                    var currentBlood :Number = Number(props.get(Codes.PLAYER_PROP_BLOOD));
+//                    if (!isNaN(currentBlood)) {
+//                        props.set(Codes.PLAYER_PROP_BLOOD, Math.max(1, currentBlood + bloodBonus));
+//                    }
+//                },
+//                function (failureCause :Object) :void {
+//                    log.warning("Eek! Sending message to offline player failed!", "cause", failureCause);
+//                });
+//        }
+//    }
 
-        if (bloodBondedPlayer != null) {
-            bloodBondedPlayer.addBlood(bloodBonus);
-            bloodBondedPlayer.addFeedback("You " + (blood > 0 ? "gained ":"lost ") + bloodBonusFormatted + " blood from your bloodbond.");
-            log.debug("awarding bloodbond " + bloodBondedPlayer.name + ", blood=" + bloodBonus);
-        }
-        else {
-            //Add to offline database
-            ServerContext.ctrl.loadOfflinePlayer(player.bloodbonded,
-                function (props :OfflinePlayerPropertyControl) :void {
-                    var currentBlood :Number = Number(props.get(Codes.PLAYER_PROP_BLOOD));
-                    if (!isNaN(currentBlood)) {
-                        props.set(Codes.PLAYER_PROP_BLOOD, Math.max(1, currentBlood + bloodBonus));
-                    }
-                },
-                function (failureCause :Object) :void {
-                    log.warning("Eek! Sending message to offline player failed!", "cause", failureCause);
-                });
-        }
-    }
 
-
-    public static function addBloodToPlayer(playerId :int, blood :Number) :void
-    {
-        if (ServerContext.server.isPlayer(playerId)) {
-            var player :PlayerData = ServerContext.server.getPlayer(playerId);
-            player.addBlood(blood);
-        }
-        else {
-
-            //Add to offline database
-            ServerContext.ctrl.loadOfflinePlayer(playerId,
-                function (props :OfflinePlayerPropertyControl) :void {
-                    var currentBlood :Number = Number(props.get(Codes.PLAYER_PROP_BLOOD));
-                    if (!isNaN(currentBlood)) {
-                        props.set(Codes.PLAYER_PROP_BLOOD, currentBlood + blood);
-                    }
-                },
-                function (failureCause :Object) :void {
-                    log.warning("Eek! Sending message to offline player failed!", "cause", failureCause);
-                });
-        }
-    }
+//    protected static function addBloodToPlayer(playerId :int, blood :Number) :void
+//    {
+//        if (ServerContext.server.isPlayer(playerId)) {
+//            var player :PlayerData = ServerContext.server.getPlayer(playerId);
+//            player.addBlood(blood);
+//        }
+//        else {
+//
+//            //Add to offline database
+//            ServerContext.ctrl.loadOfflinePlayer(playerId,
+//                function (props :OfflinePlayerPropertyControl) :void {
+//                    var currentBlood :Number = Number(props.get(Codes.PLAYER_PROP_BLOOD));
+//                    if (!isNaN(currentBlood)) {
+//                        props.set(Codes.PLAYER_PROP_BLOOD, currentBlood + blood);
+//                    }
+//                },
+//                function (failureCause :Object) :void {
+//                    log.warning("Eek! Sending message to offline player failed!", "cause", failureCause);
+//                });
+//        }
+//    }
 
 
 
@@ -287,20 +287,20 @@ public class ServerLogic
 //        }
 //    }
 
-    /**
-    * Returns actual damage.  If feeding, always have 1 left over.
-    */
-    public static function damage (player :PlayerData, damage :Number, isFeeding :Boolean = true) :Number
-    {
-        var actualDamage :Number = (player.blood - 1) >= damage ? damage : player.blood - 1;
+//    /**
+//    * Returns actual damage.  If feeding, always have 1 left over.
+//    */
+//    public static function damage (player :PlayerData, damage :Number, isFeeding :Boolean = true) :Number
+//    {
+//        var actualDamage :Number = (player.blood - 1) >= damage ? damage : player.blood - 1;
+//
+//        player.setBlood(player.blood - damage); // note: setBlood clamps this to [0, maxBlood]
+//
+//        return actualDamage;
+//
+//    }
 
-        player.setBlood(player.blood - damage); // note: setBlood clamps this to [0, maxBlood]
-
-        return actualDamage;
-
-    }
-
-    public static function increaseLevel(player :PlayerData) :void
+    protected static function increaseLevel(player :PlayerData) :void
     {
         var xpNeededForNextLevel :Number = Logic.xpNeededForLevel(player.level + 1);
         log.debug("xpNeededForNextLevel" + xpNeededForNextLevel);
@@ -310,7 +310,7 @@ public class ServerLogic
         awardSiresXpEarned(player, missingXp);
     }
 
-    public static function decreaseLevel(player :PlayerData) :void
+    protected static function decreaseLevel(player :PlayerData) :void
     {
         if (player.level > 1) {
             var xpNeededForCurrentLevel :int = Logic.xpNeededForLevel(player.level);
@@ -319,15 +319,15 @@ public class ServerLogic
         }
     }
 
-    public static function removeBlood(player :PlayerData, amount :Number) :void
-    {
-        if (!player.isDead()) {
-            player.setBlood(player.blood - amount); // note: setBlood clamps this to [0, maxBlood]
-        }
-    }
+//    protected static function removeBlood(player :PlayerData, amount :Number) :void
+//    {
+//        if (!player.isDead()) {
+//            player.setBlood(player.blood - amount); // note: setBlood clamps this to [0, maxBlood]
+//        }
+//    }
 
 
-    public static function addXP(playerId :int, bonus :Number) :void
+    protected static function addXP(playerId :int, bonus :Number) :void
     {
          if (ServerContext.server.isPlayer(playerId)) {
             var player :PlayerData = ServerContext.server.getPlayer(playerId);
@@ -518,7 +518,7 @@ public class ServerLogic
     * time the sire is newly set.
     *
     */
-    public static function playerInvitedByPlayer(newPlayerId :int, inviterId :int) :void
+    protected static function playerInvitedByPlayer(newPlayerId :int, inviterId :int) :void
     {
         var newbie :PlayerData = ServerContext.server.getPlayer(newPlayerId);
         if (newbie == null) {
@@ -705,12 +705,12 @@ public class ServerLogic
         }
     }
 
-    public static function getPlayer(playerId :int) :PlayerData
+    protected static function getPlayer(playerId :int) :PlayerData
     {
         return ServerContext.server.getPlayer(playerId);
     }
 
-    public static function isPlayer(playerId :int) :Boolean
+    protected static function isPlayer(playerId :int) :Boolean
     {
         return ServerContext.server.isPlayer(playerId);
     }
@@ -1006,7 +1006,7 @@ public class ServerLogic
     /**
     * If the avatar moves, break off the feeding/baring.
     */
-    public static function handleAvatarMoved(player :PlayerData, userIdMoved :int) :void
+    protected static function handleAvatarMoved(player :PlayerData, userIdMoved :int) :void
     {
         //Moving nullifies any action we are currently doing, except if we are heading to
         //feed.
@@ -1091,14 +1091,12 @@ public class ServerLogic
 //            return;
 //        }
 
-        //Update the highest possible score.  We use this to scale the coin payout
-        ServerContext.topBloodBloomScore = Math.max(ServerContext.topBloodBloomScore,
-            gameRecord.gameServer.lastRoundScore);
 
-        var preyIsPlayer :Boolean = srv.isPlayer(gameRecord.preyId);
-        var preyPlayer :PlayerData = preyIsPlayer ? srv.getPlayer(gameRecord.preyId) : null;
+
+        var preyIsPlayer :Boolean = srv.isPlayer(gameRecord.gameServer.preyId);
+        var preyPlayer :PlayerData = preyIsPlayer ? srv.getPlayer(gameRecord.gameServer.preyId) : null;
 //        var bloodGained :Number = 0;
-        var preyId :int = gameRecord.preyId;
+        var preyId :int = gameRecord.gameServer.preyId;
 //        var damage :Number = VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
 //        //Each predator damages the prey
 //        damage = damage * gameRecord.predators.size();
@@ -1125,7 +1123,7 @@ public class ServerLogic
 //        var bloodGainedPerPredatorFormatted :String = Util.formatNumberForFeedback(bloodGainedPerPredator);
 
 
-        for each(var predatorId :int in gameRecord.predators.toArray()) {
+        for each(var predatorId :int in gameRecord.gameServer.predatorIds) {
             var pred :PlayerData = srv.getPlayer(predatorId);
             if (pred == null) {
                 log.error("adding blood, but no pred", "predatorId", predatorId);
@@ -1191,7 +1189,10 @@ public class ServerLogic
 //        }
 
         //Then handle experience.  ATM everyone gets xp=score
-        var xpGained :Number = gameRecord.gameServer.lastRoundScore / gameRecord.playerIds.length;
+        var playerScore :Number = gameRecord.gameServer.lastRoundScore / gameRecord.playerIds.length;
+        //Update the highest possible score.  We use this to scale the coin payout
+        ServerContext.topBloodBloomScore = Math.max(ServerContext.topBloodBloomScore, playerScore);
+        var xpGained :Number = playerScore * VConstants.XP_GAINED_FROM_FEEDING_PER_BLOOD_UNIT;
         var xpFormatted :String = Util.formatNumberForFeedback(xpGained);
 
         function awardXP(playerId :int, xp :Number, xpFormatted :String) :void
@@ -1208,7 +1209,7 @@ public class ServerLogic
                 awardBloodBondedXpEarned(p, xp);
                 //Add some bonus xp to your sires
                 awardSiresXpEarned(p, xp);
-                var feedingScore :Number = gameRecord.gameServer.lastRoundScore / ServerContext.topBloodBloomScore
+                var feedingScore :Number = playerScore / ServerContext.topBloodBloomScore
                 p.ctrl.completeTask(Codes.TASK_FEEDING_ID, feedingScore);
             }
         }
