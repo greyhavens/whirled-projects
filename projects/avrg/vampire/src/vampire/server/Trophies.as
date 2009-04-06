@@ -75,7 +75,7 @@ public class Trophies
     public static const MULTIPLIER_REQS :Array = [ 3, 10, 20, 30 ];
 
     // Awarded for collecting special blood strains
-    //    00 - Apex Predator
+    //      - Apex Predator
     //    01 - Sheep Shearer
     //    02 - Bull Fighter
     //    03 - Double Trouble
@@ -137,7 +137,7 @@ public class Trophies
         }
     }
 
-    protected static function doAward (player :PlayerData, trophy :String) :void
+    public static function doAward (player :PlayerData, trophy :String) :void
     {
         if (!player.ctrl.holdsTrophy(trophy)) {
             log.debug("Awarding", "player", player.playerId, "trophy", trophy);
