@@ -39,7 +39,7 @@ public class SharedPlayerStateClient
 
     public static function getMaxBlood (playerId :int) :Number
     {
-        return VConstants.MAX_BLOOD_FOR_LEVEL(getLevel(playerId));
+        return Logic.maxBloodForLevel(getLevel(playerId));
     }
 
     public static function getLevel (playerId :int) :int

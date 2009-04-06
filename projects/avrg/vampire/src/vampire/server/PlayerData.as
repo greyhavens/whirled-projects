@@ -634,7 +634,7 @@ public class PlayerData extends EventHandlerManager
 
     public function get maxBlood () :Number
     {
-        return VConstants.MAX_BLOOD_FOR_LEVEL(level);
+        return Logic.maxBloodForLevel(level);
     }
 
     public function get bloodbonded () :int

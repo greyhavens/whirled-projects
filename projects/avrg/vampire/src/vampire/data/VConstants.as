@@ -31,9 +31,6 @@ public class VConstants
     * Blood shared among all sires = 0.1*50 = 5
     * Each sire gets 5/10=0.5 blood.
     */
-    public static const BLOOD_GAIN_FRACTION_SHARED_WITH_SIRES :Number = 0.1;
-
-
     public static const XP_GAIN_FRACTION_SHARED_WITH_SIRES :Number = 0.1;
 
     /**
@@ -64,40 +61,7 @@ public class VConstants
     public static const PLAYER_STATE_FEEDING_PREY :String = "FeedingPrey";
 
 
-//    public static const NAMED_EVENT_LEVEL_UP :String = "LevelUp";//Only for testing purposes
-//    public static const NAMED_EVENT_LEVEL_DOWN :String = "LevelDown";//Only for testing purposes
-//    public static const NAMED_EVENT_ADD_XP :String = "AddXP";//Only for testing purposes
-//    public static const NAMED_EVENT_LOSE_XP :String = "LoseXP";//Only for testing purposes
-//    public static const NAMED_EVENT_ADD_INVITE :String = "AddInvite";//Only for testing purposes
-//    public static const NAMED_EVENT_LOSE_INVITE :String = "LoseInvite";//Only for testing purposes
-//    public static const NAMED_EVENT_FEED :String = "Feed";//Only for testing purposes
-//    public static const NAMED_EVENT_MAKE_SIRE :String = "MakeSire";//Only for testing purposes
-//    public static const NAMED_EVENT_MAKE_MINION :String = "MakeMinion";//Only for testing purposes
-//    public static const NAMED_EVENT_QUIT :String = "Quit";//Only for testing purposes
-
-//    public static const NAMED_EVENT_START_BLOOD_BLOOM :String = "StartBloodBloom";
-//    public static const NAMED_EVENT_BLOODBLOOM_COUNTDOWN :String = "BloodbloomCountDown";
-//    public static const NAMED_EVENT_SHARE_TOKEN :String = "ShareToken";
-    public static const NAMED_MESSAGE_CHOOSE_FEMALE :String = "ChooseFemale";
-    public static const NAMED_MESSAGE_CHOOSE_MALE :String = "ChooseMale";
-
-    /**Upon BB completion, send the FeedingData back to the server for persistance*/
-    public static const NAMED_EVENT_UPDATE_FEEDING_DATA :String = "UpdateFeedingData";
-
-    public static const NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING :String = "MovePredAfterFeeding";
-
     public static var LOCAL_DEBUG_MODE :Boolean = false;
-
-    public static function MAX_BLOOD_FOR_LEVEL(level :int) :Number
-    {
-        return 100 + ((level - 1) * 10);
-    }
-
-    public static const TIME_INTERVAL_PROXIMITY_CHECK :int = 1000;
-
-
-
-//    public static const DEBUG_MINION :String = "miniondebug ";
 
     /**
     * If the vampire 'feeds' on non-players, this is the player Id to use.

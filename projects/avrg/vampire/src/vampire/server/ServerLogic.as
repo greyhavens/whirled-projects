@@ -20,6 +20,7 @@ import vampire.net.messages.BloodBondRequestMsg;
 import vampire.net.messages.DebugMsg;
 import vampire.net.messages.FeedConfirmMsg;
 import vampire.net.messages.FeedRequestMsg;
+import vampire.net.messages.FeedingDataMsg;
 import vampire.net.messages.GameStartedMsg;
 import vampire.net.messages.MovePredIntoPositionMsg;
 import vampire.net.messages.PlayerArrivedAtLocationMsg;
@@ -31,28 +32,28 @@ import vampire.net.messages.ShareTokenMsg;
 
 public class ServerLogic
 {
-    /**
-    * When a player gains blood, his sires all share a portion of the gain
-    *
-    */
-    public static function playerGainedBlood(player :PlayerData, blood :Number, sourcePlayerId :int = 0) :void
-    {
-        var bloodShared :Number = VConstants.BLOOD_GAIN_FRACTION_SHARED_WITH_SIRES * blood;
-        var allsires :HashSet = ServerContext.lineage.getAllSiresAndGrandSires(player.playerId);
-
-        if (allsires.size() == 0) {
-            log.debug("no sires");
-            return;
-        }
-
-        var bloodForEachSire :Number = bloodShared / allsires.size();
-        allsires.forEach(function (sireId :int) :void {
-            if (ServerContext.server.isPlayer(sireId)) {
-                var sire :PlayerData = ServerContext.server.getPlayer(sireId);
-                sire.addBlood(bloodForEachSire);
-            }
-        });
-    }
+//    /**
+//    * When a player gains blood, his sires all share a portion of the gain
+//    *
+//    */
+//    public static function playerGainedBlood(player :PlayerData, blood :Number, sourcePlayerId :int = 0) :void
+//    {
+//        var bloodShared :Number = VConstants.BLOOD_GAIN_FRACTION_SHARED_WITH_SIRES * blood;
+//        var allsires :HashSet = ServerContext.lineage.getAllSiresAndGrandSires(player.playerId);
+//
+//        if (allsires.size() == 0) {
+//            log.debug("no sires");
+//            return;
+//        }
+//
+//        var bloodForEachSire :Number = bloodShared / allsires.size();
+//        allsires.forEach(function (sireId :int) :void {
+//            if (ServerContext.server.isPlayer(sireId)) {
+//                var sire :PlayerData = ServerContext.server.getPlayer(sireId);
+//                sire.addBlood(bloodForEachSire);
+//            }
+//        });
+//    }
 
     /**
     * When a player gains blood, his sires all share a portion of the gain
@@ -410,6 +411,12 @@ public class ServerLogic
                     var requestingPlayer :PlayerData = getPlayer(feedConfirm.predatorId);
                     handleFeedConfirmMessage(requestingPlayer, feedConfirm);
                 }
+                else if (msg is FeedingDataMsg) {
+                    var bytes :ByteArray = FeedingDataMsg(msg).feedingData;
+                    if (bytes != null) {
+                        player.setFeedingData(bytes);
+                    }
+                }
                 else if (msg is GameStartedMsg) {
                     var gameStarted :GameStartedMsg = GameStartedMsg(msg);
                     var playerStarted :PlayerData = getPlayer(gameStarted.playerId);
@@ -455,26 +462,7 @@ public class ServerLogic
                         break;
                     }
                 }
-                else {
-//                    log.debug("Cannot handle Message ", "player", playerId, "type", value);
-//                    log.debug("  Classname=" + ClassUtil.getClassName(value));
-                }
             }
-            else {
-                //Then handle named messages.  Most are for debugging/testing.  If the messages are
-                //used properly, then we'll migrate them to actual Messages.
-                switch (name) {
-
-                    case VConstants.NAMED_EVENT_UPDATE_FEEDING_DATA:
-                    var bytes :ByteArray = value as ByteArray;
-                    if (bytes != null) {
-                        log.debug("Setting new feeding data");
-                        player.setFeedingData(bytes);
-                    }
-                    break;
-                }
-            }
-
         }
         catch(err :Error) {
             log.error(err.getStackTrace());

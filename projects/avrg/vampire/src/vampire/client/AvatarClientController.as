@@ -9,12 +9,14 @@ package vampire.client
     import com.whirled.avrg.AVRGameRoomEvent;
     import com.whirled.contrib.simplegame.ObjectMessage;
     import com.whirled.contrib.simplegame.SimObject;
+    import com.whirled.contrib.simplegame.net.Message;
     import com.whirled.contrib.simplegame.objects.SimpleTimer;
     import com.whirled.net.MessageReceivedEvent;
 
     import vampire.avatar.AvatarEndMovementNotifier;
     import vampire.data.VConstants;
     import vampire.net.messages.MovePredIntoPositionMsg;
+    import vampire.net.messages.MovePredatorAFterFeedingMsg;
     import vampire.net.messages.PlayerArrivedAtLocationMsg;
 
 
@@ -75,79 +77,158 @@ public class AvatarClientController extends SimObject
 
     protected function handleMessageReceived (e :MessageReceivedEvent) :void
     {
+        var msg :Message = ClientContext.msg.deserializeMessage(e.name, e.value);
+
+        if (msg != null) {
+
+            if (msg is MovePredatorAFterFeedingMsg) {
+                handleMovePredatorAFterFeedingMsg();
+            }
+            else if (msg is MovePredIntoPositionMsg) {
+                handleMovePredIntoPositionMsg(MovePredIntoPositionMsg(msg));
+            }
+        }
         //After feeding, our avatar moves a little forward and closer to the screen,
         //so as not to be hidden if the avatars are similar.
-        if (e.name == VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING) {
-
-            var moveTimer :SimpleTimer = new SimpleTimer(2.5, function() :void {
-
-                var location :Array = ClientContext.model.location;
-                var hotspot :Array = ClientContext.model.hotspot;
-                if (location != null && hotspot != null) {
-
-                    var xDirection :Number = location[3] > 0 && location[3] <= 180 ? 1 : -1;
-                    var widthLogical :Number = hotspot[0]/_ctrl.local.getRoomBounds()[0];
-
-                    var xDistance :Number = xDirection * widthLogical / 3;
-
-                    _ctrl.player.setAvatarLocation(
-                        MathUtil.clamp(location[0] + xDistance, 0, 1),
-                        location[1],
-                        MathUtil.clamp(location[2] - 0.1, 0, 1), location[3]);
-                }
-            }, false);
-            db.addObject(moveTimer);
-        }
+//        if (e.name == VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING) {
+//
+//            var moveTimer :SimpleTimer = new SimpleTimer(2.5, function() :void {
+//
+//                var location :Array = ClientContext.model.location;
+//                var hotspot :Array = ClientContext.model.hotspot;
+//                if (location != null && hotspot != null) {
+//
+//                    var xDirection :Number = location[3] > 0 && location[3] <= 180 ? 1 : -1;
+//                    var widthLogical :Number = hotspot[0]/_ctrl.local.getRoomBounds()[0];
+//
+//                    var xDistance :Number = xDirection * widthLogical / 3;
+//
+//                    _ctrl.player.setAvatarLocation(
+//                        MathUtil.clamp(location[0] + xDistance, 0, 1),
+//                        location[1],
+//                        MathUtil.clamp(location[2] - 0.1, 0, 1), location[3]);
+//                }
+//            }, false);
+//            db.addObject(moveTimer);
+//        }
         //Before we start feeding, we move our avatar to stand directly behind the
         //target avatar.
-        else if (e.name == MovePredIntoPositionMsg.NAME) {
+//        else
+//        if (e.name == MovePredIntoPositionMsg.NAME) {
+//
+//            function convertStandardRads2GameDegrees(rad :Number) :Number
+//            {
+//                return MathUtil.toDegrees(MathUtil.normalizeRadians(rad + Math.PI / 2));
+//            }
+//
+//
+//            var movemsg :MovePredIntoPositionMsg = ClientContext.msg.deserializeMessage(
+//                e.name, e.value) as MovePredIntoPositionMsg;
+//
+//            //If we are the first predator, we go directly behind the prey
+//            //Otherwise, take a a place
+//            var targetLocation :Array = movemsg.preyLocation;//ClientContext.model.getLocation(movemsg.preyId);
+//            var avatar :AVRGameAvatar = ClientContext.model.avatar;
+//
+//            var targetX :Number;
+//            var targetY :Number;
+//            var targetZ :Number;
+//
+//            //TODO: add the hotspot width /2, then test.
+//            var hotspot :Array = ClientContext.model.hotspot;
+//            var widthLogical :Number = hotspot[0]/_ctrl.local.getRoomBounds()[0];
+//
+//            var distanceLogicalAwayFromPrey :Number = widthLogical / 3;
+//
+//
+//
+//
+//            var angleRadians :Number = new Vector2(targetLocation[0] - avatar.x,
+//                targetLocation[2] - avatar.z).angle;
+//            var degs :Number = convertStandardRads2GameDegrees(angleRadians);
+//
+//            targetX = targetLocation[0] +
+//                VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[movemsg.predIndex][0] *
+//                distanceLogicalAwayFromPrey;
+//            targetY = targetLocation[1] +
+//                VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[movemsg.predIndex][1] *
+//                distanceLogicalAwayFromPrey;
+//            targetZ = targetLocation[2] +
+//                VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[movemsg.predIndex][2] *
+//                distanceLogicalAwayFromPrey;
+//
+//                ClientContext.ctrl.player.setAvatarLocation(targetX, targetY, targetZ, degs);
+//        }
 
-            function convertStandardRads2GameDegrees(rad :Number) :Number
-            {
-                return MathUtil.toDegrees(MathUtil.normalizeRadians(rad + Math.PI / 2));
-            }
 
 
-            var movemsg :MovePredIntoPositionMsg = ClientContext.msg.deserializeMessage(
-                e.name, e.value) as MovePredIntoPositionMsg;
+    }
 
-            //If we are the first predator, we go directly behind the prey
-            //Otherwise, take a a place
-            var targetLocation :Array = movemsg.preyLocation;//ClientContext.model.getLocation(movemsg.preyId);
-            var avatar :AVRGameAvatar = ClientContext.model.avatar;
-
-            var targetX :Number;
-            var targetY :Number;
-            var targetZ :Number;
-
-            //TODO: add the hotspot width /2, then test.
+    protected function handleMovePredatorAFterFeedingMsg (...ignored) :void
+    {
+        var moveTimer :SimpleTimer = new SimpleTimer(2.5, function() :void {
+            var location :Array = ClientContext.model.location;
             var hotspot :Array = ClientContext.model.hotspot;
-            var widthLogical :Number = hotspot[0]/_ctrl.local.getRoomBounds()[0];
+            if (location != null && hotspot != null) {
 
-            var distanceLogicalAwayFromPrey :Number = widthLogical / 3;
+                var xDirection :Number = location[3] > 0 && location[3] <= 180 ? 1 : -1;
+                var widthLogical :Number = hotspot[0]/_ctrl.local.getRoomBounds()[0];
 
+                var xDistance :Number = xDirection * widthLogical / 3;
 
+                _ctrl.player.setAvatarLocation(
+                    MathUtil.clamp(location[0] + xDistance, 0, 1),
+                    location[1],
+                    MathUtil.clamp(location[2] - 0.1, 0, 1), location[3]);
+            }
+        }, false);
+        db.addObject(moveTimer);
+    }
 
-
-            var angleRadians :Number = new Vector2(targetLocation[0] - avatar.x,
-                targetLocation[2] - avatar.z).angle;
-            var degs :Number = convertStandardRads2GameDegrees(angleRadians);
-
-            targetX = targetLocation[0] +
-                VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[movemsg.predIndex][0] *
-                distanceLogicalAwayFromPrey;
-            targetY = targetLocation[1] +
-                VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[movemsg.predIndex][1] *
-                distanceLogicalAwayFromPrey;
-            targetZ = targetLocation[2] +
-                VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[movemsg.predIndex][2] *
-                distanceLogicalAwayFromPrey;
-
-                ClientContext.ctrl.player.setAvatarLocation(targetX, targetY, targetZ, degs);
+    protected function handleMovePredIntoPositionMsg (movemsg :MovePredIntoPositionMsg) :void
+    {
+        function convertStandardRads2GameDegrees(rad :Number) :Number
+        {
+            return MathUtil.toDegrees(MathUtil.normalizeRadians(rad + Math.PI / 2));
         }
 
 
+//        var movemsg :MovePredIntoPositionMsg = ClientContext.msg.deserializeMessage(
+//            e.name, e.value) as MovePredIntoPositionMsg;
 
+        //If we are the first predator, we go directly behind the prey
+        //Otherwise, take a a place
+        var targetLocation :Array = movemsg.preyLocation;//ClientContext.model.getLocation(movemsg.preyId);
+        var avatar :AVRGameAvatar = ClientContext.model.avatar;
+
+        var targetX :Number;
+        var targetY :Number;
+        var targetZ :Number;
+
+        //TODO: add the hotspot width /2, then test.
+        var hotspot :Array = ClientContext.model.hotspot;
+        var widthLogical :Number = hotspot[0]/_ctrl.local.getRoomBounds()[0];
+
+        var distanceLogicalAwayFromPrey :Number = widthLogical / 3;
+
+
+
+
+        var angleRadians :Number = new Vector2(targetLocation[0] - avatar.x,
+            targetLocation[2] - avatar.z).angle;
+        var degs :Number = convertStandardRads2GameDegrees(angleRadians);
+
+        targetX = targetLocation[0] +
+            VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[movemsg.predIndex][0] *
+            distanceLogicalAwayFromPrey;
+        targetY = targetLocation[1] +
+            VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[movemsg.predIndex][1] *
+            distanceLogicalAwayFromPrey;
+        targetZ = targetLocation[2] +
+            VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[movemsg.predIndex][2] *
+            distanceLogicalAwayFromPrey;
+
+        ClientContext.ctrl.player.setAvatarLocation(targetX, targetY, targetZ, degs);
     }
 
     protected function handlePlayerMoved (e :AVRGameRoomEvent) :void
