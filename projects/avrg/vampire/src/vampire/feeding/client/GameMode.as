@@ -4,7 +4,7 @@ import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
-import com.whirled.contrib.avrg.RoomDragger;
+import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.net.*;
@@ -205,6 +205,13 @@ public class GameMode extends AppMode
 
         // Center the game in the room
         ClientCtx.centerInRoom(gameParent);
+        // and re-center it if the paintable area changes
+        if (ClientCtx.isConnected) {
+            registerListener(ClientCtx.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
+                function (...ignored) :void {
+                    ClientCtx.centerInRoom(gameParent);
+                });
+        }
     }
 
     override protected function enter () :void
