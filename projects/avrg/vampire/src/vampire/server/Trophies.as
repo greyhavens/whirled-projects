@@ -92,7 +92,7 @@ public class Trophies
     public static const HUNTER_COLLECTION_REQUIREMENT :int = 3;
     public static function getHunterTrophyName (bloodStrain :int) :String
     {
-        var strainString :String = String(bloodStrain);
+        var strainString :String = String(bloodStrain+1);
         if (strainString.length == 1) {
             strainString = "0" + strainString;
         }
