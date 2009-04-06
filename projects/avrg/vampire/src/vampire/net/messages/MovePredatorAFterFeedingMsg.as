@@ -1,6 +1,6 @@
 package vampire.net.messages
 {
-public class MovePredatorAfterFeedingMsg extends BaseGameMsg
+public class MovePredatorAFterFeedingMsg extends BaseGameMsg
 {
     public function MovePredatorAfterFeedingMsg(playerId:int = 0)
     {
