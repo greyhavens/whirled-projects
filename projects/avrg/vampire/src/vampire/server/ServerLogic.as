@@ -83,7 +83,8 @@ public class ServerLogic
                 var sire :PlayerData = ServerContext.server.getPlayer(sireId);
                 addXP(sire.playerId, awardXP);
                 log.debug("awarding sire " + sire.name + ", xp=" + awardXP);
-                sire.addFeedback("You gained " + Util.formatNumberForFeedback(awardXP) + " experience from progeny " + player.name);
+                sire.addFeedback("You gained " + Util.formatNumberForFeedback(awardXP) +
+                    " experience from progeny " + player.name);
             }
             else {//Add to offline database
                 ServerContext.ctrl.loadOfflinePlayer(sireId,
@@ -95,16 +96,17 @@ public class ServerLogic
                         props.set(Codes.PLAYER_PROP_XP_SLEEP, currentXP + awardXP);
                     },
                     function (failureCause :Object) :void {
-                        log.warning("Eek! Sending message to offline player failed!", "cause", failureCause);
+                        log.warning("Eek! Sending message to offline player failed!", "cause",
+                            failureCause);
                     });
             }
         }
         allsires.forEach(function (sireId :int) :void {
             if (sireId == immediateSire) {
-                awardXP(sireId, xp * 0.1);//Immediate sires get 10%
+                awardXP(sireId, xp * VConstants.XP_GAIN_FRACTION_SHARED_WITH_IMMEDIATE_SIRE);
             }
             else {
-                awardXP(sireId, xp * 0.05);//Immediate sires get 10%
+                awardXP(sireId, xp * VConstants.XP_GAIN_FRACTION_SHARED_WITH_GRANDSIRES);
             }
         });
     }
@@ -542,7 +544,7 @@ public class ServerLogic
         }
     }
 
-    public static function handleGameStartedMessage (player :PlayerData, e :GameStartedMsg) :void
+    protected static function handleGameStartedMessage (player :PlayerData, e :GameStartedMsg) :void
     {
         var xpGainedWhileAsleep :Number = Number(player.ctrl.props.get(Codes.PLAYER_PROP_XP_SLEEP));
         log.debug("Getting xpGainedWhileAsleep=" + xpGainedWhileAsleep);
@@ -561,7 +563,7 @@ public class ServerLogic
         player.ctrl.props.set(Codes.PLAYER_PROP_XP_SLEEP, 0);
     }
 
-    public static function handleShareTokenMessage (player :PlayerData, e :ShareTokenMsg) :void
+    protected static function handleShareTokenMessage (player :PlayerData, e :ShareTokenMsg) :void
     {
         var inviterId :int = e.inviterId;
         log.debug(player.playerId + " received inviter id=" + inviterId);
@@ -584,7 +586,7 @@ public class ServerLogic
             log.warning("handleShareTokenMessage, but our sire != 0", "e", e);
         }
     }
-    public static function handleFeedRequestMessage (player :PlayerData, e :FeedRequestMsg) :void
+    protected static function handleFeedRequestMessage (player :PlayerData, e :FeedRequestMsg) :void
     {
         log.debug("handleFeedRequestMessage");
 
@@ -662,7 +664,7 @@ public class ServerLogic
 
     }
 
-    public static function handleFeedConfirmMessage(player :PlayerData, e :FeedConfirmMsg) :void
+    protected static function handleFeedConfirmMessage(player :PlayerData, e :FeedConfirmMsg) :void
     {
         log.debug("handleFeedConfirmMessage", "e", e);
 
@@ -757,7 +759,7 @@ public class ServerLogic
     * Here we check if we are allowed to change action.
     * ATM we just allow it.
     */
-    public static function handleBloodBondRequest(player :PlayerData, e :BloodBondRequestMsg) :void
+    protected static function handleBloodBondRequest(player :PlayerData, e :BloodBondRequestMsg) :void
     {
         var targetPlayer :PlayerData = ServerContext.server.getPlayer(e.targetPlayer);
 
@@ -773,7 +775,7 @@ public class ServerLogic
     }
 
 
-    public static function handleRequestActionChange(player :PlayerData, e :RequestStateChangeMsg) :void
+    protected static function handleRequestActionChange(player :PlayerData, e :RequestStateChangeMsg) :void
     {
         log.debug("handleRequestActionChange(..), e.action=" + e.state);
         stateChange(player, e.state);
@@ -1189,7 +1191,7 @@ public class ServerLogic
 //        }
 
         //Then handle experience.  ATM everyone gets xp=score
-        var xpGained :Number = gameRecord.gameServer.lastRoundScore;
+        var xpGained :Number = gameRecord.gameServer.lastRoundScore / gameRecord.playerIds.length;
         var xpFormatted :String = Util.formatNumberForFeedback(xpGained);
 
         function awardXP(playerId :int, xp :Number, xpFormatted :String) :void
@@ -1201,7 +1203,7 @@ public class ServerLogic
             var p :PlayerData = ServerContext.server.getPlayer(playerId);
             if (p != null) {
                 addXP(p.playerId, xp);
-                p.addFeedback("You gained " + xpFormatted + " experience!");
+                p.addFeedback("You gained " + xpFormatted + " experience from feeding!");
                 //Add some bonus xp to your blood bond, if they are online
                 awardBloodBondedXpEarned(p, xp);
                 //Add some bonus xp to your sires
