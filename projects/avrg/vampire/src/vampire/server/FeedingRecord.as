@@ -166,8 +166,8 @@ public class FeedingRecord extends EventCollecter
         //Force all predator avatars out of the feeding state
         if (playerId == _preyId) {
             _predators.forEach(function(predId :int) :void {
-                var pred :PlayerData = ServerContext.server.getPlayer(predId);
-                if(pred != null) {
+                if (ServerContext.server.isPlayer(predId)) {
+                    var pred :PlayerData = ServerContext.server.getPlayer(predId);
                     ServerLogic.stateChange(pred, VConstants.PLAYER_STATE_DEFAULT);
                 }
             });
