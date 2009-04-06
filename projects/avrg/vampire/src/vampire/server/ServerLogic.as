@@ -16,6 +16,7 @@ import vampire.data.Codes;
 import vampire.data.Logic;
 import vampire.data.VConstants;
 import vampire.net.messages.BloodBondRequestMsg;
+import vampire.net.messages.DebugMsg;
 import vampire.net.messages.FeedConfirmMsg;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.GameStartedMsg;
@@ -419,6 +420,37 @@ public class ServerLogic
                     var globalMessage :String = SendGlobalMsg(msg).message;
                     ServerContext.server.addGlobalFeedback(globalMessage);
                 }
+                else if (msg is DebugMsg) {
+                    var debugMsg :DebugMsg = DebugMsg(msg);
+                    switch (debugMsg.name) {
+                        case DebugMsg.DEBUG_GAIN_XP:
+                        addXP(player.playerId, 500);
+                        break;
+
+                        case DebugMsg.DEBUG_LOSE_XP:
+                        addXP(player.playerId, -500);
+                        break;
+
+                        case DebugMsg.DEBUG_LEVEL_UP:
+                        increaseLevel(player);
+                        break;
+
+                        case DebugMsg.DEBUG_LEVEL_DOWN:
+                        decreaseLevel(player);
+                        break;
+
+                        case DebugMsg.DEBUG_ADD_INVITE:
+                        player.addToInviteTally();
+                        break;
+
+                        case DebugMsg.DEBUG_LOSE_INVITE:
+                        player.setInviteTally(Math.max(0, player.invites - 1));
+                        break;
+
+                        default:
+                        break;
+                    }
+                }
                 else {
 //                    log.debug("Cannot handle Message ", "player", playerId, "type", value);
 //                    log.debug("  Classname=" + ClassUtil.getClassName(value));
@@ -428,68 +460,6 @@ public class ServerLogic
                 //Then handle named messages.  Most are for debugging/testing.  If the messages are
                 //used properly, then we'll migrate them to actual Messages.
                 switch (name) {
-                    case VConstants.NAMED_EVENT_BLOOD_UP:
-                    player.addBlood(20);
-                    break;
-
-
-                    case VConstants.NAMED_EVENT_BLOOD_DOWN:
-                    damage(player, 20);
-                    break;
-
-                    case VConstants.NAMED_EVENT_BLOOD_UP:
-
-                    break;
-
-                    case VConstants.NAMED_MESSAGE_DEBUG_GIVE_BLOOD_ALL_ROOM:
-                    if (room != null) {
-                        room.players.forEach(function(playerId :int, player :PlayerData) :void {
-                            player.addBlood(20);
-                        });
-                    }
-                    break;
-
-                    case VConstants.NAMED_MESSAGE_DEBUG_RESET_MY_SIRE:
-                    makeSire(player, 0);
-                    break;
-
-                    case VConstants.NAMED_EVENT_ADD_XP:
-                    addXP(player.playerId, 500);
-                    break;
-
-                    case VConstants.NAMED_EVENT_LOSE_XP:
-                    addXP(player.playerId, -500);
-                    break;
-
-                    case VConstants.NAMED_EVENT_LEVEL_UP:
-                    increaseLevel(player);
-                    break;
-
-                    case VConstants.NAMED_EVENT_LEVEL_DOWN:
-                    decreaseLevel(player);
-                    break;
-
-                    case VConstants.NAMED_EVENT_ADD_INVITE:
-                    player.addToInviteTally();
-                    break;
-
-                    case VConstants.NAMED_EVENT_LOSE_INVITE:
-                    player.setInviteTally(Math.max(0, player.invites - 1));
-                    break;
-
-                    case VConstants.NAMED_EVENT_MAKE_SIRE:
-                    makeSire(player, int(value));
-                    break;
-
-                    case VConstants.NAMED_EVENT_QUIT:
-                    //We no longer track the time sleeping.
-//                    var now :Number = new Date().time;
-//                    player.setTime(now);
-                    break;
-
-//                    case PlayerArrivedAtLocationMsg.PLAYER_ARRIVED:
-//                    handlePlayerArrivedAtLocation(player);
-//                    break;
 
                     case VConstants.NAMED_EVENT_UPDATE_FEEDING_DATA:
                     var bytes :ByteArray = value as ByteArray;
@@ -498,20 +468,6 @@ public class ServerLogic
                         player.setFeedingData(bytes);
                     }
                     break;
-
-//                    case VConstants.NAMED_EVENT_SHARE_TOKEN:
-//                    var inviterId :int = int(value);
-//                    log.debug(playerId + " received inviter id=" + inviterId);
-//                    if (player.sire == 0) {
-//                        log.info(playerId + " setting sire=" + inviterId);
-//                        makeSire(player, inviterId);
-//                        //Tally the successful invites for trophies
-//                        playerInvitedByPlayer(playerId, inviterId);
-//                    }
-//                    else {
-//                        log.warning("handleShareTokenMessage, but our sire is already != 0");
-//                    }
-//                    break;
 
                     case VConstants.NAMED_MESSAGE_CHOOSE_FEMALE:
                     log.debug(VConstants.NAMED_MESSAGE_CHOOSE_FEMALE + " awarding female");
@@ -608,11 +564,13 @@ public class ServerLogic
         log.debug("Getting xpGainedWhileAsleep=" + xpGainedWhileAsleep);
         if (!isNaN(xpGainedWhileAsleep) && xpGainedWhileAsleep > 0) {
             addXP(player.playerId, xpGainedWhileAsleep);
-            player.addFeedback(Codes.POPUP_PREFIX + "You gained " + Util.formatNumberForFeedback(xpGainedWhileAsleep) +
+            var descendentsCount :int = ServerContext.lineage.getProgenyCount(player.playerId);
+            player.addFeedback(Codes.POPUP_PREFIX + "You gained " +
+                Util.formatNumberForFeedback(xpGainedWhileAsleep) +
                 " experience from your " +
                 (player.bloodbonded != 0 ? "bloodbond " : "") +
-                (player.bloodbonded != 0 && ServerContext.lineage.getMinionCount(player.playerId) > 0 ? "and " : "") +
-                (ServerContext.lineage.getMinionCount(player.playerId) > 0 ? "progeny " : "") +
+                (player.bloodbonded != 0 && descendentsCount > 0 ? "and " : "") +
+                (descendentsCount > 0 ? "progeny " : "") +
                 "while you were asleep!");
 
         }
@@ -1204,8 +1162,8 @@ public class ServerLogic
                         pred.addFeedback(Codes.POPUP_PREFIX + preyPlayer.name + " has become your sire!");
 
                         //Award coins to the sire
-                        preyPlayer.ctrl.completeTask(Codes.TASK_ACQUIRE_MINION_ID,
-                            Codes.TASK_ACQUIRE_MINION_SCORE);
+                        preyPlayer.ctrl.completeTask(Codes.TASK_ACQUIRE_PROGENY_ID,
+                            Codes.TASK_ACQUIRE_PROGENY_SCORE);
 
 
                         for each(var sireId :int in
@@ -1219,8 +1177,8 @@ public class ServerLogic
                                     pred.name + " has joined your Lineage! ", sireId);
 
                                 //Award coins to the sire(s)
-                                preyPlayer.ctrl.completeTask(Codes.TASK_ACQUIRE_MINION_ID,
-                                    Codes.TASK_ACQUIRE_MINION_SCORE/10);
+                                preyPlayer.ctrl.completeTask(Codes.TASK_ACQUIRE_PROGENY_ID,
+                                    Codes.TASK_ACQUIRE_PROGENY_SCORE/10);
 
                             }
                         }

@@ -53,20 +53,20 @@ public class GameModel extends SimObject
     public function playerEnteredRoom(...ignored) :void
     {
         if(lineage == null) {
-            _lineage = loadHierarchyFromProps();
+            _lineage = loadLineageFromProps();
             dispatchEvent(new LineageUpdatedEvent(_lineage));
         }
         else {
-            log.warning("Player entered room, but no minion hierarchy to load.");
+            log.warning("Player entered room, but no Lineage to load.");
         }
     }
 
-    protected function loadHierarchyFromProps() :Lineage
+    protected function loadLineageFromProps() :Lineage
     {
-        log.debug(VConstants.DEBUG_MINION + " loadHierarchyFromProps()");
+        log.debug(" loadLineageFromProps()");
         var hierarchy :Lineage = new Lineage();
 
-        var dict :Dictionary = ClientContext.ctrl.room.props.get(Codes.ROOM_PROP_MINION_HIERARCHY) as Dictionary;
+        var dict :Dictionary = ClientContext.ctrl.room.props.get(Codes.ROOM_PROP_LINEAGE) as Dictionary;
 
         if(dict != null) {
 
@@ -85,18 +85,18 @@ public class GameModel extends SimObject
             }
         }
         else {
-            log.debug(VConstants.DEBUG_MINION + " loadHierarchyFromProps()", "dict==null");
+            log.debug(" loadLineageFromProps()", "dict==null");
         }
-        hierarchy.recomputeMinions();
-        log.debug(VConstants.DEBUG_MINION + " loadHierarchyFromProps()", "hierarchy", hierarchy);
+        hierarchy.recomputeProgeny();
+        log.debug(" loadLineageFromProps()", "hierarchy", hierarchy);
         return hierarchy;
     }
 
     protected function handlePropChanged (e :PropertyChangedEvent) :void
     {
         switch (e.name) {
-            case Codes.ROOM_PROP_MINION_HIERARCHY://) {//|| e.name == Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS) {
-            _lineage = loadHierarchyFromProps();
+            case Codes.ROOM_PROP_LINEAGE:
+            _lineage = loadLineageFromProps();
             dispatchEvent(new LineageUpdatedEvent(_lineage));
             break;
 
@@ -120,9 +120,9 @@ public class GameModel extends SimObject
             return;
         }
 
-        if(e.name == Codes.ROOM_PROP_MINION_HIERARCHY) {
+        if(e.name == Codes.ROOM_PROP_LINEAGE) {
 
-            _lineage = loadHierarchyFromProps();
+            _lineage = loadLineageFromProps();
             dispatchEvent(new LineageUpdatedEvent(_lineage));
             return;
         }

@@ -38,13 +38,13 @@ public class VampireController extends Controller
 
     public static const SHOW_DEBUG :String = "ShowDebug";
 
-    public static const SHOW_HIERARCHY :String = "ShowHierarchy";
+    public static const SHOW_HIERARCHY :String = "ShowLineage";
 
     public static const FEED :String = "Feed";
     public static const FEED_REQUEST_ACCEPT :String = "AcceptFeedRequest";
     public static const FEED_REQUEST_DENY :String = "DenyFeedRequest";
 
-    public static const HIERARCHY_CENTER_SELECTED :String = "HierarchyCenterSelected";
+    public static const HIERARCHY_CENTER_SELECTED :String = "LineageCenterSelected";
 
     public static const RECRUIT :String = "Recruit";
 
@@ -88,12 +88,7 @@ public class VampireController extends Controller
 
     public function handleQuit () :void
     {
-//        trace(ClientContext.ourPlayerId + " setting avatar state from quit");
         ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
-//        ClientContext.ctrl.player.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, 1, true);//new Date().time);
-
-        ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_QUIT);
-
         ClientContext.quit();
     }
 
@@ -292,15 +287,12 @@ public class VampireController extends Controller
 
     }
 
-    public function handleHierarchyCenterSelected (playerId :int, hierarchyView :LineageView) :void
+    public function handleLineageCenterSelected (playerId :int, lineageView :LineageView) :void
     {
-//        if (hierarchyView._hierarchy == null){// || hierarchyView._hierarchy.getMinionCount(playerId) == 0) {
-//            return;
-//        }
-        hierarchyView.updateHierarchy(playerId);
+        lineageView.updateLineage(playerId);
     }
 
-    public function handleShowHierarchy (_hudMC :MovieClip) :void
+    public function handleShowLineage (_hudMC :MovieClip) :void
     {
         try {
             ClientContext.controller.handleShowIntro("default");

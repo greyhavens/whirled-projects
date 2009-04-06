@@ -60,7 +60,7 @@ public class VampireMain extends Sprite
             }
 
             if(!ClientContext.ctrl.isConnected() && !VConstants.LOCAL_DEBUG_MODE) {
-                trace("Not conected and not test model");
+                log.error("Not connected and not test model");
                 return;
             }
 
@@ -85,15 +85,6 @@ public class VampireMain extends Sprite
             //Start the game.
             ClientContext.game.run();
 
-            //If there is a share token, send the invitee to the server
-            var inviterId :int = ClientContext.ctrl.local.getInviterMemberId();
-            var shareToken :String = ClientContext.ctrl.local.getInviteToken();
-            //If we don't have a sire, and we are invited, send our invite token
-            if(inviterId != 0 && SharedPlayerStateClient.getSire(ClientContext.ourPlayerId) == 0) {
-                log.info(ClientContext.ctrl.player.getPlayerId() + " sending  inviterId=" + inviterId + ", token=" + shareToken);
-                ClientContext.ctrl.agent.sendMessage(ShareTokenMsg.NAME,
-                    new ShareTokenMsg(ClientContext.ourPlayerId, inviterId, shareToken).toBytes());
-            }
         }
     }
 

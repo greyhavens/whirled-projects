@@ -64,36 +64,20 @@ public class VConstants
     public static const PLAYER_STATE_FEEDING_PREY :String = "FeedingPrey";
 
 
-//    public static const GAME_MODE_FEED_FROM_NON_PLAYER :String = "FeedingNonPlayer";
-//    public static const GAME_MODE_WAITING_FOR_NO_CHATS :String = "WaitingForChats";
-//    public static const GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER :String = "MoveToFeedingNonPlayer";
-//    public static const GAME_MODE_FIGHT :String = "Fighting";
-////    public static const GAME_MODE_BLOODBOND :String = "BloodBond";
-//    public static const GAME_MODE_HIERARCHY_AND_BLOODBONDS :String = "Hierarchy";
+//    public static const NAMED_EVENT_LEVEL_UP :String = "LevelUp";//Only for testing purposes
+//    public static const NAMED_EVENT_LEVEL_DOWN :String = "LevelDown";//Only for testing purposes
+//    public static const NAMED_EVENT_ADD_XP :String = "AddXP";//Only for testing purposes
+//    public static const NAMED_EVENT_LOSE_XP :String = "LoseXP";//Only for testing purposes
+//    public static const NAMED_EVENT_ADD_INVITE :String = "AddInvite";//Only for testing purposes
+//    public static const NAMED_EVENT_LOSE_INVITE :String = "LoseInvite";//Only for testing purposes
+//    public static const NAMED_EVENT_FEED :String = "Feed";//Only for testing purposes
+//    public static const NAMED_EVENT_MAKE_SIRE :String = "MakeSire";//Only for testing purposes
+//    public static const NAMED_EVENT_MAKE_MINION :String = "MakeMinion";//Only for testing purposes
+//    public static const NAMED_EVENT_QUIT :String = "Quit";//Only for testing purposes
 
-
-
-
-    public static const NAMED_MESSAGE_DEBUG_GIVE_BLOOD_ALL_ROOM:String = "GiveBloodAllRoom";
-    public static const NAMED_MESSAGE_DEBUG_RESET_MY_SIRE:String = "ResetMySire";
-
-    public static const NAMED_EVENT_BLOOD_UP :String = "BloodUp";//Only for testing purposes
-    public static const NAMED_EVENT_BLOOD_DOWN :String = "BloodDown";//Only for testing purposes
-    public static const NAMED_EVENT_LEVEL_UP :String = "LevelUp";//Only for testing purposes
-    public static const NAMED_EVENT_LEVEL_DOWN :String = "LevelDown";//Only for testing purposes
-    public static const NAMED_EVENT_ADD_XP :String = "AddXP";//Only for testing purposes
-    public static const NAMED_EVENT_LOSE_XP :String = "LoseXP";//Only for testing purposes
-    public static const NAMED_EVENT_ADD_INVITE :String = "AddInvite";//Only for testing purposes
-    public static const NAMED_EVENT_LOSE_INVITE :String = "LoseInvite";//Only for testing purposes
-    public static const NAMED_EVENT_FEED :String = "Feed";//Only for testing purposes
-    public static const NAMED_EVENT_MAKE_SIRE :String = "MakeSire";//Only for testing purposes
-    public static const NAMED_EVENT_MAKE_MINION :String = "MakeMinion";//Only for testing purposes
-    public static const NAMED_EVENT_CHAT :String = "ChatMessage";//Only for testing purposes
-    public static const NAMED_EVENT_QUIT :String = "Quit";//Only for testing purposes
-
-    public static const NAMED_EVENT_START_BLOOD_BLOOM :String = "StartBloodBloom";
-    public static const NAMED_EVENT_BLOODBLOOM_COUNTDOWN :String = "BloodbloomCountDown";
-    public static const NAMED_EVENT_SHARE_TOKEN :String = "ShareToken";
+//    public static const NAMED_EVENT_START_BLOOD_BLOOM :String = "StartBloodBloom";
+//    public static const NAMED_EVENT_BLOODBLOOM_COUNTDOWN :String = "BloodbloomCountDown";
+//    public static const NAMED_EVENT_SHARE_TOKEN :String = "ShareToken";
     public static const NAMED_MESSAGE_CHOOSE_FEMALE :String = "ChooseFemale";
     public static const NAMED_MESSAGE_CHOOSE_MALE :String = "ChooseMale";
 
@@ -113,7 +97,7 @@ public class VConstants
 
 
 
-    public static const DEBUG_MINION :String = "miniondebug ";
+//    public static const DEBUG_MINION :String = "miniondebug ";
 
     /**
     * If the vampire 'feeds' on non-players, this is the player Id to use.

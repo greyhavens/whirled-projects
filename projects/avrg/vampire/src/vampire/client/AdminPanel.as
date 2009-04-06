@@ -17,6 +17,7 @@ import flash.text.TextFieldType;
 import vampire.data.Codes;
 import vampire.data.Logic;
 import vampire.data.VConstants;
+import vampire.net.messages.DebugMsg;
 import vampire.net.messages.SendGlobalMsg;
 
 public class AdminPanel extends DraggableObject
@@ -189,41 +190,11 @@ public class AdminPanel extends DraggableObject
 
 
 
-    protected function gainBlood(... ignored) :void
-    {
-        ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_BLOOD_UP);
-        if(VConstants.LOCAL_DEBUG_MODE) {
 
-            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
-
-            var currentBlood :Number = ClientContext.model.blood;
-            if(isNaN(currentBlood)) {
-                currentBlood = 0;
-            }
-            currentBlood = Math.min(currentBlood + 10, ClientContext.model.maxblood);
-            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD, currentBlood);
-        }
-    }
-
-    protected function loseBlood(... ignored) :void
-    {
-        ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_BLOOD_DOWN);
-
-        if(VConstants.LOCAL_DEBUG_MODE) {
-
-            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
-
-            var currentBlood :Number = ClientContext.model.blood;
-            if(isNaN(currentBlood)) {
-                currentBlood = 0;
-            }
-            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD, Math.max(0,currentBlood - 10));
-        }
-    }
 
     protected function gainLevel(... ignored) :void
     {
-        ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_LEVEL_UP);
+        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LEVEL_UP));
 
         if(VConstants.LOCAL_DEBUG_MODE) {
 
@@ -242,7 +213,7 @@ public class AdminPanel extends DraggableObject
 
     protected function loseLevel(... ignored) :void
     {
-        ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_LEVEL_DOWN);
+        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LEVEL_DOWN));
 
         if(VConstants.LOCAL_DEBUG_MODE) {
 
@@ -259,7 +230,7 @@ public class AdminPanel extends DraggableObject
 
     protected function gainXP(... ignored) :void
     {
-        ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_ADD_XP);
+        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_GAIN_XP));
         if(VConstants.LOCAL_DEBUG_MODE) {
             var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
             var currentXP:int = ClientContext.model.xp;
@@ -274,7 +245,7 @@ public class AdminPanel extends DraggableObject
 
     protected function loseXP(... ignored) :void
     {
-        ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_LOSE_XP);
+        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LOSE_XP));
         if(VConstants.LOCAL_DEBUG_MODE) {
 
             var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
@@ -292,7 +263,7 @@ public class AdminPanel extends DraggableObject
 
     protected function gainInvite(... ignored) :void
     {
-        ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_ADD_INVITE);
+        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_ADD_INVITE));
 
         if(VConstants.LOCAL_DEBUG_MODE) {
 
@@ -307,7 +278,7 @@ public class AdminPanel extends DraggableObject
 
     protected function loseInvite(... ignored) :void
     {
-        ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_LOSE_INVITE);
+        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LOSE_INVITE));
         if(VConstants.LOCAL_DEBUG_MODE) {
 
             var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);

@@ -44,30 +44,30 @@ public class LineageView extends SceneObjectParent
 
 
         _selectedPlayerIdCenter = ClientContext.ourPlayerId;
-        _hierarchy = ClientContext.model.lineage;
-        if (_hierarchy != null) {
-            updateHierarchy(_selectedPlayerIdCenter);
+        _lineage = ClientContext.model.lineage;
+        if (_lineage != null) {
+            updateLineage(_selectedPlayerIdCenter);
         }
         else if (false && VConstants.LOCAL_DEBUG_MODE) {
             trace("SHowing test hierarchy");
-            _hierarchy = new Lineage();
-            _hierarchy.setPlayerSire(1, 2);
-            _hierarchy.setPlayerSire(3, 1);
-            _hierarchy.setPlayerSire(4, 1);
-            _hierarchy.setPlayerSire(5, 1);
-            _hierarchy.setPlayerSire(6, 5);
-            _hierarchy.setPlayerSire(7, 6);
-            _hierarchy.setPlayerSire(8, 6);
-            _hierarchy.setPlayerSire(9, 1);
-            _hierarchy.setPlayerSire(10, 1);
-            _hierarchy.setPlayerSire(11, 1);
-            _hierarchy.setPlayerSire(12, 1);
-            _hierarchy.setPlayerSire(13, 1);
-            _hierarchy.setPlayerSire(14, 1);
-            updateHierarchy(3);
+            _lineage = new Lineage();
+            _lineage.setPlayerSire(1, 2);
+            _lineage.setPlayerSire(3, 1);
+            _lineage.setPlayerSire(4, 1);
+            _lineage.setPlayerSire(5, 1);
+            _lineage.setPlayerSire(6, 5);
+            _lineage.setPlayerSire(7, 6);
+            _lineage.setPlayerSire(8, 6);
+            _lineage.setPlayerSire(9, 1);
+            _lineage.setPlayerSire(10, 1);
+            _lineage.setPlayerSire(11, 1);
+            _lineage.setPlayerSire(12, 1);
+            _lineage.setPlayerSire(13, 1);
+            _lineage.setPlayerSire(14, 1);
+            updateLineage(3);
         }
 
-        _events.registerListener(ClientContext.model, LineageUpdatedEvent.LINEAGE_UPDATED, updateHierarchyEvent);
+        _events.registerListener(ClientContext.model, LineageUpdatedEvent.LINEAGE_UPDATED, updateLineageEvent);
 
 
     }
@@ -83,19 +83,19 @@ public class LineageView extends SceneObjectParent
     }
 
 
-    protected function updateHierarchyEvent(e :LineageUpdatedEvent) :void
+    protected function updateLineageEvent(e :LineageUpdatedEvent) :void
     {
-        log.debug(VConstants.DEBUG_MINION + " updateHierarchyEvent", "e", e);
-        _hierarchy = e.lineage;
-        if (_hierarchy == null) {
+        log.debug(" updateLineageEvent", "e", e);
+        _lineage = e.lineage;
+        if (_lineage == null) {
             log.error("updateHierarchyEvent(), but hierarchy is null :-(");
         }
 //        if (_hierarchy.isPlayer(_selectedPlayerIdCenter)) {
-            updateHierarchy(_selectedPlayerIdCenter);
+            updateLineage(_selectedPlayerIdCenter);
 //        }
     }
 
-    public function updateHierarchy (playerIdToCenter :int) :void
+    public function updateLineage (playerIdToCenter :int) :void
     {
         if (_isLayoutMoving) {
             return;
@@ -120,29 +120,10 @@ public class LineageView extends SceneObjectParent
 //            ", _hierarchy=" + _hierarchy);
 
 
-        if (_hierarchy == null) {
-            _hierarchy = new Lineage();
-            _hierarchy.setPlayerSire(playerIdToCenter, 0);
+        if (_lineage == null) {
+            _lineage = new Lineage();
+            _lineage.setPlayerSire(playerIdToCenter, 0);
         }
-
-
-
-//        if (_selectedPlayerIdCenter == playerIdToCenter
-//            && _previousHierarchyPage == _hierarchyPage) {
-////            _hierarchy.getMinionCount(playerIdToCenter) <= 5) {
-//
-//            trace("  doing nothing");
-//            return;
-//        }
-
-
-//        _player2Drop.forEach(function (playerId :int, so :DropSceneObject) :void {
-//            if (so.isLiveObject) {
-//                so.destroySelf();
-//            }
-//        });
-//        _player2Drop.clear();
-
 
         _isLayoutMoving = true;
         for each (var ui :SceneObject in _volatileUIComponents) {
@@ -172,29 +153,16 @@ public class LineageView extends SceneObjectParent
 
         //Record which player droplets are shown, so we can animate them better.
         _visiblePlayers.clear();
-//        _visiblePlayers.add(playerIdToCenter);
-//        for each (var minionId :int in _hierarchy.getMinionIds(playerIdToCenter).toArray()) {
-//            _visiblePlayers.add(minionId);
-//        }
-        //Add max two sires up the sire chain.
-//        if (_hierarchy.isSireExisting(playerIdToCenter)) {
-//            _visiblePlayers.add(_hierarchy.getSireId(playerIdToCenter));
-//
-//            if (_hierarchy.isSireExisting(_hierarchy.getSireId(playerIdToCenter))) {
-//                _visiblePlayers.add(_hierarchy.getSireId(_hierarchy.getSireId(playerIdToCenter)));
-//            }
-//        }
-
 
 
 
         //Draw links
         recursivelyDrawSires(_hierarchyTree, playerIdToCenter, playerX, playerY, true, 0);
-        drawMinions(_hierarchyTree, playerIdToCenter, playerX, playerY, true, 0);
+        drawProgeny(_hierarchyTree, playerIdToCenter, playerX, playerY, true, 0);
 
         //Draw labels
         recursivelyDrawSires(_hierarchyTree, playerIdToCenter, playerX, playerY, false, 0);
-        drawMinions(_hierarchyTree, playerIdToCenter, playerX, playerY, false, 0);
+        drawProgeny(_hierarchyTree, playerIdToCenter, playerX, playerY, false, 0);
 
 
 //        _visiblePlayers.forEach(function (playerId :int) :void {
@@ -246,7 +214,7 @@ public class LineageView extends SceneObjectParent
 
         if (depth < 4) {
             drawPlayerWithSireLink(s, playerId, startX, startY, startX, startY - yInc, linkOnly, false, left);
-            var sireId :int = _hierarchy.getSireId(playerId);
+            var sireId :int = _lineage.getSireId(playerId);
             recursivelyDrawSires(s, sireId, startX, startY - yInc, linkOnly, depth, !left);
         }
         else {
@@ -254,7 +222,7 @@ public class LineageView extends SceneObjectParent
 //                    drawLineFrom(s, startX, startY, startX, startY - yInc);
             }
             else {
-                var grandSireCount :int = _hierarchy.getSireProgressionCount(playerId);
+                var grandSireCount :int = _lineage.getSireProgressionCount(playerId);
 
                 var sireTextSO :SceneObject = new SimpleSceneObject(
                     getTextFieldCenteredOn((1 + grandSireCount) + " Superior GrandSire" +
@@ -268,7 +236,7 @@ public class LineageView extends SceneObjectParent
 
     }
 
-    protected function drawMinions (s :Sprite, playerId :int, startX :int, startY :int, linkOnly :Boolean, depth :int, left :Boolean = false) :void
+    protected function drawProgeny (s :Sprite, playerId :int, startX :int, startY :int, linkOnly :Boolean, depth :int, left :Boolean = false) :void
     {
         var i :int;
 
@@ -276,27 +244,27 @@ public class LineageView extends SceneObjectParent
             return;
         }
 
-        var minionIds :Array = _hierarchy.isHavingMinions(playerId) ? _hierarchy.getMinionIds(playerId).toArray() : [];
+        var progenyIds :Array = _lineage.isPossessingProgeny(playerId) ? _lineage.getProgenyIds(playerId).toArray() : [];
 
-        var minionCount :int = minionIds.length;
+        var progenyCount :int = progenyIds.length;
 
-        var startMinionViewIndex :int = 0;
+        var startProgenyViewIndex :int = 0;
 
-        if (minionCount > MAX_MINIONS_SHOWN) {
-            startMinionViewIndex = _hierarchyPage * MAX_MINIONS_SHOWN;
+        if (progenyCount > MAX_PROGENY_SHOWN) {
+            startProgenyViewIndex = _hierarchyPage * MAX_PROGENY_SHOWN;
 
-            //Delete minions after the last entry in the 'page'
-            minionIds.splice(startMinionViewIndex + MAX_MINIONS_SHOWN);
+            //Delete progenys after the last entry in the 'page'
+            progenyIds.splice(startProgenyViewIndex + MAX_PROGENY_SHOWN);
 
 
-            //Delete minions before the first entry in the 'page'
-            minionIds = minionIds.slice(startMinionViewIndex);
+            //Delete progenys before the first entry in the 'page'
+            progenyIds = progenyIds.slice(startProgenyViewIndex);
 
         }
-        var locations :Array = computeMinionLocations(startX, startY, minionIds.length);
+        var locations :Array = computeProgenyLocations(startX, startY, progenyIds.length);
 
         //Draw the page left/right buttons.
-        if (startMinionViewIndex > 0) {
+        if (startProgenyViewIndex > 0) {
             //The button
             var button_page_left :SimpleButton = ClientContext.instantiateButton("HUD", "button_hierarchy_no_mouse");
             var buttonLeftSO :SceneObject = new SimpleSceneObject(button_page_left);
@@ -321,8 +289,8 @@ public class LineageView extends SceneObjectParent
 //            Command.bind(textPageLeft, MouseEvent.CLICK, showPreviousPage);
             addGlowFilter(textPageLeft);
         }
-        //Show the more sub minions button
-        if (startMinionViewIndex + MAX_MINIONS_SHOWN < minionCount) {
+        //Show the more sub progeny button
+        if (startProgenyViewIndex + MAX_PROGENY_SHOWN < progenyCount) {
             var button_page_right :SimpleButton = ClientContext.instantiateButton("HUD", "button_hierarchy_no_mouse");
             var buttonRightSO :SceneObject = new SimpleSceneObject(button_page_right);
             buttonRightSO.x = locations[locations.length - 1].x + 25;
@@ -349,7 +317,7 @@ public class LineageView extends SceneObjectParent
 
             var horizontalBarY :int = startY + yInc;
 
-            if (minionIds.length > 1) {
+            if (progenyIds.length > 1) {
 
                 var minX :Number = Number.MAX_VALUE;
                 var maxX :Number = Number.MIN_VALUE;
@@ -363,7 +331,7 @@ public class LineageView extends SceneObjectParent
 
             }
 
-            if (minionIds.length >= 1) {
+            if (progenyIds.length >= 1) {
                 s.graphics.moveTo(startX, startY);
                 s.graphics.lineTo(startX, horizontalBarY);
             }
@@ -371,10 +339,10 @@ public class LineageView extends SceneObjectParent
 
             for(i = 0; i < locations.length; i++) {
 
-                drawPlayerWithSireLink(s, minionIds[i], locations[i].x, locations[i].y, locations[i].x, horizontalBarY, linkOnly, true, left);
+                drawPlayerWithSireLink(s, progenyIds[i], locations[i].x, locations[i].y, locations[i].x, horizontalBarY, linkOnly, true, left);
 
-                var subminionCount :int = _hierarchy.getAllMinionsAndSubminions(minionIds[i]).size();
-                if (subminionCount) {
+                var subProgenyCount :int = _lineage.getAllProgenyAndDescendents(progenyIds[i]).size();
+                if (subProgenyCount) {
                     if (linkOnly) {
                         drawLineFrom(s, locations[i].x, locations[i].y, locations[i].x, locations[i].y - yInc);
                     }
@@ -387,25 +355,25 @@ public class LineageView extends SceneObjectParent
                         addSceneObject(buttonDownSO, s);
                         _volatileUIComponents.push(buttonDownSO);
 //                        s.addChild(button_hiararchy);
-                        Command.bind(button_hiararchy, MouseEvent.CLICK, VampireController.HIERARCHY_CENTER_SELECTED, [minionIds[i], this]);
+                        Command.bind(button_hiararchy, MouseEvent.CLICK, VampireController.HIERARCHY_CENTER_SELECTED, [progenyIds[i], this]);
 //                        registerListener(button_hiararchy, MouseEvent.CLICK, function () :void {
-//                            ClientContext.controller.handleHierarchyCenterSelected(minionIds[i], _selfReference);
+//                            ClientContext.controller.handleHierarchyCenterSelected(progenyIds[i], _selfReference);
 //                        });
 
-//                        VampireController.HIERARCHY_CENTER_SELECTED, [minionIds[i], this]);
+//                        VampireController.HIERARCHY_CENTER_SELECTED, [progenyIds[i], this]);
                         addGlowFilter(button_hiararchy);
 
-                        var subminionTextField :TextField = getTextFieldCenteredOn(subminionCount + "", locations[i].x + 4, locations[i].y +1*yInc, true, left);
-                        var subminionTextSO :SceneObject = new SimpleSceneObject(subminionTextField);
-                        subminionTextField.mouseEnabled = true;
-                        addSceneObject(subminionTextSO, s);
-//                        s.addChild(subminionTextField);
-                        _volatileUIComponents.push(subminionTextSO);
-//                        registerListener(subminionTextField, MouseEvent.CLICK, function () :void {
-//                            ClientContext.controller.handleHierarchyCenterSelected(minionIds[i], _selfReference);
+                        var subProgenyTextField :TextField = getTextFieldCenteredOn(subProgenyCount + "", locations[i].x + 4, locations[i].y +1*yInc, true, left);
+                        var subProgenyTextSO :SceneObject = new SimpleSceneObject(subProgenyTextField);
+                        subProgenyTextField.mouseEnabled = true;
+                        addSceneObject(subProgenyTextSO, s);
+//                        s.addChild(subprogenyTextField);
+                        _volatileUIComponents.push(subProgenyTextSO);
+//                        registerListener(subprogenyTextField, MouseEvent.CLICK, function () :void {
+//                            ClientContext.controller.handleHierarchyCenterSelected(progenyIds[i], _selfReference);
 //                        });
-                        Command.bind(subminionTextField, MouseEvent.CLICK, VampireController.HIERARCHY_CENTER_SELECTED, [minionIds[i], this]);
-                        addGlowFilter(subminionTextField);
+                        Command.bind(subProgenyTextField, MouseEvent.CLICK, VampireController.HIERARCHY_CENTER_SELECTED, [progenyIds[i], this]);
+                        addGlowFilter(subProgenyTextField);
                     }
                 }
             }
@@ -421,22 +389,22 @@ public class LineageView extends SceneObjectParent
         })
     }
 
-    protected function computeMinionLocations (myX :int, myY:int, minions :int) :Array
+    protected function computeProgenyLocations (myX :int, myY:int, progenys :int) :Array
     {
         var maxWidth :int = LINEAGE_PANEL_WIDTH - 160;
         var locations :Array = new Array();
-        if (minions == 0) {
+        if (progenys == 0) {
             return locations;
         }
-        else if (minions == 1) {
+        else if (progenys == 1) {
             locations.push(new Vector2(myX ,  myY + yInc));
             return locations;
         }
 
         var xStart :int = myX - maxWidth / 2;
-        var xInc :int = maxWidth / (minions - 1);
-        for(var i :int = 0; i < minions; i++) {
-            locations.push(new Vector2(xStart + i * (maxWidth / (minions - 1)) ,  myY + 2*yInc));
+        var xInc :int = maxWidth / (progenys - 1);
+        for(var i :int = 0; i < progenys; i++) {
+            locations.push(new Vector2(xStart + i * (maxWidth / (progenys - 1)) ,  myY + 2*yInc));
         }
         return locations;
     }
@@ -451,19 +419,8 @@ public class LineageView extends SceneObjectParent
                                                below :Boolean,
                                                left :Boolean) :void
     {
-        if (linkOnly && _hierarchy.getSireProgressionCount(playerId) > 0) {
+        if (linkOnly && _lineage.getSireProgressionCount(playerId) > 0) {
             drawLineFrom(s, playerX, playerY, sireX, sireY);
-
-//            //Experiemental, draw a horizontal line if the player has minions, no matter where they are,
-//            if (!below && _selectedPlayerIdCenter != playerId && _hierarchy.getMinionCount(playerId) > 1) {
-//
-//
-//
-//
-//                s.graphics.lineStyle(BLOOD_LINEAGE_LINK_THICKNESS, BLOOD_LINEAGE_LINK_COLOR);
-//                s.graphics.moveTo(playerX - 20, playerY);
-//                s.graphics.lineTo(playerX + 20, playerY);
-//            }
         }
         else {
             drawPlayerNameCenteredOn(s, playerId, playerX, playerY, below, left);
@@ -478,8 +435,8 @@ public class LineageView extends SceneObjectParent
         if (!_player2Drop.containsKey(playerId)) {
 
             var playerName :String = null;
-            if (_hierarchy._playerId2Name.containsKey(playerId)) {
-                playerName = _hierarchy._playerId2Name.get(playerId) as String;
+            if (_lineage._playerId2Name.containsKey(playerId)) {
+                playerName = _lineage._playerId2Name.get(playerId) as String;
             }
             if (playerName == null || playerName.length == 0) {
                 playerName = ClientContext.getPlayerName(playerId);
@@ -487,7 +444,7 @@ public class LineageView extends SceneObjectParent
 
             playerName = playerName.substring(0, MAX_NAME_CHARS);
 
-            drop = new DropSceneObject(playerId, playerName, updateHierarchy);
+            drop = new DropSceneObject(playerId, playerName, updateLineage);
 
             addSceneObject(drop);
             drop.alpha = 0;
@@ -496,8 +453,8 @@ public class LineageView extends SceneObjectParent
         }
         drop = _player2Drop.get(playerId) as DropSceneObject;
 
-        //Experiemental, draw a horizontal line if the player has minions, no matter where they are,
-            if (!below && _selectedPlayerIdCenter != playerId && _hierarchy.getMinionCount(playerId) > 1) {
+        //Experiemental, draw a horizontal line if the player has progenys, no matter where they are,
+            if (!below && _selectedPlayerIdCenter != playerId && _lineage.getProgenyCount(playerId) > 1) {
                 drop.showHBar();
 //                s.graphics.lineStyle(BLOOD_LINEAGE_LINK_THICKNESS, BLOOD_LINEAGE_LINK_COLOR);
 //                s.graphics.moveTo(playerX - 20, playerY);
@@ -601,24 +558,24 @@ public class LineageView extends SceneObjectParent
     protected function showNextPage (...ignored) :void
     {
         _hierarchyPage++;
-        updateHierarchy(_selectedPlayerIdCenter);
+        updateLineage(_selectedPlayerIdCenter);
     }
 
     protected function showPreviousPage (...ignored) :void
     {
         _hierarchyPage--;
-        updateHierarchy(_selectedPlayerIdCenter);
+        updateLineage(_selectedPlayerIdCenter);
     }
 
 
     protected var _hierarchyTree :Sprite;
-    protected var _hierarchy :Lineage;
+    protected var _lineage :Lineage;
 
     protected var _selectedPlayerIdCenter :int;
     protected var _selectedPlayerIdList :Array = new Array();
     protected var _isLayoutMoving :Boolean = false;
 
-    protected var _hierarchyPage :int = 0;//If there are too many minions, scroll by 'pages'
+    protected var _hierarchyPage :int = 0;//If there are too many progenys, scroll by 'pages'
 //    protected var _previousHierarchyPage :int = 0;//For unnecessary updating
     protected var _selfReference :LineageView;
 
@@ -636,14 +593,14 @@ public class LineageView extends SceneObjectParent
     public static const BLOOD_LINEAGE_LINK_COLOR :int = 0xcc0000;
     public static const BLOOD_LINEAGE_LINK_THICKNESS :int = 3;
 
-    protected static const MAX_MINIONS_SHOWN :int = 5;
+    protected static const MAX_PROGENY_SHOWN :int = 5;
     public static const MAX_NAME_CHARS :int = 10;
 
     protected static const yInc :int = 30;
     protected static const LINEAGE_PANEL_WIDTH :int = 490;
     protected static const LINEAGE_PANEL_HEIGHT :int = 350;
 
-    public static const NAME :String = "HierarchySceneObject";
+    public static const NAME :String = "LineageSceneObject";
     protected static const log :Log = Log.getLog(LineageView);
 
 }

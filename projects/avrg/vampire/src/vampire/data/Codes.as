@@ -10,7 +10,7 @@ public class Codes
         return Codes.ROOM_PROP_PREFIX_PLAYER_DICT + playerId;
     }
 
-    public static const ROOM_PROP_MINION_HIERARCHY :String = "hierarchy";
+    public static const ROOM_PROP_LINEAGE :String = "hierarchy";
     public static const ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE :String = "noFeedingPlayers";
     public static const ROOM_PROP_PRIMARY_PREDS :String = "primaryPreds";
     public static const ROOM_PROP_FEEDBACK :String = "feedback";
@@ -45,11 +45,6 @@ public class Codes
     public static const PLAYER_PROP_LAST_TIME_AWAKE :String = NetConstants.makePersistent("time_last_awake");
 
     /**
-    * List of minions (people you invite into the game).
-    */
-//    public static const PLAYER_PROP_PREFIX_MINIONS :String = NetConstants.makePersistent("minions");
-
-    /**
     * The vampire who makes you into a vampire.
     */
     public static const PLAYER_PROP_SIRE :String = NetConstants.makePersistent("sire");
@@ -70,9 +65,9 @@ public class Codes
     public static const PLAYER_PROP_FEEDING_DATA :String = NetConstants.makePersistent("feedingData");
 
     /**
-    * List of minions for minion trophies
+    * List of progeny for progeny trophies
     */
-    public static const PLAYER_PROP_MINIONIDS :String = NetConstants.makePersistent("minionIds");
+    public static const PLAYER_PROP_PROGENY_IDS :String = NetConstants.makePersistent("minionIds");
 
     /**
     * Number of successful invites.
@@ -110,9 +105,9 @@ public class Codes
     /**Award coins on completion of feeding.*/
     public static const TASK_FEEDING_ID :String = "taskFeeding";
 
-    /**Award coins on minion acquisition.*/
-    public static const TASK_ACQUIRE_MINION_ID :String = "taskAcquireMinion";
-    public static const TASK_ACQUIRE_MINION_SCORE :Number = 0.8;
+    /**Award coins on progeny acquisition.*/
+    public static const TASK_ACQUIRE_PROGENY_ID :String = "taskAcquireProgeny";
+    public static const TASK_ACQUIRE_PROGENY_SCORE :Number = 0.8;
 
     public static const POPUP_PREFIX :String = "POPUP";
 

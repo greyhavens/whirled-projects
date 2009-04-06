@@ -87,12 +87,12 @@ public class LineageServer extends Lineage
 
     protected function loadPlayerFromDB(playerId :int) :void
     {
-        log.debug(VConstants.DEBUG_MINION + " loadPlayerFromDB(" + playerId + ")...");
+        log.debug(" loadPlayerFromDB(" + playerId + ")...");
         ServerContext.ctrl.loadOfflinePlayer(playerId,
             function (props :OfflinePlayerPropertyControl) :void {
                 var name :String = String(props.get(Codes.PLAYER_PROP_NAME));
                 var sireId :int = int(props.get(Codes.PLAYER_PROP_SIRE));
-                log.debug(VConstants.DEBUG_MINION + " loadPlayerFromDB(), props.getUserProps(), name=" + name + ", sire=" + sireId);
+                log.debug(" loadPlayerFromDB(), props.getUserProps(), name=" + name + ", sire=" + sireId);
 
                 setPlayerName(playerId, name);
                 setPlayerSire(playerId, sireId);
@@ -112,22 +112,22 @@ public class LineageServer extends Lineage
     */
     public function playerEnteredRoom(player :PlayerData, room :Room) :void
     {
-        log.debug(VConstants.DEBUG_MINION + " playerEnteredRoom(), hierarchy=" + ServerContext.lineage.toString());
+        log.debug(" playerEnteredRoom(), hierarchy=" + ServerContext.lineage.toString());
 
         if(player == null || room == null) {
-            log.error(VConstants.DEBUG_MINION + " playerEnteredRoom(), player == null || room == null");
+            log.error(" playerEnteredRoom(), player == null || room == null");
             return;
         }
 
         var avatar :AVRGameAvatar = room.ctrl.getAvatarInfo(player.playerId);
         if(avatar == null) {
-            log.error(VConstants.DEBUG_MINION + " playerEnteredRoom(), avatar == null");
+            log.error(" playerEnteredRoom(), avatar == null");
             return;
         }
 
         var avatarname :String = room.ctrl.getAvatarInfo(player.playerId).name;
         if(avatarname == null) {
-            log.error(VConstants.DEBUG_MINION + " playerEnteredRoom(), playername == null");
+            log.error(" playerEnteredRoom(), playername == null");
             return;
         }
 
@@ -135,21 +135,21 @@ public class LineageServer extends Lineage
 
         if(!isPlayer(player.playerId)) {
             isHierarchyAltered = true;
-            log.debug(VConstants.DEBUG_MINION + " playerEnteredRoom, player not in hierarchy");
+            log.debug(" playerEnteredRoom, player not in hierarchy");
         }
         else if(!_playerId2Name.containsKey(player.playerId) ||
             _playerId2Name.get(player.playerId) != avatarname ||
             avatarname != player.name) {
             isHierarchyAltered = true;
-            log.debug(VConstants.DEBUG_MINION + " playerEnteredRoom, player name changed");
+            log.debug(" playerEnteredRoom, player name changed");
         }
         else if(!isPlayerDataEqual(player)) {
             isHierarchyAltered = true;
-            log.debug(VConstants.DEBUG_MINION + " playerEnteredRoom, player data changed");
+            log.debug(" playerEnteredRoom, player data changed");
         }
         else if(player.sire > 0 && !isPlayerName(player.sire)){
             isHierarchyAltered = true;
-            log.debug(VConstants.DEBUG_MINION + " playerEnteredRoom, sire has no name");
+            log.debug(" playerEnteredRoom, sire has no name");
         }
 
         if(isHierarchyAltered) {//Something doesn't match.  Update all the data, and propagate
@@ -163,7 +163,7 @@ public class LineageServer extends Lineage
             //Update hierarchy data
             setPlayerSire(player.playerId, player.sire);
 
-            log.debug(VConstants.DEBUG_MINION + " before we load the sire data(just added this player), the hierarchy is=" + this.toString());
+            log.debug(" before we load the sire data(just added this player), the hierarchy is=" + this.toString());
             loadConnectingPlayersFromPropsRecursive(player.sire);
             updatePlayer(player.playerId);
 //            updateIntoRoomProps();
@@ -171,7 +171,7 @@ public class LineageServer extends Lineage
 
         }
         else {
-            log.debug(VConstants.DEBUG_MINION + " hierarchy is not altered, sending unchanged.");
+            log.debug(" hierarchy is not altered, sending unchanged.");
         }
 
     }
@@ -191,7 +191,7 @@ public class LineageServer extends Lineage
     {
         var relatedPlayersToUpdate :Array = new Array();
 
-        getAllMinionsAndSubminions(playerId).forEach(function(minionId :int) :void {
+        getAllProgenyAndDescendents(playerId).forEach(function(minionId :int) :void {
             relatedPlayersToUpdate.push(minionId);
         });
 
@@ -231,26 +231,26 @@ public class LineageServer extends Lineage
             if(room != null && room.ctrl != null && room.ctrl.isConnected()
                 && room.players != null && room.players.size() > 0) {
 
-                log.debug(VConstants.DEBUG_MINION + "updateIntoRoomProps(roomId=" + room.roomId + ")...");
+                log.debug("updateIntoRoomProps(roomId=" + room.roomId + ")...");
                 //Get the subtree containing all trees of all players in the room
                 var playerTree :HashMap = new HashMap();
-                log.debug(VConstants.DEBUG_MINION + "updateIntoRoomProps(), subtree containing all trees of all players in the room");
+                log.debug("updateIntoRoomProps(), subtree containing all trees of all players in the room");
                 room.players.forEach(function(playerId :int, player :PlayerData) :void {
-                    getMapOfSiresAndMinions(player.playerId, playerTree);
+                    getMapOfSiresAndDescendents(player.playerId, playerTree);
                 });
 
                 //Get the existing subtree
-                var roomDict :Dictionary = room.ctrl.props.get(Codes.ROOM_PROP_MINION_HIERARCHY) as Dictionary;
+                var roomDict :Dictionary = room.ctrl.props.get(Codes.ROOM_PROP_LINEAGE) as Dictionary;
                 if (roomDict == null) {
                     roomDict = new Dictionary();
-                    room.ctrl.props.set(Codes.ROOM_PROP_MINION_HIERARCHY, roomDict);
+                    room.ctrl.props.set(Codes.ROOM_PROP_LINEAGE, roomDict);
                 }
 
 //                //Update the playerId keys
 //                var allPlayerIdsOld :Array = room.ctrl.props.get(Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS) as Array;
 //                var allPlayerIdsNew :Array = playerTree.keys();
 //                if (allPlayerIdsNew == null || allPlayerIdsOld == null || !ArrayUtil.equals(allPlayerIdsNew, allPlayerIdsOld)) {
-//                    log.debug(VConstants.DEBUG_MINION + "updateIntoRoomProps(), set(" +Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS + ", " +allPlayerIdsNew + ")");
+//                    log.debug("updateIntoRoomProps(), set(" +Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS + ", " +allPlayerIdsNew + ")");
 //                    room.ctrl.props.set(Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS, allPlayerIdsNew);
 //                }
 
@@ -276,14 +276,14 @@ public class LineageServer extends Lineage
 
                     if (!ArrayUtil.equals(roomDict[playerId], nameAndSire)) {
                         updateCount++;
-                        log.debug(VConstants.DEBUG_MINION + "updateIntoRoomProps(), setIn(" +Codes.ROOM_PROP_MINION_HIERARCHY + ", " +playerId + "=" +  nameAndSire + ")");
-                        room.ctrl.props.setIn(Codes.ROOM_PROP_MINION_HIERARCHY, playerId, nameAndSire);
+                        log.debug("updateIntoRoomProps(), setIn(" +Codes.ROOM_PROP_LINEAGE + ", " +playerId + "=" +  nameAndSire + ")");
+                        room.ctrl.props.setIn(Codes.ROOM_PROP_LINEAGE, playerId, nameAndSire);
                     }
                 });
 
             }
             else {
-                log.debug(VConstants.DEBUG_MINION + "updateIntoRoomProps(roomId=" + room.roomId + ") failed");
+                log.debug("updateIntoRoomProps(roomId=" + room.roomId + ") failed");
             }
         }catch (err :Error) {
             log.error("Problem in updateIntoRoomProps()", "room", room);
@@ -304,7 +304,6 @@ public class LineageServer extends Lineage
     */
     protected function loadConnectingPlayersFromPropsRecursive(playerId :int) :void
     {
-//        log.debug(Constants.DEBUG_MINION + "loadConnectingPlayersFromPropsRecursive(" + playerId + ")")
         //If our name is present, we assume that we are already loaded.
         if(isPlayerName(playerId)) {
             return;
@@ -345,8 +344,8 @@ public class LineageServer extends Lineage
 
         var sire :PlayerData = _vserver.getPlayer(sireId);
         if(sire != null) {
-            sire.updateMinions(getMinionIds(sireId).toArray());
-//            Trophies.checkMinionTrophies(sire);
+            //TODO: CHECK THIS
+            sire.updateMinions(getProgenyIds(sireId).toArray());
         }
 
         //Update the player props

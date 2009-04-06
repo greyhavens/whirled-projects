@@ -153,7 +153,7 @@ public class PlayerData extends EventHandlerManager
         log.debug("Getting feeding data=" + feedingData);
 
         //Load/Create minionIds
-        _minionsForTrophies = _ctrl.props.get(Codes.PLAYER_PROP_MINIONIDS) as Array;
+        _minionsForTrophies = _ctrl.props.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array;
         if(_minionsForTrophies == null) {
             _minionsForTrophies = new Array();
         }
@@ -323,43 +323,27 @@ public class PlayerData extends EventHandlerManager
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
     {
 
-        log.info(VConstants.DEBUG_MINION + " Player entered room {{{", "player", toString());
-        log.debug(VConstants.DEBUG_MINION + " hierarchy=" + ServerContext.lineage);
+        log.info(" Player entered room", "player", toString());
 
-//        log.debug(Constants.DEBUG_MINION + " Player enteredRoom, already on the database=" + toString());
-//        log.debug(Constants.DEBUG_MINION + " Player enteredRoom, hierarch=" + ServerContext.minionHierarchy);
-
-            var thisPlayer :PlayerData = this;
-            _room = ServerContext.server.getRoom(int(evt.value));
-            ServerContext.server.control.doBatch(function () :void {
-                try {
-                    if(_room != null) {
-//                        var minionsBytes :ByteArray = ServerContext.minionHierarchy.toBytes();
-//                        ServerContext.serverLogBroadcast.log("enteredRoom, sending hierarchy=" + ServerContext.minionHierarchy);
-//                        _room.ctrl.props.set(Codes.ROOM_PROP_MINION_HIERARCHY, minionsBytes);
-
-                        _room.playerEntered(thisPlayer);
-                        ServerContext.lineage.playerEnteredRoom(thisPlayer, _room);
-                        thisPlayer.setState(VConstants.PLAYER_STATE_DEFAULT);
-                        ServerLogic.updateAvatarState(thisPlayer);
-                    }
-                    else {
-                        log.error("WTF, enteredRoom called, but room == null???");
-                    }
+        var thisPlayer :PlayerData = this;
+        _room = ServerContext.server.getRoom(int(evt.value));
+        ServerContext.server.control.doBatch(function () :void {
+            try {
+                if(_room != null) {
+                    _room.playerEntered(thisPlayer);
+                    ServerContext.lineage.playerEnteredRoom(thisPlayer, _room);
+                    thisPlayer.setState(VConstants.PLAYER_STATE_DEFAULT);
+                    ServerLogic.updateAvatarState(thisPlayer);
                 }
-                catch(err:Error)
-                {
-                    log.error(err.getStackTrace());
+                else {
+                    log.error("WTF, enteredRoom called, but room == null???");
                 }
-            });
-
-        //Make sure we are the right color when we enter a room.
-//        handleChangeColorScheme((isVampire() ? VConstants.COLOR_SCHEME_VAMPIRE : VConstants.COLOR_SCHEME_HUMAN));
-//        setIntoRoomProps();
-
-        log.debug(VConstants.DEBUG_MINION + "after _room.playerEntered");
-        log.debug(VConstants.DEBUG_MINION + "hierarchy=" + ServerContext.lineage);
-
+            }
+            catch(err:Error)
+            {
+                log.error(err.getStackTrace());
+            }
+        });
     }
 
 
@@ -511,9 +495,9 @@ public class PlayerData extends EventHandlerManager
                 _ctrl.props.set(Codes.PLAYER_PROP_BLOODBONDED_NAME, bloodbondedName, true);
             }
 
-            if(_ctrl.props.get(Codes.PLAYER_PROP_MINIONIDS) == null ||
-                !ArrayUtil.equals(_ctrl.props.get(Codes.PLAYER_PROP_MINIONIDS) as Array, _minionsForTrophies)) {
-                _ctrl.props.set(Codes.PLAYER_PROP_MINIONIDS, _minionsForTrophies, true);
+            if(_ctrl.props.get(Codes.PLAYER_PROP_PROGENY_IDS) == null ||
+                !ArrayUtil.equals(_ctrl.props.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array, _minionsForTrophies)) {
+                _ctrl.props.set(Codes.PLAYER_PROP_PROGENY_IDS, _minionsForTrophies, true);
                 Trophies.checkMinionTrophies(this);
             }
 

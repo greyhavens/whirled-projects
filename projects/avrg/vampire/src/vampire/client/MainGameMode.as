@@ -19,6 +19,7 @@ import vampire.debug.LineageDebug;
 import vampire.feeding.FeedingClient;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.GameStartedMsg;
+import vampire.net.messages.ShareTokenMsg;
 
 public class MainGameMode extends AppMode
 {
@@ -116,6 +117,16 @@ public class MainGameMode extends AppMode
         //Add the tutorial
         ClientContext.tutorial = new Tutorial();
 //        ClientContext.tutorial.activateTutorial();
+
+        //If there is a share token, send the invitee to the server
+        var inviterId :int = ClientContext.ctrl.local.getInviterMemberId();
+        var shareToken :String = ClientContext.ctrl.local.getInviteToken();
+        //If we don't have a sire, and we are invited, send our invite token
+        if(inviterId != 0 && SharedPlayerStateClient.getSire(ClientContext.ourPlayerId) == 0) {
+            log.info(ClientContext.ctrl.player.getPlayerId() + " sending  inviterId=" + inviterId + ", token=" + shareToken);
+            ClientContext.ctrl.agent.sendMessage(ShareTokenMsg.NAME,
+                new ShareTokenMsg(ClientContext.ourPlayerId, inviterId, shareToken).toBytes());
+        }
 
 
     }

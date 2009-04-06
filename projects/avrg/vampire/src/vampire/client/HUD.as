@@ -85,7 +85,7 @@ public class HUD extends DraggableObject
         //Otherwise check for player updates
 
         switch(e.name) {
-            case Codes.ROOM_PROP_MINION_HIERARCHY:
+            case Codes.ROOM_PROP_LINEAGE:
                 break;
             case Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE:
                 break;

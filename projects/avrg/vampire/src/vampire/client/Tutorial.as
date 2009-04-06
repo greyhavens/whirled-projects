@@ -213,7 +213,7 @@ public class Tutorial extends AppMode
             case PAGE_CLICK_BUILD_LINEAGE:
             updateTargetingRecticleInHelp("link_tolineage");
             if (ClientContext.model != null && ClientContext.model.lineage != null &&
-                (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) > 0 ||
+                (ClientContext.model.lineage.getProgenyCount(ClientContext.ourPlayerId) > 0 ||
                 ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId))) {
 
                 _currentChapter = CHAPTER_END;
@@ -227,10 +227,10 @@ public class Tutorial extends AppMode
                 log.error("chapterGUINavigation", "ClientContext.model.lineage", ClientContext.model.lineage);
             }
             else {
-                if (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) > 0 ||
+                if (ClientContext.model.lineage.getProgenyCount(ClientContext.ourPlayerId) > 0 ||
                 ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId)) {
 
-                    log.error("chapterGUINavigation", "ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId)", ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId));
+                    log.error("chapterGUINavigation", "ClientContext.model.lineage.getProgenyCount(ClientContext.ourPlayerId)", ClientContext.model.lineage.getProgenyCount(ClientContext.ourPlayerId));
 
                     log.error("chapterGUINavigation", "ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId)", ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId));
 
@@ -250,7 +250,7 @@ public class Tutorial extends AppMode
             case PAGE_CLICK_BACK:
             updateTargetingRecticleInHelp("help_back");
             if (ClientContext.model != null && ClientContext.model.lineage != null &&
-                (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) > 0 ||
+                (ClientContext.model.lineage.getProgenyCount(ClientContext.ourPlayerId) > 0 ||
                 ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId))) {
 
                 _currentChapter = CHAPTER_END;
@@ -260,7 +260,7 @@ public class Tutorial extends AppMode
             case PAGE_CLICK_BLOOD:
             updateTargetingRecticleInHelp("link_tovamps");
             if (ClientContext.model != null && ClientContext.model.lineage != null &&
-                (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) > 0 ||
+                (ClientContext.model.lineage.getProgenyCount(ClientContext.ourPlayerId) > 0 ||
                 ClientContext.model.lineage.isSireExisting(ClientContext.ourPlayerId))) {
 
                 _currentChapter = CHAPTER_END;

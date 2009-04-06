@@ -149,14 +149,14 @@ package vampire.client
             _infoTextAnchor = findSafely("text_blood") as TextField;
 
             _getSiresButton = findSafely("link_tovamps") as SimpleButton;
-            _getMinionsButton = findSafely("link_tolineage") as SimpleButton;
+            _getDescendentsButton = findSafely("link_tolineage") as SimpleButton;
 
             registerListener(_getSiresButton, MouseEvent.CLICK,
                 function (e :MouseEvent) :void {
                     ClientContext.tutorial.clickedBlood();
                     gotoFrame("vamps");
                 });
-            registerListener(_getMinionsButton, MouseEvent.CLICK,
+            registerListener(_getDescendentsButton, MouseEvent.CLICK,
                 function (e :MouseEvent) :void {
                     ClientContext.tutorial.clickedBuildLineage();
                     gotoFrame("lineage");
@@ -381,44 +381,6 @@ package vampire.client
                     //Show the top info text
                     createInfoText();
 
-                    //Add the extra help bits for sires and minion recruiting, if relevant
-                    //First, if there's no Lineage yet, jsut add the links
-//                            _getSiresButton.mouseEnabled = false;
-//                            _getSiresButton.visible = false;
-//                            _getMinionsButton.mouseEnabled = false;
-//                            _getMinionsButton.visible = false;
-//                    if (ClientContext.model.lineage == null) {
-//                        _getSiresButton.mouseEnabled = true;
-//                        _getSiresButton.visible = true;
-//                        _getMinionsButton.mouseEnabled = true;
-//                        _getMinionsButton.visible = true;
-//                    }
-//                    else {
-                        //Check if we need to show the sires link
-//                        if (ClientContext.model.lineage.getSireId(ClientContext.ourPlayerId) == 0
-//                            && ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) == 0
-//                            && _lineageView.) {
-//                            _getSiresButton.mouseEnabled = true;
-//                            _getSiresButton.visible = true;
-//                            _getMinionsButton.mouseEnabled = true;
-//                            _getMinionsButton.visible = true;
-//                        }
-//                        else {
-//                            _getSiresButton.mouseEnabled = false;
-//                            _getSiresButton.visible = false;
-//                            _getMinionsButton.mouseEnabled = false;
-//                            _getMinionsButton.visible = false;
-//                        }
-                        //Check if we need to show the minions link
-//                        if (ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) == 0) {
-//                            _getMinionsButton.mouseEnabled = true;
-//                            _getMinionsButton.visible = true;
-//                        }
-//                        else {
-//                            _getMinionsButton.mouseEnabled = false;
-//                            _getMinionsButton.visible = false;
-//                        }
-//                    }
 
                 default:
                     break;
@@ -429,20 +391,20 @@ package vampire.client
         {
             if (ClientContext.ourPlayerId == playerId &&
                 ClientContext.model.lineage.getSireId(ClientContext.ourPlayerId) == 0
-                && ClientContext.model.lineage.getMinionCount(ClientContext.ourPlayerId) == 0) {
+                && ClientContext.model.lineage.getProgenyCount(ClientContext.ourPlayerId) == 0) {
 
                 _getSiresButton.mouseEnabled = true;
                 _getSiresButton.visible = true;
-                _getMinionsButton.mouseEnabled = true;
-                _getMinionsButton.visible = true;
+                _getDescendentsButton.mouseEnabled = true;
+                _getDescendentsButton.visible = true;
             }
             else {
                 _getSiresButton.mouseEnabled = false;
                 _getSiresButton.visible = false;
-                _getMinionsButton.mouseEnabled = false;
-                _getMinionsButton.visible = false;
+                _getDescendentsButton.mouseEnabled = false;
+                _getDescendentsButton.visible = false;
             }
-            _lineageView.updateHierarchy(playerId);
+            _lineageView.updateLineage(playerId);
         }
 
         protected function backButtonPushed (...ignored) :void
@@ -576,7 +538,7 @@ package vampire.client
 
         protected var _lineageView :LineageView;
         protected var _getSiresButton :SimpleButton;
-        protected var _getMinionsButton :SimpleButton;
+        protected var _getDescendentsButton :SimpleButton;
 
         public static const NAME :String = "HelpPopup";
         protected static const log :Log = Log.getLog(HelpPopup);

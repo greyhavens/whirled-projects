@@ -6,11 +6,11 @@ package vampire.client.events
 
     public class LineageUpdatedEvent extends Event
     {
-        public function LineageUpdatedEvent(h:Lineage, playerWithNewMinion :int = 0)
+        public function LineageUpdatedEvent(h:Lineage, playerWithNewProgeny :int = 0)
         {
             super(LINEAGE_UPDATED, false, false);
             _lineage = h;
-            _playerGainedMinion = playerWithNewMinion;
+            _playerGainedProgeny = playerWithNewProgeny;
         }
 
         public function get lineage() :Lineage
@@ -18,13 +18,13 @@ package vampire.client.events
             return _lineage;
         }
 
-        public function get playerGainedMinion() :int
+        public function get playerGainedProgeny() :int
         {
-            return _playerGainedMinion;
+            return _playerGainedProgeny;
         }
 
         protected var _lineage :Lineage;
-        protected var _playerGainedMinion :int;
+        protected var _playerGainedProgeny :int;
 
         public static const LINEAGE_UPDATED :String = "Lineage Updated";
 
