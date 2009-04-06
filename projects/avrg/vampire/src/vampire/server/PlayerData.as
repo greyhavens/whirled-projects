@@ -15,10 +15,10 @@ import com.whirled.contrib.EventHandlerManager;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
-import vampire.Util;
 import vampire.data.Codes;
 import vampire.data.Logic;
 import vampire.data.VConstants;
+import vampire.feeding.Constants;
 import vampire.feeding.PlayerFeedingData;
 
 
@@ -142,6 +142,15 @@ public class PlayerData extends EventHandlerManager
             if(bytes != null) {
                 bytes.position = 0;
                 feedingData.fromBytes(bytes);
+
+                //We had a problem with trophies.  Check the player has the correct trophies
+                //when they log in.
+                for (var strain :int = 0; strain < VConstants.UNIQUE_BLOOD_STRAINS; ++strain) {
+                    if (feedingData.getStrainCount(strain) >= Constants.MAX_COLLECTIONS_PER_STRAIN) {
+                        var trophyName :String = Trophies.getHunterTrophyName(strain);
+                        Trophies.doAward(this, trophyName);
+                    }
+                }
             }
         }
         catch(err :Error) {
@@ -160,7 +169,7 @@ public class PlayerData extends EventHandlerManager
 
         _inviteTally = int(_ctrl.props.get(Codes.PLAYER_PROP_INVITES));
 
-//        updateAvatarState();
+
 
     }
 
