@@ -30,14 +30,14 @@ public class MainGameMode extends AppMode
         log.debug("Starting " + ClassUtil.tinyClassName(this));
 
         ClientContext.model.setup();
-        //Add intro panel if we're a new player
-        if(ClientContext.isNewPlayer) {
-            ClientContext.controller.handleShowIntro("intro");
-            ClientContext.isNewPlayer = false;
-        }
-        else {
-            log.debug("We're NOT a new player");
-        }
+//        //Add intro panel if we're a new player
+//        if(ClientContext.isNewPlayer) {
+//            ClientContext.controller.handleShowIntro("intro");
+//            ClientContext.isNewPlayer = false;
+//        }
+//        else {
+//            log.debug("We're NOT a new player");
+//        }
 
         ClientContext.controller.handleShowIntro("intro");
 
@@ -53,14 +53,24 @@ public class MainGameMode extends AppMode
 
     override protected function setup () :void
     {
+        super.setup();
         //Set the game mode where all game objects are added.
         ClientContext.gameMode = this;
 
         modeSprite.visible = false;
-        super.setup();
 
         ClientContext.model = new GameModel();
         addObject(ClientContext.model);
+
+        //If there is a share token, send the invitee to the server
+        var inviterId :int = ClientContext.ctrl.local.getInviterMemberId();
+        var shareToken :String = ClientContext.ctrl.local.getInviteToken();
+        //If we don't have a sire, and we are invited, send our invite token
+        if(inviterId != 0 && SharedPlayerStateClient.getSire(ClientContext.ourPlayerId) == 0) {
+            log.info(ClientContext.ctrl.player.getPlayerId() + " sending  inviterId=" + inviterId + ", token=" + shareToken);
+            ClientContext.ctrl.agent.sendMessage(ShareTokenMsg.NAME,
+                new ShareTokenMsg(ClientContext.ourPlayerId, inviterId, shareToken).toBytes());
+        }
 
 
         if (VConstants.LOCAL_DEBUG_MODE) {
@@ -88,7 +98,7 @@ public class MainGameMode extends AppMode
             addObject(lineagedebug);
         }
 
-
+        //Init the feeding game, if we're not testing.
         if (!VConstants.LOCAL_DEBUG_MODE) {
             FeedingClient.init(modeSprite, ClientContext.ctrl);
         }
@@ -99,34 +109,25 @@ public class MainGameMode extends AppMode
         //Create the overlay for individual avatars
         ClientContext.avatarOverlay = new VampireAvatarHUDOverlay(ClientContext.ctrl);
         addSceneObject(ClientContext.avatarOverlay, modeSprite);
-        //And pass to the server player arrival events, if we are moving to feed.
 
+        //Add the main HUD
         _hud = new HUD();
         addSceneObject(_hud, modeSprite);
         ClientContext.hud = _hud;
 
-
+        //Make sure we start the game standing, not dancing or feeding etc.
         ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
+
+
+        //Add the tutorial.  It starts deactivated.
+        ClientContext.tutorial = new Tutorial();
+
 
         //Add a debug panel for admins
         if(ClientContext.isAdmin(ClientContext.ourPlayerId) || VConstants.LOCAL_DEBUG_MODE) {
             var debug :SimpleTextButton = new SimpleTextButton("Admin");
             Command.bind(debug, MouseEvent.CLICK, VampireController.SHOW_DEBUG);
             modeSprite.addChild(debug);
-        }
-
-        //Add the tutorial
-        ClientContext.tutorial = new Tutorial();
-//        ClientContext.tutorial.activateTutorial();
-
-        //If there is a share token, send the invitee to the server
-        var inviterId :int = ClientContext.ctrl.local.getInviterMemberId();
-        var shareToken :String = ClientContext.ctrl.local.getInviteToken();
-        //If we don't have a sire, and we are invited, send our invite token
-        if(inviterId != 0 && SharedPlayerStateClient.getSire(ClientContext.ourPlayerId) == 0) {
-            log.info(ClientContext.ctrl.player.getPlayerId() + " sending  inviterId=" + inviterId + ", token=" + shareToken);
-            ClientContext.ctrl.agent.sendMessage(ShareTokenMsg.NAME,
-                new ShareTokenMsg(ClientContext.ourPlayerId, inviterId, shareToken).toBytes());
         }
 
 

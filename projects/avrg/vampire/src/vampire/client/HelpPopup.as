@@ -105,8 +105,12 @@ package vampire.client
             registerListener(SimpleButton(findSafely("button_totutorial")), MouseEvent.CLICK,
                 function (e :MouseEvent) :void {
                     destroySelf();
-                    showTututorialOnClose = false;
-                    ClientContext.tutorial.activateTutorial();
+                    if (ClientContext.model.xp == 0) {
+                        ClientContext.tutorial.activateTutorial();
+//                        showTututorialOnClose = false;
+                    }
+//                    showTututorialOnClose = false;
+//                    ClientContext.tutorial.activateTutorial();
                 });
             registerListener(SimpleButton(findSafely("button_tobloodbond")), MouseEvent.CLICK,
                 function (e :MouseEvent) :void {
@@ -120,10 +124,10 @@ package vampire.client
                 function (e :MouseEvent) :void {
                     destroySelf();
                     //If you don't have any xp, start the tutorial regardless.
-                    if (ClientContext.model.xp == 0 && showTututorialOnClose) {
-                        ClientContext.tutorial.activateTutorial();
-                        showTututorialOnClose = false;
-                    }
+//                    if (ClientContext.model.xp == 0 && showTututorialOnClose) {
+//                        ClientContext.tutorial.activateTutorial();
+//                        showTututorialOnClose = false;
+//                    }
                 });
 //            registerListener(SimpleButton(findSafely("button_recruit")), MouseEvent.CLICK,
 //                function (e :MouseEvent) :void {
@@ -266,7 +270,7 @@ package vampire.client
 
 
                 var starsignTextField :TextField = new TextField();
-                starsignTextField.text = BLOOD_STRAIN_NAMES[i];
+                starsignTextField.text = VConstants.BLOOD_STRAIN_NAMES[i];
                 starsignTextField.x = tally.x - 130;
                 starsignTextField.y = tally.y;
 
@@ -546,22 +550,9 @@ package vampire.client
         protected var _glowFilter :GlowFilter = new GlowFilter(0xffffff);
         protected var _displaySprite :Sprite = new Sprite();
 
-        public static var showTututorialOnClose :Boolean = true;
+//        public static var showTututorialOnClose :Boolean = true;
 
-        protected static const BLOOD_STRAIN_NAMES :Array = [
-            "Aries",
-            "Taurus",
-            "Gemini",
-            "Cancer",
-            "Leo",
-            "Virgo",
-            "Libra",
-            "Scorpio",
-            "Sagittarius",
-            "Capricorn",
-            "Aquarius",
-            "Pisces"
-        ];
+
 
     }
 }
