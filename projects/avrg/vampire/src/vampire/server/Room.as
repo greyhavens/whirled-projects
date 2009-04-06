@@ -115,6 +115,7 @@ public class Room extends SimObject
                         "playerId", player.playerId);
             return;
         }
+        _bloodBloomGameManager.playerQuitsGame(player.playerId);
 
         //Let the avatars know who is who, so they don't spam us with movement updates
 //        ctrl.sendSignal(VConstants.SIGNAL_PLAYER_IDS, playerIds);
