@@ -346,7 +346,7 @@ public class LineageServer extends Lineage
         var sire :PlayerData = _vserver.getPlayer(sireId);
         if(sire != null) {
             sire.updateMinions(getMinionIds(sireId).toArray());
-            Trophies.checkMinionTrophies(sire);
+//            Trophies.checkMinionTrophies(sire);
         }
 
         //Update the player props
@@ -367,7 +367,7 @@ public class LineageServer extends Lineage
     * into room props, the lineage will be incrementally sent.  Each update, a small chunk of the
     * linage will be sent, without any regard for the order or structure (yet).
     */
-    protected static const MAX_LINEAGE_NODES_WRITTEN_TO_A_ROOM_PROPS_PER_UPDATE :int = 50;
+    public static const MAX_LINEAGE_NODES_WRITTEN_TO_A_ROOM_PROPS_PER_UPDATE :int = 100;
     protected static const log :Log = Log.getLog(LineageServer);
 
 }
