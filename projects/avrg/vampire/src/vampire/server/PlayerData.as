@@ -712,10 +712,11 @@ public class PlayerData extends EventHandlerManager
         _xpFeedbackTime += dt;
         if (_xpFeedbackTime >= VConstants.NOTIFICATION_TIME_XP) {
             _xpFeedbackTime = 0;
-
-            addFeedback("You gained " + Util.formatNumberForFeedback(_xpFeedback) +
-                    " experience from your descendents!");
-            _xpFeedback = 0;
+            if (_xpFeedback >= 1) {
+                addFeedback("You gained " + Util.formatNumberForFeedback(_xpFeedback) +
+                        " experience from your descendents!");
+                _xpFeedback = 0;
+            }
         }
 
 

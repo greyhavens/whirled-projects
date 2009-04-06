@@ -61,6 +61,10 @@ public class ServerLogic
     */
     public static function awardSiresXpEarned(player :PlayerData, xp :Number) :void
     {
+        if (player == null) {
+            log.error("awardSiresXpEarned", "player", player);
+            return;
+        }
         log.debug("awardSiresXpEarned(" + player.name + ", xp=" + xp);
 
         var allsires :HashSet = ServerContext.lineage.getAllSiresAndGrandSires(player.playerId);
@@ -80,8 +84,8 @@ public class ServerLogic
 
         function awardXP(sireId :int, awardXP :Number) :void {
             if (ServerContext.server.isPlayer(sireId)) {
-                log.debug("awarding sire " + sire.name + ", xp=" + awardXP);
                 var sire :PlayerData = ServerContext.server.getPlayer(sireId);
+                log.debug("awarding sire " + sire.name + ", xp=" + awardXP);
                 addXP(sire.playerId, awardXP);
                 sire.addXPBonusNotification(awardXP);
 //                sire.addFeedback("You gained " + Util.formatNumberForFeedback(awardXP) +
@@ -1084,45 +1088,10 @@ public class ServerLogic
         }
 
         var room :Room = gameRecord.room;
-        //Check if it's a human practising
-//        if (srv.getPlayer(gameRecord.primaryPredatorId) != null &&
-//            !srv.getPlayer(gameRecord.primaryPredatorId).isVampire()) {
-//
-//            addFeedback("Find a vampire to feed for real.", gameRecord.primaryPredatorId);
-//            return;
-//        }
-
-
 
         var preyIsPlayer :Boolean = srv.isPlayer(gameRecord.gameServer.preyId);
         var preyPlayer :PlayerData = preyIsPlayer ? srv.getPlayer(gameRecord.gameServer.preyId) : null;
-//        var bloodGained :Number = 0;
         var preyId :int = gameRecord.gameServer.preyId;
-//        var damage :Number = VConstants.BLOOD_LOSS_FROM_THRALL_OR_NONPLAYER_FROM_FEED;
-//        //Each predator damages the prey
-//        damage = damage * gameRecord.predators.size();
-//
-//        //Handle the prey loss of blood
-//        if (preyIsPlayer) {
-//            log.debug("Prey is player");
-//            preyPlayer = srv.getPlayer(gameRecord.preyId);
-//            bloodGained = Math.abs(ServerLogic.damage(preyPlayer, damage));
-//            awardBloodBondedBloodEarned(preyPlayer, bloodGained);
-//            preyPlayer.addFeedback("You lost " + Util.formatNumberForFeedback(bloodGained) + " from feeding");
-//        }
-//        else {
-//            log.debug("Prey is nonplayer");
-//            bloodGained = Math.abs(ServerContext.npBlood.damageNonPlayer(gameRecord.preyId, damage, room.roomId));
-//        }
-//        log.debug("Prey lost " + bloodGained + " blood");
-//
-//        //You get half the blood lost
-//        bloodGained = 0.5 * bloodGained;
-//
-//        //Predators gain blood from the prey, divvied up
-//        var bloodGainedPerPredator :Number = bloodGained / gameRecord.predators.size();
-//        var bloodGainedPerPredatorFormatted :String = Util.formatNumberForFeedback(bloodGainedPerPredator);
-
 
         for each(var predatorId :int in gameRecord.gameServer.predatorIds) {
             var pred :PlayerData = srv.getPlayer(predatorId);
@@ -1130,14 +1099,6 @@ public class ServerLogic
                 log.error("adding blood, but no pred", "predatorId", predatorId);
                 continue;
             }
-//            pred.addMostRecentVictimIds(gameRecord.preyId);
-
-//            pred.addBlood(bloodGainedPerPredator);
-//            //The bloodbonded also gains a fraction
-//            awardBloodBondedBloodEarned(pred, bloodGainedPerPredator);
-//            log.debug(predatorId + " gained " + bloodGainedPerPredatorFormatted);
-//            pred.addFeedback("You gained " + bloodGainedPerPredatorFormatted + " blood!");
-
 
             if (preyIsPlayer && preyPlayer != null) {
                 //Check if we don't have a sire.  The prey vampire becomes it.
@@ -1184,20 +1145,16 @@ public class ServerLogic
         }
 
 
-        //Check for blood bonds
-//        if (preyIsPlayer) {
-//            checkBloodBondFormation(gameRecord);
-//        }
-
         //Then handle experience.  ATM everyone gets xp=score
         var playerScore :Number = gameRecord.gameServer.lastRoundScore / gameRecord.playerIds.length;
         //Update the highest possible score.  We use this to scale the coin payout
         ServerContext.topBloodBloomScore = Math.max(ServerContext.topBloodBloomScore, playerScore);
         var xpGained :Number = playerScore * VConstants.XP_GAINED_FROM_FEEDING_PER_BLOOD_UNIT;
         var xpFormatted :String = Util.formatNumberForFeedback(xpGained);
+        //The score between [0,1]
+        var feedingScoreScaled :Number = playerScore / ServerContext.topBloodBloomScore;
 
-        function awardXP(playerId :int, xp :Number, xpFormatted :String) :void
-        {
+        function awardXP(playerId :int, xp :Number, xpFormatted :String) :void {
             if (xp == 0) {
                 return;
             }
@@ -1210,8 +1167,7 @@ public class ServerLogic
                 awardBloodBondedXpEarned(p, xp);
                 //Add some bonus xp to your sires
                 awardSiresXpEarned(p, xp);
-                var feedingScore :Number = playerScore / ServerContext.topBloodBloomScore
-                p.ctrl.completeTask(Codes.TASK_FEEDING_ID, feedingScore);
+                p.ctrl.completeTask(Codes.TASK_FEEDING_ID, feedingScoreScaled);
             }
         }
 

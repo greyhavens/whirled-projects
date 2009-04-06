@@ -90,15 +90,6 @@ public class Room extends SimObject
         maybeLoadControl();
 
         var playername :String = _ctrl.getAvatarInfo(player.playerId) != null ? _ctrl.getAvatarInfo(player.playerId).name : "" + player.playerId;
-
-//        log.info("Setting " + playername + " props into room, player=" + player);
-
-//        _players.put(player.playerId, player);
-//        player.setIntoRoomProps();
-
-        //Let the avatars know who is who, so they don't spam us with movement updates
-//        ctrl.sendSignal(VConstants.SIGNAL_PLAYER_IDS, playerIds);
-
     }
 
     public function playerLeft (player :PlayerData) :void
@@ -116,26 +107,7 @@ public class Room extends SimObject
             return;
         }
         _bloodBloomGameManager.playerQuitsGame(player.playerId);
-
-        //Let the avatars know who is who, so they don't spam us with movement updates
-//        ctrl.sendSignal(VConstants.SIGNAL_PLAYER_IDS, playerIds);
-
-        //Broadcast the players in the room
-//        _ctrl.sendSignal(Constants.ROOM_SIGNAL_ENTITYID_REPONSE, _players.toArray().map(function(p :PlayerData) :int { return p.playerId}));
-
-
-//        _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, null, true);
     }
-
-//    public function checkState (... expected) :Boolean
-//    {
-//        if (ArrayUtil.contains(expected, _state)) {
-//            return true;
-//        }
-//        log.debug("State mismatch", "expected", expected, "actual", _state);
-//        return false;
-//    }
-
 
     /**
     * dt: Seconds
