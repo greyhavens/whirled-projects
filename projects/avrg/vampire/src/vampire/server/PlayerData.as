@@ -15,6 +15,7 @@ import com.whirled.contrib.EventHandlerManager;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
+import vampire.Util;
 import vampire.data.Codes;
 import vampire.data.Logic;
 import vampire.data.VConstants;
@@ -705,8 +706,19 @@ public class PlayerData extends EventHandlerManager
     }
 
     //This update comes from the server and only occurs a few times per second.
-    public function update(dt :Number) :void
+    public function update (dt :Number) :void
     {
+        //Bundle up the xp notifications
+        _xpFeedbackTime += dt;
+        if (_xpFeedbackTime >= VConstants.NOTIFICATION_TIME_XP) {
+            _xpFeedbackTime = 0;
+
+            addFeedback("You gained " + Util.formatNumberForFeedback(_xpFeedback) +
+                    " experience from your descendents!");
+            _xpFeedback = 0;
+        }
+
+
 //        _bloodUpdateTime += dt;
 //        if(_bloodUpdateTime >= UPDATE_BLOOD_INTERVAL) {
 //            //Vampires lose blood
@@ -824,6 +836,11 @@ public class PlayerData extends EventHandlerManager
         return false;
     }
 
+    public function addXPBonusNotification (bonus :Number) :void
+    {
+        _xpFeedback += bonus;
+    }
+
 
 
     protected var _name :String;
@@ -860,11 +877,15 @@ public class PlayerData extends EventHandlerManager
 
     protected var _feedback :Array = [];
 
+    protected var _xpFeedbackTime :Number = 0;
+    protected var _xpFeedback :Number = 0;
+
+
     /**A list of the most recent feedings with this player, each element:[preyId, predId]*/
 //    protected var _feedingRecord :Array = new Array();
 
-    protected var _bloodUpdateTime :Number = 0;
-    protected static const UPDATE_BLOOD_INTERVAL :Number = 3;
+//    protected var _bloodUpdateTime :Number = 0;
+//    protected static const UPDATE_BLOOD_INTERVAL :Number = 3;
 
     protected static const log :Log = Log.getLog(PlayerData);
 

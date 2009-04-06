@@ -80,11 +80,12 @@ public class ServerLogic
 
         function awardXP(sireId :int, awardXP :Number) :void {
             if (ServerContext.server.isPlayer(sireId)) {
+                log.debug("awarding sire " + sire.name + ", xp=" + awardXP);
                 var sire :PlayerData = ServerContext.server.getPlayer(sireId);
                 addXP(sire.playerId, awardXP);
-                log.debug("awarding sire " + sire.name + ", xp=" + awardXP);
-                sire.addFeedback("You gained " + Util.formatNumberForFeedback(awardXP) +
-                    " experience from progeny " + player.name);
+                sire.addXPBonusNotification(awardXP);
+//                sire.addFeedback("You gained " + Util.formatNumberForFeedback(awardXP) +
+//                    " experience from progeny " + player.name);
             }
             else {//Add to offline database
                 ServerContext.ctrl.loadOfflinePlayer(sireId,
@@ -327,7 +328,7 @@ public class ServerLogic
 //    }
 
 
-    protected static function addXP(playerId :int, bonus :Number) :void
+    public static function addXP(playerId :int, bonus :Number) :void
     {
          if (ServerContext.server.isPlayer(playerId)) {
             var player :PlayerData = ServerContext.server.getPlayer(playerId);
