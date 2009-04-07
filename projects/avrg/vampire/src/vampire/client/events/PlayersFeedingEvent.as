@@ -2,6 +2,10 @@ package vampire.client.events
 {
 import flash.events.Event;
 
+/**
+ * Updates the playerIds who are feeding and unavailable for feeding.
+ *
+ */
 public class PlayersFeedingEvent extends Event
 {
     public function PlayersFeedingEvent (playersFeeding :Array)
