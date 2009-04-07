@@ -27,12 +27,16 @@ public class FeedingServer
      * @param preyBloodType the blood strain that the prey carries, or -1 if the prey doesn't
      * have a special blood strain.
      *
+     * @param gameVariant a valid constant from feeding.variant.Variant specifying the game
+     * variant to be played.
+     *
      */
     public static function create (roomId :int,
                                    predatorId :int,
                                    preyId :int,
                                    preyBloodType :int,
                                    aiPreyName :String,
+                                   gameVariant :int,
                                    feedingHost :FeedingHost) :FeedingServer
     {
         return new vampire.feeding.server.Server(roomId,
@@ -40,6 +44,7 @@ public class FeedingServer
                                                  preyId,
                                                  preyBloodType,
                                                  aiPreyName,
+                                                 gameVariant,
                                                  feedingHost);
     }
 

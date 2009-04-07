@@ -3,7 +3,6 @@ package vampire.feeding.client {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
-import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.MainLoop;
 import com.whirled.contrib.simplegame.audio.*;
@@ -17,6 +16,7 @@ import flash.utils.getTimer;
 
 import vampire.feeding.*;
 import vampire.feeding.net.*;
+import vampire.feeding.variant.Settings;
 
 public class ClientCtx
 {
@@ -34,6 +34,7 @@ public class ClientCtx
     public static var playerIds :Array;
     public static var awardedTrophies :HashSet;
     public static var lastRoundResults :RoundOverMsg;
+    public static var settings :Settings;
 
     public static function init () :void
     {
@@ -44,6 +45,7 @@ public class ClientCtx
         playerIds = null;
         awardedTrophies = new HashSet();
         lastRoundResults = null;
+        settings = null;
     }
 
     public static function centerInRoom (disp :DisplayObject) :void

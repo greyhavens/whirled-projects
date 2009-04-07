@@ -10,6 +10,7 @@ import com.whirled.net.MessageReceivedEvent;
 
 import vampire.feeding.*;
 import vampire.feeding.net.*;
+import vampire.feeding.variant.Variant;
 
 public class Server extends FeedingServer
 {
@@ -29,6 +30,7 @@ public class Server extends FeedingServer
                             preyId :int,
                             preyBloodType :int,
                             aiPreyName :String,
+                            gameVariant :int,
                             feedingHost :FeedingHost)
     {
         if (!_inited) {
@@ -60,6 +62,8 @@ public class Server extends FeedingServer
         _ctx.preyBloodType = preyBloodType;
         _ctx.aiPreyName = aiPreyName;
         _ctx.feedingHost = feedingHost;
+        _ctx.variant = gameVariant;
+        _ctx.settings = Variant.getSettings(_ctx.variant);
 
         _ctx.props.set(Props.ALL_PLAYERS, FeedingUtil.arrayToDict(_ctx.playerIds), true);
         _ctx.props.set(Props.LOBBY_LEADER, predatorId, true);

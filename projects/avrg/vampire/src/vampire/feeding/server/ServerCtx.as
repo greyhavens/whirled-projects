@@ -9,6 +9,7 @@ import com.whirled.contrib.simplegame.net.Message;
 
 import vampire.feeding.*;
 import vampire.feeding.net.*;
+import vampire.feeding.variant.Settings;
 
 public class ServerCtx
 {
@@ -18,6 +19,8 @@ public class ServerCtx
     public var roomCtrl :RoomSubControlServer;
     public var props :GamePropControl;
     public var nameUtil :NameUtil;
+
+    public var settings :Settings;
 
     public var playerIds :Array;
     public var feedingHost :FeedingHost;
@@ -92,6 +95,16 @@ public class ServerCtx
     public function set modeName (val :String) :void
     {
         props.set(Props.MODE_NAME, val, true);
+    }
+
+    public function get variant () :int
+    {
+        return props.get(Props.VARIANT) as int;
+    }
+
+    public function set variant (val :int) :void
+    {
+        props.set(Props.VARIANT, val);
     }
 
     public function getPredatorIds () :Array

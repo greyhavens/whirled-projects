@@ -31,6 +31,7 @@ import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.ManagedTimer;
 import vampire.data.Logic;
 import vampire.data.VConstants;
+import vampire.feeding.variant.Variant;
 
 class TestGameController extends OneRoomGameRoom
     implements FeedingHost
@@ -171,6 +172,7 @@ class TestGameController extends OneRoomGameRoom
             preyId,
             preyBloodStrain,
             (preyId == Constants.NULL_PLAYER ? "AI Prey" : ""),
+            VARIANT,
             this);
 
         for each (var playerId :int in players) {
@@ -205,5 +207,6 @@ class TestGameController extends OneRoomGameRoom
     protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _timerMgr :TimerManager = new TimerManager();
 
-    protected static const MIN_PLAYERS :int = 1;
+    protected static const MIN_PLAYERS :int = 2;
+    protected static const VARIANT :int = Variant.NORMAL;
 }

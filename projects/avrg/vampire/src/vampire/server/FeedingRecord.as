@@ -12,6 +12,7 @@ import vampire.data.VConstants;
 import vampire.feeding.Constants;
 import vampire.feeding.FeedingHost;
 import vampire.feeding.FeedingServer;
+import vampire.feeding.variant.Variant;
 import vampire.net.messages.MovePredAfterFeedingMsg;
 
 public class FeedingRecord extends EventCollecter
@@ -130,6 +131,7 @@ public class FeedingRecord extends EventCollecter
                                                 gamePreyId,
                                                 preyBloodType,
                                                 _preyName,
+                                                Variant.NORMAL,
                                                 this);
 
         log.debug("starting gameServer", "gameId", _gameServer.gameId ,"roomId", _room.roomId, "_predators", _predators.toArray(), "gamePreyId", gamePreyId);
