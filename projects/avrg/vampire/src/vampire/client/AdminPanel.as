@@ -194,7 +194,7 @@ public class AdminPanel extends DraggableObject
 
     protected function gainLevel(... ignored) :void
     {
-        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LEVEL_UP));
+        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LEVEL_UP).toBytes());
 
         if(VConstants.LOCAL_DEBUG_MODE) {
 
@@ -213,7 +213,7 @@ public class AdminPanel extends DraggableObject
 
     protected function loseLevel(... ignored) :void
     {
-        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LEVEL_DOWN));
+        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LEVEL_DOWN).toBytes());
 
         if(VConstants.LOCAL_DEBUG_MODE) {
 
@@ -230,7 +230,7 @@ public class AdminPanel extends DraggableObject
 
     protected function gainXP(... ignored) :void
     {
-        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_GAIN_XP));
+        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_GAIN_XP).toBytes());
         if(VConstants.LOCAL_DEBUG_MODE) {
             var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
             var currentXP:int = ClientContext.model.xp;
@@ -245,7 +245,7 @@ public class AdminPanel extends DraggableObject
 
     protected function loseXP(... ignored) :void
     {
-        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LOSE_XP));
+        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LOSE_XP).toBytes());
         if(VConstants.LOCAL_DEBUG_MODE) {
 
             var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
@@ -263,7 +263,7 @@ public class AdminPanel extends DraggableObject
 
     protected function gainInvite(... ignored) :void
     {
-        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_ADD_INVITE));
+        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_ADD_INVITE).toBytes());
 
         if(VConstants.LOCAL_DEBUG_MODE) {
 
@@ -278,7 +278,7 @@ public class AdminPanel extends DraggableObject
 
     protected function loseInvite(... ignored) :void
     {
-        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LOSE_INVITE));
+        ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LOSE_INVITE).toBytes());
         if(VConstants.LOCAL_DEBUG_MODE) {
 
             var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
