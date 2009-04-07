@@ -29,9 +29,19 @@ public class DebugMsg extends BaseGameMsg
         return bytes;
     }
 
+    public function get type () :String
+    {
+       return _type;
+    }
+
     override public function get name () :String
     {
        return NAME;
+    }
+
+    override public function toString () :String
+    {
+        return NAME + " type=" + _type;
     }
 
     protected var _type :String;
