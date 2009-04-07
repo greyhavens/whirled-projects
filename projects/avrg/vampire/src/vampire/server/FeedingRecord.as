@@ -39,9 +39,9 @@ public class FeedingRecord extends EventCollecter
         _playerLeavesCallback = playerLeavesCallback;
         _thisBloodBloomRecord = this;//For referencing in enclosed functions.
 
-        if (_room != null && _room.ctrl != null) {
-            registerListener(_room.ctrl, AVRGameRoomEvent.PLAYER_LEFT, handlePlayerLeftRoom);
-        }
+//        if (_room != null && _room.ctrl != null) {
+//            registerListener(_room.ctrl, AVRGameRoomEvent.PLAYER_LEFT, handlePlayerLeftRoom);
+//        }
     }
 
     public function formBloodBond (playerId1 :int, playerId2 :int) :void
@@ -56,11 +56,11 @@ public class FeedingRecord extends EventCollecter
         return ServerContext.server.getPlayer(playerId).bloodbonded;
     }
 
-    protected function handlePlayerLeftRoom (e :AVRGameRoomEvent) :void
-    {
-        var playerId :int = int(e.value);
-        playerLeavesGame(playerId);
-    }
+//    protected function handlePlayerLeftRoom (e :AVRGameRoomEvent) :void
+//    {
+//        var playerId :int = int(e.value);
+//        playerLeavesGame(playerId);
+//    }
 
     public function playerLeavesGame (playerId :int, moved :Boolean = false) :void
     {
@@ -80,15 +80,18 @@ public class FeedingRecord extends EventCollecter
                 _gameServer.playerLeft(playerId);
 
             }
-            else {
-                _gameServer.playerLeft(Constants.NULL_PLAYER);
-            }
+            removePlayerFromLocalRecordOnly(playerId);
+//            _predators.remove(playerId);
+
+//            else {
+//                _gameServer.playerLeft(Constants.NULL_PLAYER);
+//            }
 
 //            if (_room.isPlayer(playerId)) {
 //            }
         }
 
-        removePlayer(playerId);
+//        removePlayer(playerId);
     }
 
     public function get isLobbyStarted () :Boolean
@@ -191,6 +194,8 @@ public class FeedingRecord extends EventCollecter
         if (_playerLeavesCallback != null) {
             _playerLeavesCallback(playerId);
         }
+
+        removePlayerFromLocalRecordOnly(playerId);
     }
 
     public function joinLobby(playerId :int) :void
@@ -310,8 +315,16 @@ public class FeedingRecord extends EventCollecter
         return playerId == _preyId;
     }
 
-    protected function removePlayer (playerId :int) :void
+    protected function removePlayerFromLocalRecordOnly (playerId :int) :void
     {
+        _predators.remove(playerId);
+        if(_preyId == playerId) {
+            _preyId = 0;
+        }
+    }
+
+//    protected function removePlayer (playerId :int) :void
+//    {
 //        if (_playerLeavesCallback != null) {
 //            _playerLeavesCallback(playerId);
 //        }
@@ -337,7 +350,7 @@ public class FeedingRecord extends EventCollecter
 //            }
 //
 //        }
-    }
+//    }
 
 //    public function update(dt :Number) :void
 //    {
@@ -393,7 +406,12 @@ public class FeedingRecord extends EventCollecter
 
     public function get playerIds() :Array
     {
-        return _predators.toArray().concat([_preyId]);
+        if (_preyId != 0) {
+            return _predators.toArray().concat([_preyId]);
+        }
+        else {
+            return _predators.toArray();
+        }
     }
 
     public function get gameServer() :FeedingServer

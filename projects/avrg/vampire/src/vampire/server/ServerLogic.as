@@ -1185,7 +1185,7 @@ public class ServerLogic
     */
     public static function updateAvatarState (player :PlayerData) :void
     {
-        if (player == null || player.avatar == null) {
+        if (player == null || player.avatar == null || player.room == null) {
             return;
         }
         var newAvatarState :String = VConstants.AVATAR_STATE_DEFAULT;

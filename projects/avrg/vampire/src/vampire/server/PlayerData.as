@@ -237,16 +237,17 @@ public class PlayerData extends EventHandlerManager
 
         //Make sure the player has left any feeding games
         if (_room != null) {
-            _room.bloodBloomGameManager.playerQuitsGame(playerId);
+            _room.playerLeft(this);
+//            _room.bloodBloomGameManager.playerQuitsGame(playerId);
         }
 
-        var currentTime :Number = new Date().time;
+//        var currentTime :Number = new Date().time;
         if(_room != null && _room.ctrl != null && _room.ctrl.isConnected()) {
 //            setTime(currentTime);
-            setIntoPlayerProps();
-            if(_ctrl != null && _ctrl.isConnected()) {
-                _ctrl.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
-            }
+//            setIntoPlayerProps();
+//            if(_ctrl != null && _ctrl.isConnected()) {
+//                _ctrl.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
+//            }
         }
         _room = null;
         _ctrl = null;
@@ -374,6 +375,7 @@ public class PlayerData extends EventHandlerManager
             }
 
         });
+        _room = null;
     }
 
 

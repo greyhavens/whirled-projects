@@ -5,10 +5,10 @@ import com.threerings.util.ClassUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
+import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.net.MessageReceivedEvent;
 
-import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
@@ -106,6 +106,10 @@ public class MainGameMode extends AppMode
         _events.registerListener(ClientContext.ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessageReceived);
 
+        //Listen for the player leaving the room, shut down the client then
+        _events.registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.LEFT_ROOM,
+            handlePlayerLeft);
+
         //Create the overlay for individual avatars
         ClientContext.avatarOverlay = new VampireAvatarHUDOverlay(ClientContext.ctrl);
         addSceneObject(ClientContext.avatarOverlay, modeSprite);
@@ -194,6 +198,11 @@ public class MainGameMode extends AppMode
         }
     }
 
+    protected function handlePlayerLeft (e :AVRGamePlayerEvent) :void
+    {
+        shutDownFeedingClient();
+    }
+
 
 
 
@@ -202,13 +211,13 @@ public class MainGameMode extends AppMode
         log.info(ClientContext.ourPlayerId + " onGameComplete(), Feeding complete, setting avatar state to default");//, "completedSuccessfully", completedSuccessfully);
 
         ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
-        var feedingClient :FeedingClient = FeedingClient(_feedingGameClient);
-        if(feedingClient.playerData != null) {
-            log.info(feedingClient.playerData);
+//        var feedingClient :FeedingClient = FeedingClient(_feedingGameClient);
+        if(_feedingGameClient.playerData != null) {
+            log.info(_feedingGameClient.playerData);
 
             ClientContext.ctrl.agent.sendMessage(FeedingDataMsg.NAME,
                 new FeedingDataMsg(ClientContext.ourPlayerId,
-                feedingClient.playerData.toBytes()).toBytes());
+                _feedingGameClient.playerData.toBytes()).toBytes());
 
 //            ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_UPDATE_FEEDING_DATA,
 //                feedingClient.playerData.toBytes());
@@ -216,19 +225,30 @@ public class MainGameMode extends AppMode
         else {
             log.error("onGameComplete(), _feedingGameClient.playerData==null");
         }
-        feedingClient.shutdown();
-        _feedingGameClient = null;
+        shutDownFeedingClient();
 
         //Notify the tutorial
         ClientContext.tutorial.feedGameOver();
 
     }
 
+    protected function shutDownFeedingClient () :void
+    {
+        if (_feedingGameClient != null) {
+            _feedingGameClient.shutdown();
+
+            if (_feedingGameClient.parent != null) {
+                _feedingGameClient.parent.removeChild(_feedingGameClient);
+            }
+            _feedingGameClient = null;
+        }
+    }
+
 
 
     protected var _hud :HUD;
     protected var _avatarController :AvatarClientController;
-    protected var _feedingGameClient :Sprite;
+    protected var _feedingGameClient :FeedingClient;
     protected static const log :Log = Log.getLog(MainGameMode);
 }
 }
