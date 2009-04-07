@@ -12,7 +12,6 @@ import flash.events.Event;
 
 import vampire.data.VConstants;
 import vampire.net.messages.ShareTokenMsg;
-import vampire.server.AVRGAgentLogTarget;
 
 [SWF(width="700", height="500")]
 public class VampireMain extends Sprite
