@@ -1,16 +1,17 @@
 package vampire.avatar {
 
+import com.whirled.AvatarControl;
+
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.net.URLRequest;
-import flash.net.navigateToURL;
 import flash.system.ApplicationDomain;
 
 public class VampatarUpsellPanel extends Sprite
 {
-    public function VampatarUpsellPanel (url :String)
+    public function VampatarUpsellPanel (ctrl :AvatarControl, itemId :int)
     {
         var panelClass :Class = getClass("popup_config");
         var panel :MovieClip = new panelClass();
@@ -19,7 +20,7 @@ public class VampatarUpsellPanel extends Sprite
         var upsellButton :SimpleButton = panel["shop_button"];
         upsellButton.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
-                flash.net.navigateToURL(new URLRequest(url));
+                ctrl.showPage("shop-l_5_" + itemId);
             });
     }
 

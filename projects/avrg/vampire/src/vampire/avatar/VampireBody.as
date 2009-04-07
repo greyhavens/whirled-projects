@@ -23,6 +23,7 @@ public class VampireBody extends MovieClipBody
                                  hairNames :Array,
                                  topNames :Array,
                                  shoeNames :Array,
+                                 upsellItemId :int,
                                  width :int, height :int = -1)
     {
         super(ctrl, media, width, height);
@@ -33,11 +34,12 @@ public class VampireBody extends MovieClipBody
         _topNames = topNames;
         _shoeNames = shoeNames;
 
+        _upsellItemId = upsellItemId;
+
         // Entity memory-based configuration
         loadConfig();
         if (_ctrl.hasControl()) {
             _ctrl.registerCustomConfig(createConfigPanel);
-
         }
 
         _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED,
@@ -83,7 +85,7 @@ public class VampireBody extends MovieClipBody
                 });
 
         case UPSELL:
-            return new VampatarUpsellPanel("http://www.google.com");
+            return new VampatarUpsellPanel(_ctrl, _upsellItemId);
         }
 
         return null;
@@ -300,6 +302,7 @@ public class VampireBody extends MovieClipBody
     protected var _hairNames :Array;
     protected var _topNames :Array;
     protected var _shoeNames :Array;
+    protected var _upsellItemId :int;
 
     /**Notify the game when we arrive at a movement destination*/
     protected var _movementNotifier :AvatarEndMovementNotifier;
