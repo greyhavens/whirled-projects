@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
+import flash.utils.Dictionary;
 
 import vampire.avatar.VampireBody;
 import vampire.data.VConstants;
@@ -14,6 +15,7 @@ import vampire.feeding.client.*;
 import vampire.feeding.net.GamePropControl;
 import vampire.feeding.net.Props;
 import vampire.feeding.server.*;
+import vampire.feeding.variant.Variant;
 
 [SWF(width="1000", height="500", frameRate="30")]
 public class BloodBloomStandalone extends Sprite
@@ -56,6 +58,12 @@ public class BloodBloomStandalone extends Sprite
             Props.PREY_BLOOD_TYPE,
             Rand.nextIntRange(0, VConstants.UNIQUE_BLOOD_STRAINS, Rand.STREAM_COSMETIC));
         dummyProps.set(Props.PREY_IS_AI, true);
+        dummyProps.set(Props.VARIANT, VARIANT);
+        dummyProps.set(Props.MODE_NAME, Constants.MODE_PLAYING);
+
+        var dict :Dictionary = new Dictionary;
+        dict[1] = true;
+        dummyProps.set(Props.GAME_PLAYERS, dict);
 
         addChild(new BloodBloom(0, new PlayerFeedingData(), function () :void {}, dummyProps));
     }
@@ -64,6 +72,8 @@ public class BloodBloomStandalone extends Sprite
 
     [Embed(source="../../../../rsrc/feeding/music.mp3")]
     protected static const MUS_MAIN_THEME :Class;
+
+    protected static const VARIANT :int = Variant.NORMAL;
 }
 
 }
