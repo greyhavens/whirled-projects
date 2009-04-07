@@ -4,14 +4,12 @@ package vampire.server
     import com.threerings.util.HashMap;
     import com.threerings.util.HashSet;
     import com.threerings.util.Log;
-    import com.whirled.avrg.AVRGameAvatar;
     import com.whirled.avrg.OfflinePlayerPropertyControl;
 
     import flash.utils.Dictionary;
 
     import vampire.data.Codes;
     import vampire.data.Lineage;
-    import vampire.data.VConstants;
 
 public class LineageServer extends Lineage
 {
@@ -297,6 +295,7 @@ public class LineageServer extends Lineage
 
         if(isPlayerName(playerId)) {
             //Player already loaded
+            return;
         }
         else if(_vserver.isPlayer(playerId)) {
             var playerName :String = _vserver.getPlayer(playerId).name;
@@ -319,22 +318,51 @@ public class LineageServer extends Lineage
 
     override public function setPlayerSire(playerId :int, sireId :int) :void
     {
-//        if(_vserver.getPlayer(playerId) != null && _vserver.getPlayer(playerId).sire > 0) {
-//            updatePlayer(_vserver.getPlayer(playerId).sire);
-//        }
         super.setPlayerSire(playerId, sireId);
+        updateProgenyIds(sireId);
+    }
 
-        var sire :PlayerData = _vserver.getPlayer(sireId);
-        if(sire != null) {
-            //TODO: CHECK THIS
-            sire.updateMinions(getProgenyIds(sireId).toArray());
+    protected function updateProgenyIds (sireId :int) :void
+    {
+        if (sireId == 0) {
+            return;
         }
 
-        //Update the player props
-//        if(_vserver.isPlayer(playerId)) {
-//            _vserver.getPlayer(playerId).setSire(getSireId(playerId));
-//        }
-//        updatePlayer(playerId);
+        var progenyIds :Array = getProgenyIds(sireId).toArray();
+        progenyIds = progenyIds.sort();
+
+        if (_vserver.isPlayer(sireId)) {
+            var sire :PlayerData = _vserver.getPlayer(sireId);
+            sire.updateProgeny(progenyIds);
+        }
+        else {//Add to offline database
+            log.debug("Adding progenyId to offline sire", "sireId", sireId, "new progenyIds", progenyIds);
+            ServerContext.ctrl.loadOfflinePlayer(sireId,
+                function (props :OfflinePlayerPropertyControl) :void {
+                    var oldProgenyIds :Array = props.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array;
+
+                    log.debug("Adding progenyId to offline sire", "sireId", sireId, "oldProgenyIds", oldProgenyIds);
+                    if (oldProgenyIds == null) {
+                        oldProgenyIds = [];
+                    }
+
+                    for each(var newProgenyId :int in progenyIds) {
+                        if(!ArrayUtil.contains(oldProgenyIds, newProgenyId)) {
+                            oldProgenyIds.push(newProgenyId);
+                            oldProgenyIds = oldProgenyIds.sort();
+                            if(oldProgenyIds.length >= 25) {
+                                break;
+                            }
+                        }
+                    }
+
+                    props.set(Codes.PLAYER_PROP_PROGENY_IDS, oldProgenyIds);
+                },
+                function (failureCause :Object) :void {
+                    log.warning("Eek! Sending message to offline player failed!", "cause",
+                        failureCause);
+                });
+        }
     }
 
 
