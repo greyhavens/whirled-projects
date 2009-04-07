@@ -319,7 +319,9 @@ public class LineageServer extends Lineage
     override public function setPlayerSire(playerId :int, sireId :int) :void
     {
         super.setPlayerSire(playerId, sireId);
-        updateProgenyIds(sireId);
+        if (getProgenyCount(sireId) <= 25) {
+            updateProgenyIds(sireId);
+        }
     }
 
     protected function updateProgenyIds (sireId :int) :void
@@ -336,12 +338,19 @@ public class LineageServer extends Lineage
             sire.updateProgeny(progenyIds);
         }
         else {//Add to offline database
-            log.debug("Adding progenyId to offline sire", "sireId", sireId, "new progenyIds", progenyIds);
             ServerContext.ctrl.loadOfflinePlayer(sireId,
                 function (props :OfflinePlayerPropertyControl) :void {
                     var oldProgenyIds :Array = props.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array;
 
-                    log.debug("Adding progenyId to offline sire", "sireId", sireId, "oldProgenyIds", oldProgenyIds);
+                    log.debug("Adding progenyId to offline sire", "sireId", sireId,
+                        "oldProgenyIds", oldProgenyIds, "newprogenyIds", progenyIds);
+                    if (ArrayUtil.equals(progenyIds, oldProgenyIds)) {
+                        log.debug("same, doing nothing");
+                        return;
+                    }
+                    var name :String = props.get(Codes.PLAYER_PROP_NAME) as String;
+
+
                     if (oldProgenyIds == null) {
                         oldProgenyIds = [];
                     }
@@ -355,8 +364,8 @@ public class LineageServer extends Lineage
                             }
                         }
                     }
-
-                    props.set(Codes.PLAYER_PROP_PROGENY_IDS, oldProgenyIds);
+                    log.debug("name Setting " + Codes.PLAYER_PROP_PROGENY_IDS + "=" + oldProgenyIds);
+                    props.set(Codes.PLAYER_PROP_PROGENY_IDS, oldProgenyIds.slice());
                 },
                 function (failureCause :Object) :void {
                     log.warning("Eek! Sending message to offline player failed!", "cause",
