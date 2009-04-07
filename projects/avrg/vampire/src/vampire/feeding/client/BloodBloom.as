@@ -4,7 +4,6 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Util;
 import com.whirled.avrg.AVRGameControl;
-import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.LevelPackManager;
 import com.whirled.contrib.ManagedTimer;

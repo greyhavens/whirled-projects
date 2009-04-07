@@ -2,7 +2,6 @@ package vampire.feeding.server {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
-import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.EventHandlerManager;
