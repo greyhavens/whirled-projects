@@ -163,13 +163,14 @@ public class PlayerData extends EventHandlerManager
         log.debug("Getting feeding data=" + feedingData);
 
         //Load/Create minionIds
-        _minionsForTrophies = _ctrl.props.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array;
-        if(_minionsForTrophies == null) {
-            _minionsForTrophies = new Array();
+        _progenyForTrophies = _ctrl.props.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array;
+        if(_progenyForTrophies == null) {
+            _progenyForTrophies = new Array();
         }
+        Trophies.checkMinionTrophies(this);
 
         _inviteTally = int(_ctrl.props.get(Codes.PLAYER_PROP_INVITES));
-
+        Trophies.checkInviteTrophies(this);
 
 
     }
@@ -344,6 +345,7 @@ public class PlayerData extends EventHandlerManager
 
     protected function leftRoom (evt :AVRGamePlayerEvent) :void
     {
+        log.debug(name + " leftRoom");
         var thisPlayer :PlayerData = this;
         ServerContext.server.control.doBatch(function () :void {
             if (_room != null) {
@@ -480,8 +482,8 @@ public class PlayerData extends EventHandlerManager
             }
 
             if(_ctrl.props.get(Codes.PLAYER_PROP_PROGENY_IDS) == null ||
-                !ArrayUtil.equals(_ctrl.props.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array, _minionsForTrophies)) {
-                _ctrl.props.set(Codes.PLAYER_PROP_PROGENY_IDS, _minionsForTrophies, true);
+                !ArrayUtil.equals(_ctrl.props.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array, _progenyForTrophies)) {
+                _ctrl.props.set(Codes.PLAYER_PROP_PROGENY_IDS, _progenyForTrophies, true);
                 Trophies.checkMinionTrophies(this);
             }
 
@@ -591,7 +593,10 @@ public class PlayerData extends EventHandlerManager
 
     public function get name () :String
     {
-        return _ctrl.getPlayerName();
+        if (_ctrl != null && _ctrl.isConnected()) {
+            return _ctrl.getPlayerName();
+        }
+        return "";
     }
 
     public function get level () :int
@@ -649,7 +654,7 @@ public class PlayerData extends EventHandlerManager
 
     public function get minionsIds() :Array
     {
-        return _minionsForTrophies;
+        return _progenyForTrophies;
     }
 
     public function get location () :Array
@@ -699,15 +704,16 @@ public class PlayerData extends EventHandlerManager
 
     }
 
-    public function updateMinions(minions :Array) :void
+    public function updateProgeny(progeny :Array) :void
     {
-        if(_minionsForTrophies.length >= 25) {
+        if(_progenyForTrophies.length >= 25) {
             return;
         }
-        for each(var newMinionId :int in minions) {
-            if(!ArrayUtil.contains(_minionsForTrophies, newMinionId)) {
-                _minionsForTrophies.push(newMinionId);
-                if(_minionsForTrophies.length >= 25) {
+        for each(var newProgenyId :int in progeny) {
+            if(!ArrayUtil.contains(_progenyForTrophies, newProgenyId)) {
+                _progenyForTrophies.push(newProgenyId);
+                _progenyForTrophies = _progenyForTrophies.sort();
+                if(_progenyForTrophies.length >= 25) {
                     break;
                 }
             }
@@ -747,7 +753,7 @@ public class PlayerData extends EventHandlerManager
 
     protected var _sire :int;
     /**Hold max 25 player ids for recording minions for trophies.*/
-    protected var _minionsForTrophies :Array = new Array();
+    protected var _progenyForTrophies :Array = new Array();
 
     protected var _targetId :int;
     protected var _targetLocation :Array;
