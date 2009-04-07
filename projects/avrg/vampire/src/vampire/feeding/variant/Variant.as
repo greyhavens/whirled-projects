@@ -8,15 +8,22 @@ public class Variant
 
     public static function getSettings (variant :int) :Settings
     {
+        var settings :Settings;
         switch (variant) {
         case NORMAL:
-            return normal();
+            settings = normal();
+            break;
+
         case CORRUPTION:
-            return corruption();
+            settings = corruption();
+            break;
 
         default:
             throw new Error("Unrecognized variant type " + variant);
         }
+
+        settings.variant = variant;
+        return settings;
     }
 
     protected static function normal () :Settings

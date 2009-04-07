@@ -19,6 +19,7 @@ import flash.utils.Dictionary;
 
 import vampire.feeding.*;
 import vampire.feeding.net.*;
+import vampire.feeding.variant.Variant;
 
 public class BloodBloom extends FeedingClient
 {
@@ -129,6 +130,8 @@ public class BloodBloom extends FeedingClient
             updatePlayers();
         } else if (e.name == Props.MODE_NAME) {
             updateMode();
+        } else if (e.name == Props.VARIANT) {
+            updateVariant();
         }
     }
 
@@ -169,6 +172,19 @@ public class BloodBloom extends FeedingClient
         _curModeName = modeName;
     }
 
+    protected function updateVariant () :void
+    {
+        var variant :int = ClientCtx.props.get(Props.VARIANT) as int;
+
+        if (ClientCtx.settings != null) {
+            log.error("Variant changed!", "oldVariant", ClientCtx.settings.variant,
+                      "newVariant", variant);
+
+        } else if (variant > Variant.INVALID) {
+            ClientCtx.settings = Variant.getSettings(variant);
+        }
+    }
+
     protected function onMsgReceived (e :ClientMsgEvent) :void
     {
         if (e.msg is GameEndedMsg || e.msg is ClientBootedMsg) {
@@ -192,6 +208,7 @@ public class BloodBloom extends FeedingClient
 
             updatePlayers();
             updateMode();
+            updateVariant();
 
         } else {
             ClientCtx.mainLoop.pushMode(new GameMode());

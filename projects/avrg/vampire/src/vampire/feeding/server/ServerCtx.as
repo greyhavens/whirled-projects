@@ -104,7 +104,7 @@ public class ServerCtx
 
     public function set variant (val :int) :void
     {
-        props.set(Props.VARIANT, val);
+        props.set(Props.VARIANT, val, true);
     }
 
     public function getPredatorIds () :Array
