@@ -92,13 +92,13 @@ public class HUD extends DraggableObject
 
             case Codes.ROOM_PROP_FEEDBACK:
                 var messages :Array = e.newValue as Array;
-                if(messages != null) {
-                    for each(var m :Array in messages) {
+                if (messages != null) {
+                    for each (var m :Array in messages) {
                         var forPlayer :int = int(m[0]);
                         var msg :String = m[1] as String;
-                        if(forPlayer <= 0 || forPlayer == ClientContext.ourPlayerId) {
+                        if (forPlayer <= 0 || forPlayer == ClientContext.ourPlayerId) {
                             _feedbackMessageQueue.push(msg);
-                            if(forPlayer == 23340) {
+                            if (forPlayer == 23340) {
                                 trace(msg);
                             }
                         }
@@ -109,13 +109,13 @@ public class HUD extends DraggableObject
             default:
                 var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
 
-                if(isNaN(playerIdUpdated)) {
+                if (isNaN(playerIdUpdated)) {
                     log.warning("propChanged, but no player id, ", "e", e);
                     return;
                 }
 
                 //If the ROOM_PROP_NON_PLAYERS prop is changed, update it
-                if(playerIdUpdated == ClientContext.ourPlayerId) {
+                if (playerIdUpdated == ClientContext.ourPlayerId) {
                     updateOurPlayerState();
                 }
         }
@@ -138,9 +138,9 @@ public class HUD extends DraggableObject
             //If it's us, update the player HUD
             if (playerIdUpdated == ClientContext.ourPlayerId) {
 
-//                if(e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
+//                if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
 //
-//                    if(e.oldValue < e.newValue) {
+//                    if (e.oldValue < e.newValue) {
 //                        var bloodUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
 //                                ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true));
 //                        bloodUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
@@ -151,20 +151,18 @@ public class HUD extends DraggableObject
 //                }
                 if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
 
-                    if (e.oldValue < e.newValue) {
+                    if (e.oldValue < e.newValue && !(isNaN(Number(e.oldValue)) || e.oldValue == 0)) {
                         xpUp = new SceneObjectPlayMovieClipOnce(
                                 ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true));
                         xpUp.x = _hudXP.x + ClientContext.model.maxblood/2;
                         xpUp.y = _hudXP.y;
                         mode.addSceneObject(xpUp, _hudXPParent);
                     }
-                    _currentLevel = ClientContext.model.level;
+                    _currentLevel = Logic.levelFromXp(Number(e.newValue));
 
                     showXP(ClientContext.ourPlayerId);
-                    oldLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.oldValue),
-                        ClientContext.model.invites);
-                    newLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.newValue),
-                        ClientContext.model.invites);
+                    oldLevel = Logic.levelFromXp(Number(e.oldValue));
+                    newLevel = Logic.levelFromXp(Number(e.newValue));
 
                     if (newLevel > oldLevel && newLevel >= 2 && e.oldValue > 0) {
                         ClientContext.controller.handleNewLevel(newLevel);
@@ -180,62 +178,33 @@ public class HUD extends DraggableObject
 
                     //If we only need invite(s) for the next level, show a popup
                     //if we haven't already done so.
-                    var level1moreXP :int = Logic.levelGivenCurrentXpAndInvites(
-                        Number(e.newValue) + 1, ClientContext.model.invites);
-                    var level1moreXPAndInvites :int = Logic.levelGivenCurrentXpAndInvites(
-                        Number(e.newValue) + 1, 100000);
-                    if (level1moreXPAndInvites > level1moreXP) {
-//                        var newLevelWithInvites :int =
-//                            Logic.levelGivenCurrentXpAndInvites(Number(e.newValue), 100000);
+                    var level1moreXP :int = Logic.levelFromXp(Number(e.newValue) + 1);
+
+//                    trace(ClientContext.model.name + " level1moreXPAndInvites=" + level1moreXPAndInvites);
+                    if (level1moreXP > newLevel && Logic.invitesNeededForLevel(level1moreXP) > 0) {
+
+                        var invitesNeeded :int = Logic.invitesNeededForLevel(newLevel + 1);
+                        var popup :PopupQuery = new PopupQuery(
+                            "NeedInvites",
+                            "You need " + Logic.invitesNeededForLevel(newLevel + 1) +
+                            " invite" + (invitesNeeded > 1 ? "s" : "") + " for level " +
+                            (newLevel + 1),
+                            ["Recruit Now", "Recruit Later"],
+                            [VampireController.RECRUIT, null]);
 
 
-//                        if (newLevel > newLevelWithInvites &&
-//                            !(isNaN(Number(e.oldValue)) || e.oldValue == 0)) {
-
-//                            var recruitFunction :Function = function(e :MouseEvent) :void {
-//                                ClientContext.ctrl.local.showInvitePage(VConstants.TEXT_INVITE, "" +
-//                                    ClientContext.ourPlayerId);
-//                            };
-
-                            var invitesNeeded :int = Logic.invitesNeededForLevel(newLevel + 1);
-                            var popup :PopupQuery = new PopupQuery(
-                                "NeedInvites",
-                                "You need " + Logic.invitesNeededForLevel(newLevel + 1) +
-                                " invite" + (invitesNeeded > 1 ? "s" : "") + " for level " +
-                                (newLevel + 1),
-                                ["Recruit Now", "Recruit Later"],
-                                [VampireController.RECRUIT, null]);
-
-
-                            if(mode.getObjectNamed(popup.objectName) == null) {
-                                mode.addSceneObject(popup, mode.modeSprite);
-                                ClientContext.centerOnViewableRoom(popup.displayObject);
-                                ClientContext.animateEnlargeFromMouseClick(popup);
-                            }
-
-
-
-//                            _isNewLevelNeedingInvitePopupShown = true;
-//                        }
+                        if (mode.getObjectNamed(popup.objectName) == null) {
+                            mode.addSceneObject(popup, mode.modeSprite);
+                            ClientContext.centerOnViewableRoom(popup.displayObject);
+                            ClientContext.animateEnlargeFromMouseClick(popup);
+                        }
                     }
 
 
                 }
                 else if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES) {
 
-
-//                    oldLevel = Logic.levelGivenCurrentXpAndInvites(ClientContext.model.xp, int(e.oldValue));
-//                    newLevel = Logic.levelGivenCurrentXpAndInvites(ClientContext.model.xp, int(e.newValue));
-//                    if(oldLevel < newLevel) {
-//                        levelUp = new SceneObjectPlayMovieClipOnce(
-//                                ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true));
-//                        levelUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
-//                        levelUp.y = _hudBlood.y;
-//                        mode.addSceneObject(levelUp, _hudBlood.parent );
-//                    }
-
-
-                    if(_currentLevel < ClientContext.model.level) {
+                    if (_currentLevel < ClientContext.model.level) {
                         //Animate a level up movieclip
                         levelUp = new SceneObjectPlayMovieClipOnce(
                             ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true));
@@ -249,12 +218,11 @@ public class HUD extends DraggableObject
 
                     }
                     _currentLevel = ClientContext.model.level;
-
                     showXP(ClientContext.ourPlayerId);
                 }
-                else if(e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
+                else if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
 
-                    if(e.newValue != 0) {
+                    if (e.newValue != 0) {
                         var bloodBondMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
                                 ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true));
                         bloodBondMovie.x = _hudXP.x + ClientContext.model.maxblood/2;
@@ -267,8 +235,8 @@ public class HUD extends DraggableObject
 
                 }
 
-                else if(e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_SIRE) {
-                    if(e.newValue != 0) {
+                else if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_SIRE) {
+                    if (e.newValue != 0) {
                         var lineageMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
                                 ClientContext.instantiateMovieClip("HUD", "lineage_feedback", true));
                         lineageMovie.x = _hudXP.x + ClientContext.model.maxblood/2;
@@ -292,7 +260,7 @@ public class HUD extends DraggableObject
 
     protected function checkPlayerRoomProps(...ignored) :void
     {
-        if(!SharedPlayerStateClient.isProps(ClientContext.ourPlayerId)) {
+        if (!SharedPlayerStateClient.isProps(ClientContext.ourPlayerId)) {
         }
         else {
             updateOurPlayerState();
@@ -380,11 +348,11 @@ public class HUD extends DraggableObject
 
 //    protected function createBloodText() :void
 //    {
-//        if(_bloodText != null && _bloodText.parent != null) {
+//        if (_bloodText != null && _bloodText.parent != null) {
 //            _bloodText.parent.removeChild(_bloodText);
 //        }
 //
-////        if(_bloodText == null) {
+////        if (_bloodText == null) {
 //            _bloodText = new TextField();//TextFieldUtil.createField(
 //
 //            _bloodText.selectable = false;
@@ -419,7 +387,7 @@ public class HUD extends DraggableObject
 
     protected function createXPText() :void
     {
-        if(_xpText != null && _xpText.parent != null) {
+        if (_xpText != null && _xpText.parent != null) {
             _xpText.parent.removeChild(_xpText);
         }
 
@@ -462,8 +430,8 @@ public class HUD extends DraggableObject
         super.update(dt);
 
         //Show feedback in the local client only feedback
-        if(_feedbackMessageQueue.length > 0){
-            for each(var msg :String in _feedbackMessageQueue) {
+        if (_feedbackMessageQueue.length > 0){
+            for each (var msg :String in _feedbackMessageQueue) {
                 if (msg.substr(0, Codes.POPUP_PREFIX.length) == Codes.POPUP_PREFIX) {
                     ClientContext.controller.handleShowPopupMessage("ServerPopup",
                         msg.substring(Codes.POPUP_PREFIX.length));
@@ -475,27 +443,29 @@ public class HUD extends DraggableObject
             _feedbackMessageQueue.splice(0);
         }
 
+        _timeSinceStart += dt;
+
         //Show feedback messages in queue, and fade out old messages.
-//        if(_feedbackMessageQueue.length > 0 && db != null) {
+//        if (_feedbackMessageQueue.length > 0 && db != null) {
 //            _feedbackMessageTimeElapsed += dt;
 //
 //            //Don't replace the current message if it's still there, it might have been inserted
 //            //due to instant feedback
-//            if(_feedbackMessageTimeElapsed >= VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY &&
+//            if (_feedbackMessageTimeElapsed >= VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY &&
 //                db.getObjectNamed(FEEDBACK_SIMOBJECT_NAME) == null) {
 //                _feedbackMessageTimeElapsed = 0;
 //                var feedbackMessage :String = _feedbackMessageQueue.shift() as String;
 //
-//                if(feedbackMessage != null) {
+//                if (feedbackMessage != null) {
 //                    insertFeedbackSceneObject(feedbackMessage);
 //
 //                }
 //            }
 //        }
 
-//        if(VConstants.LOCAL_DEBUG_MODE) {
+//        if (VConstants.LOCAL_DEBUG_MODE) {
 //            _DEBUGGING_add_feedback_timer += dt;
-//            if(_DEBUGGING_add_feedback_timer > 2) {
+//            if (_DEBUGGING_add_feedback_timer > 2) {
 //                _DEBUGGING_add_feedback_timer = 0;
 //
 //                _feedbackMessageQueue.push(generateRandomString(Rand.nextIntRange(50, 100, 0)));
@@ -586,7 +556,7 @@ public class HUD extends DraggableObject
 //            new SimpleSceneObject(textSprite, FEEDBACK_SIMOBJECT_NAME);
 //
 //        //Remove any objects with the same name
-//        if(db.getObjectNamed(FEEDBACK_SIMOBJECT_NAME) != null) {
+//        if (db.getObjectNamed(FEEDBACK_SIMOBJECT_NAME) != null) {
 //            db.getObjectNamed(FEEDBACK_SIMOBJECT_NAME).destroySelf();
 //        }
 //
@@ -635,7 +605,7 @@ public class HUD extends DraggableObject
 //            new SimpleSceneObject(textSprite, FEEDBACK_SIMOBJECT_NAME);
 //
 //        //Remove any objects with the same name
-//        if(db.getObjectNamed(FEEDBACK_SIMOBJECT_NAME) != null) {
+//        if (db.getObjectNamed(FEEDBACK_SIMOBJECT_NAME) != null) {
 //            db.getObjectNamed(FEEDBACK_SIMOBJECT_NAME).destroySelf();
 //        }
 //
@@ -660,7 +630,7 @@ public class HUD extends DraggableObject
 
 //    public function showFeedBack(msg :String, immediate :Boolean = false) :void
 //    {
-//        if(immediate) {
+//        if (immediate) {
 //            insertFeedbackSceneObject(msg);
 //        }
 //        else {
@@ -675,7 +645,7 @@ public class HUD extends DraggableObject
     protected function updateOurPlayerState(...ignored) :void
     {
 
-        if(!SharedPlayerStateClient.isProps(ClientContext.ourPlayerId)) {
+        if (!SharedPlayerStateClient.isProps(ClientContext.ourPlayerId)) {
             log.warning("updatePlayerState, but no props found");
             return;
         }
@@ -697,7 +667,7 @@ public class HUD extends DraggableObject
 //        var maxBlood :Number = SharedPlayerStateClient.getMaxBlood(playerId);
 //        var blood :Number = MathUtil.clamp(SharedPlayerStateClient.getBlood(playerId),
 //            0, maxBlood);
-//        if(isNaN(blood)) {
+//        if (isNaN(blood)) {
 //            blood = 0;
 //        }
 ////        trace("blood=" + blood + " / " + maxBlood);
@@ -710,7 +680,7 @@ public class HUD extends DraggableObject
 //        _hudBlood.graphics.drawRect(1, borderWidth + 1, blood, _hudCap.height/2 - borderWidth);
 //        _hudBlood.graphics.endFill();
 //        //Highlight
-//        if(blood >= 1) {
+//        if (blood >= 1) {
 //            _hudBlood.graphics.lineStyle(2, 0xff00000);
 //            _hudBlood.graphics.moveTo(blood + 1, borderWidth + 1);
 //            _hudBlood.graphics.lineTo(blood + 1, _hudCap.height/2);
@@ -770,7 +740,7 @@ public class HUD extends DraggableObject
         _hudXP.graphics.drawRect(0, 1, xpAbsoluteX, BLOOD_BAR_HEIGHT - 3);
         _hudXP.graphics.endFill();
         //Highlight
-        if(xpOverCurrentLevelMinimum >= 1) {
+        if (xpOverCurrentLevelMinimum >= 1) {
 //            _hudXP.graphics.lineStyle(2, 0xDFEFF4);
             _hudXP.graphics.lineStyle(2, 0xff00000);
             _hudXP.graphics.moveTo(xpAbsoluteX , 2);
@@ -840,6 +810,8 @@ public class HUD extends DraggableObject
     /**Used for registering changed level to animate a level up movieclip*/
     protected var _currentLevel :int = -0;
     protected var _currentBlood :Number = 1;
+
+    protected var _timeSinceStart :Number = 0;
 
     protected var _feedbackMessageQueue :Array = new Array();
     protected static const BLOOD_SCALE_MULTIPLIER :Number = 2.2;
