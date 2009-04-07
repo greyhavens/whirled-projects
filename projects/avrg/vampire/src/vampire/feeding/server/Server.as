@@ -71,8 +71,6 @@ public class Server extends FeedingServer
             MessageReceivedEvent.MESSAGE_RECEIVED,
             onMsgReceived);
 
-        _events.registerListener(_ctx.roomCtrl, AVRGameRoomEvent.PLAYER_LEFT, onPlayerLeftRoom);
-
         setMode(Constants.MODE_LOBBY);
     }
 
@@ -221,15 +219,6 @@ public class Server extends FeedingServer
                     break;
                 }
             }
-        }
-    }
-
-    protected function onPlayerLeftRoom (e :AVRGameRoomEvent) :void
-    {
-        var playerId :int = e.value as int;
-        if (ArrayUtil.contains(_ctx.playerIds, playerId)) {
-            log.info("Removing player from feeding (player left room)", "playerId", playerId);
-            playerLeft(playerId);
         }
     }
 

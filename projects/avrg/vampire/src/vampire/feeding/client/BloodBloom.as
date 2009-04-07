@@ -76,10 +76,6 @@ public class BloodBloom extends FeedingClient
             function (...ignored) :void {
                 shutdown();
             });
-        _events.registerListener(ClientCtx.gameCtrl.player, AVRGamePlayerEvent.LEFT_ROOM,
-            function (...ignored) :void {
-                shutdown();
-            });
 
         // If the resources aren't loaded, wait for them to load
         if (!_resourcesLoaded) {
