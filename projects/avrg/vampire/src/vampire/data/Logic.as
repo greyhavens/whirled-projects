@@ -54,6 +54,20 @@ public class Logic
         return MathUtil.clamp(level, 1, VConstants.MAXIMUM_VAMPIRE_LEVEL);
     }
 
+    public static function levelFromXp(xp :Number) :int
+    {
+        if(isNaN(xp)) {
+            return 0;
+        }
+        var level :int = 1;
+        while(xpNeededForLevel(level + 1) <= xp) {
+            level++;
+        }
+
+        //Cap the level for now
+        return MathUtil.clamp(level, 1, VConstants.MAXIMUM_VAMPIRE_LEVEL);
+    }
+
     public static function invitesNeededForLevel(level :int) :int
     {
         var invites :int = 0;
@@ -80,7 +94,9 @@ public class Logic
         var xp :Number = 0;
         var addition :Number = 2000;
         for(var i :int = 2; i <= level; i++) {
-            xp += (i-2) * addition + base;
+            //Over level 10 the xp gap increases.
+            var thisLevelAddition :Number = (i <= 10 ? addition : 2*addition)
+            xp += (i-2) * thisLevelAddition + base;
         }
         return xp;
     }
