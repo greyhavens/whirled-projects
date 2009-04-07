@@ -430,9 +430,7 @@ public class ServerLogic
                     handleGameStartedMessage(playerStarted, gameStarted);
                 }
                 else if (msg is PlayerArrivedAtLocationMsg) {
-                    var playerArrived :PlayerData =
-                        getPlayer(PlayerArrivedAtLocationMsg(msg).playerId);
-                    handlePlayerArrivedAtLocation(playerArrived);
+                    handlePlayerArrivedAtLocation(player);
                 }
                 else if (msg is SendGlobalMsg) {
                     var globalMessage :String = SendGlobalMsg(msg).message;

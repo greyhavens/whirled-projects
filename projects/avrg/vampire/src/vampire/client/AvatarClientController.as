@@ -341,7 +341,7 @@ public class AvatarClientController extends SimObject
         if (playerId == _ctrl.player.getPlayerId()) {
             var locationFromProps :Array = ClientContext.model.location;
             _ctrl.agent.sendMessage(PlayerArrivedAtLocationMsg.NAME,
-                new PlayerArrivedAtLocationMsg(_ctrl.player.getPlayerId()).toBytes());
+                new PlayerArrivedAtLocationMsg().toBytes());
 
             //And if this is our avatar, and we have a target to stand behind,
             //make sure we are in the same orientation.
