@@ -171,48 +171,32 @@ public class LobbyMode extends AppMode
             TextFieldUtil.setMaximumTextWidth(_tfStatus, _tfStatus.width);
         }
 
-        if (this.isBloodBondForming) {
+        if (!this.isPreGameLobby && this.isBloodBondForming) {
             var partnerId :int = (ClientCtx.playerIds[0] != ClientCtx.localPlayerId ?
                                   ClientCtx.playerIds[0] :
                                   ClientCtx.playerIds[1]);
             var partnerName :String = ClientCtx.getPlayerName(partnerId);
 
-            switch (ClientCtx.bloodBondProgress) {
-            case VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND - 3:
-                if (statusText == null) {
-                    statusText = "Three more feedings will forge a " +
-                                    "Blood Bond with " + partnerName + ".";
-                } else {
-                    statusText += "\nThree more will forge a Blood Bond."
-                }
-                break;
-
-            case VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND - 2:
-                if (statusText == null) {
-                    statusText = "Two more feedings will forge a " +
-                                    "Blood Bond with " + partnerName + ".";
-                } else {
-                    statusText += "\nTwo more will forge a Blood Bond."
-                }
-                break;
-
-            case VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND - 1:
-                if (statusText == null) {
-                    statusText = "One more feeding will forge a " +
-                                    "Blood Bond with " + partnerName + ".";
-                } else {
-                    statusText += "\nOne more will forge a Blood Bond."
-                }
-                break;
-
-            case VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND:
+            if (ClientCtx.bloodBondProgress >= VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND) {
                 if (statusText == null) {
                     statusText = "You and " + partnerName + " have forged a Blood Bond!";
                 } else {
                     statusText = "You and " + partnerName + " have forged a Blood Bond!" +
                                  "\nWaiting to feed again.";
                 }
-                break;
+
+            } else {
+                var diff :int =
+                    VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND - ClientCtx.bloodBondProgress;
+                var diffString :String = NUMBERS[diff];
+                var feedingString :String = (diff == 1 ? "feeding" : "feedings");
+
+                if (statusText == null) {
+                    statusText = diffString + " more " + feedingString + " will forge a " +
+                                 "Blood Bond with " + partnerName + ".";
+                } else {
+                    statusText += "\n" + diffString + " more will forge a Blood Bond.";
+                }
             }
         }
 
@@ -350,6 +334,10 @@ public class LobbyMode extends AppMode
     protected var _type :int;
     protected var _results :RoundOverMsg;
     protected var _showedRoundTimer :Boolean;
+
+    protected static const NUMBERS :Array = [
+        "Zero", "One", "Two", "Three", "Four", "Five", "Six"
+    ];
 
     protected static const log :Log = Log.getLog(LobbyMode);
 }
