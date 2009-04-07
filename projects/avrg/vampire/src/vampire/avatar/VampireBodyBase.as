@@ -5,7 +5,6 @@ import flash.display.MovieClip;
 
 public class VampireBodyBase extends MovieClipBody
 {
-    /** You must wear a legal avatar to play the game */
     public static const ENTITY_PROPERTY_IS_LEGAL_AVATAR :String = "IsLegalVampireAvatar";
 
     public function VampireBodyBase (ctrl :AvatarControl, media :MovieClip, width: int,
@@ -25,10 +24,11 @@ public class VampireBodyBase extends MovieClipBody
     protected function propertyProvider (key :String) :Object
     {
         switch(key) {
+        // You must wear a legal avatar to play the game
         case ENTITY_PROPERTY_IS_LEGAL_AVATAR:
             return true;
 
-        //The rest of the properties are provided by the movement notifier.
+        // The rest of the properties are provided by the movement notifier.
         default:
             return _movementNotifier.propertyProvider(key);
         }
