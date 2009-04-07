@@ -42,6 +42,9 @@ public class GameServer extends ObjectDB
 
         //Tim's bloodbond game server
         FeedingServer.init(_ctrl);
+
+        //Add the room population updater
+        addObject(new LoadBalancerServer(this));
     }
 
     public function get control () :AVRServerGameControl
@@ -227,6 +230,11 @@ public class GameServer extends ObjectDB
         return _players.containsKey(playerId);
     }
 
+    public function get rooms () :HashMap
+    {
+        return _rooms;
+    }
+
 
     protected var _startTime :int;
     protected var _lastTickTime :int;
@@ -235,9 +243,12 @@ public class GameServer extends ObjectDB
     protected var _rooms :HashMap = new HashMap();
     protected var _players :HashMap = new HashMap();
 
+
+
     protected var _globalFeedback :Array = new Array();
 
     public static const SERVER_TICK_UPDATE_MILLISECONDS :int = 1000;
+
     public static var log :Log = Log.getLog(GameServer);
 
 }
