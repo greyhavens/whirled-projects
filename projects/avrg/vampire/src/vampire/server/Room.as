@@ -82,7 +82,7 @@ public class Room extends SimObject
     public function playerEntered (player :PlayerData) :void
     {
 
-        if (!_players.put(player.playerId, player)) {
+        if (_players.put(player.playerId, player)) {
             log.warning("Arriving player already existed in room", "roomId", this.roomId,
                         "playerId", player.playerId);
         }
@@ -102,6 +102,7 @@ public class Room extends SimObject
                         "playerId", player.playerId);
             return;
         }
+        log.debug("room.playerLeft, removing from feeding games " + player.name);
         _bloodBloomGameManager.playerQuitsGame(player.playerId);
     }
 
