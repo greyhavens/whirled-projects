@@ -73,7 +73,7 @@ public class BloodBloomStandalone extends Sprite
     [Embed(source="../../../../rsrc/feeding/music.mp3")]
     protected static const MUS_MAIN_THEME :Class;
 
-    protected static const VARIANT :int = Variant.NORMAL;
+    protected static const VARIANT :int = Variant.CORRUPTION;
 }
 
 }

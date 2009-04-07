@@ -199,20 +199,15 @@ public class BloodBloom extends FeedingClient
             return;
         }
 
-        if (ClientCtx.isConnected) {
-            _events.registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
-            _events.registerListener(ClientCtx.props, PropertyChangedEvent.PROPERTY_CHANGED,
-                onPropChanged, false, int.MAX_VALUE);
-            _events.registerListener(ClientCtx.props, ElementChangedEvent.ELEMENT_CHANGED,
-                onPropChanged, false, int.MAX_VALUE);
+        _events.registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
+        _events.registerListener(ClientCtx.props, PropertyChangedEvent.PROPERTY_CHANGED,
+            onPropChanged, false, int.MAX_VALUE);
+        _events.registerListener(ClientCtx.props, ElementChangedEvent.ELEMENT_CHANGED,
+            onPropChanged, false, int.MAX_VALUE);
 
-            updatePlayers();
-            updateMode();
-            updateVariant();
-
-        } else {
-            ClientCtx.mainLoop.pushMode(new GameMode());
-        }
+        updateVariant();
+        updatePlayers();
+        updateMode();
     }
 
     protected static function loadResources () :void

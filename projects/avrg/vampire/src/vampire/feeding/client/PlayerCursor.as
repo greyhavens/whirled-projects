@@ -1,5 +1,6 @@
 package vampire.feeding.client {
 
+import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.resource.SwfResource;
@@ -8,6 +9,7 @@ import com.whirled.contrib.simplegame.tasks.RotationTask;
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 import flash.geom.Point;
 
 import vampire.feeding.*;
@@ -22,6 +24,10 @@ public class PlayerCursor extends CollidableObj
         _movie = ClientCtx.instantiateMovieClip("blood", "cursor", true, true);
         _sprite = SpriteUtil.createSprite();
         _sprite.addChild(_movie);
+
+        if (ClientCtx.settings.canDropWhiteCells) {
+            registerListener(GameCtx.bgLayer, MouseEvent.MOUSE_DOWN, onMouseDown);
+        }
     }
 
     override public function get displayObject () :DisplayObject
@@ -34,11 +40,10 @@ public class PlayerCursor extends CollidableObj
         SwfResource.releaseMovieClip(_movie);
     }
 
-    public function set moveTarget (val :Vector2) :void
+    protected function onMouseDown (e :MouseEvent) :void
     {
-        var curLoc :Vector2 = this.loc;
-        if (!val.equals(curLoc)) {
-            _moveDirection = val.subtract(curLoc).normalizeLocal();
+        if (ClientCtx.settings.canDropWhiteCells) {
+            dropCells();
         }
     }
 
@@ -47,8 +52,16 @@ public class PlayerCursor extends CollidableObj
         super.update(dt);
 
         if (!GameCtx.gameOver) {
-            // update location
             var curLoc :Vector2 = this.loc;
+
+            // Move towards the mouse
+            var moveTarget :Vector2 =
+                new Vector2(GameCtx.cellLayer.mouseX, GameCtx.cellLayer.mouseY);
+            if (!moveTarget.equals(curLoc)) {
+                _moveDirection = moveTarget.subtract(curLoc).normalizeLocal();
+            }
+
+            // update location
             var moveDist :Number = Constants.CURSOR_SPEED * dt;
             curLoc.x += (_moveDirection.x * moveDist);
             curLoc.y += (_moveDirection.y * moveDist);
@@ -86,19 +99,49 @@ public class PlayerCursor extends CollidableObj
         }
     }
 
+    protected function attachCell (cell :Cell) :void
+    {
+        var loc :Point = DisplayUtil.transformPoint(
+            new Point(cell.x, cell.y),
+            cell.displayObject.parent,
+            _sprite);
+        cell.x = loc.x;
+        cell.y = loc.y;
+        _sprite.addChild(cell.displayObject);
+        _attachedWhiteCells.push(cell.ref);
+
+        cell.attachToCursor(this);
+    }
+
+    protected function dropCells () :void
+    {
+        if (_attachedWhiteCells.length > 0) {
+            var loc :Point = new Point();
+            for each (var cellRef :SimObjectRef in _attachedWhiteCells) {
+                var cell :Cell = cellRef.object as Cell;
+                if (cell != null) {
+                    loc.x = cell.x;
+                    loc.y = cell.y;
+                    loc = DisplayUtil.transformPoint(loc, _sprite, GameCtx.cellLayer);
+                    cell.x = loc.x;
+                    cell.y = loc.y;
+                    GameCtx.cellLayer.addChild(cell.displayObject);
+                    cell.detachFromCursor();
+                }
+            }
+
+            _attachedWhiteCells = [];
+        }
+    }
+
     protected function handleCollisions (curLoc :Vector2) :void
     {
         var cell :Cell = Cell.getCellCollision(this);
         if (cell != null) {
             if (cell.type == Constants.CELL_WHITE) {
-                var loc :Point = cell.displayObject.parent.localToGlobal(new Point(cell.x, cell.y));
-                loc = _sprite.globalToLocal(loc);
-                cell.x = loc.x;
-                cell.y = loc.y;
-                _sprite.addChild(cell.displayObject);
-                _attachedWhiteCells.push(cell.ref);
-
-                cell.attachToCursor(this);
+                if (cell.canAttach) {
+                    attachCell(cell);
+                }
 
             } else if (cell.type == Constants.CELL_SPECIAL) {
                 cell.destroySelf();

@@ -311,6 +311,10 @@ public class GameMode extends AppMode
 
     override public function update (dt :Number) :void
     {
+        if (Constants.DEBUG_STANDARD_UPDATE_INTERVAL) {
+            dt = 1 / 30;
+        }
+
         GameCtx.timeLeft = Math.max(GameCtx.timeLeft - dt, 0);
 
         if (GameCtx.timeLeft <= 10 && !_countdown.visible) {
@@ -324,13 +328,6 @@ public class GameMode extends AppMode
         // In offline testing mode, the game is considered over when our local timer ends
         if (!ClientCtx.isConnected && GameCtx.timeLeft == 0) {
             GameCtx.gameOver = true;
-        }
-
-        // Move the player cursor towards the mouse
-        var moveTarget :Vector2 = new Vector2(GameCtx.cellLayer.mouseX, GameCtx.cellLayer.mouseY);
-        if (!moveTarget.equals(_lastMoveTarget)) {
-            GameCtx.cursor.moveTarget = moveTarget;
-            _lastMoveTarget = moveTarget;
         }
 
         super.update(dt);
@@ -377,7 +374,6 @@ public class GameMode extends AppMode
     protected var _arteries :Array;
     protected var _sparkles :MovieClip;
     protected var _countdown :MovieClip;
-    protected var _lastMoveTarget :Vector2 = new Vector2();
     protected var _musicChannel :AudioChannel;
     protected var _performedEndGameLogic :Boolean;
 

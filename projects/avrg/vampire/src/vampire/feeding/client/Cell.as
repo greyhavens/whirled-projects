@@ -153,6 +153,12 @@ public class Cell extends CollidableObj
         }
     }
 
+    public function detachFromCursor () :void
+    {
+        _attachedTo = SimObjectRef.Null();
+        addNamedTask(DETACH_COOLDOWN_TASK, new TimedTask(DETACH_COOLDOWN_TIME));
+    }
+
     public function get isAttachedToCursor () :Boolean
     {
         return (!_attachedTo.isNull);
@@ -393,6 +399,11 @@ public class Cell extends CollidableObj
         return true;
     }
 
+    public function get canAttach () :Boolean
+    {
+        return !(this.hasTasksNamed(DETACH_COOLDOWN_TASK));
+    }
+
     protected function get orbitMovementType () :int
     {
         switch (_type) {
@@ -436,12 +447,15 @@ public class Cell extends CollidableObj
     protected static const RED_ROTATION_TIME :Number = 3;
     protected static const BONUS_ROTATION_TIME :Number = 1.5;
 
+    protected static const DETACH_COOLDOWN_TIME :Number = 1.5;
+
     protected static const SPECIAL_CELL_MIN_PLAYER_DISTANCE :Number = 80;
     protected static const SPECIAL_CELL_AVOID_PLAYER_DISTANCE :NumRange =
         new NumRange(90, 100, Rand.STREAM_GAME);
     protected static const SPECIAL_CELL_AVOID_PLAYER_TIME :Number = 0.5;
 
     protected static const EXPLODE_TASK :String = "Explode";
+    protected static const DETACH_COOLDOWN_TASK :String = "DetachCooldown";
 
     protected static const CELL_MOVIES :Array = [ "cell_red", "cell_white", "cell_coop" ];
 }
