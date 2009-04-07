@@ -40,7 +40,7 @@ class TestGameController extends OneRoomGameRoom
         log.info("onGameStarted");
     }
 
-    public function onRoundComplete () :void
+    public function onRoundComplete (finalScores :HashMap) :void
     {
         log.info("onRoundComplete");
     }

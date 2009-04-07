@@ -117,7 +117,7 @@ public class ServerGameMode extends ServerMode
                 });
             _ctx.lastRoundScore = totalScore;
             // Send the final scores to the clients.
-            _ctx.feedingHost.onRoundComplete();
+            _ctx.feedingHost.onRoundComplete(_finalScores);
             _ctx.sendMessage(RoundOverMsg.create(_finalScores));
 
             // If there are two people playing the game, a predator and a prey, and they

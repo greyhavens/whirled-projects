@@ -1,4 +1,6 @@
 package vampire.feeding {
+    import com.threerings.util.HashMap;
+
 
 public interface FeedingHost
 {
@@ -6,7 +8,7 @@ public interface FeedingHost
     function onGameStarted () :void;
 
     /** Called after a successful round of feeding. */
-    function onRoundComplete () :void;
+    function onRoundComplete (finalScores :HashMap) :void;
 
     /** Called when the game is completed (after all players leave). */
     function onGameComplete () :void;

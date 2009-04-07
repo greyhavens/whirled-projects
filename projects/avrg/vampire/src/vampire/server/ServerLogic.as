@@ -3,6 +3,7 @@ package vampire.server
 
 import com.threerings.flash.MathUtil;
 import com.threerings.flash.Vector2;
+import com.threerings.util.HashMap;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
@@ -59,7 +60,7 @@ public class ServerLogic
     * When a player gains blood, his sires all share a portion of the gain
     *
     */
-    public static function awardSiresXpEarned(player :PlayerData, xp :Number) :void
+    public static function awardSiresXpEarned (player :PlayerData, xp :Number) :void
     {
         if (player == null) {
             log.error("awardSiresXpEarned", "player", player);
@@ -120,7 +121,7 @@ public class ServerLogic
     * When a player gains blood, his sires all share a portion of the gain
     *
     */
-    protected static function awardBloodBondedXpEarned(player :PlayerData, xp :Number) :void
+    protected static function awardBloodBondedXpEarned (player :PlayerData, xp :Number) :void
     {
         log.debug("awardBloodBondedXpEarned(" + player.name + ", xp=" + xp);
         if (player.bloodbonded <= 0) {
@@ -305,7 +306,7 @@ public class ServerLogic
 //
 //    }
 
-    protected static function increaseLevel(player :PlayerData) :void
+    protected static function increaseLevel (player :PlayerData) :void
     {
         var xpNeededForNextLevel :Number = Logic.xpNeededForLevel(player.level + 1);
         log.debug("xpNeededForNextLevel" + xpNeededForNextLevel);
@@ -315,7 +316,7 @@ public class ServerLogic
         awardSiresXpEarned(player, missingXp);
     }
 
-    protected static function decreaseLevel(player :PlayerData) :void
+    protected static function decreaseLevel (player :PlayerData) :void
     {
         if (player.level > 1) {
             var xpNeededForCurrentLevel :int = Logic.xpNeededForLevel(player.level);
@@ -332,7 +333,7 @@ public class ServerLogic
 //    }
 
 
-    public static function addXP(playerId :int, bonus :Number) :void
+    public static function addXP (playerId :int, bonus :Number) :void
     {
          if (ServerContext.server.isPlayer(playerId)) {
             var player :PlayerData = ServerContext.server.getPlayer(playerId);
@@ -346,9 +347,9 @@ public class ServerLogic
 
             player.setXP(Math.min(xp, Logic.maxXPGivenXPAndInvites(xp, player.invites)));
 
-            if (newLevel > currentLevel) {
-                player.setBlood(Math.min(player.blood, 0.1 * player.maxBlood));
-            }
+//            if (newLevel > currentLevel) {
+//                player.setBlood(Math.min(player.blood, 0.1 * player.maxBlood));
+//            }
 
 //            var levelWithMaxInvites :int = Logic.levelGivenCurrentXpAndInvites(xp, 100000);
 //            if (levelWithMaxInvites > newLevel) {
@@ -438,7 +439,7 @@ public class ServerLogic
                 }
                 else if (msg is DebugMsg) {
                     var debugMsg :DebugMsg = DebugMsg(msg);
-                    switch (debugMsg.name) {
+                    switch (debugMsg.type) {
                         case DebugMsg.DEBUG_GAIN_XP:
                         addXP(player.playerId, 500);
                         break;
@@ -464,6 +465,7 @@ public class ServerLogic
                         break;
 
                         default:
+                        log.debug("No registered debug type: " + msg);
                         break;
                     }
                 }
@@ -521,7 +523,7 @@ public class ServerLogic
     * time the sire is newly set.
     *
     */
-    protected static function playerInvitedByPlayer(newPlayerId :int, inviterId :int) :void
+    protected static function playerInvitedByPlayer (newPlayerId :int, inviterId :int) :void
     {
         var newbie :PlayerData = ServerContext.server.getPlayer(newPlayerId);
         if (newbie == null) {
@@ -667,7 +669,7 @@ public class ServerLogic
 
     }
 
-    protected static function handleFeedConfirmMessage(player :PlayerData, e :FeedConfirmMsg) :void
+    protected static function handleFeedConfirmMessage (player :PlayerData, e :FeedConfirmMsg) :void
     {
         log.debug("handleFeedConfirmMessage", "e", e);
 
@@ -708,18 +710,18 @@ public class ServerLogic
         }
     }
 
-    protected static function getPlayer(playerId :int) :PlayerData
+    protected static function getPlayer (playerId :int) :PlayerData
     {
         return ServerContext.server.getPlayer(playerId);
     }
 
-    protected static function isPlayer(playerId :int) :Boolean
+    protected static function isPlayer (playerId :int) :Boolean
     {
         return ServerContext.server.isPlayer(playerId);
     }
 
 
-    public static function makeSire(player :PlayerData, targetPlayerId :int) :void
+    public static function makeSire (player :PlayerData, targetPlayerId :int) :void
     {
         if (player == null) {
             return;
@@ -762,7 +764,7 @@ public class ServerLogic
     * Here we check if we are allowed to change action.
     * ATM we just allow it.
     */
-    protected static function handleBloodBondRequest(player :PlayerData, e :BloodBondRequestMsg) :void
+    protected static function handleBloodBondRequest (player :PlayerData, e :BloodBondRequestMsg) :void
     {
         var targetPlayer :PlayerData = ServerContext.server.getPlayer(e.targetPlayer);
 
@@ -778,7 +780,7 @@ public class ServerLogic
     }
 
 
-    protected static function handleRequestActionChange(player :PlayerData, e :RequestStateChangeMsg) :void
+    protected static function handleRequestActionChange (player :PlayerData, e :RequestStateChangeMsg) :void
     {
         log.debug("handleRequestActionChange(..), e.action=" + e.state);
         stateChange(player, e.state);
@@ -788,7 +790,7 @@ public class ServerLogic
     * Here we check if we are allowed to change action.
     * ATM we just allow it.
     */
-    public static function stateChange(player :PlayerData, newState :String) :void
+    public static function stateChange (player :PlayerData, newState :String) :void
     {
         log.debug(player.name + " stateChange(" + newState + ")");
         if (player == null || player.room == null) {
@@ -1009,7 +1011,7 @@ public class ServerLogic
     /**
     * If the avatar moves, break off the feeding/baring.
     */
-    protected static function handleAvatarMoved(player :PlayerData, userIdMoved :int) :void
+    protected static function handleAvatarMoved (player :PlayerData, userIdMoved :int) :void
     {
         //Moving nullifies any action we are currently doing, except if we are heading to
         //feed.
@@ -1054,7 +1056,7 @@ public class ServerLogic
         }
     }
 
-   public static function bloodBloomRoundOver(gameRecord :FeedingRecord) :void
+   public static function bloodBloomRoundOver (gameRecord :FeedingRecord, finalScores :HashMap) :void
     {
         log.debug("bloodBloomRoundOver()", "gameRecord", gameRecord);
         var srv :GameServer = ServerContext.server;
@@ -1091,7 +1093,14 @@ public class ServerLogic
         var preyPlayer :PlayerData = preyIsPlayer ? srv.getPlayer(gameRecord.gameServer.preyId) : null;
         var preyId :int = gameRecord.gameServer.preyId;
 
-        for each(var predatorId :int in gameRecord.gameServer.predatorIds) {
+        var predIds :Array = [];
+        finalScores.forEach(function (playerId :int, score :int) :void {
+            if (score > 0 && playerId != gameRecord.gameServer.preyId) {
+                predIds.push(playerId);
+            }
+        });
+
+        for each(var predatorId :int in predIds) {
             var pred :PlayerData = srv.getPlayer(predatorId);
             if (pred == null) {
                 log.error("adding blood, but no pred", "predatorId", predatorId);
@@ -1144,7 +1153,8 @@ public class ServerLogic
 
 
         //Then handle experience.  ATM everyone gets xp=score
-        var playerScore :Number = gameRecord.gameServer.lastRoundScore / gameRecord.playerIds.length;
+        var numPlayers :Number = predIds.length + (gameRecord.gameServer.preyId != 0 ? 1 : 0);
+        var playerScore :Number = gameRecord.gameServer.lastRoundScore / numPlayers;
         //Update the highest possible score.  We use this to scale the coin payout
         ServerContext.topBloodBloomScore = Math.max(ServerContext.topBloodBloomScore, playerScore);
         var xpGained :Number = playerScore * VConstants.XP_GAINED_FROM_FEEDING_PER_BLOOD_UNIT;
@@ -1174,7 +1184,11 @@ public class ServerLogic
         }
 
         gameRecord.predators.forEach(function(predId :int) :void {
-            awardXP(predId, xpGained, xpFormatted);
+            //Only award xp if the pred score was > 0
+            //This also excludes players that loin the lobby after the feed is started.
+            if (finalScores.get(predId) > 0) {
+                awardXP(predId, xpGained, xpFormatted);
+            }
         });
     }
 

@@ -2,9 +2,9 @@ package vampire.server
 {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
+import com.threerings.util.HashMap;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
-import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.simplegame.EventCollecter;
 
 import vampire.data.Logic;
@@ -230,7 +230,7 @@ public class FeedingRecord extends EventCollecter
         }
     }
 
-    public function onRoundComplete () :void
+    public function onRoundComplete (finalScores :HashMap) :void
     {
         log.debug("roundCompleteCallback");
         try {
@@ -247,7 +247,7 @@ public class FeedingRecord extends EventCollecter
                 var score :Number = _gameServer.lastRoundScore;
                 log.debug("Score=" + score);
                 ServerContext.server.control.doBatch(function() :void {
-                    ServerLogic.bloodBloomRoundOver(_thisBloodBloomRecord);
+                    ServerLogic.bloodBloomRoundOver(_thisBloodBloomRecord, finalScores);
 //                    _room.bloodBloomRoundOver(_thisBloodBloomRecord);
                 });
 
