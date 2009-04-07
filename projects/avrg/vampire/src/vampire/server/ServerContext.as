@@ -21,19 +21,15 @@ public class ServerContext
 
     public static var serverLogBroadcast: AVRGAgentLogTarget;
 
-    public static function getPlayerName(playerId :int) :String
-    {
-        var player :PlayerData = server.getPlayer(playerId);
-
-        if(player == null || player.room == null) {
-            return "Player " + playerId;
-        }
-        var avatar :AVRGameAvatar = player.room.ctrl.getAvatarInfo(playerId);
-        if(avatar == null) {
-            return "Player " + playerId;
-        }
-        return avatar.name;
-    }
+//    public static function getPlayerName(playerId :int) :String
+//    {
+//        var player :PlayerData = server.getPlayer(playerId);
+//
+//        if(player == null) {
+//            return "Player " + playerId;
+//        }
+//        return player.ctrl.getPlayerName();
+//    }
 
 
     public static function trace2(msg :String) :void

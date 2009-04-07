@@ -119,46 +119,31 @@ public class LineageServer extends Lineage
             return;
         }
 
-        var avatar :AVRGameAvatar = room.ctrl.getAvatarInfo(player.playerId);
-        if(avatar == null) {
-            log.error(" playerEnteredRoom(), avatar == null");
-            return;
-        }
-
-        var avatarname :String = room.ctrl.getAvatarInfo(player.playerId).name;
-        if(avatarname == null) {
-            log.error(" playerEnteredRoom(), playername == null");
-            return;
-        }
+//        var avatarname :String = player.name;
 
         var isHierarchyAltered :Boolean = false;
 
-        if(!isPlayer(player.playerId)) {
+        if (!isPlayer(player.playerId)) {
             isHierarchyAltered = true;
             log.debug(" playerEnteredRoom, player not in hierarchy");
         }
-        else if(!_playerId2Name.containsKey(player.playerId) ||
-            _playerId2Name.get(player.playerId) != avatarname ||
-            avatarname != player.name) {
+        else if (!_playerId2Name.containsKey(player.playerId) ||
+            _playerId2Name.get(player.playerId) != player.name) {
             isHierarchyAltered = true;
             log.debug(" playerEnteredRoom, player name changed");
         }
-        else if(!isPlayerDataEqual(player)) {
+        else if (!isPlayerDataEqual(player)) {
             isHierarchyAltered = true;
             log.debug(" playerEnteredRoom, player data changed");
         }
-        else if(player.sire > 0 && !isPlayerName(player.sire)){
+        else if (player.sire > 0 && !isPlayerName(player.sire)){
             isHierarchyAltered = true;
             log.debug(" playerEnteredRoom, sire has no name");
         }
 
-        if(isHierarchyAltered) {//Something doesn't match.  Update all the data, and propagate
+        if (isHierarchyAltered) {//Something doesn't match.  Update all the data, and propagate
             //Update names
-            setPlayerName(player.playerId,  avatarname);
-
-            if(avatarname != player.name) {
-                player.setName(avatarname);
-            }
+            setPlayerName(player.playerId,  player.name);
 
             //Update hierarchy data
             setPlayerSire(player.playerId, player.sire);
@@ -166,9 +151,6 @@ public class LineageServer extends Lineage
             log.debug(" before we load the sire data(just added this player), the hierarchy is=" + this.toString());
             loadConnectingPlayersFromPropsRecursive(player.sire);
             updatePlayer(player.playerId);
-//            updateIntoRoomProps();
-
-
         }
         else {
             log.debug(" hierarchy is not altered, sending unchanged.");

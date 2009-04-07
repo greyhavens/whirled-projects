@@ -226,10 +226,10 @@ public class PlayerData extends EventHandlerManager
             + "]";
     }
 
-    public function isDead () :Boolean
-    {
-        return blood <= 0;
-    }
+//    public function isDead () :Boolean
+//    {
+//        return blood <= 0;
+//    }
 
     public function shutdown () :void
     {
@@ -268,10 +268,6 @@ public class PlayerData extends EventHandlerManager
         _xp = Math.min(_xp, Logic.maxXPGivenXPAndInvites(_xp, invites));
     }
 
-//    public function setAvatarState (s :String) :void
-//    {
-//        _avatarState = s;
-//    }
     public function setState (action :String) :void
     {
         if (action != _state) {
@@ -279,18 +275,6 @@ public class PlayerData extends EventHandlerManager
         }
         _state = action;
     }
-
-    public function setName (name :String) :void
-    {
-        _name = name;
-    }
-
-//    public function setTimeToCurrentTime () :void
-//    {
-//        var currentTime :Number = new Date().time;
-//        setTime(currentTime);
-//    }
-
 
     protected function get targetPlayer () :PlayerData
     {
@@ -423,10 +407,6 @@ public class PlayerData extends EventHandlerManager
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME, bloodbondedName);
             }
 
-            //The tutorial is always shown now.
-//            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE] != time && !isNaN(time)) {
-//                room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE, time);
-//            }
             if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP] != xp && !isNaN(xp)) {
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, xp);
             }
@@ -434,10 +414,6 @@ public class PlayerData extends EventHandlerManager
             if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES] != invites) {
                 room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES, invites);
             }
-
-//            if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE] != avatarState) {
-//                room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE, avatarState);
-//            }
 
             //Copy the feedback to the room
             for each (var msg :String in _feedback) {
@@ -477,10 +453,6 @@ public class PlayerData extends EventHandlerManager
             if(_ctrl.props.get(Codes.PLAYER_PROP_XP) != xp) {
                 _ctrl.props.set(Codes.PLAYER_PROP_XP, xp, true);
             }
-
-//            if(_ctrl.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE) != time) {
-//                _ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, time, true);
-//            }
 
             if(_ctrl.props.get(Codes.PLAYER_PROP_SIRE) != sire) {
                 _ctrl.props.set(Codes.PLAYER_PROP_SIRE, sire, true);
@@ -548,13 +520,6 @@ public class PlayerData extends EventHandlerManager
     {
         _ctrl.props.set(Codes.PLAYER_PROP_FEEDING_DATA, bytes);
     }
-
-//    public function setTime (time :Number) :void
-//    {
-//        _timePlayerPreviouslyQuit = time;
-//        //Set immediately
-//        _ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, time);
-//    }
 
     public function addToInviteTally (addition :int = 1) :void
     {
@@ -626,7 +591,7 @@ public class PlayerData extends EventHandlerManager
 
     public function get name () :String
     {
-        return _name;
+        return _ctrl.getPlayerName();
     }
 
     public function get level () :int
@@ -663,11 +628,6 @@ public class PlayerData extends EventHandlerManager
         return _bloodbondedName;
     }
 
-//    public function get avatarState () :String
-//    {
-//        return _avatarState;
-//    }
-
     public function get sire () :int
     {
         return _sire;
@@ -691,12 +651,6 @@ public class PlayerData extends EventHandlerManager
     {
         return _minionsForTrophies;
     }
-
-
-//    public function get time () :Number
-//    {
-//        return _timePlayerPreviouslyQuit;
-//    }
 
     public function get location () :Array
     {
@@ -760,68 +714,6 @@ public class PlayerData extends EventHandlerManager
         }
     }
 
-
-
-//    public function addFeedingRecord(preyId :int, predId :int) :void
-//    {
-//        _feedingRecord.push([ preyId, predId]);
-//    }
-//
-//    public function get feedingRecord() :Array
-//    {
-//        return _feedingRecord;
-//    }
-//
-//    public function clearFeedingRecord() :void
-//    {
-//        _feedingRecord.splice(0);
-//    }
-//
-//    /**
-//    * @param previousFeed NUmber of games previous.  0 is the current game.
-//    */
-//    public function getPreyInPreviousFeed (previousFeed :int) :int
-//    {
-//        if (_feedingRecord.length == 0 || _feedingRecord.length < previousFeed) {
-//            return 0;
-//        }
-//        else {
-//            return _feedingRecord[previousFeed][0];
-//        }
-//    }
-//
-//    public function purgeFeedingRecordOfAllExcept (otherPlayerId :int) :void
-//    {
-//        var index :int = 0;
-//        while(index < _feedingRecord.length) {
-//
-//            var currentRecord :Array = _feedingRecord[index] as Array;
-//            //Record ok
-//            if ((currentRecord[0] == playerId && currentRecord[1] == otherPlayerId) ||
-//                (currentRecord[1] == playerId && currentRecord[0] == otherPlayerId)) {
-//
-//                index++;
-//            }
-//            else {//Purge this record
-//                _feedingRecord.splice(index, 1);
-//            }
-//
-//        }
-//    }
-
-//    /**
-//    * @param previousFeed NUmber of games previous.  0 is the current game.
-//    */
-//    public function getPredatorInPreviousFeed (previousFeed :int) :int
-//    {
-//        if (_feedingRecord.length == 0 || _feedingRecord.length < previousFeed) {
-//            return 0;
-//        }
-//        else {
-//            return _feedingRecord[previousFeed][1];
-//        }
-//    }
-
     public function isVictim() :Boolean
     {
         if(state != VConstants.AVATAR_STATE_BARED) {
@@ -846,12 +738,9 @@ public class PlayerData extends EventHandlerManager
 
 
 
-    protected var _name :String;
     protected var _blood :Number;
     protected var _xp :Number;
     protected var _state :String;
-
-//    protected var _avatarState :String = "Default";
 
     protected var _bloodbonded :int;
     protected var _bloodbondedName :String;
@@ -860,18 +749,10 @@ public class PlayerData extends EventHandlerManager
     /**Hold max 25 player ids for recording minions for trophies.*/
     protected var _minionsForTrophies :Array = new Array();
 
-//    protected var _timePlayerPreviouslyQuit :Number;
-
     protected var _targetId :int;
     protected var _targetLocation :Array;
 
     protected var _inviteTally :int;
-
-    /** Records who we eat, and who eats us, for determining blood bond status.*/
-//    protected var _mostRecentVictimIds :Array = new Array();
-
-    /** Player data for BloodBloom*/
-//    protected var _feedingData :PlayerFeedingData;
 
 
     protected var _room :Room;
@@ -882,13 +763,6 @@ public class PlayerData extends EventHandlerManager
 
     protected var _xpFeedbackTime :Number = 0;
     protected var _xpFeedback :Number = 0;
-
-
-    /**A list of the most recent feedings with this player, each element:[preyId, predId]*/
-//    protected var _feedingRecord :Array = new Array();
-
-//    protected var _bloodUpdateTime :Number = 0;
-//    protected static const UPDATE_BLOOD_INTERVAL :Number = 3;
 
     protected static const log :Log = Log.getLog(PlayerData);
 

@@ -87,14 +87,15 @@ public class ClientContext
 
     public static function getPlayerName (playerId :int) :String
     {
-        if (ctrl != null && ctrl.isConnected() && !VConstants.LOCAL_DEBUG_MODE) {
-            var avatar :AVRGameAvatar = ctrl.room.getAvatarInfo(playerId);
-            if (null != avatar) {
-                return avatar.name;
-            }
-        }
-
-        return "Player " + playerId.toString();
+        return ctrl.game.getOccupantName(playerId);
+//        if (ctrl != null && ctrl.isConnected() && !VConstants.LOCAL_DEBUG_MODE) {
+//            var avatar :AVRGameAvatar = ctrl.room.getAvatarInfo(playerId);
+//            if (null != avatar) {
+//                return avatar.name;
+//            }
+//        }
+//
+//        return "Player " + playerId.toString();
     }
 
     public static function isPlayerProps () :Boolean

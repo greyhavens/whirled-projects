@@ -273,7 +273,7 @@ public class GameModel extends SimObject
             return "Player Name";
         }
         else {
-            return ClientContext.ctrl.room.getAvatarInfo(ClientContext.ourPlayerId).name;
+            return ClientContext.ctrl.game.getOccupantName(ClientContext.ourPlayerId);
         }
     }
 

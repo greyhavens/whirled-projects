@@ -88,14 +88,10 @@ public class Room extends SimObject
         }
 
         maybeLoadControl();
-
-        var playername :String = _ctrl.getAvatarInfo(player.playerId) != null ? _ctrl.getAvatarInfo(player.playerId).name : "" + player.playerId;
     }
 
     public function playerLeft (player :PlayerData) :void
     {
-//        _entityLocations.remove(player.playerId);
-
         if (!_players.remove(player.playerId)) {
             log.warning("Departing player did not exist in room", "roomId", this.roomId,
                         "playerId", player.playerId);
