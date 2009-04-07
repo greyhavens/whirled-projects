@@ -6,10 +6,10 @@ import com.whirled.contrib.simplegame.util.*;
 public class Constants
 {
     public static const DEBUG_SHOW_STATS :Boolean = false;
-    public static const DEBUG_DISABLE_AUDIO :Boolean = true;
+    public static const DEBUG_DISABLE_AUDIO :Boolean = false;
     public static const DEBUG_FORCE_SPECIAL_BLOOD_STRAIN :Boolean = false;
     public static const DEBUG_DISABLE_ROOM_OVERLAY :Boolean = false;
-    public static const DEBUG_STANDARD_UPDATE_INTERVAL :Boolean = true;
+    public static const DEBUG_STANDARD_UPDATE_INTERVAL :Boolean = false;
 
     public static const GAME_TIME :Number = 60 * 2;
 
