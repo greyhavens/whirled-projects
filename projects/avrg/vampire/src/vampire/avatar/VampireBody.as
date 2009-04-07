@@ -12,7 +12,7 @@ import flash.filters.BitmapFilter;
 import flash.filters.ColorMatrixFilter;
 import flash.utils.ByteArray;
 
-public class VampireBody extends MovieClipBody
+public class VampireBody extends VampireBodyBase
 {
     public static const UPSELL :int = 0;
     public static const CONFIGURABLE :int = 1;
@@ -48,26 +48,6 @@ public class VampireBody extends MovieClipBody
                     loadConfig();
                 }
             });
-
-        //Notify the game when we arrive at a movement destination
-        _movementNotifier = new AvatarEndMovementNotifier(_ctrl);
-
-        //Register custom properties
-        if(_ctrl.hasControl()) {
-            _ctrl.registerPropertyProvider(propertyProvider);
-        }
-    }
-
-    protected function propertyProvider (key :String) :Object
-    {
-        switch(key) {
-
-            case ENTITY_PROPERTY_IS_LEGAL_AVATAR:
-                return true;
-
-           default://The rest of the properties are provided by the movement notifier.
-                return _movementNotifier.propertyProvider(key);
-        }
     }
 
     protected function createConfigPanel () :Sprite
@@ -304,13 +284,7 @@ public class VampireBody extends MovieClipBody
     protected var _shoeNames :Array;
     protected var _upsellItemId :int;
 
-    /**Notify the game when we arrive at a movement destination*/
-    protected var _movementNotifier :AvatarEndMovementNotifier;
-
     protected static const MEMORY_CONFIG :String = "VampatarConfig";
-
-    /** You must wear a level avatar to play the game */
-    public static const ENTITY_PROPERTY_IS_LEGAL_AVATAR :String = "IsLegalVampireAvatar";
 }
 
 }
