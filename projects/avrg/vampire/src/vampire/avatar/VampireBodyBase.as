@@ -5,15 +5,18 @@ import flash.display.MovieClip;
 
 public class VampireBodyBase extends MovieClipBody
 {
+    /** You must wear a legal avatar to play the game */
+    public static const ENTITY_PROPERTY_IS_LEGAL_AVATAR :String = "IsLegalVampireAvatar";
+
     public function VampireBodyBase (ctrl :AvatarControl, media :MovieClip, width: int,
                                      height :int = -1)
     {
         super(ctrl, media, width, height);
 
-        //Notify the game when we arrive at a movement destination
+        // Notify the game when we arrive at a movement destination
         _movementNotifier = new AvatarEndMovementNotifier(_ctrl);
 
-        //Register custom properties
+        // Register custom properties
         if(_ctrl.hasControl()) {
             _ctrl.registerPropertyProvider(propertyProvider);
         }
@@ -31,11 +34,7 @@ public class VampireBodyBase extends MovieClipBody
         }
     }
 
-    /**Notify the game when we arrive at a movement destination*/
     protected var _movementNotifier :AvatarEndMovementNotifier;
-
-    /** You must wear a level avatar to play the game */
-    public static const ENTITY_PROPERTY_IS_LEGAL_AVATAR :String = "IsLegalVampireAvatar";
 }
 
 }
