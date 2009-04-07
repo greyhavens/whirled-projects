@@ -191,9 +191,9 @@ public class ClientCtx
     public static function getPlayerName (playerId :int) :String
     {
         if (gameCtrl.isConnected()) {
-            var avatar :AVRGameAvatar = gameCtrl.room.getAvatarInfo(playerId);
-            if (null != avatar) {
-                return avatar.name;
+            var name :String = gameCtrl.game.getOccupantName(playerId);
+            if (name != null) {
+                return name;
             }
         }
 
