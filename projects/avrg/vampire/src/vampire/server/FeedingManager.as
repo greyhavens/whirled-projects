@@ -149,6 +149,9 @@ public class FeedingManager extends SimObject
 //            gameRecord.removePlayer(playerId);
             _playerId2Game.remove(playerId);
         }
+        else {
+            log.debug("playerQuitsGame, player not a mamber of any game", "playerId", playerId);
+        }
     }
 
     public function isPredatorInGame (playerId :int) :Boolean
