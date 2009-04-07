@@ -14,6 +14,7 @@ public class Codes
     public static const ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE :String = "noFeedingPlayers";
     public static const ROOM_PROP_PRIMARY_PREDS :String = "primaryPreds";
     public static const ROOM_PROP_FEEDBACK :String = "feedback";
+    public static const ROOM_PROP_LOW_POPULATION_ROOMS :String = "lowPopRooms";
 
 
 
