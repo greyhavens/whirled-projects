@@ -109,7 +109,7 @@ public class Trophies
         }
         var minionCount :int = player.minionsIds.length;
 
-        log.debug("handlePlayerGainsMinion", "player", player.playerId, "minionCount", minionCount);
+        log.debug("checkMinionTrophies", "player", player.playerId, "minionCount", minionCount);
 
         for each(var minionReq :int in PATRON_REQS) {
             if(minionCount >= minionReq) {
