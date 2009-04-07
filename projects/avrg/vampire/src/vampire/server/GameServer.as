@@ -111,19 +111,15 @@ public class GameServer extends ObjectDB
         _lastTickTime = time;
         var dt :Number = dT / 1000.0;//Seconds
 
-        //Store the current (enough) time so all the PlayerData objects don't have to create another.
-        ServerContext.time = new Date().time;
-
         //We don't want to update stale rooms
         removeStaleRooms();
 
         //Add the global messages to each room
         _rooms.forEach(function(roomId :int, room :Room) :void {
-
-                for each(var globalMessage :String in _globalFeedback) {
-                    room.addFeedback(globalMessage, 0);
-                }
-            });
+            for each(var globalMessage :String in _globalFeedback) {
+                room.addFeedback(globalMessage, 0);
+            }
+        });
 
         //Then empty the global message queue
         _globalFeedback.splice(0);
@@ -179,8 +175,6 @@ public class GameServer extends ObjectDB
             if (pctrl == null) {
                 throw new Error("Could not get PlayerSubControlServer for player!");
             }
-
-            var hierarchyChanged :Boolean = false;
 
             _ctrl.doBatch(function () :void {
                 var player :PlayerData = new PlayerData(pctrl);
