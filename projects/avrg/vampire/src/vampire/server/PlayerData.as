@@ -34,7 +34,7 @@ public class PlayerData extends EventHandlerManager
 {
     public function PlayerData (ctrl :PlayerSubControlServer)
     {
-        if(ctrl == null) {
+        if (ctrl == null) {
             log.error("Bad! PlayerData(null).  What happened to the PlayerSubControlServer?  Expect random failures everywhere.");
             return;
         }
@@ -55,7 +55,7 @@ public class PlayerData extends EventHandlerManager
 
         //Get experience
         _xp = Number(_ctrl.props.get(Codes.PLAYER_PROP_XP));
-        if(isNaN(_xp)) {
+        if (isNaN(_xp)) {
             setXP(0);
         }
         log.debug("Getting xp=" + _xp);
@@ -68,7 +68,7 @@ public class PlayerData extends EventHandlerManager
         //For now we ignore blood.
         //Get blood
 //        _blood = Number(_ctrl.props.get(Codes.PLAYER_PROP_BLOOD));
-//        if(_timePlayerPreviouslyQuit == 0) {
+//        if (_timePlayerPreviouslyQuit == 0) {
 //            // blood should always be set if level is set, but let's play it safe
 //            log.debug("   setting blood=" + VConstants.MAX_BLOOD_FOR_LEVEL(1));
 //            setBlood(VConstants.MAX_BLOOD_FOR_LEVEL(1));
@@ -76,14 +76,14 @@ public class PlayerData extends EventHandlerManager
 //        }
 //
 //        //In the current game, we don't let you die.
-//        if(_blood < 1) {
+//        if (_blood < 1) {
 //            setBlood(1);
 //        }
 //        log.debug("Getting blood="+_blood);
 
         //Get bloodbonded data
         _bloodbonded = int(_ctrl.props.get(Codes.PLAYER_PROP_BLOODBONDED));
-        if(_bloodbonded > 0) {
+        if (_bloodbonded > 0) {
             _bloodbondedName = _ctrl.props.get(Codes.PLAYER_PROP_BLOODBONDED_NAME) as String;
         }
         log.debug("Getting bloodbonded=" + _bloodbonded);
@@ -102,11 +102,11 @@ public class PlayerData extends EventHandlerManager
 
         //If we have previously been awake, reduce our blood proportionally to the time since we last played.
 //        log.debug("Getting time=" + time);
-//        if(time > 1) {
+//        if (time > 1) {
 //            var date :Date = new Date();
 //            var now :Number = date.time;
 //            var millisecondsSinceLastAwake :Number = now - time;
-//            if(millisecondsSinceLastAwake < 0) {
+//            if (millisecondsSinceLastAwake < 0) {
 //                log.error("Computing time since last awake, but < 0, now=" + now + ", time=" + time);
 //            }
 //            var daysSinceLastAwake :Number = millisecondsSinceLastAwake / (1000*60*60*24);
@@ -135,12 +135,12 @@ public class PlayerData extends EventHandlerManager
 
         //Create feeding data if there is none
         var feedingData :PlayerFeedingData = new PlayerFeedingData();
-        if(_ctrl.props.get(Codes.PLAYER_PROP_FEEDING_DATA) == null) {
+        if (_ctrl.props.get(Codes.PLAYER_PROP_FEEDING_DATA) == null) {
             _ctrl.props.set(Codes.PLAYER_PROP_FEEDING_DATA, feedingData.toBytes());
         }
         try {
             var bytes :ByteArray = _ctrl.props.get(Codes.PLAYER_PROP_FEEDING_DATA) as ByteArray;
-            if(bytes != null) {
+            if (bytes != null) {
                 bytes.position = 0;
                 feedingData.fromBytes(bytes);
 
@@ -164,9 +164,10 @@ public class PlayerData extends EventHandlerManager
 
         //Load/Create minionIds
         _progenyForTrophies = _ctrl.props.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array;
-        if(_progenyForTrophies == null) {
+        if (_progenyForTrophies == null) {
             _progenyForTrophies = new Array();
         }
+        log.debug("Getting progenyIds=" + progenyIds);
         Trophies.checkMinionTrophies(this);
 
         _inviteTally = int(_ctrl.props.get(Codes.PLAYER_PROP_INVITES));
@@ -243,10 +244,10 @@ public class PlayerData extends EventHandlerManager
         }
 
 //        var currentTime :Number = new Date().time;
-        if(_room != null && _room.ctrl != null && _room.ctrl.isConnected()) {
+        if (_room != null && _room.ctrl != null && _room.ctrl.isConnected()) {
 //            setTime(currentTime);
 //            setIntoPlayerProps();
-//            if(_ctrl != null && _ctrl.isConnected()) {
+//            if (_ctrl != null && _ctrl.isConnected()) {
 //                _ctrl.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
 //            }
         }
@@ -279,7 +280,7 @@ public class PlayerData extends EventHandlerManager
 
     protected function get targetPlayer () :PlayerData
     {
-        if(ServerContext.server.isPlayer(targetId)) {
+        if (ServerContext.server.isPlayer(targetId)) {
             return ServerContext.server.getPlayer(targetId);
         }
         return null;
@@ -292,7 +293,7 @@ public class PlayerData extends EventHandlerManager
 
     public function get avatar () :AVRGameAvatar
     {
-        if(room == null || room.ctrl == null || !room.ctrl.isConnected() ||
+        if (room == null || room.ctrl == null || !room.ctrl.isConnected() ||
             !room.ctrl.isPlayerHere(playerId) || _ctrl == null || !_ctrl.isConnected()) {
             return null;
         }
@@ -301,7 +302,7 @@ public class PlayerData extends EventHandlerManager
 
     protected function get targetOfTargetPlayer() :int
     {
-        if(!isTargetPlayer) {
+        if (!isTargetPlayer) {
             return 0;
         }
         return targetPlayer.targetId;
@@ -309,7 +310,7 @@ public class PlayerData extends EventHandlerManager
 
     protected function get isTargetTargetingMe() :Boolean
     {
-        if(!isTargetPlayer) {
+        if (!isTargetPlayer) {
             return false;
         }
         return targetPlayer.targetId == playerId;
@@ -325,7 +326,7 @@ public class PlayerData extends EventHandlerManager
         _room = ServerContext.server.getRoom(int(evt.value));
         ServerContext.server.control.doBatch(function () :void {
             try {
-                if(_room != null) {
+                if (_room != null) {
                     _room.playerEntered(thisPlayer);
                     ServerContext.lineage.playerEnteredRoom(thisPlayer, _room);
                     thisPlayer.setState(VConstants.PLAYER_STATE_DEFAULT);
@@ -375,12 +376,12 @@ public class PlayerData extends EventHandlerManager
     {
         try {
 
-            if(_ctrl == null || !_ctrl.isConnected()) {
+            if (_ctrl == null || !_ctrl.isConnected()) {
                 log.error("setIntoRoomProps() but ", "_ctrl", _ctrl);
                 return;
             }
 
-            if(_room == null || _room.ctrl == null || !_room.ctrl.isConnected()) {
+            if (_room == null || _room.ctrl == null || !_room.ctrl.isConnected()) {
                 log.error("setIntoRoomProps() but ", "room", room);
                 return;
             }
@@ -439,34 +440,34 @@ public class PlayerData extends EventHandlerManager
     {
         try {
         //Permanent props
-            if(_ctrl == null || _ctrl.props == null || !_ctrl.isConnected()) {
+            if (_ctrl == null || _ctrl.props == null || !_ctrl.isConnected()) {
                 return;
             }
 
             //For now we ignore blood.
-//            if(_ctrl.props.get(Codes.PLAYER_PROP_BLOOD) != blood) {
+//            if (_ctrl.props.get(Codes.PLAYER_PROP_BLOOD) != blood) {
 //                _ctrl.props.set(Codes.PLAYER_PROP_BLOOD, blood, true);
 //            }
 
-            if(_ctrl.props.get(Codes.PLAYER_PROP_NAME) != name) {
+            if (_ctrl.props.get(Codes.PLAYER_PROP_NAME) != name) {
                 _ctrl.props.set(Codes.PLAYER_PROP_NAME, name, true);
             }
 
-            if(_ctrl.props.get(Codes.PLAYER_PROP_XP) != xp) {
+            if (_ctrl.props.get(Codes.PLAYER_PROP_XP) != xp) {
                 _ctrl.props.set(Codes.PLAYER_PROP_XP, xp, true);
             }
 
-            if(_ctrl.props.get(Codes.PLAYER_PROP_SIRE) != sire) {
+            if (_ctrl.props.get(Codes.PLAYER_PROP_SIRE) != sire) {
                 _ctrl.props.set(Codes.PLAYER_PROP_SIRE, sire, true);
             }
 
-            if(_ctrl.props.get(Codes.PLAYER_PROP_BLOODBONDED) != bloodbonded) {
+            if (_ctrl.props.get(Codes.PLAYER_PROP_BLOODBONDED) != bloodbonded) {
                 _ctrl.props.set(Codes.PLAYER_PROP_BLOODBONDED, bloodbonded, true);
 
 
-                if(_bloodbonded > 0) {//Set the name too
+                if (_bloodbonded > 0) {//Set the name too
                     var bloodBondedPlayer :PlayerData = ServerContext.server.getPlayer(_bloodbonded);
-                    if(bloodBondedPlayer != null) {
+                    if (bloodBondedPlayer != null) {
                         _bloodbondedName = bloodBondedPlayer.name;
                         _ctrl.props.set(Codes.PLAYER_PROP_BLOODBONDED_NAME, _bloodbondedName, true);
                     }
@@ -477,17 +478,21 @@ public class PlayerData extends EventHandlerManager
 
             }
 
-            if(_ctrl.props.get(Codes.PLAYER_PROP_BLOODBONDED_NAME) != bloodbondedName) {
+            if (_ctrl.props.get(Codes.PLAYER_PROP_BLOODBONDED_NAME) != bloodbondedName) {
                 _ctrl.props.set(Codes.PLAYER_PROP_BLOODBONDED_NAME, bloodbondedName, true);
             }
 
-            if(_ctrl.props.get(Codes.PLAYER_PROP_PROGENY_IDS) == null ||
-                !ArrayUtil.equals(_ctrl.props.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array, _progenyForTrophies)) {
+            if (!ArrayUtil.equals(_ctrl.props.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array,
+                _progenyForTrophies)) {
+
+                log.debug("Changing progeny ids in update loop");
+                log.debug("_ctrl.props.get(Codes.PLAYER_PROP_PROGENY_IDS)=" + _ctrl.props.get(Codes.PLAYER_PROP_PROGENY_IDS));
+                log.debug("_progenyForTrophies=" + _progenyForTrophies);
                 _ctrl.props.set(Codes.PLAYER_PROP_PROGENY_IDS, _progenyForTrophies, true);
                 Trophies.checkMinionTrophies(this);
             }
 
-            if(_ctrl.props.get(Codes.PLAYER_PROP_INVITES) != invites) {
+            if (_ctrl.props.get(Codes.PLAYER_PROP_INVITES) != invites) {
                 _ctrl.props.set(Codes.PLAYER_PROP_INVITES, invites, true);
                 Trophies.checkInviteTrophies(this);
             }
@@ -545,8 +550,8 @@ public class PlayerData extends EventHandlerManager
         var oldBloodBond :int = _bloodbonded;
         _bloodbonded = bloodbonded;
 
-        if(oldBloodBond != 0 && _bloodbonded != oldBloodBond) {//Remove the blood bond from the other player.
-            if(ServerContext.server.isPlayer(oldBloodBond)) {
+        if (oldBloodBond != 0 && _bloodbonded != oldBloodBond) {//Remove the blood bond from the other player.
+            if (ServerContext.server.isPlayer(oldBloodBond)) {
                 var oldPartner :PlayerData = ServerContext.server.getPlayer(oldBloodBond);
                 oldPartner.removeBloodBond();
             }
@@ -565,9 +570,9 @@ public class PlayerData extends EventHandlerManager
         }
 
 
-        if(_bloodbonded != 0) {//Set the name too
+        if (_bloodbonded != 0) {//Set the name too
             var bloodBondedPlayer :PlayerData = ServerContext.server.getPlayer(_bloodbonded);
-            if(bloodBondedPlayer != null) {
+            if (bloodBondedPlayer != null) {
                 _bloodbondedName = bloodBondedPlayer.name;
             }
             else {
@@ -652,14 +657,14 @@ public class PlayerData extends EventHandlerManager
         return _targetLocation;
     }
 
-    public function get minionsIds() :Array
+    public function get progenyIds() :Array
     {
         return _progenyForTrophies;
     }
 
     public function get location () :Array
     {
-        if(room == null || room.ctrl == null || room.ctrl.getAvatarInfo(playerId) == null) {
+        if (room == null || room.ctrl == null || room.ctrl.getAvatarInfo(playerId) == null) {
             return null;
         }
         var avatar :AVRGameAvatar = room.ctrl.getAvatarInfo(playerId);
@@ -682,12 +687,12 @@ public class PlayerData extends EventHandlerManager
 
 
 //        _bloodUpdateTime += dt;
-//        if(_bloodUpdateTime >= UPDATE_BLOOD_INTERVAL) {
+//        if (_bloodUpdateTime >= UPDATE_BLOOD_INTERVAL) {
 //            //Vampires lose blood
-//            if(blood > 1) {
+//            if (blood > 1) {
 //                ServerLogic.damage(this, dt * VConstants.VAMPIRE_BLOOD_LOSS_RATE, false);
 //                //But not below 1
-//                if(blood < 1) {
+//                if (blood < 1) {
 //                    setBlood(1);
 //                }
 //            }
@@ -706,32 +711,33 @@ public class PlayerData extends EventHandlerManager
 
     public function updateProgeny(progeny :Array) :void
     {
-        if(_progenyForTrophies.length >= 25) {
+        if (_progenyForTrophies.length >= 25) {
             return;
         }
-        for each(var newProgenyId :int in progeny) {
-            if(!ArrayUtil.contains(_progenyForTrophies, newProgenyId)) {
+        for each (var newProgenyId :int in progeny) {
+            if (!ArrayUtil.contains(_progenyForTrophies, newProgenyId)) {
                 _progenyForTrophies.push(newProgenyId);
                 _progenyForTrophies = _progenyForTrophies.sort();
-                if(_progenyForTrophies.length >= 25) {
+                if (_progenyForTrophies.length >= 25) {
                     break;
                 }
             }
         }
+        Trophies.checkMinionTrophies(this);
     }
 
     public function isVictim() :Boolean
     {
-        if(state != VConstants.AVATAR_STATE_BARED) {
+        if (state != VConstants.AVATAR_STATE_BARED) {
             return false;
         }
 
         var predator :PlayerData = ServerContext.server.getPlayer(targetId);
-        if(predator == null) {
+        if (predator == null) {
             return false;
         }
 
-        if(predator.state == VConstants.AVATAR_STATE_FEEDING && predator.targetId == playerId) {
+        if (predator.state == VConstants.AVATAR_STATE_FEEDING && predator.targetId == playerId) {
             return true;
         }
         return false;
