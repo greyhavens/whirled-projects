@@ -107,7 +107,7 @@ public class Trophies
             log.error("checkMinionTrophies", "player", player);
             return;
         }
-        var minionCount :int = player.minionsIds.length;
+        var minionCount :int = player.progenyIds.length;
 
         log.debug("checkMinionTrophies", "player", player.playerId, "minionCount", minionCount);
 
