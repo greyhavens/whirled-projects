@@ -8,6 +8,7 @@ import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AgentSubControl;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.PropertyGetSubControl;
 
@@ -38,11 +39,8 @@ public class GameModel extends SimObject
         registerListener(_propsCtrl, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged);
         registerListener(_propsCtrl, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
 
-
-
         //Update the HUD when the room props come in.
         registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, playerEnteredRoom);
-
 
         //If the room props are already present, update the HUD now.
         if(SharedPlayerStateClient.isProps(ClientContext.ourPlayerId)) {
@@ -50,7 +48,7 @@ public class GameModel extends SimObject
         }
     }
 
-    public function playerEnteredRoom(...ignored) :void
+    protected function playerEnteredRoom (...ignored) :void
     {
         if(lineage == null) {
             _lineage = loadLineageFromProps();
@@ -121,40 +119,9 @@ public class GameModel extends SimObject
         }
 
         if(e.name == Codes.ROOM_PROP_LINEAGE) {
-
             _lineage = loadLineageFromProps();
             dispatchEvent(new LineageUpdatedEvent(_lineage));
             return;
-        }
-
-        //Otherwise check for player updates
-        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
-
-
-        if(!isNaN(playerIdUpdated)) {
-
-//            //If a state change comes in, inform the avatar
-//            if(e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE) {
-//
-//                var entityAvatarId :String = ClientContext.getPlayerEntityId(playerIdUpdated);
-//
-//                var setStateFunction :Function = ClientContext.ctrl.room.getEntityProperty(
-//                    AvatarGameBridge.ENTITY_PROPERTY_SETSTATE_FUNCTION, entityAvatarId) as Function;
-//
-//                if(setStateFunction != null) {
-//                    log.debug("From room props " + playerIdUpdated + ", action=" + ClientContext.model.state +
-//                        ", setStateFunction() " + e.newValue.toString());
-//                    setStateFunction(e.newValue.toString());
-//                }
-//                else {
-//                    log.error("handleElementChanged, setStateFunction==null, crusty avatar??", "e",
-//                        e, "entityAvatarId", entityAvatarId, "playerIdUpdated", playerIdUpdated);
-//                }
-//
-//            }
-
-
-
         }
     }
 
@@ -276,23 +243,6 @@ public class GameModel extends SimObject
             return ClientContext.ctrl.game.getOccupantName(ClientContext.ourPlayerId);
         }
     }
-
-//    /**
-//     * Set the avatar target.  That way, when the avatar arrived at it's destination, it
-//     * will set it's orientation the same as the target's orientation.
-//     */
-//    public function set standBehindTarget (targetId :int) :void
-//    {
-//        _avatarStandBehindTargetId = targetId;
-////        var setTargetFunction :Function = ClientContext.ctrl.room.getEntityProperty(
-////            AvatarGameBridge.ENTITY_PROPERTY_SET_STAND_BEHIND_ID_FUNCTION, ClientContext.ourEntityId) as Function;
-////        if(setTargetFunction != null) {
-////            setTargetFunction(targetId);
-////        }
-////        else {
-////            log.error("Cannot set avatar stand behind target as the function is null, targetId=" + targetId);
-////        }
-//    }
 
     public function get state() :String
     {
