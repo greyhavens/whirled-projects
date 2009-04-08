@@ -5,20 +5,24 @@ import com.whirled.contrib.EventHandlers;
 import com.whirled.contrib.simplegame.Config;
 import com.whirled.contrib.simplegame.SimpleGame;
 import com.whirled.contrib.simplegame.resource.ResourceManager;
-import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.Sprite;
 import flash.events.Event;
 
 import vampire.data.VConstants;
-import vampire.net.messages.ShareTokenMsg;
 
 [SWF(width="700", height="500")]
 public class VampireMain extends Sprite
 {
     public function VampireMain()
     {
-        Log.setLevel("", Log.ERROR);
+        if (VConstants.LOCAL_DEBUG_MODE) {
+            Log.setLevel("", Log.DEBUG);
+        }
+        else {
+            Log.setLevel("", Log.ERROR);
+        }
+
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
