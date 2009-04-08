@@ -96,7 +96,7 @@ public class MainGameMode extends AppMode
             ClientContext.model.dispatchEvent(msg);
 
             var lineagedebug :LineageDebug = new LineageDebug();
-            addObject(lineagedebug);
+//            addObject(lineagedebug);
         }
 
         //Init the feeding game, if we're not testing.

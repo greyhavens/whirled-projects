@@ -65,6 +65,13 @@ public class ClientContext
         }
         msg = new BasicMessageManager();
         vampire.Util.initMessageManager(msg);
+
+        if (VConstants.LOCAL_DEBUG_MODE) {
+            Log.setLevel("", Log.DEBUG);
+        }
+        else {
+            Log.setLevel("", Log.ERROR);
+        }
     }
     public static function quit () :void
     {

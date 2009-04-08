@@ -1,10 +1,11 @@
 package vampire.server
 {
-import com.whirled.avrg.AVRGameAvatar;
+import com.threerings.util.Log;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.contrib.simplegame.net.BasicMessageManager;
 
 import vampire.Util;
+import vampire.data.VConstants;
 
 public class ServerContext
 {
@@ -21,6 +22,13 @@ public class ServerContext
         ctrl = gameCtrl;
         msg = new BasicMessageManager();
         vampire.Util.initMessageManager(msg);
+
+        if (VConstants.LOCAL_DEBUG_MODE) {
+            Log.setLevel("", Log.DEBUG);
+        }
+        else {
+            Log.setLevel("", Log.ERROR);
+        }
     }
 }
 }

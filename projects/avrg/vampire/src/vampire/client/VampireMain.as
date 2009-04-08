@@ -16,13 +16,6 @@ public class VampireMain extends Sprite
 {
     public function VampireMain()
     {
-        if (VConstants.LOCAL_DEBUG_MODE) {
-            Log.setLevel("", Log.DEBUG);
-        }
-        else {
-            Log.setLevel("", Log.ERROR);
-        }
-
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
