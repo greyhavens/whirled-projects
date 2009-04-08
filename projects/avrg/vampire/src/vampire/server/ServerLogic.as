@@ -33,6 +33,7 @@ import vampire.net.messages.ShareTokenMsg;
 
 public class ServerLogic
 {
+
 //    /**
 //    * When a player gains blood, his sires all share a portion of the gain
 //    *
@@ -869,7 +870,7 @@ public class ServerLogic
                     VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY.length - 1);
 
                 var msg :MovePredIntoPositionMsg = new MovePredIntoPositionMsg(
-                    player.playerId, player.targetId, predLocIndex, targetLocation);
+                    player.playerId, player.targetId, predLocIndex == 0, predLocIndex, targetLocation);
 
                player.ctrl.sendMessage(msg.name, msg.toBytes());
                break;
