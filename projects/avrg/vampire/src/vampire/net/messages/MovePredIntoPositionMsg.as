@@ -5,10 +5,11 @@ package vampire.net.messages
 public class MovePredIntoPositionMsg extends BaseGameMsg
 {
     public function MovePredIntoPositionMsg (playerId:int = 0, preyId :int = 0,
-        predIndex :int = 0, targetLocation :Array = null)
+        standBehindPrey :Boolean = false, predIndex :int = 0, targetLocation :Array = null)
     {
         super(playerId);
         _preyId = preyId;
+        _standBehindPrey = standBehindPrey;
        _predIndex = predIndex;
        _preyLocation = targetLocation != null ? targetLocation : [0,0,0,0];
     }
@@ -17,6 +18,7 @@ public class MovePredIntoPositionMsg extends BaseGameMsg
     {
         super.fromBytes(bytes);
         _preyId = bytes.readInt();
+        _standBehindPrey = bytes.readBoolean();
         _predIndex = bytes.readInt();
 
         var x :Number = bytes.readFloat();
@@ -31,6 +33,7 @@ public class MovePredIntoPositionMsg extends BaseGameMsg
     {
         var bytes :ByteArray = super.toBytes(bytes);
         bytes.writeInt(_preyId);
+        bytes.writeBoolean(_standBehindPrey);
         bytes.writeInt(_predIndex);
         bytes.writeFloat(_preyLocation[0]);
         bytes.writeFloat(_preyLocation[1]);
@@ -54,12 +57,18 @@ public class MovePredIntoPositionMsg extends BaseGameMsg
        return _preyLocation;
     }
 
+    public function get isStandingBehindPrey () :Boolean
+    {
+       return _standBehindPrey;
+    }
+
     override public function get name () :String
     {
        return NAME;
     }
 
     protected var _preyId :int;
+    protected var _standBehindPrey :Boolean;
     protected var _predIndex :int;
     protected var _preyLocation :Array;
 
