@@ -449,11 +449,11 @@ public class VampireAvatarHUD extends AvatarHUD
         var isAvatarPartOfLineage :Boolean =
             ClientContext.model.lineage.isMemberOfLineage(playerId);
 
-        trace("setDisplayModeSelectableForFeed");
-
-        trace("isPlayerPartOfLineage="+isPlayerPartOfLineage);
-        trace("isAvatarPartOfLineage="+isAvatarPartOfLineage);
-        trace("ClientContext.model.isPlayer(playerId)="+ClientContext.model.isPlayer(playerId));
+//        trace("setDisplayModeSelectableForFeed");
+//
+//        trace("isPlayerPartOfLineage="+isPlayerPartOfLineage);
+//        trace("isAvatarPartOfLineage="+isAvatarPartOfLineage);
+//        trace("ClientContext.model.isPlayer(playerId)="+ClientContext.model.isPlayer(playerId));
 
         if (isPlayerPartOfLineage) {
             var avatarHasNoSire :Boolean = !ClientContext.model.lineage.isSireExisting(playerId);
