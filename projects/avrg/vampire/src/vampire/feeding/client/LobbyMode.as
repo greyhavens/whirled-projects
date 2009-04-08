@@ -43,6 +43,10 @@ public class LobbyMode extends AppMode
 
         var contents :MovieClip = _panelMovie["draggable"];
 
+        // Leaderboard is not used yet
+        var leaderboard :MovieClip = contents["leaderboard"];
+        leaderboard.visible = false;
+
         // Make the lobby draggable
         addObject(new RoomDragger(ClientCtx.gameCtrl, contents, _panelMovie));
         ClientCtx.centerInRoom(_panelMovie);
@@ -51,9 +55,11 @@ public class LobbyMode extends AppMode
         var instructionsBasic :MovieClip = contents["instructions_basic"];
         var instructionsMultiplayer :MovieClip = contents["instructions_multiplayer"];
         var instructionsStrain :MovieClip = contents["instructions_strains"];
+        var instructionsCorruption :MovieClip = contents["instructions_corruption"];
         instructionsBasic.visible = false;
         instructionsMultiplayer.visible = false;
         instructionsStrain.visible = false;
+        instructionsCorruption.visible = false;
 
         if (this.isPreGameLobby && ClientCtx.playerData.timesPlayed == 0) {
             instructionsBasic.visible = true;
