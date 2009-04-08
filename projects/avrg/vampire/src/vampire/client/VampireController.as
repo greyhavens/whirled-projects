@@ -210,8 +210,8 @@ public class VampireController extends Controller
             //That way, when the avatar arrived at it's destination, it
             //will set it's orientation the same as the target's orientation.
             ClientContext.gameMode.sendMessageToNamedObject(
-                new ObjectMessage(AvatarClientController.GAME_MESSAGE_TARGETID, targetId),
-                AvatarClientController.NAME);
+                new ObjectMessage(ClientAvatar.GAME_MESSAGE_TARGETID, targetId),
+                ClientAvatar.NAME);
         }
 
 
