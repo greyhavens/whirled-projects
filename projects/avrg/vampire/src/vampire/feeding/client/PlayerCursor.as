@@ -68,7 +68,7 @@ public class PlayerCursor extends CollidableObj
         _createdWhiteCell.scaleX = _createdWhiteCell.scaleY = 0;
         addNamedTask(
             RESPAWN_WHITE_CELL_TASK,
-            TargetedScaleTask.CreateEaseOut(
+            TargetedScaleTask.CreateEaseIn(
                 _createdWhiteCell, 1, 1, ClientCtx.settings.playerWhiteCellCreationTime));
     }
 
