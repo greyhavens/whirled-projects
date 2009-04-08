@@ -439,7 +439,7 @@ public class LineageView extends SceneObjectParent
                 playerName = _lineage._playerId2Name.get(playerId) as String;
             }
             if (playerName == null || playerName.length == 0) {
-                playerName = ClientContext.getPlayerName(playerId);
+                playerName = "Player " + playerId;//ClientContext.getPlayerName(playerId);
             }
 
             playerName = playerName.substring(0, MAX_NAME_CHARS);
