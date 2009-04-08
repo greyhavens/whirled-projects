@@ -1,8 +1,7 @@
 package com.whirled.contrib.avrg
 {
-import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.HashMap;
-import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.objects.SceneObjectParent;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -12,7 +11,7 @@ import flash.geom.Rectangle;
 /**
  * Generic room targeting overlay.  May delete this class in the future.
  */
-public class TargetingOverlay extends SceneObject
+public class TargetingOverlay extends SceneObjectParent
 {
     /**
     *
@@ -23,19 +22,7 @@ public class TargetingOverlay extends SceneObject
           mouseOverTarget :Function  = null)
     {
         _displaySprite  = new Sprite();
-//        _displaySprite.mouseChildren = true;
-//        _displaySprite.mouseEnabled = true;
-//        _displaySprite.graphics.beginFill(0, 0);
-//        _displaySprite.graphics.drawRect(0, 0, 700, 500);
-//        _displaySprite.graphics.endFill();
-
-        //For testing purposes
-
-
         _paintableOverlay = new Sprite();
-//        _paintableOverlay.graphics.beginFill(0, 0);
-//        _paintableOverlay.graphics.drawRect(0, 0, 700, 500);
-//        _paintableOverlay.graphics.endFill();
 
         _displaySprite.addChild(_paintableOverlay);
         _paintableOverlay.mouseChildren = true;
@@ -131,8 +118,6 @@ public class TargetingOverlay extends SceneObject
             _paintableOverlay.graphics.clear();
         }
     }
-
-    protected var _displaySprite :Sprite;
 
     /**
     * Another sprite is used to paint on, so it can be detached from the _displaySprite if neccesary.
