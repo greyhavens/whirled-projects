@@ -53,6 +53,16 @@ public class GameCtx
         gotCorruption = false;
     }
 
+    public static function get isSinglePlayer () :Boolean
+    {
+        return !(isMultiplayer);
+    }
+
+    public static function get isMultiplayer () :Boolean
+    {
+        return ClientCtx.gamePlayerIds.length > 1;
+    }
+
     // Returns a new Vector, clamped within the bounds of the game
     public static function clampLoc (loc :Vector2) :Vector2
     {

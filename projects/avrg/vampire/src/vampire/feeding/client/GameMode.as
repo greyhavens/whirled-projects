@@ -31,7 +31,7 @@ public class GameMode extends AppMode
 
     public function sendMultiplier (multiplier :int, x :int, y :int) :void
     {
-        if (ClientCtx.isMultiplayer) {
+        if (GameCtx.isMultiplayer) {
             ClientCtx.msgMgr.sendMessage(CreateMultiplierMsg.create(
                 ClientCtx.localPlayerId,
                 x, y,
@@ -300,7 +300,7 @@ public class GameMode extends AppMode
         cell.x = loc.x;
         cell.y = loc.y;
 
-        if (!ClientCtx.isSinglePlayer) {
+        if (!GameCtx.isSinglePlayer) {
             // show a little animation showing who gave us the multiplier
             var playerName :String = ClientCtx.getPlayerName(playerId);
             var tfName :TextField = TextBits.createText(playerName, 1.4, 0, 0xffffff,

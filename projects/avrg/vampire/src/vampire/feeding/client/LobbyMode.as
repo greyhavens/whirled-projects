@@ -166,7 +166,7 @@ public class LobbyMode extends AppMode
         } else {
             _startButton.visible = false;
             var leaderName :String = ClientCtx.getPlayerName(ClientCtx.lobbyLeaderId);
-            if (ClientCtx.playerIds.length == 1) {
+            if (ClientCtx.allPlayerIds.length == 1) {
                 statusText = "All Feeders have left.";
             } else if (this.isPreGameLobby) {
                 statusText = "Waiting for " + leaderName + " to start feeding.";
@@ -178,9 +178,9 @@ public class LobbyMode extends AppMode
         }
 
         if (!this.isPreGameLobby && this.isBloodBondForming) {
-            var partnerId :int = (ClientCtx.playerIds[0] != ClientCtx.localPlayerId ?
-                                  ClientCtx.playerIds[0] :
-                                  ClientCtx.playerIds[1]);
+            var partnerId :int = (ClientCtx.allPlayerIds[0] != ClientCtx.localPlayerId ?
+                                  ClientCtx.allPlayerIds[0] :
+                                  ClientCtx.allPlayerIds[1]);
             var partnerName :String = ClientCtx.getPlayerName(partnerId);
 
             if (ClientCtx.bloodBondProgress >= VConstants.FEEDING_ROUNDS_TO_FORM_BLOODBOND) {
@@ -255,7 +255,7 @@ public class LobbyMode extends AppMode
                 });
 
             // Anyone who joined the game while the round was in progress doesn't have a score
-            for each (playerId in ClientCtx.playerIds) {
+            for each (playerId in ClientCtx.allPlayerIds) {
                 if (playerId != ClientCtx.preyId && !_results.scores.containsKey(playerId)) {
                     obj = {};
                     obj["player_name"] = ClientCtx.getPlayerName(playerId);
@@ -264,7 +264,7 @@ public class LobbyMode extends AppMode
             }
 
         } else {
-            for each (playerId in ClientCtx.playerIds) {
+            for each (playerId in ClientCtx.allPlayerIds) {
                 if (playerId != ClientCtx.preyId) {
                     obj = {};
                     obj["player_name"] = ClientCtx.getPlayerName(playerId);
@@ -289,7 +289,7 @@ public class LobbyMode extends AppMode
 
     protected function get isBloodBondForming () :Boolean
     {
-        return (this.isLobby && ClientCtx.playerIds.length == 2 && !ClientCtx.preyIsAi);
+        return (this.isLobby && ClientCtx.allPlayerIds.length == 2 && !ClientCtx.preyIsAi);
     }
 
     protected function onPropChanged (e :PropertyChangedEvent) :void

@@ -31,7 +31,8 @@ public class ClientCtx
     public static var msgMgr :ClientMsgMgr;
     public static var gameCompleteCallback :Function;
     public static var playerData :PlayerFeedingData;
-    public static var playerIds :Array;
+    public static var allPlayerIds :Array;  // includes people waiting in the lobby for next round
+    public static var gamePlayerIds :Array;
     public static var awardedTrophies :HashSet;
     public static var lastRoundResults :RoundOverMsg;
     public static var settings :Settings;
@@ -42,7 +43,8 @@ public class ClientCtx
         msgMgr = null;
         gameCompleteCallback = null;
         playerData = null;
-        playerIds = null;
+        allPlayerIds = null;
+        gamePlayerIds = null;
         awardedTrophies = new HashSet();
         lastRoundResults = null;
         settings = null;
@@ -142,19 +144,9 @@ public class ClientCtx
         return (!isPrey);
     }
 
-    public static function get isSinglePlayer () :Boolean
-    {
-        return (!isConnected || playerIds.length <= 1);
-    }
-
-    public static function get isMultiplayer () :Boolean
-    {
-        return !isSinglePlayer;
-    }
-
     public static function isPlayer (playerId :int) :Boolean
     {
-        return ArrayUtil.contains(playerIds, playerId);
+        return ArrayUtil.contains(allPlayerIds, playerId);
     }
 
     public static function get playerCanCollectPreyStrain () :Boolean
