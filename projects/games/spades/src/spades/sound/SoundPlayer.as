@@ -18,7 +18,13 @@ public class SoundPlayer
     public function SoundPlayer (model :Model)
     {
         _myId = model.table.getLocalId();
-        MultiLoader.getLoaders(SOUNDS, gotSounds, false, _soundDomain);
+        MultiLoader.loadClasses(SOUNDS, _soundDomain, function () :void {
+            _deal = getSound("card_deal");
+            _play = getSound("play_card");
+            _takeTrick = getSound("take_trick");
+            _turnWarning = getSound("turn_end_warning");
+            _shuffle = getSound("shuffling");
+        });
 
         if (model.hand != null) {
             model.hand.addEventListener(
@@ -33,17 +39,6 @@ public class SoundPlayer
         model.gameCtrl.game.addEventListener(
             StateChangedEvent.ROUND_STARTED, 
             roundStartedListener);
-
-        function gotSounds (obj :*) :void {
-            Debug.debug("Sounds loaded object " + obj);
-
-            _deal = getSound("card_deal");
-            _play = getSound("play_card");
-            _takeTrick = getSound("take_trick");
-            _turnWarning = getSound("turn_end_warning");
-            _shuffle = getSound("shuffling");
-
-        }
     }
 
     protected function dealtListener (event :HandEvent) :void
