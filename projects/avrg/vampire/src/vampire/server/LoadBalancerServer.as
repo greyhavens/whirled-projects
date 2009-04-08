@@ -2,6 +2,7 @@ package vampire.server
 {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
+import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.tasks.FunctionTask;
 import com.whirled.contrib.simplegame.tasks.RepeatingTask;
@@ -50,6 +51,7 @@ public class LoadBalancerServer extends SimObject
         //so should be reasonably efficient.
         if (!ArrayUtil.equals(_lowPopulationRooms, newRoomPopulationData)) {
             _lowPopulationRooms = [roomIdsSorted, roomPopulations];
+            log.debug("sending to all rooms", "lowPopulationRooms", _lowPopulationRooms);
             _server.rooms.forEach(function (roomId :int, room :Room) :void {
                 if (!room.isStale) {
                     room.ctrl.props.set(Codes.ROOM_PROP_LOW_POPULATION_ROOMS,
@@ -155,7 +157,8 @@ public class LoadBalancerServer extends SimObject
     }
     protected var _server :GameServer;
 
-    public static const ROOM_POPULATION_REFRESH_RATE :Number = 5;
+    protected static const ROOM_POPULATION_REFRESH_RATE :Number = 10;
+    protected static const log :Log = Log.getLog(LoadBalancerServer);
 
 }
 }
