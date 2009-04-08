@@ -49,7 +49,7 @@ public class PlayerCursor extends CollidableObj
 
     protected function onMouseDown (e :MouseEvent) :void
     {
-        if (ClientCtx.settings.playerCreatesWhiteCells && !this.isWhiteCellSpawning) {
+        if (this.isWhiteCellSpawned) {
             var cell :Cell = GameObjects.createCell(Constants.CELL_WHITE, true);
             var loc :Point = new Point(_createdWhiteCell.x, _createdWhiteCell.y);
             loc = DisplayUtil.transformPoint(loc, _createdWhiteCell.parent, GameCtx.cellLayer);
@@ -72,6 +72,11 @@ public class PlayerCursor extends CollidableObj
         addNamedTask(
             RESPAWN_WHITE_CELL_TASK,
             After(pauseTime, TargetedScaleTask.CreateEaseIn(_createdWhiteCell, 1, 1, growTime)));
+    }
+
+    protected function get isWhiteCellSpawned () :Boolean
+    {
+        return (ClientCtx.settings.playerCreatesWhiteCells && !this.isWhiteCellSpawning);
     }
 
     protected function get isWhiteCellSpawning () :Boolean
@@ -219,25 +224,30 @@ public class PlayerCursor extends CollidableObj
     {
         // get rid of cells
         var numWhiteCells :int;
-        for each (var cellRef :SimObjectRef in _attachedWhiteCells) {
-            if (!cellRef.isNull) {
-                numWhiteCells++;
-                cellRef.object.destroySelf();
+        if (_attachedWhiteCells.length > 0) {
+            for each (var cellRef :SimObjectRef in _attachedWhiteCells) {
+                if (!cellRef.isNull) {
+                    numWhiteCells++;
+                    cellRef.object.destroySelf();
+                }
             }
+
+            _attachedWhiteCells = [];
         }
 
-        _attachedWhiteCells = [];
+        // Award a trophy for delivering a bunch of white cells
+        if (numWhiteCells >= Trophies.CONSTANT_GARDENER_REQ) {
+            ClientCtx.awardTrophy(Trophies.CONSTANT_GARDENER);
+        }
 
         _lastArtery = arteryType;
 
         // Deliver a white cell to the heart
         if (numWhiteCells > 0) {
             GameCtx.gameMode.deliverWhiteCell(arteryType);
-        }
-
-        // Award a trophy for delivering a bunch of white cells
-        if (numWhiteCells >= Trophies.CONSTANT_GARDENER_REQ) {
-            ClientCtx.awardTrophy(Trophies.CONSTANT_GARDENER);
+        } else if (this.isWhiteCellSpawned) {
+            GameCtx.gameMode.deliverWhiteCell(arteryType);
+            respawnWhiteCell();
         }
     }
 
