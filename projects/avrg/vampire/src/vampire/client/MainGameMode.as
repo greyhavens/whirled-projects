@@ -20,6 +20,7 @@ import vampire.feeding.FeedingClient;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.FeedingDataMsg;
 import vampire.net.messages.GameStartedMsg;
+import vampire.net.messages.RoomNameMsg;
 import vampire.net.messages.ShareTokenMsg;
 
 public class MainGameMode extends AppMode
@@ -194,7 +195,13 @@ public class MainGameMode extends AppMode
                 ClientContext.centerOnViewableRoom(popup.displayObject);
                 ClientContext.animateEnlargeFromMouseClick(popup);
             }
-
+        }
+        else if (e.name == RoomNameMsg.NAME) {
+            var roomMsg :RoomNameMsg = new RoomNameMsg(ClientContext.ourPlayerId,
+                                                       ClientContext.ctrl.room.getRoomId(),
+                                                       ClientContext.ctrl.room.getRoomName());
+            log.debug("Sending to agent=" + roomMsg);
+            ClientContext.ctrl.agent.sendMessage(RoomNameMsg.NAME, roomMsg.toBytes());
         }
     }
 

@@ -4,7 +4,6 @@ package vampire.server
 import com.threerings.flash.MathUtil;
 import com.threerings.flash.Vector2;
 import com.threerings.util.HashMap;
-import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
@@ -26,6 +25,7 @@ import vampire.net.messages.GameStartedMsg;
 import vampire.net.messages.MovePredIntoPositionMsg;
 import vampire.net.messages.PlayerArrivedAtLocationMsg;
 import vampire.net.messages.RequestStateChangeMsg;
+import vampire.net.messages.RoomNameMsg;
 import vampire.net.messages.SendGlobalMsg;
 import vampire.net.messages.ShareTokenMsg;
 
@@ -69,20 +69,13 @@ public class ServerLogic
         }
         log.debug("awardSiresXpEarned(" + player.name + ", xp=" + xp);
 
-        var allsires :HashSet = ServerContext.lineage.getAllSiresAndGrandSires(player.playerId);
-        if (allsires.size() == 0) {
-            log.debug("no sires");
-            return;
-        }
+
 
         //Check if we are part of the Lineage (with Ubervamp as the grandsire).  Only then
         //are we allowed to collect minion xp.
-        if (!allsires.contains(VConstants.UBER_VAMP_ID)) {
-//            player.addFeedback("You must be part of the Lineage to earn XP from your minions");
+        if (!ServerContext.lineage.isMemberOfLineage(player.playerId)) {
             return;
         }
-
-        var immediateSire :int = ServerContext.lineage.getSireId(player.playerId);
 
         function awardXP(sireId :int, awardXP :Number) :void {
             if (ServerContext.server.isPlayer(sireId)) {
@@ -90,8 +83,6 @@ public class ServerLogic
                 log.debug("awarding sire " + sire.name + ", xp=" + awardXP);
                 addXP(sire.playerId, awardXP);
                 sire.addXPBonusNotification(awardXP);
-//                sire.addFeedback("You gained " + Util.formatNumberForFeedback(awardXP) +
-//                    " experience from progeny " + player.name);
             }
             else {//Add to offline database
                 ServerContext.ctrl.loadOfflinePlayer(sireId,
@@ -108,14 +99,56 @@ public class ServerLogic
                     });
             }
         }
-        allsires.forEach(function (sireId :int) :void {
-            if (sireId == immediateSire) {
-                awardXP(sireId, xp * VConstants.XP_GAIN_FRACTION_SHARED_WITH_IMMEDIATE_SIRE);
+
+        //Award to sires two levels up
+        var numberOfGrandGenerationsToAward :int = 2;
+
+        var currentSireId :int = ServerContext.lineage.getSireId(player.playerId);
+        var generations :int = 1;
+        var immediateSire :int = ServerContext.lineage.getSireId(player.playerId);
+
+        while (currentSireId != 0 && generations <= 2) {
+
+            if (currentSireId == immediateSire) {
+                awardXP(currentSireId, xp * VConstants.XP_GAIN_FRACTION_SHARED_WITH_IMMEDIATE_SIRE);
             }
             else {
-                awardXP(sireId, xp * VConstants.XP_GAIN_FRACTION_SHARED_WITH_GRANDSIRES);
+                awardXP(currentSireId, xp * VConstants.XP_GAIN_FRACTION_SHARED_WITH_GRANDSIRES);
             }
-        });
+            currentSireId = ServerContext.lineage.getSireId(currentSireId);
+            generations++;
+        }
+
+
+
+
+
+
+
+
+
+//        var allsires :HashSet = ServerContext.lineage.getAllSiresAndGrandSires(player.playerId);
+//        if (allsires.size() == 0) {
+//            log.debug("no sires");
+//            return;
+//        }
+
+
+//        if (!allsires.contains(VConstants.UBER_VAMP_ID)) {
+////            player.addFeedback("You must be part of the Lineage to earn XP from your minions");
+//            return;
+//        }
+
+
+
+//        allsires.forEach(function (sireId :int) :void {
+//            if (sireId == immediateSire) {
+//                awardXP(sireId, xp * VConstants.XP_GAIN_FRACTION_SHARED_WITH_IMMEDIATE_SIRE);
+//            }
+//            else {
+//                awardXP(sireId, xp * VConstants.XP_GAIN_FRACTION_SHARED_WITH_GRANDSIRES);
+//            }
+//        });
     }
 
     /**
@@ -437,6 +470,13 @@ public class ServerLogic
                 else if (msg is SendGlobalMsg) {
                     var globalMessage :String = SendGlobalMsg(msg).message;
                     ServerContext.server.addGlobalFeedback(globalMessage);
+                }
+                else if (msg is RoomNameMsg) {
+                    var roomMsg :RoomNameMsg = RoomNameMsg(msg);
+                    if (ServerContext.server.getRoom(roomMsg.roomId) != null) {
+                        var roomNoName :Room = ServerContext.server.getRoom(roomMsg.roomId);
+                        roomNoName.handleRoomNameMsg(roomMsg);
+                    }
                 }
                 else if (msg is DebugMsg) {
                     var debugMsg :DebugMsg = DebugMsg(msg);
@@ -1113,29 +1153,60 @@ public class ServerLogic
                 if (!ServerContext.lineage.isMemberOfLineage(pred.playerId)) {
                     if (ServerContext.lineage.isMemberOfLineage(preyId)) {
                         makeSire(pred,  preyPlayer.playerId);
-                        pred.addFeedback(Codes.POPUP_PREFIX + preyPlayer.name + " has become your sire!");
+                        pred.addFeedback(Codes.POPUP_PREFIX + preyPlayer.name +
+                            " has become your sire!");
 
                         //Award coins to the sire
                         preyPlayer.ctrl.completeTask(Codes.TASK_ACQUIRE_PROGENY_ID,
                             Codes.TASK_ACQUIRE_PROGENY_SCORE);
 
+                        //Award to sires two levels up
+                        var numberOfGrandGenerationsToAward :int = 2;
 
-                        for each(var sireId :int in
-                            ServerContext.lineage.getAllSiresAndGrandSires(pred.playerId).toArray()) {
+                        var currentSireId :int = ServerContext.lineage.getSireId(
+                            preyPlayer.playerId);
+                        var generations :int = 1;
 
-                            if (srv.isPlayer(sireId)
-                                && srv.getPlayer(sireId).room != null) {
+                        while (currentSireId != 0 && generations <= 2) {
+                            if (srv.isPlayer(currentSireId)
+                                && srv.getPlayer(currentSireId).room != null) {
+                                var grandSirePlayer :PlayerData = srv.getPlayer(currentSireId);
 
                                 //Tell the sire she's got children
-                                srv.getPlayer(sireId).room.addFeedback(Codes.POPUP_PREFIX +
-                                    pred.name + " has joined your Lineage! ", sireId);
+                                grandSirePlayer.room.addFeedback(Codes.POPUP_PREFIX +
+                                    pred.name + " has joined your Lineage! ", currentSireId);
 
                                 //Award coins to the sire(s)
-                                preyPlayer.ctrl.completeTask(Codes.TASK_ACQUIRE_PROGENY_ID,
+                                grandSirePlayer.ctrl.completeTask(Codes.TASK_ACQUIRE_PROGENY_ID,
                                     Codes.TASK_ACQUIRE_PROGENY_SCORE/10);
 
                             }
+                            currentSireId = ServerContext.lineage.getSireId(currentSireId);
+                            generations++;
                         }
+
+//                        var preySireId :int = ServerContext.lineage.getSireId(preyPlayer.playerId);
+//
+//
+//
+//                        if (preyPlayer.sire
+//
+//                        for each(var sireId :int in
+//                            ServerContext.lineage.getAllSiresAndGrandSires(pred.playerId).toArray()) {
+//
+//                            if (srv.isPlayer(sireId)
+//                                && srv.getPlayer(sireId).room != null) {
+//
+//                                //Tell the sire she's got children
+//                                srv.getPlayer(sireId).room.addFeedback(Codes.POPUP_PREFIX +
+//                                    pred.name + " has joined your Lineage! ", sireId);
+//
+//                                //Award coins to the sire(s)
+//                                preyPlayer.ctrl.completeTask(Codes.TASK_ACQUIRE_PROGENY_ID,
+//                                    Codes.TASK_ACQUIRE_PROGENY_SCORE/10);
+//
+//                            }
+//                        }
                     }
                     else {
                         pred.addFeedback(preyPlayer.name + " is not part of the Lineage (Progeny of Lilith).  Feed from a Lineage member to join.");

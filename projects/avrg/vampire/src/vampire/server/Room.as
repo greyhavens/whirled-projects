@@ -10,10 +10,14 @@ import com.threerings.util.Hashable;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.RoomSubControlServer;
-import com.whirled.contrib.simplegame.ObjectDB;
 import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.tasks.FunctionTask;
+import com.whirled.contrib.simplegame.tasks.RepeatingTask;
+import com.whirled.contrib.simplegame.tasks.SerialTask;
+import com.whirled.contrib.simplegame.tasks.TimedTask;
 
 import vampire.data.Codes;
+import vampire.net.messages.RoomNameMsg;
 
 public class Room extends SimObject
     implements Hashable
@@ -34,6 +38,43 @@ public class Room extends SimObject
     override public function get objectName () :String
     {
         return "Room " + _roomId;
+    }
+
+    override protected function addedToDB () :void
+    {
+        super.addedToDB();
+        //Periodically ask a player to send us our name, until someone does.
+        var serialTask :SerialTask = new SerialTask();
+        serialTask.addTask(new TimedTask(ROOM_NAME_QUERY_INTERVAL));
+        serialTask.addTask(new FunctionTask(function () :void {
+            if (_name == null) {
+                sendAPlayerRequestForRoomName();
+            }
+            else {
+                log.debug("We are named, so remove name request task");
+                removeNamedTasks(ROOM_NAME_QUERY_TASK_NAME);
+            }
+        }));
+        var repeating :RepeatingTask = new RepeatingTask(serialTask);
+
+        addNamedTask(ROOM_NAME_QUERY_TASK_NAME, repeating);
+
+        //And since we have just started up, send a request immediately.
+        sendAPlayerRequestForRoomName();
+    }
+
+    protected function sendAPlayerRequestForRoomName () :void
+    {
+        if (_name == null) {
+            if (_players.size() > 0) {
+                var playerId :int = _players.keys()[0];
+                var player :PlayerData = getPlayer(playerId);
+                if (player != null) {
+                    log.debug("Sending " + player.name + " room name request");
+                    player.ctrl.sendMessage(RoomNameMsg.NAME, new RoomNameMsg().toBytes());
+                }
+            }
+        }
     }
 
 
@@ -243,13 +284,6 @@ public class Room extends SimObject
         return _players.keys();
     }
 
-
-
-//    public function get roomDB () :ObjectDB
-//    {
-//        return _roomDB;
-//    }
-
     public function addFeedback (msg :String, playerId :int = 0) :void
     {
         log.debug(playerId + " " + msg);
@@ -261,11 +295,26 @@ public class Room extends SimObject
         return _bloodBloomGameManager;
     }
 
+    public function get name () :String
+    {
+        return _name;
+    }
+
+    public function handleRoomNameMsg (e :RoomNameMsg) :void
+    {
+        if (e.roomId == roomId) {
+            log.debug("Room " + roomId + " got " + e);
+            _name = e.roomName;
+        }
+    }
+
 
     /**
     * Holds BloodBloomGameRecord objects.  They have countdown timers so need to be updated.
     */
 //    protected var _roomDB :ObjectDB = new ObjectDB();
+
+    protected var _name :String;
 
     protected var _roomId :int;
     protected var _ctrl :RoomSubControlServer;
@@ -281,6 +330,9 @@ public class Room extends SimObject
     *
     * */
     protected var _feedbackMessageQueue :Array = new Array();
+
+    protected static const ROOM_NAME_QUERY_TASK_NAME :String = "roomNameQuery";
+    protected static const ROOM_NAME_QUERY_INTERVAL :Number = 10;
 
 }
 }
