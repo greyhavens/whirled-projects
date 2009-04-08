@@ -65,11 +65,11 @@ public class PlayerCursor extends CollidableObj
 
     protected function respawnWhiteCell () :void
     {
-        _createdWhiteCell.alpha = 0;
+        _createdWhiteCell.scaleX = _createdWhiteCell.scaleY = 0;
         addNamedTask(
             RESPAWN_WHITE_CELL_TASK,
-            new TargetedAlphaTask(
-                _createdWhiteCell, 1, ClientCtx.settings.playerWhiteCellCreationTime));
+            TargetedScaleTask.CreateEaseOut(
+                _createdWhiteCell, 1, 1, ClientCtx.settings.playerWhiteCellCreationTime));
     }
 
     protected function get isWhiteCellSpawning () :Boolean
@@ -273,23 +273,64 @@ import com.whirled.contrib.simplegame.util.MXInterpolatorAdapter;
 import mx.effects.easing.*;
 import flash.display.DisplayObject;
 
-class TargetedAlphaTask
+class TargetedScaleTask
     implements ObjectTask
 {
-    public function TargetedAlphaTask (
+    public static function CreateLinear (target :DisplayObject, x :Number, y :Number, time :Number)
+        :TargetedScaleTask
+    {
+        return new TargetedScaleTask(
+            target,
+            x, y,
+            time,
+            new MXInterpolatorAdapter(mx.effects.easing.Linear.easeNone));
+    }
+
+    public static function CreateSmooth (target :DisplayObject, x :Number, y :Number, time :Number)
+        :TargetedScaleTask
+    {
+        return new TargetedScaleTask(
+            target,
+            x, y,
+            time,
+            new MXInterpolatorAdapter(mx.effects.easing.Cubic.easeInOut));
+    }
+
+    public static function CreateEaseIn (target :DisplayObject, x :Number, y :Number, time :Number)
+        :TargetedScaleTask
+    {
+        return new TargetedScaleTask(
+            target,
+            x, y,
+            time,
+            new MXInterpolatorAdapter(mx.effects.easing.Cubic.easeIn));
+    }
+
+    public static function CreateEaseOut (target :DisplayObject, x :Number, y :Number, time :Number)
+        :TargetedScaleTask
+    {
+        return new TargetedScaleTask(
+            target,
+            x, y,
+            time,
+            new MXInterpolatorAdapter(mx.effects.easing.Cubic.easeOut));
+    }
+
+    public function TargetedScaleTask (
         target :DisplayObject,
-        alpha :Number,
+        x :Number,
+        y :Number,
         time :Number = 0,
         interpolator :Interpolator = null)
     {
-
         // default to linear interpolation
         if (null == interpolator) {
             interpolator = new MXInterpolatorAdapter(mx.effects.easing.Linear.easeNone);
         }
 
         _target = target;
-        _to = alpha;
+        _toX = x;
+        _toY = y;
         _totalTime = Math.max(time, 0);
         _interpolator = interpolator;
     }
@@ -297,19 +338,21 @@ class TargetedAlphaTask
     public function update (dt :Number, obj :SimObject) :Boolean
     {
         if (0 == _elapsedTime) {
-            _from = _target.alpha;
+            _fromX = _target.scaleX;
+            _fromY = _target.scaleY;
         }
 
         _elapsedTime += dt;
 
-        _target.alpha = _interpolator.interpolate(_from, _to, _elapsedTime, _totalTime);
+        _target.scaleX = _interpolator.interpolate(_fromX, _toX, _elapsedTime, _totalTime);
+        _target.scaleY = _interpolator.interpolate(_fromY, _toY, _elapsedTime, _totalTime);
 
         return (_elapsedTime >= _totalTime);
     }
 
     public function clone () :ObjectTask
     {
-        return new TargetedAlphaTask(_target, _to, _totalTime, _interpolator);
+        return new TargetedScaleTask(_target, _toX, _toY, _totalTime, _interpolator);
     }
 
     public function receiveMessage (msg :ObjectMessage) :Boolean
@@ -321,10 +364,12 @@ class TargetedAlphaTask
 
     protected var _interpolator :Interpolator;
 
-    protected var _to :Number;
-    protected var _from :Number;
+    protected var _toX :Number;
+    protected var _toY :Number;
+
+    protected var _fromX :Number;
+    protected var _fromY :Number;
 
     protected var _totalTime :Number = 0;
     protected var _elapsedTime :Number = 0;
 }
-

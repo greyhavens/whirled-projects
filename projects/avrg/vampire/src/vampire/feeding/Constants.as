@@ -42,7 +42,6 @@ public class Constants
         new NumRange(160, 170, Rand.STREAM_GAME),   // Special
     ];
     public static const CELL_RADIUS :Array = [ 8, 8, 8, 21 ];
-    public static const CELL_BIRTH_TIME :Number = 0.5;
 
     public static const BURST_RED :int = 0;
     public static const BURST_WHITE :int = 1;

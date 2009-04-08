@@ -46,11 +46,11 @@ public class CorruptionBurst extends CellBurst
     {
         super.update(dt);
 
-        // When we collide with red cells, bonus cells, or RedBursts, we create new CorruptionBursts
+        // When we collide with cells or RedBursts, we create new CorruptionBursts
         var collided :CollidableObj = RedBurst.getRedBurstCollision(this);
         if (collided == null) {
             var cell :Cell = Cell.getCellCollision(this);
-            if (cell != null && cell.state == Cell.STATE_NORMAL) {
+            if (cell != null && cell.state != Cell.STATE_BIRTH) {
                 collided = cell;
             }
         }

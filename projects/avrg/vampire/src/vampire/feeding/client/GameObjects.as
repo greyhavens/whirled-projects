@@ -48,6 +48,9 @@ public class GameObjects
             isBlackBurst = !cell.isWhiteCell;
             wasAttachedToCursor = cell.isAttachedToCursor;
             multiplier = cell.multiplier;
+
+        } else if (fromObj is CellBurst) {
+            multiplier = CellBurst(fromObj).multiplier;
         }
 
         var obj :CorruptionBurst = new CorruptionBurst(isBlackBurst, wasAttachedToCursor,

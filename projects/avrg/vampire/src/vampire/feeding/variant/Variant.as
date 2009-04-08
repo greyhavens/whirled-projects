@@ -36,6 +36,8 @@ public class Variant
         settings.playerCarriesWhiteCells = true;
         settings.canDropWhiteCells = false;
         settings.scoreCorruption = false;
+        settings.normalCellBirthTime = 0.5;
+        settings.whiteCellBirthTime = 0.5;
         settings.whiteCellNormalTime = 8;
         settings.whiteCellExplodeTime = 7;
         settings.normalCellSpeed = 5;
@@ -54,9 +56,11 @@ public class Variant
         settings.playerCarriesWhiteCells = false;
         settings.canDropWhiteCells = true;
         settings.scoreCorruption = true;
+        settings.normalCellBirthTime = 0.5;
+        settings.whiteCellBirthTime = 0;
         settings.whiteCellNormalTime = 0;
-        settings.whiteCellExplodeTime = 3;
-        settings.normalCellSpeed = 5;
+        settings.whiteCellExplodeTime = 2;
+        settings.normalCellSpeed = 8;
         settings.whiteCellSpeed = 0;
 
         return settings;

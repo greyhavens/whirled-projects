@@ -11,6 +11,8 @@ public class Settings
     public var playerCarriesWhiteCells :Boolean;
     public var canDropWhiteCells :Boolean;
     public var scoreCorruption :Boolean;
+    public var normalCellBirthTime :Number;
+    public var whiteCellBirthTime :Number;
     public var whiteCellNormalTime :Number;
     public var whiteCellExplodeTime :Number;
     public var normalCellSpeed :Number;

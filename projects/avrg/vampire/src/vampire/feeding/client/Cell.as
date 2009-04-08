@@ -193,7 +193,9 @@ public class Cell extends CollidableObj
 
         var thisCell :Cell = this;
         addTask(new SerialTask(
-            LocationTask.CreateEaseOut(birthTarget.x, birthTarget.y, Constants.CELL_BIRTH_TIME),
+            LocationTask.CreateEaseOut(
+                birthTarget.x, birthTarget.y,
+                ClientCtx.settings.normalCellBirthTime),
             new FunctionTask(function () :void {
                 GameCtx.cellLayer.addChild(thisCell.displayObject);
                 _state = STATE_NORMAL;
@@ -201,15 +203,13 @@ public class Cell extends CollidableObj
 
         // fade in
         this.alpha = 0;
-        addTask(new AlphaTask(1, 0.4));
+        addTask(new AlphaTask(1, ClientCtx.settings.normalCellBirthTime));
 
         attachTip(TipFactory.POP_RED);
     }
 
     protected function birthWhiteCell () :void
     {
-        _state = STATE_BIRTH;
-
         // pick a random location on the outside of the board
         var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
         var distRange :NumRange = Constants.CELL_BIRTH_DISTANCE[Constants.CELL_WHITE];
@@ -218,10 +218,18 @@ public class Cell extends CollidableObj
         this.x = loc.x;
         this.y = loc.y;
 
-        addTask(After(Constants.CELL_BIRTH_TIME,
-            new FunctionTask(function () :void {
-                _state = STATE_NORMAL;
-            })));
+        if (ClientCtx.settings.whiteCellBirthTime > 0) {
+            _state = STATE_BIRTH;
+            this.alpha = 0;
+            addTask(new SerialTask(
+                new AlphaTask(1, ClientCtx.settings.whiteCellBirthTime),
+                new FunctionTask(function () :void {
+                    _state = STATE_NORMAL;
+                })));
+
+        } else {
+            _state = STATE_NORMAL;
+        }
 
         // white cells explode after a bit of time
         _movie.gotoAndStop(1);
@@ -238,17 +246,11 @@ public class Cell extends CollidableObj
                 GameCtx.gameMode.onWhiteCellBurst();
             })));
 
-        // fade in
-        this.alpha = 0;
-        addTask(new AlphaTask(1, 0.4));
-
         attachTip(TipFactory.GRAB_WHITE);
     }
 
     protected function birthSpecialCell () :void
     {
-        _state = STATE_BIRTH;
-
         // pick a random location anywhere on the board
         var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
         var distRange :NumRange = Constants.CELL_BIRTH_DISTANCE[Constants.CELL_SPECIAL];
@@ -257,14 +259,14 @@ public class Cell extends CollidableObj
         this.x = loc.x;
         this.y = loc.y;
 
-        addTask(After(Constants.CELL_BIRTH_TIME,
+        _state = STATE_BIRTH;
+
+        this.alpha = 0;
+        addTask(new SerialTask(
+            new AlphaTask(1, ClientCtx.settings.normalCellBirthTime),
             new FunctionTask(function () :void {
                 _state = STATE_NORMAL;
             })));
-
-        // fade in
-        this.alpha = 0;
-        addTask(new AlphaTask(1, 0.4));
 
         attachTip(TipFactory.GET_SPECIAL);
     }
