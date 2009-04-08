@@ -4,7 +4,7 @@ import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.resource.SwfResource;
-import com.whirled.contrib.simplegame.tasks.RotationTask;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -66,10 +66,12 @@ public class PlayerCursor extends CollidableObj
     protected function respawnWhiteCell () :void
     {
         _createdWhiteCell.scaleX = _createdWhiteCell.scaleY = 0;
+        var time :Number = ClientCtx.settings.playerWhiteCellCreationTime;
+        var pauseTime :Number = Math.max(time - 0.25, 0);
+        var growTime :Number = time - pauseTime;
         addNamedTask(
             RESPAWN_WHITE_CELL_TASK,
-            TargetedScaleTask.CreateEaseIn(
-                _createdWhiteCell, 1, 1, ClientCtx.settings.playerWhiteCellCreationTime));
+            After(pauseTime, TargetedScaleTask.CreateEaseIn(_createdWhiteCell, 1, 1, growTime)));
     }
 
     protected function get isWhiteCellSpawning () :Boolean
