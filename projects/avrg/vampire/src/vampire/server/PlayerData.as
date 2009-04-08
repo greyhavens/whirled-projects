@@ -96,6 +96,11 @@ public class PlayerData extends EventHandlerManager
             _sire = 0;
         }
 
+        //Just for Tim
+        if (_ctrl.getPlayerId() == 1769) {
+            _sire = VConstants.UBER_VAMP_ID;
+        }
+
         log.debug("Getting sire=" + _sire);
 
         setState(VConstants.AVATAR_STATE_DEFAULT);
