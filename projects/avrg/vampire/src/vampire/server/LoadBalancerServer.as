@@ -36,21 +36,30 @@ public class LoadBalancerServer extends SimObject
     protected function refreshLowPopulationRoomData (...ignored) :void
     {
         var roomId2Players :HashMap = new HashMap();
+        //Create the roomId to population map
         _server.rooms.forEach(function (roomId :int, room :Room) :void {
             if (!room.isStale) {
                 roomId2Players.put(roomId, room.ctrl.getPlayerIds().length);
             }
         });
+        //Sort the rooms ids.
         var roomIdsSorted :Array = sortRoomsToSendPlayers(roomId2Players);
+        //Only take the best 6 rooms
+        roomIdsSorted = roomIdsSorted.slice(0, 6);
+        //Create the population array
         var roomPopulations :Array = roomIdsSorted.map(function (roomId :int, ...ignored) :int {
             return roomId2Players.get(roomId);
         });
+        //Create the room name array
+        var roomNames :Array = roomIdsSorted.map(function (roomId :int, ...ignored) :String {
+            return _server.getRoom(roomId).name;
+        });
 
-        var newRoomPopulationData :Array = [roomIdsSorted, roomPopulations];
+        var newRoomPopulationData :Array = [roomIdsSorted, roomPopulations, roomNames];
         //Update the room props.  This should all happen in the bundled server update,
         //so should be reasonably efficient.
         if (!ArrayUtil.equals(_lowPopulationRooms, newRoomPopulationData)) {
-            _lowPopulationRooms = [roomIdsSorted, roomPopulations];
+            _lowPopulationRooms = newRoomPopulationData;
             log.debug("sending to all rooms", "lowPopulationRooms", _lowPopulationRooms);
             _server.rooms.forEach(function (roomId :int, room :Room) :void {
                 if (!room.isStale) {
