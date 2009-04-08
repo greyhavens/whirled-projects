@@ -25,13 +25,14 @@ public class RedBurst extends CellBurst
 
     public function RedBurst (fromCell :Cell, sequence :BurstSequence)
     {
-        super(fromCell.type, Constants.RED_BURST_RADIUS_MIN, Constants.RED_BURST_RADIUS_MAX);
-        _sequence = sequence;
-        _multiplier = fromCell.multiplier;
+        super(fromCell.type, Constants.RED_BURST_RADIUS_MIN, Constants.RED_BURST_RADIUS_MAX,
+              fromCell.multiplier, sequence);
     }
 
     override protected function beginBurst () :void
     {
+        super.beginBurst();
+
         addTask(ScaleTask.CreateEaseOut(
             this.targetScale,
             this.targetScale,
@@ -44,34 +45,20 @@ public class RedBurst extends CellBurst
             }),
             new SelfDestructTask()));
 
-        if (_sequence == null) {
-            _sequence = new BurstSequence();
-            _sequence.x = x;
-            _sequence.y = y;
-            GameCtx.gameMode.addSceneObject(_sequence, GameCtx.uiLayer);
-        }
-        _sequence.addCellBurst(this);
-
         ClientCtx.audio.playSoundNamed("sfx_red_burst");
     }
 
     override protected function removedFromDB () :void
     {
-        if (!_burstCompleted) {
+        if (!_burstCompleted && _sequence != null) {
             _sequence.removeCellBurst(this);
         }
-    }
-
-    public function get multiplier () :int
-    {
-        return _multiplier;
     }
 
     override protected function update (dt :Number) :void
     {
         super.update(dt);
 
-        // We're bursting. When we collide with red cells or RedBursts, we create new WhiteBursts;
         var cell :Cell = Cell.getCellCollision(this);
         if (cell != null && !cell.isWhiteCell && cell.state == Cell.STATE_NORMAL) {
             if (cell.type == Constants.CELL_SPECIAL) {
@@ -113,8 +100,6 @@ public class RedBurst extends CellBurst
         }
     }
 
-    protected var _sequence :BurstSequence;
-    protected var _multiplier :int = 1;
     protected var _burstCompleted :Boolean;
 
     protected static const GROUP_NAME :String = "RedBurst";

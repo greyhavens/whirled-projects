@@ -8,14 +8,16 @@ import flash.display.MovieClip;
 import flash.display.Sprite;
 
 import vampire.feeding.*;
-import vampire.feeding.client.SpriteUtil;
 
 public class CellBurst extends CollidableObj
 {
-    public function CellBurst (burstType :int, radiusMin :Number, radiusMax :Number)
+    public function CellBurst (burstType :int, radiusMin :Number, radiusMax :Number,
+                               multiplier :int, sequence :BurstSequence)
     {
         _radius = radiusMin;
         _radiusMax = radiusMax;
+        _multiplier = multiplier;
+        _sequence = sequence;
 
         _movie = ClientCtx.instantiateMovieClip("blood", MOVIE_NAMES[burstType], true, true);
         _sprite = SpriteUtil.createSprite();
@@ -40,6 +42,11 @@ public class CellBurst extends CollidableObj
         return _sprite;
     }
 
+    public function get multiplier () :int
+    {
+        return _multiplier;
+    }
+
     public function get radiusMax () :Number
     {
         return _radiusMax;
@@ -57,14 +64,26 @@ public class CellBurst extends CollidableObj
 
     protected function beginBurst () :void
     {
-        // Superclasses override
+        if (_sequence == null) {
+            _sequence = new BurstSequence();
+            _sequence.x = this.x;
+            _sequence.y = this.y;
+            GameCtx.gameMode.addSceneObject(_sequence, GameCtx.uiLayer);
+        }
+
+        if (_sequence != null) {
+            _sequence.addCellBurst(this);
+        }
     }
 
     protected var _sprite :Sprite;
     protected var _movie :MovieClip;
 
     protected var _cellType :int;
+    protected var _multiplier :int;
     protected var _radiusMax :Number;
+
+    protected var _sequence :BurstSequence;
 
     protected static const MOVIE_NAMES :Array = [
         "cell_red_burst",

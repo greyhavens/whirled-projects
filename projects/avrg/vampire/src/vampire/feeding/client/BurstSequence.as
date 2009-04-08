@@ -1,6 +1,5 @@
 package vampire.feeding.client {
 
-import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.objects.SceneObject;
@@ -38,8 +37,12 @@ public class BurstSequence extends SceneObject
         return _sprite;
     }
 
-    public function addCellBurst (burst :RedBurst) :void
+    public function addCellBurst (burst :CellBurst) :void
     {
+        if (_type < 0) {
+            _type = (burst is CorruptionBurst ? TYPE_CORRUPTION : TYPE_NORMAL);
+        }
+
         _bursts.push(burst.ref);
         _totalBursts++;
         if (Constants.MULTIPLIERS_ADD && burst.multiplier > 1) {
@@ -56,7 +59,7 @@ public class BurstSequence extends SceneObject
         _needsRelocate = true;
     }
 
-    public function removeCellBurst (burst :RedBurst) :void
+    public function removeCellBurst (burst :CellBurst) :void
     {
         ArrayUtil.removeFirst(_bursts, burst.ref);
         _totalBursts--;
@@ -119,22 +122,24 @@ public class BurstSequence extends SceneObject
                 }
             }
 
-            TextBits.initTextField(_tf, text, 2, 0, 0xD8F1FC);
-            _tf.x = -_tf.width * 0.5;
-            _tf.y = -_tf.height * 0.5;
+            if (this.hasScoreValue) {
+                TextBits.initTextField(_tf, text, 2, 0, 0xD8F1FC);
+                _tf.x = -_tf.width * 0.5;
+                _tf.y = -_tf.height * 0.5;
 
-            _lastCellCount = _bursts.length;
+                _lastCellCount = _bursts.length;
+            }
         }
     }
 
     protected function deliverPayload () :void
     {
-        if (this.totalValue > 0) {
+        if (this.totalValue > 0 && this.hasScoreValue) {
             var loc :Point = this.displayObject.parent.localToGlobal(new Point(this.x, this.y));
             GameCtx.score.addBlood(loc.x, loc.y, this.totalValue, 0);
         }
 
-        if (_totalBursts >= Constants.CREATE_BONUS_BURST_SIZE) {
+        if (_totalBursts >= Constants.CREATE_BONUS_BURST_SIZE && this.createMultiplier) {
             // Send a multiplier to the other players
             var multiplierSize :int = Math.min(this.multiplier + 1, Constants.MAX_MULTIPLIER);
             GameCtx.gameMode.sendMultiplier(multiplierSize, this.x, this.y);
@@ -155,6 +160,19 @@ public class BurstSequence extends SceneObject
             this.multiplier);
     }
 
+    protected function get createMultiplier () :Boolean
+    {
+        //return (_type == TYPE_NORMAL);
+        return this.hasScoreValue;
+    }
+
+    protected function get hasScoreValue () :Boolean
+    {
+        return (ClientCtx.settings.scoreCorruption && _type == TYPE_CORRUPTION) ||
+               (!ClientCtx.settings.scoreCorruption && _type != TYPE_CORRUPTION);
+    }
+
+    protected var _type :int = -1;
     protected var _bursts :Array = [];
     protected var _largestMultiplier :int;
     protected var _totalMultiplier :int = 1;
@@ -168,6 +186,9 @@ public class BurstSequence extends SceneObject
     protected var _tf :TextField;
 
     protected static const GROUP_NAME :String = "BurstSequence";
+
+    protected static const TYPE_NORMAL :int = 0;
+    protected static const TYPE_CORRUPTION :int = 1;
 }
 
 }

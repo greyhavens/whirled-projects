@@ -208,5 +208,5 @@ class TestGameController extends OneRoomGameRoom
     protected var _timerMgr :TimerManager = new TimerManager();
 
     protected static const MIN_PLAYERS :int = 2;
-    protected static const VARIANT :int = Variant.NORMAL;
+    protected static const VARIANT :int = Variant.CORRUPTION;
 }

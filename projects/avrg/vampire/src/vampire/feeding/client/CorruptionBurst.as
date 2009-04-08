@@ -7,18 +7,23 @@ import vampire.server.Trophies;
 
 public class CorruptionBurst extends CellBurst
 {
-    public function CorruptionBurst (isBlackBurst :Boolean, cellWasAttachedToCursor :Boolean)
+    public function CorruptionBurst (isBlackBurst :Boolean, cellWasAttachedToCursor :Boolean,
+                                     multiplier :int, sequence :BurstSequence)
     {
         super(
             isBlackBurst ? Constants.BURST_BLACK : Constants.BURST_WHITE,
             isBlackBurst ? Constants.BLACK_BURST_RADIUS_MIN : Constants.WHITE_BURST_RADIUS_MIN,
-            isBlackBurst ? Constants.BLACK_BURST_RADIUS_MAX : Constants.WHITE_BURST_RADIUS_MAX);
+            isBlackBurst ? Constants.BLACK_BURST_RADIUS_MAX : Constants.WHITE_BURST_RADIUS_MAX,
+            multiplier,
+            sequence);
 
         _cellWasAttachedToCursor = cellWasAttachedToCursor;
     }
 
     override protected function beginBurst () :void
     {
+        super.beginBurst();
+
         addTask(ScaleTask.CreateEaseOut(
             this.targetScale,
             this.targetScale,
@@ -51,7 +56,7 @@ public class CorruptionBurst extends CellBurst
         }
 
         if (collided != null) {
-            GameObjects.createCorruptionBurst(collided);
+            GameObjects.createCorruptionBurst(collided, _sequence);
             _corruptionSpread = true;
         }
     }

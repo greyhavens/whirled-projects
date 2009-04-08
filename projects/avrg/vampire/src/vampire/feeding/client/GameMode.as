@@ -5,6 +5,7 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.net.*;
@@ -196,6 +197,10 @@ public class GameMode extends AppMode
         // the Thread The Needle trophy
         if (!ClientCtx.hasAwardedTrophies([ Trophies.THREAD_THE_NEEDLE ])) {
             addObject(new ThreadTheNeedleWatcher());
+        }
+
+        if (ClientCtx.settings.scoreCorruption) {
+            GameCtx.bgLayer.filters = [ new ColorMatrix().tint(0x003300).createFilter() ];
         }
 
         // (Since the game now covers the room with an opaque backdrop when a feeding is

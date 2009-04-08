@@ -37,17 +37,21 @@ public class GameObjects
         return obj;
     }
 
-    public static function createCorruptionBurst (fromObj :CollidableObj) :CorruptionBurst
+    public static function createCorruptionBurst (fromObj :CollidableObj,
+        sequence :BurstSequence) :CorruptionBurst
     {
         var wasAttachedToCursor :Boolean;
         var isBlackBurst :Boolean = true;
+        var multiplier :int = 1;
         if (fromObj is Cell) {
             var cell :Cell = Cell(fromObj);
             isBlackBurst = !cell.isWhiteCell;
             wasAttachedToCursor = cell.isAttachedToCursor;
+            multiplier = cell.multiplier;
         }
 
-        var obj :CorruptionBurst = new CorruptionBurst(isBlackBurst, wasAttachedToCursor);
+        var obj :CorruptionBurst = new CorruptionBurst(isBlackBurst, wasAttachedToCursor,
+                                                       multiplier, sequence);
 
         var loc :Point =
             fromObj.displayObject.parent.localToGlobal(new Point(fromObj.x, fromObj.y));
