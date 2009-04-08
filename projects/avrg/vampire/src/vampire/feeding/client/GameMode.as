@@ -126,12 +126,18 @@ public class GameMode extends AppMode
         GameCtx.tipFactory = new TipFactory();
 
         var bg :MovieClip = ClientCtx.instantiateMovieClip("blood", "background");
+        if (ClientCtx.settings.scoreCorruption) {
+            bg.filters = [ new ColorMatrix().adjustColor(0, 0, -20, -175).createFilter() ];
+        }
         bg.cacheAsBitmap = true;
         bg.x = Constants.GAME_CTR.x;
         bg.y = Constants.GAME_CTR.y;
         GameCtx.bgLayer.addChild(bg);
 
         var heartMovie :MovieClip = ClientCtx.instantiateMovieClip("blood", "circulatory");
+        if (ClientCtx.settings.scoreCorruption) {
+            heartMovie.filters = [ new ColorMatrix().adjustColor(-60, 80, -95, 0).createFilter() ];
+        }
         heartMovie.x = Constants.GAME_CTR.x;
         heartMovie.y = Constants.GAME_CTR.y;
         GameCtx.heartLayer.addChild(heartMovie);
@@ -205,10 +211,6 @@ public class GameMode extends AppMode
         // the Thread The Needle trophy
         if (!ClientCtx.hasAwardedTrophies([ Trophies.THREAD_THE_NEEDLE ])) {
             addObject(new ThreadTheNeedleWatcher());
-        }
-
-        if (ClientCtx.settings.scoreCorruption) {
-            GameCtx.bgLayer.filters = [ new ColorMatrix().tint(0x003300).createFilter() ];
         }
 
         // (Since the game now covers the room with an opaque backdrop when a feeding is

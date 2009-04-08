@@ -43,7 +43,7 @@ public class RoomOverlay extends SceneObject
 
         var g :Graphics = _shape.graphics;
         g.clear();
-        g.beginFill(COLOR);
+        g.beginFill(ClientCtx.settings.scoreCorruption ? CORRUPTION_COLOR : NORMAL_COLOR);
         g.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
         g.endFill();
     }
@@ -70,7 +70,8 @@ public class RoomOverlay extends SceneObject
     protected var _shape :Shape;
     protected var _dying :Boolean;
 
-    protected static const COLOR :uint = 0x110000;
+    protected static const NORMAL_COLOR :uint = 0x110000;
+    protected static const CORRUPTION_COLOR :uint = 0x162c36
 }
 
 }
