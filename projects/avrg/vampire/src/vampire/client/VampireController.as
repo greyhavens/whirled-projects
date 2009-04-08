@@ -209,9 +209,9 @@ public class VampireController extends Controller
             //Set the avatar target to stand behind.
             //That way, when the avatar arrived at it's destination, it
             //will set it's orientation the same as the target's orientation.
-            ClientContext.gameMode.sendMessageToNamedObject(
-                new ObjectMessage(ClientAvatar.GAME_MESSAGE_TARGETID, targetId),
-                ClientAvatar.NAME);
+//            ClientContext.gameMode.sendMessageToNamedObject(
+//                new ObjectMessage(ClientAvatar.GAME_MESSAGE_TARGETID, targetId),
+//                ClientAvatar.NAME);
         }
 
 

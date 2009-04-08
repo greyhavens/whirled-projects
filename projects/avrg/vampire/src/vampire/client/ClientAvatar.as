@@ -15,8 +15,8 @@ package vampire.client
 
     import vampire.avatar.AvatarEndMovementNotifier;
     import vampire.data.VConstants;
-    import vampire.net.messages.MovePredIntoPositionMsg;
     import vampire.net.messages.MovePredAfterFeedingMsg;
+    import vampire.net.messages.MovePredIntoPositionMsg;
     import vampire.net.messages.PlayerArrivedAtLocationMsg;
 
 
@@ -193,6 +193,7 @@ public class ClientAvatar extends SimObject
         }
 
 
+
 //        var movemsg :MovePredIntoPositionMsg = ClientContext.msg.deserializeMessage(
 //            e.name, e.value) as MovePredIntoPositionMsg;
 
@@ -211,7 +212,10 @@ public class ClientAvatar extends SimObject
 
         var distanceLogicalAwayFromPrey :Number = widthLogical / 3;
 
-
+        //Maybe stand behind the prey?
+        if (movemsg.isStandingBehindPrey) {
+            _avatarIdToStandBehind = movemsg.preyId;
+        }
 
 
         var angleRadians :Number = new Vector2(targetLocation[0] - avatar.x,
@@ -228,7 +232,16 @@ public class ClientAvatar extends SimObject
             VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[movemsg.predIndex][2] *
             distanceLogicalAwayFromPrey;
 
-        ClientContext.ctrl.player.setAvatarLocation(targetX, targetY, targetZ, degs);
+        if (avatar != null && avatar.x == targetX && avatar.y == targetY && avatar.z == targetZ) {
+            //We are already at the feeding position
+            _movingPredatorIntoPosition = false;
+            _ctrl.agent.sendMessage(PlayerArrivedAtLocationMsg.NAME,
+                new PlayerArrivedAtLocationMsg().toBytes());
+        }
+        else {
+            _movingPredatorIntoPosition = true;
+            ClientContext.ctrl.player.setAvatarLocation(targetX, targetY, targetZ, degs);
+        }
     }
 
     protected function handlePlayerMoved (e :AVRGameRoomEvent) :void
@@ -337,6 +350,11 @@ public class ClientAvatar extends SimObject
             return;
         }
 
+        //If we're not moving the predator into position, ignore
+        if (!_movingPredatorIntoPosition) {
+            return;
+        }
+
         //If our player moved, inform the server.
         if (playerId == _ctrl.player.getPlayerId()) {
             var locationFromProps :Array = ClientContext.model.location;
@@ -387,12 +405,12 @@ public class ClientAvatar extends SimObject
         return null;
     }
 
-    override protected function receiveMessage (msg:ObjectMessage) :void
-    {
-        if (msg.name == GAME_MESSAGE_TARGETID) {
-            _avatarIdToStandBehind = int(msg.data);
-        }
-    }
+//    override protected function receiveMessage (msg:ObjectMessage) :void
+//    {
+//        if (msg.name == GAME_MESSAGE_TARGETID) {
+//            _avatarIdToStandBehind = int(msg.data);
+//        }
+//    }
 
     protected var _ctrl :AVRGameControl;
     protected var _currentEntityId :String;
@@ -402,10 +420,18 @@ public class ClientAvatar extends SimObject
     * in the same orientation.
     */
     protected var _avatarIdToStandBehind :int;
+
+    /**
+    * Only send the server notification of arriving at a destination when
+    * the server cares about it.
+    */
+    protected var _movingPredatorIntoPosition :Boolean = false;
+
+
     protected static const log :Log = Log.getLog(ClientAvatar);
 
     public static const NAME :String = "AvatarClientController";
-    public static const GAME_MESSAGE_TARGETID :String = "GameMessage: TargetId";
+//    public static const GAME_MESSAGE_TARGETID :String = "GameMessage: TargetId";
 
     /**This is like a radius in logical distance units.*/
     protected static const FEEDING_LOGICAL_X_OFFSET :Number = 0.1;
