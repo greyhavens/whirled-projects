@@ -4,7 +4,6 @@ package vampire.client {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.EntityControl;
-import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimpleGame;
@@ -87,7 +86,10 @@ public class ClientContext
 
     public static function getPlayerName (playerId :int) :String
     {
-        return ctrl.game.getOccupantName(playerId);
+        if (ctrl.game.getOccupantName(playerId) != null) {
+            return ctrl.game.getOccupantName(playerId);
+        }
+//        SharedPlayerStateClient.
 //        if (ctrl != null && ctrl.isConnected() && !VConstants.LOCAL_DEBUG_MODE) {
 //            var avatar :AVRGameAvatar = ctrl.room.getAvatarInfo(playerId);
 //            if (null != avatar) {
@@ -95,7 +97,7 @@ public class ClientContext
 //            }
 //        }
 //
-//        return "Player " + playerId.toString();
+        return "Player " + playerId.toString();
     }
 
     public static function isPlayerProps () :Boolean
@@ -275,6 +277,14 @@ public class ClientContext
 //        var bounds :Rectangle = d.getBounds(d.parent);
 //        d.x += -bounds.x - bounds.width / 2;
 //        d.y += -bounds.y - bounds.height / 2;
+    }
+    public static function placeTopMiddle (d :DisplayObject) :void
+    {
+        var topMiddlePoint :Point = new Point();
+            topMiddlePoint.x = ctrl.local.getPaintableArea().width/2;
+            topMiddlePoint.y = d.height / 2;;
+        d.x = topMiddlePoint.x;
+        d.y = topMiddlePoint.y;
     }
 
     protected static const ANIMATION_TIME :Number = 0.3;

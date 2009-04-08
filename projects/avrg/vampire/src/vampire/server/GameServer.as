@@ -44,7 +44,7 @@ public class GameServer extends ObjectDB
         FeedingServer.init(_ctrl);
 
         //Add the room population updater
-        addObject(new LoadBalancerServer(this));
+//        addObject(new LoadBalancerServer(this));
     }
 
     public function get control () :AVRServerGameControl
@@ -243,11 +243,9 @@ public class GameServer extends ObjectDB
     protected var _rooms :HashMap = new HashMap();
     protected var _players :HashMap = new HashMap();
 
-
-
     protected var _globalFeedback :Array = new Array();
 
-    public static const SERVER_TICK_UPDATE_MILLISECONDS :int = 1000;
+    public static const SERVER_TICK_UPDATE_MILLISECONDS :int = 500;
 
     public static var log :Log = Log.getLog(GameServer);
 

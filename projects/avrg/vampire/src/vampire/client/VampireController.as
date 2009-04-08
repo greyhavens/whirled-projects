@@ -46,6 +46,7 @@ public class VampireController extends Controller
     public static const HIERARCHY_CENTER_SELECTED :String = "LineageCenterSelected";
 
     public static const RECRUIT :String = "Recruit";
+    public static const MOVE :String = "Move";
 
     public function VampireController (panel :Sprite)
     {
@@ -259,25 +260,25 @@ public class VampireController extends Controller
 
             default:
 
-            if (ClientContext.ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR).length <= 1) {
-                var popup :PopupQuery = new PopupQuery(
-                    null,
-                    "This room is empty! Try hunting in a different room.");
-                ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
-                ClientContext.centerOnViewableRoom(popup.displayObject);
-                ClientContext.animateEnlargeFromMouseClick(popup);
-
-                var quitTimer :SimpleTimer = new SimpleTimer(3, function() :void {
-                    if (popup.isLiveObject) {
-                        popup.destroySelf();
-                    }
-                });
-                ClientContext.gameMode.addObject(quitTimer);
-            }
-            else {
+//            if (ClientContext.ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR).length <= 1) {
+//                var popup :PopupQuery = new PopupQuery(
+//                    null,
+//                    "This room is empty! Try hunting in a different room.");
+//                ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
+//                ClientContext.centerOnViewableRoom(popup.displayObject);
+//                ClientContext.animateEnlargeFromMouseClick(popup);
+//
+//                var quitTimer :SimpleTimer = new SimpleTimer(3, function() :void {
+//                    if (popup.isLiveObject) {
+//                        popup.destroySelf();
+//                    }
+//                });
+//                ClientContext.gameMode.addObject(quitTimer);
+//            }
+//            else {
                 ClientContext.avatarOverlay.setDisplayMode(
                     VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS);
-            }
+//            }
             break;
         }
 
@@ -353,6 +354,12 @@ public class VampireController extends Controller
     {
         log.debug("Recruiting...");
         ClientContext.ctrl.local.showInvitePage(VConstants.TEXT_INVITE, ClientContext.model.name);
+    }
+
+    public function handleMove (roomId :int) :void
+    {
+        trace("Moving to room (" + roomId + ")");
+        ClientContext.ctrl.player.moveToRoom(roomId);
     }
 
 

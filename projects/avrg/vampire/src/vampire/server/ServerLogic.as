@@ -473,7 +473,9 @@ public class ServerLogic
                 }
                 else if (msg is RoomNameMsg) {
                     var roomMsg :RoomNameMsg = RoomNameMsg(msg);
-                    if (ServerContext.server.getRoom(roomMsg.roomId) != null) {
+                    if (roomMsg.roomId != 0 &&
+                        ServerContext.server.getRoom(roomMsg.roomId) != null) {
+
                         var roomNoName :Room = ServerContext.server.getRoom(roomMsg.roomId);
                         roomNoName.handleRoomNameMsg(roomMsg);
                     }
