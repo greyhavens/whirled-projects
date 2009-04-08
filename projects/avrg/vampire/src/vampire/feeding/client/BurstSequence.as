@@ -162,7 +162,6 @@ public class BurstSequence extends SceneObject
 
     protected function get createMultiplier () :Boolean
     {
-        //return (_type == TYPE_NORMAL);
         return this.hasScoreValue;
     }
 

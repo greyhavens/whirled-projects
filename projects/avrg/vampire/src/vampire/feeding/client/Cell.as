@@ -227,12 +227,12 @@ public class Cell extends CollidableObj
         _movie.gotoAndStop(1);
         var thisCell :Cell = this;
         addNamedTask(EXPLODE_TASK, new SerialTask(
-            new TimedTask(Constants.WHITE_CELL_NORMAL_TIME.next()),
+            new TimedTask(ClientCtx.settings.whiteCellNormalTime),
             new FunctionTask(function () :void {
                 _state = STATE_PREPARING_TO_EXPLODE;
             }),
-            new ShowFramesTask(
-                _movie, 1, ShowFramesTask.LAST_FRAME, Constants.WHITE_CELL_EXPLODE_TIME),
+            new ShowFramesTask(_movie, 1, ShowFramesTask.LAST_FRAME,
+                               ClientCtx.settings.whiteCellExplodeTime),
             new FunctionTask(function () :void {
                 GameObjects.createCorruptionBurst(thisCell, null);
                 GameCtx.gameMode.onWhiteCellBurst();
@@ -303,11 +303,14 @@ public class Cell extends CollidableObj
 
         ctrImpulse.length = 2;
 
+        var speed :Number = (_type == Constants.CELL_WHITE ?
+                             ClientCtx.settings.whiteCellSpeed :
+                             ClientCtx.settings.normalCellSpeed);
+
         var impulse :Vector2 = (this.orbitMovementType == ORBIT_NORMAL ?
                                 perpImpulse :
                                 ctrImpulse.add(perpImpulse));
-
-        impulse.length = SPEED_BASE * dt;
+        impulse.length = speed * dt;
 
         curLoc.x += impulse.x;
         curLoc.y += impulse.y;
@@ -437,7 +440,6 @@ public class Cell extends CollidableObj
     protected var _movieLoadedFromCache :Boolean;
     protected var _attachedTip :SimObjectRef = SimObjectRef.Null();
 
-    protected static const SPEED_BASE :Number = 5;
     protected static const SPEED_FOLLOW :Number = 60;
 
     protected static const ORBIT_NORMAL :int = 0;

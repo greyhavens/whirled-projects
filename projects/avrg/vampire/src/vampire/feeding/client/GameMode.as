@@ -144,16 +144,18 @@ public class GameMode extends AppMode
         GameCtx.gameMode.addObject(GameCtx.heart);
 
         // spawn white cells on a timer separate from the heartbeat
-        var whiteCellSpawner :SimObject = new SimObject();
-        whiteCellSpawner.addTask(new RepeatingTask(
-            new VariableTimedTask(
-                Constants.WHITE_CELL_CREATION_TIME.min,
-                Constants.WHITE_CELL_CREATION_TIME.max,
-                Rand.STREAM_GAME),
-            new FunctionTask(function () :void {
-                spawnCells(Constants.CELL_WHITE, Constants.WHITE_CELL_CREATION_COUNT.next());
-            })));
-        addObject(whiteCellSpawner);
+        if (ClientCtx.settings.boardCreatesWhiteCells) {
+            var whiteCellSpawner :SimObject = new SimObject();
+            whiteCellSpawner.addTask(new RepeatingTask(
+                new VariableTimedTask(
+                    Constants.WHITE_CELL_CREATION_TIME.min,
+                    Constants.WHITE_CELL_CREATION_TIME.max,
+                    Rand.STREAM_GAME),
+                new FunctionTask(function () :void {
+                    spawnCells(Constants.CELL_WHITE, Constants.WHITE_CELL_CREATION_COUNT.next());
+                })));
+            addObject(whiteCellSpawner);
+        }
 
         GameCtx.sentMultiplierIndicator = new SentMultiplierIndicator(
             ClientCtx.isPredator ?

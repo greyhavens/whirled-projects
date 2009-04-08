@@ -25,8 +25,15 @@ public class PlayerCursor extends CollidableObj
         _sprite = SpriteUtil.createSprite();
         _sprite.addChild(_movie);
 
-        if (ClientCtx.settings.canDropWhiteCells) {
+        if (ClientCtx.settings.canDropWhiteCells || ClientCtx.settings.playerCreatesWhiteCells) {
             registerListener(GameCtx.bgLayer, MouseEvent.MOUSE_DOWN, onMouseDown);
+        }
+
+        if (ClientCtx.settings.playerCreatesWhiteCells) {
+            _createdWhiteCell = Cell.createCellSprite(Constants.CELL_WHITE, 0, false);
+            _createdWhiteCell.y = -(_movie.height * 0.35);
+            _sprite.addChildAt(_createdWhiteCell, 0);
+            respawnWhiteCell();
         }
     }
 
@@ -42,9 +49,32 @@ public class PlayerCursor extends CollidableObj
 
     protected function onMouseDown (e :MouseEvent) :void
     {
-        if (ClientCtx.settings.canDropWhiteCells) {
+        if (ClientCtx.settings.playerCreatesWhiteCells && !this.isWhiteCellSpawning) {
+            var cell :Cell = GameObjects.createCell(Constants.CELL_WHITE, true);
+            var loc :Point = new Point(_createdWhiteCell.x, _createdWhiteCell.y);
+            loc = DisplayUtil.transformPoint(loc, _createdWhiteCell.parent, GameCtx.cellLayer);
+            cell.x = loc.x;
+            cell.y = loc.y;
+
+            respawnWhiteCell();
+
+        } else if (ClientCtx.settings.canDropWhiteCells) {
             dropCells();
         }
+    }
+
+    protected function respawnWhiteCell () :void
+    {
+        _createdWhiteCell.alpha = 0;
+        addNamedTask(
+            RESPAWN_WHITE_CELL_TASK,
+            new TargetedAlphaTask(
+                _createdWhiteCell, 1, ClientCtx.settings.playerWhiteCellCreationTime));
+    }
+
+    protected function get isWhiteCellSpawning () :Boolean
+    {
+        return hasTasksNamed(RESPAWN_WHITE_CELL_TASK);
     }
 
     override protected function update (dt :Number) :void
@@ -139,7 +169,7 @@ public class PlayerCursor extends CollidableObj
         var cell :Cell = Cell.getCellCollision(this);
         if (cell != null) {
             if (cell.type == Constants.CELL_WHITE) {
-                if (cell.canAttach) {
+                if (ClientCtx.settings.playerCarriesWhiteCells && cell.canAttach) {
                     attachCell(cell);
                 }
 
@@ -216,6 +246,7 @@ public class PlayerCursor extends CollidableObj
 
     protected var _sprite :Sprite;
     protected var _movie :MovieClip;
+    protected var _createdWhiteCell :Sprite;
 
     protected var _moveDirection :Vector2 = new Vector2();
 
@@ -225,6 +256,75 @@ public class PlayerCursor extends CollidableObj
     protected var _lastArtery :int = -1;
 
     protected static const ROTATE_SPEED :Number = 180; // degrees/second
+
+    protected static const RESPAWN_WHITE_CELL_TASK :String = "RespawnWhiteCell";
 }
 
 }
+
+import com.threerings.util.Assert;
+import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.ObjectMessage;
+import com.whirled.contrib.simplegame.ObjectTask;
+import com.whirled.contrib.simplegame.components.AlphaComponent;
+import com.whirled.contrib.simplegame.util.Interpolator;
+import com.whirled.contrib.simplegame.util.MXInterpolatorAdapter;
+
+import mx.effects.easing.*;
+import flash.display.DisplayObject;
+
+class TargetedAlphaTask
+    implements ObjectTask
+{
+    public function TargetedAlphaTask (
+        target :DisplayObject,
+        alpha :Number,
+        time :Number = 0,
+        interpolator :Interpolator = null)
+    {
+
+        // default to linear interpolation
+        if (null == interpolator) {
+            interpolator = new MXInterpolatorAdapter(mx.effects.easing.Linear.easeNone);
+        }
+
+        _target = target;
+        _to = alpha;
+        _totalTime = Math.max(time, 0);
+        _interpolator = interpolator;
+    }
+
+    public function update (dt :Number, obj :SimObject) :Boolean
+    {
+        if (0 == _elapsedTime) {
+            _from = _target.alpha;
+        }
+
+        _elapsedTime += dt;
+
+        _target.alpha = _interpolator.interpolate(_from, _to, _elapsedTime, _totalTime);
+
+        return (_elapsedTime >= _totalTime);
+    }
+
+    public function clone () :ObjectTask
+    {
+        return new TargetedAlphaTask(_target, _to, _totalTime, _interpolator);
+    }
+
+    public function receiveMessage (msg :ObjectMessage) :Boolean
+    {
+        return false;
+    }
+
+    protected var _target :DisplayObject;
+
+    protected var _interpolator :Interpolator;
+
+    protected var _to :Number;
+    protected var _from :Number;
+
+    protected var _totalTime :Number = 0;
+    protected var _elapsedTime :Number = 0;
+}
+

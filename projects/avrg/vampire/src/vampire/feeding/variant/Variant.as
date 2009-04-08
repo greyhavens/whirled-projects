@@ -30,8 +30,16 @@ public class Variant
     {
         var settings :Settings = new Settings();
 
+        settings.boardCreatesWhiteCells = true;
+        settings.playerCreatesWhiteCells = false;
+        settings.playerWhiteCellCreationTime = 0;
+        settings.playerCarriesWhiteCells = true;
         settings.canDropWhiteCells = false;
         settings.scoreCorruption = false;
+        settings.whiteCellNormalTime = 8;
+        settings.whiteCellExplodeTime = 7;
+        settings.normalCellSpeed = 5;
+        settings.whiteCellSpeed = 5;
 
         return settings;
     }
@@ -40,8 +48,16 @@ public class Variant
     {
         var settings :Settings = new Settings();
 
+        settings.boardCreatesWhiteCells = false;
+        settings.playerCreatesWhiteCells = true;
+        settings.playerWhiteCellCreationTime = 2;
+        settings.playerCarriesWhiteCells = false;
         settings.canDropWhiteCells = true;
         settings.scoreCorruption = true;
+        settings.whiteCellNormalTime = 0;
+        settings.whiteCellExplodeTime = 3;
+        settings.normalCellSpeed = 5;
+        settings.whiteCellSpeed = 0;
 
         return settings;
     }
