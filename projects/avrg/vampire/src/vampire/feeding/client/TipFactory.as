@@ -42,7 +42,7 @@ public class TipFactory
         var tip :Tip = new Tip(type, owner, followsOwner);
         tip.offset.x = -tip.width * 0.5;
         tip.offset.y = -tip.height - 10;
-        GameCtx.gameMode.addSceneObject(tip, GameCtx.uiLayer);
+        GameCtx.gameMode.addSceneObject(tip, GameCtx.effectLayer);
 
         _tipCounts[type] += 1;
 
@@ -135,7 +135,7 @@ class Tip extends SceneObject
                 var deadTip :DeadTip = new DeadTip(_type, MIN_TIME - _lifeTime);
                 deadTip.x = this.x;
                 deadTip.y = this.y;
-                GameCtx.gameMode.addSceneObject(deadTip, GameCtx.uiLayer);
+                GameCtx.gameMode.addSceneObject(deadTip, GameCtx.effectLayer);
             }
 
             destroySelf();

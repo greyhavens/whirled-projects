@@ -24,6 +24,7 @@ public class GameCtx
     public static var burstLayer :Sprite;
     public static var cellLayer :Sprite;
     public static var cursorLayer :Sprite;
+    public static var effectLayer :Sprite;
     public static var uiLayer :Sprite;
     public static var helpLayer :Sprite;
 
@@ -44,6 +45,7 @@ public class GameCtx
         bgLayer = null;
         cellLayer = null;
         cursorLayer = null;
+        effectLayer = null;
         uiLayer = null;
 
         timeLeft = Constants.GAME_TIME;

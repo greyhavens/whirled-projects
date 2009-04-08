@@ -104,20 +104,22 @@ public class GameMode extends AppMode
         GameCtx.burstLayer = SpriteUtil.createSprite();
         GameCtx.cellLayer = SpriteUtil.createSprite();
         GameCtx.cursorLayer = SpriteUtil.createSprite();
-        GameCtx.uiLayer = SpriteUtil.createSprite(true, true);
+        GameCtx.effectLayer = SpriteUtil.createSprite();
+        GameCtx.uiLayer = SpriteUtil.createSprite(true, false);
         gameParent.addChild(GameCtx.bgLayer);
         gameParent.addChild(GameCtx.cellBirthLayer);
         gameParent.addChild(GameCtx.heartLayer);
         gameParent.addChild(GameCtx.burstLayer);
         gameParent.addChild(GameCtx.cellLayer);
         gameParent.addChild(GameCtx.cursorLayer);
+        gameParent.addChild(GameCtx.effectLayer);
         gameParent.addChild(GameCtx.uiLayer);
 
         if (Constants.DEBUG_SHOW_STATS) {
             var statView :StatView = new StatView();
             statView.x = 0;
             statView.y = 460;
-            addSceneObject(statView, GameCtx.uiLayer);
+            addSceneObject(statView, GameCtx.effectLayer);
         }
 
         // Setup game objects
@@ -161,12 +163,12 @@ public class GameMode extends AppMode
             ClientCtx.isPredator ?
             BONUS_SENT_INDICATOR_PREDATOR_LOC :
             BONUS_SENT_INDICATOR_PREY_LOC);
-        addSceneObject(GameCtx.sentMultiplierIndicator, GameCtx.uiLayer);
+        addSceneObject(GameCtx.sentMultiplierIndicator, GameCtx.effectLayer);
 
         var timerView :TimerView = new TimerView();
         timerView.x = Constants.GAME_CTR.x;
         timerView.y = Constants.GAME_CTR.y;
-        addSceneObject(timerView, GameCtx.uiLayer);
+        addSceneObject(timerView, GameCtx.effectLayer);
 
         GameCtx.score = new ScoreHelpQuitView();
         GameCtx.score.x = Constants.GAME_CTR.x;
@@ -179,7 +181,7 @@ public class GameMode extends AppMode
                 ClientCtx.playerData.getStrainCount(ClientCtx.preyBloodType));
             GameCtx.specialStrainTallyView.x = Constants.GAME_CTR.x;
             GameCtx.specialStrainTallyView.y = Constants.GAME_CTR.y;
-            addSceneObject(GameCtx.specialStrainTallyView, GameCtx.uiLayer);
+            addSceneObject(GameCtx.specialStrainTallyView, GameCtx.effectLayer);
         }
 
         GameCtx.cursor = GameObjects.createPlayerCursor();
@@ -282,7 +284,7 @@ public class GameMode extends AppMode
                 loc,
                 function () :void { addMultiplierToBoard(msg.multiplier, loc, msg.playerId); });
 
-            addSceneObject(anim, GameCtx.uiLayer);
+            addSceneObject(anim, GameCtx.effectLayer);
         }
     }
 
@@ -312,7 +314,7 @@ public class GameMode extends AppMode
                 new TimedTask(0.5),
                 LocationTask.CreateEaseIn(animX, animY - 50, 1),
                 new SelfDestructTask()));
-            addSceneObject(animName, GameCtx.uiLayer);
+            addSceneObject(animName, GameCtx.effectLayer);
         }
     }
 

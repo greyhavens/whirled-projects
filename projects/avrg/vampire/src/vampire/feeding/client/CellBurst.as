@@ -68,7 +68,7 @@ public class CellBurst extends CollidableObj
             _sequence = new BurstSequence();
             _sequence.x = this.x;
             _sequence.y = this.y;
-            GameCtx.gameMode.addSceneObject(_sequence, GameCtx.uiLayer);
+            GameCtx.gameMode.addSceneObject(_sequence, GameCtx.effectLayer);
         }
 
         if (_sequence != null) {

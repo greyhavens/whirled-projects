@@ -179,7 +179,7 @@ public class PlayerCursor extends CollidableObj
                 //GameObjects.createSpecialBloodAnim(cell);
                 GameCtx.gameMode.addSceneObject(
                     new LostSpecialStrainAnim(cell.specialStrain, cell.x, cell.y),
-                    GameCtx.uiLayer);
+                    GameCtx.effectLayer);
 
                 cell.destroySelf();
 
