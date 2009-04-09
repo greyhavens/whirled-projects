@@ -94,8 +94,9 @@ public class PlayerCursor extends CollidableObj
             // Move towards the mouse
             var moveTarget :Vector2 =
                 new Vector2(GameCtx.cellLayer.mouseX, GameCtx.cellLayer.mouseY);
-            if (!moveTarget.equals(curLoc)) {
+            if (!moveTarget.equals(curLoc) && !moveTarget.equals(_lastMoveTarget)) {
                 _moveDirection = moveTarget.subtract(curLoc).normalizeLocal();
+                _lastMoveTarget = moveTarget;
             }
 
             // update location
@@ -261,6 +262,7 @@ public class PlayerCursor extends CollidableObj
     protected var _createdWhiteCell :Sprite;
 
     protected var _moveDirection :Vector2 = new Vector2();
+    protected var _lastMoveTarget :Vector2 = new Vector2();
 
     protected var _attachedWhiteCells :Array = [];
 
