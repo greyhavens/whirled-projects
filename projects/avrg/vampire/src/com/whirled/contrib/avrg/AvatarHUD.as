@@ -73,11 +73,6 @@ public class AvatarHUD extends SceneObject
         //We don't need to update every frame.
 //        _timeSinceLastUpdate += dt;
 
-        if(VConstants.LOCAL_DEBUG_MODE) {
-            return;
-        }
-
-
 
         var newLocation :Array = _ctrl.room.getEntityProperty(
             EntityControl.PROP_LOCATION_LOGICAL, entityId) as Array;
@@ -87,7 +82,7 @@ public class AvatarHUD extends SceneObject
         }
 
 
-            setLocation(newLocation, UPDATE_INTERVAL_SECONDS);
+        setLocation(newLocation, UPDATE_INTERVAL_SECONDS);
 
         //If we don't yet have a location, make us invisible
         visible = location != null;
