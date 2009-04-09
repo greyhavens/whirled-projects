@@ -93,10 +93,14 @@ public class Logic
         var base :Number = 1000;
         var xp :Number = 0;
         var addition :Number = 2000;
-        for(var i :int = 2; i <= level; i++) {
+        var currentinc :Number = addition;
+        if (level >= 2) {
+            xp = base;
+        }
+        for(var i :int = 3; i <= level; i++) {
             //Over level 10 the xp gap increases.
-            var thisLevelAddition :Number = (i <= 10 ? addition : 2*addition)
-            xp += (i-2) * thisLevelAddition + base;
+            xp += currentinc;
+            currentinc += (i <= 10 ? addition : 5*addition);
         }
         return xp;
     }

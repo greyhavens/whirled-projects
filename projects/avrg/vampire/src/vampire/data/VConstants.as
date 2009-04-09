@@ -33,9 +33,9 @@ public class VConstants
     * Blood shared among all sires = 0.1*50 = 5
     * Each sire gets 5/10=0.5 blood.
     */
-    public static const XP_GAIN_FRACTION_SHARED_WITH_IMMEDIATE_SIRE :Number = 0.01;
+    public static const XP_GAIN_FRACTION_SHARED_WITH_IMMEDIATE_SIRE :Number = 0.1;
 
-    public static const XP_GAIN_FRACTION_SHARED_WITH_GRANDSIRES :Number = 0.001;
+    public static const XP_GAIN_FRACTION_SHARED_WITH_GRANDSIRES :Number = 0.01;
 
     /**
     * For every unit of blood gained from feeding, how much experience is gained.
@@ -48,7 +48,7 @@ public class VConstants
     public static const MAX_BLOOD_NONPLAYERS :Number = 80;
 
     /**We cap the max level for now.*/
-    public static const MAXIMUM_VAMPIRE_LEVEL :int = 10;
+    public static const MAXIMUM_VAMPIRE_LEVEL :int = 20;
 
     //Possible avatar states
     public static const AVATAR_STATE_DEFAULT :String = "Default";
