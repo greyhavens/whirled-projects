@@ -38,8 +38,8 @@ public class TargetingOverlay extends SceneObjectParent
                 trace("Target Clicked, should replace targetClickedCallback");}
         }
 
-        registerListener(_displaySprite, MouseEvent.MOUSE_MOVE, handleMouseMove);
-        registerListener(_displaySprite, MouseEvent.CLICK, handleMouseClick);
+//        registerListener(_displaySprite, MouseEvent.MOUSE_MOVE, handleMouseMove);
+//        registerListener(_displaySprite, MouseEvent.CLICK, handleMouseClick);
 
         _rects = new HashMap();
 

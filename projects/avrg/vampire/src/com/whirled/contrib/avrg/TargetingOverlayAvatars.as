@@ -113,9 +113,9 @@ public class TargetingOverlayAvatars extends TargetingOverlay
     protected function checkAvatarsAndUsersMatch(...ignored) :void
     {
 
-        if(VConstants.LOCAL_DEBUG_MODE) {
-            return;
-        }
+//        if(VConstants.LOCAL_DEBUG_MODE) {
+//            return;
+//        }
         //Check for room avatars without a HUD
         var allUserIds :HashSet = new HashSet();
         var userId :int;
