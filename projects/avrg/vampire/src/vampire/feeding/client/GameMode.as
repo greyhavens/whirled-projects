@@ -125,19 +125,17 @@ public class GameMode extends AppMode
         // Setup game objects
         GameCtx.tipFactory = new TipFactory();
 
-        var bg :MovieClip = ClientCtx.instantiateMovieClip("blood", "background");
-        if (ClientCtx.settings.scoreCorruption) {
-            bg.filters = [ new ColorMatrix().adjustColor(0, 0, -20, -175).createFilter() ];
-        }
+        var isCorruption :Boolean = ClientCtx.isCorruption;
+
+        var bg :MovieClip = ClientCtx.instantiateMovieClip("blood",
+            (isCorruption ? "background_corruption" : "background"));
         bg.cacheAsBitmap = true;
         bg.x = Constants.GAME_CTR.x;
         bg.y = Constants.GAME_CTR.y;
         GameCtx.bgLayer.addChild(bg);
 
-        var heartMovie :MovieClip = ClientCtx.instantiateMovieClip("blood", "circulatory");
-        if (ClientCtx.settings.scoreCorruption) {
-            heartMovie.filters = [ new ColorMatrix().adjustColor(-60, 80, -95, 0).createFilter() ];
-        }
+        var heartMovie :MovieClip = ClientCtx.instantiateMovieClip("blood",
+            (isCorruption ? "circulatory_corruption" : "circulatory"));
         heartMovie.x = Constants.GAME_CTR.x;
         heartMovie.y = Constants.GAME_CTR.y;
         GameCtx.heartLayer.addChild(heartMovie);

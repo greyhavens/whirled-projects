@@ -37,6 +37,11 @@ public class ClientCtx
     public static var lastRoundResults :RoundOverMsg;
     public static var settings :Settings;
 
+    public static function get isCorruption () :Boolean
+    {
+        return settings.scoreCorruption;
+    }
+
     public static function init () :void
     {
         props = null;

@@ -21,7 +21,8 @@ public class PlayerCursor extends CollidableObj
     {
         _radius = Constants.CURSOR_RADIUS;
 
-        _movie = ClientCtx.instantiateMovieClip("blood", "cursor", true, true);
+        _movie = ClientCtx.instantiateMovieClip(
+            "blood", (ClientCtx.isCorruption ? "cursor" : "cursor_corruption"), true, true);
         _sprite = SpriteUtil.createSprite();
         _sprite.addChild(_movie);
 

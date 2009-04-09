@@ -18,7 +18,8 @@ public class ScoreHelpQuitView extends SceneObject
 {
     public function ScoreHelpQuitView ()
     {
-        _movie = ClientCtx.instantiateMovieClip("blood", "score", false, true);
+        _movie = ClientCtx.instantiateMovieClip(
+            "blood", (ClientCtx.isCorruption ? "score_corruption" : "score"), false, true);
         _tf = _movie["score_field"];
 
         var quitButton :SimpleButton = _movie["button_quit"];
@@ -131,7 +132,8 @@ class FlyingCell extends SceneObject
     public function FlyingCell (size :int)
     {
         _sprite = SpriteUtil.createSprite();
-        _movie = ClientCtx.instantiateMovieClip("blood", "cell_red", true, true);
+        _movie =
+            ClientCtx.instantiateMovieClip("blood", (ClientCtx.isCorruption ? "cell_black_burst" : "cell_red"), true, true);
         _sprite.addChild(_movie);
         _sprite.scaleX = _sprite.scaleY = SCALE[size];
     }
