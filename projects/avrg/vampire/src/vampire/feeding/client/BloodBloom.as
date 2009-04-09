@@ -12,6 +12,7 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.ResourceManager;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
+import com.whirled.contrib.namespace.*;
 
 import flash.display.Sprite;
 import flash.events.Event;
@@ -53,15 +54,15 @@ public class BloodBloom extends FeedingClient
     public function BloodBloom (gameId :int,
                                 playerData :PlayerFeedingData,
                                 gameCompleteCallback :Function,
-                                props :GamePropGetControl = null)
+                                props :NamespacePropGetControl = null)
     {
         if (!_inited) {
             throw new Error("FeedingGameClient.init has not been called");
         }
 
         ClientCtx.init();
-        ClientCtx.props =
-            (props != null ? props : new GamePropGetControl(gameId, ClientCtx.gameCtrl.room.props));
+        ClientCtx.props = (props != null ? props :
+            new NamespacePropGetControl(String(gameId), ClientCtx.gameCtrl.room.props));
         ClientCtx.playerData = playerData.clone();
         ClientCtx.gameCompleteCallback = gameCompleteCallback;
         ClientCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);

@@ -7,6 +7,7 @@ import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.net.Message;
 import com.whirled.net.MessageReceivedEvent;
+import com.whirled.contrib.namespace.*;
 
 import vampire.feeding.*;
 import vampire.feeding.net.*;
@@ -47,8 +48,8 @@ public class Server extends FeedingServer
         _ctx.server = this;
         _ctx.gameId = _gameIdCounter++;
         _ctx.roomCtrl = _ctx.gameCtrl.getRoom(roomId);
-        _ctx.nameUtil = new NameUtil(_ctx.gameId);
-        _ctx.props = new GamePropControl(_ctx.gameId, _ctx.roomCtrl.props);
+        _ctx.nameUtil = new NameUtil(String(_ctx.gameId));
+        _ctx.props = new NamespacePropControl(String(_ctx.gameId), _ctx.roomCtrl.props);
 
         _ctx.playerIds = [];
         if (preyId != Constants.NULL_PLAYER) {
@@ -227,13 +228,13 @@ public class Server extends FeedingServer
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
     {
-        if (e.isFromServer() || !_ctx.nameUtil.isForGame(e.name)) {
+        if (e.isFromServer() || !_ctx.nameUtil.isInNamespace(e.name)) {
             // don't listen to messages that we've sent, or that aren't for this
             // particular game
             return;
         }
 
-        var name :String = _ctx.nameUtil.decodeName(e.name);
+        var name :String = _ctx.nameUtil.decode(e.name);
         var msg :Message = _ctx.msgMgr.deserializeMessage(name, e.value);
         if (msg == null) {
             return;
@@ -276,7 +277,7 @@ public class Server extends FeedingServer
     protected function logBadMessage (e :MessageReceivedEvent, reason :String, err :Error = null)
         :void
     {
-        _ctx.logBadMessage(log, e.senderId, _ctx.nameUtil.decodeName(e.name), reason, err);
+        _ctx.logBadMessage(log, e.senderId, _ctx.nameUtil.decode(e.name), reason, err);
     }
 
     protected var _ctx :ServerCtx = new ServerCtx();

@@ -5,6 +5,7 @@ import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.net.*;
 import com.whirled.net.MessageReceivedEvent;
+import com.whirled.contrib.namespace.NameUtil;
 
 import flash.events.EventDispatcher;
 
@@ -16,7 +17,7 @@ public class ClientMsgMgr extends EventDispatcher
     public function ClientMsgMgr (gameId :int, gameCtrl :AVRGameControl)
     {
         _gameCtrl = gameCtrl;
-        _nameUtil = new NameUtil(gameId);
+        _nameUtil = new NameUtil(String(gameId));
 
         if (gameCtrl.isConnected()) {
             _events.registerListener(gameCtrl.room, MessageReceivedEvent.MESSAGE_RECEIVED,
@@ -35,7 +36,7 @@ public class ClientMsgMgr extends EventDispatcher
     {
         if (_gameCtrl.isConnected()) {
             log.info("Sending message", "player", ClientCtx.localPlayerId, "name", msg.name);
-            _gameCtrl.agent.sendMessage(_nameUtil.encodeName(msg.name), serializeMsg(msg));
+            _gameCtrl.agent.sendMessage(_nameUtil.encode(msg.name), serializeMsg(msg));
         }
     }
 
@@ -51,8 +52,8 @@ public class ClientMsgMgr extends EventDispatcher
 
     public function deserializeMessage (name :String, val :Object) :Message
     {
-        if (_nameUtil.isForGame(name)) {
-            return _msgMgr.deserializeMessage(_nameUtil.decodeName(name), val);
+        if (_nameUtil.isInNamespace(name)) {
+            return _msgMgr.deserializeMessage(_nameUtil.decode(name), val);
         } else {
             return null;
         }

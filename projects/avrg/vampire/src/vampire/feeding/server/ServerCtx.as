@@ -6,6 +6,7 @@ import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.RoomSubControlServer;
 import com.whirled.contrib.simplegame.net.BasicMessageManager;
 import com.whirled.contrib.simplegame.net.Message;
+import com.whirled.contrib.namespace.*;
 
 import vampire.feeding.*;
 import vampire.feeding.net.*;
@@ -17,7 +18,7 @@ public class ServerCtx
 
     public var gameId :int;
     public var roomCtrl :RoomSubControlServer;
-    public var props :GamePropControl;
+    public var props :NamespacePropControl;
     public var nameUtil :NameUtil;
 
     public var settings :Settings;
@@ -137,7 +138,7 @@ public class ServerCtx
 
     public function sendMessage (msg :Message, toPlayer :int = 0) :void
     {
-        var name :String = nameUtil.encodeName(msg.name);
+        var name :String = nameUtil.encode(msg.name);
         var val :Object = msg.toBytes();
         if (toPlayer == 0) {
             roomCtrl.sendMessage(name, val);

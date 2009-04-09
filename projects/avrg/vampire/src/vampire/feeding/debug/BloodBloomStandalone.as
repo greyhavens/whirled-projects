@@ -3,6 +3,7 @@ package vampire.feeding.debug {
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.simplegame.util.Rand;
+import com.whirled.contrib.namespace.*;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
@@ -12,7 +13,6 @@ import vampire.avatar.VampireBody;
 import vampire.data.VConstants;
 import vampire.feeding.*;
 import vampire.feeding.client.*;
-import vampire.feeding.net.GamePropControl;
 import vampire.feeding.net.Props;
 import vampire.feeding.server.*;
 import vampire.feeding.variant.Variant;
@@ -52,7 +52,8 @@ public class BloodBloomStandalone extends Sprite
 
     protected function startGame () :void
     {
-        var dummyProps :GamePropControl = new GamePropControl(0, new LocalPropertySubControl());
+        var dummyProps :NamespacePropControl =
+            new NamespacePropControl(String(0), new LocalPropertySubControl());
         dummyProps.set(Props.AI_PREY_NAME, "AI Prey");
         dummyProps.set(
             Props.PREY_BLOOD_TYPE,

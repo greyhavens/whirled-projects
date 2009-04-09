@@ -7,6 +7,7 @@ import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.MainLoop;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.namespace.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -27,7 +28,7 @@ public class ClientCtx
     public static var audio :AudioManager;
 
     // Initialized every time a new feeding takes place
-    public static var props :GamePropGetControl;
+    public static var props :NamespacePropGetControl;
     public static var msgMgr :ClientMsgMgr;
     public static var gameCompleteCallback :Function;
     public static var playerData :PlayerFeedingData;
