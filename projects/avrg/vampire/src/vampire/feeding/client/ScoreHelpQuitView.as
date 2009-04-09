@@ -132,8 +132,8 @@ class FlyingCell extends SceneObject
     public function FlyingCell (size :int)
     {
         _sprite = SpriteUtil.createSprite();
-        _movie =
-            ClientCtx.instantiateMovieClip("blood", (ClientCtx.isCorruption ? "cell_black_burst" : "cell_red"), true, true);
+        _movie = ClientCtx.instantiateMovieClip("blood",
+            (ClientCtx.isCorruption ? "cell_black_burst" : "cell_red"), true, true);
         _sprite.addChild(_movie);
         _sprite.scaleX = _sprite.scaleY = SCALE[size];
     }
