@@ -30,23 +30,17 @@ public class LoadBalancerClient extends SceneObject
         _ctrl = ctrl;
         registerListener(ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessageReceived);
-
-
-//        _roomIdsAndNamesAndPlayers = ctrl.room.props.get(Codes.ROOM_PROP_LOW_POPULATION_ROOMS) as Array;
-//
-//
-//        registerListener(ctrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged);
         _parent = parent;
-//        updateUI();
-//        activate();
-
     }
 
     public function activate () :void
     {
         //Send a data request to the server we we init.
-        ClientUtil.fadeInSceneObject(this, _parent);
-        _ctrl.agent.sendMessage(LoadBalancingMsg.NAME, new LoadBalancingMsg().toBytes());
+//        ClientUtil.fadeInSceneObject(this, _parent);
+        if (!_isWaitingForRoomDataMessage) {
+            _ctrl.agent.sendMessage(LoadBalancingMsg.NAME, new LoadBalancingMsg().toBytes());
+            _isWaitingForRoomDataMessage = true;
+        }
     }
 
     public function deactivate (...ignored) :void
@@ -64,6 +58,8 @@ public class LoadBalancerClient extends SceneObject
     protected function handleMessageReceived (e :MessageReceivedEvent) :void
     {
         if (e.name == LoadBalancingMsg.NAME) {
+
+            _isWaitingForRoomDataMessage = false;
             var msg :LoadBalancingMsg =
                 ClientContext.msg.deserializeMessage(e.name, e.value) as LoadBalancingMsg;
 
@@ -76,7 +72,10 @@ public class LoadBalancerClient extends SceneObject
                     _roomIds.splice(index, 1);
                     _roomNames.splice(index, 1);
                 }
-                updateUI();
+
+                showRoomsAsChatLinks(_roomIds, _roomNames);
+
+//                updateUI();
 
             }
             else {
@@ -84,13 +83,19 @@ public class LoadBalancerClient extends SceneObject
             }
         }
     }
-//    protected function handlePropChanged (e :PropertyChangedEvent) :void
-//    {
-//        if (e.name == Codes.ROOM_PROP_LOW_POPULATION_ROOMS) {
-//            _roomIdsAndNamesAndPlayers = e.newValue as Array;
-//            updateUI();
-//        }
-//    }
+
+    protected function showRoomsAsChatLinks (roomIds :Array, roomNames :Array) :void
+    {
+        _ctrl.local.feedback("Click a room link to hunt other players:");
+        for (var ii :int = 0; ii < roomIds.length; ++ii) {
+            if (VConstants.MODE_DEV) {
+                _ctrl.local.feedback(roomNames + ": http://localhost:8080/#world-s" + roomIds[ii]);
+            }
+            else {
+                _ctrl.local.feedback(roomNames + ": http://www.whirled.com/#world-s" + roomIds[ii]);
+            }
+        }
+    }
 
     protected function updateUI () :void
     {
@@ -141,11 +146,11 @@ public class LoadBalancerClient extends SceneObject
     {
         super.addedToDB();
 //        activate();
-        if (VConstants.LOCAL_DEBUG_MODE) {
-            _roomIds = [1,2,3,4];
-            _roomNames = ["1", "2 dsaj dflasdfj", "dfdfgdfg", "56456456456"];
-            updateUI();
-        }
+//        if (VConstants.LOCAL_DEBUG_MODE) {
+//            _roomIds = [1,2,3,4];
+//            _roomNames = ["1", "2 dsaj dflasdfj", "dfdfgdfg", "56456456456"];
+//            updateUI();
+//        }
     }
 
     override public function get displayObject () :DisplayObject
@@ -173,19 +178,19 @@ public class LoadBalancerClient extends SceneObject
 //        return _loadBalancingMsg;
 //    }
 
-//    protected var _roomIdsAndNamesAndPlayers :Array = [];
 
     protected var _ctrl :AVRGameControl;
     protected var _roomIds :Array = [];
     protected var _roomNames :Array = [];
-//    protected var _roomPlayerCounts :Array = [];
-//    protected var _roomButtons :Array = [];
     protected var _displaySprite :Sprite = new Sprite();
     protected var _panel :MovieClip;
     protected var _parent :DisplayObjectContainer;
 
+    protected var _isWaitingForRoomDataMessage :Boolean = false;
+
 //    protected var _loadBalancingMsg :LoadBalancingMsg;
 //    public static const MESSAGE_ROOMIDS_AND_POPULATIONS :String = "roomIdsAndPlayers";
+    public static const MESSAGE_ACTIVATE :String = "activateLoadBalancer";
     public static const NAME :String = "LoadBalancerClient";
     protected static const log :Log = Log.getLog(LoadBalancerClient);
 }

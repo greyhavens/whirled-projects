@@ -27,6 +27,10 @@ public class MainGameMode extends AppMode
 {
     override protected function enter () :void
     {
+        if (!ClientContext.ctrl.isConnected()) {
+            return;
+        }
+
         modeSprite.visible = true;
         log.debug("Starting " + ClassUtil.tinyClassName(this));
 
@@ -55,6 +59,11 @@ public class MainGameMode extends AppMode
     override protected function setup () :void
     {
         super.setup();
+
+        if (!ClientContext.ctrl.isConnected()) {
+            return;
+        }
+
         //Set the game mode where all game objects are added.
         ClientContext.gameMode = this;
 
@@ -127,6 +136,9 @@ public class MainGameMode extends AppMode
         //Add the tutorial.  It starts deactivated.
         ClientContext.tutorial = new Tutorial();
 
+
+        //Add the client load balancer
+        addObject(new LoadBalancerClient(ClientContext.ctrl, modeSprite));
 
         //Add a debug panel for admins
         if(ClientContext.isAdmin(ClientContext.ourPlayerId) || VConstants.LOCAL_DEBUG_MODE) {

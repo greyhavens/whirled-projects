@@ -6,7 +6,6 @@ import com.threerings.util.Log;
 import com.whirled.EntityControl;
 import com.whirled.contrib.avrg.AvatarHUD;
 import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.ObjectMessage;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 
@@ -260,25 +259,33 @@ public class VampireController extends Controller
 
             default:
 
-//            if (ClientContext.ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR).length <= 1) {
-//                var popup :PopupQuery = new PopupQuery(
-//                    null,
+            if (ClientContext.ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR).length <= 1) {
+                var popup :PopupQuery = new PopupQuery(
+                    null,
 //                    "This room is empty! Try hunting in a different room.");
-//                ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
-//                ClientContext.centerOnViewableRoom(popup.displayObject);
-//                ClientContext.animateEnlargeFromMouseClick(popup);
-//
-//                var quitTimer :SimpleTimer = new SimpleTimer(3, function() :void {
-//                    if (popup.isLiveObject) {
-//                        popup.destroySelf();
-//                    }
-//                });
-//                ClientContext.gameMode.addObject(quitTimer);
-//            }
-//            else {
+                    "The scent of blood in the air.  Click on a link to hunt other players\n" +
+                    "     <--------------------");
+                ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
+                ClientContext.centerOnViewableRoom(popup.displayObject);
+                ClientContext.animateEnlargeFromMouseClick(popup);
+
+                var quitTimer :SimpleTimer = new SimpleTimer(3, function() :void {
+                    if (popup.isLiveObject) {
+                        popup.destroySelf();
+                    }
+                });
+                ClientContext.gameMode.addObject(quitTimer);
+
+                if (ClientContext.gameMode.getObjectNamed(LoadBalancerClient.NAME) != null) {
+                    var lb :LoadBalancerClient = ClientContext.gameMode.getObjectNamed(
+                        LoadBalancerClient.NAME) as LoadBalancerClient;
+                    lb.activate();
+                }
+            }
+            else {
                 ClientContext.avatarOverlay.setDisplayMode(
                     VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS);
-//            }
+            }
             break;
         }
 
