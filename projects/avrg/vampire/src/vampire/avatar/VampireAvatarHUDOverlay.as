@@ -70,9 +70,6 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
         }
 
         setDisplayMode(DISPLAY_MODE_OFF);
-
-//        _loadBalancer = new LoadBalancerClient(ClientContext.ctrl, _paintableOverlay);
-//        addSimObject(_loadBalancer);
     }
 
     override protected function addedToDB():void
@@ -84,8 +81,6 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
                 mode.addSceneObject(p, _paintableOverlay);
             }
         }
-
-//        addSimObject(_loadBalancer);
     }
 
     override protected function destroyed():void
@@ -161,11 +156,6 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
                 _displaySprite.addChild(_paintableOverlay);
 
                 var playersInRoom :int = ClientContext.ctrl.room.getPlayerIds().length;
-//                if (VConstants.LOCAL_DEBUG_MODE || playersInRoom == 1 ||
-//                    playersInRoom >= VConstants.PLAYERS_IN_ROOM_TRIGGERING_BALANCING) {
-//                    _loadBalancer.activate();
-//                }
-
                 validIds = getValidPlayerIdTargets();
 
                 if (validIds.size() > 0) {
@@ -192,19 +182,16 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
                                 "Try hunting in a different room.");
                         }
                     }
-//                    setDisplayMode(DISPLAY_MODE_OFF);
+                    setDisplayMode(DISPLAY_MODE_OFF);
                 }
 
 
                 break;
             default://Off
-
                 _paintableOverlay.graphics.clear();
                 _avatars.forEach(function(id :int, avatar :VampireAvatarHUD) :void {
                     avatar.setDisplayModeInvisible();
                 });
-
-//                _loadBalancer.deactivate();
         }
 
     }
@@ -223,9 +210,6 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
     protected var p1 :VampireAvatarHUD;
 
     protected var _displayMode :int = 0;
-
-//    protected var _loadBalancer :LoadBalancerClient;
-
     public static const DISPLAY_MODE_OFF :int = 0;
     public static const DISPLAY_MODE_SHOW_VALID_TARGETS :int = 2;
 
