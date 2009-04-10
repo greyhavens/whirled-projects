@@ -7,7 +7,7 @@ import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.MainLoop;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.namespace.*;
+import com.whirled.contrib.namespc.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;

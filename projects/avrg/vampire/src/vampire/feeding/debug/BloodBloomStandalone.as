@@ -2,8 +2,8 @@ package vampire.feeding.debug {
 
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.TimerManager;
+import com.whirled.contrib.namespc.*;
 import com.whirled.contrib.simplegame.util.Rand;
-import com.whirled.contrib.namespace.*;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
@@ -11,6 +11,7 @@ import flash.utils.Dictionary;
 
 import vampire.avatar.VampireBody;
 import vampire.data.VConstants;
+import vampire.debug.LocalPropertySubControl;
 import vampire.feeding.*;
 import vampire.feeding.client.*;
 import vampire.feeding.net.Props;

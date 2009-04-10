@@ -5,7 +5,7 @@ import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.net.*;
 import com.whirled.net.MessageReceivedEvent;
-import com.whirled.contrib.namespace.NameUtil;
+import com.whirled.contrib.namespc.*;
 
 import flash.events.EventDispatcher;
 

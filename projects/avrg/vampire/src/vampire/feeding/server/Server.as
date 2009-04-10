@@ -7,7 +7,7 @@ import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.net.Message;
 import com.whirled.net.MessageReceivedEvent;
-import com.whirled.contrib.namespace.*;
+import com.whirled.contrib.namespc.*;
 
 import vampire.feeding.*;
 import vampire.feeding.net.*;

@@ -12,7 +12,7 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.ResourceManager;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
-import com.whirled.contrib.namespace.*;
+import com.whirled.contrib.namespc.*;
 
 import flash.display.Sprite;
 import flash.events.Event;

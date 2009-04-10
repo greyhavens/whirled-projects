@@ -3,7 +3,7 @@ package vampire.quest {
 import com.whirled.net.NetConstants;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.PropertySubControl;
-import com.whirled.contrib.namespace.NamespacePropControl;
+import com.whirled.contrib.namespc.*;
 import com.whirled.contrib.EventHandlerManager;
 
 import flash.events.EventDispatcher;

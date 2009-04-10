@@ -1,4 +1,4 @@
-package vampire.feeding.debug {
+package vampire.debug {
 
 import com.threerings.util.HashMap;
 import com.threerings.util.StringUtil;
