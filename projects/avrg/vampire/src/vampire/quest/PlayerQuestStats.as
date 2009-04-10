@@ -36,6 +36,16 @@ public class PlayerQuestStats extends EventDispatcher
         return _props.get(encodeName(name));
     }
 
+    public function getIntStat (name :String) :int
+    {
+        return getStat(name) as int;
+    }
+
+    public function statExists (name :String) :Boolean
+    {
+        return (getStat(name) != null);
+    }
+
     public function getStatNames () :Array
     {
         return _props.getPropertyNames().map(
