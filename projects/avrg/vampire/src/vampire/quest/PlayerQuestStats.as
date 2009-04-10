@@ -1,10 +1,10 @@
 package vampire.quest {
 
+import com.whirled.contrib.EventHandlerManager;
+import com.whirled.contrib.namespc.*;
 import com.whirled.net.NetConstants;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.PropertySubControl;
-import com.whirled.contrib.namespc.*;
-import com.whirled.contrib.EventHandlerManager;
 
 import flash.events.EventDispatcher;
 
@@ -34,6 +34,14 @@ public class PlayerQuestStats extends EventDispatcher
     public function getStat (name :String) :Object
     {
         return _props.get(encodeName(name));
+    }
+
+    public function getStatNames () :Array
+    {
+        return _props.getPropertyNames().map(
+            function (propName :String, ...ignored) :String {
+                return decodeName(propName);
+            });
     }
 
     protected function onPropChanged (e :PropertyChangedEvent) :void

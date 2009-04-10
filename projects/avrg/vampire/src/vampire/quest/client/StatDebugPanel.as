@@ -59,6 +59,10 @@ public class StatDebugPanel extends DraggableObject
             var name :String = getEnteredName();
             setStatusText("Stat", "name", name, "val", _stats.getStat(name).toString());
         });
+
+        createButton("List Stats", function (...ignored) :void {
+            setStatusText("Stats", "names", _stats.getStatNames());
+        });
     }
 
     protected function createButton (buttonText :String, callback :Function) :SimpleButton
