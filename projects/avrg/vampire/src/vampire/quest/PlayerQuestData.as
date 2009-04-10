@@ -1,6 +1,5 @@
 package vampire.quest {
 
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.Util;
 import com.whirled.contrib.namespc.NamespacePropControl;
 import com.whirled.net.PropertySubControl;
@@ -26,7 +25,8 @@ public class PlayerQuestData
 
     public function isActiveQuest (questId :String) :void
     {
-        return ArrayUtil.contains(this.activeQuestIds, questId);
+        var dict :Dictionary = _props.get(PROP_ACTIVE_QUESTS) as Dictionary;
+        return (dict != null && dict[questId] !== undefined ? true : false);
     }
 
     public function get activeQuestIds () :Array
