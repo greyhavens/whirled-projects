@@ -49,7 +49,7 @@ public class QuestDesc
         var hash :int;
         var inc :int = int(Math.max(1, Math.ceil(questId.length / 32)));
         for (var ii :int = 0; ii < questId.length; ii += inc) {
-            hash = (hash << 1) ^ int(questId.charCodeAt(ii));
+            hash = ((hash << 5) + hash) ^ int(questId.charCodeAt(ii));
         }
 
         return hash;
