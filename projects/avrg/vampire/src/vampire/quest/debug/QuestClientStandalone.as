@@ -7,8 +7,7 @@ import com.whirled.net.PropertySubControl;
 import flash.display.Sprite;
 
 import vampire.debug.LocalPropertySubControl;
-import vampire.quest.PlayerQuestData;
-import vampire.quest.PlayerQuestStats;
+import vampire.quest.*;
 import vampire.quest.client.*;
 
 [SWF(width="700", height="500", frameRate="30")]
@@ -29,6 +28,8 @@ public class QuestClientStandalone extends Sprite
         var stats :PlayerQuestStats = new PlayerQuestStats(localProps);
 
         QuestClient.init(_sg, questData, stats);
+
+        questData.addQuest(Quests.getQuestByName("TestQuest").id);
 
         MethodQueue.callLater(function () :void {
             QuestClient.showDebugPanel(true);

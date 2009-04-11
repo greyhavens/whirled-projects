@@ -1,11 +1,12 @@
 package vampire.quest {
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.StringUtil;
 
 public class QuestDesc
 {
-    // Unique id
-    public var id :String;
+    // Unique name
+    public var name :String;
 
     // A list of stats that this quest cares about
     public var relevantStats :Array = [];
@@ -33,23 +34,38 @@ public class QuestDesc
     // function getProgressText (stats :PlayerQuestStats) :String
     public var getProgressTextFn :Function;
 
-    public function get hashCode () :int
+    public function get id () :int
     {
-        return hashForId(id);
+        return getId(name);
     }
 
     public function toString () :String
     {
-        return StringUtil.simpleToString(this, [ "id", "hashCode", "displayName" ]);
+        return StringUtil.simpleToString(this, [ "name", "id", "displayName" ]);
     }
 
-    public static function hashForId (questId :String) :int
+    public function isRelevantStat (statName :String) :Boolean
+    {
+        return ArrayUtil.contains(this.relevantStats, statName);
+    }
+
+    public function isComplete (stats :PlayerQuestStats) :Boolean
+    {
+        return this.isCompletedFn(stats);
+    }
+
+    public function getProgressText (stats :PlayerQuestStats) :String
+    {
+        return this.getProgressTextFn(stats);
+    }
+
+    public static function getId (name :String) :int
     {
         // examine at most 32 characters of the id
         var hash :int;
-        var inc :int = int(Math.max(1, Math.ceil(questId.length / 32)));
-        for (var ii :int = 0; ii < questId.length; ii += inc) {
-            hash = ((hash << 5) + hash) ^ int(questId.charCodeAt(ii));
+        var inc :int = int(Math.max(1, Math.ceil(name.length / 32)));
+        for (var ii :int = 0; ii < name.length; ii += inc) {
+            hash = ((hash << 5) + hash) ^ int(name.charCodeAt(ii));
         }
 
         return hash;

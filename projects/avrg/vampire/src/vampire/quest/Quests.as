@@ -11,15 +11,21 @@ public class Quests
 
         // create a test quest
         var testQuest :QuestDesc = new QuestDesc();
-        testQuest.id = "TestQuest";
+        testQuest.name = "TestQuest";
+        testQuest.displayName = "'Get those Frobs!'";
         makeCollectionRequirement(testQuest, "Frob", 3); // Collect 3 Frobs!
         addQuest(testQuest);
     }
 
-    public static function getQuest (hash :int) :QuestDesc
+    public static function getQuest (questId :int) :QuestDesc
     {
         checkInited();
-        return _quests.get(hash) as QuestDesc;
+        return _quests.get(questId) as QuestDesc;
+    }
+
+    public static function getQuestByName (name :String) :QuestDesc
+    {
+        return getQuest(QuestDesc.getId(name));
     }
 
     protected static function addQuest (desc :QuestDesc) :void
@@ -27,7 +33,7 @@ public class Quests
         checkInited();
 
         validateQuest(desc, true);
-        _quests.put(desc.hashCode, desc);
+        _quests.put(desc.id, desc);
     }
 
     protected static function makeCollectionRequirement (desc :QuestDesc, statName :String,
@@ -38,7 +44,8 @@ public class Quests
             return stats.getIntStat(statName) >= num;
         };
         desc.getProgressTextFn = function (stats :PlayerQuestStats) :String {
-            var remaining :int = Math.max(num - stats.getIntStat(statName), 0);
+            var cur :int = stats.getIntStat(statName);
+            var remaining :int = Math.max(num - cur, 0);
             return "Collect " + remaining + " more " + statName + (remaining == 1 ? "." : "s.");
         }
     }
@@ -56,7 +63,7 @@ public class Quests
         if (desc == null) {
             log.error("Invalid quest (quest is null)", new Error());
             return false;
-        } else if (desc.id == null) {
+        } else if (desc.name == null) {
             log.error("Invalid quest (id is null)", "desc", desc, new Error());
             return false;
         } else if (desc.isCompletedFn == null) {
@@ -65,7 +72,7 @@ public class Quests
         } else if (desc.getProgressTextFn == null) {
             log.error("Invalid quest (getProgressTextFn is null)", "desc", desc, new Error());
             return false;
-        } else if (validateNotDuplicate && _quests.containsKey(desc.hashCode)) {
+        } else if (validateNotDuplicate && _quests.containsKey(desc.id)) {
             log.error("Invalid quest (id already exists)", "desc", desc, new Error());
             return false;
         }
@@ -74,7 +81,7 @@ public class Quests
     }
 
     protected static var _inited :Boolean;
-    protected static var _quests :HashMap = new HashMap(); // Map<hash:int, quest:QuestDesc>
+    protected static var _quests :HashMap = new HashMap(); // Map<id:int, quest:QuestDesc>
 
     protected static var log :Log = Log.getLog(Quests);
 }

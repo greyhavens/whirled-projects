@@ -1,15 +1,14 @@
 package vampire.quest.client {
 
-import flash.text.TextField;
+import com.threerings.util.StringUtil;
 
-import vampire.quest.PlayerQuestStats;
+import flash.text.TextField;
 
 public class StatDebugPanel extends GenericDraggableWindow
 {
-    public function StatDebugPanel (stats :PlayerQuestStats) :void
+    public function StatDebugPanel () :void
     {
         super(500);
-        _stats = stats;
 
         // text entry
         layoutElement(TextBits.createText("Name:", 1.2));
@@ -23,16 +22,16 @@ public class StatDebugPanel extends GenericDraggableWindow
 
         // buttons
         createButton("Set Stat", function (...ignored) :void {
-            _stats.setStat(getEnteredName(), getEnteredVal());
+            ClientCtx.stats.setStat(getEnteredName(), getEnteredVal());
         });
 
         createButton("Get Stat", function (...ignored) :void {
             var name :String = getEnteredName();
-            setStatusText("Stat", "name", name, "val", _stats.getStat(name));
+            setStatusText("Stat", "name", name, "val", ClientCtx.stats.getStat(name));
         });
 
         createButton("List Stats", function (...ignored) :void {
-            setStatusText("Stats", "names", _stats.getStatNames());
+            setStatusText("Stats", "names", ClientCtx.stats.getStatNames());
         });
     }
 
@@ -44,10 +43,18 @@ public class StatDebugPanel extends GenericDraggableWindow
     protected function getEnteredVal () :Object
     {
         var text :String = _valueField.text;
-        return (text == null || text.length == 0 || text == "null" ? null : text);
-    }
+        if (text == null || text.length == 0 || text == "null") {
+            return null;
+        }
 
-    protected var _stats :PlayerQuestStats;
+        try {
+            return StringUtil.parseNumber(text);
+        } catch (e :ArgumentError) {
+            // swallow
+        }
+
+        return text;
+    }
 
     protected var _nameField :TextField;
     protected var _valueField :TextField;

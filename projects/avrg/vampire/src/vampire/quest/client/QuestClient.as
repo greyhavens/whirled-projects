@@ -24,7 +24,7 @@ public class QuestClient
     public static function showDebugPanel (show :Boolean) :void
     {
         if (_debugPanel == null && show) {
-            _debugPanel = new StatDebugPanel(ClientCtx.stats);
+            _debugPanel = new StatDebugPanel();
             ClientCtx.mainLoop.topMode.addSceneObject(_debugPanel);
         }
 
@@ -36,7 +36,7 @@ public class QuestClient
     public static function showQuestPanel (show :Boolean) :void
     {
         if (_questPanel == null && show) {
-            _questPanel = new QuestPanel(ClientCtx.questData);
+            _questPanel = new QuestPanel();
             ClientCtx.mainLoop.topMode.addSceneObject(_questPanel);
         }
 
