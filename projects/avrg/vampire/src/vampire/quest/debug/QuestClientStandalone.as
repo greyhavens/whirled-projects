@@ -7,6 +7,7 @@ import com.whirled.net.PropertySubControl;
 import flash.display.Sprite;
 
 import vampire.debug.LocalPropertySubControl;
+import vampire.quest.PlayerQuestData;
 import vampire.quest.PlayerQuestStats;
 import vampire.quest.client.*;
 
@@ -24,12 +25,14 @@ public class QuestClientStandalone extends Sprite
 
         // Init local props
         var localProps :LocalPropertySubControl = new LocalPropertySubControl();
+        var questData :PlayerQuestData = new PlayerQuestData(localProps);
         var stats :PlayerQuestStats = new PlayerQuestStats(localProps);
 
-        QuestClient.init(_sg, stats);
+        QuestClient.init(_sg, questData, stats);
 
         MethodQueue.callLater(function () :void {
-            QuestClient.showDebugPanel();
+            QuestClient.showDebugPanel(true);
+            QuestClient.showQuestPanel(true);
         });
     }
 

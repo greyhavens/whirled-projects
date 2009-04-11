@@ -33,9 +33,26 @@ public class QuestDesc
     // function getProgressText (stats :PlayerQuestStats) :String
     public var getProgressTextFn :Function;
 
+    public function get hashCode () :int
+    {
+        return hashForId(id);
+    }
+
     public function toString () :String
     {
-        StringUtil.simpleToString(this, "id", "displayName");
+        return StringUtil.simpleToString(this, [ "id", "hashCode", "displayName" ]);
+    }
+
+    public static function hashForId (questId :String) :int
+    {
+        // examine at most 32 characters of the id
+        var hash :int;
+        var inc :int = int(Math.max(1, Math.ceil(questId.length / 32)));
+        for (var ii :int = 0; ii < questId.length; ii += inc) {
+            hash = (hash << 1) ^ int(questId.charCodeAt(ii));
+        }
+
+        return hash;
     }
 }
 

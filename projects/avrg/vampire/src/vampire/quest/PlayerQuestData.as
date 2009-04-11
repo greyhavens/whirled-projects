@@ -15,23 +15,23 @@ public class PlayerQuestData
 
     public function addQuest (questId :String) :void
     {
-        _props.setIn(PROP_ACTIVE_QUESTS, questId, true, true);
+        _props.setIn(PROP_ACTIVE_QUESTS, QuestDesc.hashForId(questId), true, false);
     }
 
     public function completeQuest (questId :String) :void
     {
-        _props.setIn(PROP_ACTIVE_QUESTS, questid, null, true);
+        _props.setIn(PROP_ACTIVE_QUESTS, QuestDesc.hashForId(questId), null, false);
     }
 
-    public function isActiveQuest (questId :String) :void
+    public function isActiveQuest (questId :String) :Boolean
     {
         var dict :Dictionary = _props.get(PROP_ACTIVE_QUESTS) as Dictionary;
-        return (dict != null && dict[questId] !== undefined ? true : false);
+        return (dict != null && dict[QuestDesc.hashForId(questId)] !== undefined ? true : false);
     }
 
     public function get activeQuestIds () :Array
     {
-        var quests :Array = _props.get(PROP_ACTIVE_QUESTS) as Dictionary;
+        var quests :Dictionary = _props.get(PROP_ACTIVE_QUESTS) as Dictionary;
         return (quests != null ? Util.keys(quests) : []);
     }
 

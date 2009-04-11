@@ -10,7 +10,7 @@ public class Quests
         _inited = true;
 
         // create a test quest
-        public var testQuest :QuestDesc = new QuestDesc();
+        var testQuest :QuestDesc = new QuestDesc();
         testQuest.id = "TestQuest";
         makeCollectionRequirement(testQuest, "Frob", 3); // Collect 3 Frobs!
         createQuest(testQuest);
@@ -23,12 +23,20 @@ public class Quests
         return _quests.get(id) as QuestDesc;
     }
 
+    public static function getQuestFromHashCode (hash :int) :QuestDesc
+    {
+        checkInited();
+
+        return _questHashCodes.get(hash) as QuestDesc;
+    }
+
     protected static function createQuest (desc :QuestDesc) :void
     {
         checkInited();
 
         validateQuest(desc, true);
         _quests.put(desc.id, desc);
+        _questHashCodes.put(desc.hashCode, desc);
     }
 
     protected static function makeCollectionRequirement (desc :QuestDesc, statName :String,
@@ -51,23 +59,34 @@ public class Quests
         }
     }
 
-    protected static function validateQuest (desc :QuestDesc, validateNotDuplicate :Boolean) :void
+    protected static function validateQuest (desc :QuestDesc, validateNotDuplicate :Boolean) :Boolean
     {
         if (desc == null) {
             log.error("Invalid quest (quest is null)", new Error());
+            return false;
         } else if (desc.id == null) {
-            log.error("Invalid quest (id is null)", "desc", desc, new Error();
+            log.error("Invalid quest (id is null)", "desc", desc, new Error());
+            return false;
         } else if (desc.isCompletedFn == null) {
             log.error("Invalid quest (isCompletedFn is null)", "desc", desc, new Error());
+            return false;
         } else if (desc.getProgressTextFn == null) {
             log.error("Invalid quest (getProgressTextFn is null)", "desc", desc, new Error());
+            return false;
         } else if (validateNotDuplicate && _quests.containsKey(desc.id)) {
             log.error("Invalid quest (id already exists)", "desc", desc, new Error());
+            return false;
+        } else if (validateNotDuplicate && _questHashCodes.containsKey(desc.hashCode)) {
+            log.error("Invalid quest (hashCode collision)", "desc", desc, new Error());
+            return false;
         }
+
+        return true;
     }
 
     protected static var _inited :Boolean;
     protected static var _quests :HashMap = new HashMap();
+    protected static var _questHashCodes :HashMap = new HashMap();
 
     protected static var log :Log = Log.getLog(Quests);
 }
