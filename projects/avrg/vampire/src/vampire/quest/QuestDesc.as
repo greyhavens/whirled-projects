@@ -11,7 +11,7 @@ public class QuestDesc
     public var relevantStats :Array = [];
 
     // Requirements for quest availability
-    public var completedQuests :Array = []; // list of ids
+    public var requiredQuests :Array = []; // list of ids
     public var minLevel :int;
     public var maxLevel :int = int.MAX_VALUE;
 

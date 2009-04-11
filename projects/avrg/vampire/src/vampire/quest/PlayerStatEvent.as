@@ -13,6 +13,11 @@ public class PlayerStatEvent extends Event
         super(type);
         this.statName = statName;
     }
+
+    override public function clone () :Event
+    {
+        return new PlayerStatEvent(type, statName);
+    }
 }
 
 }

@@ -13,30 +13,21 @@ public class Quests
         var testQuest :QuestDesc = new QuestDesc();
         testQuest.id = "TestQuest";
         makeCollectionRequirement(testQuest, "Frob", 3); // Collect 3 Frobs!
-        createQuest(testQuest);
+        addQuest(testQuest);
     }
 
-    public static function getQuest (id :String) :QuestDesc
+    public static function getQuest (hash :int) :QuestDesc
     {
         checkInited();
-
-        return _quests.get(id) as QuestDesc;
+        return _quests.get(hash) as QuestDesc;
     }
 
-    public static function getQuestFromHashCode (hash :int) :QuestDesc
-    {
-        checkInited();
-
-        return _questHashCodes.get(hash) as QuestDesc;
-    }
-
-    protected static function createQuest (desc :QuestDesc) :void
+    protected static function addQuest (desc :QuestDesc) :void
     {
         checkInited();
 
         validateQuest(desc, true);
-        _quests.put(desc.id, desc);
-        _questHashCodes.put(desc.hashCode, desc);
+        _quests.put(desc.hashCode, desc);
     }
 
     protected static function makeCollectionRequirement (desc :QuestDesc, statName :String,
@@ -59,7 +50,8 @@ public class Quests
         }
     }
 
-    protected static function validateQuest (desc :QuestDesc, validateNotDuplicate :Boolean) :Boolean
+    protected static function validateQuest (desc :QuestDesc, validateNotDuplicate :Boolean)
+        :Boolean
     {
         if (desc == null) {
             log.error("Invalid quest (quest is null)", new Error());
@@ -73,11 +65,8 @@ public class Quests
         } else if (desc.getProgressTextFn == null) {
             log.error("Invalid quest (getProgressTextFn is null)", "desc", desc, new Error());
             return false;
-        } else if (validateNotDuplicate && _quests.containsKey(desc.id)) {
+        } else if (validateNotDuplicate && _quests.containsKey(desc.hashCode)) {
             log.error("Invalid quest (id already exists)", "desc", desc, new Error());
-            return false;
-        } else if (validateNotDuplicate && _questHashCodes.containsKey(desc.hashCode)) {
-            log.error("Invalid quest (hashCode collision)", "desc", desc, new Error());
             return false;
         }
 
@@ -85,8 +74,7 @@ public class Quests
     }
 
     protected static var _inited :Boolean;
-    protected static var _quests :HashMap = new HashMap();
-    protected static var _questHashCodes :HashMap = new HashMap();
+    protected static var _quests :HashMap = new HashMap(); // Map<hash:int, quest:QuestDesc>
 
     protected static var log :Log = Log.getLog(Quests);
 }

@@ -23,7 +23,7 @@ public class PlayerQuestStats extends EventDispatcher
 
     public function setStat (name :String, val :Object) :void
     {
-        _props.set(encodeName(name), val, true);
+        _props.set(encodeName(name), val);
     }
 
     public function clearStat (name :String) :void
