@@ -223,7 +223,6 @@ public class MainGameMode extends AppMode
 
         if (message != null) {
             if (message is StartFeedingClientMsg) {
-                var startGame
                 handleStartFeedingClientMsg(StartFeedingClientMsg(message));
             }
             else if (message is FeedRequestMsg) {

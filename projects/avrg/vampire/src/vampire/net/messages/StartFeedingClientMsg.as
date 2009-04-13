@@ -6,7 +6,7 @@ package vampire.net.messages
 
 public class StartFeedingClientMsg extends BaseGameMsg
 {
-    public function StartFeedingClientMsg(playerId:int = 0, gameId :int, scoresDay :Array = null,
+    public function StartFeedingClientMsg(playerId:int = 0, gameId :int = 0, scoresDay :Array = null,
         scoresMonth :Array = null)
     {
         super(playerId);

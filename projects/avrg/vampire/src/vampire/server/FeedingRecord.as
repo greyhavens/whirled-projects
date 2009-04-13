@@ -140,7 +140,7 @@ public class FeedingRecord extends EventCollecter
         // send a message with the game ID to each of the players, a
         var leaderBoard :LeaderBoardServer;
         if (ServerContext.server.getObjectNamed(LeaderBoardServer.NAME) != null) {
-            var leaderBoard :LeaderBoardServer =
+            leaderBoard =
                 ServerContext.server.getObjectNamed(LeaderBoardServer.NAME) as LeaderBoardServer;
         }
         ServerContext.ctrl.doBatch(function () :void {
@@ -149,8 +149,8 @@ public class FeedingRecord extends EventCollecter
                     log.debug("Sending start game message to client " + playerId + "=StartClient", _gameServer.gameId);
 
                     var msg :StartFeedingClientMsg = leaderBoard != null ?
-                        leaderBoard.createStartGameMessage(playerId) :
-                        new StartFeedingClientMsg(playerId);
+                        leaderBoard.createStartGameMessage(playerId, _gameServer.gameId) :
+                        new StartFeedingClientMsg(playerId, _gameServer.gameId);
 
                     ServerContext.server.getPlayer(playerId).ctrl.sendMessage(
                         StartFeedingClientMsg.NAME, msg.toBytes());

@@ -87,9 +87,9 @@ public class LeaderBoardServer extends SimObject
     * This class creates the message because we don't want to expose the score array to
     * other classes.
     */
-    public function createStartGameMessage (playerId :int) :StartFeedingClientMsg
+    public function createStartGameMessage (playerId :int, gameId :int) :StartFeedingClientMsg
     {
-        return new StartFeedingClientMsg(playerId, _scoresAndNamesDay, _scoresAndNamesMonthy);
+        return new StartFeedingClientMsg(playerId, gameId, _scoresAndNamesDay, _scoresAndNamesMonthy);
     }
 
     override protected function receiveMessage (msg :ObjectMessage) :void

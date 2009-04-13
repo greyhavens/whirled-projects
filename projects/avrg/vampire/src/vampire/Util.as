@@ -19,6 +19,7 @@ import vampire.net.messages.RequestStateChangeMsg;
 import vampire.net.messages.RoomNameMsg;
 import vampire.net.messages.SendGlobalMsg;
 import vampire.net.messages.ShareTokenMsg;
+import vampire.net.messages.StartFeedingClientMsg;
 import vampire.net.messages.SuccessfulFeedMsg;
 
 
