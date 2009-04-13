@@ -144,6 +144,7 @@ public class Room extends SimObject
             return;
         }
         log.debug("room.playerLeft, removing from feeding games " + player.name);
+
         _bloodBloomGameManager.playerQuitsGame(player.playerId);
     }
 
@@ -263,6 +264,8 @@ public class Room extends SimObject
 ////            }
 ////            _players.clear();
             _ctrl = null;
+
+            _bloodBloomGameManager.
         }
         catch(err :Error) {
 

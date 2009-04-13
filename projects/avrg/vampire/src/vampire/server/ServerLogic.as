@@ -158,10 +158,10 @@ public class ServerLogic
     protected static function awardBloodBondedXpEarned (player :PlayerData, xp :Number) :void
     {
         log.debug("awardBloodBondedXpEarned(" + player.name + ", xp=" + xp);
-        if (player.bloodbonded <= 0) {
+        if (player.bloodbond <= 0) {
             return;
         }
-        var bloodBondedPlayer :PlayerData =ServerContext.server.getPlayer(player.bloodbonded);
+        var bloodBondedPlayer :PlayerData =ServerContext.server.getPlayer(player.bloodbond);
         var xpBonus :Number = xp * VConstants.BLOOD_BOND_FEEDING_XP_BONUS;
         var xBonusFormatted :String = Util.formatNumberForFeedback(xpBonus);
 
@@ -172,7 +172,7 @@ public class ServerLogic
         }
         else {
             //Add to offline database
-            ServerContext.ctrl.loadOfflinePlayer(player.bloodbonded,
+            ServerContext.ctrl.loadOfflinePlayer(player.bloodbond,
                 function (props :OfflinePlayerPropertyControl) :void {
                     var currentXP :Number = Number(props.get(Codes.PLAYER_PROP_XP_SLEEP));
                     if (isNaN(currentXP)) {
@@ -347,7 +347,7 @@ public class ServerLogic
         var missingXp :Number = xpNeededForNextLevel - player.xp;
         log.debug("missingXp" + missingXp);
         addXP(player.playerId, missingXp);
-        awardSiresXpEarned(player, missingXp);
+//        awardSiresXpEarned(player, missingXp);
     }
 
     protected static function decreaseLevel (player :PlayerData) :void
@@ -379,7 +379,7 @@ public class ServerLogic
             xp = Math.max(xp, 0);
             var newLevel :int = Logic.levelGivenCurrentXpAndInvites(xp, player.invites);
 
-            player.setXP(Math.min(xp, Logic.maxXPGivenXPAndInvites(xp, player.invites)));
+            player.xp = Math.min(xp, Logic.maxXPGivenXPAndInvites(xp, player.invites));
 
 //            if (newLevel > currentLevel) {
 //                player.setBlood(Math.min(player.blood, 0.1 * player.maxBlood));
@@ -456,7 +456,7 @@ public class ServerLogic
                 else if (msg is FeedingDataMsg) {
                     var bytes :ByteArray = FeedingDataMsg(msg).feedingData;
                     if (bytes != null) {
-                        player.setFeedingData(bytes);
+                        player.feedingData = bytes;
                     }
                 }
                 else if (msg is GameStartedMsg) {
@@ -504,7 +504,7 @@ public class ServerLogic
                         break;
 
                         case DebugMsg.DEBUG_LOSE_INVITE:
-                        player.setInviteTally(Math.max(0, player.invites - 1));
+                        player.invites = Math.max(0, player.invites - 1);
                         break;
 
                         default:
@@ -602,8 +602,8 @@ public class ServerLogic
             player.addFeedback(Codes.POPUP_PREFIX + "You gained " +
                 Util.formatNumberForFeedback(xpGainedWhileAsleep) +
                 " experience from your " +
-                (player.bloodbonded != 0 ? "bloodbond " : "") +
-                (player.bloodbonded != 0 && descendentsCount > 0 ? "and " : "") +
+                (player.bloodbond != 0 ? "bloodbond " : "") +
+                (player.bloodbond != 0 && descendentsCount > 0 ? "and " : "") +
                 (descendentsCount > 0 ? "progeny " : "") +
                 "while you were asleep!");
 
@@ -638,7 +638,8 @@ public class ServerLogic
     {
         log.debug("handleFeedRequestMessage");
 
-        if (player == null) {
+        if (player == null || player.room == null || e == null) {
+            log.error("handleFeedRequestMessage", "player", player, "e", e);
             return;
         }
 
@@ -652,8 +653,8 @@ public class ServerLogic
 
 
         //Set info useful for later
-        player.setTargetId(e.targetPlayer);
-        player.setTargetLocation([e.targetX, e.targetY, e.targetZ]);
+        player.targetId = e.targetPlayer;
+        player.targetLocation = [e.targetX, e.targetY, e.targetZ];
 
         //If a game lobby already exists, add ourselves to that game, and move into position.
         //Otherwise, first ask the prey.
@@ -695,7 +696,7 @@ public class ServerLogic
         }
         else {
             //If the prey is a player, ask permission.  Otherwise start up the lobby
-            if (getPlayer(e.targetPlayer) != null) {
+            if (isPlayer(e.targetPlayer)) {
                 log.debug("asking prey permission");
                 //Ask the prey first.
                 var preyPlayer :PlayerData = getPlayer(e.targetPlayer);
@@ -778,7 +779,7 @@ public class ServerLogic
 
         ServerContext.lineage.setPlayerSire(player.playerId, targetPlayerId);
         log.info(player.playerId + " then setting sire(" + ServerContext.lineage.getSireId(player.playerId) + ")");
-        player.setSire(ServerContext.lineage.getSireId(player.playerId));
+        player.sire = ServerContext.lineage.getSireId(player.playerId);
 
 //        ServerContext.minionHierarchy.updatePlayer(targetPlayerId);
         ServerContext.lineage.updatePlayer(player.playerId);
@@ -818,7 +819,7 @@ public class ServerLogic
 
         if (e.add) {
 
-            player.setBloodBonded(e.targetPlayer)
+            player.bloodBond = e.targetPlayer;
         }
     }
 
@@ -859,7 +860,7 @@ public class ServerLogic
                 //If I'm feeding, just break off the feed.
                 if (room.bloodBloomGameManager.isPredatorInGame(playerId)) {
                     room.bloodBloomGameManager.playerQuitsGame(playerId);
-                    player.setState(VConstants.PLAYER_STATE_DEFAULT);
+                    player.state = VConstants.PLAYER_STATE_DEFAULT;
                     break;
                 }
 
@@ -873,7 +874,7 @@ public class ServerLogic
 //                }
 
                 //Otherwise, go into bared mode.  Whay not?
-                player.setState(newState);
+                player.state = newState;
                 break;
 
 
@@ -886,7 +887,7 @@ public class ServerLogic
 
                 //Make sure we don't overwrite existing feeding.
                 if (player.state != VConstants.PLAYER_STATE_MOVING_TO_FEED) {
-                    player.setState(newState);
+                    player.state = newState;
                 }
 
                 //Check if there are any games existing.
@@ -945,7 +946,7 @@ public class ServerLogic
 //                    break;
 //                }
 
-                player.setState(newState);
+                player.state = newState;
 //                plaupdateAvatarState();
                 if (game.isLobbyStarted) {
                     log.debug("    Joining lobby...");
@@ -975,7 +976,7 @@ public class ServerLogic
 //                break;
 
             default:
-                player.setState(newState);
+                player.state = newState;
 
 
         }
@@ -1095,7 +1096,7 @@ public class ServerLogic
 
 //            case VConstants.GAME_MODE_FEED_FROM_NON_PLAYER:
             default :
-                player.setState(VConstants.AVATAR_STATE_DEFAULT);
+                player.state = VConstants.AVATAR_STATE_DEFAULT;
         }
     }
 

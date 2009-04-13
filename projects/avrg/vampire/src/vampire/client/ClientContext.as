@@ -39,7 +39,7 @@ public class ClientContext
     public static var game :SimpleGame;
     public static var gameResources :ResourceManager;
 
-    public static var model :GameModel;
+    public static var model :PlayerModel;
 
     /**The main game mode to add all game objects.*/
     public static var gameMode :AppMode;
@@ -66,7 +66,7 @@ public class ClientContext
         msg = new BasicMessageManager();
         vampire.Util.initMessageManager(msg);
 
-        if (VConstants.LOCAL_DEBUG_MODE) {
+        if (VConstants.LOCAL_DEBUG_MODE || VConstants.MODE_DEV) {
             Log.setLevel("", Log.DEBUG);
         }
         else {
@@ -107,10 +107,10 @@ public class ClientContext
         return "Player " + playerId.toString();
     }
 
-    public static function isPlayerProps () :Boolean
-    {
-        return model.time > 0;
-    }
+//    public static function isPlayerProps () :Boolean
+//    {
+//        return model.time > 0;
+//    }
 
     public static function instantiateMovieClip (rsrcName :String, className :String,
         disableMouseInteraction :Boolean = false, fromCache :Boolean = false) :MovieClip
@@ -214,9 +214,9 @@ public class ClientContext
         return playerId == 23340 || //Ragbeard
                playerId == 1769  || //Capital-T-Tim
                playerId == 12    || //Nemo (Whirled and dev).
-//               playerId == 1     || //local msoy
-//               playerId == 2     || //local msoy
-//               playerId == 3     || //local msoy
+               playerId == 1     || //local msoy
+               playerId == 2     || //local msoy
+               playerId == 3     || //local msoy
 //               playerId == 1734     || //dev Dion
 //               playerId == 1735     || //dev Ragbeard's Evil Twin
                playerId == VConstants.UBER_VAMP_ID; //Übervamp

@@ -24,7 +24,6 @@ package vampire.avatar
     import flash.geom.Point;
 
     import vampire.client.ClientContext;
-    import vampire.client.SharedPlayerStateClient;
     import vampire.client.VampireController;
     import vampire.client.events.PlayersFeedingEvent;
     import vampire.data.Codes;
@@ -45,7 +44,7 @@ public class VampireAvatarHUD extends AvatarHUD
         _roomKey = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + _userId;
 
         //Listen for changes in blood levels
-        registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
+        registerListener(ClientContext.ctrl.player.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
 //        registerListener(ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
 //
 //        registerListener(ClientContext.model, LineageUpdatedEvent.LINEAGE_UPDATED, updateLineageInfo);
@@ -58,7 +57,7 @@ public class VampireAvatarHUD extends AvatarHUD
 //            trace(playerId + " clicked ");
 //        });
 
-        if (ClientContext.model.bloodbonded == userId) {
+        if (ClientContext.model.bloodbond == userId) {
             addBloodBondIcon();
         }
 
@@ -240,11 +239,11 @@ public class VampireAvatarHUD extends AvatarHUD
     {
         var oldLevel :int;
         var newLevel :int;
-        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
+//        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
 
 
         //If it's us, update the our HUD
-        if(!isNaN(playerIdUpdated) && playerIdUpdated == playerId) {
+//        if(!isNaN(playerIdUpdated) && playerIdUpdated == playerId) {
             if(e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
 
                 if (e.newValue > e.oldValue) {
@@ -264,16 +263,16 @@ public class VampireAvatarHUD extends AvatarHUD
                     mode.addSceneObject(bloodBondMovie, _displaySprite);
                 }
             }
-        }
+//        }
 
-        if(!isNaN(playerIdUpdated) && playerIdUpdated == ClientContext.ourPlayerId) {
+//        if(!isNaN(playerIdUpdated) && playerIdUpdated == ClientContext.ourPlayerId) {
             if(e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
                 removeBloodbondIcon();
                 if (e.newValue == playerId) {
                     addBloodBondIcon();
                 }
             }
-        }
+//        }
 
     }
 

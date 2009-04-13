@@ -20,9 +20,6 @@ public class FeedingManager extends SimObject
     {
         var gamesShutdown :HashSet = new HashSet();
         _playerId2Game.forEach(function(playerId :int, game :FeedingRecord) :void {
-            if(game.isFinished) {
-                gamesShutdown.add(game.gameServer.gameId);
-            }
             if(!gamesShutdown.contains(game.gameServer.gameId)) {
                 gamesShutdown.add(game.gameServer.gameId);
                 game.shutdown();

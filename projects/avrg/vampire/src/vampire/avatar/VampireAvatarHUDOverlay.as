@@ -13,7 +13,6 @@ import flash.events.MouseEvent;
 import framework.FakeAVRGContext;
 
 import vampire.client.ClientContext;
-import vampire.client.LoadBalancerClient;
 import vampire.data.VConstants;
 
 
@@ -172,15 +171,17 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
                 }
                 else {
                     if (previousDisplayMode != mode) {
-                        var avatars :int = _ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR).length;
-                        if (avatars > 1) {
-                            _ctrl.local.feedback("Everyone is in the midst of feeding.  Either wait " +
-                                " a little, or try hunting in a different room.");
-                        }
-                        else {
-                            _ctrl.local.feedback("This room is empty! " +
-                                "Try hunting in a different room.");
-                        }
+
+                        ClientContext.controller.handleActivateLoadBalancer();
+//                        var avatars :int = _ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR).length;
+//                        if (avatars > 1) {
+//                            _ctrl.local.feedback("Everyone is in the midst of feeding.  Either wait " +
+//                                " a little, or try hunting in a different room.");
+//                        }
+//                        else {
+//                            _ctrl.local.feedback("This room is empty! " +
+//                                "Try hunting in a different room.");
+//                        }
                     }
                     setDisplayMode(DISPLAY_MODE_OFF);
                 }

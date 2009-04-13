@@ -4,11 +4,9 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameAvatar;
-import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AgentSubControl;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.net.ElementChangedEvent;
-import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.PropertyGetSubControl;
 
@@ -19,6 +17,7 @@ import vampire.client.events.LineageUpdatedEvent;
 import vampire.client.events.PlayersFeedingEvent;
 import vampire.data.Codes;
 import vampire.data.Lineage;
+import vampire.data.Logic;
 import vampire.data.VConstants;
 import vampire.feeding.PlayerFeedingData;
 
@@ -29,40 +28,47 @@ import vampire.feeding.PlayerFeedingData;
  */
 
 [Event(name="Hierarchy Updated", type="vampire.client.events.LineageUpdatedEvent")]
-public class GameModel extends SimObject
+public class PlayerModel extends SimObject
 {
-    public function setup () :void
+    public function PlayerModel ()
     {
         _agentCtrl = ClientContext.ctrl.agent;
-        _propsCtrl = ClientContext.ctrl.room.props;
+//        _propsCtrl = ClientContext.ctrl.room.props;
+        _propsCtrl = ClientContext.ctrl.player.props;
+
+        if (_propsCtrl == null) {
+            throw new Error("Player props cannot be null");
+        }
+
+        _lineage = new Lineage();
 
         registerListener(_propsCtrl, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged);
         registerListener(_propsCtrl, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
 
         //Update the HUD when the room props come in.
-        registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, playerEnteredRoom);
+//        registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, playerEnteredRoom);
 
         //If the room props are already present, update the HUD now.
-        if(SharedPlayerStateClient.isProps(ClientContext.ourPlayerId)) {
-            playerEnteredRoom();
-        }
+//        if(SharedPlayerStateClient.isProps(ClientContext.ourPlayerId)) {
+//            playerEnteredRoom();
+//        }
     }
 
-    protected function playerEnteredRoom (...ignored) :void
-    {
-        if(lineage == null) {
-            _lineage = loadLineageFromProps();
-            dispatchEvent(new LineageUpdatedEvent(_lineage));
-        }
-        else {
-            log.warning("Player entered room, but no Lineage to load.");
-        }
-    }
+//    protected function playerEnteredRoom (...ignored) :void
+//    {
+//        if(lineage == null) {
+//            _lineage = loadLineageFromProps();
+//            dispatchEvent(new LineageUpdatedEvent(_lineage));
+//        }
+//        else {
+//            log.warning("Player entered room, but no Lineage to load.");
+//        }
+//    }
 
     protected function loadLineageFromProps() :Lineage
     {
         log.debug(" loadLineageFromProps()");
-        var hierarchy :Lineage = new Lineage();
+        var lineage :Lineage = new Lineage();
 
         var dict :Dictionary = ClientContext.ctrl.room.props.get(Codes.ROOM_PROP_LINEAGE) as Dictionary;
 
@@ -76,8 +82,8 @@ public class GameModel extends SimObject
                     var data :Array = dict[playerId] as Array;
                     var playerName :String = data[0];
                     var sireId :int = int(data[1]);
-                    hierarchy.setPlayerSire(playerId, sireId);
-                    hierarchy.setPlayerName(playerId, playerName);
+                    lineage.setPlayerSire(playerId, sireId);
+                    lineage.setPlayerName(playerId, playerName);
                 }
 
             }
@@ -85,9 +91,9 @@ public class GameModel extends SimObject
         else {
             log.debug(" loadLineageFromProps()", "dict==null");
         }
-        hierarchy.recomputeProgeny();
-        log.debug(" loadLineageFromProps()", "hierarchy", hierarchy);
-        return hierarchy;
+        lineage.recomputeProgeny();
+        log.debug(" loadLineageFromProps()", "hierarchy", lineage);
+        return lineage;
     }
 
     protected function handlePropChanged (e :PropertyChangedEvent) :void
@@ -140,73 +146,69 @@ public class GameModel extends SimObject
         return ArrayUtil.contains(playerIdsInRoom(), userId);
     }
 
-    public function get bloodbonded() :int
+    public function get bloodbond() :int
     {
         if(VConstants.LOCAL_DEBUG_MODE) {
            return 1;
         }
         else {
-            return SharedPlayerStateClient.getBloodBonded(ClientContext.ourPlayerId);
+            return _propsCtrl.get(Codes.PLAYER_PROP_BLOODBOND) as int;
+//            return SharedPlayerStateClient.getBloodBonded(ClientContext.ourPlayerId);
         }
     }
 
-    public function get bloodbondedName() :String
+    public function get bloodbondName() :String
     {
         if(VConstants.LOCAL_DEBUG_MODE) {
             return "Bloodbond name";
         }
         else {
-            var name :String = SharedPlayerStateClient.getBloodBondedName(ClientContext.ourPlayerId);
-            return name != null && name.length > 0 ? name : "No bloodbond yet.";
+            return _propsCtrl.get(Codes.PLAYER_PROP_BLOODBOND_NAME) as String;
+//            var name :String = SharedPlayerStateClient.getBloodBondedName(ClientContext.ourPlayerId);
+//            return name != null && name.length > 0 ? name : "No bloodbond yet.";
         }
 
     }
 
-    public function get blood() :Number
-    {
-        return SharedPlayerStateClient.getBlood(ClientContext.ourPlayerId);
-    }
+//    public function get blood() :Number
+//    {
+//        return SharedPlayerStateClient.getBlood(ClientContext.ourPlayerId);
+//    }
 
     public function get bloodType() :int
     {
-        return SharedPlayerStateClient.getBloodType(ClientContext.ourPlayerId);
+        return Logic.getPlayerBloodStrain(ClientContext.ourPlayerId) as int;
     }
 
     public function get maxblood() :Number
     {
-        return SharedPlayerStateClient.getMaxBlood(ClientContext.ourPlayerId);
+        return Logic.maxBloodForLevel(level) as Number;
     }
 
     public function get level() :int
     {
-        return SharedPlayerStateClient.getLevel(ClientContext.ourPlayerId);
+        return Math.max(1, Logic.levelGivenCurrentXpAndInvites(xp, invites)) as int;
+//        return SharedPlayerStateClient.getLevel(ClientContext.ourPlayerId);
     }
 
     public function get sire() :int
     {
-        if (_lineage != null) {
-            return _lineage.getSireId(ClientContext.ourPlayerId);
-        }
-        return 0;
+        return _propsCtrl.get(Codes.PLAYER_PROP_SIRE) as int;
+//        if (_lineage != null) {
+//            return _lineage.getSireId(ClientContext.ourPlayerId);
+//        }
+//        return 0;
     }
 
     public function get invites() :int
     {
-        return SharedPlayerStateClient.getInvites(ClientContext.ourPlayerId);
+        return _propsCtrl.get(Codes.PLAYER_PROP_INVITES) as int;
+//        return SharedPlayerStateClient.getInvites(ClientContext.ourPlayerId);
     }
 
     public function get location() :Array
     {
         var avatar :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo(ClientContext.ourPlayerId);
-        if(avatar != null) {
-            return [avatar.x, avatar.y, avatar.z, avatar.orientation];
-        }
-        return null;
-    }
-
-    public function getLocation (playerId :int) :Array
-    {
-        var avatar :AVRGameAvatar = ClientContext.ctrl.room.getAvatarInfo(playerId);
         if(avatar != null) {
             return [avatar.x, avatar.y, avatar.z, avatar.orientation];
         }
@@ -225,14 +227,16 @@ public class GameModel extends SimObject
 
     public function get xp() :Number
     {
-        return SharedPlayerStateClient.getXP(ClientContext.ourPlayerId);
+        var value :Number = _propsCtrl.get(Codes.PLAYER_PROP_XP) as Number;
+        return isNaN(value) ? 0 : value;
+//        return SharedPlayerStateClient.getXP(ClientContext.ourPlayerId);
     }
 
-    public function get time() :int
-    {
-        return int(ClientContext.ctrl.player.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE));
-//        SharedPlayerStateClient.getTime(ClientContext.ourPlayerId);
-    }
+//    public function get time() :int
+//    {
+//        return int(ClientContext.ctrl.player.props.get(Codes.PLAYER_PROP_LAST_TIME_AWAKE));
+////        SharedPlayerStateClient.getTime(ClientContext.ourPlayerId);
+//    }
 
     public function get name() :String
     {
@@ -246,13 +250,14 @@ public class GameModel extends SimObject
 
     public function get state() :String
     {
-        return SharedPlayerStateClient.getCurrentState(ClientContext.ourPlayerId);
+        return _propsCtrl.get(Codes.PLAYER_PROP_STATE) as String;
+//        return SharedPlayerStateClient.getCurrentState(ClientContext.ourPlayerId);
     }
 
-    public function isNewPlayer() :Boolean
-    {
-        return time <= 1;
-    }
+//    public function isNewPlayer() :Boolean
+//    {
+//        return time <= 1;
+//    }
 
     public function get lineage() :Lineage
     {
@@ -350,7 +355,7 @@ public class GameModel extends SimObject
 
 
 
-    protected static var log :Log = Log.getLog(GameModel);
+    protected static var log :Log = Log.getLog(PlayerModel);
 
 }
 }

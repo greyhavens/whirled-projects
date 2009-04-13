@@ -107,17 +107,17 @@ public class HUD extends DraggableObject
                 break;
 
             default:
-                var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
-
-                if (isNaN(playerIdUpdated)) {
-                    log.warning("propChanged, but no player id, ", "e", e);
-                    return;
-                }
-
-                //If the ROOM_PROP_NON_PLAYERS prop is changed, update it
-                if (playerIdUpdated == ClientContext.ourPlayerId) {
-                    updateOurPlayerState();
-                }
+//                var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
+//
+//                if (isNaN(playerIdUpdated)) {
+//                    log.warning("propChanged, but no player id, ", "e", e);
+//                    return;
+//                }
+//
+//                //If the ROOM_PROP_NON_PLAYERS prop is changed, update it
+//                if (playerIdUpdated == ClientContext.ourPlayerId) {
+//                    updateOurPlayerState();
+//                }
         }
 
     }
@@ -126,7 +126,7 @@ public class HUD extends DraggableObject
     {
         //Check if it is non-player properties changed??
         //Otherwise check for player updates
-        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
+//        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
         var levelUp :SceneObjectPlayMovieClipOnce;
         var xpUp :SceneObjectPlayMovieClipOnce;
         var oldLevel :int;
@@ -134,9 +134,9 @@ public class HUD extends DraggableObject
 
         var mode :AppMode = ClientContext.gameMode;
 
-        if (!isNaN(playerIdUpdated)) {
+//        if (!isNaN(playerIdUpdated)) {
             //If it's us, update the player HUD
-            if (playerIdUpdated == ClientContext.ourPlayerId) {
+//            if (playerIdUpdated == ClientContext.ourPlayerId) {
 
 //                if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
 //
@@ -247,25 +247,25 @@ public class HUD extends DraggableObject
                     }
                 }
 
-            }
-        }
+//            }
+//        }
 
 
-        else {
-            log.error("isNaN(" + playerIdUpdated + "), failed to update ElementChangedEvent" + e);
-        }
+//        else {
+//            log.error("isNaN(" + playerIdUpdated + "), failed to update ElementChangedEvent" + e);
+//        }
 
     }
 
 
-    protected function checkPlayerRoomProps(...ignored) :void
-    {
-        if (!SharedPlayerStateClient.isProps(ClientContext.ourPlayerId)) {
-        }
-        else {
-            updateOurPlayerState();
-        }
-    }
+//    protected function checkPlayerRoomProps(...ignored) :void
+//    {
+//        if (!SharedPlayerStateClient.isProps(ClientContext.ourPlayerId)) {
+//        }
+//        else {
+//            updateOurPlayerState();
+//        }
+//    }
 
     public function findSafely (name :String) :DisplayObject
     {
@@ -309,7 +309,7 @@ public class HUD extends DraggableObject
         _hudXP = new Sprite();
         _hudXPParent = draggableObject as DisplayObjectContainer;
         _hudXPParent.addChildAt(_hudXP,
-        _hudXPParent.getChildIndex(_hudXPParent.getChildByName("splat")) + 1);
+            _hudXPParent.getChildIndex(_hudXPParent.getChildByName("splat")) + 1);
 //        _hudXP.x = 0;
 //        _hudXP.y = 0;
 //        _hudCap.parent.removeChild(_hudCap);
@@ -645,10 +645,10 @@ public class HUD extends DraggableObject
     protected function updateOurPlayerState(...ignored) :void
     {
 
-        if (!SharedPlayerStateClient.isProps(ClientContext.ourPlayerId)) {
-            log.warning("updatePlayerState, but no props found");
-            return;
-        }
+//        if (!SharedPlayerStateClient.isProps(ClientContext.ourPlayerId)) {
+//            log.warning("updatePlayerState, but no props found");
+//            return;
+//        }
 
 
 //        showBlood(ClientContext.ourPlayerId);
@@ -710,7 +710,7 @@ public class HUD extends DraggableObject
 //        showBlood(playerId);
 
         //Use the blood scale for the xp scale
-        var maxBlood :Number = SharedPlayerStateClient.getMaxBlood(playerId);
+        var maxBlood :Number = ClientContext.model.maxblood;
 //        var blood :Number = MathUtil.clamp(SharedPlayerStateClient.getBlood(playerId),
 //            0, maxBlood);
         var xp :int = ClientContext.model.xp;

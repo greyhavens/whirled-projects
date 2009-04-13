@@ -10,10 +10,10 @@ import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.events.MouseEvent;
+import flash.utils.ByteArray;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
-import vampire.client.events.LineageUpdatedEvent;
-import vampire.data.Lineage;
+import vampire.data.LineageSubSet;
 import vampire.data.VConstants;
 import vampire.debug.LineageDebug;
 import vampire.feeding.FeedingClient;
@@ -34,7 +34,7 @@ public class MainGameMode extends AppMode
         modeSprite.visible = true;
         log.debug("Starting " + ClassUtil.tinyClassName(this));
 
-        ClientContext.model.setup();
+//        ClientContext.model.setup();
 //        //Add intro panel if we're a new player
 //        if(ClientContext.isNewPlayer) {
 //            ClientContext.controller.handleShowIntro("intro");
@@ -69,44 +69,84 @@ public class MainGameMode extends AppMode
 
         modeSprite.visible = false;
 
-        ClientContext.model = new GameModel();
+        ClientContext.model = new PlayerModel();
         addObject(ClientContext.model);
+
+
+//        ClientContext.model.lineage = LineageDebug.createBasicLineage(10, 7, 50000);
+////        trace("Lineage: " + ClientContext.model.lineage);
+//
+//        var bytes :ByteArray = new ByteArray();
+//        ClientContext.model.lineage.writeExternal(bytes);
+//        trace("Before compression: " + bytes.length);
+//        bytes.compress();
+//        trace("After compression: " + bytes.length);
+//
+//        ClientContext.model.lineage = new LineageSubSet().fromLineage(ClientContext.model.lineage, 19);
+//        trace("Subset " + ClientContext.model.lineage);
+
+//        ClientContext.model.lineage.setPlayerSire(1, 0);
+//        LineageDebug.addRandomPlayersToLineage(ClientContext.model.lineage, 200);
+
+
+//        var subLinButton :SimpleTextButton = new SimpleTextButton("SublineagePlayer 2");
+//        modeSprite.addChild(subLinButton);
+//        subLinButton.x = 300;
+//        subLinButton.y = 10;
+//        subLinButton.addEventListener(MouseEvent.CLICK, function(...ignored) :void {
+//            var sub :LineageSubSet = new LineageSubSet().fromLineage(ClientContext.model.lineage, 2);
+//            trace("Lineage: " + ClientContext.model.lineage);
+//            trace("Subset: " + sub);
+//            var view :LineageViewBase = new LineageViewBase(sub, 1);
+//            var spriteDB :SpriteObjectDB = new SpriteObjectDB();
+//            spriteDB.addSceneObject(view);
+//            ClientContext.gameMode.modeSprite.addChild(spriteDB);
+//            ClientContext.centerOnViewableRoom(view.displayObject);
+//
+//        });
+
+
+
+
+
+
+
 
         //If there is a share token, send the invitee to the server
         var inviterId :int = ClientContext.ctrl.local.getInviterMemberId();
         var shareToken :String = ClientContext.ctrl.local.getInviteToken();
         //If we don't have a sire, and we are invited, send our invite token
-        if(inviterId != 0 && SharedPlayerStateClient.getSire(ClientContext.ourPlayerId) == 0) {
+        if(inviterId != 0 && ClientContext.model.sire == 0) {
             log.info(ClientContext.ctrl.player.getPlayerId() + " sending  inviterId=" + inviterId + ", token=" + shareToken);
             ClientContext.ctrl.agent.sendMessage(ShareTokenMsg.NAME,
                 new ShareTokenMsg(ClientContext.ourPlayerId, inviterId, shareToken).toBytes());
         }
 
 
-        if (VConstants.LOCAL_DEBUG_MODE) {
-
-            var lineage :Lineage = new Lineage();
-            LineageDebug.addRandomPlayersToLineage(lineage, 10);
-//                lineage.setPlayerSire(1, 2);
-//                lineage.setPlayerSire(3, 1);
-//                lineage.setPlayerSire(4, 1);
-//                lineage.setPlayerSire(5, 1);
-//                lineage.setPlayerSire(6, 5);
-//                lineage.setPlayerSire(7, 6);
-//                lineage.setPlayerSire(8, 6);
-//                lineage.setPlayerSire(9, 1);
-//                lineage.setPlayerSire(10, 1);
-//                lineage.setPlayerSire(11, 1);
-//                lineage.setPlayerSire(12, 1);
-//                lineage.setPlayerSire(13, 1);
-//                lineage.setPlayerSire(14, 1);
-            var msg :LineageUpdatedEvent = new LineageUpdatedEvent(lineage, ClientContext.ourPlayerId);
-            ClientContext.model.lineage = lineage;
-            ClientContext.model.dispatchEvent(msg);
-
-            var lineagedebug :LineageDebug = new LineageDebug();
-//            addObject(lineagedebug);
-        }
+//        if (VConstants.LOCAL_DEBUG_MODE) {
+//
+//            var lineage :Lineage = new Lineage();
+//            LineageDebug.addRandomPlayersToLineage(lineage, 10);
+////                lineage.setPlayerSire(1, 2);
+////                lineage.setPlayerSire(3, 1);
+////                lineage.setPlayerSire(4, 1);
+////                lineage.setPlayerSire(5, 1);
+////                lineage.setPlayerSire(6, 5);
+////                lineage.setPlayerSire(7, 6);
+////                lineage.setPlayerSire(8, 6);
+////                lineage.setPlayerSire(9, 1);
+////                lineage.setPlayerSire(10, 1);
+////                lineage.setPlayerSire(11, 1);
+////                lineage.setPlayerSire(12, 1);
+////                lineage.setPlayerSire(13, 1);
+////                lineage.setPlayerSire(14, 1);
+//            var msg :LineageUpdatedEvent = new LineageUpdatedEvent(lineage, ClientContext.ourPlayerId);
+//            ClientContext.model.lineage = lineage;
+//            ClientContext.model.dispatchEvent(msg);
+//
+//            var lineagedebug :LineageDebug = new LineageDebug();
+////            addObject(lineagedebug);
+//        }
 
         //Init the feeding game, if we're not testing.
         if (!VConstants.LOCAL_DEBUG_MODE) {

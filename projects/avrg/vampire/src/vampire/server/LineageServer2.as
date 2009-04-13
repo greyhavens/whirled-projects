@@ -1,20 +1,22 @@
 package vampire.server
 {
-    import com.threerings.util.ArrayUtil;
-    import com.threerings.util.HashMap;
-    import com.threerings.util.HashSet;
-    import com.threerings.util.Log;
-    import com.whirled.avrg.OfflinePlayerPropertyControl;
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.HashMap;
+import com.threerings.util.HashSet;
+import com.threerings.util.Log;
+import com.whirled.avrg.OfflinePlayerPropertyControl;
 
-    import flash.utils.Dictionary;
+import flash.utils.Dictionary;
 
-    import vampire.data.Codes;
-    import vampire.data.Lineage;
+import vampire.data.Codes;
+import vampire.data.Lineage;
 
-public class LineageServer extends Lineage
+
+public class LineageServer2 extends LineageServer
 {
-    public function LineageServer(vserver :GameServer)
+    public function LineageServer2(vserver :GameServer)
     {
+        super(vserver);
         _vserver = vserver;
     }
 
@@ -62,7 +64,7 @@ public class LineageServer extends Lineage
         }
     }
 
-    protected function isPlayerDataEqual(player :PlayerData) :Boolean
+    override protected function isPlayerDataEqual(player :PlayerData) :Boolean
     {
         if(player.sire != getSireId(player.playerId)) {
             return false;
@@ -83,7 +85,7 @@ public class LineageServer extends Lineage
 
 
 
-    protected function loadPlayerFromDB(playerId :int) :void
+    override protected function loadPlayerFromDB(playerId :int) :void
     {
         log.debug(" loadPlayerFromDB(" + playerId + ")...");
         ServerContext.ctrl.loadOfflinePlayer(playerId,
@@ -108,7 +110,7 @@ public class LineageServer extends Lineage
     /**
     * Called by Player.  That way, we are sure that Player has updated its room member.
     */
-    public function playerEnteredRoom(player :PlayerData, room :Room) :void
+    override public function playerEnteredRoom(player :PlayerData, room :Room) :void
     {
         log.debug(" playerEnteredRoom(), hierarchy=" + ServerContext.lineage.toString());
 
@@ -156,7 +158,7 @@ public class LineageServer extends Lineage
 
     }
 
-    protected function updateRoom(roomId :int) : void
+    override protected function updateRoom(roomId :int) : void
     {
         _roomsNeedingUpdate.add(roomId);
     }
@@ -167,15 +169,15 @@ public class LineageServer extends Lineage
     * actual writing to room props occurs in the update method, so that the amount of network
     * traffic can be controlled.
     */
-    public function updatePlayer(playerId :int) : void
+    override public function updatePlayer(playerId :int) : void
     {
         var relatedPlayersToUpdate :Array = new Array();
 
-        getAllDescendents(playerId).forEach(function(minionId :int, ...ignored) :void {
+        getAllDescendents(playerId).forEach(function(minionId :int) :void {
             relatedPlayersToUpdate.push(minionId);
         });
 
-        getAllSiresAndGrandSires(playerId).forEach(function(sireId :int, ...ignored) :void {
+        getAllSiresAndGrandSires(playerId).forEach(function(sireId :int) :void {
             relatedPlayersToUpdate.push(sireId);
         });
 
@@ -204,7 +206,7 @@ public class LineageServer extends Lineage
     }
 
 
-    protected function updateIntoRoomProps(room :Room) :Boolean
+    override protected function updateIntoRoomProps(room :Room) :Boolean
     {
         var finished :Boolean = true;
         try {
@@ -282,7 +284,7 @@ public class LineageServer extends Lineage
     * ATM we only load sires and upwards.
     *
     */
-    protected function loadConnectingPlayersFromPropsRecursive(playerId :int) :void
+    override protected function loadConnectingPlayersFromPropsRecursive(playerId :int) :void
     {
         //If our name is present, we assume that we are already loaded.
         if(isPlayerName(playerId)) {
@@ -319,16 +321,18 @@ public class LineageServer extends Lineage
     override public function setPlayerSire(playerId :int, sireId :int) :void
     {
         super.setPlayerSire(playerId, sireId);
-        updateProgenyIds(sireId);
+        if (getProgenyCount(sireId) <= 25) {
+            updateProgenyIds(sireId);
+        }
     }
 
-    protected function updateProgenyIds (sireId :int) :void
+    override protected function updateProgenyIds (sireId :int) :void
     {
         if (sireId == 0) {
             return;
         }
 
-        var progenyIds :Array = getProgenyIds(sireId);
+        var progenyIds :Array = getProgenyIds(sireId).toArray();
         progenyIds = progenyIds.sort();
 
         if (_vserver.isPlayer(sireId)) {
@@ -340,16 +344,14 @@ public class LineageServer extends Lineage
                 function (props :OfflinePlayerPropertyControl) :void {
                     var oldProgenyIds :Array = props.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array;
 
-                    if (oldProgenyIds == null) {
-                        oldProgenyIds = new Array();
-                    }
                     log.debug("Adding progenyId to offline sire", "sireId", sireId,
                         "oldProgenyIds", oldProgenyIds, "newprogenyIds", progenyIds);
                     if (ArrayUtil.equals(progenyIds, oldProgenyIds)) {
                         log.debug("same, doing nothing");
                         return;
                     }
-//                    var name :String = props.get(Codes.PLAYER_PROP_NAME) as String;
+                    var name :String = props.get(Codes.PLAYER_PROP_NAME) as String;
+
 
                     if (oldProgenyIds == null) {
                         oldProgenyIds = [];
@@ -358,9 +360,12 @@ public class LineageServer extends Lineage
                     for each(var newProgenyId :int in progenyIds) {
                         if(!ArrayUtil.contains(oldProgenyIds, newProgenyId)) {
                             oldProgenyIds.push(newProgenyId);
+                            oldProgenyIds = oldProgenyIds.sort();
+                            if(oldProgenyIds.length >= 25) {
+                                break;
+                            }
                         }
                     }
-                    oldProgenyIds = oldProgenyIds.sort();
                     log.debug("name Setting " + Codes.PLAYER_PROP_PROGENY_IDS + "=" + oldProgenyIds);
                     props.set(Codes.PLAYER_PROP_PROGENY_IDS, oldProgenyIds.slice());
                 },
@@ -373,9 +378,9 @@ public class LineageServer extends Lineage
 
 
 
-    protected var _vserver :GameServer;
-    protected var _roomsNeedingUpdate :HashSet = new HashSet();
-    protected var _playerIdsNeedingUpdate :Array = new Array();
+//    protected var _vserver :GameServer;
+//    protected var _roomsNeedingUpdate :HashSet = new HashSet();
+//    protected var _playerIdsNeedingUpdate :Array = new Array();
 
     /**
     * The lineage will be very large for some players.  To prevent a massive dump of a large lineage
@@ -383,7 +388,6 @@ public class LineageServer extends Lineage
     * linage will be sent, without any regard for the order or structure (yet).
     */
     public static const MAX_LINEAGE_NODES_WRITTEN_TO_A_ROOM_PROPS_PER_UPDATE :int = 100;
-    protected static const log :Log = Log.getLog(LineageServer);
-
+    protected static const log :Log = Log.getLog(LineageServer2);
 }
 }

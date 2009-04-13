@@ -73,6 +73,8 @@ public class LoadBalancerClient extends SceneObject
                     _roomNames.splice(index, 1);
                 }
 
+
+
                 showRoomsAsChatLinks(_roomIds, _roomNames);
 
 //                updateUI();
@@ -89,10 +91,10 @@ public class LoadBalancerClient extends SceneObject
         _ctrl.local.feedback("Click a room link to hunt other players:");
         for (var ii :int = 0; ii < roomIds.length; ++ii) {
             if (VConstants.MODE_DEV) {
-                _ctrl.local.feedback(roomNames + ": http://localhost:8080/#world-s" + roomIds[ii]);
+                _ctrl.local.feedback(roomNames[ii] + ": http://localhost:8080/#world-s" + roomIds[ii]);
             }
             else {
-                _ctrl.local.feedback(roomNames + ": http://www.whirled.com/#world-s" + roomIds[ii]);
+                _ctrl.local.feedback(roomNames[ii] + ": http://www.whirled.com/#world-s" + roomIds[ii]);
             }
         }
     }

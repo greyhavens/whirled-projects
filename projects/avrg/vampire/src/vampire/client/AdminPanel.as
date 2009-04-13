@@ -186,12 +186,6 @@ public class AdminPanel extends DraggableObject
 
     }
 
-
-
-
-
-
-
     protected function gainLevel(... ignored) :void
     {
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LEVEL_UP).toBytes());

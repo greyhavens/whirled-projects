@@ -23,7 +23,7 @@ public class ServerContext
         msg = new BasicMessageManager();
         vampire.Util.initMessageManager(msg);
 
-        if (VConstants.LOCAL_DEBUG_MODE) {
+        if (VConstants.LOCAL_DEBUG_MODE || VConstants.MODE_DEV) {
             Log.setLevel("", Log.DEBUG);
         }
         else {

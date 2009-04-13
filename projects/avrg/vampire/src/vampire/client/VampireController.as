@@ -46,6 +46,7 @@ public class VampireController extends Controller
 
     public static const RECRUIT :String = "Recruit";
     public static const MOVE :String = "Move";
+    public static const ACTIVATE_LOAD_BALANCER :String = "ActivateLoadBalancer";
 
     public function VampireController (panel :Sprite)
     {
@@ -248,7 +249,7 @@ public class VampireController extends Controller
 
     public function handleFeed () :void
     {
-        var model :GameModel = ClientContext.model;
+        var model :PlayerModel = ClientContext.model;
 
         switch(ClientContext.avatarOverlay.displayMode) {
 
@@ -259,32 +260,21 @@ public class VampireController extends Controller
 
             default:
 
+
+
+            //Show the load balancer if there are few avatars.
             if (ClientContext.ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR).length <= 1) {
-                var popup :PopupQuery = new PopupQuery(
-                    null,
-//                    "This room is empty! Try hunting in a different room.");
-                    "The scent of blood in the air.  Click on a link to hunt other players\n" +
-                    "     <--------------------");
-                ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
-                ClientContext.centerOnViewableRoom(popup.displayObject);
-                ClientContext.animateEnlargeFromMouseClick(popup);
-
-                var quitTimer :SimpleTimer = new SimpleTimer(3, function() :void {
-                    if (popup.isLiveObject) {
-                        popup.destroySelf();
-                    }
-                });
-                ClientContext.gameMode.addObject(quitTimer);
-
-                if (ClientContext.gameMode.getObjectNamed(LoadBalancerClient.NAME) != null) {
-                    var lb :LoadBalancerClient = ClientContext.gameMode.getObjectNamed(
-                        LoadBalancerClient.NAME) as LoadBalancerClient;
-                    lb.activate();
-                }
+                handleActivateLoadBalancer();
             }
             else {
                 ClientContext.avatarOverlay.setDisplayMode(
                     VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS);
+                //Show the load balancer if there are too many players.
+                if (ClientContext.ctrl.room.getPlayerIds().length >=
+                    VConstants.PLAYERS_IN_ROOM_TRIGGERING_BALANCING) {
+
+                        handleActivateLoadBalancer();
+                    }
             }
             break;
         }
@@ -368,6 +358,33 @@ public class VampireController extends Controller
         trace("Moving to room (" + roomId + ")");
         ClientContext.ctrl.player.moveToRoom(roomId);
     }
+
+    public function handleActivateLoadBalancer () :void
+    {
+        var popup :PopupQuery = new PopupQuery(
+            null,
+            "The scent of blood in the air.  Click on a link to hunt other players\n" +
+            "     <--------------------");
+        ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
+        ClientContext.centerOnViewableRoom(popup.displayObject);
+        ClientContext.animateEnlargeFromMouseClick(popup);
+
+        var quitTimer :SimpleTimer = new SimpleTimer(3, function() :void {
+            if (popup.isLiveObject) {
+                popup.destroySelf();
+            }
+        });
+        ClientContext.gameMode.addObject(quitTimer);
+
+        if (ClientContext.gameMode.getObjectNamed(LoadBalancerClient.NAME) != null) {
+            var lb :LoadBalancerClient = ClientContext.gameMode.getObjectNamed(
+                LoadBalancerClient.NAME) as LoadBalancerClient;
+            lb.activate();
+        }
+        else {
+            log.error("handleActivateLoadBalancer, where is the load balancer???");
+        }
+}
 
 
     protected static const log :Log = Log.getLog(VampireController);

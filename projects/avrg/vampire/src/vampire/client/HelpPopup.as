@@ -184,15 +184,15 @@ package vampire.client
 
         protected function elementChanged (e :ElementChangedEvent) :void
         {
-            var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
+//            var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
 
-            if (playerIdUpdated == ClientContext.ourPlayerId) {
+//            if (playerIdUpdated == ClientContext.ourPlayerId) {
 
                 if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED
                     || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME) {
                     showBloodBonded();
                 }
-            }
+//            }
         }
 
         protected function showBloodBonded () :void
@@ -201,10 +201,10 @@ package vampire.client
                 redoBloodBondText("Test bb name");
             }
             else {
-                if (ClientContext.model.bloodbonded <= 0) {
+                if (ClientContext.model.bloodbond <= 0) {
                     return;
                 }
-                redoBloodBondText(ClientContext.model.bloodbondedName);
+                redoBloodBondText(ClientContext.model.bloodbondName);
             }
         }
 

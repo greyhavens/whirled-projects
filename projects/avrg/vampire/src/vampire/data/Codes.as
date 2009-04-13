@@ -21,7 +21,7 @@ public class Codes
     public static const PLAYER_PROP_NAME:String = NetConstants.makePersistent("playerName");
 
     /** Current amount of blood*/
-    public static const PLAYER_PROP_BLOOD :String = NetConstants.makePersistent("blood");
+//    public static const PLAYER_PROP_BLOOD :String = NetConstants.makePersistent("blood");
 
     /** Current amount of blood*/
     public static const PLAYER_PROP_XP :String = NetConstants.makePersistent("xp");
@@ -30,7 +30,7 @@ public class Codes
     public static const PLAYER_PROP_XP_SLEEP :String = NetConstants.makePersistent("xp_sleep");
 
     /** Blood type.  Used for bonuses in BloodBloom.*/
-    public static const PLAYER_PROP_BlOOD_TYPE :String = NetConstants.makePersistent("bloodType");
+//    public static const PLAYER_PROP_BlOOD_TYPE :String = NetConstants.makePersistent("bloodType");
 
     /** Current level.  This controls the max amount of blood*/
 //    public static const PLAYER_PROP_PREFIX_LEVEL :String = NetConstants.makePersistent("level");
@@ -52,12 +52,12 @@ public class Codes
     /**
     * PlayerId currently bloodbonded to you.  Bloodbonding is romantic with minor game effects.
     */
-    public static const PLAYER_PROP_BLOODBONDED :String = NetConstants.makePersistent("bloodbonded");
+    public static const PLAYER_PROP_BLOODBOND :String = NetConstants.makePersistent("bloodbonded");
 
     /**
     * Player name currently bloodbonded to you.  Bloodbonding is romantic with minor game effects.
     */
-    public static const PLAYER_PROP_BLOODBONDED_NAME :String = NetConstants.makePersistent("bloodbondedName");
+    public static const PLAYER_PROP_BLOODBOND_NAME :String = NetConstants.makePersistent("bloodbondedName");
 
     /**
     * Blood bloom feeding data.
@@ -69,10 +69,33 @@ public class Codes
     */
     public static const PLAYER_PROP_PROGENY_IDS :String = NetConstants.makePersistent("minionIds");
 
+
+    /**
+    * List of progeny for progeny trophies
+    */
+    public static const PLAYER_PROP_LINEAGE :String = NetConstants.makePersistent("lineage");
+
+    public static const PLAYER_PROP_STATE :String = "state";
+
+
     /**
     * Number of successful invites.
     */
     public static const PLAYER_PROP_INVITES :String = NetConstants.makePersistent("invites");
+
+//    public static const PLAYER_PROP_AVATAR_STATE :String = "avatarState";
+
+    public static const PLAYER_PROPS_UPDATED :Array = [
+                                                PLAYER_PROP_NAME,
+                                                PLAYER_PROP_XP,
+                                                PLAYER_PROP_SIRE,
+                                                PLAYER_PROP_BLOODBOND,
+                                                PLAYER_PROP_BLOODBOND_NAME,
+                                                PLAYER_PROP_FEEDING_DATA,
+                                                PLAYER_PROP_LINEAGE,
+                                                PLAYER_PROP_INVITES,
+                                              ];
+
 
 
     /**
