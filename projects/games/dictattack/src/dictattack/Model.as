@@ -304,7 +304,7 @@ public class Model
         // if we are in control, zero out the points, create a board and publish it
         if (_ctx.control.game.amInControl()) {
             _ctx.control.net.set(POINTS, new Array(pcount).map(function (): int { return 0; }));
-            _ctx.control.services.getDictionaryLetterSet(
+            _ctx.control.services.getDictionaryLetters(
                 Content.LOCALE, null, _size*_size, gotLetterSet);
         }
 
