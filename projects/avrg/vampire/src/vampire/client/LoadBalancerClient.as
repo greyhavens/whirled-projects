@@ -1,10 +1,10 @@
 package vampire.client
 {
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.tasks.LocationTask;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.DisplayObject;
@@ -13,6 +13,7 @@ import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 import flash.text.TextField;
 
 import vampire.data.VConstants;
@@ -35,6 +36,27 @@ public class LoadBalancerClient extends SceneObject
 
         //Send a message when we start, so there is no delay for the player
         _ctrl.agent.sendMessage(LoadBalancingMsg.NAME, new LoadBalancingMsg().toBytes());
+
+        _panel = ClientContext.instantiateMovieClip("HUD", "popup_relocate", true);
+        _panel.mouseChildren = true;
+        _displaySprite.addChild(_panel);
+
+        var relocationText :TextField = _panel["relocation_text"] as TextField;
+        registerListener(relocationText, MouseEvent.CLICK, function (...ignored) :void {
+            var loc :Point = _ctrl.local.locationToPaintable(0.5, 0, 0);
+            addTask(LocationTask.CreateEaseOut(loc.x, _panel.height / 2, 0.5));
+        });
+        relocationText.text = "Click to hunt elsewhere";
+
+
+
+        registerListener(_panel["relocate_close"], MouseEvent.CLICK, deactivate);
+
+        for (var ii :int = 0; ii < 4; ++ii) {
+            var ground :MovieClip = _panel["ground_0" + (ii + 1)] as MovieClip;
+            registerListener(ground, MouseEvent.CLICK, _roomMoveFunctions[ii]);
+            TextField(ground["room_name"]).text = "";
+        }
     }
 
     override protected function update (dt:Number) :void
@@ -45,12 +67,25 @@ public class LoadBalancerClient extends SceneObject
     public function activate () :void
     {
         //Send a data request to the server we we init.
-//        ClientUtil.fadeInSceneObject(this, _parent);
+        ClientUtil.fadeInSceneObject(this, _parent);
+
+        var loc :Point = _ctrl.local.locationToPaintable(0.5, 0, 0);
+        x = loc.x;
+        y = -92;
+
         if (_timeSinceLoadMessageSent >= MIN_TIME_BETWEEN_MESSAGES) {
             _ctrl.agent.sendMessage(LoadBalancingMsg.NAME, new LoadBalancingMsg().toBytes());
             _timeSinceLoadMessageSent = 0;
 //            _isWaitingForRoomDataMessage = true;
         }
+        var relocationText :TextField = _panel["relocation_text"] as TextField;
+        if (ClientContext.getAvatarIds().length == 1) {
+            relocationText.text = "Your prey has vanished. Click to hunt elsewhere.";
+        }
+        else {
+            relocationText.text = "This room is crowded. Click to hunt elsewhere.";
+        }
+
     }
 
     public function deactivate (...ignored) :void
@@ -83,10 +118,6 @@ public class LoadBalancerClient extends SceneObject
                     _roomNames.splice(index, 1);
                 }
 
-
-
-//                showRoomsAsChatLinks(_roomIds, _roomNames);
-
                 updateUI();
 
             }
@@ -112,25 +143,22 @@ public class LoadBalancerClient extends SceneObject
     protected function updateUI () :void
     {
         ClientUtil.detach(_panel);
-        _panel = ClientContext.instantiateMovieClip("HUD", "popup_relocate", true);
-        _panel.mouseChildren = true;
-//        _panel.mouseEnabled = true;
-        _displaySprite.addChild(_panel);
 
-        ClientContext.placeTopMiddle(displayObject);
-//        y += displayObject.height;
-
-        registerListener(_panel["relocate_close"], MouseEvent.CLICK, deactivate);
 
 //        ClientUtil.fadeInSceneObject(this);
 
         //Change the text if there is no-one in the room.
         if (_ctrl.room.getPlayerIds().length <= 1) {
-            TextField(_panel["relocation_text"]).text = "Your prey has escaped.  "
+            TextField(_panel["relocation_text"]).text = ""
                  + "Choose another hunting ground...";
         }
 
+
+
         for (var ii :int = 0; ii < 4; ++ii) {
+
+            removeEventListener(MouseEvent.CLICK, _roomMoveFunctions[ii]);
+
             var roomId :int = _roomIds[ii];
 
             var ground :MovieClip = _panel["ground_0" + (ii + 1)] as MovieClip;
@@ -138,9 +166,10 @@ public class LoadBalancerClient extends SceneObject
             if (ground != null) {
                 addGlowFilter(ground);
                 if (ii <= _roomNames.length - 1) {
+
                     TextField(ground["room_name"]).text = _roomNames[ii];
-                    Command.bind(ground, MouseEvent.CLICK, VampireController.MOVE, roomId);
-                    registerListener(ground, MouseEvent.CLICK, deactivate);
+//                    Command.bind(ground, MouseEvent.CLICK, VampireController.MOVE, roomId);
+//                    registerListener(ground, MouseEvent.CLICK, deactivate);
                 }
                 else {
                     TextField(ground["room_name"]).text = "";
@@ -153,6 +182,8 @@ public class LoadBalancerClient extends SceneObject
         }
 
     }
+
+
 
     override protected function addedToDB () :void
     {
@@ -185,6 +216,30 @@ public class LoadBalancerClient extends SceneObject
         })
     }
 
+    protected function moveToRoom1 (...ignored) :void
+    {
+        moveToRoom(_roomIds[0]);
+    }
+    protected function moveToRoom2 (...ignored) :void
+    {
+        moveToRoom(_roomIds[1]);
+    }
+    protected function moveToRoom3 (...ignored) :void
+    {
+        moveToRoom(_roomIds[2]);
+    }
+    protected function moveToRoom4 (...ignored) :void
+    {
+        moveToRoom(_roomIds[3]);
+    }
+    protected function moveToRoom (roomId :int) :void
+    {
+        if (roomId != 0) {
+            deactivate();
+            ClientContext.controller.handleMove(roomId);
+        }
+    }
+
 //    public function get loadBalancingMsg () :LoadBalancingMsg
 //    {
 //        return _loadBalancingMsg;
@@ -194,6 +249,7 @@ public class LoadBalancerClient extends SceneObject
     protected var _ctrl :AVRGameControl;
     protected var _roomIds :Array = [];
     protected var _roomNames :Array = [];
+    protected var _roomMoveFunctions :Array = [moveToRoom1, moveToRoom2, moveToRoom3, moveToRoom4];
     protected var _displaySprite :Sprite = new Sprite();
     protected var _panel :MovieClip;
     protected var _parent :DisplayObjectContainer;
