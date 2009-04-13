@@ -51,8 +51,8 @@ public class MainGameMode extends AppMode
             new GameStartedMsg(ClientContext.ourPlayerId).toBytes());
 
         //Init the avatar logic controller and avatar event listener
-        _avatarController = new ClientAvatar(ClientContext.ctrl);
-        addObject(_avatarController);
+        _clientAvatar = new ClientAvatar(ClientContext.ctrl);
+        addObject(_clientAvatar);
 
     }
 
@@ -306,7 +306,7 @@ public class MainGameMode extends AppMode
 
 
     protected var _hud :HUD;
-    protected var _avatarController :ClientAvatar;
+    protected var _clientAvatar :ClientAvatar;
     protected var _feedingGameClient :FeedingClient;
     protected static const log :Log = Log.getLog(MainGameMode);
 }
