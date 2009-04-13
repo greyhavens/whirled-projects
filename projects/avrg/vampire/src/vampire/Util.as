@@ -41,7 +41,18 @@ public class Util
         }
     }
 
+    public static function getStringHash (val :String) :int
+    {
+        // examine at most 32 characters of the val
+        var hash :int;
+        var inc :int = int(Math.max(1, Math.ceil(val.length / 32)));
+        for (var ii :int = 0; ii < val.length; ii += inc) {
+            // hash(i) = (hash(i-1) * 33) ^ str[i]
+            hash = ((hash << 5) + hash) ^ int(val.charCodeAt(ii));
+        }
 
+        return hash;
+    }
 
     public static function initMessageManager (mgr :MessageManager) :void
     {

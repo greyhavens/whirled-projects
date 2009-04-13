@@ -3,6 +3,8 @@ package vampire.quest {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.StringUtil;
 
+import vampire.Util;
+
 public class QuestDesc
 {
     // Unique name
@@ -36,7 +38,7 @@ public class QuestDesc
 
     public function get id () :int
     {
-        return getId(name);
+        return Util.getStringHash(name);
     }
 
     public function toString () :String
@@ -61,14 +63,7 @@ public class QuestDesc
 
     public static function getId (name :String) :int
     {
-        // examine at most 32 characters of the id
-        var hash :int;
-        var inc :int = int(Math.max(1, Math.ceil(name.length / 32)));
-        for (var ii :int = 0; ii < name.length; ii += inc) {
-            hash = ((hash << 5) + hash) ^ int(name.charCodeAt(ii));
-        }
-
-        return hash;
+        return Util.getStringHash(name);
     }
 }
 
