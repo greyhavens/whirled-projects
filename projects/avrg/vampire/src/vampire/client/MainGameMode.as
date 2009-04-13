@@ -7,21 +7,20 @@ import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.net.Message;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.events.MouseEvent;
-import flash.utils.ByteArray;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
-import vampire.data.LineageSubSet;
 import vampire.data.VConstants;
-import vampire.debug.LineageDebug;
 import vampire.feeding.FeedingClient;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.FeedingDataMsg;
 import vampire.net.messages.GameStartedMsg;
 import vampire.net.messages.RoomNameMsg;
 import vampire.net.messages.ShareTokenMsg;
+import vampire.net.messages.StartFeedingClientMsg;
 
 public class MainGameMode extends AppMode
 {
@@ -191,7 +190,7 @@ public class MainGameMode extends AppMode
     }
 
 
-    protected function handleStartFeedingClient (gameId :int) :void
+    protected function handleStartFeedingClientMsg (msg :StartFeedingClientMsg) :void
     {
 //        log.info("Received StartClient message", "gameId", gameId);
 
@@ -206,7 +205,7 @@ public class MainGameMode extends AppMode
                 _feedingGameClient = FeedingClient.create(gameId,
                     ClientContext.model.playerFeedingData, onGameComplete);
             }*/
-            _feedingGameClient = FeedingClient.create(gameId,
+            _feedingGameClient = FeedingClient.create(msg.gameId,
                     ClientContext.model.playerFeedingData, onGameComplete);
 
             modeSprite.addChildAt(_feedingGameClient, 0)
@@ -220,41 +219,46 @@ public class MainGameMode extends AppMode
     {
         var ctrl :AVRGameControl = ClientContext.ctrl;
 
-        if (e.name == "StartClient") {
-            handleStartFeedingClient(e.value as int);
-        }
-        else if (e.name == FeedRequestMsg.NAME) {
-            var msg :FeedRequestMsg =
-                ClientContext.msg.deserializeMessage(e.name, e.value) as FeedRequestMsg;
+        var message :Message = ClientContext.msg.deserializeMessage(e.name, e.value);
 
-//            trace("got " + FeedRequestMsg.NAME);
-            var fromPlayerName :String = ClientContext.getPlayerName(msg.playerId);
-            var popup :PopupQuery = new PopupQuery(
-                    VampireController.POPUP_PREFIX_FEED_REQUEST + msg.playerId,
-                    fromPlayerName + " would like to feed on you.",
-                    ["Accept", "Deny"],
-                    [
-                        function () :void {
-                            ClientContext.controller.handleAcceptFeedRequest(msg.playerId);
-                        },
-                        function () :void {
-                            ClientContext.controller.handleDenyFeedRequest(msg.playerId);
-                        },
-                    ]);
-
-            if(getObjectNamed(popup.objectName) == null) {
-                addSceneObject(popup, modeSprite);
-                ClientContext.centerOnViewableRoom(popup.displayObject);
-                ClientContext.animateEnlargeFromMouseClick(popup);
+        if (message != null) {
+            if (message is StartFeedingClientMsg) {
+                var startGame
+                handleStartFeedingClientMsg(StartFeedingClientMsg(message));
             }
+            else if (message is FeedRequestMsg) {
+                var feedRequestMessage :FeedRequestMsg = FeedRequestMsg(message);
+
+                var fromPlayerName :String = ClientContext.getPlayerName(feedRequestMessage.playerId);
+                var popup :PopupQuery = new PopupQuery(
+                        VampireController.POPUP_PREFIX_FEED_REQUEST + feedRequestMessage.playerId,
+                        fromPlayerName + " would like to feed on you.",
+                        ["Accept", "Deny"],
+                        [
+                            function () :void {
+                                ClientContext.controller.handleAcceptFeedRequest(feedRequestMessage.playerId);
+                            },
+                            function () :void {
+                                ClientContext.controller.handleDenyFeedRequest(feedRequestMessage.playerId);
+                            },
+                        ]);
+
+                if(getObjectNamed(popup.objectName) == null) {
+                    addSceneObject(popup, modeSprite);
+                    ClientContext.centerOnViewableRoom(popup.displayObject);
+                    ClientContext.animateEnlargeFromMouseClick(popup);
+                }
+            }
+            else if (message is RoomNameMsg) {
+                var roomMsg :RoomNameMsg = new RoomNameMsg(ClientContext.ourPlayerId,
+                                                           ClientContext.ctrl.room.getRoomId(),
+                                                           ClientContext.ctrl.room.getRoomName());
+                log.debug("Sending to agent=" + roomMsg);
+                ClientContext.ctrl.agent.sendMessage(RoomNameMsg.NAME, roomMsg.toBytes());
+            }
+
         }
-        else if (e.name == RoomNameMsg.NAME) {
-            var roomMsg :RoomNameMsg = new RoomNameMsg(ClientContext.ourPlayerId,
-                                                       ClientContext.ctrl.room.getRoomId(),
-                                                       ClientContext.ctrl.room.getRoomName());
-            log.debug("Sending to agent=" + roomMsg);
-            ClientContext.ctrl.agent.sendMessage(RoomNameMsg.NAME, roomMsg.toBytes());
-        }
+
     }
 
     protected function handlePlayerLeft (e :AVRGamePlayerEvent) :void

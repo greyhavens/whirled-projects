@@ -9,6 +9,7 @@ import vampire.net.messages.FeedConfirmMsg;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.FeedingDataMsg;
 import vampire.net.messages.GameStartedMsg;
+import vampire.net.messages.LineageMsg;
 import vampire.net.messages.LoadBalancingMsg;
 import vampire.net.messages.MovePredAfterFeedingMsg;
 import vampire.net.messages.MovePredIntoPositionMsg;
@@ -50,6 +51,7 @@ public class Util
         mgr.addMessageType(FeedingDataMsg);
         mgr.addMessageType(FeedRequestMsg);
         mgr.addMessageType(GameStartedMsg);
+        mgr.addMessageType(LineageMsg);
         mgr.addMessageType(LoadBalancingMsg);
         mgr.addMessageType(MovePredIntoPositionMsg);
         mgr.addMessageType(MovePredAfterFeedingMsg);
@@ -59,6 +61,7 @@ public class Util
         mgr.addMessageType(RoomNameMsg);
         mgr.addMessageType(SendGlobalMsg);
         mgr.addMessageType(ShareTokenMsg);
+        mgr.addMessageType(StartFeedingClientMsg);
         mgr.addMessageType(SuccessfulFeedMsg);
     }
 }

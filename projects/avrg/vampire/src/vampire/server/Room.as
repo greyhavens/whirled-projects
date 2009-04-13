@@ -265,7 +265,6 @@ public class Room extends SimObject
 ////            _players.clear();
             _ctrl = null;
 
-            _bloodBloomGameManager.
         }
         catch(err :Error) {
 

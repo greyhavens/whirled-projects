@@ -31,15 +31,25 @@ public class LoadBalancerClient extends SceneObject
         registerListener(ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessageReceived);
         _parent = parent;
+
+
+        //Send a message when we start, so there is no delay for the player
+        _ctrl.agent.sendMessage(LoadBalancingMsg.NAME, new LoadBalancingMsg().toBytes());
+    }
+
+    override protected function update (dt:Number) :void
+    {
+        _timeSinceLoadMessageSent += dt;
     }
 
     public function activate () :void
     {
         //Send a data request to the server we we init.
 //        ClientUtil.fadeInSceneObject(this, _parent);
-        if (!_isWaitingForRoomDataMessage) {
+        if (_timeSinceLoadMessageSent >= MIN_TIME_BETWEEN_MESSAGES) {
             _ctrl.agent.sendMessage(LoadBalancingMsg.NAME, new LoadBalancingMsg().toBytes());
-            _isWaitingForRoomDataMessage = true;
+            _timeSinceLoadMessageSent = 0;
+//            _isWaitingForRoomDataMessage = true;
         }
     }
 
@@ -59,7 +69,7 @@ public class LoadBalancerClient extends SceneObject
     {
         if (e.name == LoadBalancingMsg.NAME) {
 
-            _isWaitingForRoomDataMessage = false;
+//            _isWaitingForRoomDataMessage = false;
             var msg :LoadBalancingMsg =
                 ClientContext.msg.deserializeMessage(e.name, e.value) as LoadBalancingMsg;
 
@@ -75,9 +85,9 @@ public class LoadBalancerClient extends SceneObject
 
 
 
-                showRoomsAsChatLinks(_roomIds, _roomNames);
+//                showRoomsAsChatLinks(_roomIds, _roomNames);
 
-//                updateUI();
+                updateUI();
 
             }
             else {
@@ -188,7 +198,10 @@ public class LoadBalancerClient extends SceneObject
     protected var _panel :MovieClip;
     protected var _parent :DisplayObjectContainer;
 
-    protected var _isWaitingForRoomDataMessage :Boolean = false;
+    protected var _timeSinceLoadMessageSent :Number = 0;
+    protected static const MIN_TIME_BETWEEN_MESSAGES :Number = 5;
+
+//    protected var _isWaitingForRoomDataMessage :Boolean = false;
 
 //    protected var _loadBalancingMsg :LoadBalancingMsg;
 //    public static const MESSAGE_ROOMIDS_AND_POPULATIONS :String = "roomIdsAndPlayers";

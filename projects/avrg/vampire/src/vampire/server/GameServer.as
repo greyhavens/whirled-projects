@@ -7,7 +7,6 @@ import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRServerGameControl;
-import com.whirled.avrg.OfflinePlayerPropertyControl;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.simplegame.ObjectDB;
 import com.whirled.net.MessageReceivedEvent;
@@ -15,8 +14,6 @@ import com.whirled.net.MessageReceivedEvent;
 import flash.utils.getTimer;
 import flash.utils.setInterval;
 
-import vampire.data.Codes;
-import vampire.data.VConstants;
 import vampire.feeding.FeedingServer;
 
 public class GameServer extends ObjectDB
@@ -50,6 +47,9 @@ public class GameServer extends ObjectDB
 
         //Add the room population updater
         addObject(new LoadBalancerServer(this));
+
+        //Add the feeding leaderboard server
+        addObject(new LeaderBoardServer(_ctrl));
 
     }
 

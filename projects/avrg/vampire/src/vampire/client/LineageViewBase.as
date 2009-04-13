@@ -14,6 +14,8 @@ import com.whirled.contrib.simplegame.tasks.LocationTask;
 import com.whirled.contrib.simplegame.tasks.SerialTask;
 import com.whirled.contrib.simplegame.tasks.TimedTask;
 
+import vampire.data.VConstants;
+
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.MovieClip;
@@ -374,7 +376,7 @@ public class LineageViewBase extends SceneObjectParent
                 playerName = "Player " + playerId;//ClientContext.getPlayerName(playerId);
             }
 
-            playerName = playerName.substring(0, MAX_NAME_CHARS);
+            playerName = playerName.substring(0, VConstants.MAX_CHARS_IN_LINEAGE_NAME);
 
             drop = new DropSceneObject(playerId, playerName, updateLineage);
 
@@ -534,7 +536,7 @@ public class LineageViewBase extends SceneObjectParent
     public static const BLOOD_LINEAGE_LINK_THICKNESS :int = 3;
 
     protected static const MAX_PROGENY_SHOWN :int = 5;
-    public static const MAX_NAME_CHARS :int = 10;
+//    public static const MAX_NAME_CHARS :int = 10;
 
     protected static const yInc :int = 30;
     protected static const LINEAGE_PANEL_WIDTH :int = 490;
@@ -562,6 +564,7 @@ import flash.display.InteractiveObject;
 import vampire.client.ClientContext;
 import flash.display.Shape;
 import vampire.data.Lineage;
+import vampire.data.VConstants;
 
 class DropSceneObject extends SceneObject
 {
@@ -571,7 +574,7 @@ class DropSceneObject extends SceneObject
         _playerId = playerId;
         _centerLineageFunction = centerLineage;
 
-        playerName = playerName.substring(0, LineageViewBase.MAX_NAME_CHARS);
+        playerName = playerName.substring(0, VConstants.MAX_CHARS_IN_LINEAGE_NAME);
 
         _nameText = getTextFieldCenteredOn(playerName, 0, 0);
         _displaySprite.addChild(_nameText);

@@ -19,6 +19,9 @@ public class VConstants
     */
     public static const PLAYER_LINEAGE_LEVELS_DOWN :int = 2;
 
+    public static const MAX_CHARS_IN_LINEAGE_NAME :int = 10;
+    public static const MAX_HIGH_SCORES :int = 10;
+
     /**
     * If you're not related to the ubervamp
     */

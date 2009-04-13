@@ -14,6 +14,7 @@ import vampire.feeding.FeedingHost;
 import vampire.feeding.FeedingServer;
 import vampire.feeding.variant.Variant;
 import vampire.net.messages.MovePredAfterFeedingMsg;
+import vampire.net.messages.StartFeedingClientMsg;
 
 public class FeedingRecord extends EventCollecter
     implements FeedingHost
@@ -137,11 +138,24 @@ public class FeedingRecord extends EventCollecter
         log.debug("starting gameServer", "gameId", _gameServer.gameId ,"roomId", _room.roomId, "_predators", _predators.toArray(), "gamePreyId", gamePreyId);
 
         // send a message with the game ID to each of the players, a
+        var leaderBoard :LeaderBoardServer;
+        if (ServerContext.server.getObjectNamed(LeaderBoardServer.NAME) != null) {
+            var leaderBoard :LeaderBoardServer =
+                ServerContext.server.getObjectNamed(LeaderBoardServer.NAME) as LeaderBoardServer;
+        }
         ServerContext.ctrl.doBatch(function () :void {
             for each (var playerId :int in playerIds) {
-                if(_room.isPlayer(playerId)) {
+                if(ServerContext.server.isPlayer(playerId)) {
                     log.debug("Sending start game message to client " + playerId + "=StartClient", _gameServer.gameId);
-                    _room.getPlayer(playerId).ctrl.sendMessage("StartClient", _gameServer.gameId);
+
+                    var msg :StartFeedingClientMsg = leaderBoard != null ?
+                        leaderBoard.createStartGameMessage(playerId) :
+                        new StartFeedingClientMsg(playerId);
+
+                    ServerContext.server.getPlayer(playerId).ctrl.sendMessage(
+                        StartFeedingClientMsg.NAME, msg.toBytes());
+//                    _room.getPlayer(playerId).ctrl.sendMessage("StartClient", _gameServer.gameId);
+//                    _room.getPlayer(playerId).ctrl.sendMessage("StartClient", _gameServer.gameId);
 //                    ServerContext.ctrl.getPlayer(playerId).sendMessage("StartClient", _gameServer.gameId);
                 }
             }
