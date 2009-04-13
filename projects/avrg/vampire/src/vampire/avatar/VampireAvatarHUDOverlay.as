@@ -1,8 +1,8 @@
 package vampire.avatar
 {
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.Command;
 import com.threerings.util.HashSet;
-import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.avrg.AvatarHUD;
@@ -13,6 +13,7 @@ import flash.events.MouseEvent;
 import framework.FakeAVRGContext;
 
 import vampire.client.ClientContext;
+import vampire.client.VampireController;
 import vampire.data.VConstants;
 
 
@@ -36,7 +37,7 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
             function(e :AVRGameRoomEvent) :void {
                 setDisplayMode(_displayMode);
             }
-       );
+        );
 
 
         //If you click outside the feeding buttons, return to the default display.
@@ -46,7 +47,9 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
                     setDisplayMode(DISPLAY_MODE_OFF);
                 }
             }
-       );
+        );
+        Command.bind(_paintableOverlay, MouseEvent.CLICK,
+            VampireController.DECTIVATE_LOAD_BALANCER);
 
         if(VConstants.LOCAL_DEBUG_MODE) {
             p1 = new VampireAvatarHUD(ctrl,  1);
