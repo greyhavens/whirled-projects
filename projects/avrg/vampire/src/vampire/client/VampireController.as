@@ -260,22 +260,10 @@ public class VampireController extends Controller
 
             default:
 
-
-
-            //Show the load balancer if there are few avatars.
-            if (ClientContext.ctrl.room.getEntityIds(EntityControl.TYPE_AVATAR).length <= 1) {
-                handleActivateLoadBalancer();
-            }
-            else {
-                ClientContext.avatarOverlay.setDisplayMode(
-                    VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS);
-                //Show the load balancer if there are too many players.
-                if (ClientContext.ctrl.room.getPlayerIds().length >=
-                    VConstants.PLAYERS_IN_ROOM_TRIGGERING_BALANCING) {
-
-                        handleActivateLoadBalancer();
-                    }
-            }
+            ClientContext.avatarOverlay.setDisplayMode(
+                VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS);
+            //Show the load balancer
+            handleActivateLoadBalancer();
             break;
         }
 
