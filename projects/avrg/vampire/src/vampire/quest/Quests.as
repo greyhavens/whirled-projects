@@ -32,7 +32,7 @@ public class Quests
     {
         checkInited();
 
-        validateQuest(desc, true);
+        validate(desc, true);
         _quests.put(desc.id, desc);
     }
 
@@ -57,23 +57,22 @@ public class Quests
         }
     }
 
-    protected static function validateQuest (desc :QuestDesc, validateNotDuplicate :Boolean)
-        :Boolean
+    protected static function validate (desc :QuestDesc, validateNotDuplicate :Boolean) :Boolean
     {
         if (desc == null) {
-            log.error("Invalid quest (quest is null)", new Error());
+            log.error("Invalid Quest (Quest is null)", new Error());
             return false;
         } else if (desc.name == null) {
-            log.error("Invalid quest (id is null)", "desc", desc, new Error());
+            log.error("Invalid Quest (id is null)", "desc", desc, new Error());
             return false;
         } else if (desc.isCompletedFn == null) {
-            log.error("Invalid quest (isCompletedFn is null)", "desc", desc, new Error());
+            log.error("Invalid Quest (isCompletedFn is null)", "desc", desc, new Error());
             return false;
         } else if (desc.getProgressTextFn == null) {
-            log.error("Invalid quest (getProgressTextFn is null)", "desc", desc, new Error());
+            log.error("Invalid Quest (getProgressTextFn is null)", "desc", desc, new Error());
             return false;
         } else if (validateNotDuplicate && _quests.containsKey(desc.id)) {
-            log.error("Invalid quest (id already exists)", "desc", desc, new Error());
+            log.error("Invalid Quest (id already exists)", "desc", desc, new Error());
             return false;
         }
 
