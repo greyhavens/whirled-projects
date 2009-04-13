@@ -20,6 +20,7 @@ public class GameServer extends ObjectDB
 {
     public function GameServer ()
     {
+        trace("Vampire Server initializing...");
         log.info("Vampire Server initializing...");
         if(ServerContext.ctrl == null) {
             log.error("AVRServerGameControl should of been initialized already");
@@ -40,7 +41,7 @@ public class GameServer extends ObjectDB
         ServerContext.lineage = new LineageServer(this);
         addObject(ServerContext.lineage);
 
-        addObject(new LineageServer2(null));
+//        addObject(new LineageServer2(null));
 
         //Tim's bloodbond game server
         FeedingServer.init(_ctrl);
@@ -49,7 +50,7 @@ public class GameServer extends ObjectDB
         addObject(new LoadBalancerServer(this));
 
         //Add the feeding leaderboard server
-        addObject(new LeaderBoardServer(_ctrl));
+//        addObject(new LeaderBoardServer(_ctrl));
 
     }
 
