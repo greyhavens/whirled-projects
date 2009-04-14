@@ -18,50 +18,48 @@ public class StartFeedingClientMsg extends BaseGameMsg
     override public function toBytes (bytes :ByteArray = null) :ByteArray
     {
         var bytes :ByteArray = super.toBytes(bytes);
+        var ii :int;
         bytes.writeInt(_gameId);
-        bytes.writeInt(_highScoresDaily.length);
-        for (var ii :int = 0; ii < _highScoresDaily.length; ++ii) {
-            bytes.writeInt(_highScoresDaily[ii][0]);
-            bytes.writeUTF(_highScoresDaily[ii][1]);
-        }
 
-        bytes.writeInt(_highScoresMonthly.length);
-        for (ii = 0; ii < _highScoresMonthly.length; ++ii) {
-            bytes.writeInt(_highScoresMonthly[ii][0]);
-            bytes.writeUTF(_highScoresMonthly[ii][1]);
+        function writeScoreArray (bytes :ByteArray, scores :Array) :void {
+
+            bytes.writeInt(scores.length);
+            for (var ii :int = 0; ii < scores.length; ++ii) {
+                if (scores[ii] as Array == null ||
+                    (scores[ii] as Array).length < 2) {
+                        bytes.writeInt(0);
+                        bytes.writeUTF("");
+                    }
+                else {
+                    bytes.writeInt(scores[ii][0]);
+                    bytes.writeUTF(scores[ii][1] == null ? "" : scores[ii][1]);
+                }
+            }
         }
+        writeScoreArray(bytes, _highScoresDaily);
+        writeScoreArray(bytes, _highScoresMonthly);
+
         return bytes;
     }
 
     override public function fromBytes (bytes :ByteArray) :void
     {
-        var score :int;
-        var names :String;
-        var ii :int;
-
+        super.fromBytes(bytes);
         _gameId = bytes.readInt();
-        var length :int = bytes.readInt();
-        _highScoresDaily = [];
-        for (ii = 0; ii < length; ++ii) {
-            score = bytes.readInt();
-            names = bytes.readUTF();
-            _highScoresDaily.push([score, names]);
+
+        function readScoreArray (bytes :ByteArray) :Array {
+            var length :int = bytes.readInt();
+            var scores :Array = [];
+            for (var ii :int = 0; ii < length; ++ii) {
+                var score :int = bytes.readInt();
+                var names :String = bytes.readUTF();
+                scores.push([score, names]);
+            }
+            return scores;
         }
 
-        length = bytes.readInt();
-        _highScoresMonthly = [];
-        for (ii = 0; ii < length; ++ii) {
-            score = bytes.readInt();
-            names = bytes.readUTF();
-            _highScoresMonthly.push([score, names]);
-        }
-    }
-
-    override public function toString() :String
-    {
-        return ClassUtil.tinyClassName(this) + ": player=" + _playerId
-            + ", scores daily=" + _highScoresDaily
-            + ", scores monthly=" + _highScoresMonthly;
+        _highScoresDaily = readScoreArray(bytes);
+        _highScoresMonthly = readScoreArray(bytes);
     }
 
     public function get scoresDaily () :Array
@@ -81,6 +79,14 @@ public class StartFeedingClientMsg extends BaseGameMsg
     override public function get name () :String
     {
        return NAME;
+    }
+
+    override public function toString () :String
+    {
+        return ClassUtil.tinyClassName(this)
+            + "gameId=" + _gameId
+            + ", scoresDaily=" + scoresDaily
+            + ", scoresMonthly=" + scoresMonthly;
     }
 
     protected var _gameId :int;
