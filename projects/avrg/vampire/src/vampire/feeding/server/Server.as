@@ -228,6 +228,11 @@ public class Server extends FeedingServer
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
     {
+        log.debug("onMsgReceived", "e", e);
+        if (e == null) {
+            log.error("onMsgReceived", "e", e);
+            return;
+        }
         if (e.isFromServer() || !_ctx.nameUtil.isInNamespace(e.name)) {
             // don't listen to messages that we've sent, or that aren't for this
             // particular game

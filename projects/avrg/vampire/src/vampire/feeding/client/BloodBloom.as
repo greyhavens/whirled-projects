@@ -8,11 +8,11 @@ import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.LevelPackManager;
 import com.whirled.contrib.ManagedTimer;
 import com.whirled.contrib.TimerManager;
+import com.whirled.contrib.namespc.*;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.ResourceManager;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
-import com.whirled.contrib.namespc.*;
 
 import flash.display.Sprite;
 import flash.events.Event;
@@ -54,7 +54,9 @@ public class BloodBloom extends FeedingClient
     public function BloodBloom (gameId :int,
                                 playerData :PlayerFeedingData,
                                 gameCompleteCallback :Function,
-                                props :NamespacePropGetControl = null)
+                                props :NamespacePropGetControl = null,
+                                scoresDaily :Array = null,
+                                scoresMonthly :Array = null)
     {
         if (!_inited) {
             throw new Error("FeedingGameClient.init has not been called");
@@ -66,6 +68,8 @@ public class BloodBloom extends FeedingClient
         ClientCtx.playerData = playerData.clone();
         ClientCtx.gameCompleteCallback = gameCompleteCallback;
         ClientCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);
+        ClientCtx.highScoresDaily = scoresDaily;
+        ClientCtx.highScoresMonthly = scoresMonthly;
         FeedingUtil.initMessageManager(ClientCtx.msgMgr);
 
         _events.registerListener(this, Event.ADDED_TO_STAGE,

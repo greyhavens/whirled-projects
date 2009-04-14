@@ -4,10 +4,10 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
+import com.whirled.contrib.namespc.*;
 import com.whirled.contrib.simplegame.MainLoop;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.namespc.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -37,6 +37,9 @@ public class ClientCtx
     public static var awardedTrophies :HashSet;
     public static var lastRoundResults :RoundOverMsg;
     public static var settings :Settings;
+    public static var highScoresDaily :Array;
+    public static var highScoresMonthly :Array;
+
 
     public static function get isCorruption () :Boolean
     {
