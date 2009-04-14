@@ -132,6 +132,7 @@ public class PlayerQuestData extends EventDispatcher
     protected static const PROP_ACTIVE_QUESTS :String = NetConstants.makePersistent("ActiveQuests");
     protected static const PROP_AVAIL_LOCS :String = NetConstants.makePersistent("AvailLocs");
     protected static const PROP_CUR_LOC :String = NetConstants.makePersistent("CurLoc");
+
     protected static const NAMESPACE :String = "pqd";
 
     protected static var log :Log = Log.getLog(PlayerQuestData);
