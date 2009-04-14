@@ -8,6 +8,13 @@ public class Locations
     public static function init () :void
     {
         _inited = true;
+
+        // create some dummy Locations
+        var homeBase :LocationDesc = new LocationDesc("HomeBase", "Home Base");
+        addLocation(homeBase);
+        var battleground :LocationDesc = new LocationDesc("Battleground", "Battleground");
+        addLocation(battleground);
+        makeTwoWayConnection("HomeBase", "Battleground", 5);
     }
 
     public static function getLocation (locId :int) :LocationDesc
@@ -21,7 +28,7 @@ public class Locations
         return getLocation(LocationDesc.getId(name));
     }
 
-    protected static function addQuest (desc :LocationDesc) :void
+    protected static function addLocation (desc :LocationDesc) :void
     {
         checkInited();
 
@@ -34,6 +41,27 @@ public class Locations
         if (!_inited) {
             throw new Error("Locations.init has not been called");
         }
+    }
+
+    protected static function makeTwoWayConnection (aName :String, bName :String, cost :int)
+        :void
+    {
+        var a :LocationDesc = getLocationByName(aName);
+        var b :LocationDesc = getLocationByName(bName);
+        if (a == null) {
+            throw new Error("Unrecognized Location [name=" + aName + "]");
+        }
+        if (b == null) {
+            throw new Error("Unrecognized Location [name=" + bName + "]");
+        }
+
+        if (a.isConnectedTo(b) || b.isConnectedTo(a)) {
+            throw new Error(
+                "Locations are already connected [aName=" + aName + " bName=" + bName + "]");
+        }
+
+        a.connectedLocs.push(new LocationConnection(b, cost));
+        b.connectedLocs.push(new LocationConnection(a, cost));
     }
 
     protected static function validate (desc :LocationDesc, validateNotDuplicate :Boolean) :Boolean

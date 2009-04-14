@@ -15,6 +15,7 @@ public class QuestClient
         _inited = true;
 
         Quests.init();
+        Locations.init();
 
         ClientCtx.mainLoop = simpleGame.ctx.mainLoop;
         ClientCtx.questData = questData;

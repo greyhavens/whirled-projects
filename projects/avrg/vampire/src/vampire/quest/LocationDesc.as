@@ -20,7 +20,13 @@ public class LocationDesc
     // flavor
     public var displayName :String;
 
-    public function isConnectedLocation (loc :LocationDesc) :Boolean
+    public function LocationDesc (name :String, displayName :String)
+    {
+        this.name = name;
+        this.displayName = displayName;
+    }
+
+    public function isConnectedTo (loc :LocationDesc) :Boolean
     {
         return (getMovementCost(loc) >= 0);
     }
