@@ -15,9 +15,9 @@ public class StartFeedingClientMsg extends BaseGameMsg
         _highScoresMonthly = scoresMonth == null ? [] : scoresMonth;
     }
 
-    override public function fromBytes (bytes :ByteArray) :void
+    override public function toBytes (bytes :ByteArray = null) :ByteArray
     {
-        super.fromBytes(bytes);
+        var bytes :ByteArray = super.toBytes(bytes);
         bytes.writeInt(_gameId);
         bytes.writeInt(_highScoresDaily.length);
         for (var ii :int = 0; ii < _highScoresDaily.length; ++ii) {
@@ -30,15 +30,15 @@ public class StartFeedingClientMsg extends BaseGameMsg
             bytes.writeInt(_highScoresMonthly[ii][0]);
             bytes.writeUTF(_highScoresMonthly[ii][1]);
         }
+        return bytes;
     }
 
-    override public function toBytes (bytes :ByteArray = null) :ByteArray
+    override public function fromBytes (bytes :ByteArray) :void
     {
         var score :int;
         var names :String;
         var ii :int;
 
-        var bytes :ByteArray = super.toBytes(bytes);
         _gameId = bytes.readInt();
         var length :int = bytes.readInt();
         _highScoresDaily = [];
@@ -55,7 +55,6 @@ public class StartFeedingClientMsg extends BaseGameMsg
             names = bytes.readUTF();
             _highScoresMonthly.push([score, names]);
         }
-        return bytes;
     }
 
     override public function toString() :String
