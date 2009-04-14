@@ -19,6 +19,10 @@ public class VConstants
     */
     public static const PLAYER_LINEAGE_LEVELS_DOWN :int = 2;
 
+    /**
+    * The max characters in names displayed in the lineage.  Since we cannot display long
+    * names, don't persist or transmit them. (shorten them).
+    */
     public static const MAX_CHARS_IN_LINEAGE_NAME :int = 10;
     public static const MAX_HIGH_SCORES :int = 10;
 
