@@ -25,12 +25,12 @@ public class LeaderBoardServer extends SimObject
     {
         _ctrl = ctrl;
 
-        var scoreDict :Dictionary = _ctrl.props.get(SERVER_PROP_NAME) as Dictionary;
-        if (scoreDict == null) {
-            scoreDict = new Dictionary();
-            scoreDict.set(PROP_KEY_DAY, []);
-            scoreDict.set(PROP_KEY_MONTH, []);
+        if ((_ctrl.props.get(SERVER_PROP_NAME) as Dictionary) == null) {
+            _ctrl.props.setIn(SERVER_PROP_NAME, PROP_KEY_DAY, []);
+            _ctrl.props.setIn(SERVER_PROP_NAME, PROP_KEY_MONTH, []);
         }
+        var scoreDict :Dictionary = _ctrl.props.get(SERVER_PROP_NAME) as Dictionary;
+
         _scoresAndNamesDay = scoreDict.get(PROP_KEY_DAY) as Array;
         if (_scoresAndNamesDay == null) {
             _scoresAndNamesDay = [];

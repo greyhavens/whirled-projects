@@ -144,7 +144,7 @@ public class FeedingRecord extends EventCollecter
                 ServerContext.server.getObjectNamed(LeaderBoardServer.NAME) as LeaderBoardServer;
         }
         ServerContext.ctrl.doBatch(function () :void {
-            for each (var playerId :int in playerIds) {
+            for each (var playerId :int in _gameServer.playerIds) {
                 if(ServerContext.server.isPlayer(playerId)) {
                     log.debug("Sending start game message to client " + playerId + "=StartClient", _gameServer.gameId);
 
