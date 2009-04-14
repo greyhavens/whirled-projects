@@ -15,6 +15,5 @@ public class Server extends ServerObject
         //Start the game server
         var v :GameServer = new GameServer();
     }
-
 }
 }
