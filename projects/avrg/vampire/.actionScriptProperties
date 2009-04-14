@@ -2,10 +2,13 @@
 <actionScriptProperties mainApplicationPath="VampireAVRG.as" version="3">
 <compiler additionalCompilerArguments="" copyDependentFiles="true" enableModuleDebug="true" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="true" htmlHistoryManagement="true" htmlPlayerVersion="9.0.124" htmlPlayerVersionCheck="true" outputFolderPath="bin-debug" sourceFolderPath="src" strict="true" useApolloConfig="false" verifyDigests="true" warn="true">
 <compilerSourcePath>
-<compilerSourcePathEntry kind="1" linkType="1" path="/export/whirled/contrib/src/as"/>
-<compilerSourcePathEntry kind="1" linkType="1" path="/export/whirled/libraries/toybox/src/as"/>
-<compilerSourcePathEntry kind="1" linkType="1" path="/export/whirled/libraries/whirled/src/as"/>
-<compilerSourcePathEntry kind="1" linkType="1" path="/export/whirled/projects/avrg/probe/src"/>
+<compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/projects/avatars/uravatar/src"/>
+<compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/libraries/narya/src/as"/>
+<compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/libraries/nenya/src/as"/>
+<compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/libraries/vilya/src/as"/>
+<compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/libraries/narya/src/player"/>
+<compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/contrib/src/as"/>
+<compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/libraries/whirled/src/as"/>
 </compilerSourcePath>
 <libraryPath defaultLinkType="1">
 <libraryPathEntry kind="4" path="">
@@ -23,25 +26,12 @@
 <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/framework.swc" useDefaultLinkType="false"/>
 </excludedEntries>
 </libraryPathEntry>
-<libraryPathEntry kind="3" linkType="1" path="/export/whirled/dist/lib/naryalib.swc" sourcepath="/export/whirled/libraries/narya/src/as" useDefaultLinkType="false"/>
-<libraryPathEntry kind="3" linkType="1" path="/export/whirled/dist/lib/vilyalib.swc" sourcepath="/export/whirled/libraries/vilya/src/as" useDefaultLinkType="false"/>
-<libraryPathEntry kind="3" linkType="1" path="/export/whirled/dist/lib/nenyalib.swc" sourcepath="/export/whirled/libraries/nenya/src/as" useDefaultLinkType="false"/>
-<libraryPathEntry kind="3" linkType="1" path="/export/whirled/dist/lib/whirledlib.swc" sourcepath="/export/whirled/libraries/whirled/src/as" useDefaultLinkType="false"/>
-<libraryPathEntry kind="3" linkType="1" path="/export/whirled/lib/tweener.swc" useDefaultLinkType="false"/>
-<libraryPathEntry kind="3" linkType="1" path="/export/whirled/lib/fl-components.swc" useDefaultLinkType="false"/>
-<libraryPathEntry kind="3" linkType="1" path="/export/whirled/lib/corelib.swc" useDefaultLinkType="false"/>
-<libraryPathEntry kind="3" linkType="1" path="/export/whirled/lib/flexlib.swc" useDefaultLinkType="false"/>
 </libraryPath>
 <sourceAttachmentPath>
-<sourceAttachmentPathEntry kind="3" linkType="1" path="/export/whirled/dist/lib/naryalib.swc" sourcepath="/export/whirled/libraries/narya/src/as" useDefaultLinkType="false"/>
-<sourceAttachmentPathEntry kind="3" linkType="1" path="/export/whirled/dist/lib/vilyalib.swc" sourcepath="/export/whirled/libraries/vilya/src/as" useDefaultLinkType="false"/>
-<sourceAttachmentPathEntry kind="3" linkType="1" path="/export/whirled/dist/lib/nenyalib.swc" sourcepath="/export/whirled/libraries/nenya/src/as" useDefaultLinkType="false"/>
-<sourceAttachmentPathEntry kind="3" linkType="1" path="/export/whirled/dist/lib/whirledlib.swc" sourcepath="/export/whirled/libraries/whirled/src/as" useDefaultLinkType="false"/>
 </sourceAttachmentPath>
 </compiler>
 <applications>
 <application path="VampireAVRG.as"/>
-<application path="vampire/feeding/debug/BloodBloomStandalone.as"/>
 </applications>
 <modules/>
 <buildCSSFiles/>
