@@ -138,6 +138,11 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
         return validIds;
     }
 
+    override public function get objectName () :String
+    {
+        return NAME;
+    }
+
     public function setDisplayMode(mode :int) :void
     {
         var previousDisplayMode :int = _displayMode;
@@ -217,6 +222,7 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
     protected var _displayMode :int = 0;
     public static const DISPLAY_MODE_OFF :int = 0;
     public static const DISPLAY_MODE_SHOW_VALID_TARGETS :int = 2;
+    public static const NAME :String = "VampireHUDOverlay";
 
     protected static const UPDATE_DISPLAY_TIMER_NAME :String = "updateVampireHUDTimer";
 }

@@ -76,7 +76,7 @@ public class HUD extends DraggableObject
 
     override public function get objectName () :String
     {
-        return "HUD";
+        return NAME;
     }
 
     protected function handlePropChanged (e :PropertyChangedEvent) :void
@@ -909,6 +909,7 @@ public class HUD extends DraggableObject
     protected var _feedbackMessageQueue :Array = new Array();
     protected static const BLOOD_SCALE_MULTIPLIER :Number = 2.2;
     protected static const BLOOD_BAR_HEIGHT :int = 51;
+    public static const NAME :String = "HUD";
     protected static const log :Log = Log.getLog(HUD);
 }
 

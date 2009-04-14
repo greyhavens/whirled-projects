@@ -71,6 +71,8 @@ public class MainGameMode extends AppMode
         ClientContext.model = new PlayerModel();
         addObject(ClientContext.model);
 
+        addObject(new RoomModel());
+
 
 //        ClientContext.model.lineage = LineageDebug.createBasicLineage(10, 7, 50000);
 ////        trace("Lineage: " + ClientContext.model.lineage);
@@ -307,6 +309,21 @@ public class MainGameMode extends AppMode
             }
             _feedingGameClient = null;
         }
+    }
+
+    public function get roomModel () :RoomModel
+    {
+        return getObjectNamed(RoomModel.NAME) as RoomModel;
+    }
+
+    public function get hud () :HUD
+    {
+        return getObjectNamed(HUD.NAME) as HUD;
+    }
+
+    public function get avatarOverlay () :VampireAvatarHUDOverlay
+    {
+        return getObjectNamed(VampireAvatarHUDOverlay.NAME) as VampireAvatarHUDOverlay;
     }
 
 
