@@ -3,10 +3,10 @@ package vampire.server
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
-import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
-import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.simplegame.ObjectMessage;
+
+import flash.utils.ByteArray;
 
 import vampire.data.Codes;
 import vampire.data.Lineage;
@@ -98,7 +98,12 @@ public class LineageServer2 extends Lineage
                 var lineage :Lineage = getSubLineage(playerId, 1, 2);
                 log.debug("Setting into players lineage", "playerId", playerId,
                     "lineage", lineage);
-                _vserver.getPlayer(playerId).lineage = lineage.toBytes();
+                var bytes :ByteArray = lineage.toBytes();
+                _vserver.getPlayer(playerId).lineage = bytes;
+                if (_vserver.getPlayer(playerId).room != null) {
+                    _vserver.getPlayer(playerId).room.ctrl.props.setIn(
+                        Codes.ROOM_PROP_PLAYER_LINEAGE, playerId, bytes);
+                }
 //                var msg :LineageMsg = new LineageMsg(playerId, lineage);
 //                _vserver.getPlayer(playerId).ctrl.sendMessage(LineageMsg.NAME, msg.toBytes());
             }

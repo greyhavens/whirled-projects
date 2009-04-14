@@ -16,6 +16,8 @@ import com.whirled.contrib.simplegame.tasks.RepeatingTask;
 import com.whirled.contrib.simplegame.tasks.SerialTask;
 import com.whirled.contrib.simplegame.tasks.TimedTask;
 
+import flash.utils.ByteArray;
+
 import vampire.data.Codes;
 import vampire.net.messages.RoomNameMsg;
 
@@ -129,6 +131,7 @@ public class Room extends SimObject
         }
 
         maybeLoadControl();
+        _ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, player.playerId, player.lineage);
     }
 
     public function playerLeft (player :PlayerData) :void
@@ -146,6 +149,8 @@ public class Room extends SimObject
         log.debug("room.playerLeft, removing from feeding games " + player.name);
 
         _bloodBloomGameManager.playerQuitsGame(player.playerId);
+        //Delete the lineage for this player
+        _ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, player.playerId, null);
     }
 
     /**
@@ -308,6 +313,11 @@ public class Room extends SimObject
             log.debug("Room " + roomId + " got " + e);
             _name = e.roomName;
         }
+    }
+
+    public function setPlayerLineage (playerId :int, lineageBytes :ByteArray) :void
+    {
+
     }
 
 
