@@ -13,6 +13,7 @@ import flash.events.Event;
 import com.threerings.util.Log;
 
 import com.whirled.game.CoinsAwardedEvent;
+import com.whirled.game.GameContentEvent;
 import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;
 
@@ -55,7 +56,7 @@ public class DictionaryAttack extends Sprite
 
     public function showSplashMenu () :void
     {
-        if (_ctx.view.parent != null) {
+        if (_ctx.view != null && _ctx.view.parent != null) {
             removeChild(_ctx.view);
         }
         addChild(_splash = new SplashView(_ctx, this));
