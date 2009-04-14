@@ -305,40 +305,40 @@ public class Lineage extends SimObject
 //
 //    }
 
-//    override public function toStringOld2 () :String
-//    {
-//        var sb :StringBuilder = new StringBuilder(" Lineage:");
-//        for each(var playerId :int in playerIds) {
-//            var player :Node = _playerId2Node.get(playerId) as Node;
-//            sb.append(" (" + playerId + ", " + (isPlayerName(playerId) ? getPlayerName(playerId) : "no name"));
-//            sb.append(", " + getSireId(playerId) + ")");
-//        }
-//        return sb.toString();
-//    }
-
     override public function toString () :String
     {
-        var _centerPlayerId :int = 1;
-
-        var sb :StringBuilder = new StringBuilder("Lineage, playerIds=" + playerIds);
-        sb.append("\nCenter on: " + _centerPlayerId);
-        sb.append("\nChildren and grand children:");
-//        trace("Children ids of center " + _centerPlayerId + "=" + getProgenyIds(_centerPlayerId));
-//        var children :Array = getProgenyIds(_centerPlayerId);
-        var children :Array = getAllDescendents(_centerPlayerId);
-        for each (var childId :int in children) {
-            sb.append("\n" + childId + " -sire (" + getSireId(childId) + ")--");
-            var grandchildren :Array = getProgenyIds(childId);
-//            trace("Children ids of child " + childId + "=" + getProgenyIds(childId));
-            for each (var grandChildId :int in grandchildren) {
-                var greatGCCount :int = getAllDescendentsCount(grandChildId);
-//                trace("Descendents count of " + grandChildId + "=" + getAllDescendentsCount(grandChildId));
-                sb.append(" ," + grandChildId + (greatGCCount > 0 ? " (" + greatGCCount + ")" : ""));
-            }
-
+        var sb :StringBuilder = new StringBuilder(" Lineage:");
+        for each(var playerId :int in playerIds) {
+            var player :Node = _playerId2Node.get(playerId) as Node;
+            sb.append(" (" + playerId + ", " + (isPlayerName(playerId) ? getPlayerName(playerId) : "no name"));
+            sb.append(", " + getSireId(playerId) + ")");
         }
         return sb.toString();
     }
+
+//    override public function toString () :String
+//    {
+//        var _centerPlayerId :int = 1;
+//
+//        var sb :StringBuilder = new StringBuilder("Lineage, playerIds=" + playerIds);
+//        sb.append("\nCenter on: " + _centerPlayerId);
+//        sb.append("\nChildren and grand children:");
+////        trace("Children ids of center " + _centerPlayerId + "=" + getProgenyIds(_centerPlayerId));
+////        var children :Array = getProgenyIds(_centerPlayerId);
+//        var children :Array = getAllDescendents(_centerPlayerId);
+//        for each (var childId :int in children) {
+//            sb.append("\n" + childId + " -sire (" + getSireId(childId) + ")--");
+//            var grandchildren :Array = getProgenyIds(childId);
+////            trace("Children ids of child " + childId + "=" + getProgenyIds(childId));
+//            for each (var grandChildId :int in grandchildren) {
+//                var greatGCCount :int = getAllDescendentsCount(grandChildId);
+////                trace("Descendents count of " + grandChildId + "=" + getAllDescendentsCount(grandChildId));
+//                sb.append(" ," + grandChildId + (greatGCCount > 0 ? " (" + greatGCCount + ")" : ""));
+//            }
+//
+//        }
+//        return sb.toString();
+//    }
 
     public function fromBytes (bytes :IDataInput) :void
     {
@@ -368,14 +368,19 @@ public class Lineage extends SimObject
         return _playerId2Node.size();
     }
 
-    protected function getAllPlayerIdsConnected(playerId :int) :Array
+    protected function getAllPlayerIdsConnected(playerId :int, steps :int  = -1) :Array
     {
         var allConnected :Array = [playerId];
-        var sires :Array = getAllSiresAndGrandSires(playerId);
-        var descendents :Array = getAllDescendents(playerId);
+        var sires :Array = getAllSiresAndGrandSires(playerId, steps);
+        var descendents :Array = getAllDescendents(playerId, null, steps);
 
-        allConnected.splice(allConnected.length, 0, sires);
-        allConnected.splice(allConnected.length, 0, descendents);
+        var id :int;
+        for each (id in sires) {
+            allConnected.push(id);
+        }
+        for each (id in descendents) {
+            allConnected.push(id);
+        }
 
         return allConnected;
     }
@@ -468,7 +473,7 @@ public class Lineage extends SimObject
 
 
         players2Add = players2Add.concat(getAllSiresAndGrandSires(playerId,
-            levelsAbove));
+            levelsAbove - 1));
         players2Add = players2Add.concat(getAllDescendents(playerId, null,
             levelsBelow));
 
@@ -515,14 +520,17 @@ public class Lineage extends SimObject
 
         return true;
     }
-
+    override public function get objectName () :String
+    {
+        return NAME;
+    }
 
 
 
     protected var _playerId2Node :HashMap = new HashMap();
     public var _playerId2Name :HashMap = new HashMap();
 
-
+    public static const NAME :String = "Lineage";
 
 
 

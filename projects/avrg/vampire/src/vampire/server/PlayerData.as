@@ -36,11 +36,11 @@ public class PlayerData extends EventHandlerManager
         }
 
         _ctrl = ctrl;
+        _playerId = ctrl.getPlayerId();
 
         //Setup the data container.  This will only update values that are changed.
         _propsUndater = new PlayerPropertiesUpdater(_ctrl, Codes.PLAYER_PROPS_UPDATED);
 
-        _playerId = ctrl.getPlayerId();
 
         registerListener(_ctrl, AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
         registerListener(_ctrl, AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
@@ -52,15 +52,22 @@ public class PlayerData extends EventHandlerManager
             xp = 0;
         }
 
+        //Make sure we are not over the limit, due to changing level requirements.
+        xp = Logic.maxXPGivenXPAndInvites(xp, invites);
+
+        //Better empty than null
+        if (progenyIds == null) {
+            progenyIds = [];
+        }
+
         log.info("Logging in", "playerId", playerId,
-//                "blood", blood,
-//                "maxBlood",  maxBlood,
                 "xp",  xp,
                 "level", level,
                 "sire", sire,
+                "progeny", progenyIds,
                 "bloodbond", bloodbond,
                 "bloodbondName", bloodbondName
-                );//, "time", new Date(time).toTimeString()
+                );
 
         Trophies.checkMinionTrophies(this);
         Trophies.checkInviteTrophies(this);
@@ -69,6 +76,16 @@ public class PlayerData extends EventHandlerManager
     public function get feedingData () :ByteArray
     {
         return _propsUndater.get(Codes.PLAYER_PROP_FEEDING_DATA) as ByteArray;
+    }
+
+    public function get lineage () :ByteArray
+    {
+        return _propsUndater.get(Codes.PLAYER_PROP_LINEAGE) as ByteArray;
+    }
+
+    public function set lineage (b :ByteArray) :void
+    {
+        _propsUndater.put(Codes.PLAYER_PROP_LINEAGE, b);
     }
 
     public function addFeedback (msg :String) :void
@@ -108,12 +125,11 @@ public class PlayerData extends EventHandlerManager
             + ", name=" + name
             + ", roomId=" +
             (room != null ? room.roomId : "null")
-            + ", level=" + level
-//            + ", blood=" + blood + "/" + maxBlood
-            + ", bloodbond=" + bloodbond
-            + ", targetId=" + targetId
-            + ", sire=" + sire
             + ", xp=" + xp
+            + ", level=" + level
+            + ", bloodbond=" + bloodbond
+            + ", sire=" + sire
+            + ", progeny=" + progenyIds
             + "]";
     }
 
@@ -189,7 +205,7 @@ public class PlayerData extends EventHandlerManager
             try {
                 if (_room != null) {
                     _room.playerEntered(thisPlayer);
-                    ServerContext.lineage.playerEnteredRoom(thisPlayer, _room);
+//                    ServerContext.server.lineage.playerEnteredRoom(thisPlayer, _room);
                     thisPlayer.state = VConstants.PLAYER_STATE_DEFAULT;
                     ServerLogic.updateAvatarState(thisPlayer);
                 }
@@ -398,7 +414,29 @@ public class PlayerData extends EventHandlerManager
 
     public function get progenyIds() :Array
     {
-        return [];//_progenyIds;
+        var progeny :Array = _propsUndater.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array;
+        if (progeny == null) {
+            return [];
+        }
+        return progeny;
+    }
+
+    public function set progenyIds(p :Array) :void
+    {
+        _propsUndater.put(Codes.PLAYER_PROP_PROGENY_IDS, p);
+    }
+
+    public function addProgeny (progenyId :int) :void
+    {
+        var p :Array = progenyIds;
+        if (p == null) {
+            p = new Array();
+        }
+        if (!ArrayUtil.contains(p, progenyId)) {
+            p.push(progenyId);
+        }
+        p.sort();
+        progenyIds = p;
     }
 
     public function get location () :Array
@@ -481,6 +519,7 @@ public class PlayerData extends EventHandlerManager
 
     //Non-persistant variables
     protected var _state :String;
+//    protected var _lineage :Lineage;
     protected var _targetId :int;
     protected var _targetLocation :Array;
     protected var _feedback :Array = [];

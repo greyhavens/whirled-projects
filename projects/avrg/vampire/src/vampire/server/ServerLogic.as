@@ -41,7 +41,7 @@ public class ServerLogic
 //    public static function playerGainedBlood(player :PlayerData, blood :Number, sourcePlayerId :int = 0) :void
 //    {
 //        var bloodShared :Number = VConstants.BLOOD_GAIN_FRACTION_SHARED_WITH_SIRES * blood;
-//        var allsires :HashSet = ServerContext.lineage.getAllSiresAndGrandSires(player.playerId);
+//        var allsires :HashSet = ServerContext.server.lineage.getAllSiresAndGrandSires(player.playerId);
 //
 //        if (allsires.size() == 0) {
 //            log.debug("no sires");
@@ -73,7 +73,7 @@ public class ServerLogic
 
         //Check if we are part of the Lineage (with Ubervamp as the grandsire).  Only then
         //are we allowed to collect minion xp.
-        if (!ServerContext.lineage.isMemberOfLineage(player.playerId)) {
+        if (!ServerContext.server.lineage.isMemberOfLineage(player.playerId)) {
             return;
         }
 
@@ -103,9 +103,9 @@ public class ServerLogic
         //Award to sires two levels up
         var numberOfGrandGenerationsToAward :int = 2;
 
-        var currentSireId :int = ServerContext.lineage.getSireId(player.playerId);
+        var currentSireId :int = ServerContext.server.lineage.getSireId(player.playerId);
         var generations :int = 1;
-        var immediateSire :int = ServerContext.lineage.getSireId(player.playerId);
+        var immediateSire :int = ServerContext.server.lineage.getSireId(player.playerId);
 
         while (currentSireId != 0 && generations <= 2) {
 
@@ -115,7 +115,7 @@ public class ServerLogic
             else {
                 awardXP(currentSireId, xp * VConstants.XP_GAIN_FRACTION_SHARED_WITH_GRANDSIRES);
             }
-            currentSireId = ServerContext.lineage.getSireId(currentSireId);
+            currentSireId = ServerContext.server.lineage.getSireId(currentSireId);
             generations++;
         }
 
@@ -127,7 +127,7 @@ public class ServerLogic
 
 
 
-//        var allsires :HashSet = ServerContext.lineage.getAllSiresAndGrandSires(player.playerId);
+//        var allsires :HashSet = ServerContext.server.lineage.getAllSiresAndGrandSires(player.playerId);
 //        if (allsires.size() == 0) {
 //            log.debug("no sires");
 //            return;
@@ -430,8 +430,8 @@ public class ServerLogic
 
             //Attempt to handle Message type message first
             var msg :Message = ServerContext.msg.deserializeMessage(name, value);
+            log.debug(playerId + " handleMessage() GameMessage: ", "name", name, "value", msg);
             if (msg != null) {
-//                log.debug(playerId + " handleMessage() GameMessage: ", "name", name, "value", msg);
 
                 if (msg is RequestStateChangeMsg) {
                     handleRequestActionChange(player, RequestStateChangeMsg(msg));
@@ -598,7 +598,7 @@ public class ServerLogic
         log.debug("Getting xpGainedWhileAsleep=" + xpGainedWhileAsleep);
         if (!isNaN(xpGainedWhileAsleep) && xpGainedWhileAsleep > 0) {
             addXP(player.playerId, xpGainedWhileAsleep);
-            var descendentsCount :int = ServerContext.lineage.getProgenyCount(player.playerId);
+            var descendentsCount :int = ServerContext.server.lineage.getProgenyCount(player.playerId);
             player.addFeedback(Codes.POPUP_PREFIX + "You gained " +
                 Util.formatNumberForFeedback(xpGainedWhileAsleep) +
                 " experience from your " +
@@ -777,27 +777,27 @@ public class ServerLogic
         log.info(player.playerId + " makeSire(" + targetPlayerId + ")");
 
 
-        ServerContext.lineage.setPlayerSire(player.playerId, targetPlayerId);
-        log.info(player.playerId + " then setting sire(" + ServerContext.lineage.getSireId(player.playerId) + ")");
-        player.sire = ServerContext.lineage.getSireId(player.playerId);
+        ServerContext.server.lineage.setPlayerSire(player.playerId, targetPlayerId);
+        log.info(player.playerId + " then setting sire(" + ServerContext.server.lineage.getSireId(player.playerId) + ")");
+        player.sire = ServerContext.server.lineage.getSireId(player.playerId);
 
 //        ServerContext.minionHierarchy.updatePlayer(targetPlayerId);
-        ServerContext.lineage.updatePlayer(player.playerId);
+//        ServerContext.server.lineage.updatePlayer(player.playerId);
 //        ServerContext.minionHierarchy.updateIntoRoomProps();
 
-        if (oldSire != 0) {
-            ServerContext.lineage.updatePlayer(oldSire);
-        }
+//        if (oldSire != 0) {
+//            ServerContext.server.lineage.updatePlayer(oldSire);
+//        }
     }
 
 //    public static function makeMinion(player :PlayerData, targetPlayerId :int) :void
 //    {
 //        log.info("makeMinion(" + targetPlayerId + ")");
-//        ServerContext.lineage.setPlayerSire(targetPlayerId, playerId);
+//        ServerContext.server.lineage.setPlayerSire(targetPlayerId, playerId);
 //
-//        player.setSire(ServerContext.lineage.getSireId(playerId));
+//        player.setSire(ServerContext.server.lineage.getSireId(playerId));
 //
-//        ServerContext.lineage.updatePlayer(playerId);
+//        ServerContext.server.lineage.updatePlayer(playerId);
 ////        ServerContext.minionHierarchy.updateIntoRoomProps();
 //    }
 
@@ -996,7 +996,7 @@ public class ServerLogic
 //    {
 //
 //        log.info(VConstants.DEBUG_MINION + " Player entered room {{{", "player", toString());
-//        log.debug(VConstants.DEBUG_MINION + " hierarchy=" + ServerContext.lineage);
+//        log.debug(VConstants.DEBUG_MINION + " hierarchy=" + ServerContext.server.lineage);
 //
 ////        log.debug(Constants.DEBUG_MINION + " Player enteredRoom, already on the database=" + toString());
 ////        log.debug(Constants.DEBUG_MINION + " Player enteredRoom, hierarch=" + ServerContext.minionHierarchy);
@@ -1011,7 +1011,7 @@ public class ServerLogic
 ////                        _room.ctrl.props.set(Codes.ROOM_PROP_MINION_HIERARCHY, minionsBytes);
 //
 //                        room.playerEntered(player);
-//                        ServerContext.lineage.playerEnteredRoom(player, room);
+//                        ServerContext.server.lineage.playerEnteredRoom(player, room);
 //                        player.updateAvatarState();
 //                    }
 //                    else {
@@ -1029,7 +1029,7 @@ public class ServerLogic
 ////        setIntoRoomProps();
 //
 //        log.debug(VConstants.DEBUG_MINION + "after _room.playerEntered");
-//        log.debug(VConstants.DEBUG_MINION + "hierarchy=" + ServerContext.lineage);
+//        log.debug(VConstants.DEBUG_MINION + "hierarchy=" + ServerContext.server.lineage);
 //
 //    }
 
@@ -1153,8 +1153,8 @@ public class ServerLogic
 
             if (preyIsPlayer && preyPlayer != null) {
                 //Check if we don't have a sire.  The prey vampire becomes it.
-                if (!ServerContext.lineage.isMemberOfLineage(pred.playerId)) {
-                    if (ServerContext.lineage.isMemberOfLineage(preyId)) {
+                if (!ServerContext.server.lineage.isMemberOfLineage(pred.playerId)) {
+                    if (ServerContext.server.lineage.isMemberOfLineage(preyId)) {
                         makeSire(pred,  preyPlayer.playerId);
                         pred.addFeedback(Codes.POPUP_PREFIX + preyPlayer.name +
                             " has become your sire!");
@@ -1166,7 +1166,7 @@ public class ServerLogic
                         //Award to sires two levels up
                         var numberOfGrandGenerationsToAward :int = 2;
 
-                        var currentSireId :int = ServerContext.lineage.getSireId(
+                        var currentSireId :int = ServerContext.server.lineage.getSireId(
                             preyPlayer.playerId);
                         var generations :int = 1;
 
@@ -1184,18 +1184,18 @@ public class ServerLogic
                                     Codes.TASK_ACQUIRE_PROGENY_SCORE/10);
 
                             }
-                            currentSireId = ServerContext.lineage.getSireId(currentSireId);
+                            currentSireId = ServerContext.server.lineage.getSireId(currentSireId);
                             generations++;
                         }
 
-//                        var preySireId :int = ServerContext.lineage.getSireId(preyPlayer.playerId);
+//                        var preySireId :int = ServerContext.server.lineage.getSireId(preyPlayer.playerId);
 //
 //
 //
 //                        if (preyPlayer.sire
 //
 //                        for each(var sireId :int in
-//                            ServerContext.lineage.getAllSiresAndGrandSires(pred.playerId).toArray()) {
+//                            ServerContext.server.lineage.getAllSiresAndGrandSires(pred.playerId).toArray()) {
 //
 //                            if (srv.isPlayer(sireId)
 //                                && srv.getPlayer(sireId).room != null) {

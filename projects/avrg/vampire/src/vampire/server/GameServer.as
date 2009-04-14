@@ -9,6 +9,7 @@ import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.simplegame.ObjectDB;
+import com.whirled.contrib.simplegame.ObjectMessage;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.getTimer;
@@ -38,8 +39,8 @@ public class GameServer extends ObjectDB
         _lastTickTime = _startTime;
         setInterval(tick, SERVER_TICK_UPDATE_MILLISECONDS);
 
-        ServerContext.lineage = new LineageServer(this);
-        addObject(ServerContext.lineage);
+//        ServerContext.lineage = new LineageServer2(this);
+        addObject(new LineageServer2(this));
 
 //        addObject(new LineageServer2(null));
 
@@ -57,6 +58,11 @@ public class GameServer extends ObjectDB
     public function get control () :AVRServerGameControl
     {
         return _ctrl;
+    }
+
+    public function get lineage () :LineageServer2
+    {
+        return getObjectNamed(LineageServer2.NAME) as LineageServer2;
     }
 
     /**
@@ -189,7 +195,13 @@ public class GameServer extends ObjectDB
             _ctrl.doBatch(function () :void {
                 var player :PlayerData = new PlayerData(pctrl);
                 _players.put(playerId, player);
+
+                //Tell the lineage that there is a new player.
+                sendMessageToNamedObject(
+                    new ObjectMessage(LineageServer2.MESSAGE_PLAYER_JOINED_GAME, player),
+                    LineageServer2.NAME);
             });
+
 
 
             log.debug("Sucessfully created Player object.");

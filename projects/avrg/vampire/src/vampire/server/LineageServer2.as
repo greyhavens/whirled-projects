@@ -1,315 +1,109 @@
 package vampire.server
 {
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.HashMap;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
+import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
-
-import flash.utils.Dictionary;
+import com.whirled.avrg.PlayerSubControlServer;
+import com.whirled.contrib.simplegame.ObjectMessage;
 
 import vampire.data.Codes;
 import vampire.data.Lineage;
 
 
-public class LineageServer2 extends LineageServer
+public class LineageServer2 extends Lineage
 {
     public function LineageServer2(vserver :GameServer)
     {
-        super(vserver);
         _vserver = vserver;
+//        registerListener(vserver.control.game, AVRGameControlEvent.PLAYER_JOINED_GAME,
+//            playerJoinedGame);
+    }
+
+//    protected function playerJoinedGame (evt :AVRGameControlEvent) :void
+//    {
+//        log.info("playerJoinedGame() " + evt);
+//        var playerId :int = int(evt.value);
+//
+//        var pctrl :PlayerSubControlServer = _vserver.control.getPlayer(playerId);
+//        if (pctrl == null) {
+//            log.error("playerJoinedGame, Could not get PlayerSubControlServer for player!");
+//            return;
+//        }
+//
+//        //Get the sire, grandsire, children and grandchildren.
+//        //They will come in at an unknown later time, so we'll likely have to send
+//        //multiple updates.
+//
+//
+//
+//    }
+
+    /**
+    * Update the relevant players online, and offline.
+    *
+    */
+    protected function playerJoined (player :PlayerData) :void
+    {
+        log.error("playerJoined", "player", player);
+        if (player == null) {
+            log.error("playerJoinedOrChanged", "player", player,
+                " but no PlayerData.  Maybe we are ahead of the game server?");
+            return;
+        }
+
+        log.error("playerJoined, setting name", "player.name", player.name);
+        setPlayerName(player.playerId, player.name);
+        //Don't load this player again in the current session
+        _playersLoadedFromDB.add(player.playerId);
+        //First add the player as progeny to sire, whether online or offline
+        if (player.sire != 0) {
+            log.error("playerJoined, setting sire", "player.name", player.sire);
+            setPlayerSire(player.playerId, player.sire);
+            if (!_playersLoadedFromDB.contains(player.sire)) {
+                loadOfflinePlayer(player.sire);
+            }
+        }
+        //Then add the progeny to the lineage,
+        for each (var progeny :int in player.progenyIds) {
+            setPlayerSire(progeny, player.playerId);
+            if (!_playersLoadedFromDB.contains(progeny)) {
+                loadOfflinePlayer(progeny);
+            }
+        }
+        _playerIdsResendLineage.add(player.playerId);
     }
 
     /**
+    * The server tells us when a new PlayerData object is created.
+    */
+    override protected function receiveMessage (msg :ObjectMessage) :void
+    {
+        if (msg.name == MESSAGE_PLAYER_JOINED_GAME) {
+            playerJoined(msg.data as PlayerData);
+        }
+    }
+
+
+    /**
     * Updates on server ticks.  This should only be in the order of a few updates per second.
+    * We send new Lineages to players with new data in their linages.
     *
     */
     override protected function update(dt:Number) :void
     {
-        //Check players to update.  If they have a room, update the room and remove the playerId
-        var i :int = 0;
-        while(i < _playerIdsNeedingUpdate.length) {
-            var playerId :int = int(_playerIdsNeedingUpdate[i]);
-            //If the the player is offline, we don't want to update
-            if(!_vserver.isPlayer(playerId)) {
-                _playerIdsNeedingUpdate.splice(i, 1);
-                continue;
-            }
-            var player :PlayerData = _vserver.getPlayer(playerId);
-            if(player != null && player.room != null) {
-                _roomsNeedingUpdate.add(player.room.roomId);
-                _playerIdsNeedingUpdate.splice(i, 1);
-                continue;
-            }
-            //Somehow the player doesn't have a room, so we'll keep it in the update list for now.
-            i++;
-        }
-
-       var roomsFinishedUpdating :Array = new Array();
-
-        _roomsNeedingUpdate.forEach(function(roomId :int) :void {
-
-            var room :Room = _vserver.getRoom(roomId);
-            if(room != null && room.ctrl != null) {
-                var finished :Boolean = updateIntoRoomProps(room);
-                if(finished) {
-                    roomsFinishedUpdating.push(roomId);
-                }
+        _playerIdsResendLineage.forEach(function (playerId :int) :void {
+            if (_vserver.isPlayer(playerId)) {
+                var lineage :Lineage = getSubLineage(playerId, 1, 2);
+                log.debug("Setting into players lineage", "playerId", playerId,
+                    "lineage", lineage);
+                _vserver.getPlayer(playerId).lineage = lineage.toBytes();
+//                var msg :LineageMsg = new LineageMsg(playerId, lineage);
+//                _vserver.getPlayer(playerId).ctrl.sendMessage(LineageMsg.NAME, msg.toBytes());
             }
         });
-
-
-        for each(var finishedRoomId :int in roomsFinishedUpdating) {
-            _roomsNeedingUpdate.remove(finishedRoomId);
-        }
-    }
-
-    override protected function isPlayerDataEqual(player :PlayerData) :Boolean
-    {
-        if(player.sire != getSireId(player.playerId)) {
-            return false;
-        }
-//        var minionsInThisHierarchy :HashSet = getMinionIds(player.playerId);
-//        var minionsStoredInPlayerProps :Array = player.minions;
-//        if(minionsInThisHierarchy.size() != minionsStoredInPlayerProps.length) {
-//            return false;
-//        }
-//
-//        for each(var minionId :int in minionsStoredInPlayerProps) {
-//            if(!minionsInThisHierarchy.contains(minionId)) {
-//                return false;
-//            }
-//        }
-        return true;
-    }
-
-
-
-    override protected function loadPlayerFromDB(playerId :int) :void
-    {
-        log.debug(" loadPlayerFromDB(" + playerId + ")...");
-        ServerContext.ctrl.loadOfflinePlayer(playerId,
-            function (props :OfflinePlayerPropertyControl) :void {
-                var name :String = String(props.get(Codes.PLAYER_PROP_NAME));
-                var sireId :int = int(props.get(Codes.PLAYER_PROP_SIRE));
-                log.debug(" loadPlayerFromDB(), props.getUserProps(), name=" + name + ", sire=" + sireId);
-
-                setPlayerName(playerId, name);
-                setPlayerSire(playerId, sireId);
-                loadConnectingPlayersFromPropsRecursive(sireId);
-
-                updatePlayer(playerId);
-//                updateIntoRoomProps();
-            },
-            function (failureCause :Object) :void {
-                log.warning("Eek! Sending message to offline player failed!", "cause", failureCause); ;
-            });
-    }
-
-
-    /**
-    * Called by Player.  That way, we are sure that Player has updated its room member.
-    */
-    override public function playerEnteredRoom(player :PlayerData, room :Room) :void
-    {
-        log.debug(" playerEnteredRoom(), hierarchy=" + ServerContext.lineage.toString());
-
-        if(player == null || room == null) {
-            log.error(" playerEnteredRoom(), player == null || room == null");
-            return;
-        }
-
-//        var avatarname :String = player.name;
-
-        var isHierarchyAltered :Boolean = false;
-
-        if (!isPlayer(player.playerId)) {
-            isHierarchyAltered = true;
-            log.debug(" playerEnteredRoom, player not in hierarchy");
-        }
-        else if (!_playerId2Name.containsKey(player.playerId) ||
-            _playerId2Name.get(player.playerId) != player.name) {
-            isHierarchyAltered = true;
-            log.debug(" playerEnteredRoom, player name changed");
-        }
-        else if (!isPlayerDataEqual(player)) {
-            isHierarchyAltered = true;
-            log.debug(" playerEnteredRoom, player data changed");
-        }
-        else if (player.sire > 0 && !isPlayerName(player.sire)){
-            isHierarchyAltered = true;
-            log.debug(" playerEnteredRoom, sire has no name");
-        }
-
-        if (isHierarchyAltered) {//Something doesn't match.  Update all the data, and propagate
-            //Update names
-            setPlayerName(player.playerId,  player.name);
-
-            //Update hierarchy data
-            setPlayerSire(player.playerId, player.sire);
-
-            log.debug(" before we load the sire data(just added this player), the hierarchy is=" + this.toString());
-            loadConnectingPlayersFromPropsRecursive(player.sire);
-            updatePlayer(player.playerId);
-        }
-        else {
-            log.debug(" hierarchy is not altered, sending unchanged.");
-        }
-
-    }
-
-    override protected function updateRoom(roomId :int) : void
-    {
-        _roomsNeedingUpdate.add(roomId);
-    }
-
-    /**
-    * Mark this player and all sires and minions for an update.  Note, the update does not occur
-    * in this method, it simply *marks* this player and appropriate links for an update.  The
-    * actual writing to room props occurs in the update method, so that the amount of network
-    * traffic can be controlled.
-    */
-    override public function updatePlayer(playerId :int) : void
-    {
-        var relatedPlayersToUpdate :Array = new Array();
-
-        getAllDescendents(playerId).forEach(function(minionId :int) :void {
-            relatedPlayersToUpdate.push(minionId);
-        });
-
-        getAllSiresAndGrandSires(playerId).forEach(function(sireId :int) :void {
-            relatedPlayersToUpdate.push(sireId);
-        });
-
-        relatedPlayersToUpdate.push(playerId);
-
-        for each(var idToUpdate :int in relatedPlayersToUpdate) {
-            if(_vserver.isPlayer(idToUpdate)) {
-                var player :PlayerData = _vserver.getPlayer(idToUpdate);
-                //If the player is in a room, update the room
-//                if(player != null && player.room != null) {
-//                    updateRoom(player.room.roomId);
-//                }
-//                //Otherwise, store the player to update at a later time, hopefully then with
-//                //an associated room.
-//                else {
-                    _playerIdsNeedingUpdate.push(idToUpdate);
-//                }
-            }
-            else {
-                //No logging, as this could happen a lot as players log on, then log off.
-//                log.debug("updatePlayer(), but no Player in server", "playerId", idToUpdate);
-            }
-        }
-
-
-    }
-
-
-    override protected function updateIntoRoomProps(room :Room) :Boolean
-    {
-        var finished :Boolean = true;
-        try {
-            if(room != null && room.ctrl != null && room.ctrl.isConnected()
-                && room.players != null && room.players.size() > 0) {
-
-                log.debug("updateIntoRoomProps(roomId=" + room.roomId + ")...");
-                //Get the subtree containing all trees of all players in the room
-                var playerTree :HashMap = new HashMap();
-                log.debug("updateIntoRoomProps(), subtree containing all trees of all players in the room");
-                room.players.forEach(function(playerId :int, player :PlayerData) :void {
-                    getMapOfSiresAndDescendents(player.playerId, playerTree);
-                });
-
-                //Get the existing subtree
-                var roomDict :Dictionary = room.ctrl.props.get(Codes.ROOM_PROP_LINEAGE) as Dictionary;
-                if (roomDict == null) {
-                    roomDict = new Dictionary();
-                    room.ctrl.props.set(Codes.ROOM_PROP_LINEAGE, roomDict);
-                }
-
-//                //Update the playerId keys
-//                var allPlayerIdsOld :Array = room.ctrl.props.get(Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS) as Array;
-//                var allPlayerIdsNew :Array = playerTree.keys();
-//                if (allPlayerIdsNew == null || allPlayerIdsOld == null || !ArrayUtil.equals(allPlayerIdsNew, allPlayerIdsOld)) {
-//                    log.debug("updateIntoRoomProps(), set(" +Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS + ", " +allPlayerIdsNew + ")");
-//                    room.ctrl.props.set(Codes.ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS, allPlayerIdsNew);
-//                }
-
-                //Remove keys not present anymore
-                var keysToRemove :Array = new Array();
-                for (var key:Object in roomDict) {//Where key==playerId
-                    if(!playerTree.containsKey(key)) {
-                        keysToRemove.push(key);
-                    }
-                }
-                for each(var playerIdToRemove :int in keysToRemove) {
-                    delete roomDict[playerIdToRemove];
-                }
-
-                var updateCount :int = 0;
-                //Update the room props for individual player data
-                playerTree.forEach(function(playerId :int, nameAndSire :Array) :void {
-
-                    if(updateCount >= MAX_LINEAGE_NODES_WRITTEN_TO_A_ROOM_PROPS_PER_UPDATE) {
-                        finished = false;
-                        return;
-                    }
-
-                    if (!ArrayUtil.equals(roomDict[playerId], nameAndSire)) {
-                        updateCount++;
-                        log.debug("updateIntoRoomProps(), setIn(" +Codes.ROOM_PROP_LINEAGE + ", " +playerId + "=" +  nameAndSire + ")");
-                        room.ctrl.props.setIn(Codes.ROOM_PROP_LINEAGE, playerId, nameAndSire);
-                    }
-                });
-
-            }
-            else {
-                log.debug("updateIntoRoomProps(roomId=" + room.roomId + ") failed");
-            }
-        }catch (err :Error) {
-            log.error("Problem in updateIntoRoomProps()", "room", room);
-            log.error(err.getStackTrace());
-        }
-        return finished;
-    }
-
-
-
-
-    /**
-    * We assume that if the player name is present, they have been loaded (and all
-    * their children and sire).
-    *
-    * ATM we only load sires and upwards.
-    *
-    */
-    override protected function loadConnectingPlayersFromPropsRecursive(playerId :int) :void
-    {
-        //If our name is present, we assume that we are already loaded.
-        if(isPlayerName(playerId)) {
-            return;
-        }
-
-        if(playerId <= 0) {
-            return;
-        }
-
-        if(isPlayerName(playerId)) {
-            //Player already loaded
-            return;
-        }
-        else if(_vserver.isPlayer(playerId)) {
-            var playerName :String = _vserver.getPlayer(playerId).name;
-            var sireId :int = _vserver.getPlayer(playerId).sire;
-            setPlayerName(playerId, playerName);
-            setPlayerSire(playerId, sireId);
-            loadConnectingPlayersFromPropsRecursive(sireId);
-        }
-        else {
-            loadPlayerFromDB(playerId);
-        }
-
+        _playerIdsResendLineage.clear();
     }
 
     override public function toString():String
@@ -317,56 +111,131 @@ public class LineageServer2 extends LineageServer
         return super.toString();
     }
 
-
+    //We use this opportunity to update offline (and online players) progeny data.
     override public function setPlayerSire(playerId :int, sireId :int) :void
     {
-        super.setPlayerSire(playerId, sireId);
-        if (getProgenyCount(sireId) <= 25) {
-            updateProgenyIds(sireId);
+        //Only update the lineage and offline props if we haven't loaded them before
+        if (getSireId(playerId) != sireId) {
+            super.setPlayerSire(playerId, sireId);
+            updateProgenyIds(sireId, playerId);
+            offlinePlayerFinishedLoading(playerId);
         }
     }
 
-    override protected function updateProgenyIds (sireId :int) :void
+    protected function loadOfflinePlayer (playerId :int) :void
+    {
+        if (playerId == 0) {
+            return;
+        }
+
+        if (_playersLoadedFromDB.contains(playerId)) {
+            return;
+        }
+
+        if (_vserver.isPlayer(playerId)) {
+            return;
+        }
+
+        log.debug("loadOfflinePlayer", "playerId", playerId, "begin");
+
+        ServerContext.ctrl.loadOfflinePlayer(playerId,
+            function (props :OfflinePlayerPropertyControl) :void {
+                var progenyIds :Array = props.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array;
+                var sireId :int = props.get(Codes.PLAYER_PROP_SIRE) as int;
+                var name :String = props.get(Codes.PLAYER_PROP_NAME) as String;
+
+                _playersLoadedFromDB.add(playerId);
+                log.debug("loadOfflinePlayer", "playerId", playerId, "in offline props");
+                setPlayerSire(playerId, sireId);
+                setPlayerName(playerId, name);
+                for each (var progenyId :int in progenyIds) {
+                    setPlayerSire(progenyId, playerId);
+                }
+
+                offlinePlayerFinishedLoading(playerId);
+
+            },
+            function (failureCause :Object) :void {
+                log.warning("Eek! Sending message to offline player failed!", "cause",
+                    failureCause);
+            });
+    }
+
+    /**
+    * When an offline player finishes loading, we might want to
+    * load it's sire or childrens if there are players who need
+    * that data.
+    */
+    protected function offlinePlayerFinishedLoading (playerId :int) :void
+    {
+        log.debug("offlinePlayerFinishedLoading", "playerId", playerId);
+        log.debug("offlinePlayerFinishedLoading", "lineage", this);
+        if (isVisibleToOnlinePlayer(playerId)) {
+            loadOfflinePlayer(getSireId(playerId));
+
+            for each (var progenyId :int in getProgenyIds(playerId)) {
+                loadOfflinePlayer(progenyId);
+            }
+        }
+
+        //Resend the lineage to the sire and grandsire.
+        for each (var sire :int in getAllSiresAndGrandSires(playerId, 2)) {
+            _playerIdsResendLineage.add(sire);
+        }
+    }
+
+    /**
+    * When an offline player has loaded it's data into the Lineage, we also load
+    * it's sire/children, if we they are visible to any online players.
+    *
+    */
+    protected function isVisibleToOnlinePlayer (playerId :int) :Boolean
+    {
+        var sireId :int = getSireId(playerId);
+        if (sireId != 0) {
+            if (_vserver.isPlayer(sireId)) {
+                return true;
+            }
+
+            var grandSireId :int = getSireId(sireId);
+            if (_vserver.isPlayer(grandSireId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+    * Not all players will have the correct progeny ids, since we started the game
+    * only storing sireIds.  So we update progeny ids when a new player logs on.
+    */
+    protected function updateProgenyIds (sireId :int, newProgenyId :int) :void
     {
         if (sireId == 0) {
             return;
         }
 
-        var progenyIds :Array = getProgenyIds(sireId).toArray();
-        progenyIds = progenyIds.sort();
-
         if (_vserver.isPlayer(sireId)) {
             var sire :PlayerData = _vserver.getPlayer(sireId);
-            sire.updateProgeny(progenyIds);
+            sire.addProgeny(newProgenyId);
         }
         else {//Add to offline database
             ServerContext.ctrl.loadOfflinePlayer(sireId,
                 function (props :OfflinePlayerPropertyControl) :void {
                     var oldProgenyIds :Array = props.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array;
 
-                    log.debug("Adding progenyId to offline sire", "sireId", sireId,
-                        "oldProgenyIds", oldProgenyIds, "newprogenyIds", progenyIds);
-                    if (ArrayUtil.equals(progenyIds, oldProgenyIds)) {
-                        log.debug("same, doing nothing");
+                    if (oldProgenyIds == null) {
+                        oldProgenyIds = new Array();
+                    }
+
+                    if (ArrayUtil.contains(oldProgenyIds, newProgenyId)) {
                         return;
                     }
-                    var name :String = props.get(Codes.PLAYER_PROP_NAME) as String;
 
-
-                    if (oldProgenyIds == null) {
-                        oldProgenyIds = [];
-                    }
-
-                    for each(var newProgenyId :int in progenyIds) {
-                        if(!ArrayUtil.contains(oldProgenyIds, newProgenyId)) {
-                            oldProgenyIds.push(newProgenyId);
-                            oldProgenyIds = oldProgenyIds.sort();
-                            if(oldProgenyIds.length >= 25) {
-                                break;
-                            }
-                        }
-                    }
-                    log.debug("name Setting " + Codes.PLAYER_PROP_PROGENY_IDS + "=" + oldProgenyIds);
+                    oldProgenyIds.push(newProgenyId);
+                    oldProgenyIds.sort();
+                    log.debug("Setting " + Codes.PLAYER_PROP_PROGENY_IDS + "=" + oldProgenyIds);
                     props.set(Codes.PLAYER_PROP_PROGENY_IDS, oldProgenyIds.slice());
                 },
                 function (failureCause :Object) :void {
@@ -376,18 +245,24 @@ public class LineageServer2 extends LineageServer
         }
     }
 
+    override public function get objectName () :String
+    {
+        return NAME;
+    }
 
-
-//    protected var _vserver :GameServer;
-//    protected var _roomsNeedingUpdate :HashSet = new HashSet();
-//    protected var _playerIdsNeedingUpdate :Array = new Array();
+    protected var _vserver :GameServer;
 
     /**
-    * The lineage will be very large for some players.  To prevent a massive dump of a large lineage
-    * into room props, the lineage will be incrementally sent.  Each update, a small chunk of the
-    * linage will be sent, without any regard for the order or structure (yet).
+    * Once a player is loaded from offline, they don't need to be loaded again.
+    * Record their id here to remember.
     */
-    public static const MAX_LINEAGE_NODES_WRITTEN_TO_A_ROOM_PROPS_PER_UPDATE :int = 100;
+    protected var _playersLoadedFromDB :HashSet = new HashSet();
+
+    protected var _playerIdsResendLineage :HashSet = new HashSet();
+
+    public static const MESSAGE_PLAYER_JOINED_GAME :String = "Message: Player Joined";
+    public static const NAME :String = "LineageServer";
+
     protected static const log :Log = Log.getLog(LineageServer2);
 }
 }

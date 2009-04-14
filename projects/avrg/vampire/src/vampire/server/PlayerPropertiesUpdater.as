@@ -64,7 +64,7 @@ public class PlayerPropertiesUpdater
         }
     }
 
-    protected function isByteArraysDifferent (b1 :ByteArray, b2 :ByteArray) :Boolean
+    public static function isByteArraysDifferent (b1 :ByteArray, b2 :ByteArray) :Boolean
     {
         if ((b1 == null && b2 != null) || (b1 != null && b2 == null)) {
             return true;
@@ -86,7 +86,7 @@ public class PlayerPropertiesUpdater
         return false;
     }
 
-    protected function isArraysDifferent (a1 :Array, a2 :Array) :Boolean
+    protected static function isArraysDifferent (a1 :Array, a2 :Array) :Boolean
     {
         return !ArrayUtil.equals(a1, a2);
     }

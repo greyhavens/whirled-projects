@@ -5,12 +5,12 @@ import com.whirled.net.NetConstants;
 public class Codes
 {
 
-    public static function playerRoomPropKey (playerId :int) :String
-    {
-        return Codes.ROOM_PROP_PREFIX_PLAYER_DICT + playerId;
-    }
+//    public static function playerRoomPropKey (playerId :int) :String
+//    {
+//        return Codes.ROOM_PROP_PREFIX_PLAYER_DICT + playerId;
+//    }
 
-    public static const ROOM_PROP_LINEAGE :String = "hierarchy";
+//    public static const ROOM_PROP_LINEAGE :String = "hierarchy";
     public static const ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE :String = "noFeedingPlayers";
     public static const ROOM_PROP_PRIMARY_PREDS :String = "primaryPreds";
     public static const ROOM_PROP_FEEDBACK :String = "feedback";
@@ -67,13 +67,13 @@ public class Codes
     /**
     * List of progeny for progeny trophies
     */
-    public static const PLAYER_PROP_PROGENY_IDS :String = NetConstants.makePersistent("minionIds");
+    public static const PLAYER_PROP_PROGENY_IDS :String = NetConstants.makePersistent("progeny");
 
 
     /**
-    * List of progeny for progeny trophies
+    * Players own sub-lineage.
     */
-    public static const PLAYER_PROP_LINEAGE :String = NetConstants.makePersistent("lineage");
+    public static const PLAYER_PROP_LINEAGE :String = "lineage";
 
     public static const PLAYER_PROP_STATE :String = "state";
 
@@ -92,6 +92,7 @@ public class Codes
                                                 PLAYER_PROP_BLOODBOND,
                                                 PLAYER_PROP_BLOODBOND_NAME,
                                                 PLAYER_PROP_FEEDING_DATA,
+                                                PLAYER_PROP_PROGENY_IDS,
                                                 PLAYER_PROP_LINEAGE,
                                                 PLAYER_PROP_INVITES,
                                               ];
@@ -103,27 +104,27 @@ public class Codes
      * of a player in a room (currently health and max health). The full room property name
      * is constructed by appending the player's numerical id.
      */
-    public static const ROOM_PROP_PREFIX_PLAYER_DICT :String = "p";
+//    public static const ROOM_PROP_PREFIX_PLAYER_DICT :String = "p";
 
     /**
     * Attributes stored in the room properties for each player.  Each entry in the array
     * corresponds to the index of the player dictionary.
     *
     */
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD :int = 0;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_NAME :int = 1;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME :int = 2;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE :int = 3;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBLOOM_COUNTDOWN :int = 4;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_SIRE :int = 5;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED :int = 6;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE :int = 7;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_XP :int = 8;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_INVITES :int = 9;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_ID :int = 10;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_LOCATION :int = 11;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE:int = 12;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT :int = 15;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD :int = 0;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_NAME :int = 1;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME :int = 2;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE :int = 3;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBLOOM_COUNTDOWN :int = 4;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_SIRE :int = 5;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED :int = 6;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_STATE :int = 7;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_XP :int = 8;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_INVITES :int = 9;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_ID :int = 10;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_LOCATION :int = 11;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_AVATAR_STATE:int = 12;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT :int = 15;
 
     /**Award coins on completion of feeding.*/
     public static const TASK_FEEDING_ID :String = "taskFeeding";
