@@ -50,15 +50,17 @@ public class LoadBalancerServer extends SimObject
             log.debug("update", "roomNames", roomNames);
 //            var msgBytes :ByteArray = roomInfoMessage.toBytes();
 
+            var roomInfoMessage :LoadBalancingMsg =
+                new LoadBalancingMsg(0, roomIds, roomNames);
+            var bytes :ByteArray = roomInfoMessage.toBytes();
+
             _playersRequestedRoomInfo.forEach(function (playerId :int) :void {
                 //Only handle the message if the originating player exists.
                 try {
                     if (_server.isPlayer(playerId)) {
                         var player :PlayerData = _server.getPlayer(playerId);
-                        var roomInfoMessage :LoadBalancingMsg =
-                            new LoadBalancingMsg(player.playerId, roomIds, roomNames);
                         log.debug("Sending " + player.name + " " + roomInfoMessage);
-                        player.ctrl.sendMessage(LoadBalancingMsg.NAME, roomInfoMessage.toBytes());
+                        player.ctrl.sendMessage(LoadBalancingMsg.NAME, bytes);
                     }
                 }
                 catch(err :Error) {
