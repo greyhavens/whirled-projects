@@ -55,6 +55,7 @@ public class LoadBalancerClient extends SceneObject
         for (var ii :int = 0; ii < 4; ++ii) {
             var ground :MovieClip = _panel["ground_0" + (ii + 1)] as MovieClip;
             registerListener(ground, MouseEvent.CLICK, _roomMoveFunctions[ii]);
+            registerListener(ground, MouseEvent.CLICK, deactivate);
             TextField(ground["room_name"]).text = "";
         }
     }
@@ -68,6 +69,9 @@ public class LoadBalancerClient extends SceneObject
     {
         //Send a data request to the server we we init.
         ClientUtil.fadeInSceneObject(this, _parent);
+        if (_parent == null) {
+            log.error("activate", "_parent", _parent);
+        }
 
         var loc :Point = _ctrl.local.locationToPaintable(0.5, 0, 0);
         x = loc.x;
@@ -76,7 +80,6 @@ public class LoadBalancerClient extends SceneObject
         if (_timeSinceLoadMessageSent >= MIN_TIME_BETWEEN_MESSAGES) {
             _ctrl.agent.sendMessage(LoadBalancingMsg.NAME, new LoadBalancingMsg().toBytes());
             _timeSinceLoadMessageSent = 0;
-//            _isWaitingForRoomDataMessage = true;
         }
         var relocationText :TextField = _panel["relocation_text"] as TextField;
         if (ClientContext.getAvatarIds().length == 1) {
@@ -103,10 +106,10 @@ public class LoadBalancerClient extends SceneObject
     protected function handleMessageReceived (e :MessageReceivedEvent) :void
     {
         if (e.name == LoadBalancingMsg.NAME) {
-
-//            _isWaitingForRoomDataMessage = false;
             var msg :LoadBalancingMsg =
                 ClientContext.msg.deserializeMessage(e.name, e.value) as LoadBalancingMsg;
+
+            log.debug("handleMessageReceived", "msg", msg);
 
             if (msg != null) {
                 _roomIds = msg.roomIds;
@@ -127,49 +130,38 @@ public class LoadBalancerClient extends SceneObject
         }
     }
 
-    protected function showRoomsAsChatLinks (roomIds :Array, roomNames :Array) :void
-    {
-        _ctrl.local.feedback("Click a room link to hunt other players:");
-        for (var ii :int = 0; ii < roomIds.length; ++ii) {
-            if (VConstants.MODE_DEV) {
-                _ctrl.local.feedback(roomNames[ii] + ": http://localhost:8080/#world-s" + roomIds[ii]);
-            }
-            else {
-                _ctrl.local.feedback(roomNames[ii] + ": http://www.whirled.com/#world-s" + roomIds[ii]);
-            }
-        }
-    }
+//    protected function showRoomsAsChatLinks (roomIds :Array, roomNames :Array) :void
+//    {
+//        _ctrl.local.feedback("Click a room link to hunt other players:");
+//        for (var ii :int = 0; ii < roomIds.length; ++ii) {
+//            if (VConstants.MODE_DEV) {
+//                _ctrl.local.feedback(roomNames[ii] + ": http://localhost:8080/#world-s" + roomIds[ii]);
+//            }
+//            else {
+//                _ctrl.local.feedback(roomNames[ii] + ": http://www.whirled.com/#world-s" + roomIds[ii]);
+//            }
+//        }
+//    }
 
     protected function updateUI () :void
     {
-        ClientUtil.detach(_panel);
-
-
-//        ClientUtil.fadeInSceneObject(this);
-
         //Change the text if there is no-one in the room.
         if (_ctrl.room.getPlayerIds().length <= 1) {
             TextField(_panel["relocation_text"]).text = ""
                  + "Choose another hunting ground...";
         }
 
-
-
         for (var ii :int = 0; ii < 4; ++ii) {
 
             removeEventListener(MouseEvent.CLICK, _roomMoveFunctions[ii]);
 
             var roomId :int = _roomIds[ii];
-
             var ground :MovieClip = _panel["ground_0" + (ii + 1)] as MovieClip;
 
             if (ground != null) {
                 addGlowFilter(ground);
                 if (ii <= _roomNames.length - 1) {
-
                     TextField(ground["room_name"]).text = _roomNames[ii];
-//                    Command.bind(ground, MouseEvent.CLICK, VampireController.MOVE, roomId);
-//                    registerListener(ground, MouseEvent.CLICK, deactivate);
                 }
                 else {
                     TextField(ground["room_name"]).text = "";
@@ -178,22 +170,7 @@ public class LoadBalancerClient extends SceneObject
             else {
                 log.error("ground_0" + (ii + 1) + " null");
             }
-
         }
-
-    }
-
-
-
-    override protected function addedToDB () :void
-    {
-        super.addedToDB();
-//        activate();
-//        if (VConstants.LOCAL_DEBUG_MODE) {
-//            _roomIds = [1,2,3,4];
-//            _roomNames = ["1", "2 dsaj dflasdfj", "dfdfgdfg", "56456456456"];
-//            updateUI();
-//        }
     }
 
     override public function get displayObject () :DisplayObject
@@ -240,12 +217,6 @@ public class LoadBalancerClient extends SceneObject
         }
     }
 
-//    public function get loadBalancingMsg () :LoadBalancingMsg
-//    {
-//        return _loadBalancingMsg;
-//    }
-
-
     protected var _ctrl :AVRGameControl;
     protected var _roomIds :Array = [];
     protected var _roomNames :Array = [];
@@ -257,10 +228,6 @@ public class LoadBalancerClient extends SceneObject
     protected var _timeSinceLoadMessageSent :Number = 0;
     protected static const MIN_TIME_BETWEEN_MESSAGES :Number = 5;
 
-//    protected var _isWaitingForRoomDataMessage :Boolean = false;
-
-//    protected var _loadBalancingMsg :LoadBalancingMsg;
-//    public static const MESSAGE_ROOMIDS_AND_POPULATIONS :String = "roomIdsAndPlayers";
     public static const MESSAGE_ACTIVATE :String = "activateLoadBalancer";
     public static const NAME :String = "LoadBalancerClient";
     protected static const log :Log = Log.getLog(LoadBalancerClient);
