@@ -100,7 +100,7 @@ public class GameView extends Sprite
             var xpos :int = _board.getPixelSize() + 2*Content.BOARD_BORDER + 25;
             var help :SimpleButton = _ctx.content.makeButton("How to Play");
             help.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-                showHelp();
+                _ctx.top.showHelp();
             });
             help.x = xpos;
             help.y = 50;
@@ -151,7 +151,7 @@ public class GameView extends Sprite
 
         var seenHelp :Boolean = (cookie["seen_help"] as Boolean);
         if (!seenHelp) {
-            showHelp();
+            _ctx.top.showHelp();
             cookie["seen_help"] = true;
             _ctx.control.player.setCookie(cookie)
         }
@@ -351,11 +351,6 @@ public class GameView extends Sprite
         _input.selectable = true;
         _input.text = "";
         focusInput(true);
-    }
-
-    protected function showHelp () :void
-    {
-        HelpView.show(_ctx);
     }
 
     protected function submitWord () :void
