@@ -14,6 +14,8 @@ public class Codes
     public static const ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE :String = "noFeedingPlayers";
     public static const ROOM_PROP_PRIMARY_PREDS :String = "primaryPreds";
     public static const ROOM_PROP_FEEDBACK :String = "feedback";
+    //Keep player lineages in room props
+    public static const ROOM_PROP_PLAYER_LINEAGE :String = "playerLineage";
 
 
 
