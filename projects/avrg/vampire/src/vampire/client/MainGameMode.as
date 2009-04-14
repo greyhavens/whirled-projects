@@ -152,11 +152,11 @@ public class MainGameMode extends AppMode
             FeedingClient.init(modeSprite, ClientContext.ctrl);
         }
 
-        _events.registerListener(ClientContext.ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
+        registerListener(ClientContext.ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessageReceived);
 
         //Listen for the player leaving the room, shut down the client then
-        _events.registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.LEFT_ROOM,
+        registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.LEFT_ROOM,
             handlePlayerLeft);
 
         //Create the overlay for individual avatars
@@ -192,7 +192,7 @@ public class MainGameMode extends AppMode
 
     protected function handleStartFeedingClientMsg (msg :StartFeedingClientMsg) :void
     {
-//        log.info("Received StartClient message", "gameId", gameId);
+        log.info("handleStartFeedingClientMsg", "msg", msg);
 
         if (_feedingGameClient != null) {
             log.warning("Received StartFeeding message while already in game");
@@ -206,7 +206,10 @@ public class MainGameMode extends AppMode
                     ClientContext.model.playerFeedingData, onGameComplete);
             }*/
             _feedingGameClient = FeedingClient.create(msg.gameId,
-                    ClientContext.model.playerFeedingData, onGameComplete);
+                                                      ClientContext.model.playerFeedingData,
+                                                      onGameComplete,
+                                                      msg.scoresDaily,
+                                                      msg.scoresMonthly);
 
             modeSprite.addChildAt(_feedingGameClient, 0)
 

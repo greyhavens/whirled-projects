@@ -190,68 +190,69 @@ public class AdminPanel extends DraggableObject
     {
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LEVEL_UP).toBytes());
 
-        if(VConstants.LOCAL_DEBUG_MODE) {
-
-            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
-
-            var currentLevel :Number = ClientContext.model.level;
-            trace("currentLevel=" + currentLevel);
-            var xpNeededForNextLevel :int = Logic.xpNeededForLevel(currentLevel + 1) - ClientContext.model.xp;
-            trace("xpNeededForNextLevel=" + xpNeededForNextLevel);
-            var invitesNeededForNextLevel :int = Logic.invitesNeededForLevel(currentLevel + 1);
-            trace("invitesNeededForNextLevel=" + invitesNeededForNextLevel);
-            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES, invitesNeededForNextLevel);
-            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, ClientContext.model.xp + xpNeededForNextLevel);
-        }
+//        if(VConstants.LOCAL_DEBUG_MODE) {
+//
+//            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
+//
+//            var currentLevel :Number = ClientContext.model.level;
+//            trace("currentLevel=" + currentLevel);
+//            var xpNeededForNextLevel :int = Logic.xpNeededForLevel(currentLevel + 1) - ClientContext.model.xp;
+//            trace("xpNeededForNextLevel=" + xpNeededForNextLevel);
+//            var invitesNeededForNextLevel :int = Logic.invitesNeededForLevel(currentLevel + 1);
+//            trace("invitesNeededForNextLevel=" + invitesNeededForNextLevel);
+//            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES, invitesNeededForNextLevel);
+//            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, ClientContext.model.xp + xpNeededForNextLevel);
+//        }
     }
 
     protected function loseLevel(... ignored) :void
     {
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LEVEL_DOWN).toBytes());
 
-        if(VConstants.LOCAL_DEBUG_MODE) {
-
-            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
-
-            var currentLevel :Number = ClientContext.model.level;
-            if(currentLevel > 1) {
-                var newXp :int = Logic.xpNeededForLevel(currentLevel - 1);
-                props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, newXp);
-            }
-
-        }
+//        if(VConstants.LOCAL_DEBUG_MODE) {
+//
+//            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
+//
+//            var currentLevel :Number = ClientContext.model.level;
+//            if(currentLevel > 1) {
+//                var newXp :int = Logic.xpNeededForLevel(currentLevel - 1);
+//                props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, newXp);
+//            }
+//
+//        }
     }
 
     protected function gainXP(... ignored) :void
     {
+        trace("Sending gainXP debug");
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_GAIN_XP).toBytes());
-        if(VConstants.LOCAL_DEBUG_MODE) {
-            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
-            var currentXP:int = ClientContext.model.xp;
-            var invites:int = ClientContext.model.invites;
-            currentXP += 500;
-
-            currentXP = Math.min(currentXP, Logic.maxXPGivenXPAndInvites(currentXP, invites));
-
-            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, Math.max(0,currentXP));
-        }
+//        if(VConstants.LOCAL_DEBUG_MODE) {
+//            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
+//            var currentXP:int = ClientContext.model.xp;
+//            var invites:int = ClientContext.model.invites;
+//            currentXP += 500;
+//
+//            currentXP = Math.min(currentXP, Logic.maxXPGivenXPAndInvites(currentXP, invites));
+//
+//            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, Math.max(0,currentXP));
+//        }
     }
 
     protected function loseXP(... ignored) :void
     {
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LOSE_XP).toBytes());
-        if(VConstants.LOCAL_DEBUG_MODE) {
-
-            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
-
-            var currentXP:int = ClientContext.model.xp;
-            var invites:int = ClientContext.model.invites;
-            currentXP -= 500;
-
-            currentXP = Math.min(currentXP, Logic.maxXPGivenXPAndInvites(currentXP, invites));
-
-            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, Math.max(0,currentXP));
-        }
+//        if(VConstants.LOCAL_DEBUG_MODE) {
+//
+//            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
+//
+//            var currentXP:int = ClientContext.model.xp;
+//            var invites:int = ClientContext.model.invites;
+//            currentXP -= 500;
+//
+//            currentXP = Math.min(currentXP, Logic.maxXPGivenXPAndInvites(currentXP, invites));
+//
+//            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, Math.max(0,currentXP));
+//        }
     }
 
 
@@ -259,29 +260,29 @@ public class AdminPanel extends DraggableObject
     {
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_ADD_INVITE).toBytes());
 
-        if(VConstants.LOCAL_DEBUG_MODE) {
-
-            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
-
-            var currentInvites:int = ClientContext.model.invites;
-
-            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES, Math.max(0,currentInvites + 1));
-            trace("Current invites=" + ClientContext.model.invites);
-        }
+//        if(VConstants.LOCAL_DEBUG_MODE) {
+//
+//            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
+//
+//            var currentInvites:int = ClientContext.model.invites;
+//
+//            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES, Math.max(0,currentInvites + 1));
+//            trace("Current invites=" + ClientContext.model.invites);
+//        }
     }
 
     protected function loseInvite(... ignored) :void
     {
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LOSE_INVITE).toBytes());
-        if(VConstants.LOCAL_DEBUG_MODE) {
-
-            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
-
-            var currentInvites:int = ClientContext.model.invites;
-
-            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES, Math.max(0,currentInvites - 1));
-            trace("Current invites=" + ClientContext.model.invites);
-        }
+//        if(VConstants.LOCAL_DEBUG_MODE) {
+//
+//            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
+//
+//            var currentInvites:int = ClientContext.model.invites;
+//
+//            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES, Math.max(0,currentInvites - 1));
+//            trace("Current invites=" + ClientContext.model.invites);
+//        }
     }
 
     protected var _displaySprite :Sprite = new Sprite();

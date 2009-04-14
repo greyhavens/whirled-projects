@@ -6,7 +6,7 @@ package vampire.client
     import com.whirled.contrib.avrg.RoomDragger;
     import com.whirled.contrib.simplegame.objects.DraggableObject;
     import com.whirled.contrib.simplegame.objects.Dragger;
-    import com.whirled.net.ElementChangedEvent;
+    import com.whirled.net.PropertyChangedEvent;
 
     import flash.display.DisplayObject;
     import flash.display.InteractiveObject;
@@ -149,7 +149,10 @@ package vampire.client
 
             _bondTextAnchor = findSafely("text_bloodbond") as TextField;
             _bloodbondIconAnchor = findSafely("bond_icon");
-            registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+
+            //Listen for the bloodbond changing
+            registerListener(ClientContext.ctrl.player.props,
+                PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
             _infoTextAnchor = findSafely("text_blood") as TextField;
 
             _getSiresButton = findSafely("link_tovamps") as SimpleButton;
@@ -182,17 +185,13 @@ package vampire.client
         }
 
 
-        protected function elementChanged (e :ElementChangedEvent) :void
+        protected function propertyChanged (e :PropertyChangedEvent) :void
         {
-//            var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
+            if (e.name == Codes.PLAYER_PROP_BLOODBOND
+                || e.name == Codes.PLAYER_PROP_BLOODBOND_NAME) {
 
-//            if (playerIdUpdated == ClientContext.ourPlayerId) {
-
-                if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED
-                    || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME) {
-                    showBloodBonded();
-                }
-//            }
+                showBloodBonded();
+            }
         }
 
         protected function showBloodBonded () :void

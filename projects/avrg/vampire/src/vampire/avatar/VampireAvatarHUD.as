@@ -13,7 +13,7 @@ package vampire.avatar
     import com.whirled.contrib.simplegame.tasks.AlphaTask;
     import com.whirled.contrib.simplegame.tasks.FunctionTask;
     import com.whirled.contrib.simplegame.tasks.SerialTask;
-    import com.whirled.net.ElementChangedEvent;
+    import com.whirled.net.PropertyChangedEvent;
 
     import flash.display.DisplayObject;
     import flash.display.InteractiveObject;
@@ -41,10 +41,12 @@ public class VampireAvatarHUD extends AvatarHUD
     public function VampireAvatarHUD(ctrl :AVRGameControl, userId:int)
     {
         super(ctrl, userId);
-        _roomKey = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + _userId;
+//        _roomKey = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + _userId;
 
         //Listen for changes in blood levels
-        registerListener(ClientContext.ctrl.player.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
+//        registerListener(ClientContext.ctrl.player.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
+        registerListener(ClientContext.ctrl.player.props, PropertyChangedEvent.PROPERTY_CHANGED,
+            handlePropertyChanged);
 //        registerListener(ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
 //
 //        registerListener(ClientContext.model, LineageUpdatedEvent.LINEAGE_UPDATED, updateLineageInfo);
@@ -232,50 +234,78 @@ public class VampireAvatarHUD extends AvatarHUD
 
     }
 
-
-
-
-    protected function handleElementChanged (e :ElementChangedEvent) :void
+    protected function handlePropertyChanged (e :PropertyChangedEvent) :void
     {
         var oldLevel :int;
         var newLevel :int;
-//        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
 
-
-        //If it's us, update the our HUD
-//        if(!isNaN(playerIdUpdated) && playerIdUpdated == playerId) {
-            if(e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
-
-                if (e.newValue > e.oldValue) {
-                    var levelUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
-                        ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true));
-                    if (mode != null && levelUp != null) {
-                        mode.addSceneObject(levelUp, _displaySprite);
-                    }
-                }
-
-            }
-            //Animate a bloodbond animation
-            else if(e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
-                if(e.newValue != 0) {
-                    var bloodBondMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
-                            ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true));
-                    mode.addSceneObject(bloodBondMovie, _displaySprite);
+        switch (e.name) {
+            case Codes.PLAYER_PROP_XP:
+            if (e.newValue > e.oldValue) {
+                var levelUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+                    ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true));
+                if (mode != null && levelUp != null) {
+                    mode.addSceneObject(levelUp, _displaySprite);
                 }
             }
-//        }
+            break;
 
-//        if(!isNaN(playerIdUpdated) && playerIdUpdated == ClientContext.ourPlayerId) {
-            if(e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
-                removeBloodbondIcon();
-                if (e.newValue == playerId) {
-                    addBloodBondIcon();
-                }
+            case Codes.PLAYER_PROP_BLOODBOND:
+            removeBloodbondIcon();
+            if(e.newValue == playerId) {
+                var bloodBondMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+                        ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true));
+                mode.addSceneObject(bloodBondMovie, _displaySprite);
+                addBloodBondIcon();
             }
-//        }
-
+            break;
+            default:
+            break;
+        }
     }
 
+
+//    protected function handleElementChanged (e :ElementChangedEvent) :void
+//    {
+//        var oldLevel :int;
+//        var newLevel :int;
+////        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
+//
+//
+//        //If it's us, update the our HUD
+////        if(!isNaN(playerIdUpdated) && playerIdUpdated == playerId) {
+//            if(e.index == Codes.PLAYER_PROP_XP) {
+//
+//                if (e.newValue > e.oldValue) {
+//                    var levelUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+//                        ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true));
+//                    if (mode != null && levelUp != null) {
+//                        mode.addSceneObject(levelUp, _displaySprite);
+//                    }
+//                }
+//
+//            }
+//            //Animate a bloodbond animation
+//            else if(e.index == Codes.PLAYER_PROP_BLOODBOND) {
+//                if(e.newValue != 0) {
+//                    var bloodBondMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+//                            ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true));
+//                    mode.addSceneObject(bloodBondMovie, _displaySprite);
+//                }
+//            }
+////        }
+//
+////        if(!isNaN(playerIdUpdated) && playerIdUpdated == ClientContext.ourPlayerId) {
+//            if(e.index == Codes.PLAYER_PROP_BLOODBOND) {
+//                removeBloodbondIcon();
+//                if (e.newValue == playerId) {
+//                    addBloodBondIcon();
+//                }
+//            }
+////        }
+//
+//    }
+//
 
 
 
@@ -508,7 +538,7 @@ public class VampireAvatarHUD extends AvatarHUD
     protected var _bloodBondIcon :MovieClip;
     protected var _preyStrain :MovieClip;
 
-    protected var _roomKey :String;
+//    protected var _roomKey :String;
 
     protected var _feedButton :SceneButton;
     protected var _targetUIScene :SceneObject;

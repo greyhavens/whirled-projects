@@ -142,14 +142,14 @@ public class ClientContext
         return null;
     }
 
-    public static function get ourRoomKey () :String
-    {
-        if(_playerRoomKey == null) {
-            _playerRoomKey = Codes.playerRoomPropKey(ClientContext.ourPlayerId);
-        }
-
-        return _playerRoomKey;
-    }
+//    public static function get ourRoomKey () :String
+//    {
+//        if(_playerRoomKey == null) {
+//            _playerRoomKey = Codes.playerRoomPropKey(ClientContext.ourPlayerId);
+//        }
+//
+//        return _playerRoomKey;
+//    }
 
     public static function getPlayerEntityId (playerId :int) :String
     {

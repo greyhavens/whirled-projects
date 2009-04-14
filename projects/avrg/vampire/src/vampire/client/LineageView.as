@@ -53,8 +53,8 @@ public class LineageView extends LineageViewBase
 
     protected function updateLineageEvent(e :LineageUpdatedEvent) :void
     {
-        log.debug(" updateLineageEvent", "e", e);
         _lineage = e.lineage;
+        log.debug(" updateLineageEvent", "e", e, "_lineage", _lineage);
         if (_lineage == null) {
             log.error("updateHierarchyEvent(), but hierarchy is null :-(");
         }

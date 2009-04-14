@@ -54,7 +54,7 @@ public class HUD extends DraggableObject
         //Listen to events that might cause us to update ourselves
         registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, updateOurPlayerState);
         registerListener(ClientContext.ctrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged);
-        registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
+//        registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
 //        registerListener(ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
 //        mode.addObject(_bloodXPMouseOverSceneObject);
     }
@@ -83,10 +83,16 @@ public class HUD extends DraggableObject
     {
         //Check if it is non-player properties changed??
         //Otherwise check for player updates
+        var levelUp :SceneObjectPlayMovieClipOnce;
+        var xpUp :SceneObjectPlayMovieClipOnce;
+        var oldLevel :int;
+        var newLevel :int;
+
+        var mode :AppMode = ClientContext.gameMode;
 
         switch(e.name) {
-            case Codes.ROOM_PROP_LINEAGE:
-                break;
+//            case Codes.ROOM_PROP_LINEAGE:
+//                break;
             case Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE:
                 break;
 
@@ -106,18 +112,105 @@ public class HUD extends DraggableObject
                 }
                 break;
 
+            case Codes.PLAYER_PROP_XP:
+
+                if (e.oldValue < e.newValue && !(isNaN(Number(e.oldValue)) || e.oldValue == 0)) {
+                    xpUp = new SceneObjectPlayMovieClipOnce(
+                            ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true));
+                    xpUp.x = _hudXP.x + ClientContext.model.maxblood/2;
+                    xpUp.y = _hudXP.y;
+                    mode.addSceneObject(xpUp, _hudXPParent);
+                }
+                _currentLevel = Logic.levelFromXp(Number(e.newValue));
+
+                showXP(ClientContext.ourPlayerId);
+                oldLevel = Logic.levelFromXp(Number(e.oldValue));
+                newLevel = Logic.levelFromXp(Number(e.newValue));
+
+                if (newLevel > oldLevel && newLevel >= 2 && e.oldValue > 0) {
+                    ClientContext.controller.handleNewLevel(newLevel);
+
+                    levelUp = new SceneObjectPlayMovieClipOnce(
+                            ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true));
+                    levelUp.x = _hudXP.x + ClientContext.model.maxblood/2;
+                    levelUp.y = _hudXP.y;
+                    mode.addSceneObject(levelUp, _hudXPParent);
+                }
+
+
+
+                //If we only need invite(s) for the next level, show a popup
+                //if we haven't already done so.
+                var level1moreXP :int = Logic.levelFromXp(Number(e.newValue) + 1);
+
+                if (level1moreXP > newLevel && Logic.invitesNeededForLevel(level1moreXP) > 0) {
+
+                    var invitesNeeded :int = Logic.invitesNeededForLevel(newLevel + 1);
+                    var popup :PopupQuery = new PopupQuery(
+                        "NeedInvites",
+                        "You need " + Logic.invitesNeededForLevel(newLevel + 1) +
+                        " invite" + (invitesNeeded > 1 ? "s" : "") + " for level " +
+                        (newLevel + 1),
+                        ["Recruit Now", "Recruit Later"],
+                        [VampireController.RECRUIT, null]);
+
+
+                    if (mode.getObjectNamed(popup.objectName) == null) {
+                        mode.addSceneObject(popup, mode.modeSprite);
+                        ClientContext.centerOnViewableRoom(popup.displayObject);
+                        ClientContext.animateEnlargeFromMouseClick(popup);
+                    }
+                }
+                break;
+
+
+            case Codes.PLAYER_PROP_INVITES:
+
+                if (_currentLevel < ClientContext.model.level) {
+                    //Animate a level up movieclip
+                    levelUp = new SceneObjectPlayMovieClipOnce(
+                        ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true));
+                    levelUp.x = _hudXP.x + ClientContext.model.maxblood/2;
+                    levelUp.y = _hudXP.y;
+                    if (mode != null && _hudXPParent != null) {
+                        mode.addSceneObject(levelUp, _hudXPParent);
+                    }
+
+                    ClientContext.controller.handleNewLevel(ClientContext.model.level);
+
+                }
+                _currentLevel = ClientContext.model.level;
+                showXP(ClientContext.ourPlayerId);
+                break;
+
+            case Codes.PLAYER_PROP_BLOODBOND:
+
+                if (e.newValue != 0) {
+                    var bloodBondMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+                            ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true));
+                    bloodBondMovie.x = _hudXP.x + ClientContext.model.maxblood/2;
+                    bloodBondMovie.y = _hudXP.y;
+
+                    if (mode != null) {
+                        mode.addSceneObject(bloodBondMovie, _hudXPParent);
+                    }
+                }
+                break;
+
+
+            case Codes.PLAYER_PROP_SIRE:
+                if (e.newValue != 0) {
+                    var lineageMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+                            ClientContext.instantiateMovieClip("HUD", "lineage_feedback", true));
+                    lineageMovie.x = _hudXP.x + ClientContext.model.maxblood/2;
+                    lineageMovie.y = _hudXP.y;
+                    if (mode != null) {
+                        mode.addSceneObject(lineageMovie, _displaySprite);
+                    }
+                }
+                break;
+
             default:
-//                var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
-//
-//                if (isNaN(playerIdUpdated)) {
-//                    log.warning("propChanged, but no player id, ", "e", e);
-//                    return;
-//                }
-//
-//                //If the ROOM_PROP_NON_PLAYERS prop is changed, update it
-//                if (playerIdUpdated == ClientContext.ourPlayerId) {
-//                    updateOurPlayerState();
-//                }
         }
 
     }
@@ -127,125 +220,125 @@ public class HUD extends DraggableObject
         //Check if it is non-player properties changed??
         //Otherwise check for player updates
 //        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
-        var levelUp :SceneObjectPlayMovieClipOnce;
-        var xpUp :SceneObjectPlayMovieClipOnce;
-        var oldLevel :int;
-        var newLevel :int;
-
-        var mode :AppMode = ClientContext.gameMode;
-
-//        if (!isNaN(playerIdUpdated)) {
-            //If it's us, update the player HUD
-//            if (playerIdUpdated == ClientContext.ourPlayerId) {
-
-//                if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
+//        var levelUp :SceneObjectPlayMovieClipOnce;
+//        var xpUp :SceneObjectPlayMovieClipOnce;
+//        var oldLevel :int;
+//        var newLevel :int;
 //
-//                    if (e.oldValue < e.newValue) {
-//                        var bloodUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+//        var mode :AppMode = ClientContext.gameMode;
+//
+////        if (!isNaN(playerIdUpdated)) {
+//            //If it's us, update the player HUD
+////            if (playerIdUpdated == ClientContext.ourPlayerId) {
+//
+////                if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
+////
+////                    if (e.oldValue < e.newValue) {
+////                        var bloodUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+////                                ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true));
+////                        bloodUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
+////                        bloodUp.y = _hudBlood.y;
+////                        mode.addSceneObject(bloodUp, _hudBlood.parent );
+////                    }
+////                    showBlood(ClientContext.ourPlayerId);
+////                }
+//                if (e.index == Codes.PLAYER_PROP_XP) {
+//
+//                    if (e.oldValue < e.newValue && !(isNaN(Number(e.oldValue)) || e.oldValue == 0)) {
+//                        xpUp = new SceneObjectPlayMovieClipOnce(
 //                                ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true));
-//                        bloodUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
-//                        bloodUp.y = _hudBlood.y;
-//                        mode.addSceneObject(bloodUp, _hudBlood.parent );
+//                        xpUp.x = _hudXP.x + ClientContext.model.maxblood/2;
+//                        xpUp.y = _hudXP.y;
+//                        mode.addSceneObject(xpUp, _hudXPParent);
 //                    }
-//                    showBlood(ClientContext.ourPlayerId);
+//                    _currentLevel = Logic.levelFromXp(Number(e.newValue));
+//
+//                    showXP(ClientContext.ourPlayerId);
+//                    oldLevel = Logic.levelFromXp(Number(e.oldValue));
+//                    newLevel = Logic.levelFromXp(Number(e.newValue));
+//
+//                    if (newLevel > oldLevel && newLevel >= 2 && e.oldValue > 0) {
+//                        ClientContext.controller.handleNewLevel(newLevel);
+//
+//                        levelUp = new SceneObjectPlayMovieClipOnce(
+//                                ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true));
+//                        levelUp.x = _hudXP.x + ClientContext.model.maxblood/2;
+//                        levelUp.y = _hudXP.y;
+//                        mode.addSceneObject(levelUp, _hudXPParent);
+//                    }
+//
+//
+//
+//                    //If we only need invite(s) for the next level, show a popup
+//                    //if we haven't already done so.
+//                    var level1moreXP :int = Logic.levelFromXp(Number(e.newValue) + 1);
+//
+////                    trace(ClientContext.model.name + " level1moreXPAndInvites=" + level1moreXPAndInvites);
+//                    if (level1moreXP > newLevel && Logic.invitesNeededForLevel(level1moreXP) > 0) {
+//
+//                        var invitesNeeded :int = Logic.invitesNeededForLevel(newLevel + 1);
+//                        var popup :PopupQuery = new PopupQuery(
+//                            "NeedInvites",
+//                            "You need " + Logic.invitesNeededForLevel(newLevel + 1) +
+//                            " invite" + (invitesNeeded > 1 ? "s" : "") + " for level " +
+//                            (newLevel + 1),
+//                            ["Recruit Now", "Recruit Later"],
+//                            [VampireController.RECRUIT, null]);
+//
+//
+//                        if (mode.getObjectNamed(popup.objectName) == null) {
+//                            mode.addSceneObject(popup, mode.modeSprite);
+//                            ClientContext.centerOnViewableRoom(popup.displayObject);
+//                            ClientContext.animateEnlargeFromMouseClick(popup);
+//                        }
+//                    }
+//
+//
 //                }
-                if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
-
-                    if (e.oldValue < e.newValue && !(isNaN(Number(e.oldValue)) || e.oldValue == 0)) {
-                        xpUp = new SceneObjectPlayMovieClipOnce(
-                                ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true));
-                        xpUp.x = _hudXP.x + ClientContext.model.maxblood/2;
-                        xpUp.y = _hudXP.y;
-                        mode.addSceneObject(xpUp, _hudXPParent);
-                    }
-                    _currentLevel = Logic.levelFromXp(Number(e.newValue));
-
-                    showXP(ClientContext.ourPlayerId);
-                    oldLevel = Logic.levelFromXp(Number(e.oldValue));
-                    newLevel = Logic.levelFromXp(Number(e.newValue));
-
-                    if (newLevel > oldLevel && newLevel >= 2 && e.oldValue > 0) {
-                        ClientContext.controller.handleNewLevel(newLevel);
-
-                        levelUp = new SceneObjectPlayMovieClipOnce(
-                                ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true));
-                        levelUp.x = _hudXP.x + ClientContext.model.maxblood/2;
-                        levelUp.y = _hudXP.y;
-                        mode.addSceneObject(levelUp, _hudXPParent);
-                    }
-
-
-
-                    //If we only need invite(s) for the next level, show a popup
-                    //if we haven't already done so.
-                    var level1moreXP :int = Logic.levelFromXp(Number(e.newValue) + 1);
-
-//                    trace(ClientContext.model.name + " level1moreXPAndInvites=" + level1moreXPAndInvites);
-                    if (level1moreXP > newLevel && Logic.invitesNeededForLevel(level1moreXP) > 0) {
-
-                        var invitesNeeded :int = Logic.invitesNeededForLevel(newLevel + 1);
-                        var popup :PopupQuery = new PopupQuery(
-                            "NeedInvites",
-                            "You need " + Logic.invitesNeededForLevel(newLevel + 1) +
-                            " invite" + (invitesNeeded > 1 ? "s" : "") + " for level " +
-                            (newLevel + 1),
-                            ["Recruit Now", "Recruit Later"],
-                            [VampireController.RECRUIT, null]);
-
-
-                        if (mode.getObjectNamed(popup.objectName) == null) {
-                            mode.addSceneObject(popup, mode.modeSprite);
-                            ClientContext.centerOnViewableRoom(popup.displayObject);
-                            ClientContext.animateEnlargeFromMouseClick(popup);
-                        }
-                    }
-
-
-                }
-                else if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES) {
-
-                    if (_currentLevel < ClientContext.model.level) {
-                        //Animate a level up movieclip
-                        levelUp = new SceneObjectPlayMovieClipOnce(
-                            ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true));
-                        levelUp.x = _hudXP.x + ClientContext.model.maxblood/2;
-                        levelUp.y = _hudXP.y;
-                        if (mode != null && _hudXPParent != null) {
-                            mode.addSceneObject(levelUp, _hudXPParent);
-                        }
-
-                        ClientContext.controller.handleNewLevel(ClientContext.model.level);
-
-                    }
-                    _currentLevel = ClientContext.model.level;
-                    showXP(ClientContext.ourPlayerId);
-                }
-                else if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
-
-                    if (e.newValue != 0) {
-                        var bloodBondMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
-                                ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true));
-                        bloodBondMovie.x = _hudXP.x + ClientContext.model.maxblood/2;
-                        bloodBondMovie.y = _hudXP.y;
-
-                        if (mode != null) {
-                            mode.addSceneObject(bloodBondMovie, _hudXPParent);
-                        }
-                    }
-
-                }
-
-                else if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_SIRE) {
-                    if (e.newValue != 0) {
-                        var lineageMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
-                                ClientContext.instantiateMovieClip("HUD", "lineage_feedback", true));
-                        lineageMovie.x = _hudXP.x + ClientContext.model.maxblood/2;
-                        lineageMovie.y = _hudXP.y;
-                        if (mode != null) {
-                            mode.addSceneObject(lineageMovie, _displaySprite);
-                        }
-                    }
-                }
+//                else if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES) {
+//
+//                    if (_currentLevel < ClientContext.model.level) {
+//                        //Animate a level up movieclip
+//                        levelUp = new SceneObjectPlayMovieClipOnce(
+//                            ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true));
+//                        levelUp.x = _hudXP.x + ClientContext.model.maxblood/2;
+//                        levelUp.y = _hudXP.y;
+//                        if (mode != null && _hudXPParent != null) {
+//                            mode.addSceneObject(levelUp, _hudXPParent);
+//                        }
+//
+//                        ClientContext.controller.handleNewLevel(ClientContext.model.level);
+//
+//                    }
+//                    _currentLevel = ClientContext.model.level;
+//                    showXP(ClientContext.ourPlayerId);
+//                }
+//                else if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
+//
+//                    if (e.newValue != 0) {
+//                        var bloodBondMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+//                                ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true));
+//                        bloodBondMovie.x = _hudXP.x + ClientContext.model.maxblood/2;
+//                        bloodBondMovie.y = _hudXP.y;
+//
+//                        if (mode != null) {
+//                            mode.addSceneObject(bloodBondMovie, _hudXPParent);
+//                        }
+//                    }
+//
+//                }
+//
+//                else if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_SIRE) {
+//                    if (e.newValue != 0) {
+//                        var lineageMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
+//                                ClientContext.instantiateMovieClip("HUD", "lineage_feedback", true));
+//                        lineageMovie.x = _hudXP.x + ClientContext.model.maxblood/2;
+//                        lineageMovie.y = _hudXP.y;
+//                        if (mode != null) {
+//                            mode.addSceneObject(lineageMovie, _displaySprite);
+//                        }
+//                    }
+//                }
 
 //            }
 //        }
