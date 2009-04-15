@@ -50,7 +50,7 @@ package fakeavrg
         /** @private */
         override protected function createSubControls () :Array
         {
-            _propsfake = new PropertyGetSubControlFake(this, 0);
+            _propsfake = new PropertySubControlFake(this, 0);
             return [ _propsfake ];
         }
 
@@ -70,7 +70,7 @@ package fakeavrg
 
 
         /** @private */
-        protected var _propsfake :PropertyGetSubControlFake;
+        protected var _propsfake :PropertySubControlFake;
 
     }
 }

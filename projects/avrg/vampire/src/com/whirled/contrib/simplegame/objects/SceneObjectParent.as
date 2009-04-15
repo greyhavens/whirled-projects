@@ -12,7 +12,7 @@ import flash.display.Sprite;
  * A SceneObject with children scene objects.  The children use the db, but need to be disposed
  * of with the parent.
  */
-public class SceneObjectParent extends SceneObject
+public class SceneObjectParent extends DraggableObject
 {
     override protected function addedToDB () :void
     {
