@@ -1,5 +1,7 @@
 package vampire
 {
+import com.threerings.util.HashMap;
+import com.threerings.util.StringBuilder;
 import com.whirled.contrib.simplegame.net.MessageManager;
 
 import vampire.net.messages.AvatarChosenMsg;
@@ -75,6 +77,15 @@ public class Util
         mgr.addMessageType(ShareTokenMsg);
         mgr.addMessageType(StartFeedingClientMsg);
         mgr.addMessageType(SuccessfulFeedMsg);
+    }
+
+    public static function hashmapToString (h :HashMap) :String
+    {
+        var sb :StringBuilder = new StringBuilder();
+        for each (var key :String in h.keys()) {
+            sb.append("\n" + key + "=" + h.get(key));
+        }
+        return sb.toString();
     }
 }
 }
