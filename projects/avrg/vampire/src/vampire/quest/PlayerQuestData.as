@@ -12,6 +12,11 @@ import com.whirled.net.PropertySubControl;
 import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
 
+[Event(name="QuestAdded", type="vampire.quest.PlayerQuestEvent")]
+[Event(name="QuestCompleted", type="vampire.quest.PlayerQuestEvent")]
+[Event(name="LocationAdded", type="vampire.quest.PlayerLocationEvent")]
+[Event(name="MovedToLocation", type="vampire.quest.PlayerLocationEvent")]
+
 public class PlayerQuestData extends EventDispatcher
 {
     public function PlayerQuestData (props :PropertySubControl) :void

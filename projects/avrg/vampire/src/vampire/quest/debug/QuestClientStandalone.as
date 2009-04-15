@@ -1,6 +1,7 @@
 package vampire.quest.debug {
 
-import com.threerings.util.MethodQueue;
+import com.whirled.contrib.ManagedTimer;
+import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.net.PropertySubControl;
 
@@ -30,15 +31,28 @@ public class QuestClientStandalone extends Sprite
         QuestClient.init(_sg, questData, stats);
 
         questData.addQuest(Quests.getQuestByName("TestQuest").id);
+        questData.addAvailableLocation(Locations.getLocationByName("HomeBase"));
+        questData.addAvailableLocation(Locations.getLocationByName("Battleground"));
+        questData.curLocation = Locations.getLocationByName("HomeBase");
 
-        MethodQueue.callLater(function () :void {
-            QuestClient.showDebugPanel(true);
-            QuestClient.showQuestPanel(true);
-        });
+        var waitLoop :ManagedTimer = _timerMgr.runForever(50,
+            function (...ignored) :void {
+                if (QuestClient.isReady) {
+                    waitLoop.cancel();
+                    start();
+                }
+            });
+    }
+
+    protected function start () :void
+    {
+        QuestClient.showDebugPanel(true);
+        QuestClient.showQuestPanel(true);
     }
 
     protected var _sg :SimpleGame;
     protected var _localProps :PropertySubControl;
+    protected var _timerMgr :TimerManager = new TimerManager();
 }
 
 }

@@ -21,6 +21,8 @@ public class QuestPanel extends DraggableObject
         _uiLayer = new Sprite();
         _sprite.addChild(_uiLayer);
 
+        ClientCtx.mainLoop.topMode.addSceneObject(new MapView(), _uiLayer);
+
         var g :Graphics = _draggableLayer.graphics;
         g.lineStyle(1, 0xffffff);
         g.beginFill(0);
@@ -96,6 +98,7 @@ public class QuestPanel extends DraggableObject
         return _draggableLayer;
     }
 
+    protected var _locationViews :Array = [];
     protected var _activeQuestViews :Array = [];
 
     protected var _sprite :Sprite;

@@ -11,10 +11,21 @@ public class Locations
 
         // create some dummy Locations
         var homeBase :LocationDesc = new LocationDesc("HomeBase", "Home Base");
-        addLocation(homeBase);
         var battleground :LocationDesc = new LocationDesc("Battleground", "Battleground");
+        var dragons :LocationDesc = new LocationDesc("Dragons", "Here Be Dragons");
+        addLocation(homeBase);
         addLocation(battleground);
-        makeTwoWayConnection("HomeBase", "Battleground", 5);
+        addLocation(dragons);
+
+        makeTwoWayConnection("HomeBase", "Battleground", 10);
+        makeTwoWayConnection("Battleground", "Dragons", 10);
+        makeTwoWayConnection("HomeBase", "Dragons", 30);
+    }
+
+    public static function getLocationList () :Array
+    {
+        // returns the entire set of locations
+        return _locs.values();
     }
 
     public static function getLocation (locId :int) :LocationDesc
