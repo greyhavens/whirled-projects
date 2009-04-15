@@ -59,7 +59,7 @@ public class VampireBody extends VampireBodyBase
         switch (_configPanelType) {
         case CONFIGURABLE:
             return new VampatarConfigPanel(
-                20, _configParams, _curConfig,
+                _playerLevel, _configParams, _curConfig,
                 function (newConfig :VampatarConfig) :void {
                     saveConfig(newConfig);
                     applyConfig(newConfig);
