@@ -112,7 +112,7 @@ public class AvatarEndMovementNotifier
                 }
             }
 
-            if(_avatarArrivedCallback != null) {
+            if(_avatarArrivedCallback != null && _ctrl.isConnected()) {
                 _avatarArrivedCallback(userIdMoved, actualLocation);
             }
         }
