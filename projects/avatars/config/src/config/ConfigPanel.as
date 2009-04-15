@@ -1,5 +1,6 @@
 package config {
 
+import com.threerings.flash.DisplayUtil;
 import com.threerings.util.Log;
 
 import flash.display.BitmapData;
@@ -9,6 +10,7 @@ import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 import flash.system.ApplicationDomain;
 
 public class ConfigPanel extends Sprite
@@ -23,53 +25,16 @@ public class ConfigPanel extends Sprite
         var panel :MovieClip = new panelClass();
         addChild(panel);
 
-        // create dropdowns
-        var topDropdown :Dropdown = createDropdown(
-            panel["top_option"],
-            numberItems([ "Button-Down", "Striped", "Tee", "None", "Jacket" ]),
-            function (value :int) :void {
-                if (_config.topNumber != value) {
-                    _config.topNumber = value;
-                    configUpdated();
-                }
-            },
-            _config.topNumber);
+        // Dropdowns
+        var topOptions :Array = [ "Button-Down", "Striped", "Tee", "None", "Jacket" ];
+        createDropdown(panel["top_option"], topOptions, "topNumber");
 
-        // color pickers
-        var skinPicker :MyColorPicker = createColorPicker(
-            MyColorPicker.PALETTE_SKIN,
-            panel["skin_color"],
-            function (color :uint) :void {
-                if (_config.skinColor != color) {
-                    _config.skinColor = color;
-                    configUpdated();
-                }
-            },
-            _config.skinColor);
+        // Color pickers
+        createColorPicker(MyColorPicker.PALETTE_SKIN, panel["skin_color"], "skinColor");
+        createColorPicker(MyColorPicker.PALETTE_GENERAL, panel["pants_color"], "pantsColor");
+        createColorPicker(MyColorPicker.PALETTE_GENERAL, panel["top_color"], "topColor");
 
-        var pantsPicker :MyColorPicker = createColorPicker(
-            MyColorPicker.PALETTE_GENERAL,
-            panel["pants_color"],
-            function (color :uint) :void {
-                if (_config.pantsColor != color) {
-                    _config.pantsColor = color;
-                    configUpdated();
-                }
-            },
-            _config.pantsColor);
-
-        var topPicker :MyColorPicker = createColorPicker(
-            MyColorPicker.PALETTE_GENERAL,
-            panel["top_color"],
-            function (color :uint) :void {
-                if (_config.topColor != color) {
-                    _config.topColor = color;
-                    configUpdated();
-                }
-            },
-            _config.topColor);
-
-        // randomize button
+        // Randomize button
         var randomizeButton :SimpleButton = panel["button_randomize"];
         randomizeButton.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
@@ -77,10 +42,12 @@ public class ConfigPanel extends Sprite
                 // that we don't flood the network with meaningless updates
                 _suppressConfigUpdates = true;
 
-                topDropdown.selectRandomItem();
-                skinPicker.selectRandomColor();
-                pantsPicker.selectRandomColor();
-                topPicker.selectRandomColor();
+                for each (var dropdown :Dropdown in _dropdowns) {
+                    dropdown.selectRandomItem();
+                }
+                for each (var cp :MyColorPicker in _colorPickers) {
+                    cp.selectRandomColor();
+                }
 
                 _suppressConfigUpdates = false;
                 configUpdated();
@@ -100,40 +67,58 @@ public class ConfigPanel extends Sprite
             });
     }
 
-    protected function createDropdown (button :SimpleButton, items :Array,
-                                       onItemSelected :Function, initialValue :*) :Dropdown
+    protected function createDropdown (button :SimpleButton, items :Array, configName :String)
+        :Dropdown
     {
-        var dropdown :Dropdown = new Dropdown(button, items, onItemSelected);
-        dropdown.x = button.x;
-        dropdown.y = button.y;
-        dropdown.selectItemByValue(initialValue);
+        var dropdown :Dropdown = new Dropdown(button, numberItems(items),
+            function (value :int) :void {
+                if (_config[configName] != value) {
+                    _config[configName] = value;
+                    configUpdated();
+                }
+            });
+
+        var loc :Point =
+            DisplayUtil.transformPoint(new Point(button.x, button.y), button.parent, this);
+        dropdown.x = loc.x;
+        dropdown.y = loc.y;
+
+        dropdown.selectItemByValue(_config[configName]);
 
         button.addEventListener(MouseEvent.MOUSE_DOWN,
             function (...ignored) :void {
                 showPicker(dropdown);
             });
 
-        _pickers.push(dropdown);
+        _dropdowns.push(dropdown);
 
         return dropdown;
     }
 
-    protected function createColorPicker (type :int,
-                                          button :MovieClip,
-                                          onColorSelected :Function,
-                                          initialColor :uint) :MyColorPicker
+    protected function createColorPicker (type :int, button :MovieClip, configName :String)
+        :MyColorPicker
     {
-        var cp :MyColorPicker = new MyColorPicker(type, button, onColorSelected);
-        cp.x = button.x;
-        cp.y = button.y;
-        cp.selectColor(initialColor);
+        var cp :MyColorPicker = new MyColorPicker(type, button,
+            function (color :uint) :void {
+                if (_config[configName] != color) {
+                    _config[configName] = color;
+                    configUpdated();
+                }
+            });
+
+        var loc :Point =
+            DisplayUtil.transformPoint(new Point(button.x, button.y), button.parent, this);
+        cp.x = loc.x;
+        cp.y = loc.y;
+
+        cp.selectColor(_config[configName]);
 
         button.addEventListener(MouseEvent.MOUSE_DOWN,
             function (...ignored) :void {
                 showPicker(cp);
             });
 
-        _pickers.push(cp);
+        _colorPickers.push(cp);
 
         return cp;
     }
@@ -148,9 +133,15 @@ public class ConfigPanel extends Sprite
 
     protected function hideAllPickers () :void
     {
-        for each (var picker :DisplayObject in _pickers) {
-            if (picker.parent != null) {
-                picker.parent.removeChild(picker);
+        for each (var dropdown :Dropdown in _dropdowns) {
+            if (dropdown.parent != null) {
+                dropdown.parent.removeChild(dropdown);
+            }
+        }
+
+        for each (var cp :MyColorPicker in _colorPickers) {
+            if (cp.parent != null) {
+                cp.parent.removeChild(cp);
             }
         }
 
@@ -177,7 +168,8 @@ public class ConfigPanel extends Sprite
         return out;
     }
 
-    protected var _pickers :Array = [];
+    protected var _dropdowns :Array = [];
+    protected var _colorPickers :Array = [];
     protected var _mouseCapture :Sprite;
 
     protected var _originalConfig :ConfigData;
@@ -317,7 +309,7 @@ class MyColorPicker extends Sprite
     protected var _swatch :Shape;
     protected var _swatchColor :uint;
 
-    protected static var _bitmaps :Array = [ null, null ];
+    protected static var _bitmaps :Array = [];
 
     protected static const PALETTE_MOVIES :Array = [ "palette_skin", "palette_all" ];
     protected static const SCALES :Array = [ 3, 2 ];
