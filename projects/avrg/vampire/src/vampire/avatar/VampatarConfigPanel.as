@@ -1,5 +1,6 @@
 package vampire.avatar {
 
+import com.threerings.flash.DisplayUtil;
 import com.threerings.util.Log;
 
 import flash.display.BitmapData;
@@ -8,14 +9,15 @@ import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
+import flash.text.TextField;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 import flash.system.ApplicationDomain;
 
 public class VampatarConfigPanel extends Sprite
 {
-    public function VampatarConfigPanel (hairNames :Array,
-                                         topNames :Array,
-                                         shoeNames :Array,
+    public function VampatarConfigPanel (playerLevel :int,
+                                         params :ConfigParams,
                                          curConfig :VampatarConfig,
                                          applyConfigCallback :Function) :void
     {
@@ -27,95 +29,48 @@ public class VampatarConfigPanel extends Sprite
         var panel :MovieClip = new panelClass();
         addChild(panel);
 
-        // create dropdowns
-        var hairDropdown :Dropdown = createDropdown(
-            panel["hair_option"],
-            numberItems(hairNames),
-            function (value :int) :void {
-                if (_config.hairNumber != value) {
-                    _config.hairNumber = value;
-                    configUpdated();
-                }
-            },
-            _config.hairNumber);
+        var facePanel :MovieClip = panel["config_face"];
 
-        var topDropdown :Dropdown = createDropdown(
-            panel["top_option"],
-            numberItems(topNames),
-            function (value :int) :void {
-                if (_config.topNumber != value) {
-                    _config.topNumber = value;
-                    configUpdated();
-                }
-            },
-            _config.topNumber);
+        var isSkinUnlocked :Boolean = (playerLevel >= AvatarConstants.SKINTONE_UNLOCK_LEVEL);
+        var isFaceUnlocked :Boolean = (playerLevel >= AvatarConstants.FACE_UNLOCK_LEVEL);
 
-        var shoesDropdown :Dropdown = createDropdown(
-            panel["shoes_option"],
-            numberItems(shoeNames),
-            function (value :int) :void {
-                if (_config.shoesNumber != value) {
-                    _config.shoesNumber = value;
-                    configUpdated();
-                }
-            },
-            _config.shoesNumber);
+        // Upsell
+        var upsellPanel :MovieClip = panel["uplevel_panel"];
+        if (isFaceUnlocked) {
+            upsellPanel.visible = false;
 
-        // color pickers
-        var skinPicker :MyColorPicker = createColorPicker(
-            MyColorPicker.TYPE_SKIN,
-            panel["skin_color"],
-            function (color :uint) :void {
-                if (_config.skinColor != color) {
-                    _config.skinColor = color;
-                    configUpdated();
-                }
-            },
-            _config.skinColor);
+        } else {
+            upsellPanel.visible = true;
+            facePanel.parent.removeChild(facePanel);
 
-        var pantsPicker :MyColorPicker = createColorPicker(
-            MyColorPicker.TYPE_GENERAL,
-            panel["pants_color"],
-            function (color :uint) :void {
-                if (_config.pantsColor != color) {
-                    _config.pantsColor = color;
-                    configUpdated();
-                }
-            },
-            _config.pantsColor);
+            var tfUpsell :TextField = upsellPanel["uplevel_text"];
+            tfUpsell.text = (!isSkinUnlocked ? "Unlock more skin tones at level 10!" :
+                "Unlock facial expressions at level 20!");
+        }
 
-        var topPicker :MyColorPicker = createColorPicker(
-            MyColorPicker.TYPE_GENERAL,
-            panel["top_color"],
-            function (color :uint) :void {
-                if (_config.topColor != color) {
-                    _config.topColor = color;
-                    configUpdated();
-                }
-            },
-            _config.topColor);
+        // Dropdowns
+        createDropdown(panel["hair_option"], params.hairNames, "hairNumber");
+        createDropdown(panel["top_option"], params.topNames, "topNumber");
+        createDropdown(panel["shoes_option"], params.shoeNames, "shoesNumber");
 
-        var shoesPicker :MyColorPicker = createColorPicker(
-            MyColorPicker.TYPE_GENERAL,
-            panel["shoes_color"],
-            function (color :uint) :void {
-                if (_config.shoesColor != color) {
-                    _config.shoesColor = color;
-                    configUpdated();
-                }
-            },
-            _config.shoesColor);
+        if (isFaceUnlocked) {
+            createDropdown(facePanel["eyes_option"], params.eyeNames, "eyesNumber");
+            createDropdown(facePanel["brows_option"], params.browNames, "browsNumber");
+            createDropdown(facePanel["mouth_option"], params.mouthNames, "mouthNumber");
+        }
 
-        var hairPicker :MyColorPicker = createColorPicker(
-            MyColorPicker.TYPE_GENERAL,
-            panel["hair_color"],
-            function (color :uint) :void {
-                if (_config.hairColor != color) {
-                    _config.hairColor = color;
-                    configUpdated();
-                }
-            },
-            _config.hairColor);
+        // Color pickers
+        var skinPalette :int =
+            (isSkinUnlocked ? MyColorPicker.TYPE_SKIN_UPGRADE : MyColorPicker.TYPE_SKIN);
+        createColorPicker(skinPalette, panel["skin_color"], "skinColor");
+        createColorPicker(MyColorPicker.TYPE_GENERAL, panel["pants_color"], "pantsColor");
+        createColorPicker(MyColorPicker.TYPE_GENERAL, panel["top_color"], "topColor");
+        createColorPicker(MyColorPicker.TYPE_GENERAL, panel["shoes_color"], "shoesColor");
+        createColorPicker(MyColorPicker.TYPE_GENERAL, panel["hair_color"], "hairColor");
+
+        if (isFaceUnlocked) {
+            createColorPicker(MyColorPicker.TYPE_GENERAL, facePanel["eyes_color"], "eyesColor");
+        }
 
         // randomize button
         var randomizeButton :SimpleButton = panel["button_randomize"];
@@ -125,14 +80,12 @@ public class VampatarConfigPanel extends Sprite
                 // that we don't flood the network with meaningless updates
                 _suppressConfigUpdates = true;
 
-                hairDropdown.selectRandomItem();
-                topDropdown.selectRandomItem();
-                shoesDropdown.selectRandomItem();
-                skinPicker.selectRandomColor();
-                pantsPicker.selectRandomColor();
-                topPicker.selectRandomColor();
-                shoesPicker.selectRandomColor();
-                hairPicker.selectRandomColor();
+                for each (var dropdown :Dropdown in _dropdowns) {
+                    dropdown.selectRandomItem();
+                }
+                for each (var cp :MyColorPicker in _colorPickers) {
+                    cp.selectRandomColor();
+                }
 
                 _suppressConfigUpdates = false;
                 configUpdated();
@@ -152,40 +105,58 @@ public class VampatarConfigPanel extends Sprite
             });
     }
 
-    protected function createDropdown (button :SimpleButton, items :Array,
-                                       onItemSelected :Function, initialValue :*) :Dropdown
+    protected function createDropdown (button :SimpleButton, items :Array, configName :String)
+        :Dropdown
     {
-        var dropdown :Dropdown = new Dropdown(button, items, onItemSelected);
-        dropdown.x = button.x;
-        dropdown.y = button.y;
-        dropdown.selectItemByValue(initialValue);
+        var dropdown :Dropdown = new Dropdown(button, numberItems(items),
+            function (value :int) :void {
+                if (_config[configName] != value) {
+                    _config[configName] = value;
+                    configUpdated();
+                }
+            });
+
+        var loc :Point =
+            DisplayUtil.transformPoint(new Point(button.x, button.y), button.parent, this);
+        dropdown.x = loc.x;
+        dropdown.y = loc.y;
+
+        dropdown.selectItemByValue(_config[configName]);
 
         button.addEventListener(MouseEvent.MOUSE_DOWN,
             function (...ignored) :void {
                 showPicker(dropdown);
             });
 
-        _pickers.push(dropdown);
+        _dropdowns.push(dropdown);
 
         return dropdown;
     }
 
-    protected function createColorPicker (type :int,
-                                          button :MovieClip,
-                                          onColorSelected :Function,
-                                          initialColor :uint) :MyColorPicker
+    protected function createColorPicker (type :int, button :MovieClip, configName :String)
+        :MyColorPicker
     {
-        var cp :MyColorPicker = new MyColorPicker(type, button, onColorSelected);
-        cp.x = button.x;
-        cp.y = button.y;
-        cp.selectColor(initialColor);
+        var cp :MyColorPicker = new MyColorPicker(type, button,
+            function (color :uint) :void {
+                if (_config[configName] != color) {
+                    _config[configName] = color;
+                    configUpdated();
+                }
+            });
+
+        var loc :Point =
+            DisplayUtil.transformPoint(new Point(button.x, button.y), button.parent, this);
+        cp.x = loc.x;
+        cp.y = loc.y;
+
+        cp.selectColor(_config[configName]);
 
         button.addEventListener(MouseEvent.MOUSE_DOWN,
             function (...ignored) :void {
                 showPicker(cp);
             });
 
-        _pickers.push(cp);
+        _colorPickers.push(cp);
 
         return cp;
     }
@@ -200,9 +171,15 @@ public class VampatarConfigPanel extends Sprite
 
     protected function hideAllPickers () :void
     {
-        for each (var picker :DisplayObject in _pickers) {
-            if (picker.parent != null) {
-                picker.parent.removeChild(picker);
+        for each (var dropdown :Dropdown in _dropdowns) {
+            if (dropdown.parent != null) {
+                dropdown.parent.removeChild(dropdown);
+            }
+        }
+
+        for each (var cp :MyColorPicker in _colorPickers) {
+            if (cp.parent != null) {
+                cp.parent.removeChild(cp);
             }
         }
 
@@ -229,7 +206,8 @@ public class VampatarConfigPanel extends Sprite
         return out;
     }
 
-    protected var _pickers :Array = [];
+    protected var _dropdowns :Array = [];
+    protected var _colorPickers :Array = [];
     protected var _mouseCapture :Sprite;
 
     protected var _originalConfig :VampatarConfig;
@@ -279,6 +257,7 @@ class MyColorPicker extends Sprite
 {
     public static const TYPE_SKIN :int = 0;
     public static const TYPE_GENERAL :int = 1;
+    public static const TYPE_SKIN_UPGRADE :int = 2;
 
     public static function randPaletteColor (paletteType :int) :uint
     {
@@ -369,10 +348,12 @@ class MyColorPicker extends Sprite
     protected var _swatch :Shape;
     protected var _swatchColor :uint;
 
-    protected static var _bitmaps :Array = [ null, null ];
+    protected static var _bitmaps :Array = [];
 
-    protected static const PALETTE_MOVIES :Array = [ "palette_vamp", "palette_all" ];
-    protected static const SCALES :Array = [ 3, 2 ];
+    protected static const PALETTE_MOVIES :Array = [
+        "palette_vamp", "palette_all", "palette_skin"
+    ];
+    protected static const SCALES :Array = [ 3, 2, 3 ];
 
     protected static const SWATCH_HEIGHT :int = 20;
     protected static const BORDER :int = 6;

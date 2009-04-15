@@ -20,34 +20,38 @@ public class VampireBody extends VampireBodyBase
     public function VampireBody (ctrl :AvatarControl,
                                  media :MovieClip,
                                  configPanelType :int,
-                                 hairNames :Array,
-                                 topNames :Array,
-                                 shoeNames :Array,
+                                 configParams :ConfigParams,
                                  upsellItemId :int,
                                  width :int, height :int = -1)
     {
         super(ctrl, media, width, height);
 
         _configPanelType = configPanelType;
-
-        _hairNames = hairNames;
-        _topNames = topNames;
-        _shoeNames = shoeNames;
+        _configParams = configParams;
 
         _upsellItemId = upsellItemId;
 
-        // Entity memory-based configuration
-        loadConfig();
         if (_ctrl.hasControl()) {
             _ctrl.registerCustomConfig(createConfigPanel);
         }
+
+        loadConfig();
+        _playerLevel = _ctrl.getMemory(MEMORY_PLAYER_LEVEL) as int;
 
         _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED,
             function (e :ControlEvent) :void {
                 if (e.name == MEMORY_CONFIG) {
                     loadConfig();
+                } else if (e.name == MEMORY_PLAYER_LEVEL) {
+                    _playerLevel = _ctrl.getMemory(MEMORY_PLAYER_LEVEL) as int;
                 }
             });
+    }
+
+    override protected function setPlayerLevel (newLevel :int) :void
+    {
+        super.setPlayerLevel(newLevel);
+        saveMemory(MEMORY_PLAYER_LEVEL, newLevel);
     }
 
     protected function createConfigPanel () :Sprite
@@ -55,10 +59,7 @@ public class VampireBody extends VampireBodyBase
         switch (_configPanelType) {
         case CONFIGURABLE:
             return new VampatarConfigPanel(
-                _hairNames,
-                _topNames,
-                _shoeNames,
-                _curConfig,
+                20, _configParams, _curConfig,
                 function (newConfig :VampatarConfig) :void {
                     saveConfig(newConfig);
                     applyConfig(newConfig);
@@ -89,12 +90,16 @@ public class VampireBody extends VampireBodyBase
 
     protected function saveConfig (config :VampatarConfig) :void
     {
-        _ctrl.setMemory(MEMORY_CONFIG, config.toBytes(),
-            function (success :Boolean) :void {
-                if (!success) {
-                    log.warning("Failed to save VampatarConfig!");
-                }
-            });
+        saveMemory(MEMORY_CONFIG, config.toBytes());
+    }
+
+    protected function saveMemory (name :String, value :Object) :void
+    {
+        _ctrl.setMemory(name, value, function (success :Boolean) :void {
+            if (!success) {
+                log.warning("Failed to save Vampatar memory!", "name", name);
+            }
+        });
     }
 
     protected function applyConfig (config :VampatarConfig) :void
@@ -144,6 +149,15 @@ public class VampireBody extends VampireBodyBase
             selectFrame(movie, [ "footR", "skin" ], _curConfig.shoesNumber);
             selectFrame(movie, [ "calfL", "shoes" ], _curConfig.shoesNumber);
             selectFrame(movie, [ "calfR", "shoes" ], _curConfig.shoesNumber);
+
+            // Eyes
+            selectFrame(movie, [ "head", "eyes" ], _curConfig.eyesNumber);
+
+            // Brows
+            selectFrame(movie, [ "head", "eyebrows" ], _curConfig.browsNumber);
+
+            // Mouth
+            selectFrame(movie, [ "head", "mouth" ], _curConfig.mouthNumber);
         }
     }
 
@@ -156,6 +170,7 @@ public class VampireBody extends VampireBodyBase
         var shirtFilter :ColorMatrixFilter = createColorFilter(_curConfig.topColor);
         var pantsFilter :ColorMatrixFilter = createColorFilter(_curConfig.pantsColor);
         var shoesFilter :ColorMatrixFilter = createColorFilter(_curConfig.shoesColor);
+        var eyesFilter :ColorMatrixFilter = createColorFilter(_curConfig.eyesColor);
 
         for each (var movie :MovieClip in movies) {
             // Skin color
@@ -211,6 +226,9 @@ public class VampireBody extends VampireBodyBase
             applyFilter(movie, [ "calfR", "shoes", ], shoesFilter);
             applyFilter(movie, [ "footL", "shoes", ], shoesFilter);
             applyFilter(movie, [ "footR", "shoes", ], shoesFilter);
+
+            // Eyes color
+            applyFilter(movie, [ "head", "eyes", ], eyesFilter);
         }
     }
 
@@ -279,12 +297,11 @@ public class VampireBody extends VampireBodyBase
 
     protected var _curConfig :VampatarConfig;
     protected var _configPanelType :int;
-    protected var _hairNames :Array;
-    protected var _topNames :Array;
-    protected var _shoeNames :Array;
+    protected var _configParams :ConfigParams;
     protected var _upsellItemId :int;
 
     protected static const MEMORY_CONFIG :String = "VampatarConfig";
+    protected static const MEMORY_PLAYER_LEVEL :String = "PlayerLevel";
 }
 
 }
