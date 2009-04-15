@@ -54,9 +54,7 @@ public class BloodBloom extends FeedingClient
     public function BloodBloom (gameId :int,
                                 playerData :PlayerFeedingData,
                                 gameCompleteCallback :Function,
-                                props :NamespacePropGetControl = null)//,
-//                                scoresDaily :Array = null,
-//                                scoresMonthly :Array = null)
+                                props :NamespacePropGetControl = null)
     {
         if (!_inited) {
             throw new Error("FeedingGameClient.init has not been called");
@@ -68,8 +66,6 @@ public class BloodBloom extends FeedingClient
         ClientCtx.playerData = playerData.clone();
         ClientCtx.gameCompleteCallback = gameCompleteCallback;
         ClientCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);
-//        ClientCtx.highScoresDaily = scoresDaily;
-//        ClientCtx.highScoresMonthly = scoresMonthly;
         FeedingUtil.initMessageManager(ClientCtx.msgMgr);
 
         _events.registerListener(this, Event.ADDED_TO_STAGE,
