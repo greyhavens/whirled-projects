@@ -3,7 +3,6 @@ package vampire.server
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.StringBuilder;
-import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.contrib.simplegame.ObjectMessage;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.tasks.FunctionTask;
@@ -11,6 +10,8 @@ import com.whirled.contrib.simplegame.tasks.RepeatingTask;
 import com.whirled.contrib.simplegame.tasks.SerialTask;
 import com.whirled.contrib.simplegame.tasks.TimedTask;
 import com.whirled.net.PropertySubControl;
+
+import fakeavrg.PropertySubControlFake;
 
 import flash.utils.Dictionary;
 
@@ -31,12 +32,13 @@ public class LeaderBoardServer extends SimObject
             _props.setIn(SERVER_PROP_NAME, PROP_KEY_MONTH, []);
         }
         var scoreDict :Dictionary = _props.get(SERVER_PROP_NAME) as Dictionary;
+        trace("Score dict=" + scoreDict);
 
-        _scoresAndNamesDay = scoreDict.get(PROP_KEY_DAY) as Array;
+        _scoresAndNamesDay = scoreDict[PROP_KEY_DAY] as Array;
         if (_scoresAndNamesDay == null) {
             _scoresAndNamesDay = [];
         }
-        _scoresAndNamesMonthy = scoreDict.get(PROP_KEY_MONTH) as Array;
+        _scoresAndNamesMonthy = scoreDict[PROP_KEY_MONTH] as Array;
         if (_scoresAndNamesMonthy == null) {
             _scoresAndNamesMonthy = [];
         }
@@ -78,12 +80,6 @@ public class LeaderBoardServer extends SimObject
         return NAME;
     }
 
-//    //Don't modify this array!!
-//    public function get highScores () :Array
-//    {
-//        return _scoresAndNamesWeekly;
-//    }
-
     /**
     * This class creates the message because we don't want to expose the score array to
     * other classes.
@@ -95,7 +91,7 @@ public class LeaderBoardServer extends SimObject
 
     override protected function receiveMessage (msg :ObjectMessage) :void
     {
-        if (msg != null && msg.name == LEADER_BOARD_MESSAGE_SCORES) {
+        if (msg != null && msg.name == MESSAGE_LEADER_BOARD_MESSAGE_SCORES) {
             var playerScores :HashMap = msg.data as HashMap;
             if (playerScores != null) {
                 //Get the total score
@@ -125,10 +121,8 @@ public class LeaderBoardServer extends SimObject
                 //
                 var sb :StringBuilder = new StringBuilder();
                 for each (var playerId : int in playerIds) {
-                    if (ServerContext.server.isPlayer(playerId)) {
-                        var name :String = ServerContext.server.getPlayer(playerId).name;
-                        sb.append(name.substr(0, VConstants.MAX_CHARS_IN_LINEAGE_NAME) + ", ");
-                    }
+                    var name :String = getPlayerName(playerId);
+                    sb.append(name.substr(0, VConstants.MAX_CHARS_IN_LINEAGE_NAME) + ", ");
                 }
                 var nameString :String = sb.toString();
                 //Chop the last comma
@@ -141,6 +135,18 @@ public class LeaderBoardServer extends SimObject
                 log.error("receiveMessage", "msg.name", msg.name, "playerScores", playerScores);
             }
         }
+    }
+
+    protected function getPlayerName (playerId :int) :String
+    {
+        if (localDebug) {
+            return "Player " + playerId;
+        }
+        if (ServerContext.server.isPlayer(playerId)) {
+            var name :String = ServerContext.server.getPlayer(playerId).name;
+            return name;
+        }
+        return "Player " + playerId;
     }
 
     protected function updateScores (score :int, names :String) :void
@@ -211,6 +217,50 @@ public class LeaderBoardServer extends SimObject
     public static function debug () :void
     {
 
+        var props :PropertySubControl = new PropertySubControlFake();
+        var now :Number = new Date().time;
+
+        props.setIn(SERVER_PROP_NAME, PROP_KEY_DAY, [
+                                                        [10, "tenners", now - 30],
+                                                        [100, "hundreders", now - DAY_SECONDS],
+                                                        [1000, "thousanders", now - DAY_SECONDS + 100],
+                                                    ]);
+        props.setIn(SERVER_PROP_NAME, PROP_KEY_MONTH, [
+                                                        [101, "tennersM", now - 30],
+                                                        [1001, "hundredersM", now - MONTH_SECONDS],
+                                                        [10001, "thousandersM", now - MONTH_SECONDS  + 100],
+                                                    ]);
+
+        var board :LeaderBoardServer = new LeaderBoardServer(props);
+        board.localDebug = true;
+        trace("Start " + board);
+
+        trace("New scores");
+        var scores :HashMap = new HashMap();
+        scores.put(1, 200);
+        scores.put(2, 230);
+        scores.put(3, 430);
+        board.receiveMessage(new ObjectMessage(MESSAGE_LEADER_BOARD_MESSAGE_SCORES, scores));
+        trace("after scores " + board);
+
+        trace("fresh board from props: " + new LeaderBoardServer(props));
+    }
+
+    override public function toString () :String
+    {
+        var ii :int;
+        var scoreArray :Array;
+        var sb :StringBuilder = new StringBuilder("Current Leaderboard:\n");
+        sb.append("  Daily scores:\n");
+        for each (scoreArray in _scoresAndNamesDay) {
+            sb.append("\t\t" + scoreArray + "\n");
+        }
+        sb.append("  Monthy scores:\n");
+        for each (scoreArray in _scoresAndNamesMonthy) {
+            sb.append("\t\t" + scoreArray + "\n");
+        }
+
+        return sb.toString();
     }
 
 
@@ -222,7 +272,9 @@ public class LeaderBoardServer extends SimObject
     protected var _localHighScoreDay :int = 0;
     protected var _localHighScoreMnth :int = 0;
 
-    public static const LEADER_BOARD_MESSAGE_SCORES :String = "Message: new scores";
+    protected var localDebug :Boolean = false;
+
+    public static const MESSAGE_LEADER_BOARD_MESSAGE_SCORES :String = "Message: new scores";
     protected static const SERVER_PROP_NAME :String = "FeedingHighScores";
     protected static const PROP_KEY_DAY :int = 1;
     protected static const PROP_KEY_MONTH :int = 2;
