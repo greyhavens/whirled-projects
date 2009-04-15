@@ -16,6 +16,7 @@ import flash.utils.Dictionary;
 [Event(name="QuestCompleted", type="vampire.quest.PlayerQuestEvent")]
 [Event(name="LocationAdded", type="vampire.quest.PlayerLocationEvent")]
 [Event(name="MovedToLocation", type="vampire.quest.PlayerLocationEvent")]
+[Event(name="QuestJuiceChanged", type="vampire.quest.PlayerJuiceEvent")]
 
 public class PlayerQuestData extends EventDispatcher
 {
@@ -29,6 +30,16 @@ public class PlayerQuestData extends EventDispatcher
     public function shutdown () :void
     {
         _events.freeAllHandlers();
+    }
+
+    public function get questJuice () :int
+    {
+        return _props.get(PROP_QUEST_JUICE) as int;
+    }
+
+    public function set questJuice (val :int) :void
+    {
+        _props.set(PROP_QUEST_JUICE, val);
     }
 
     public function addQuest (questId :int) :void
@@ -107,6 +118,14 @@ public class PlayerQuestData extends EventDispatcher
                         new PlayerLocationEvent(PlayerLocationEvent.MOVED_TO_LOCATION, loc));
                 }
             }
+
+        } else if (e.name == PROP_QUEST_JUICE) {
+            if (e.newValue == null) {
+                log.warning("Player quest juice is null");
+            } else {
+                var juice :int = e.newValue as int;
+                dispatchEvent(new PlayerJuiceEvent(PlayerJuiceEvent.QUEST_JUICE_CHANGED, juice));
+            }
         }
     }
 
@@ -137,6 +156,7 @@ public class PlayerQuestData extends EventDispatcher
     protected static const PROP_ACTIVE_QUESTS :String = NetConstants.makePersistent("ActiveQuests");
     protected static const PROP_AVAIL_LOCS :String = NetConstants.makePersistent("AvailLocs");
     protected static const PROP_CUR_LOC :String = NetConstants.makePersistent("CurLoc");
+    protected static const PROP_QUEST_JUICE :String = NetConstants.makePersistent("QuestJuice");
 
     protected static const NAMESPACE :String = "pqd";
 

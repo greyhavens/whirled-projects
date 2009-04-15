@@ -42,7 +42,11 @@ public class MapView extends SceneObject
     {
         registerListener(getLocButton(loc), MouseEvent.CLICK,
             function (...ignored) :void {
-                ClientCtx.questData.curLocation = loc;
+                var cost :int = ClientCtx.questData.curLocation.getMovementCost(loc);
+                if (cost >= 0 && cost <= ClientCtx.questData.questJuice) {
+                    ClientCtx.questData.curLocation = loc;
+                    ClientCtx.questData.questJuice -= cost;
+                }
             });
     }
 

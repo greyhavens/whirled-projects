@@ -30,6 +30,7 @@ public class QuestClientStandalone extends Sprite
 
         QuestClient.init(_sg, questData, stats);
 
+        questData.questJuice = 100;
         questData.addQuest(Quests.getQuestByName("TestQuest").id);
         questData.addAvailableLocation(Locations.getLocationByName("HomeBase"));
         questData.addAvailableLocation(Locations.getLocationByName("Battleground"));

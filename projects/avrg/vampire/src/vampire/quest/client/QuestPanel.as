@@ -29,11 +29,21 @@ public class QuestPanel extends DraggableObject
         g.drawRect(0, 0, WIDTH, HEIGHT);
         g.endFill();
 
-        var title :TextField = TextBits.createText("Quests", 3, 0, 0xffffff);
+        _tfQuestJuice = new TextField();
+        _tfQuestJuice.x = 10;
+        _tfQuestJuice.y = 340;
+        _draggableLayer.addChild(_tfQuestJuice);
+        updateQuestJuice();
+
+        var title :TextField = TextBits.createText("Quests", 2, 0, 0xffffff);
         title.x = (_sprite.width - title.width) * 0.5;
-        title.y = 10;
+        title.y = 350;
         _draggableLayer.addChild(title);
 
+        registerListener(ClientCtx.questData, PlayerJuiceEvent.QUEST_JUICE_CHANGED,
+            function (e :PlayerJuiceEvent) :void {
+                updateQuestJuice();
+            });
         registerListener(ClientCtx.questData, PlayerQuestEvent.QUEST_ADDED,
             function (e :PlayerQuestEvent) :void {
                 addQuest(e.questId);
@@ -47,6 +57,12 @@ public class QuestPanel extends DraggableObject
         for each (var questId :int in ClientCtx.questData.activeQuests) {
             addQuest(questId);
         }
+    }
+
+    protected function updateQuestJuice () :void
+    {
+        var text :String = "Quest Juice: " + ClientCtx.questData.questJuice;
+        TextBits.initTextField(_tfQuestJuice, text, 1.3, 0, 0x00ff00);
     }
 
     protected function addQuest (questId :int) :void
@@ -74,7 +90,7 @@ public class QuestPanel extends DraggableObject
 
     protected function updateQuestViews () :void
     {
-        var y :Number = 60;
+        var y :Number = 380;
         for each (var questView :ActiveQuestView in _activeQuestViews) {
             questView.x = 10;
             questView.y = y;
@@ -101,12 +117,14 @@ public class QuestPanel extends DraggableObject
     protected var _locationViews :Array = [];
     protected var _activeQuestViews :Array = [];
 
+    protected var _tfQuestJuice :TextField;
+
     protected var _sprite :Sprite;
     protected var _draggableLayer :Sprite;
     protected var _uiLayer :Sprite;
 
-    protected static const WIDTH :Number = 500;
-    protected static const HEIGHT :Number = 300;
+    protected static const WIDTH :Number = 700;
+    protected static const HEIGHT :Number = 500;
 }
 
 }
@@ -170,7 +188,8 @@ class ActiveQuestView extends SceneObject
             _completeButton.visible = true;
             _tfStatus.visible = false;
         } else {
-            TextBits.initTextField(_tfStatus, desc.getProgressText(ClientCtx.stats), 1.3, 0,
+            var text :String = desc.description + " " + desc.getProgressText(ClientCtx.stats);
+            TextBits.initTextField(_tfStatus, text, 1.3, 0,
                 0xffffff);
             _tfStatus.x = _tfName.x + _tfName.width + 5;
             _tfStatus.visible = true;

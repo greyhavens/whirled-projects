@@ -12,8 +12,9 @@ public class Quests
         // create a test quest
         var testQuest :QuestDesc = new QuestDesc();
         testQuest.name = "TestQuest";
-        testQuest.displayName = "'Get those Frobs!'";
-        makeCollectionRequirement(testQuest, "Frob", 3); // Collect 3 Frobs!
+        testQuest.displayName = "Monster Whacker";
+        testQuest.description = "Go to the Battleground and kill 3 monsters";
+        makeCollectionRequirement(testQuest, "Monster", 3);
         addQuest(testQuest);
     }
 
@@ -46,7 +47,7 @@ public class Quests
         desc.getProgressTextFn = function (stats :PlayerQuestStats) :String {
             var cur :int = stats.getIntStat(statName);
             var remaining :int = Math.max(num - cur, 0);
-            return "Collect " + remaining + " more " + statName + (remaining == 1 ? "." : "s.");
+            return "(" + remaining + " remaining)";
         }
     }
 
