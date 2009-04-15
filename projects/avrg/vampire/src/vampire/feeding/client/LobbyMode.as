@@ -6,6 +6,7 @@ import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.avrg.RoomDragger;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
@@ -44,8 +45,9 @@ public class LobbyMode extends AppMode
         var contents :MovieClip = _panelMovie["draggable"];
 
         // Leaderboard is not used yet
-        var leaderboard :MovieClip = contents["leaderboard"];
+        var leaderboard :SceneObject = new LeaderBoardClient(contents["leaderboard"]);
         leaderboard.visible = false;
+        addObject(leaderboard);
 
         // Make the lobby draggable
         addObject(new RoomDragger(ClientCtx.gameCtrl, contents, _panelMovie));
@@ -62,7 +64,7 @@ public class LobbyMode extends AppMode
         instructionsCorruption.visible = false;
 
         if (true) {//Production: show high scores after X games played
-            showScores();
+            leaderboard.visible = true;
         }
         else if (this.isPreGameLobby && ClientCtx.playerData.timesPlayed == 0) {
             instructionsBasic.visible = true;
@@ -130,25 +132,25 @@ public class LobbyMode extends AppMode
         }
     }
 
-    protected function showScores () :void
-    {
-        trace("Showing scores");
-        var leaderboard :MovieClip = _panelMovie["draggable"]["leaderboard"] as MovieClip;
-        leaderboard.visible = true;
-//        for (var ii :int = 1; ii <= 5; ++ii) {
-//            var dailyScore :MovieClip = leaderboard["today_0" + ii ] as MovieClip;
-//            if (dailyScore != null) {
-//                if (ClientCtx.highScoresDaily != null && ClientCtx.highScoresDaily.length >= 5) {
-//                    TextField(dailyScore["player_name"]).text = ClientCtx.highScoresDaily[ii][1];
-//                    TextField(dailyScore["player_score"]).text = "" + ClientCtx.highScoresDaily[ii][0];
-//                }
-//                else {
-//                    TextField(dailyScore["player_name"]).text = "";
-//                    TextField(dailyScore["player_score"]).text = "";
-//                }
-//            }
-//        }
-    }
+//    protected function showScores () :void
+//    {
+//        trace("Showing scores");
+//        var leaderboard :MovieClip = _panelMovie["draggable"]["leaderboard"] as MovieClip;
+//        leaderboard.visible = true;
+////        for (var ii :int = 1; ii <= 5; ++ii) {
+////            var dailyScore :MovieClip = leaderboard["today_0" + ii ] as MovieClip;
+////            if (dailyScore != null) {
+////                if (ClientCtx.highScoresDaily != null && ClientCtx.highScoresDaily.length >= 5) {
+////                    TextField(dailyScore["player_name"]).text = ClientCtx.highScoresDaily[ii][1];
+////                    TextField(dailyScore["player_score"]).text = "" + ClientCtx.highScoresDaily[ii][0];
+////                }
+////                else {
+////                    TextField(dailyScore["player_name"]).text = "";
+////                    TextField(dailyScore["player_score"]).text = "";
+////                }
+////            }
+////        }
+//    }
 
     protected function showRoundTimer (show :Boolean, remainingTime :Number = 0) :void
     {

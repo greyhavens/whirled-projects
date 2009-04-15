@@ -209,9 +209,9 @@ public class MainGameMode extends AppMode
             }*/
             _feedingGameClient = FeedingClient.create(msg.gameId,
                                                       ClientContext.model.playerFeedingData,
-                                                      onGameComplete,
-                                                      msg.scoresDaily,
-                                                      msg.scoresMonthly);
+                                                      onGameComplete);//,
+//                                                      msg.scoresDaily,
+//                                                      msg.scoresMonthly);
 
             modeSprite.addChildAt(_feedingGameClient, 0)
 

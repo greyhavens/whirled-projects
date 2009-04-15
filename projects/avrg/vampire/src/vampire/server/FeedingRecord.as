@@ -138,19 +138,20 @@ public class FeedingRecord extends EventCollecter
         log.debug("starting gameServer", "gameId", _gameServer.gameId ,"roomId", _room.roomId, "_predators", _predators.toArray(), "gamePreyId", gamePreyId);
 
         // send a message with the game ID to each of the players, a
-        var leaderBoard :LeaderBoardServer;
-        if (ServerContext.server.getObjectNamed(LeaderBoardServer.NAME) != null) {
-            leaderBoard =
-                ServerContext.server.getObjectNamed(LeaderBoardServer.NAME) as LeaderBoardServer;
-        }
+//        var leaderBoard :LeaderBoardServer;
+//        if (ServerContext.server.getObjectNamed(LeaderBoardServer.NAME) != null) {
+//            leaderBoard =
+//                ServerContext.server.getObjectNamed(LeaderBoardServer.NAME) as LeaderBoardServer;
+//        }
         ServerContext.ctrl.doBatch(function () :void {
             for each (var playerId :int in _gameServer.playerIds) {
                 if(ServerContext.server.isPlayer(playerId)) {
                     log.debug("Sending start game message to client " + playerId + "=StartClient", _gameServer.gameId);
 
-                    var msg :StartFeedingClientMsg = leaderBoard != null ?
-                        leaderBoard.createStartGameMessage(playerId, _gameServer.gameId) :
-                        new StartFeedingClientMsg(playerId, _gameServer.gameId);
+//                    var msg :StartFeedingClientMsg = leaderBoard != null ?
+//                        leaderBoard.createStartGameMessage(playerId, _gameServer.gameId) :
+                    var msg :StartFeedingClientMsg = new StartFeedingClientMsg(playerId,
+                        _gameServer.gameId);
 
                     ServerContext.server.getPlayer(playerId).ctrl.sendMessage(
                         StartFeedingClientMsg.NAME, msg.toBytes());

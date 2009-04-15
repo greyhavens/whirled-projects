@@ -7,6 +7,7 @@ import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
+import com.whirled.contrib.simplegame.ObjectMessage;
 import com.whirled.contrib.simplegame.net.Message;
 
 import flash.utils.ByteArray;
@@ -1136,6 +1137,12 @@ public class ServerLogic
         var preyIsPlayer :Boolean = srv.isPlayer(gameRecord.gameServer.preyId);
         var preyPlayer :PlayerData = preyIsPlayer ? srv.getPlayer(gameRecord.gameServer.preyId) : null;
         var preyId :int = gameRecord.gameServer.preyId;
+
+        //Send the LeaderBoard the scores
+        log.debug("Sending message to LeaderBoardServer");
+        ServerContext.server.sendMessageToNamedObject(
+            new ObjectMessage(LeaderBoardServer.MESSAGE_LEADER_BOARD_MESSAGE_SCORES, finalScores),
+            LeaderBoardServer.NAME);
 
         var predIds :Array = [];
         finalScores.forEach(function (playerId :int, score :int) :void {

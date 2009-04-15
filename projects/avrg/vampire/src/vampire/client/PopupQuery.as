@@ -1,11 +1,14 @@
 package vampire.client
 {
 import com.threerings.flash.TextFieldUtil;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.contrib.avrg.RoomDragger;
+import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.objects.DraggableObject;
 import com.whirled.contrib.simplegame.objects.Dragger;
+import com.whirled.contrib.simplegame.objects.SceneObject;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -122,12 +125,6 @@ public class PopupQuery extends DraggableObject
     override protected function get draggableObject () :InteractiveObject
     {
         return _draggableSprite;
-    }
-
-    override protected function addedToDB () :void
-    {
-        super.addedToDB();
-//        ClientContext.animateEnlargeFromMouseClick(this);
     }
 
     public function setText (message :String): void
@@ -275,6 +272,55 @@ public class PopupQuery extends DraggableObject
     }
 
 
+    override protected function addedToDB () :void
+    {
+        super.addedToDB();
+        for each (var sim :SimObject in _yetToAddToDB) {
+            db.addObject(sim);
+        }
+        _yetToAddToDB = null;
+    }
+
+    protected function addSimObject (s :SimObject) :void
+    {
+        if (db != null) {
+            db.addObject(s);
+        }
+        else {
+            _yetToAddToDB.push(s);
+        }
+        _subObjects.push(s);
+    }
+    protected function addSceneObject (s :SceneObject, parent :DisplayObjectContainer = null) :void
+    {
+        if (parent != null) {
+            parent.addChild(s.displayObject);
+        }
+        else {
+            _displaySprite.addChild(s.displayObject);
+        }
+        addSimObject(s);
+    }
+
+    protected function destroySimObject (s :SimObject) :void
+    {
+        if (s.isLiveObject) {
+            s.destroySelf();
+        }
+        ArrayUtil.removeAll(_subObjects, s);
+    }
+
+    override protected function destroyed () :void
+    {
+        super.destroyed();
+        for each (var child :SimObject in _subObjects) {
+            if (child.isLiveObject) {
+                child.destroySelf();
+            }
+        }
+    }
+
+
 
     protected var _name :String;
 
@@ -294,6 +340,12 @@ public class PopupQuery extends DraggableObject
     protected var _displaySprite :Sprite = new Sprite();
     protected var _draggableSprite :Sprite = new Sprite();
     protected var _buttonPanelSprite :Sprite = new Sprite();
+
+    //Make this into a scene object parent
+    protected var _subObjects :Array = new Array();
+    protected var _yetToAddToDB :Array = new Array();
+
+
     protected static const GAP_BETWEEN_BUTTON_AND_PANEL_BOTTOM :int = 4;
     protected static const GAP_ABOVE_AND_BELOW_TEXT :int = 18;//15;
 

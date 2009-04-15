@@ -3,7 +3,6 @@ package vampire.client
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
-import com.whirled.EntityControl;
 import com.whirled.contrib.avrg.AvatarHUD;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimObject;
@@ -13,6 +12,7 @@ import flash.display.MovieClip;
 import flash.display.Sprite;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
+import vampire.data.Lineage;
 import vampire.data.VConstants;
 import vampire.net.messages.FeedConfirmMsg;
 import vampire.net.messages.FeedRequestMsg;
@@ -36,7 +36,8 @@ public class VampireController extends Controller
 
     public static const SHOW_DEBUG :String = "ShowDebug";
 
-    public static const SHOW_HIERARCHY :String = "ShowLineage";
+    public static const SHOW_LINEAGE :String = "ShowLineage";
+    public static const SHOW_PREY_LINEAGE :String = "ShowPreyLineage";
 
     public static const FEED :String = "Feed";
     public static const FEED_REQUEST_ACCEPT :String = "AcceptFeedRequest";
@@ -130,14 +131,15 @@ public class VampireController extends Controller
     }
 
 
-    public function handleShowIntro (startFrame :String = null, centerLineage :int = 0) :void
+    public function handleShowIntro (startFrame :String = null, lineage :Lineage = null,
+        playerCenter :int = 0) :void
     {
         try {
             var help :HelpPopup =
                 ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as HelpPopup;
 
             if (help == null) {
-                help = new HelpPopup(startFrame);
+                help = new HelpPopup(startFrame, lineage, playerCenter);
                 ClientContext.gameMode.addSceneObject(help,
                     ClientContext.game.ctx.mainLoop.topMode.modeSprite);
 
@@ -158,12 +160,12 @@ public class VampireController extends Controller
             }
 
 
-            help = ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as HelpPopup;
-            if (help != null) {
-                if (centerLineage != 0) {
-                    help.centerLineageOnPlayer(centerLineage);
-                }
-            }
+//            help = ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as HelpPopup;
+//            if (help != null) {
+//                if (playerCenter != 0) {
+//                    help.centerLineageOnPlayer(playerCenter);
+//                }
+//            }
 
         }
         catch(err :Error) {
@@ -276,10 +278,11 @@ public class VampireController extends Controller
         lineageView.updateLineage(playerId);
     }
 
-    public function handleShowLineage (_hudMC :MovieClip) :void
+    public function handleShowLineage (_hudMC :MovieClip, lineage :Lineage = null,
+        playerCenter :int = 0) :void
     {
         try {
-            ClientContext.controller.handleShowIntro("default");
+            ClientContext.controller.handleShowIntro("default", lineage, playerCenter);
         }
         catch(err :Error) {
             trace(err.getStackTrace());
@@ -384,6 +387,13 @@ public class VampireController extends Controller
         else {
             log.error("handleDeactivateLoadBalancer, where is the load balancer???");
         }
+    }
+
+    public function handleShowPreyLineage (playerId :int) :void
+    {
+        var lineage :Lineage = ClientContext.gameMode.roomModel.getLineage(playerId);
+        trace("handleShowPreyLineage lineage=" + lineage + ", player=" + playerId);
+        handleShowIntro("default", lineage, playerId);
     }
 
 

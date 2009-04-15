@@ -14,8 +14,6 @@ import com.whirled.contrib.simplegame.tasks.LocationTask;
 import com.whirled.contrib.simplegame.tasks.SerialTask;
 import com.whirled.contrib.simplegame.tasks.TimedTask;
 
-import vampire.data.VConstants;
-
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.MovieClip;
@@ -29,6 +27,7 @@ import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 
 import vampire.data.Lineage;
+import vampire.data.VConstants;
 
 public class LineageViewBase extends SceneObjectParent
 {
@@ -49,9 +48,22 @@ public class LineageViewBase extends SceneObjectParent
         }
     }
 
+    public function addPopupBackground () :void
+    {
+        var popupPanel :MovieClip = ClientContext.instantiateMovieClip("HUD", "popup", false);
+        ClientUtil.detach(DisplayObject(popupPanel["button_01"]));
+        ClientUtil.detach(DisplayObject(popupPanel["button_02"]));
+        displaySprite.addChildAt(popupPanel, 0);
+        //Close button shuts the popup
+        var closeButton :SimpleButton = popupPanel["button_close"] as SimpleButton;
+        registerListener(closeButton, MouseEvent.CLICK, function (e :MouseEvent) :void {
+            destroySelf();
+        });
+    }
+
     override public function get objectName () :String
     {
-        return NAME;
+        return null;
     }
 
     public function get displaySprite () :Sprite

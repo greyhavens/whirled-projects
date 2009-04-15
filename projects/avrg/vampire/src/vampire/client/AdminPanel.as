@@ -5,7 +5,7 @@ import com.whirled.contrib.avrg.RoomDragger;
 import com.whirled.contrib.simplegame.objects.DraggableObject;
 import com.whirled.contrib.simplegame.objects.Dragger;
 
-import fakeavrg.PropertyGetSubControlFake;
+import fakeavrg.PropertySubControlFake;
 
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;

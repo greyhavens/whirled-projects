@@ -5,7 +5,6 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameControl;
-import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimpleGame;
 import com.whirled.contrib.simplegame.net.BasicMessageManager;
 import com.whirled.contrib.simplegame.objects.SceneObject;
@@ -25,7 +24,6 @@ import flash.geom.Rectangle;
 import vampire.Util;
 import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.avatar.VampireBodyBase;
-import vampire.data.Codes;
 import vampire.data.VConstants;
 
 /**
@@ -42,7 +40,7 @@ public class ClientContext
     public static var model :PlayerModel;
 
     /**The main game mode to add all game objects.*/
-    public static var gameMode :AppMode;
+    public static var gameMode :MainGameMode;
     public static var hud :HUD;
     public static var avatarOverlay :VampireAvatarHUDOverlay;
     public static var ourPlayerId :int;

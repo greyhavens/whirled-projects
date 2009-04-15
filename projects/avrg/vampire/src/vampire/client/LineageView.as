@@ -51,7 +51,7 @@ public class LineageView extends LineageViewBase
         return NAME;
     }
 
-    protected function updateLineageEvent(e :LineageUpdatedEvent) :void
+    protected function updateLineageEvent (e :LineageUpdatedEvent) :void
     {
         _lineage = e.lineage;
         log.debug(" updateLineageEvent", "e", e, "_lineage", _lineage);

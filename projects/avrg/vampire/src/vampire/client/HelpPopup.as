@@ -22,6 +22,7 @@ package vampire.client
 
     import vampire.Util;
     import vampire.data.Codes;
+    import vampire.data.Lineage;
     import vampire.data.Logic;
     import vampire.data.VConstants;
     import vampire.feeding.Constants;
@@ -29,12 +30,21 @@ package vampire.client
 
     public class HelpPopup extends DraggableObject
     {
-        public function HelpPopup (startframe :String = "intro")
+        public function HelpPopup (startframe :String = "intro", otherLineage :Lineage = null,
+            playerCenter :int = 0)
         {
+            trace("HelpPopup");
             _hudHelp = ClientContext.instantiateMovieClip("HUD", "popup_help", false);
             _displaySprite.addChild(_hudHelp);
 
-            _lineageView = new LineageView();
+            _lineageFromOtherPlayer = otherLineage;
+            if (otherLineage == null) {
+                _lineageView = new LineageView();
+            }
+            else {
+                _lineageView = new LineageViewBase(otherLineage, playerCenter);
+            }
+
 
             //Go to the first frame where all the buttons are.  Even though not all buttons are
             //visible there, obviously, however they need to be instantiated on the first frame
@@ -81,9 +91,6 @@ package vampire.client
                     gotoFrame("bloodbond");
                 });
 
-
-
-
             //Wire up the buttons
             registerListener(SimpleButton(findSafely("button_toinstructions")), MouseEvent.CLICK,
                 function (e :MouseEvent) :void {
@@ -129,15 +136,7 @@ package vampire.client
 //                        showTututorialOnClose = false;
 //                    }
                 });
-//            registerListener(SimpleButton(findSafely("button_recruit")), MouseEvent.CLICK,
-//                function (e :MouseEvent) :void {
-//                    ClientContext.tutorial.clickedRecruit();
-//                    ClientContext.controller.handleRecruit();
-//                });
 
-            //RECRUIT RIP
-//            var recruitButton :DisplayObject = findSafely("button_torecruiting");
-//            ClientUtil.detach(recruitButton);
             registerListener(SimpleButton(findSafely("button_torecruiting")), MouseEvent.CLICK,
                 function (e :MouseEvent) :void {
                     ClientContext.tutorial.clickedRecruit();
@@ -151,8 +150,10 @@ package vampire.client
             _bloodbondIconAnchor = findSafely("bond_icon");
 
             //Listen for the bloodbond changing
-            registerListener(ClientContext.ctrl.player.props,
-                PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+            if (_lineageFromOtherPlayer == null) {
+                registerListener(ClientContext.ctrl.player.props,
+                    PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+            }
             _infoTextAnchor = findSafely("text_blood") as TextField;
 
             _getSiresButton = findSafely("link_tovamps") as SimpleButton;
@@ -359,30 +360,40 @@ package vampire.client
                     lineage_center.parent.addChild(_lineageView.displayObject);
                     _lineageView.x = lineage_center.x;
                     _lineageView.y = lineage_center.y;// - 20;
-                    centerLineageOnPlayer(ClientContext.ourPlayerId);
+                    if (_lineageFromOtherPlayer == null) {
+                        trace("showing crap");
+                        centerLineageOnPlayer(ClientContext.ourPlayerId);
 
-                    //Add the clickable, glowable bloodbond icon
-                    var bloodbondIcon :MovieClip = ClientContext.instantiateMovieClip("HUD", "bond_icon", false);
+                        //Add the clickable, glowable bloodbond icon
+                        var bloodbondIcon :MovieClip = ClientContext.instantiateMovieClip("HUD", "bond_icon", false);
 
-                    registerListener(bloodbondIcon, MouseEvent.CLICK,
-                        function (e :MouseEvent) :void {
-                            if (bloodbondIcon.parent != null) {
-                                bloodbondIcon.parent.removeChild(bloodbondIcon);
-                            }
-                            gotoFrame("bloodbond");
-                        });
+                        registerListener(bloodbondIcon, MouseEvent.CLICK,
+                            function (e :MouseEvent) :void {
+                                if (bloodbondIcon.parent != null) {
+                                    bloodbondIcon.parent.removeChild(bloodbondIcon);
+                                }
+                                gotoFrame("bloodbond");
+                            });
 
-                    addGlowFilter(bloodbondIcon);
-                    bloodbondIcon.scaleX = bloodbondIcon.scaleY = 2;
-                    bloodbondIcon.x = _bloodbondIconAnchor.x - bloodbondIcon.width/2;
-                    bloodbondIcon.y = _bloodbondIconAnchor.y;
-                    _lineageView.displaySprite.addChild(bloodbondIcon);
+                        addGlowFilter(bloodbondIcon);
+                        bloodbondIcon.scaleX = bloodbondIcon.scaleY = 2;
+                        bloodbondIcon.x = _bloodbondIconAnchor.x - bloodbondIcon.width/2;
+                        bloodbondIcon.y = _bloodbondIconAnchor.y;
+                        _lineageView.displaySprite.addChild(bloodbondIcon);
 
-                    //Actually show your blondbond, if you have one
-                    showBloodBonded();
+                        //Actually show your blondbond, if you have one
+                        showBloodBonded();
 
-                    //Show the top info text
-                    createInfoText();
+                        //Show the top info text
+                        createInfoText();
+                    }
+                    else {
+                        _getSiresButton.mouseEnabled = false;
+                        _getSiresButton.visible = false;
+                        _getDescendentsButton.mouseEnabled = false;
+                        _getDescendentsButton.visible = false;
+                        _infoText.parent.removeChild(_infoText);
+                    }
 
 
                 default:
@@ -539,9 +550,12 @@ package vampire.client
         protected var _infoTextAnchor :TextField;
         protected var _infoText :TextField;
 
-        protected var _lineageView :LineageView;
+        protected var _lineageView :LineageViewBase;
         protected var _getSiresButton :SimpleButton;
         protected var _getDescendentsButton :SimpleButton;
+
+        //If the player selects another lineage to view, don't show our lineage.
+        protected var _lineageFromOtherPlayer :Lineage;
 
         public static const NAME :String = "HelpPopup";
         protected static const log :Log = Log.getLog(HelpPopup);
