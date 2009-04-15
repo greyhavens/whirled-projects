@@ -190,11 +190,13 @@ public class VampireAvatarHUD extends AvatarHUD
         });
 
         registerListener(buttonJoin, MouseEvent.CLICK, function (...ignored) :void {
-            ClientContext.controller.handleShowIntro("default", playerId);
+//            ClientContext.controller.handleShowIntro("default", playerId);
+            ClientContext.controller.handleShowPreyLineage(playerId);
         });
 
         registerListener(buttonLineage, MouseEvent.CLICK, function (...ignored) :void {
-            ClientContext.controller.handleShowIntro("default", playerId);
+//            ClientContext.controller.handleShowIntro("default", playerId);
+            ClientContext.controller.handleShowPreyLineage(playerId);
         })
 
         Command.bind(MovieClip(_target_UI["strain"]), MouseEvent.CLICK,
