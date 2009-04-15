@@ -20,6 +20,12 @@ public class Locations
         makeTwoWayConnection("HomeBase", "Battleground", 10);
         makeTwoWayConnection("Battleground", "Dragons", 10);
         makeTwoWayConnection("HomeBase", "Dragons", 30);
+
+        // add some activities
+        battleground.activities.push(new ActivityDesc(
+            ActivityDesc.TYPE_CORRUPTION,
+            "Whack some Monsters",
+            {}));
     }
 
     public static function getLocationList () :Array

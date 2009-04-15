@@ -8,6 +8,13 @@ public class ActivityDesc
     public var params :Object;
 
     public var displayName :String;
+
+    public function ActivityDesc (type :int, displayName :String, params :Object)
+    {
+        this.type = type;
+        this.displayName = displayName;
+        this.params = params;
+    }
 }
 
 }
