@@ -37,8 +37,8 @@ public class ClientCtx
     public static var awardedTrophies :HashSet;
     public static var lastRoundResults :RoundOverMsg;
     public static var settings :Settings;
-    public static var highScoresDaily :Array;
-    public static var highScoresMonthly :Array;
+//    public static var highScoresDaily :Array;
+//    public static var highScoresMonthly :Array;
 
 
     public static function get isCorruption () :Boolean

@@ -32,11 +32,13 @@ public class FeedingClient extends Sprite
      * function gameCompleteCallback () :void
      */
     public static function create (gameId :int, playerData :PlayerFeedingData,
-                                   gameCompleteCallback :Function, scoresDaily :Array = null,
-                                   scoresMonthly :Array = null) :FeedingClient
+                                   gameCompleteCallback :Function
+//                                   scoresDaily :Array = null,
+//                                   scoresMonthly :Array = null
+                                   ) :FeedingClient
     {
-        return new BloodBloom(gameId, playerData, gameCompleteCallback, null,
-            scoresDaily, scoresMonthly);
+        return new BloodBloom(gameId, playerData, gameCompleteCallback);//, null,
+//            scoresDaily, scoresMonthly);
     }
 
     /**

@@ -61,7 +61,10 @@ public class LobbyMode extends AppMode
         instructionsStrain.visible = false;
         instructionsCorruption.visible = false;
 
-        if (this.isPreGameLobby && ClientCtx.playerData.timesPlayed == 0) {
+        if (true) {//Production: show high scores after X games played
+            showScores();
+        }
+        else if (this.isPreGameLobby && ClientCtx.playerData.timesPlayed == 0) {
             instructionsBasic.visible = true;
         } else if ((this.isPreGameLobby || Rand.nextBoolean(Rand.STREAM_COSMETIC)) &&
                    ClientCtx.playerCanCollectPreyStrain) {
@@ -129,20 +132,22 @@ public class LobbyMode extends AppMode
 
     protected function showScores () :void
     {
+        trace("Showing scores");
         var leaderboard :MovieClip = _panelMovie["draggable"]["leaderboard"] as MovieClip;
-        for (var ii :int = 1; ii <= 5; ++ii) {
-            var dailyScore :MovieClip = leaderboard["today_0" + ii ] as MovieClip;
-            if (dailyScore != null) {
-                if (ClientCtx.highScoresDaily != null && ClientCtx.highScoresDaily.length >= 5) {
-                    TextField(dailyScore["player_name"]).text = ClientCtx.highScoresDaily[ii][1];
-                    TextField(dailyScore["player_score"]).text = "" + ClientCtx.highScoresDaily[ii][0];
-                }
-                else {
-                    TextField(dailyScore["player_name"]).text = "";
-                    TextField(dailyScore["player_score"]).text = "";
-                }
-            }
-        }
+        leaderboard.visible = true;
+//        for (var ii :int = 1; ii <= 5; ++ii) {
+//            var dailyScore :MovieClip = leaderboard["today_0" + ii ] as MovieClip;
+//            if (dailyScore != null) {
+//                if (ClientCtx.highScoresDaily != null && ClientCtx.highScoresDaily.length >= 5) {
+//                    TextField(dailyScore["player_name"]).text = ClientCtx.highScoresDaily[ii][1];
+//                    TextField(dailyScore["player_score"]).text = "" + ClientCtx.highScoresDaily[ii][0];
+//                }
+//                else {
+//                    TextField(dailyScore["player_name"]).text = "";
+//                    TextField(dailyScore["player_score"]).text = "";
+//                }
+//            }
+//        }
     }
 
     protected function showRoundTimer (show :Boolean, remainingTime :Number = 0) :void

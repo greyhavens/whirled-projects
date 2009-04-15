@@ -23,6 +23,9 @@ import vampire.net.messages.StartFeedingClientMsg;
  */
 public class LeaderBoardServer extends SimObject
 {
+    /**
+    * The props are currently the distribute-to-all clients props.
+    */
     public function LeaderBoardServer(props :PropertySubControl)
     {
         _props = props;
@@ -84,10 +87,10 @@ public class LeaderBoardServer extends SimObject
     * This class creates the message because we don't want to expose the score array to
     * other classes.
     */
-    public function createStartGameMessage (playerId :int, gameId :int) :StartFeedingClientMsg
-    {
-        return new StartFeedingClientMsg(playerId, gameId, _scoresAndNamesDay, _scoresAndNamesMonthy);
-    }
+//    public function createStartGameMessage (playerId :int, gameId :int) :StartFeedingClientMsg
+//    {
+//        return new StartFeedingClientMsg(playerId, gameId, _scoresAndNamesDay, _scoresAndNamesMonthy);
+//    }
 
     override protected function receiveMessage (msg :ObjectMessage) :void
     {
@@ -163,7 +166,6 @@ public class LeaderBoardServer extends SimObject
                 updateScoreTable(_scoresAndNamesMonthy, score, names, time, MONTH_SECONDS, 3);
             _props.setIn(SERVER_PROP_NAME, PROP_KEY_MONTH, _scoresAndNamesMonthy);
         }
-
     }
 
 
