@@ -2,24 +2,25 @@ package fakeavrg
 {
 import com.threerings.util.HashMap;
 import com.whirled.AbstractControl;
-import com.whirled.TargetedSubControl;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.PropertySubControl;
 
-import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;
 import flash.utils.Dictionary;
 
-public class PropertySubControlFake extends TargetedSubControl
-    implements PropertySubControl
+public class PropertySubControlFake extends EventDispatcher//extendsTargetedSubControl
+    implements PropertySubControl, IEventDispatcher
 {
-    public function PropertySubControlFake(parent :AbstractControl, targetId :int)
+    public function PropertySubControlFake(parent :AbstractControl = null, targetId :int = 1)
     {
-        super(parent, targetId);
-        _eventDispatcher = new EventDispatcher(this);
+//        super(parent, targetId);
+//        _eventDispatcher = new EventDispatcher();
+        _targetId = targetId;
     }
+
+
 
     public function getPropertyNames(prefix:String=""):Array
     {
@@ -78,35 +79,49 @@ public class PropertySubControlFake extends TargetedSubControl
         dispatchEvent(e);
     }
 
-    override public function dispatchEvent (event :Event) :Boolean
-    {
-        return _eventDispatcher.dispatchEvent(event);
-    }
+////    override
+//    public function dispatchEvent (event :Event) :Boolean
+//    {
+//        return _eventDispatcher.dispatchEvent(event);
+//    }
+//
+////    override
+//    public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void
+//    {
+//        _eventDispatcher.addEventListener(type, listener, useCapture, priority, useWeakReference);
+//    }
+//
+//
+////    override
+//    public function hasEventListener(type:String):Boolean
+//    {
+//        return _eventDispatcher.hasEventListener(type);
+//    }
+//
+////    override
+//    public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void
+//    {
+//        _eventDispatcher.removeEventListener(type, listener, useCapture);
+//    }
+//
+////    override
+//    public function willTrigger(type:String):Boolean
+//    {
+//        return null//_eventDispatcher.willTrigger(type);
+//    }
 
-    override public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void
+    /**
+     * Get the targetId on which this control operates.
+     */
+    public function getTargetId () :int
     {
-        _eventDispatcher.addEventListener(type, listener, useCapture, priority, useWeakReference);
-    }
-
-
-    override public function hasEventListener(type:String):Boolean
-    {
-        return _eventDispatcher.hasEventListener(type);
-    }
-
-    override public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void
-    {
-        _eventDispatcher.removeEventListener(type, listener, useCapture);
-    }
-
-    override public function willTrigger(type:String):Boolean
-    {
-        return _eventDispatcher.willTrigger(type);
+        return _targetId;
     }
 
 
     protected var _dict :HashMap = new HashMap;
-    private var _eventDispatcher :EventDispatcher;
+//    private var _eventDispatcher :EventDispatcher;
+    protected var _targetId :int;
 
 }
 }
