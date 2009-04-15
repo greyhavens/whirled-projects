@@ -51,7 +51,7 @@ public class GameServer extends ObjectDB
         addObject(new LoadBalancerServer(this));
 
         //Add the feeding leaderboard server
-//        addObject(new LeaderBoardServer(_ctrl));
+//        addObject(new LeaderBoardServer(_ctrl.props));
 
     }
 

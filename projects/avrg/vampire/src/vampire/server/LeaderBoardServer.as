@@ -10,6 +10,7 @@ import com.whirled.contrib.simplegame.tasks.FunctionTask;
 import com.whirled.contrib.simplegame.tasks.RepeatingTask;
 import com.whirled.contrib.simplegame.tasks.SerialTask;
 import com.whirled.contrib.simplegame.tasks.TimedTask;
+import com.whirled.net.PropertySubControl;
 
 import flash.utils.Dictionary;
 
@@ -21,15 +22,15 @@ import vampire.net.messages.StartFeedingClientMsg;
  */
 public class LeaderBoardServer extends SimObject
 {
-    public function LeaderBoardServer(ctrl :AVRServerGameControl)
+    public function LeaderBoardServer(props :PropertySubControl)
     {
-        _ctrl = ctrl;
+        _props = props;
 
-        if ((_ctrl.props.get(SERVER_PROP_NAME) as Dictionary) == null) {
-            _ctrl.props.setIn(SERVER_PROP_NAME, PROP_KEY_DAY, []);
-            _ctrl.props.setIn(SERVER_PROP_NAME, PROP_KEY_MONTH, []);
+        if ((_props.get(SERVER_PROP_NAME) as Dictionary) == null) {
+            _props.setIn(SERVER_PROP_NAME, PROP_KEY_DAY, []);
+            _props.setIn(SERVER_PROP_NAME, PROP_KEY_MONTH, []);
         }
-        var scoreDict :Dictionary = _ctrl.props.get(SERVER_PROP_NAME) as Dictionary;
+        var scoreDict :Dictionary = _props.get(SERVER_PROP_NAME) as Dictionary;
 
         _scoresAndNamesDay = scoreDict.get(PROP_KEY_DAY) as Array;
         if (_scoresAndNamesDay == null) {
@@ -149,12 +150,12 @@ public class LeaderBoardServer extends SimObject
         if (score > _localHighScoreDay) {
             _localHighScoreDay =
                 updateScoreTable(_scoresAndNamesDay, score, names, time, DAY_SECONDS, 5);
-                _ctrl.props.setIn(SERVER_PROP_NAME, PROP_KEY_DAY, _scoresAndNamesDay);
+                _props.setIn(SERVER_PROP_NAME, PROP_KEY_DAY, _scoresAndNamesDay);
         }
         if (score > _localHighScoreMnth) {
             _localHighScoreMnth =
                 updateScoreTable(_scoresAndNamesMonthy, score, names, time, MONTH_SECONDS, 3);
-            _ctrl.props.setIn(SERVER_PROP_NAME, PROP_KEY_MONTH, _scoresAndNamesMonthy);
+            _props.setIn(SERVER_PROP_NAME, PROP_KEY_MONTH, _scoresAndNamesMonthy);
         }
 
     }
@@ -207,8 +208,13 @@ public class LeaderBoardServer extends SimObject
         return maxScore;
     }
 
+    public static function debug () :void
+    {
 
-    protected var _ctrl :AVRServerGameControl;
+    }
+
+
+    protected var _props :PropertySubControl;
 
     protected var _scoresAndNamesDay :Array;
     protected var _scoresAndNamesMonthy :Array;
