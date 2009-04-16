@@ -243,7 +243,7 @@ public class VampireAvatarHUD extends AvatarHUD
 
         switch (e.name) {
             case Codes.PLAYER_PROP_XP:
-            if (e.newValue > e.oldValue) {
+            if (e.newValue > e.oldValue && ClientContext.ourPlayerId == playerId) {
                 var levelUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
                     ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true));
                 if (mode != null && levelUp != null) {
