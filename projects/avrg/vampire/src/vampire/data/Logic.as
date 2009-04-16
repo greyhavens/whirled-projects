@@ -34,15 +34,13 @@ public class Logic
         if(isNaN(xp)) {
             return 0;
         }
-        var maxLevelFromInvites :int = 1;
+        var maxLevelFromInvites :int = VConstants.MAXIMUM_VAMPIRE_LEVEL;
         for each(var levelAndInviteMin :Array in LEVEL_INVITE_CAPS) {
             var levelCap :int = levelAndInviteMin[0];
             var minInvites :int = levelAndInviteMin[1];
             if(invites < minInvites) {
-                maxLevelFromInvites = levelCap - 1;
-                break;
+                maxLevelFromInvites = Math.min(maxLevelFromInvites, levelCap - 1);
             }
-            maxLevelFromInvites = levelCap;
         }
 
         var level :int = 1;
@@ -125,7 +123,8 @@ public class Logic
     */
     public static const LEVEL_INVITE_CAPS :Array = [
         [5, 1],
-        [10, 2]
+        [10, 2],
+//        [10000, 10000]
     ]
 
 }
