@@ -3,6 +3,8 @@ package vampire.feeding {
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.util.*;
 
+import vampire.data.VConstants;
+
 public class Constants
 {
     public static const DEBUG_SHOW_STATS :Boolean = false;
@@ -11,7 +13,9 @@ public class Constants
     public static const DEBUG_DISABLE_ROOM_OVERLAY :Boolean = false;
     public static const DEBUG_STANDARD_UPDATE_INTERVAL :Boolean = false;
 
-    public static const GAME_TIME :Number = 1;//60 * 2;
+    public static const GAME_TIME :Number = 60 * 2;
+
+    public static const MIN_GAMES_BEFORE_LEADERBOARD_SHOWN :int = 10;
 
     public static const PLAYER_PREDATOR :int = 0;
     public static const PLAYER_PREY :int = 1;

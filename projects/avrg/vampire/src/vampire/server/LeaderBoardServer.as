@@ -1,6 +1,5 @@
 package vampire.server
 {
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.StringBuilder;
@@ -15,13 +14,12 @@ import com.whirled.net.PropertySubControl;
 
 import fakeavrg.PropertySubControlFake;
 
-import vampire.Util;
 import vampire.data.VConstants;
 
 /**
  * Manages high scores on the server.
  * Permanently stores props on the server only, and copies non-permanent high scores into the
- * global props.
+ * global game-wide props.
  */
 public class LeaderBoardServer extends SimObject
 {
@@ -33,55 +31,46 @@ public class LeaderBoardServer extends SimObject
     {
         _propsServer = propsServer;
         _propsGlobal = propsGlobal;
+    }
 
-        _scoresAndNamesDay = _propsServer.get(AGENT_PROP_HIGHSCORES_DAILY) as Array;
-        if (_scoresAndNamesDay == null) {
-            _scoresAndNamesDay = [];
-        }
-
-        _scoresAndNamesMonthy = _propsServer.get(AGENT_PROP_HIGHSCORES_MONTHLY) as Array;
-        if (_scoresAndNamesMonthy == null) {
-            _scoresAndNamesMonthy = [];
-        }
-
-        checkForStaleScores();
-
-        updateScoresIntoProps(_scoresAndNamesDay, GLOBAL_PROP_SCORES_DAILY, _propsGlobal);
-        updateScoresIntoProps(_scoresAndNamesMonthy, GLOBAL_PROP_SCORES_MONTHLY, _propsGlobal);
+    override protected function addedToDB () :void
+    {
+        super.addedToDB();
+        //Remove the stale scores every hour.
+        addTask(new RepeatingTask(
+                    new SerialTask(new TimedTask(3600),
+                                   new FunctionTask(checkForStaleScores))));
+        //Update the global scores after a bit.
+        //There is a bug where the server props are not available immediately.
+        addTask(new SerialTask(
+                new TimedTask(4),
+                new FunctionTask(function () :void {
+                    updateScoresIntoProps(_propsServer.get(AGENT_PROP_SCORES_DAILY) as Array,
+                        GLOBAL_PROP_SCORES_DAILY, _propsGlobal);
+                    updateScoresIntoProps(_propsServer.get(AGENT_PROP_SCORES_MONTHLY) as Array,
+                        GLOBAL_PROP_SCORES_MONTHLY, _propsGlobal);
+                })));
 
     }
 
     protected static function updateScoresIntoProps (scores :Array, propName :String,
         props :PropertySubControl) :void
     {
-        log.info("updateScoresIntoProps");
         if (props != null) {
 
             //Chop of the score time
-
             var scoresLessTime :Array = [];
             for each (var score :Array in scores) {
                 scoresLessTime.push(score.slice(0, 2));
             }
 
-            if (!ArrayUtil.equals(scoresLessTime,
-                props.get(propName) as Array)) {
-
-                log.info("updateScoresIntoProps, setting " + propName + "=" + scoresLessTime);
-                props.set(propName, scoresLessTime);
-            }
+            var currentScore :Array = props.get(propName) as Array;
+            props.set(propName, scoresLessTime, true);
         }
     }
 
-    override protected function addedToDB () :void
-    {
-        //Remove the stale scores every hour.
-        addTask(new RepeatingTask(
-                    new SerialTask(new TimedTask(3600),
-                                   new FunctionTask(checkForStaleScores))));
-    }
-
-    protected static function removeStaleScores (scores :Array, scoreLifetime :Number, now :Number) :void
+    protected static function removeStaleScores (scores :Array, scoreLifetime :Number,
+        now :Number) :void
     {
         //Remove stale scores
         var index :int = 0;
@@ -99,8 +88,14 @@ public class LeaderBoardServer extends SimObject
     protected function checkForStaleScores () :void
     {
         var time :Number = new Date().time;
-        removeStaleScores(_scoresAndNamesDay, DAY_SECONDS, time);
-        removeStaleScores(_scoresAndNamesMonthy, MONTH_SECONDS, time);
+        var tempScoresDay :Array = scoresAndNamesDay != null ? scoresAndNamesDay : [];
+        var tempScoresMonth :Array = scoresAndNamesMonth != null ? scoresAndNamesMonth : [];
+        removeStaleScores(tempScoresDay, DAY_SECONDS, time);
+        removeStaleScores(tempScoresMonth, MONTH_SECONDS, time);
+
+        updateScoresIntoProps(tempScoresDay, AGENT_PROP_SCORES_DAILY, _propsServer);
+        updateScoresIntoProps(tempScoresMonth, AGENT_PROP_SCORES_MONTHLY, _propsServer);
+
         _localHighScoreDay = 0;
         _localHighScoreMnth = 0;
     }
@@ -112,11 +107,12 @@ public class LeaderBoardServer extends SimObject
 
     override protected function receiveMessage (msg :ObjectMessage) :void
     {
-        log.info("receiveMessage", "name", msg.name);
+        var scoresDayTemp :Array = scoresAndNamesDay != null ? scoresAndNamesDay : [];
+        var scoresMonthTemp :Array = scoresAndNamesMonth != null ? scoresAndNamesMonth : [];
+
         if (msg != null && msg.name == MESSAGE_LEADER_BOARD_MESSAGE_SCORES) {
             var playerScores :HashMap = msg.data as HashMap;
             if (playerScores != null) {
-                log.info("receiveMessage", "scores", Util.hashmapToString(playerScores));
                 //Get the total score
                 var totalScore :int = 0;
                 playerScores.forEach(function (playerId :int, score :int) :void {
@@ -124,8 +120,6 @@ public class LeaderBoardServer extends SimObject
                         totalScore += score;
                     }
                 });
-
-                log.info("receiveMessage", "totalScore", totalScore);
 
                 //Sort the player ids by score
                 var playerIds :Array = playerScores.keys();
@@ -144,15 +138,23 @@ public class LeaderBoardServer extends SimObject
                 });
                 //Create the name string from the players names ordered by individual scores
                 //
-                var sb :StringBuilder = new StringBuilder();
+                var lengthAllNames :int = 0;
                 for each (var playerId : int in playerIds) {
                     var name :String = getPlayerName(playerId);
-                    sb.append(name.substr(0, VConstants.MAX_CHARS_IN_LINEAGE_NAME) + ", ");
+                    lengthAllNames += name.length;
                 }
-                var nameString :String = sb.toString();
+                var textFieldSize :int = 32;
+                var charsPerName :int = (textFieldSize - (playerIds.length - 1) * 2)
+                                        / playerIds.length;
+                charsPerName = Math.max(charsPerName, VConstants.MAX_CHARS_IN_LINEAGE_NAME);
+
+                var nameString :String = "";
+                playerIds.forEach(function (playerId :int, ...ignored) :void {
+
+                    nameString += getPlayerName(playerId).substr(0, charsPerName) + ", ";
+                })
                 //Chop the last comma
                 nameString = nameString.substr(0, nameString.length - 2);
-
                 updateScores(totalScore, nameString);
 
             }
@@ -177,31 +179,22 @@ public class LeaderBoardServer extends SimObject
     protected function updateScores (score :int, names :String) :void
     {
         var time :Number = new Date().time;
-        log.info("updateScores", "score", score, "names", names);
 
-        log.info("updateScores", "_localHighScoreDay", _localHighScoreDay,
-                                 "_scoresAndNamesDay", _scoresAndNamesDay,
-                                 "_localHighScoreMnth", _localHighScoreMnth,
-                                 "_scoresAndNamesMonthy", _scoresAndNamesMonthy
-                                 );
+        var tempScores :Array;
 
-        if (score > _localHighScoreDay || _scoresAndNamesDay.length < NUMBER_HIGH_SCORES_DAILY) {
-            log.info("updateScores", "updating day score");
+        if (score > _localHighScoreDay || scoresAndNamesDay == null || scoresAndNamesDay.length < NUMBER_HIGH_SCORES_DAILY) {
+            tempScores = scoresAndNamesDay != null ? scoresAndNamesDay.slice() : [];
             _localHighScoreDay =
-                updateScoreTable(_scoresAndNamesDay, score, names, time, DAY_SECONDS, NUMBER_HIGH_SCORES_DAILY);
-                log.info("updateScores", "after updating day score _localHighScoreDay", _localHighScoreDay);
-                log.info("updateScores", "after updating into global props _scoresAndNamesDay", _scoresAndNamesDay);
-
-                updateScoresIntoProps(_scoresAndNamesDay, GLOBAL_PROP_SCORES_DAILY, _propsGlobal);
-                updateScoresIntoProps(_scoresAndNamesDay, AGENT_PROP_HIGHSCORES_DAILY, _propsServer);
+                updateScoreTable(tempScores, score, names, time, DAY_SECONDS, NUMBER_HIGH_SCORES_DAILY);
+                updateScoresIntoProps(tempScores, GLOBAL_PROP_SCORES_DAILY, _propsGlobal);
+                updateScoresIntoProps(tempScores, AGENT_PROP_SCORES_DAILY, _propsServer);
         }
-        if (score > _localHighScoreMnth || _scoresAndNamesMonthy.length < NUMBER_HIGH_SCORES_MONTHLY) {
-            log.info("updateScores", "updating month score");
+        if (score > _localHighScoreMnth || scoresAndNamesMonth == null || scoresAndNamesMonth.length < NUMBER_HIGH_SCORES_MONTHLY) {
+            tempScores = scoresAndNamesMonth != null ? scoresAndNamesMonth.slice() : [];
             _localHighScoreMnth =
-                updateScoreTable(_scoresAndNamesMonthy, score, names, time, MONTH_SECONDS, NUMBER_HIGH_SCORES_MONTHLY);
-                log.info("updateScores", "after updating day score _localHighScoreMnth", _localHighScoreMnth);
-                updateScoresIntoProps(_scoresAndNamesMonthy, GLOBAL_PROP_SCORES_MONTHLY, _propsGlobal);
-                updateScoresIntoProps(_scoresAndNamesMonthy, AGENT_PROP_HIGHSCORES_MONTHLY, _propsServer);
+                updateScoreTable(tempScores, score, names, time, MONTH_SECONDS, NUMBER_HIGH_SCORES_MONTHLY);
+                updateScoresIntoProps(tempScores, GLOBAL_PROP_SCORES_MONTHLY, _propsGlobal);
+                updateScoresIntoProps(tempScores, AGENT_PROP_SCORES_MONTHLY, _propsServer);
         }
     }
 
@@ -247,12 +240,12 @@ public class LeaderBoardServer extends SimObject
         var globalprops :PropertySubControl = new PropertySubControlFake();
         var now :Number = new Date().time;
 
-        agentprops.set(AGENT_PROP_HIGHSCORES_DAILY,[
+        agentprops.set(AGENT_PROP_SCORES_DAILY,[
                                                     [10, "tenners", now - 30],
                                                     [100, "hundreders", now - DAY_SECONDS],
                                                     [1000, "thousanders", now - DAY_SECONDS + 100],
                                                     ]);
-        agentprops.set(AGENT_PROP_HIGHSCORES_MONTHLY, [
+        agentprops.set(AGENT_PROP_SCORES_MONTHLY, [
                                                         [101, "tennersM", now - 30],
                                                         [1001, "hundredersM", now - MONTH_SECONDS],
                                                         [10001, "thousandersM", now - MONTH_SECONDS  + 100],
@@ -279,15 +272,26 @@ public class LeaderBoardServer extends SimObject
         var scoreArray :Array;
         var sb :StringBuilder = new StringBuilder("Current Leaderboard:\n");
         sb.append("  Daily scores:\n");
-        for each (scoreArray in _scoresAndNamesDay) {
+        for each (scoreArray in scoresAndNamesDay) {
             sb.append("\t\t" + scoreArray + "\n");
         }
+
         sb.append("  Monthy scores:\n");
-        for each (scoreArray in _scoresAndNamesMonthy) {
+        for each (scoreArray in scoresAndNamesMonth) {
             sb.append("\t\t" + scoreArray + "\n");
         }
 
         return sb.toString();
+    }
+
+    protected function get scoresAndNamesDay () :Array
+    {
+        return _propsServer.get(AGENT_PROP_SCORES_DAILY) as Array;
+    }
+
+    protected function get scoresAndNamesMonth () :Array
+    {
+        return _propsServer.get(AGENT_PROP_SCORES_MONTHLY) as Array;
     }
 
     /**Store the scores permanently on the agent only*/
@@ -295,9 +299,6 @@ public class LeaderBoardServer extends SimObject
 
     /**Distribute the scores to all clients*/
     protected var _propsGlobal :PropertySubControl;
-
-    protected var _scoresAndNamesDay :Array;
-    protected var _scoresAndNamesMonthy :Array;
 
     protected var _localHighScoreDay :int = 0;
     protected var _localHighScoreMnth :int = 0;
@@ -308,10 +309,10 @@ public class LeaderBoardServer extends SimObject
     public static const GLOBAL_PROP_SCORES_DAILY :String = "HighScoresFeedingDaily";
     public static const GLOBAL_PROP_SCORES_MONTHLY :String = "HighScoresFeedingMonthy";
 
-    protected static const AGENT_PROP_HIGHSCORES_DAILY :String =
+    protected static const AGENT_PROP_SCORES_DAILY :String =
         NetConstants.makePersistent(GLOBAL_PROP_SCORES_DAILY);
 
-    protected static const AGENT_PROP_HIGHSCORES_MONTHLY :String =
+    protected static const AGENT_PROP_SCORES_MONTHLY :String =
         NetConstants.makePersistent(GLOBAL_PROP_SCORES_MONTHLY);
 
     public static const NUMBER_HIGH_SCORES_DAILY :int = 5;

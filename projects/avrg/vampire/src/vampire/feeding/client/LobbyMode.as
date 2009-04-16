@@ -63,7 +63,7 @@ public class LobbyMode extends AppMode
         instructionsStrain.visible = false;
         instructionsCorruption.visible = false;
 
-        if (true) {//Production: show high scores after X games played
+        if (ClientCtx.playerData.timesPlayed >= Constants.MIN_GAMES_BEFORE_LEADERBOARD_SHOWN) {
             leaderboard.visible = true;
         }
         else if (this.isPreGameLobby && ClientCtx.playerData.timesPlayed == 0) {
