@@ -382,7 +382,7 @@ public class PlayerData extends EventHandlerManager
 
     public function get level () :int
     {
-        return Logic.levelGivenCurrentXpAndInvites(xp);
+        return Logic.levelGivenCurrentXpAndInvites(xp, invites);
     }
 
     public function get xp () :Number
