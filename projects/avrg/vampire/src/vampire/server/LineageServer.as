@@ -96,7 +96,7 @@ public class LineageServer extends Lineage
         _playerIdsResendLineage.forEach(function (playerId :int) :void {
             if (_vserver.isPlayer(playerId)) {
                 var lineage :Lineage = getSubLineage(playerId, 1, 2);
-                log.debug("Setting into players lineage", "playerId", playerId,
+                log.debug("Setting into " + _vserver.getPlayer(playerId).name+ "'s lineage", "playerId", playerId,
                     "lineage", lineage);
                 var bytes :ByteArray = lineage.toBytes();
                 _vserver.getPlayer(playerId).lineage = bytes;
