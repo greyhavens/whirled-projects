@@ -451,8 +451,7 @@ public class ServerLogic
                 }
                 else if (msg is FeedConfirmMsg) {
                     var feedConfirm :FeedConfirmMsg = FeedConfirmMsg(msg);
-                    var requestingPlayer :PlayerData = getPlayer(feedConfirm.predatorId);
-                    handleFeedConfirmMessage(requestingPlayer, feedConfirm);
+                    handleFeedConfirmMessage(player, feedConfirm);
                 }
                 else if (msg is FeedingDataMsg) {
                     var bytes :ByteArray = FeedingDataMsg(msg).feedingData;
@@ -483,35 +482,7 @@ public class ServerLogic
                 }
                 else if (msg is DebugMsg) {
                     var debugMsg :DebugMsg = DebugMsg(msg);
-                    switch (debugMsg.type) {
-                        case DebugMsg.DEBUG_GAIN_XP:
-                        addXP(player.playerId, 500);
-                        break;
-
-                        case DebugMsg.DEBUG_LOSE_XP:
-                        addXP(player.playerId, -500);
-                        break;
-
-                        case DebugMsg.DEBUG_LEVEL_UP:
-                        increaseLevel(player);
-                        break;
-
-                        case DebugMsg.DEBUG_LEVEL_DOWN:
-                        decreaseLevel(player);
-                        break;
-
-                        case DebugMsg.DEBUG_ADD_INVITE:
-                        player.addToInviteTally();
-                        break;
-
-                        case DebugMsg.DEBUG_LOSE_INVITE:
-                        player.invites = Math.max(0, player.invites - 1);
-                        break;
-
-                        default:
-                        log.debug("No registered debug type: " + msg);
-                        break;
-                    }
+                    handleDebug(player, debugMsg);
                 }
             }
         }
@@ -519,6 +490,41 @@ public class ServerLogic
             log.error(err.getStackTrace());
         }
 
+    }
+
+    protected static function handleDebug (player :PlayerData, debugMsg :DebugMsg) :void
+    {
+        log.debug("handleDebug", "player", player, "debugMsg", debugMsg);
+        switch (debugMsg.type) {
+            case DebugMsg.DEBUG_GAIN_XP:
+            log.debug("handleDebug", "addXP");
+            addXP(player.playerId, 500);
+            break;
+
+            case DebugMsg.DEBUG_LOSE_XP:
+            addXP(player.playerId, -500);
+            break;
+
+            case DebugMsg.DEBUG_LEVEL_UP:
+            increaseLevel(player);
+            break;
+
+            case DebugMsg.DEBUG_LEVEL_DOWN:
+            decreaseLevel(player);
+            break;
+
+            case DebugMsg.DEBUG_ADD_INVITE:
+            player.addToInviteTally();
+            break;
+
+            case DebugMsg.DEBUG_LOSE_INVITE:
+            player.invites = Math.max(0, player.invites - 1);
+            break;
+
+            default:
+            log.debug("No registered debug type: " + debugMsg);
+            break;
+        }
     }
 
     protected static function handleAvatarChosenMessage (player :PlayerData,
@@ -637,7 +643,7 @@ public class ServerLogic
     }
     protected static function handleFeedRequestMessage (player :PlayerData, e :FeedRequestMsg) :void
     {
-        log.debug("handleFeedRequestMessage");
+        log.debug("handleFeedRequestMessage", "player", player, "e", e);
 
         if (player == null || player.room == null || e == null) {
             log.error("handleFeedRequestMessage", "player", player, "e", e);
@@ -678,6 +684,14 @@ public class ServerLogic
 
             stateChange(player, VConstants.PLAYER_STATE_MOVING_TO_FEED);
 
+
+            var feedConfirm :FeedConfirmMsg = new FeedConfirmMsg(e.playerId,
+                                                                 e.targetName,
+                                                                 player.playerId,
+                                                                 true);
+
+            player.ctrl.sendMessage(FeedConfirmMsg.NAME, feedConfirm.toBytes());
+
 //            log.debug("adding to game");
 //            //Add ourselves to a game.  We'll check this later, when we arrive at our location
 //            game = player.room.bloodBloomGameManager.requestFeed(
@@ -714,25 +728,26 @@ public class ServerLogic
 
     }
 
-    protected static function handleFeedConfirmMessage (player :PlayerData, e :FeedConfirmMsg) :void
+    protected static function handleFeedConfirmMessage (prey :PlayerData, e :FeedConfirmMsg) :void
     {
         log.debug("handleFeedConfirmMessage", "e", e);
 
-        if (player == null) {
-            log.error("handleFeedConfirmMessage", "player", player);
-            return;
-        }
-
-        if (player.room == null || player.room.ctrl == null || !player.room.ctrl.isConnected()) {
-            log.error("handleFeedConfirmMessage", "player.room", player.room);
-            return;
-        }
-
-        var prey :PlayerData = getPlayer(e.playerId);
         if (prey == null) {
-            log.error("handleFeedConfirmMessage", "prey", player);
+            log.error("handleFeedConfirmMessage", "player", prey);
             return;
         }
+
+        if (prey.room == null || prey.room.ctrl == null || !prey.room.ctrl.isConnected()) {
+            log.error("handleFeedConfirmMessage", "player.room", prey.room);
+            return;
+        }
+
+//        var prey :PlayerData = getPlayer(e.playerId);
+        if (prey == null) {
+            log.error("handleFeedConfirmMessage", "prey", prey);
+            return;
+        }
+        var requestingPlayer :PlayerData = getPlayer(e.predatorId);
 
         if (e.isAllowedToFeed) {
 
@@ -740,19 +755,32 @@ public class ServerLogic
             stateChange(prey, VConstants.PLAYER_STATE_BARED);
 
             //Join the game
-            var game :FeedingRecord = player.room.bloodBloomGameManager.requestFeed(
-                    player.playerId,
+            var game :FeedingRecord = prey.room.bloodBloomGameManager.requestFeed(
+                    e.predatorId,
                     prey.playerId,
                     e.preyName,
-                    player.targetLocation);//Prey location
+                    prey.targetLocation);//Prey location
 
-            stateChange(player, VConstants.PLAYER_STATE_MOVING_TO_FEED);
+            stateChange(requestingPlayer, VConstants.PLAYER_STATE_MOVING_TO_FEED);
 //            if (!game.isStarted) {
 //            }
         }
-        else {
-            player.addFeedback(prey.name + " denied your request to feed.");
+
+        if (requestingPlayer != null) {
+            var feedConfirm :FeedConfirmMsg = new FeedConfirmMsg(prey.playerId,
+                                                                 prey.name,
+                                                                 requestingPlayer.playerId,
+                                                                 e.isAllowedToFeed);
+
+            requestingPlayer.ctrl.sendMessage(FeedConfirmMsg.NAME, feedConfirm.toBytes());
         }
+        else {
+            log.error("handleFeedConfirmMessage", "requestingPlayer", requestingPlayer);
+        }
+
+//        else {
+//            player.addFeedback(prey.name + " denied your request to feed.");
+//        }
     }
 
     protected static function getPlayer (playerId :int) :PlayerData
@@ -1257,7 +1285,7 @@ public class ServerLogic
                 awardBloodBondedXpEarned(p, xp);
                 //Add some bonus xp to your sires
                 awardSiresXpEarned(p, xp);
-                p.ctrl.completeTask(Codes.TASK_FEEDING_ID, feedingScoreScaled);
+                p.ctrl.completeTask(Codes.TASK_FEEDING, feedingScoreScaled);
             }
         }
 

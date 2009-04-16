@@ -6,7 +6,6 @@ import com.threerings.util.Log;
 import com.whirled.contrib.avrg.AvatarHUD;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.objects.SimpleTimer;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
@@ -198,18 +197,18 @@ public class VampireController extends Controller
             //Show feedback if it's a player.
             if (ArrayUtil.contains(ClientContext.model.playerIds, targetId)) {
                 var popup :PopupQuery = new PopupQuery(
-                    null,
+                    VConstants.POPUP_MESSAGE_FEED_CONFIRM + targetId,
                     "Waiting for " + targetName + "'s permission to feed...");
                 ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
                 ClientContext.centerOnViewableRoom(popup.displayObject);
                 ClientContext.animateEnlargeFromMouseClick(popup);
 
-                var quitTimer :SimpleTimer = new SimpleTimer(3, function() :void {
-                    if (popup.isLiveObject) {
-                        popup.destroySelf();
-                    }
-                });
-                ClientContext.gameMode.addObject(quitTimer);
+//                var quitTimer :SimpleTimer = new SimpleTimer(3, function() :void {
+//                    if (popup.isLiveObject) {
+//                        popup.destroySelf();
+//                    }
+//                });
+//                ClientContext.gameMode.addObject(quitTimer);
             }
 
             //Set the avatar target to stand behind.
@@ -310,20 +309,22 @@ public class VampireController extends Controller
 
     public function handleAcceptFeedRequest (playerId :int) :void
     {
-        var targetName :String = ClientContext.model.getAvatarName(playerId);
+//        var targetName :String = ClientContext.model.getAvatarName(playerId);
         var msg :FeedConfirmMsg = new FeedConfirmMsg(ClientContext.ourPlayerId,
-            targetName, playerId, true);
+            ClientContext.model.name, playerId, true);
         ClientContext.ctrl.agent.sendMessage(FeedConfirmMsg.NAME, msg.toBytes());
 
         //If you accept one feed request, you accept all concurrent feed request,
         //ans destroy the feed request popups
-        for each (var playerId :int in ClientContext.model.playerIds) {
-            var popupName :String = POPUP_PREFIX_FEED_REQUEST + playerId;
+        for each (var playerIdWaiting :int in ClientContext.model.playerIds) {
+            var popupName :String = POPUP_PREFIX_FEED_REQUEST + playerIdWaiting;
             if (ClientContext.gameMode.getObjectNamed(popupName) != null) {
                 ClientContext.gameMode.getObjectNamed(popupName).destroySelf();
 
-                msg = new FeedConfirmMsg(ClientContext.ourPlayerId, targetName, playerId, true);
-                ClientContext.ctrl.agent.sendMessage(FeedConfirmMsg.NAME, msg.toBytes());
+                if (playerId != playerIdWaiting) {
+                    msg = new FeedConfirmMsg(ClientContext.ourPlayerId, ClientContext.model.name, playerIdWaiting, true);
+                    ClientContext.ctrl.agent.sendMessage(FeedConfirmMsg.NAME, msg.toBytes());
+                }
             }
         }
     }

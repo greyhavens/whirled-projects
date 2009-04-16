@@ -18,6 +18,7 @@ import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.data.Codes;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingClient;
+import vampire.net.messages.FeedConfirmMsg;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.FeedingDataMsg;
 import vampire.net.messages.GameStartedMsg;
@@ -230,7 +231,16 @@ public class MainGameMode extends AppMode
 
     }
 
+    protected function handleFeedConfirm (e :FeedConfirmMsg) :void
+    {
+        if (getObjectNamed(VConstants.POPUP_MESSAGE_FEED_CONFIRM + e.playerId) != null) {
+            getObjectNamed(VConstants.POPUP_MESSAGE_FEED_CONFIRM + e.playerId).destroySelf();
+        }
 
+        if (!e.isAllowedToFeed) {
+            ClientContext.controller.handleShowPopupMessage(null, e.preyName + " has denied your request to feed", lowPriorityLayer);
+        }
+    }
     protected function handleStartFeedingClientMsg (msg :StartFeedingClientMsg) :void
     {
         log.info("handleStartFeedingClientMsg", "msg", msg);
@@ -268,6 +278,9 @@ public class MainGameMode extends AppMode
         if (message != null) {
             if (message is StartFeedingClientMsg) {
                 handleStartFeedingClientMsg(StartFeedingClientMsg(message));
+            }
+            else if (message is FeedConfirmMsg) {
+                handleFeedConfirm(FeedConfirmMsg(message));
             }
             else if (message is FeedRequestMsg) {
                 var feedRequestMessage :FeedRequestMsg = FeedRequestMsg(message);
