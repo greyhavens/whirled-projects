@@ -198,6 +198,13 @@ public class LoadBalancerServer extends SimObject
 
         });
 
+        //Add the rooms with two players again
+        roomId2PlayerCount.forEach(function (roomId :int, playerCount :int) :void {
+            if (playerCount == 2) {
+                sortedRooms.push(roomId);
+            }
+        });
+
         return sortedRooms;
     }
     protected var _server :GameServer;
