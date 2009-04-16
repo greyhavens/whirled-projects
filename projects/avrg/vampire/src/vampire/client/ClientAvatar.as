@@ -7,13 +7,15 @@ package vampire.client
     import com.whirled.avrg.AVRGameAvatar;
     import com.whirled.avrg.AVRGameControl;
     import com.whirled.avrg.AVRGameRoomEvent;
-    import com.whirled.contrib.simplegame.ObjectMessage;
     import com.whirled.contrib.simplegame.SimObject;
     import com.whirled.contrib.simplegame.net.Message;
     import com.whirled.contrib.simplegame.objects.SimpleTimer;
     import com.whirled.net.MessageReceivedEvent;
+    import com.whirled.net.PropertyChangedEvent;
 
     import vampire.avatar.AvatarEndMovementNotifier;
+    import vampire.avatar.VampireBodyBase;
+    import vampire.data.Codes;
     import vampire.data.VConstants;
     import vampire.net.messages.MovePredAfterFeedingMsg;
     import vampire.net.messages.MovePredIntoPositionMsg;
@@ -44,7 +46,41 @@ public class ClientAvatar extends SimObject
         registerListener(_ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessageReceived);
 
+        registerListener(_ctrl.player.props, PropertyChangedEvent.PROPERTY_CHANGED,
+            handlePlayerPropChanged);
+
         resetAvatarCallbackFunctions();
+
+        //Set the level on startup
+        setAvatarCurrentLevel();
+    }
+
+    protected function handlePlayerPropChanged (e :PropertyChangedEvent) :void
+    {
+        switch (e.name) {
+            case Codes.PLAYER_PROP_XP:
+            case Codes.PLAYER_PROP_INVITES:
+            setAvatarCurrentLevel();
+            break;
+
+            default:
+            break;
+        }
+    }
+
+    protected function setAvatarCurrentLevel () :void
+    {
+        var level :int = ClientContext.model.level;
+        //Let's hear when the avatar arrived at a destination
+        var setLevel :Function = _ctrl.room.getEntityProperty(
+                                                VampireBodyBase.ENTITY_PROPERTY_SET_PLAYER_LEVEL,
+                                                ClientContext.ourEntityId) as Function;
+        if (setLevel != null) {
+            setLevel(level);
+        }
+        else {
+            log.error("setAvatarLevel", "setLevel", setLevel);
+        }
     }
 
 
@@ -88,80 +124,6 @@ public class ClientAvatar extends SimObject
                 handleMovePredIntoPositionMsg(MovePredIntoPositionMsg(msg));
             }
         }
-        //After feeding, our avatar moves a little forward and closer to the screen,
-        //so as not to be hidden if the avatars are similar.
-//        if (e.name == VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING) {
-//
-//            var moveTimer :SimpleTimer = new SimpleTimer(2.5, function() :void {
-//
-//                var location :Array = ClientContext.model.location;
-//                var hotspot :Array = ClientContext.model.hotspot;
-//                if (location != null && hotspot != null) {
-//
-//                    var xDirection :Number = location[3] > 0 && location[3] <= 180 ? 1 : -1;
-//                    var widthLogical :Number = hotspot[0]/_ctrl.local.getRoomBounds()[0];
-//
-//                    var xDistance :Number = xDirection * widthLogical / 3;
-//
-//                    _ctrl.player.setAvatarLocation(
-//                        MathUtil.clamp(location[0] + xDistance, 0, 1),
-//                        location[1],
-//                        MathUtil.clamp(location[2] - 0.1, 0, 1), location[3]);
-//                }
-//            }, false);
-//            db.addObject(moveTimer);
-//        }
-        //Before we start feeding, we move our avatar to stand directly behind the
-        //target avatar.
-//        else
-//        if (e.name == MovePredIntoPositionMsg.NAME) {
-//
-//            function convertStandardRads2GameDegrees(rad :Number) :Number
-//            {
-//                return MathUtil.toDegrees(MathUtil.normalizeRadians(rad + Math.PI / 2));
-//            }
-//
-//
-//            var movemsg :MovePredIntoPositionMsg = ClientContext.msg.deserializeMessage(
-//                e.name, e.value) as MovePredIntoPositionMsg;
-//
-//            //If we are the first predator, we go directly behind the prey
-//            //Otherwise, take a a place
-//            var targetLocation :Array = movemsg.preyLocation;//ClientContext.model.getLocation(movemsg.preyId);
-//            var avatar :AVRGameAvatar = ClientContext.model.avatar;
-//
-//            var targetX :Number;
-//            var targetY :Number;
-//            var targetZ :Number;
-//
-//            //TODO: add the hotspot width /2, then test.
-//            var hotspot :Array = ClientContext.model.hotspot;
-//            var widthLogical :Number = hotspot[0]/_ctrl.local.getRoomBounds()[0];
-//
-//            var distanceLogicalAwayFromPrey :Number = widthLogical / 3;
-//
-//
-//
-//
-//            var angleRadians :Number = new Vector2(targetLocation[0] - avatar.x,
-//                targetLocation[2] - avatar.z).angle;
-//            var degs :Number = convertStandardRads2GameDegrees(angleRadians);
-//
-//            targetX = targetLocation[0] +
-//                VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[movemsg.predIndex][0] *
-//                distanceLogicalAwayFromPrey;
-//            targetY = targetLocation[1] +
-//                VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[movemsg.predIndex][1] *
-//                distanceLogicalAwayFromPrey;
-//            targetZ = targetLocation[2] +
-//                VConstants.PREDATOR_LOCATIONS_RELATIVE_TO_PREY[movemsg.predIndex][2] *
-//                distanceLogicalAwayFromPrey;
-//
-//                ClientContext.ctrl.player.setAvatarLocation(targetX, targetY, targetZ, degs);
-//        }
-
-
-
     }
 
     protected function handleMovePredAfterFeedingMsg (...ignored) :void
@@ -191,11 +153,6 @@ public class ClientAvatar extends SimObject
         {
             return MathUtil.toDegrees(MathUtil.normalizeRadians(rad + Math.PI / 2));
         }
-
-
-
-//        var movemsg :MovePredIntoPositionMsg = ClientContext.msg.deserializeMessage(
-//            e.name, e.value) as MovePredIntoPositionMsg;
 
         //If we are the first predator, we go directly behind the prey
         //Otherwise, take a a place
@@ -259,6 +216,7 @@ public class ClientAvatar extends SimObject
     {
         checkForAvatarSwitch(e);
         checkForBaredModeViaAvatarMenu(e);
+        setAvatarCurrentLevel();
     }
 
     /**
@@ -334,9 +292,6 @@ public class ClientAvatar extends SimObject
             setAvatarArrivedCallback(avatarArrivedAtDestination);
         }
         else {
-//            log.error("The avatar did not provide the property=" +
-//                AvatarEndMovementNotifier.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK);
-
             var t :SimpleTimer = new SimpleTimer(1, function () :void {
                 resetAvatarCallbackFunctions();
             });
@@ -405,13 +360,6 @@ public class ClientAvatar extends SimObject
         return null;
     }
 
-//    override protected function receiveMessage (msg:ObjectMessage) :void
-//    {
-//        if (msg.name == GAME_MESSAGE_TARGETID) {
-//            _avatarIdToStandBehind = int(msg.data);
-//        }
-//    }
-
     protected var _ctrl :AVRGameControl;
     protected var _currentEntityId :String;
 
@@ -428,10 +376,8 @@ public class ClientAvatar extends SimObject
     protected var _movingPredatorIntoPosition :Boolean = false;
 
 
-    protected static const log :Log = Log.getLog(ClientAvatar);
 
     public static const NAME :String = "AvatarClientController";
-//    public static const GAME_MESSAGE_TARGETID :String = "GameMessage: TargetId";
 
     /**This is like a radius in logical distance units.*/
     protected static const FEEDING_LOGICAL_X_OFFSET :Number = 0.1;
@@ -446,6 +392,7 @@ public class ClientAvatar extends SimObject
     protected static const MINIMUM_FIRST_TARGET_DISTANCE :Number = MathUtil.distance(0, 0,
         FEEDING_LOGICAL_X_OFFSET, FEEDING_LOGICAL_Z_OFFSET) + 0.01;
 
+    protected static const log :Log = Log.getLog(ClientAvatar);
 
 }
 }
