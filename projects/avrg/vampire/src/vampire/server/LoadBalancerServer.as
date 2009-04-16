@@ -14,6 +14,13 @@ import flash.utils.ByteArray;
 
 import vampire.net.messages.LoadBalancingMsg;
 
+/**
+ * Periodically sorts rooms according to the number of players (with some caveats)
+ * and stores the 5 best rooms.  When players request, the room list is sent to the
+ * player.  This updates the LoadBalancer on the client, which shows 4 rooms the
+ * player can click and be transported to.
+ *
+ */
 public class LoadBalancerServer extends SimObject
 {
     public function LoadBalancerServer (server :GameServer)
@@ -48,7 +55,6 @@ public class LoadBalancerServer extends SimObject
                 }
             });
             log.debug("update", "roomNames", roomNames);
-//            var msgBytes :ByteArray = roomInfoMessage.toBytes();
 
             var roomInfoMessage :LoadBalancingMsg =
                 new LoadBalancingMsg(0, roomIds, roomNames);
@@ -86,11 +92,6 @@ public class LoadBalancerServer extends SimObject
         _server = null;
     }
 
-    public function createLoadBalancingMsg (player :PlayerData) :void
-    {
-
-    }
-
     protected function refreshLowPopulationRoomData (...ignored) :void
     {
         var roomId2Players :HashMap = new HashMap();
@@ -103,31 +104,6 @@ public class LoadBalancerServer extends SimObject
         //Sort the rooms ids.
         var roomIdsSorted :Array = sortRoomsToSendPlayers(roomId2Players);
         _sortedRoomIds = roomIdsSorted;
-//        trace("refreshing room pops _sortedRoomIds=" + _sortedRoomIds);
-        //Only take the best 6 rooms
-//        roomIdsSorted = roomIdsSorted.slice(0, 6);
-//        //Create the population array
-//        var roomPopulations :Array = roomIdsSorted.map(function (roomId :int, ...ignored) :int {
-//            return roomId2Players.get(roomId);
-//        });
-//        //Create the room name array
-//        var roomNames :Array = roomIdsSorted.map(function (roomId :int, ...ignored) :String {
-//            return _server.getRoom(roomId).name;
-//        });
-//
-//        var newRoomPopulationData :Array = [roomIdsSorted, roomPopulations, roomNames];
-//        //Update the room props.  This should all happen in the bundled server update,
-//        //so should be reasonably efficient.
-//        if (!ArrayUtil.equals(_lowPopulationRooms, newRoomPopulationData)) {
-//            _lowPopulationRooms = newRoomPopulationData;
-//            log.debug("sending to all rooms", "lowPopulationRooms", _lowPopulationRooms);
-//            _server.rooms.forEach(function (roomId :int, room :Room) :void {
-//                if (!room.isStale) {
-//                    room.ctrl.props.set(Codes.ROOM_PROP_LOW_POPULATION_ROOMS,
-//                        _lowPopulationRooms);
-//                }
-//            });
-//        }
     }
 
     /**
