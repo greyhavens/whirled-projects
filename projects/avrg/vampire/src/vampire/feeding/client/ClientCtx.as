@@ -17,7 +17,7 @@ import flash.utils.getTimer;
 
 import vampire.feeding.*;
 import vampire.feeding.net.*;
-import vampire.feeding.variant.Settings;
+import vampire.feeding.variant.VariantSettings;
 
 public class ClientCtx
 {
@@ -28,33 +28,36 @@ public class ClientCtx
     public static var audio :AudioManager;
 
     // Initialized every time a new feeding takes place
-    public static var props :NamespacePropGetControl;
-    public static var msgMgr :ClientMsgMgr;
-    public static var gameCompleteCallback :Function;
-    public static var playerData :PlayerFeedingData;
-    public static var allPlayerIds :Array;  // includes people waiting in the lobby for next round
-    public static var gamePlayerIds :Array;
+    public static var clientSettings :FeedingClientSettings;
     public static var awardedTrophies :HashSet;
     public static var lastRoundResults :RoundOverMsg;
-    public static var settings :Settings;
-
+    public static var variantSettings :VariantSettings;
+    // Valid only if clientSettings.spOnly is false
+    public static var props :NamespacePropGetControl;
+    public static var msgMgr :ClientMsgMgr;
+    public static var allPlayerIds :Array;  // includes people waiting in the lobby for next round
+    public static var gamePlayerIds :Array;
 
     public static function get isCorruption () :Boolean
     {
-        return settings.scoreCorruption;
+        return variantSettings.scoreCorruption;
+    }
+
+    public static function get playerData () :PlayerFeedingData
+    {
+        return clientSettings.playerData;
     }
 
     public static function init () :void
     {
-        props = null;
-        msgMgr = null;
-        gameCompleteCallback = null;
-        playerData = null;
-        allPlayerIds = null;
-        gamePlayerIds = null;
+        clientSettings = null;
         awardedTrophies = new HashSet();
         lastRoundResults = null;
-        settings = null;
+        variantSettings = null;
+        props = null;
+        msgMgr = null;
+        allPlayerIds = null;
+        gamePlayerIds = null;
     }
 
     public static function centerInRoom (disp :DisplayObject) :void
@@ -84,7 +87,9 @@ public class ClientCtx
         // Track the trophies we've awarded this feeding session, and don't try
         // to award them again (this isn't tracked across feeding sessions - should it be?)
         if (!awardedTrophies.contains(trophyName)) {
-            msgMgr.sendMessage(AwardTrophyMsg.create(trophyName));
+            if (!ClientCtx.clientSettings.spOnly) {
+                msgMgr.sendMessage(AwardTrophyMsg.create(trophyName));
+            }
             awardedTrophies.add(trophyName);
 
             log.info("Awarded trophy '" + trophyName + "'");
@@ -104,12 +109,13 @@ public class ClientCtx
 
     public static function get preyId () :int
     {
-        return (props.get(Props.PREY_ID) as int);
+        return (clientSettings.spOnly ? 0 : props.get(Props.PREY_ID) as int);
     }
 
     public static function get aiPreyName () :String
     {
-        return (props.get(Props.AI_PREY_NAME) as String);
+        return (clientSettings.spOnly ? clientSettings.spPreyName :
+            props.get(Props.AI_PREY_NAME) as String);
     }
 
     public static function get preyBloodType () :int
@@ -117,23 +123,24 @@ public class ClientCtx
         if (Constants.DEBUG_FORCE_SPECIAL_BLOOD_STRAIN) {
             return 0;
         } else {
-            return (props.get(Props.PREY_BLOOD_TYPE) as int);
+            return (clientSettings.spOnly ? clientSettings.spPreyBloodStrain :
+                props.get(Props.PREY_BLOOD_TYPE) as int);
         }
     }
 
     public static function get preyIsAi () :Boolean
     {
-        return (props.get(Props.PREY_IS_AI) as Boolean);
+        return (clientSettings.spOnly || props.get(Props.PREY_IS_AI) as Boolean);
     }
 
     public static function get lobbyLeaderId () :int
     {
-        return (props.get(Props.LOBBY_LEADER) as int);
+        return (clientSettings.spOnly ? localPlayerId : props.get(Props.LOBBY_LEADER) as int);
     }
 
     public static function get bloodBondProgress () :int
     {
-        return (props.get(Props.BLOOD_BOND_PROGRESS) as int);
+        return (clientSettings.spOnly ? 0 : props.get(Props.BLOOD_BOND_PROGRESS) as int);
     }
 
     public static function get isLobbyLeader () :Boolean
@@ -160,16 +167,16 @@ public class ClientCtx
     {
         return (isPredator &&
                 !preyIsAi &&
-                playerData.canCollectStrainFromPlayer(preyBloodType, preyId));
+                clientSettings.playerData.canCollectStrainFromPlayer(preyBloodType, preyId));
     }
 
     public static function quit (playerInitiated :Boolean) :void
     {
-        if (playerInitiated) {
+        if (playerInitiated && !clientSettings.spOnly) {
             msgMgr.sendMessage(ClientQuitMsg.create());
         }
 
-        gameCompleteCallback();
+        clientSettings.gameCompleteCallback();
 
         // TODO: if the player didn't initiate the quit, show a screen explaining what happened
     }

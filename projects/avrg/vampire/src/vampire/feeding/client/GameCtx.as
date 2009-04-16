@@ -60,7 +60,7 @@ public class GameCtx
 
     public static function get isMultiplayer () :Boolean
     {
-        return ClientCtx.gamePlayerIds.length > 1;
+        return (!ClientCtx.clientSettings.spOnly && ClientCtx.gamePlayerIds.length > 1);
     }
 
     // Returns a new Vector, clamped within the bounds of the game

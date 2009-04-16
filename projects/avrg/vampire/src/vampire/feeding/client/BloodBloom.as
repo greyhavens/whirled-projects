@@ -51,23 +51,21 @@ public class BloodBloom extends FeedingClient
         _inited = true;
     }
 
-    public function BloodBloom (multiplayer :Boolean,
-                                gameId :int,
-                                playerData :PlayerFeedingData,
-                                gameCompleteCallback :Function,
-                                props :NamespacePropGetControl = null)
+    public function BloodBloom (settings :FeedingClientSettings)
     {
         if (!_inited) {
             throw new Error("FeedingGameClient.init has not been called");
         }
 
         ClientCtx.init();
-        ClientCtx.props = (props != null ? props :
-            new NamespacePropGetControl(String(gameId), ClientCtx.gameCtrl.room.props));
-        ClientCtx.playerData = playerData.clone();
-        ClientCtx.gameCompleteCallback = gameCompleteCallback;
-        ClientCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);
-        FeedingUtil.initMessageManager(ClientCtx.msgMgr);
+        ClientCtx.clientSettings = settings;
+
+        if (!ClientCtx.clientSettings.spOnly) {
+            ClientCtx.props = new NamespacePropGetControl(String(settings.mpGameId),
+                ClientCtx.gameCtrl.room.props);
+            ClientCtx.msgMgr = new ClientMsgMgr(settings.mpGameId, ClientCtx.gameCtrl);
+            FeedingUtil.initMessageManager(ClientCtx.msgMgr);
+        }
 
         _events.registerListener(this, Event.ADDED_TO_STAGE,
             function (...ignored) :void {
@@ -117,7 +115,7 @@ public class BloodBloom extends FeedingClient
 
     override public function get playerData () :PlayerFeedingData
     {
-        return ClientCtx.playerData;
+        return ClientCtx.clientSettings.playerData;
     }
 
     protected function loadLevelPacks () :void
@@ -189,12 +187,12 @@ public class BloodBloom extends FeedingClient
     {
         var variant :int = ClientCtx.props.get(Props.VARIANT) as int;
 
-        if (ClientCtx.settings != null) {
-            log.error("Variant changed!", "oldVariant", ClientCtx.settings.variant,
+        if (ClientCtx.variantSettings != null) {
+            log.error("Variant changed!", "oldVariant", ClientCtx.variantSettings.variant,
                       "newVariant", variant);
 
         } else if (variant > Variant.INVALID) {
-            ClientCtx.settings = Variant.getSettings(variant);
+            ClientCtx.variantSettings = Variant.getSettings(variant);
         }
     }
 
@@ -212,16 +210,22 @@ public class BloodBloom extends FeedingClient
             return;
         }
 
-        _events.registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
-        _events.registerListener(ClientCtx.props, PropertyChangedEvent.PROPERTY_CHANGED,
-            onPropChanged, false, int.MAX_VALUE);
-        _events.registerListener(ClientCtx.props, ElementChangedEvent.ELEMENT_CHANGED,
-            onPropChanged, false, int.MAX_VALUE);
+        if (ClientCtx.clientSettings.spOnly) {
+            ClientCtx.variantSettings = Variant.getSettings(ClientCtx.clientSettings.spVariant);
+            ClientCtx.mainLoop.unwindToMode(new GameMode());
 
-        updateVariant();
-        updateAllPlayers();
-        updateGamePlayers();
-        updateMode();
+        } else {
+            _events.registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
+            _events.registerListener(ClientCtx.props, PropertyChangedEvent.PROPERTY_CHANGED,
+                onPropChanged, false, int.MAX_VALUE);
+            _events.registerListener(ClientCtx.props, ElementChangedEvent.ELEMENT_CHANGED,
+                onPropChanged, false, int.MAX_VALUE);
+
+            updateVariant();
+            updateAllPlayers();
+            updateGamePlayers();
+            updateMode();
+        }
     }
 
     protected static function loadResources () :void

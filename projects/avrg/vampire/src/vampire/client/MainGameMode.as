@@ -18,6 +18,7 @@ import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.data.Codes;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingClient;
+import vampire.feeding.FeedingClientSettings;
 import vampire.net.messages.FeedConfirmMsg;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.FeedingDataMsg;
@@ -256,9 +257,9 @@ public class MainGameMode extends AppMode
                 _feedingGameClient = FeedingClient.create(gameId,
                     ClientContext.model.playerFeedingData, onGameComplete);
             }*/
-            _feedingGameClient = FeedingClient.create(true, msg.gameId,
-                                                      ClientContext.model.playerFeedingData,
-                                                      onGameComplete);//,
+            var settings :FeedingClientSettings = FeedingClientSettings.mpSettings(
+                msg.gameId, ClientContext.model.playerFeedingData, onGameComplete);
+            _feedingGameClient = FeedingClient.create(settings);//,
 //                                                      msg.scoresDaily,
 //                                                      msg.scoresMonthly);
 

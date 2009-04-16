@@ -167,8 +167,8 @@ public class BurstSequence extends SceneObject
 
     protected function get hasScoreValue () :Boolean
     {
-        return (ClientCtx.settings.scoreCorruption && _type == TYPE_CORRUPTION) ||
-               (!ClientCtx.settings.scoreCorruption && _type != TYPE_CORRUPTION);
+        return (ClientCtx.variantSettings.scoreCorruption && _type == TYPE_CORRUPTION) ||
+               (!ClientCtx.variantSettings.scoreCorruption && _type != TYPE_CORRUPTION);
     }
 
     protected var _type :int = -1;

@@ -20,24 +20,10 @@ public class FeedingClient extends Sprite
 
     /**
      * Starts a FeedingGameClient and connects it to the given game.
-     * @see FeedingGameServer.get gameId
-     *
-     * @param multiplayer true if the game will connect to a FeedingGameServer; false if this
-     * is a single-player-only game.
-     *
-     * @param collectedBloodStrains an Array of ints representing the number of each special
-     * blood strain that the player has collected thus far.
-     *
-     * @param playerData
-     *
-     * @param gameCompleteCallback this function will be called when feeding has ended.
-     * It takes no parameters and returns nothing.
-     * function gameCompleteCallback () :void
      */
-    public static function create (multiplayer :Boolean, gameId :int, playerData :PlayerFeedingData,
-                                   gameCompleteCallback :Function) :FeedingClient
+    public static function create (settings :FeedingClientSettings) :FeedingClient
     {
-        return new BloodBloom(multiplayer, gameId, playerData, gameCompleteCallback);
+        return new BloodBloom(settings);
     }
 
     /**

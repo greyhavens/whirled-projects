@@ -26,11 +26,12 @@ public class PlayerCursor extends CollidableObj
         _sprite = SpriteUtil.createSprite();
         _sprite.addChild(_movie);
 
-        if (ClientCtx.settings.canDropWhiteCells || ClientCtx.settings.playerCreatesWhiteCells) {
+        if (ClientCtx.variantSettings.canDropWhiteCells ||
+            ClientCtx.variantSettings.playerCreatesWhiteCells) {
             registerListener(GameCtx.bgLayer, MouseEvent.MOUSE_DOWN, onMouseDown);
         }
 
-        if (ClientCtx.settings.playerCreatesWhiteCells) {
+        if (ClientCtx.variantSettings.playerCreatesWhiteCells) {
             _createdWhiteCell = Cell.createCellSprite(Constants.CELL_WHITE, 0, false);
             _createdWhiteCell.y = -(_movie.height * 0.35);
             _sprite.addChildAt(_createdWhiteCell, 0);
@@ -59,7 +60,7 @@ public class PlayerCursor extends CollidableObj
 
             respawnWhiteCell();
 
-        } else if (ClientCtx.settings.canDropWhiteCells) {
+        } else if (ClientCtx.variantSettings.canDropWhiteCells) {
             dropCells();
         }
     }
@@ -67,7 +68,7 @@ public class PlayerCursor extends CollidableObj
     protected function respawnWhiteCell () :void
     {
         _createdWhiteCell.scaleX = _createdWhiteCell.scaleY = 0;
-        var time :Number = ClientCtx.settings.playerWhiteCellCreationTime;
+        var time :Number = ClientCtx.variantSettings.playerWhiteCellCreationTime;
         var pauseTime :Number = Math.max(time - 0.25, 0);
         var growTime :Number = time - pauseTime;
         addNamedTask(
@@ -77,7 +78,7 @@ public class PlayerCursor extends CollidableObj
 
     protected function get isWhiteCellSpawned () :Boolean
     {
-        return (ClientCtx.settings.playerCreatesWhiteCells && !this.isWhiteCellSpawning);
+        return (ClientCtx.variantSettings.playerCreatesWhiteCells && !this.isWhiteCellSpawning);
     }
 
     protected function get isWhiteCellSpawning () :Boolean
@@ -178,7 +179,7 @@ public class PlayerCursor extends CollidableObj
         var cell :Cell = Cell.getCellCollision(this);
         if (cell != null) {
             if (cell.type == Constants.CELL_WHITE) {
-                if (ClientCtx.settings.playerCarriesWhiteCells && cell.canAttach) {
+                if (ClientCtx.variantSettings.playerCarriesWhiteCells && cell.canAttach) {
                     attachCell(cell);
                 }
 

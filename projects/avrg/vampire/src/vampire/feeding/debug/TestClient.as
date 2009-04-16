@@ -59,7 +59,8 @@ public class TestClient extends Sprite
             } else {
                 var pfd :PlayerFeedingData = new PlayerFeedingData();
                 pfd.playerStrain = Logic.getPlayerBloodStrain(_gameCtrl.player.getPlayerId());
-                _curGame = FeedingClient.create(true, gameId, pfd, onGameComplete);
+                _curGame = FeedingClient.create(
+                    FeedingClientSettings.mpSettings(gameId, pfd, onGameComplete));
 
                 addChild(_curGame);
                 freezeAvatars(true);

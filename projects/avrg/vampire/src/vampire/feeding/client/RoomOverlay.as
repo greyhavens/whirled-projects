@@ -43,7 +43,7 @@ public class RoomOverlay extends SceneObject
 
         var g :Graphics = _shape.graphics;
         g.clear();
-        g.beginFill(ClientCtx.settings.scoreCorruption ? CORRUPTION_COLOR : NORMAL_COLOR);
+        g.beginFill(ClientCtx.variantSettings.scoreCorruption ? CORRUPTION_COLOR : NORMAL_COLOR);
         g.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
         g.endFill();
     }

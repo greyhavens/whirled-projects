@@ -10,7 +10,7 @@ import com.whirled.contrib.namespc.*;
 
 import vampire.feeding.*;
 import vampire.feeding.net.*;
-import vampire.feeding.variant.Settings;
+import vampire.feeding.variant.VariantSettings;
 
 public class ServerCtx
 {
@@ -21,7 +21,7 @@ public class ServerCtx
     public var props :NamespacePropControl;
     public var nameUtil :NameUtil;
 
-    public var settings :Settings;
+    public var settings :VariantSettings;
 
     public var playerIds :Array;
     public var feedingHost :FeedingHost;

@@ -1,5 +1,6 @@
 package vampire.feeding.debug {
 
+import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.namespc.*;
@@ -7,14 +8,11 @@ import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
-import flash.utils.Dictionary;
 
 import vampire.avatar.VampireBody;
 import vampire.data.VConstants;
-import vampire.debug.LocalPropertySubControl;
 import vampire.feeding.*;
 import vampire.feeding.client.*;
-import vampire.feeding.net.Props;
 import vampire.feeding.server.*;
 import vampire.feeding.variant.Variant;
 
@@ -53,24 +51,20 @@ public class BloodBloomStandalone extends Sprite
 
     protected function startGame () :void
     {
-        var dummyProps :NamespacePropControl =
-            new NamespacePropControl(String(0), new LocalPropertySubControl());
-        dummyProps.set(Props.AI_PREY_NAME, "AI Prey");
-        dummyProps.set(
-            Props.PREY_BLOOD_TYPE,
-            Rand.nextIntRange(0, VConstants.UNIQUE_BLOOD_STRAINS, Rand.STREAM_COSMETIC));
-        dummyProps.set(Props.PREY_IS_AI, true);
-        dummyProps.set(Props.VARIANT, VARIANT);
-        dummyProps.set(Props.MODE_NAME, Constants.MODE_PLAYING);
+        var settings :FeedingClientSettings = FeedingClientSettings.spSettings(
+            "Standalone Prey",
+            Rand.nextIntRange(0, VConstants.UNIQUE_BLOOD_STRAINS, Rand.STREAM_COSMETIC),
+            VARIANT,
+            new PlayerFeedingData(),
+            function () :void { log.info("onGameComplete"); },
+            null);
 
-        var dict :Dictionary = new Dictionary;
-        dict[1] = true;
-        dummyProps.set(Props.GAME_PLAYERS, dict);
-
-        addChild(new BloodBloom(false, 0, new PlayerFeedingData(), function () :void {}, dummyProps));
+        addChild(new BloodBloom(settings));
     }
 
     protected var _timerMgr :TimerManager = new TimerManager();
+
+    protected static var log :Log = Log.getLog(BloodBloomStandalone);
 
     [Embed(source="../../../../rsrc/feeding/music.mp3")]
     protected static const MUS_MAIN_THEME :Class;

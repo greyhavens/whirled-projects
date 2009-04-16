@@ -195,7 +195,7 @@ public class Cell extends CollidableObj
         addTask(new SerialTask(
             LocationTask.CreateEaseOut(
                 birthTarget.x, birthTarget.y,
-                ClientCtx.settings.normalCellBirthTime),
+                ClientCtx.variantSettings.normalCellBirthTime),
             new FunctionTask(function () :void {
                 GameCtx.cellLayer.addChild(thisCell.displayObject);
                 _state = STATE_NORMAL;
@@ -203,7 +203,7 @@ public class Cell extends CollidableObj
 
         // fade in
         this.alpha = 0;
-        addTask(new AlphaTask(1, ClientCtx.settings.normalCellBirthTime));
+        addTask(new AlphaTask(1, ClientCtx.variantSettings.normalCellBirthTime));
 
         attachTip(TipFactory.POP_RED);
     }
@@ -218,11 +218,11 @@ public class Cell extends CollidableObj
         this.x = loc.x;
         this.y = loc.y;
 
-        if (ClientCtx.settings.whiteCellBirthTime > 0) {
+        if (ClientCtx.variantSettings.whiteCellBirthTime > 0) {
             _state = STATE_BIRTH;
             this.alpha = 0;
             addTask(new SerialTask(
-                new AlphaTask(1, ClientCtx.settings.whiteCellBirthTime),
+                new AlphaTask(1, ClientCtx.variantSettings.whiteCellBirthTime),
                 new FunctionTask(function () :void {
                     _state = STATE_NORMAL;
                 })));
@@ -235,12 +235,12 @@ public class Cell extends CollidableObj
         _movie.gotoAndStop(1);
         var thisCell :Cell = this;
         addNamedTask(EXPLODE_TASK, new SerialTask(
-            new TimedTask(ClientCtx.settings.whiteCellNormalTime),
+            new TimedTask(ClientCtx.variantSettings.whiteCellNormalTime),
             new FunctionTask(function () :void {
                 _state = STATE_PREPARING_TO_EXPLODE;
             }),
             new ShowFramesTask(_movie, 1, ShowFramesTask.LAST_FRAME,
-                               ClientCtx.settings.whiteCellExplodeTime),
+                               ClientCtx.variantSettings.whiteCellExplodeTime),
             new FunctionTask(function () :void {
                 GameObjects.createCorruptionBurst(thisCell, null);
                 GameCtx.gameMode.onWhiteCellBurst();
@@ -263,7 +263,7 @@ public class Cell extends CollidableObj
 
         this.alpha = 0;
         addTask(new SerialTask(
-            new AlphaTask(1, ClientCtx.settings.normalCellBirthTime),
+            new AlphaTask(1, ClientCtx.variantSettings.normalCellBirthTime),
             new FunctionTask(function () :void {
                 _state = STATE_NORMAL;
             })));
@@ -306,8 +306,8 @@ public class Cell extends CollidableObj
         ctrImpulse.length = 2;
 
         var speed :Number = (_type == Constants.CELL_WHITE ?
-                             ClientCtx.settings.whiteCellSpeed :
-                             ClientCtx.settings.normalCellSpeed);
+                             ClientCtx.variantSettings.whiteCellSpeed :
+                             ClientCtx.variantSettings.normalCellSpeed);
 
         var impulse :Vector2 = (this.orbitMovementType == ORBIT_NORMAL ?
                                 perpImpulse :

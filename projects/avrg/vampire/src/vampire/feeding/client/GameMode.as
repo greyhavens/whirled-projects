@@ -85,7 +85,9 @@ public class GameMode extends AppMode
     {
         super.setup();
 
-        registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
+        if (!ClientCtx.clientSettings.spOnly) {
+            registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
+        }
 
         if (!Constants.DEBUG_DISABLE_ROOM_OVERLAY) {
             addSceneObject(new RoomOverlay(), _modeSprite);
@@ -154,7 +156,7 @@ public class GameMode extends AppMode
         GameCtx.gameMode.addObject(GameCtx.heart);
 
         // spawn white cells on a timer separate from the heartbeat
-        if (ClientCtx.settings.boardCreatesWhiteCells) {
+        if (ClientCtx.variantSettings.boardCreatesWhiteCells) {
             var whiteCellSpawner :SimObject = new SimObject();
             whiteCellSpawner.addTask(new RepeatingTask(
                 new VariableTimedTask(
@@ -347,8 +349,18 @@ public class GameMode extends AppMode
 
         // If the game is over, wait for animations to complete before actually ending things
         if (GameCtx.gameOver && this.canEndGameNow && !_performedEndGameLogic) {
-            // send our scores
-            ClientCtx.msgMgr.sendMessage(RoundScoreMsg.create(GameCtx.score.bloodCount));
+
+            // End the game manually if we're in standalone mode;
+            // otherwise we'll wait for the actual RoundOverMsg to come in
+            if (ClientCtx.clientSettings.spOnly) {
+                var scores :HashMap = new HashMap();
+                scores.put(ClientCtx.localPlayerId, GameCtx.score.bloodCount);
+                onRoundOver(RoundOverMsg.create(scores));
+
+            } else {
+                // send our scores
+                ClientCtx.msgMgr.sendMessage(RoundScoreMsg.create(GameCtx.score.bloodCount));
+            }
 
             // award trophies
             if (!GameCtx.gotCorruption) {
@@ -356,15 +368,6 @@ public class GameMode extends AppMode
             }
 
             _performedEndGameLogic = true;
-
-            // For testing purposes, end the game manually if we're in standalone mode;
-            // otherwise we'll wait for the actual RoundOverMsg to come in
-            if (!ClientCtx.isConnected) {
-                var scores :HashMap = new HashMap();
-                scores.put(ClientCtx.localPlayerId, GameCtx.score.bloodCount);
-                onRoundOver(RoundOverMsg.create(scores));
-                return;
-            }
         }
     }
 

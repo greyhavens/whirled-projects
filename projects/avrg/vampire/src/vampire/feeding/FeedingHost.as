@@ -1,6 +1,6 @@
 package vampire.feeding {
-    import com.threerings.util.HashMap;
 
+import com.threerings.util.HashMap;
 
 public interface FeedingHost
 {

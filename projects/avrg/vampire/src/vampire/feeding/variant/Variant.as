@@ -6,9 +6,9 @@ public class Variant
     public static const NORMAL :int = 1;
     public static const CORRUPTION :int = 2;
 
-    public static function getSettings (variant :int) :Settings
+    public static function getSettings (variant :int) :VariantSettings
     {
-        var settings :Settings;
+        var settings :VariantSettings;
         switch (variant) {
         case NORMAL:
             settings = normal();
@@ -26,9 +26,9 @@ public class Variant
         return settings;
     }
 
-    protected static function normal () :Settings
+    protected static function normal () :VariantSettings
     {
-        var settings :Settings = new Settings();
+        var settings :VariantSettings = new VariantSettings();
 
         settings.boardCreatesWhiteCells = true;
         settings.playerCreatesWhiteCells = false;
@@ -46,9 +46,9 @@ public class Variant
         return settings;
     }
 
-    protected static function corruption () :Settings
+    protected static function corruption () :VariantSettings
     {
-        var settings :Settings = new Settings();
+        var settings :VariantSettings = new VariantSettings();
 
         settings.boardCreatesWhiteCells = false;
         settings.playerCreatesWhiteCells = true;
