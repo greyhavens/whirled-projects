@@ -81,7 +81,6 @@ package vampire.net.messages
         protected var _targetX :Number;
         protected var _targetY :Number;
         protected var _targetZ :Number;
-        protected var _allowMultiplePredators :Boolean;
 
         public static const NAME :String = "Message: Request Feed";
 
