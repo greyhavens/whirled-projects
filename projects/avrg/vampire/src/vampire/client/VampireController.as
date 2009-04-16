@@ -8,6 +8,7 @@ import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 
+import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 
@@ -291,7 +292,8 @@ public class VampireController extends Controller
     }
 
 
-    public function handleShowPopupMessage (name :String, msg :String, buttonNames :Array = null,
+    public function handleShowPopupMessage (name :String, msg :String,
+        parent :DisplayObjectContainer, buttonNames :Array = null,
         functionsOrCommands :Array = null) :void
     {
         var popup :PopupQuery = new PopupQuery(name, msg, buttonNames, functionsOrCommands);
@@ -301,7 +303,7 @@ public class VampireController extends Controller
             mode.getObjectNamed(popup.objectName).destroySelf();
         }
 
-        mode.addSceneObject(popup, mode.modeSprite);
+        mode.addSceneObject(popup, parent);
         ClientContext.centerOnViewableRoom(popup.displayObject);
         ClientContext.animateEnlargeFromMouseClick(popup);
     }
@@ -336,7 +338,9 @@ public class VampireController extends Controller
 
     public function handleNewLevel (newLevel :int) :void
     {
-        handleShowPopupMessage("NewLevel", VConstants.TEXT_NEW_LEVEL + newLevel + "!",
+        handleShowPopupMessage("NewLevel",
+            VConstants.TEXT_NEW_LEVEL + newLevel + "!",
+            ClientContext.gameMode.lowPriorityLayer,
             ["More info"], [function() :void {ClientContext.controller.handleShowIntro("blood")}]);
     }
     public function handleRecruit () :void

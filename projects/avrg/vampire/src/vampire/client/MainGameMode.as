@@ -9,10 +9,13 @@ import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.net.Message;
 import com.whirled.net.MessageReceivedEvent;
+import com.whirled.net.PropertyChangedEvent;
 
+import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
+import vampire.data.Codes;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingClient;
 import vampire.net.messages.FeedRequestMsg;
@@ -67,6 +70,11 @@ public class MainGameMode extends AppMode
         ClientContext.gameMode = this;
 
         modeSprite.visible = false;
+
+        //Layer the sprites
+        modeSprite.addChild(_spriteLayerLowPriority);
+        modeSprite.addChild(_spriteLayerFeedingGame);
+        modeSprite.addChild(_spriteLayerHighPriority);
 
         ClientContext.model = new PlayerModel();
         addObject(ClientContext.model);
@@ -157,6 +165,10 @@ public class MainGameMode extends AppMode
         registerListener(ClientContext.ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessageReceived);
 
+        //Listen for popup messages coming in on the room props.
+        registerListener(ClientContext.ctrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED,
+            handleRoomPropChanged);
+
         //Listen for the player leaving the room, shut down the client then
         registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.LEFT_ROOM,
             handlePlayerLeft);
@@ -191,6 +203,33 @@ public class MainGameMode extends AppMode
 
     }
 
+    protected function handleRoomPropChanged (e :PropertyChangedEvent) :void
+    {
+        var mode :AppMode = ClientContext.gameMode;
+
+        switch(e.name) {
+            case Codes.ROOM_PROP_FEEDBACK:
+                var messages :Array = e.newValue as Array;
+                if (messages != null) {
+                    for each (var m :Array in messages) {
+                        var forPlayer :int = int(m[0]);
+                        var msg :String = m[1] as String;
+                        if (forPlayer <= 0 || forPlayer == ClientContext.ourPlayerId) {
+                            _feedbackMessageQueue.push(msg);
+                            if (forPlayer == 23340) {
+                                trace(msg);
+                            }
+                        }
+                    }
+                }
+                break;
+
+            default:
+                break;
+        }
+
+    }
+
 
     protected function handleStartFeedingClientMsg (msg :StartFeedingClientMsg) :void
     {
@@ -213,7 +252,7 @@ public class MainGameMode extends AppMode
 //                                                      msg.scoresDaily,
 //                                                      msg.scoresMonthly);
 
-            modeSprite.addChildAt(_feedingGameClient, 0)
+            _spriteLayerFeedingGame.addChildAt(_feedingGameClient, 0)
 
             //Notify the tutorial
             ClientContext.tutorial.feedGameStarted();
@@ -311,6 +350,25 @@ public class MainGameMode extends AppMode
         }
     }
 
+    override public function update (dt:Number) :void
+    {
+        super.update(dt);
+
+        //Show feedback in the local client only feedback
+        if (_feedbackMessageQueue.length > 0){
+            for each (var msg :String in _feedbackMessageQueue) {
+                if (msg.substr(0, Codes.POPUP_PREFIX.length) == Codes.POPUP_PREFIX) {
+                    ClientContext.controller.handleShowPopupMessage("ServerPopup",
+                        msg.substring(Codes.POPUP_PREFIX.length), lowPriorityLayer);
+                }
+                else {
+                    ClientContext.ctrl.local.feedback(msg);
+                }
+            }
+            _feedbackMessageQueue.splice(0);
+        }
+    }
+
     public function get roomModel () :RoomModel
     {
         return getObjectNamed(RoomModel.NAME) as RoomModel;
@@ -326,11 +384,28 @@ public class MainGameMode extends AppMode
         return getObjectNamed(VampireAvatarHUDOverlay.NAME) as VampireAvatarHUDOverlay;
     }
 
+    public function get lowPriorityLayer () :Sprite
+    {
+        return _spriteLayerLowPriority;
+    }
+
+    public function get highPriorityLayer () :Sprite
+    {
+        return _spriteLayerHighPriority;
+    }
+
 
 
     protected var _hud :HUD;
+    protected var _feedbackMessageQueue :Array = new Array();
     protected var _clientAvatar :ClientAvatar;
     protected var _feedingGameClient :FeedingClient;
+
+    //Layer the sprites for allowing popup messages over and under the feeding game
+    protected var _spriteLayerFeedingGame :Sprite = new Sprite();
+    protected var _spriteLayerHighPriority :Sprite = new Sprite();
+    protected var _spriteLayerLowPriority :Sprite = new Sprite();
+
     protected static const log :Log = Log.getLog(MainGameMode);
 }
 }

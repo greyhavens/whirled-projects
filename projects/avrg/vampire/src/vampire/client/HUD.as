@@ -54,9 +54,6 @@ public class HUD extends DraggableObject
         //Listen to events that might cause us to update ourselves
         registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, updateOurPlayerState);
         registerListener(ClientContext.ctrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged);
-//        registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
-//        registerListener(ClientContext.ctrl.room, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
-//        mode.addObject(_bloodXPMouseOverSceneObject);
     }
 
     override public function get displayObject () :DisplayObject
@@ -91,25 +88,7 @@ public class HUD extends DraggableObject
         var mode :AppMode = ClientContext.gameMode;
 
         switch(e.name) {
-//            case Codes.ROOM_PROP_LINEAGE:
-//                break;
             case Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE:
-                break;
-
-            case Codes.ROOM_PROP_FEEDBACK:
-                var messages :Array = e.newValue as Array;
-                if (messages != null) {
-                    for each (var m :Array in messages) {
-                        var forPlayer :int = int(m[0]);
-                        var msg :String = m[1] as String;
-                        if (forPlayer <= 0 || forPlayer == ClientContext.ourPlayerId) {
-                            _feedbackMessageQueue.push(msg);
-                            if (forPlayer == 23340) {
-                                trace(msg);
-                            }
-                        }
-                    }
-                }
                 break;
 
             case Codes.PLAYER_PROP_XP:
@@ -215,151 +194,6 @@ public class HUD extends DraggableObject
 
     }
 
-    protected function handleElementChanged (e :ElementChangedEvent) :void
-    {
-        //Check if it is non-player properties changed??
-        //Otherwise check for player updates
-//        var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName(e.name);
-//        var levelUp :SceneObjectPlayMovieClipOnce;
-//        var xpUp :SceneObjectPlayMovieClipOnce;
-//        var oldLevel :int;
-//        var newLevel :int;
-//
-//        var mode :AppMode = ClientContext.gameMode;
-//
-////        if (!isNaN(playerIdUpdated)) {
-//            //If it's us, update the player HUD
-////            if (playerIdUpdated == ClientContext.ourPlayerId) {
-//
-////                if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
-////
-////                    if (e.oldValue < e.newValue) {
-////                        var bloodUp :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
-////                                ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true));
-////                        bloodUp.x = _hudBlood.x + ClientContext.model.maxblood/2;
-////                        bloodUp.y = _hudBlood.y;
-////                        mode.addSceneObject(bloodUp, _hudBlood.parent );
-////                    }
-////                    showBlood(ClientContext.ourPlayerId);
-////                }
-//                if (e.index == Codes.PLAYER_PROP_XP) {
-//
-//                    if (e.oldValue < e.newValue && !(isNaN(Number(e.oldValue)) || e.oldValue == 0)) {
-//                        xpUp = new SceneObjectPlayMovieClipOnce(
-//                                ClientContext.instantiateMovieClip("HUD", "bloodup_feedback", true));
-//                        xpUp.x = _hudXP.x + ClientContext.model.maxblood/2;
-//                        xpUp.y = _hudXP.y;
-//                        mode.addSceneObject(xpUp, _hudXPParent);
-//                    }
-//                    _currentLevel = Logic.levelFromXp(Number(e.newValue));
-//
-//                    showXP(ClientContext.ourPlayerId);
-//                    oldLevel = Logic.levelFromXp(Number(e.oldValue));
-//                    newLevel = Logic.levelFromXp(Number(e.newValue));
-//
-//                    if (newLevel > oldLevel && newLevel >= 2 && e.oldValue > 0) {
-//                        ClientContext.controller.handleNewLevel(newLevel);
-//
-//                        levelUp = new SceneObjectPlayMovieClipOnce(
-//                                ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true));
-//                        levelUp.x = _hudXP.x + ClientContext.model.maxblood/2;
-//                        levelUp.y = _hudXP.y;
-//                        mode.addSceneObject(levelUp, _hudXPParent);
-//                    }
-//
-//
-//
-//                    //If we only need invite(s) for the next level, show a popup
-//                    //if we haven't already done so.
-//                    var level1moreXP :int = Logic.levelFromXp(Number(e.newValue) + 1);
-//
-////                    trace(ClientContext.model.name + " level1moreXPAndInvites=" + level1moreXPAndInvites);
-//                    if (level1moreXP > newLevel && Logic.invitesNeededForLevel(level1moreXP) > 0) {
-//
-//                        var invitesNeeded :int = Logic.invitesNeededForLevel(newLevel + 1);
-//                        var popup :PopupQuery = new PopupQuery(
-//                            "NeedInvites",
-//                            "You need " + Logic.invitesNeededForLevel(newLevel + 1) +
-//                            " invite" + (invitesNeeded > 1 ? "s" : "") + " for level " +
-//                            (newLevel + 1),
-//                            ["Recruit Now", "Recruit Later"],
-//                            [VampireController.RECRUIT, null]);
-//
-//
-//                        if (mode.getObjectNamed(popup.objectName) == null) {
-//                            mode.addSceneObject(popup, mode.modeSprite);
-//                            ClientContext.centerOnViewableRoom(popup.displayObject);
-//                            ClientContext.animateEnlargeFromMouseClick(popup);
-//                        }
-//                    }
-//
-//
-//                }
-//                else if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES) {
-//
-//                    if (_currentLevel < ClientContext.model.level) {
-//                        //Animate a level up movieclip
-//                        levelUp = new SceneObjectPlayMovieClipOnce(
-//                            ClientContext.instantiateMovieClip("HUD", "levelup_feedback", true));
-//                        levelUp.x = _hudXP.x + ClientContext.model.maxblood/2;
-//                        levelUp.y = _hudXP.y;
-//                        if (mode != null && _hudXPParent != null) {
-//                            mode.addSceneObject(levelUp, _hudXPParent);
-//                        }
-//
-//                        ClientContext.controller.handleNewLevel(ClientContext.model.level);
-//
-//                    }
-//                    _currentLevel = ClientContext.model.level;
-//                    showXP(ClientContext.ourPlayerId);
-//                }
-//                else if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
-//
-//                    if (e.newValue != 0) {
-//                        var bloodBondMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
-//                                ClientContext.instantiateMovieClip("HUD", "bloodbond_feedback", true));
-//                        bloodBondMovie.x = _hudXP.x + ClientContext.model.maxblood/2;
-//                        bloodBondMovie.y = _hudXP.y;
-//
-//                        if (mode != null) {
-//                            mode.addSceneObject(bloodBondMovie, _hudXPParent);
-//                        }
-//                    }
-//
-//                }
-//
-//                else if (e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_SIRE) {
-//                    if (e.newValue != 0) {
-//                        var lineageMovie :SceneObjectPlayMovieClipOnce = new SceneObjectPlayMovieClipOnce(
-//                                ClientContext.instantiateMovieClip("HUD", "lineage_feedback", true));
-//                        lineageMovie.x = _hudXP.x + ClientContext.model.maxblood/2;
-//                        lineageMovie.y = _hudXP.y;
-//                        if (mode != null) {
-//                            mode.addSceneObject(lineageMovie, _displaySprite);
-//                        }
-//                    }
-//                }
-
-//            }
-//        }
-
-
-//        else {
-//            log.error("isNaN(" + playerIdUpdated + "), failed to update ElementChangedEvent" + e);
-//        }
-
-    }
-
-
-//    protected function checkPlayerRoomProps(...ignored) :void
-//    {
-//        if (!SharedPlayerStateClient.isProps(ClientContext.ourPlayerId)) {
-//        }
-//        else {
-//            updateOurPlayerState();
-//        }
-//    }
-
     public function findSafely (name :String) :DisplayObject
     {
         var o :DisplayObject = DisplayUtil.findInHierarchy(_displaySprite, name);
@@ -375,8 +209,6 @@ public class HUD extends DraggableObject
         _hud = new Sprite();
         _displaySprite.addChild(_hud);
 
-
-
         _hud.addChild(_hudMC);
         //Center the hud graphic
         _hudMC.x = -_hudMC.width/2;
@@ -389,31 +221,16 @@ public class HUD extends DraggableObject
         _hudMC.mouseChildren = true;
         _hudMC.mouseEnabled = true;
 
-//        _hudCap = findSafely("button_menu");
-        //Store the x as the x anchor for the blood and xp bars.
-//        _hudCapStartX = _hudCap.x;
-
-
-//        _hudBlood = new Sprite();
-//        _hudCap.parent.addChild(_hudBlood);
-//        _hudBlood.x = _hudCap.x - _hudCap.width/2;
-//        _hudBlood.y = _hudCap.y - (_hudCap.height/2 + 1);
-
         _hudXP = new Sprite();
         _hudXPParent = draggableObject as DisplayObjectContainer;
         _hudXPParent.addChildAt(_hudXP,
-            _hudXPParent.getChildIndex(_hudXPParent.getChildByName("splat")) + 1);
-//        _hudXP.x = 0;
-//        _hudXP.y = 0;
-//        _hudCap.parent.removeChild(_hudCap);
+        _hudXPParent.getChildIndex(_hudXPParent.getChildByName("splat")) + 1);
 
         _bloodXPMouseOverSprite = new Sprite();
         _bloodXPMouseOverSceneObject = new SimpleSceneObject(_bloodXPMouseOverSprite, "MouseOverBlood");
         _bloodXPMouseOverSceneObject.x = _hudXP.x;
         _bloodXPMouseOverSceneObject.y = _hudXP.y;
         _bloodXPMouseOverSceneObject.alpha = 0;
-
-//        Command.bind(_bloodXPMouseOverSprite, MouseEvent.CLICK, VampireController.SHOW_INTRO, "blood");
 
         registerListener(_bloodXPMouseOverSprite, MouseEvent.ROLL_OVER, function(...ignored) :void {
             _bloodXPMouseOverSceneObject.addTask(AlphaTask.CreateEaseIn(1, 0.3));
@@ -423,7 +240,6 @@ public class HUD extends DraggableObject
         });
 
         _hudXPParent.addChild(_bloodXPMouseOverSprite);
-//        _hudXP.addChild(_bloodXPMouseOverSprite);
         db.addObject(_bloodXPMouseOverSceneObject);
 
         var hudHelp :SimpleButton = SimpleButton(findSafely("button_menu"));
@@ -437,46 +253,6 @@ public class HUD extends DraggableObject
 
 
     }
-
-
-//    protected function createBloodText() :void
-//    {
-//        if (_bloodText != null && _bloodText.parent != null) {
-//            _bloodText.parent.removeChild(_bloodText);
-//        }
-//
-////        if (_bloodText == null) {
-//            _bloodText = new TextField();//TextFieldUtil.createField(
-//
-//            _bloodText.selectable = false;
-//            _bloodText.tabEnabled = false;
-////            _bloodText.embedFonts = true;
-//            _bloodText.mouseEnabled = false;
-//            var lineageformat :TextFormat = new TextFormat();
-//    //        lineageformat.font = "JuiceEmbedded";
-////            lineageformat.size = 14;
-////            lineageformat.align = TextFormatAlign.LEFT;
-//    //        lineageformat.bold = true;
-//            _bloodText.textColor = 0xffffff;
-//            _bloodText.width = 80;
-//            _bloodText.height = 20;
-////            _bloodText.setTextFormat(lineageformat);
-//
-//            Sprite(_bloodXPMouseOverSceneObject.displayObject).addChild(_bloodText);
-////        }
-//
-//            _bloodText.text =
-//                Util.formatNumberForFeedback(ClientContext.model.blood) + " / " +
-//                ClientContext.model.maxblood;
-//
-////        _bloodText.antiAliasType = AntiAliasType.ADVANCED;
-//
-//
-////        _bloodText.alpha = 0;
-//        _bloodText.x = ClientContext.model.maxblood/2 - _bloodText.getLineMetrics(0).width/2;
-//        _bloodText.y = _hudBlood.height/2 - _bloodText.getLineMetrics(0).height/2;
-//
-//    }
 
     protected function createXPText() :void
     {
@@ -521,291 +297,20 @@ public class HUD extends DraggableObject
     override protected function update(dt:Number):void
     {
         super.update(dt);
-
-        //Show feedback in the local client only feedback
-        if (_feedbackMessageQueue.length > 0){
-            for each (var msg :String in _feedbackMessageQueue) {
-                if (msg.substr(0, Codes.POPUP_PREFIX.length) == Codes.POPUP_PREFIX) {
-                    ClientContext.controller.handleShowPopupMessage("ServerPopup",
-                        msg.substring(Codes.POPUP_PREFIX.length));
-                }
-                else {
-                    ClientContext.ctrl.local.feedback(msg);
-                }
-            }
-            _feedbackMessageQueue.splice(0);
-        }
-
         _timeSinceStart += dt;
 
-        //Show feedback messages in queue, and fade out old messages.
-//        if (_feedbackMessageQueue.length > 0 && db != null) {
-//            _feedbackMessageTimeElapsed += dt;
-//
-//            //Don't replace the current message if it's still there, it might have been inserted
-//            //due to instant feedback
-//            if (_feedbackMessageTimeElapsed >= VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY &&
-//                db.getObjectNamed(FEEDBACK_SIMOBJECT_NAME) == null) {
-//                _feedbackMessageTimeElapsed = 0;
-//                var feedbackMessage :String = _feedbackMessageQueue.shift() as String;
-//
-//                if (feedbackMessage != null) {
-//                    insertFeedbackSceneObject(feedbackMessage);
-//
-//                }
-//            }
-//        }
-
-//        if (VConstants.LOCAL_DEBUG_MODE) {
-//            _DEBUGGING_add_feedback_timer += dt;
-//            if (_DEBUGGING_add_feedback_timer > 2) {
-//                _DEBUGGING_add_feedback_timer = 0;
-//
-//                _feedbackMessageQueue.push(generateRandomString(Rand.nextIntRange(50, 100, 0)));
-//            }
-//        }
     }
-
-//    protected function insertFeedbackSceneObject2(feedbackMessage :String) :void
-//    {
-//        var textSprite :Sprite = new Sprite();
-//
-//        var feedbackMessageTextField :TextField =
-//            TextFieldUtil.createField(feedbackMessage);
-//        feedbackMessageTextField.selectable = false;
-//        feedbackMessageTextField.tabEnabled = false;
-////        feedbackMessageTextField.embedFonts = true;
-//
-//
-//        var lineageformat :TextFormat = new TextFormat();
-////        lineageformat.font = "JuiceEmbedded";
-//        lineageformat.size = 20;
-//        lineageformat.color = 0xffffff;
-//        lineageformat.align = TextFormatAlign.LEFT;
-////        lineageformat.bold = true;
-//        feedbackMessageTextField.setTextFormat(lineageformat);
-//        feedbackMessageTextField.textColor = 0xffffff;
-//        feedbackMessageTextField.width = Math.min(feedbackMessageTextField.textWidth + 10, 300);
-//        feedbackMessageTextField.height = 80;
-////        feedbackMessageTextField.x = -350 + feedbackMessageTextField.width
-//        feedbackMessageTextField.x =  -feedbackMessageTextField.width - 50;
-//        feedbackMessageTextField.y = -20;
-//        feedbackMessageTextField.multiline = true;//_hudFeedback.multiline;
-//        feedbackMessageTextField.wordWrap = true;
-//        feedbackMessageTextField.antiAliasType = AntiAliasType.ADVANCED;
-//
-//
-////        var lineageformat :TextFormat = new TextFormat();
-////        lineageformat.font = "JuiceEmbedded";
-////        lineageformat.size = 24.;
-////        lineageformat.color = 0x000000;
-////        lineageformat.align = TextFormatAlign.RIGHT;
-////        lineageformat.bold = true;
-////        feedbackMessageTextField.setTextFormat(lineageformat);
-////        feedbackMessageTextField.textColor = _hudFeedback.textColor;
-////        feedbackMessageTextField.width = _hudFeedback.width;
-////        feedbackMessageTextField.height = _hudFeedback.height;
-////        feedbackMessageTextField.x = _hudFeedback.x - 10;
-////        feedbackMessageTextField.y = _hudFeedback.y + 10;
-////        feedbackMessageTextField.multiline = _hudFeedback.multiline;
-////        feedbackMessageTextField.wordWrap = true;
-////        feedbackMessageTextField.antiAliasType = AntiAliasType.ADVANCED;
-////
-////        var blurred :BlurFilter = new BlurFilter(1.3, 1.3, 1);
-////        var storedBlur :Array = [blurred];
-////        feedbackMessageTextField.filters = storedBlur;
-//
-//
-////        var shadowText :TextField =
-////            TextFieldUtil.createField(feedbackMessage);
-////        shadowText.selectable = false;
-////        shadowText.tabEnabled = false;
-////        shadowText.embedFonts = true;
-////
-////        shadowText.setTextFormat(lineageformat);
-////        shadowText.textColor = 0xffffff;
-////        shadowText.width = _hudFeedback.width;
-////        shadowText.height = _hudFeedback.height;
-////        shadowText.x = _hudFeedback.x - 10;
-////        shadowText.y = _hudFeedback.y + 10;
-////        shadowText.multiline = _hudFeedback.multiline;
-////        shadowText.wordWrap = true;
-////        shadowText.antiAliasType = AntiAliasType.ADVANCED;
-////
-////        var blurredShadow:DropShadowFilter = new DropShadowFilter(0.8, 0, 0xffffff, 1.0, 5, 5, 1000);
-////        var storedBlurShadow :Array = [blurredShadow];
-////        shadowText.filters = storedBlurShadow;
-//
-//
-////        textSprite.addChild(shadowText);
-//        textSprite.addChild(feedbackMessageTextField);
-//
-//        textSprite.graphics.beginFill(0);
-//        textSprite.graphics.drawRect(feedbackMessageTextField.x -10, feedbackMessageTextField.y-10, feedbackMessageTextField.width + 20, feedbackMessageTextField.height);
-//        textSprite.graphics.endFill();
-//
-//        textSprite.x -= 30;
-//        var textSceneObject :SimpleSceneObject =
-//            new SimpleSceneObject(textSprite, FEEDBACK_SIMOBJECT_NAME);
-//
-//        //Remove any objects with the same name
-//        if (db.getObjectNamed(FEEDBACK_SIMOBJECT_NAME) != null) {
-//            db.getObjectNamed(FEEDBACK_SIMOBJECT_NAME).destroySelf();
-//        }
-//
-//        mode.addSceneObject(textSceneObject, _hudMC);
-//
-//        var serialTask :SerialTask = new SerialTask();
-//        serialTask.addTask(
-//            new TimedTask(VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY * 0.9));
-//        serialTask.addTask(new SelfDestructTask());
-//        textSceneObject.addTask(serialTask);
-//    }
-//
-//    protected function insertFeedbackSceneObject(feedbackMessage :String) :void
-//    {
-//        var textSprite :Sprite = new Sprite();
-//
-//        var feedbackMessageTextField :TextField =
-//            TextFieldUtil.createField(feedbackMessage);
-//        feedbackMessageTextField.selectable = false;
-//        feedbackMessageTextField.tabEnabled = false;
-//
-//        var lineageformat :TextFormat = new TextFormat();
-//        lineageformat.size = 16;
-//        lineageformat.color = 0xffffff;
-//        lineageformat.align = TextFormatAlign.LEFT;
-//        feedbackMessageTextField.setTextFormat(lineageformat);
-//        feedbackMessageTextField.textColor = 0xffffff;
-//        feedbackMessageTextField.width = Math.min(feedbackMessageTextField.textWidth + 10, 400);
-//        feedbackMessageTextField.height = 30;
-//        feedbackMessageTextField.x = 0;// -feedbackMessageTextField.width - 50;
-//        feedbackMessageTextField.y = 0;
-//        feedbackMessageTextField.multiline = false;//_hudFeedback.multiline;
-//        feedbackMessageTextField.wordWrap = false;
-//        feedbackMessageTextField.antiAliasType = AntiAliasType.ADVANCED;
-//        textSprite.addChild(feedbackMessageTextField);
-//
-//        textSprite.graphics.beginFill(0);
-//        textSprite.graphics.drawRect(feedbackMessageTextField.x -10, feedbackMessageTextField.y-6, feedbackMessageTextField.width + 40, feedbackMessageTextField.height);
-//        textSprite.graphics.endFill();
-//
-//        var finalXForText :int = -feedbackMessageTextField.width - 40;
-//
-//        textSprite.x = finalXForText + 20;
-//        textSprite.y = 15;
-//        var textSceneObject :SimpleSceneObject =
-//            new SimpleSceneObject(textSprite, FEEDBACK_SIMOBJECT_NAME);
-//
-//        //Remove any objects with the same name
-//        if (db.getObjectNamed(FEEDBACK_SIMOBJECT_NAME) != null) {
-//            db.getObjectNamed(FEEDBACK_SIMOBJECT_NAME).destroySelf();
-//        }
-//
-//        mode.addSceneObject(textSceneObject, _hudMC);
-//        _hudMC.addChildAt(textSceneObject.displayObject, 2);
-//
-//
-//
-//        var serialAnimationTask :SerialTask = new SerialTask();
-//        serialAnimationTask.addTask(LocationTask.CreateEaseIn(finalXForText - 2, textSprite.y, 0.3));
-//        serialAnimationTask.addTask(LocationTask.CreateEaseIn(finalXForText, textSprite.y, 0.2));
-//        serialAnimationTask.addTask(new TimedTask(1));
-//        serialAnimationTask.addTask(LocationTask.CreateEaseIn(finalXForText + 30, textSprite.y, 0.2));
-//        serialAnimationTask.addTask(new SelfDestructTask());
-//
-////        var serialTask :SerialTask = new SerialTask();
-////        serialTask.addTask(
-////            new TimedTask(VConstants.TIME_FEEDBACK_MESSAGE_DISPLAY * 0.9));
-////        serialTask.addTask(new SelfDestructTask());
-//        textSceneObject.addTask(serialAnimationTask);
-//    }
-
-//    public function showFeedBack(msg :String, immediate :Boolean = false) :void
-//    {
-//        if (immediate) {
-//            insertFeedbackSceneObject(msg);
-//        }
-//        else {
-//            _feedbackMessageQueue.push(msg);
-//        }
-//    }
-
-
-
-
 
     protected function updateOurPlayerState(...ignored) :void
     {
-
-//        if (!SharedPlayerStateClient.isProps(ClientContext.ourPlayerId)) {
-//            log.warning("updatePlayerState, but no props found");
-//            return;
-//        }
-
-
-//        showBlood(ClientContext.ourPlayerId);
         showXP(ClientContext.ourPlayerId);
-//        showLevel(ClientContext.ourPlayerId);
-//        showBloodBonds(ClientContext.ourPlayerId);
-//        showAction(ClientContext.ourPlayerId);
-//        showTime(ClientContext.ourPlayerId);
-//        showTarget(ClientContext.ourPlayerId);
-
     }
 
-//    protected function showBlood(playerId :int) :void
-//    {
-////        var scaleX :Number = SharedPlayerStateClient.getMaxBlood(playerId) / VConstants.MAX_BLOOD_FOR_LEVEL(1);
-//        var maxBlood :Number = SharedPlayerStateClient.getMaxBlood(playerId);
-//        var blood :Number = MathUtil.clamp(SharedPlayerStateClient.getBlood(playerId),
-//            0, maxBlood);
-//        if (isNaN(blood)) {
-//            blood = 0;
-//        }
-////        trace("blood=" + blood + " / " + maxBlood);
-//
-//        var borderWidth :int = 3;
-//        //Draw the blood bar
-//        //Blood
-//        _hudBlood.graphics.clear();
-//        _hudBlood.graphics.beginFill(0x990000);
-//        _hudBlood.graphics.drawRect(1, borderWidth + 1, blood, _hudCap.height/2 - borderWidth);
-//        _hudBlood.graphics.endFill();
-//        //Highlight
-//        if (blood >= 1) {
-//            _hudBlood.graphics.lineStyle(2, 0xff00000);
-//            _hudBlood.graphics.moveTo(blood + 1, borderWidth + 1);
-//            _hudBlood.graphics.lineTo(blood + 1, _hudCap.height/2);
-//        }
-////        //Border
-//        _hudBlood.graphics.lineStyle(borderWidth, 0);
-//        _hudBlood.graphics.drawRect(0, borderWidth, maxBlood + borderWidth*2 - 1, _hudCap.height/2 - (borderWidth - 1));
-//
-////        trace("blood rect=" + _hudBlood.x + ", " + _hudBlood.y + ", " + _hudBlood.width + ", " + _hudBlood.height);
-//
-//
-//        //Make sure the HUDCap is on the end of the bars
-//        _hudCap.x = _hudBlood.x + maxBlood + borderWidth*2 + 5;
-//
-//        //Draw the mouseover sprite
-//        var bloodXPMouseOverSprite :Sprite = _bloodXPMouseOverSceneObject.displayObject as Sprite;
-//        bloodXPMouseOverSprite.graphics.clear();
-//        bloodXPMouseOverSprite.graphics.beginFill(0, 0);
-//        bloodXPMouseOverSprite.graphics.drawRect(0, 0, maxBlood, _hudCap.height - 3);
-//        bloodXPMouseOverSprite.graphics.endFill();
-//
-//        createBloodText();
-//    }
 
     protected function showXP(playerId :int) :void
     {
-//        showBlood(playerId);
-
         //Use the blood scale for the xp scale
         var maxBlood :Number = ClientContext.model.maxblood;
-//        var blood :Number = MathUtil.clamp(SharedPlayerStateClient.getBlood(playerId),
-//            0, maxBlood);
         var xp :int = ClientContext.model.xp;
         var invites :int = ClientContext.model.invites;
 
@@ -827,14 +332,11 @@ public class HUD extends DraggableObject
         _hudXP.graphics.beginFill(0x330000, 0.5);
         _hudXP.graphics.drawRect(0, 1, maxBlood + 1, BLOOD_BAR_HEIGHT - 3);
 
-//        _hudXP.graphics.beginFill(0xA9D2E3);
         _hudXP.graphics.beginFill(0x990000);
-//        _hudXP.graphics.drawRect(1, borderWidth, xpAbsoluteX, _hudCap.height/2 - borderWidth - 3);
         _hudXP.graphics.drawRect(0, 1, xpAbsoluteX, BLOOD_BAR_HEIGHT - 3);
         _hudXP.graphics.endFill();
         //Highlight
         if (xpOverCurrentLevelMinimum >= 1) {
-//            _hudXP.graphics.lineStyle(2, 0xDFEFF4);
             _hudXP.graphics.lineStyle(2, 0xff00000);
             _hudXP.graphics.moveTo(xpAbsoluteX , 2);
             _hudXP.graphics.lineTo(xpAbsoluteX , BLOOD_BAR_HEIGHT -2);
@@ -842,8 +344,6 @@ public class HUD extends DraggableObject
         //Border
         _hudXP.graphics.lineStyle(borderWidth, 0);
         _hudXP.graphics.drawRect(0, borderWidth - 2, maxBlood + borderWidth - 1, BLOOD_BAR_HEIGHT - (borderWidth * 2 - 2));
-
-//        _hudCap.x = maxBlood - borderWidth + 1;
 
         //Change mouse click capturing sprite
         _bloodXPMouseOverSprite.graphics.clear();
@@ -881,7 +381,6 @@ public class HUD extends DraggableObject
     protected var _hudMC :MovieClip;
 
 
-//    protected var _hudBlood :Sprite;
     protected var _hudXP :Sprite;
     protected var _bloodXPMouseOverSprite :Sprite;
     protected var _bloodXPMouseOverSceneObject :SceneObject;
@@ -890,15 +389,11 @@ public class HUD extends DraggableObject
 
     //Used for anchoring the bars.
     protected var _hudCapStartX :int;
-//    protected var _hudCap :DisplayObject;
-
 
     protected var _bloodText :TextField;
     protected var _xpText :TextField;
 
-//    protected var _isNewLevelNeedingInvitePopupShown :Boolean = false;
     protected var _displaySprite :Sprite = new Sprite();
-
 
     /**Used for registering changed level to animate a level up movieclip*/
     protected var _currentLevel :int = -0;
@@ -906,7 +401,6 @@ public class HUD extends DraggableObject
 
     protected var _timeSinceStart :Number = 0;
 
-    protected var _feedbackMessageQueue :Array = new Array();
     protected static const BLOOD_SCALE_MULTIPLIER :Number = 2.2;
     protected static const BLOOD_BAR_HEIGHT :int = 51;
     public static const NAME :String = "HUD";
