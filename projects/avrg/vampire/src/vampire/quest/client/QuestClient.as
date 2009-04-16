@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.SimpleGame;
 import flash.display.Sprite;
 
 import vampire.quest.*;
+import vampire.quest.activity.*;
 
 public class QuestClient extends Sprite
 {
@@ -34,6 +35,26 @@ public class QuestClient extends Sprite
             function (err :String) :void {
                 log.error("Error loading resources: " + err);
             });
+    }
+
+    public static function beginActivity (activity :ActivityDesc) :void
+    {
+        if (activity.params.isLobbied) {
+            // TODO
+        } else {
+            beginSpActivity(activity);
+        }
+    }
+    
+    protected static function beginSpActivity (activity :ActivityDesc) :void
+    {
+        switch (activity.type) {
+        case ActivityDesc.TYPE_CORRUPTION:
+
+        default:
+            log.warning("Unrecognized activity type", "activity", activity);
+            break;
+        }
     }
 
     public static function showDebugPanel (show :Boolean) :void

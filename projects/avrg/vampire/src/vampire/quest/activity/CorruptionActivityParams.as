@@ -1,20 +1,20 @@
-package vampire.quest {
+package vampire.quest.activity {
 
-public class CorruptionActivityParams
+import vampire.quest.activity.ActivityParams;
+
+public class CorruptionActivityParams extends ActivityParams
 {
     public var totalBlood :int;
-    public var minPlayers :int;
-    public var maxPlayers :int;
 
     public var awardedStatName :String;
     public var awardedStatIncrement :int;
 
-    public function CorruptionActivityParams (totalBlood :int, minPlayers :int, maxPlayers :int,
+    public function CorruptionActivityParams (minPlayers :int, maxPlayers :int, totalBlood :int,
         awardedStatName :String, awardedStatIncrement :int)
     {
+        super(minPlayers, maxPlayers);
+
         this.totalBlood = totalBlood;
-        this.minPlayers = minPlayers;
-        this.maxPlayers = maxPlayers;
         this.awardedStatName = awardedStatName;
         this.awardedStatIncrement = awardedStatIncrement;
     }

@@ -3,6 +3,8 @@ package vampire.quest {
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 
+import vampire.quest.activity.*;
+
 public class Locations
 {
     public static function init () :void
@@ -25,11 +27,11 @@ public class Locations
         battleground.activities.push(new ActivityDesc(
             ActivityDesc.TYPE_CORRUPTION,
             "Whack a small monster",
-            new CorruptionActivityParams(100, 1, 1, "Monster", 1)));
+            new CorruptionActivityParams(1, 1, 100, "Monster", 1)));
         battleground.activities.push(new ActivityDesc(
             ActivityDesc.TYPE_CORRUPTION,
             "Whack a LARGE monster",
-            new CorruptionActivityParams(500, 1, 5, "Monster", 3)));
+            new CorruptionActivityParams(1, 5, 500, "Monster", 3)));
     }
 
     public static function getLocationList () :Array

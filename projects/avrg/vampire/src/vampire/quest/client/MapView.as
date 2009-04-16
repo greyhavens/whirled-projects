@@ -121,7 +121,9 @@ import com.whirled.contrib.simplegame.objects.SceneObject;
 import flash.display.Sprite;
 
 import vampire.quest.*;
+import vampire.quest.activity.*;
 import vampire.quest.client.*;
+
 import flash.text.TextField;
 import flash.display.SimpleButton;
 import com.threerings.flash.SimpleTextButton;

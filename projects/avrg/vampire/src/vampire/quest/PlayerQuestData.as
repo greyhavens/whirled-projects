@@ -44,12 +44,12 @@ public class PlayerQuestData extends EventDispatcher
 
     public function addQuest (questId :int) :void
     {
-        _props.setIn(PROP_ACTIVE_QUESTS, questId, true, false);
+        _props.setIn(PROP_ACTIVE_QUESTS, questId, true);
     }
 
     public function completeQuest (questId :int) :void
     {
-        _props.setIn(PROP_ACTIVE_QUESTS, questId, null, false);
+        _props.setIn(PROP_ACTIVE_QUESTS, questId, null);
     }
 
     public function isActiveQuest (questId :int) :Boolean
@@ -81,7 +81,7 @@ public class PlayerQuestData extends EventDispatcher
 
     public function addAvailableLocation (loc :LocationDesc) :void
     {
-        _props.setIn(PROP_AVAIL_LOCS, loc.id, true, false);
+        _props.setIn(PROP_AVAIL_LOCS, loc.id, true);
     }
 
     public function get availableLocations () :Array
