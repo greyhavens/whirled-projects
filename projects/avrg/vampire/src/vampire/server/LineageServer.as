@@ -12,9 +12,9 @@ import vampire.data.Codes;
 import vampire.data.Lineage;
 
 
-public class LineageServer2 extends Lineage
+public class LineageServer extends Lineage
 {
-    public function LineageServer2(vserver :GameServer)
+    public function LineageServer(vserver :GameServer)
     {
         _vserver = vserver;
 //        registerListener(vserver.control.game, AVRGameControlEvent.PLAYER_JOINED_GAME,
@@ -268,6 +268,6 @@ public class LineageServer2 extends Lineage
     public static const MESSAGE_PLAYER_JOINED_GAME :String = "Message: Player Joined";
     public static const NAME :String = "LineageServer";
 
-    protected static const log :Log = Log.getLog(LineageServer2);
+    protected static const log :Log = Log.getLog(LineageServer);
 }
 }

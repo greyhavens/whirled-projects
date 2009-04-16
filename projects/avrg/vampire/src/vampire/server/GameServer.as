@@ -40,7 +40,7 @@ public class GameServer extends ObjectDB
         setInterval(tick, SERVER_TICK_UPDATE_MILLISECONDS);
 
 //        ServerContext.lineage = new LineageServer2(this);
-        addObject(new LineageServer2(this));
+        addObject(new LineageServer(this));
 
 //        addObject(new LineageServer2(null));
 
@@ -60,9 +60,9 @@ public class GameServer extends ObjectDB
         return _ctrl;
     }
 
-    public function get lineage () :LineageServer2
+    public function get lineage () :LineageServer
     {
-        return getObjectNamed(LineageServer2.NAME) as LineageServer2;
+        return getObjectNamed(LineageServer.NAME) as LineageServer;
     }
 
     /**
@@ -198,8 +198,8 @@ public class GameServer extends ObjectDB
 
                 //Tell the lineage that there is a new player.
                 sendMessageToNamedObject(
-                    new ObjectMessage(LineageServer2.MESSAGE_PLAYER_JOINED_GAME, player),
-                    LineageServer2.NAME);
+                    new ObjectMessage(LineageServer.MESSAGE_PLAYER_JOINED_GAME, player),
+                    LineageServer.NAME);
             });
 
 
