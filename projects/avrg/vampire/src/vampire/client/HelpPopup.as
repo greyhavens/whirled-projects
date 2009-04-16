@@ -33,17 +33,11 @@ package vampire.client
         public function HelpPopup (startframe :String = "intro", otherLineage :Lineage = null,
             playerCenter :int = 0)
         {
-            trace("HelpPopup");
             _hudHelp = ClientContext.instantiateMovieClip("HUD", "popup_help", false);
             _displaySprite.addChild(_hudHelp);
 
-            _lineageFromOtherPlayer = otherLineage;
-            if (otherLineage == null) {
-                _lineageView = new LineageView();
-            }
-            else {
-                _lineageView = new LineageViewBase(otherLineage, playerCenter);
-            }
+            _targetLineageView = new LineageViewBase(otherLineage, playerCenter);
+            _myLineageView = new LineageView();
 
 
             //Go to the first frame where all the buttons are.  Even though not all buttons are
@@ -150,10 +144,8 @@ package vampire.client
             _bloodbondIconAnchor = findSafely("bond_icon");
 
             //Listen for the bloodbond changing
-            if (_lineageFromOtherPlayer == null) {
-                registerListener(ClientContext.ctrl.player.props,
-                    PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
-            }
+            registerListener(ClientContext.ctrl.player.props,
+                PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
             _infoTextAnchor = findSafely("text_blood") as TextField;
 
             _getSiresButton = findSafely("link_tovamps") as SimpleButton;
@@ -174,11 +166,6 @@ package vampire.client
 
 
         }
-
-//        public function get lineageView () :LineageView
-//        {
-//            return _lineageView;
-//        }
 
         override public function get displayObject () :DisplayObject
         {
@@ -247,10 +234,6 @@ package vampire.client
                     tf.gotoAndStop(3);
                 }
 
-//                if (Logic.getPlayerPreferredBloodStrain(ClientContext.ourPlayerId) == i) {
-//                    tf.gotoAndStop(2);
-//                }
-
                 TextField(tf["tally"]).text = "";
                 var tally :TextField = TextField(tf["tally"]);
 
@@ -287,8 +270,8 @@ package vampire.client
         override public function destroySelf ():void
         {
             super.destroySelf();
-            if (_lineageView != null && _lineageView.isLiveObject) {
-                _lineageView.destroySelf();
+            if (_myLineageView != null && _myLineageView.isLiveObject) {
+                _myLineageView.destroySelf();
 
             }
             ClientContext.tutorial.clickedVWButtonCloseHelp();
@@ -297,9 +280,10 @@ package vampire.client
         override protected function addedToDB ():void
         {
             super.addedToDB();
-            db.addObject(_lineageView);
+            db.addObject(_myLineageView);
+            db.addObject(_targetLineageView);
             if (_hudHelp.currentFrame == 2) {
-                _hudHelp.addChild(_lineageView.displayObject);
+                _hudHelp.addChild(_myLineageView.displayObject);
             }
         }
 
@@ -318,8 +302,12 @@ package vampire.client
                 _hudHelp.removeChild(_bloodTypeOverlay);
             }
 
-            if (_hudHelp.contains(_lineageView.displayObject)) {
-                _hudHelp.removeChild(_lineageView.displayObject);
+            if (_hudHelp.contains(_myLineageView.displayObject)) {
+                _hudHelp.removeChild(_myLineageView.displayObject);
+            }
+
+            if (_hudHelp.contains(_targetLineageView.displayObject)) {
+                _hudHelp.removeChild(_targetLineageView.displayObject);
             }
 
             if (_bondText != null && _bondText.parent != null
@@ -348,20 +336,27 @@ package vampire.client
 
             removeExtraHelpPanels();
 
+            var lineage_center :MovieClip;
+
             switch(frame) {
                 case "bloodtype":
                     updateBloodStrainPage();
                     _hudHelp.addChild(_bloodTypeOverlay);
                     break;
+
+                case "target":
+                    lineage_center = findSafely("lineage_center") as MovieClip;
+                    lineage_center.parent.addChild(_targetLineageView.displayObject);
+                    _targetLineageView.x = lineage_center.x;
+                    _targetLineageView.y = lineage_center.y;
+                    break;
                 case "default":
 
                     //Center the lineage view on the anchor created for it.
-                    var lineage_center :MovieClip = findSafely("lineage_center") as MovieClip;
-                    lineage_center.parent.addChild(_lineageView.displayObject);
-                    _lineageView.x = lineage_center.x;
-                    _lineageView.y = lineage_center.y;// - 20;
-                    if (_lineageFromOtherPlayer == null) {
-                        trace("showing crap");
+                    lineage_center = findSafely("lineage_center") as MovieClip;
+                    lineage_center.parent.addChild(_myLineageView.displayObject);
+                    _myLineageView.x = lineage_center.x;
+                    _myLineageView.y = lineage_center.y;// - 20;
                         centerLineageOnPlayer(ClientContext.ourPlayerId);
 
                         //Add the clickable, glowable bloodbond icon
@@ -379,21 +374,14 @@ package vampire.client
                         bloodbondIcon.scaleX = bloodbondIcon.scaleY = 2;
                         bloodbondIcon.x = _bloodbondIconAnchor.x - bloodbondIcon.width/2;
                         bloodbondIcon.y = _bloodbondIconAnchor.y;
-                        _lineageView.displaySprite.addChild(bloodbondIcon);
+                        _myLineageView.displaySprite.addChild(bloodbondIcon);
 
                         //Actually show your blondbond, if you have one
                         showBloodBonded();
 
                         //Show the top info text
                         createInfoText();
-                    }
-                    else {
-                        _getSiresButton.mouseEnabled = false;
-                        _getSiresButton.visible = false;
-                        _getDescendentsButton.mouseEnabled = false;
-                        _getDescendentsButton.visible = false;
-                        _infoText.parent.removeChild(_infoText);
-                    }
+                    break;
 
 
                 default:
@@ -418,7 +406,7 @@ package vampire.client
                 _getDescendentsButton.mouseEnabled = false;
                 _getDescendentsButton.visible = false;
             }
-            _lineageView.updateLineage(playerId);
+            _myLineageView.updateLineage(playerId);
         }
 
         protected function backButtonPushed (...ignored) :void
@@ -539,6 +527,12 @@ package vampire.client
             _infoTextAnchor.parent.addChild(_infoText);
         }
 
+        public function setTargetLineage (lineage :Lineage, playerCenter :int) :void
+        {
+            _targetLineageView.lineage = lineage;
+            _targetLineageView.updateLineage(playerCenter);
+        }
+
 
         protected var _hudHelp :MovieClip;
         protected var _frameHistory :Array = new Array();
@@ -550,22 +544,17 @@ package vampire.client
         protected var _infoTextAnchor :TextField;
         protected var _infoText :TextField;
 
-        protected var _lineageView :LineageViewBase;
+        protected var _myLineageView :LineageViewBase;
         protected var _getSiresButton :SimpleButton;
         protected var _getDescendentsButton :SimpleButton;
 
-        //If the player selects another lineage to view, don't show our lineage.
-        protected var _lineageFromOtherPlayer :Lineage;
+        protected var _targetLineageView :LineageViewBase;
 
         public static const NAME :String = "HelpPopup";
         protected static const log :Log = Log.getLog(HelpPopup);
 
         protected var _glowFilter :GlowFilter = new GlowFilter(0xffffff);
         protected var _displaySprite :Sprite = new Sprite();
-
-//        public static var showTututorialOnClose :Boolean = true;
-
-
 
     }
 }

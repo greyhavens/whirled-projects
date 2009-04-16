@@ -155,6 +155,7 @@ public class VampireController extends Controller
                     help.destroySelf();
                 }
                 else {
+                    help.setTargetLineage(lineage, playerCenter);
                     help.gotoFrame(startFrame);
                 }
             }
@@ -392,8 +393,7 @@ public class VampireController extends Controller
     public function handleShowPreyLineage (playerId :int) :void
     {
         var lineage :Lineage = ClientContext.gameMode.roomModel.getLineage(playerId);
-        trace("handleShowPreyLineage lineage=" + lineage + ", player=" + playerId);
-        handleShowIntro("default", lineage, playerId);
+        handleShowIntro("target", lineage, playerId);
     }
 
 
