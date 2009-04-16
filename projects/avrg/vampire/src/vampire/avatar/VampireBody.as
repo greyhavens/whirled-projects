@@ -1,5 +1,6 @@
 ﻿package vampire.avatar {
 
+import com.threerings.util.ArrayUtil;
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
 import com.whirled.contrib.ColorMatrix;
@@ -46,6 +47,15 @@ public class VampireBody extends VampireBodyBase
                     _playerLevel = _ctrl.getMemory(MEMORY_PLAYER_LEVEL) as int;
                 }
             });
+
+        // Any state with "feeding" or "bared" in its name should not have its
+        // facial components configured with selectCurConfigFrames().
+        for each (var movie :MovieClip in getAllMovies()) {
+            var movieName :String = getMovieName(movie).toLowerCase();
+            if (movieName.indexOf("feeding") >= 0 || movieName.indexOf("bared") >= 0) {
+                _nonFaceConfigurableMovies.push(movie);
+            }
+        }
     }
 
     override protected function setPlayerLevel (newLevel :int) :void
@@ -150,14 +160,14 @@ public class VampireBody extends VampireBodyBase
             selectFrame(movie, [ "calfL", "shoes" ], _curConfig.shoesNumber);
             selectFrame(movie, [ "calfR", "shoes" ], _curConfig.shoesNumber);
 
-            // Eyes
-            selectFrame(movie, [ "head", "eyes" ], _curConfig.eyesNumber);
-
-            // Brows
-            selectFrame(movie, [ "head", "eyebrows" ], _curConfig.browsNumber);
-
-            // Mouth
-            selectFrame(movie, [ "head", "mouth" ], _curConfig.mouthNumber);
+            if (!ArrayUtil.contains(_nonFaceConfigurableMovies, movie)) {
+                // Eyes
+                selectFrame(movie, [ "head", "eyes" ], _curConfig.eyesNumber);
+                // Brows
+                selectFrame(movie, [ "head", "eyebrows" ], _curConfig.browsNumber);
+                // Mouth
+                selectFrame(movie, [ "head", "mouth" ], _curConfig.mouthNumber);
+            }
         }
     }
 
@@ -299,6 +309,7 @@ public class VampireBody extends VampireBodyBase
     protected var _configPanelType :int;
     protected var _configParams :ConfigParams;
     protected var _upsellItemId :int;
+    protected var _nonFaceConfigurableMovies :Array = [];
 
     protected static const MEMORY_CONFIG :String = "VampatarConfig";
     protected static const MEMORY_PLAYER_LEVEL :String = "PlayerLevel";
