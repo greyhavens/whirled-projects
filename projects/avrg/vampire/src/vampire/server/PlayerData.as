@@ -44,6 +44,7 @@ public class PlayerData extends EventHandlerManager
 
         registerListener(_ctrl, AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
         registerListener(_ctrl, AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
+        registerListener(_ctrl, AVRGamePlayerEvent.TASK_COMPLETED, handleTaskCompleted);
 
         //Start in the default state
         _state = VConstants.AVATAR_STATE_DEFAULT;
@@ -71,6 +72,17 @@ public class PlayerData extends EventHandlerManager
 
         Trophies.checkMinionTrophies(this);
         Trophies.checkInviteTrophies(this);
+    }
+
+    protected function handleTaskCompleted (e :AVRGamePlayerEvent) :void
+    {
+        log.debug("handleTaskCompleted", "e", e);
+        switch (e.name) {
+            case Codes.TASK_FEEDING:
+            var coins :int = e.value as int;
+//            addFeedback("You gained " + xpFormatted + " experience and " + coins +" coins from feeding!");
+            break;
+        }
     }
 
     public function get feedingData () :ByteArray
