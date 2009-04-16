@@ -371,31 +371,17 @@ public class ServerLogic
     public static function addXP (playerId :int, bonus :Number) :void
     {
          if (ServerContext.server.isPlayer(playerId)) {
-            var player :PlayerData = ServerContext.server.getPlayer(playerId);
+             var player :PlayerData = ServerContext.server.getPlayer(playerId);
+            log.info("addXP", "current xp=", player.xp);
 
-            var currentLevel :int = Logic.levelGivenCurrentXpAndInvites(player.xp, player.invites);
+             var currentLevel :int = Logic.levelGivenCurrentXpAndInvites(player.xp, player.invites);
 
-            var xp :Number = player.xp;
-            xp += bonus;
-            xp = Math.max(xp, 0);
-            var newLevel :int = Logic.levelGivenCurrentXpAndInvites(xp, player.invites);
-
-            player.xp = Math.min(xp, Logic.maxXPGivenXPAndInvites(xp, player.invites));
-
-//            if (newLevel > currentLevel) {
-//                player.setBlood(Math.min(player.blood, 0.1 * player.maxBlood));
-//            }
-
-//            var levelWithMaxInvites :int = Logic.levelGivenCurrentXpAndInvites(xp, 100000);
-//            if (levelWithMaxInvites > newLevel) {
-//                var invitesNeededForNextLevel :int = Logic.invitesNeededForLevel(newLevel + 1);
-//                invitesNeededForNextLevel = Math.max(0, invitesNeededForNextLevel - player.invites);
-//                player.addFeedback("You've reached level " + newLevel + ", but your Lineage isn't diverse "
-//                + "enough to handle your growing power.  Recruit " + invitesNeededForNextLevel +
-//                " new player" + (invitesNeededForNextLevel > 1 ? "s":"")
-//                + " from outside Whirled to support your new potency.");
-//            }
-
+             var tempxp :Number = player.xp;
+             tempxp += bonus;
+             tempxp = Math.max(tempxp, 0);
+             var newLevel :int = Logic.levelGivenCurrentXpAndInvites(tempxp, player.invites);
+             tempxp = Math.min(tempxp, Logic.maxXPGivenXPAndInvites(tempxp, player.invites));
+             player.xp = tempxp;
 
         }
         else {
@@ -403,9 +389,9 @@ public class ServerLogic
             //Add to offline database
             ServerContext.ctrl.loadOfflinePlayer(playerId,
                 function (props :OfflinePlayerPropertyControl) :void {
-                    var currentXP :Number = Number(props.get(Codes.PLAYER_PROP_XP));
+                    var currentXP :Number = Number(props.get(Codes.PLAYER_PROP_XP_SLEEP));
                     if (!isNaN(currentXP)) {
-                        props.set(Codes.PLAYER_PROP_XP, currentXP + xp);
+                        props.set(Codes.PLAYER_PROP_XP_SLEEP, currentXP + bonus);
                     }
                 },
                 function (failureCause :Object) :void {
@@ -497,7 +483,7 @@ public class ServerLogic
         log.debug("handleDebug", "player", player, "debugMsg", debugMsg);
         switch (debugMsg.type) {
             case DebugMsg.DEBUG_GAIN_XP:
-            log.debug("handleDebug", "addXP");
+            log.debug("handleDebug", "addXP", 500);
             addXP(player.playerId, 500);
             break;
 

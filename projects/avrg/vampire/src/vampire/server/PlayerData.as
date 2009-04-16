@@ -160,7 +160,7 @@ public class PlayerData extends EventHandlerManager
 
     public function set xp (newxp :Number) :void
     {
-        _propsUndater.put(Codes.PLAYER_PROP_XP, Math.min(xp, Logic.maxXPGivenXPAndInvites(xp, invites)));
+        _propsUndater.put(Codes.PLAYER_PROP_XP, Math.min(newxp, Logic.maxXPGivenXPAndInvites(newxp, invites)));
     }
 
     public function set state (action :String) :void
