@@ -92,6 +92,8 @@ public class VConstants
     */
     public static const PLAYER_ID_NON_PLAYER :int = 0;
 
+    public static const POPUP_MESSAGE_FEED_CONFIRM :String = "waitingFeedConfirm"
+
     public static const TEXT_INVITE :String = "Join my Bloodline!";
     public static const TEXT_NEW_LEVEL :String = "You have achieved level ";
     public static const TEXT_CONFIM_SIRE :String = "If you feed from this Lineage vampire, " +

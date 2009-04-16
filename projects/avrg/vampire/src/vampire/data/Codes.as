@@ -129,7 +129,7 @@ public class Codes
 //    public static const ROOM_PROP_PLAYER_DICT_INDEX_HOTSPOT :int = 15;
 
     /**Award coins on completion of feeding.*/
-    public static const TASK_FEEDING_ID :String = "taskFeeding";
+    public static const TASK_FEEDING :String = "taskFeeding";
 
     /**Award coins on progeny acquisition.*/
     public static const TASK_ACQUIRE_PROGENY_ID :String = "taskAcquireProgeny";
