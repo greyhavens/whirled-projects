@@ -58,8 +58,9 @@ public class Trophies
         "cascade300",
         "cascade400",
         "cascade500",
+        "cascade600",
     ];
-    public static const CASCADE_REQS :Array = [ 100, 200, 300, 400, 500 ];
+    public static const CASCADE_REQS :Array = [ 100, 200, 300, 400, 500, 600 ];
 
     // Awarded for creating a cascade with a certain multiplier value
     // Awarded for creating a cascade of a certain size
@@ -70,8 +71,10 @@ public class Trophies
         "multiplier10",
         "multiplier20",
         "multiplier30",
+        "multiplier40",
+        "multiplier80",
     ];
-    public static const MULTIPLIER_REQS :Array = [ 10, 20, 30 ];
+    public static const MULTIPLIER_REQS :Array = [ 10, 20, 30, 40, 80 ];
 
     // Awarded for collecting special blood strains
     //      - Apex Predator
