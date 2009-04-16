@@ -167,14 +167,9 @@ class LocationActivityView extends SceneObject
         var btn :SimpleButton = new SimpleTextButton(activity.displayName);
         registerListener(btn, MouseEvent.CLICK,
             function (...ignored) :void {
-                doActivity(activity);
+                QuestClient.beginActivity(activity);
             });
         return btn;
-    }
-
-    protected function doActivity (activity :ActivityDesc) :void
-    {
-
     }
 
     override public function get displayObject () :DisplayObject

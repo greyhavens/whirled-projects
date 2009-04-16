@@ -5,10 +5,14 @@ import com.whirled.contrib.simplegame.SimpleGame;
 
 import flash.display.Sprite;
 
+import vampire.feeding.FeedingClient;
+import vampire.feeding.FeedingClientSettings;
+import vampire.feeding.PlayerFeedingData;
+import vampire.feeding.variant.Variant;
 import vampire.quest.*;
 import vampire.quest.activity.*;
 
-public class QuestClient extends Sprite
+public class QuestClient
 {
     public static function init (simpleGame :SimpleGame, questData :PlayerQuestData,
         stats :PlayerQuestStats) :void
@@ -45,11 +49,19 @@ public class QuestClient extends Sprite
             beginSpActivity(activity);
         }
     }
-    
+
     protected static function beginSpActivity (activity :ActivityDesc) :void
     {
         switch (activity.type) {
         case ActivityDesc.TYPE_CORRUPTION:
+            var feedingGame :FeedingClient = FeedingClient.create(FeedingClientSettings.spSettings(
+                "", 0,
+                Variant.CORRUPTION,
+                new PlayerFeedingData(),
+                function () :void {},
+                activity.params));
+            ClientCtx.mainLoop.topMode.modeSprite.addChild(feedingGame);
+            break;
 
         default:
             log.warning("Unrecognized activity type", "activity", activity);

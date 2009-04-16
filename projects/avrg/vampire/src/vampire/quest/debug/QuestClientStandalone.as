@@ -8,6 +8,7 @@ import com.whirled.net.PropertySubControl;
 import flash.display.Sprite;
 
 import vampire.debug.LocalPropertySubControl;
+import vampire.feeding.FeedingClient;
 import vampire.quest.*;
 import vampire.quest.client.*;
 
@@ -28,6 +29,7 @@ public class QuestClientStandalone extends Sprite
         var questData :PlayerQuestData = new PlayerQuestData(localProps);
         var stats :PlayerQuestStats = new PlayerQuestStats(localProps);
 
+        FeedingClient.init(this, new DisconnectedControl(this));
         QuestClient.init(_sg, questData, stats);
 
         questData.questJuice = 100;
@@ -57,3 +59,20 @@ public class QuestClientStandalone extends Sprite
 }
 
 }
+
+import com.whirled.avrg.AVRGameControl;
+import flash.display.DisplayObject;
+
+class DisconnectedControl extends AVRGameControl
+{
+    public function DisconnectedControl (disp :DisplayObject)
+    {
+        super(disp);
+    }
+
+    override public function isConnected () :Boolean
+    {
+        return false;
+    }
+}
+
