@@ -102,7 +102,11 @@ public class BloodBloom extends FeedingClient
                 _events.freeAllHandlers();
                 _timerMgr.shutdown();
                 ClientCtx.audio.stopAllSounds();
-                ClientCtx.msgMgr.shutdown();
+
+                if (ClientCtx.msgMgr != null) {
+                    ClientCtx.msgMgr.shutdown();
+                }
+
                 ClientCtx.init(); // release any memory we might be holding onto here
 
                 log.info("Quitting BloodBloom");
