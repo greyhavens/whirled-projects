@@ -18,8 +18,10 @@ import flash.display.Sprite;
 import flash.errors.IllegalOperationError;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
+import flash.events.TimerEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import flash.utils.Timer;
 
 import popcraft.data.*;
 import popcraft.game.*;
@@ -101,6 +103,15 @@ public class PopCraft extends Sprite
 
             // get level packs
             ClientCtx.reloadLevelPacks();
+
+            // TEMP: remove me soon - player level packs don't seem to be available
+            // immediately after the game starts; wait a few seconds to ask for them.
+            var lpTimer :Timer = new Timer(3000, 1);
+            lpTimer.addEventListener(TimerEvent.TIMER,
+                function (...ignored) :void {
+                    ClientCtx.reloadLevelPacks();
+                });
+            lpTimer.start();
 
             // if the player purchases level packs while the game is in progress, update our
             // level packs
@@ -262,5 +273,5 @@ class LoadingMode extends GenericLoadingMode
     protected var _loadingResources :Boolean;
     protected var _elapsedTime :Number = 0;
 
-    protected static const EXTENDED_LOADING_TIME :Number = 4;
+    protected static const EXTENDED_LOADING_TIME :Number = 3;
 }

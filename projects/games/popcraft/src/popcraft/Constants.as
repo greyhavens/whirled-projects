@@ -68,7 +68,7 @@ public class Constants
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean   = false;
     public static const DEBUG_GIVE_MORBID_INFECTION :Boolean        = false;
 
-    public static const DEBUG_EXTEND_LOAD_SEQUENCE :Boolean         = false;
+    public static const DEBUG_EXTEND_LOAD_SEQUENCE :Boolean         = true;
     public static const DEBUG_DRAW_STATS :Boolean                   = false;
     public static const DEBUG_ALLOW_CHEATS :Boolean                 = false;
     public static const DEBUG_DISABLE_AUDIO :Boolean                = false;
