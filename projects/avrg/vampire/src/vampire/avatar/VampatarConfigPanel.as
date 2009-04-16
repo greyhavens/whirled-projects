@@ -9,10 +9,10 @@ import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
-import flash.text.TextField;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.system.ApplicationDomain;
+import flash.text.TextField;
 
 public class VampatarConfigPanel extends Sprite
 {
@@ -69,7 +69,7 @@ public class VampatarConfigPanel extends Sprite
         createColorPicker(MyColorPicker.TYPE_GENERAL, panel["hair_color"], "hairColor");
 
         if (isFaceUnlocked) {
-            createColorPicker(MyColorPicker.TYPE_GENERAL, facePanel["eyes_color"], "eyesColor");
+            createColorPicker(MyColorPicker.TYPE_HUE, facePanel["eyes_color"], "eyesColor");
         }
 
         // randomize button
@@ -258,6 +258,7 @@ class MyColorPicker extends Sprite
     public static const TYPE_SKIN :int = 0;
     public static const TYPE_GENERAL :int = 1;
     public static const TYPE_SKIN_UPGRADE :int = 2;
+    public static const TYPE_HUE :int = 3;
 
     public static function randPaletteColor (paletteType :int) :uint
     {
@@ -351,9 +352,9 @@ class MyColorPicker extends Sprite
     protected static var _bitmaps :Array = [];
 
     protected static const PALETTE_MOVIES :Array = [
-        "palette_vamp", "palette_all", "palette_skin"
+        "palette_vamp", "palette_all", "palette_skin", "palette_hue",
     ];
-    protected static const SCALES :Array = [ 3, 2, 3 ];
+    protected static const SCALES :Array = [ 3, 2, 3, 3 ];
 
     protected static const SWATCH_HEIGHT :int = 20;
     protected static const BORDER :int = 6;

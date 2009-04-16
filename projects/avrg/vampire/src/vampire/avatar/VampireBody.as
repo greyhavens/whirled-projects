@@ -1,5 +1,6 @@
 ﻿package vampire.avatar {
 
+import com.threerings.flash.ColorUtil;
 import com.threerings.util.ArrayUtil;
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
@@ -180,7 +181,7 @@ public class VampireBody extends VampireBodyBase
         var shirtFilter :ColorMatrixFilter = createColorFilter(_curConfig.topColor);
         var pantsFilter :ColorMatrixFilter = createColorFilter(_curConfig.pantsColor);
         var shoesFilter :ColorMatrixFilter = createColorFilter(_curConfig.shoesColor);
-        var eyesFilter :ColorMatrixFilter = createColorFilter(_curConfig.eyesColor);
+        var eyesFilter :ColorMatrixFilter = createHueFilter(ColorUtil.getHue(_curConfig.eyesColor));
 
         for each (var movie :MovieClip in movies) {
             // Skin color
@@ -303,6 +304,11 @@ public class VampireBody extends VampireBodyBase
     protected static function createColorFilter (color :uint) :ColorMatrixFilter
     {
         return new ColorMatrix().colorize(color).createFilter();
+    }
+
+    protected static function createHueFilter (angle :Number) :ColorMatrixFilter
+    {
+        return new ColorMatrix().adjustHue(angle).createFilter();
     }
 
     protected var _curConfig :VampatarConfig;
