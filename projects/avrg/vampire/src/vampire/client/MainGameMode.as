@@ -207,7 +207,7 @@ public class MainGameMode extends AppMode
                 _feedingGameClient = FeedingClient.create(gameId,
                     ClientContext.model.playerFeedingData, onGameComplete);
             }*/
-            _feedingGameClient = FeedingClient.create(msg.gameId,
+            _feedingGameClient = FeedingClient.create(true, msg.gameId,
                                                       ClientContext.model.playerFeedingData,
                                                       onGameComplete);//,
 //                                                      msg.scoresDaily,

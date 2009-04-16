@@ -67,7 +67,7 @@ public class BloodBloomStandalone extends Sprite
         dict[1] = true;
         dummyProps.set(Props.GAME_PLAYERS, dict);
 
-        addChild(new BloodBloom(0, new PlayerFeedingData(), function () :void {}, dummyProps));
+        addChild(new BloodBloom(false, 0, new PlayerFeedingData(), function () :void {}, dummyProps));
     }
 
     protected var _timerMgr :TimerManager = new TimerManager();

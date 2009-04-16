@@ -51,7 +51,8 @@ public class BloodBloom extends FeedingClient
         _inited = true;
     }
 
-    public function BloodBloom (gameId :int,
+    public function BloodBloom (multiplayer :Boolean,
+                                gameId :int,
                                 playerData :PlayerFeedingData,
                                 gameCompleteCallback :Function,
                                 props :NamespacePropGetControl = null)
@@ -81,7 +82,6 @@ public class BloodBloom extends FeedingClient
         // If the resources aren't loaded, wait for them to load
         if (!_resourcesLoaded) {
             var timer :ManagedTimer = _timerMgr.runForever(50, checkResourcesLoaded);
-            timer.start();
             function checkResourcesLoaded (...ignored) :void {
                 if (_resourcesLoaded) {
                     timer.cancel();
