@@ -39,7 +39,7 @@ public class PlayerData extends EventHandlerManager
         _playerId = ctrl.getPlayerId();
 
         //Setup the data container.  This will only update values that are changed.
-        _propsUndater = new PlayerPropertiesUpdater(_ctrl, Codes.PLAYER_PROPS_UPDATED);
+        _propsUndater = new PlayerPropertiesUpdater(_ctrl.props, Codes.PLAYER_PROPS_UPDATED);
 
 
         registerListener(_ctrl, AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
@@ -160,7 +160,7 @@ public class PlayerData extends EventHandlerManager
 
     public function set xp (newxp :Number) :void
     {
-        _propsUndater.put(Codes.PLAYER_PROP_XP, Math.min(newxp, Logic.maxXPGivenXPAndInvites(newxp, invites)));
+        _propsUndater.put(Codes.PLAYER_PROP_XP, newxp);//Math.min(newxp, Logic.maxXPGivenXPAndInvites(newxp, invites)));
     }
 
     public function set state (action :String) :void

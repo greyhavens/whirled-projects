@@ -3,10 +3,13 @@ package vampire.server
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.HashSet;
-import com.whirled.avrg.PlayerSubControlServer;
+import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.Updatable;
+import com.whirled.net.PropertySubControl;
 
 import flash.utils.ByteArray;
+
+import vampire.data.Codes;
 
 /**
  * Copies the player data into player props only on the update loop.
@@ -16,11 +19,11 @@ import flash.utils.ByteArray;
 public class PlayerPropertiesUpdater
     implements Updatable
 {
-    public function PlayerPropertiesUpdater(ctrl :PlayerSubControlServer, propsKeys :Array = null)
+    public function PlayerPropertiesUpdater(props :PropertySubControl, propsKeys :Array = null)
     {
-        _ctrl = ctrl;
+        _props = props;
         for each (var propKey :String in propsKeys) {
-            var currentValue :Object = ctrl.props.get(propKey);
+            var currentValue :Object = _props.get(propKey);
             _data.put(propKey, currentValue);
         }
     }
@@ -43,7 +46,7 @@ public class PlayerPropertiesUpdater
             _needsUpdate.forEach(function (key :String) :void {
 
                 updateValue = false;
-                var oldValue :Object = _ctrl.props.get(key);
+                var oldValue :Object = _props.get(key);
                 var newValue :Object = _data.get(key);
 
                 if (newValue is ByteArray) {
@@ -57,7 +60,10 @@ public class PlayerPropertiesUpdater
                 }
 
                 if (updateValue) {
-                    _ctrl.props.set(key, newValue, true);
+                    if (key == Codes.PLAYER_PROP_XP) {
+                        log.info("updating xp to " + newValue);
+                    }
+                    _props.set(key, newValue, true);
                 }
             });
             _needsUpdate.clear();
@@ -100,7 +106,8 @@ public class PlayerPropertiesUpdater
     /**The player data*/
     protected var _data :HashMap = new HashMap();
     protected var _needsUpdate :HashSet = new HashSet();
-    protected var _ctrl :PlayerSubControlServer;
+    protected var _props :PropertySubControl;
+    protected static const log :Log = Log.getLog(PlayerPropertiesUpdater);
 
 }
 }
