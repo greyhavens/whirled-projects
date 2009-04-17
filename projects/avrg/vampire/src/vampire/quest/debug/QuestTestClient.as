@@ -1,26 +1,27 @@
 package vampire.quest.debug {
 
+import com.threerings.util.Log;
+import com.whirled.avrg.AVRGameControl;
+import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.ManagedTimer;
 import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.simplegame.*;
-import com.whirled.net.PropertySubControl;
 
 import flash.display.Sprite;
+import flash.events.Event;
 
-import vampire.debug.LocalPropertySubControl;
-import vampire.feeding.FeedingClient;
-import vampire.furni.QuestTotem;
+import vampire.feeding.*;
 import vampire.quest.*;
 import vampire.quest.client.*;
 
-[SWF(width="700", height="500", frameRate="30")]
-public class QuestClientStandalone extends Sprite
+public class QuestTestClient extends Sprite
 {
-    QuestTestClient;
-    QuestTotem;
-
-    public function QuestClientStandalone ()
+    public function QuestTestClient ()
     {
+        log.info("Starting QuestTestClient");
+
+        _events.registerListener(this, Event.UNLOAD, onQuit);
+
         // Init simplegame
         var config :Config = new Config();
         config.hostSprite = this;
@@ -28,14 +29,13 @@ public class QuestClientStandalone extends Sprite
         _sg.ctx.mainLoop.pushMode(new AppMode());
         _sg.run();
 
-        // Init local props
-        var localProps :LocalPropertySubControl = new LocalPropertySubControl();
-        var questData :PlayerQuestData = new PlayerQuestData(localProps);
-        var stats :PlayerQuestStats = new PlayerQuestStats(localProps);
-        var gameCtrl :DisconnectedControl = new DisconnectedControl(this);
+        // Init props
+        _gameCtrl = new AVRGameControl(this);
+        var questData :PlayerQuestData = new PlayerQuestData(_gameCtrl.player.props);
+        var stats :PlayerQuestStats = new PlayerQuestStats(_gameCtrl.player.props);
 
-        FeedingClient.init(this, gameCtrl);
-        QuestClient.init(gameCtrl, _sg, questData, stats);
+        FeedingClient.init(this, _gameCtrl);
+        QuestClient.init(_gameCtrl, _sg, questData, stats);
 
         questData.questJuice = 100;
         questData.addQuest(Quests.getQuestByName("TestQuest").id);
@@ -58,25 +58,18 @@ public class QuestClientStandalone extends Sprite
         QuestClient.showQuestPanel(true);
     }
 
-    protected var _sg :SimpleGame;
-    protected var _localProps :PropertySubControl;
+    protected function onQuit (...ignored) :void
+    {
+        _events.freeAllHandlers();
+        _timerMgr.shutdown();
+    }
+
+    protected var _gameCtrl :AVRGameControl;
+    protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _timerMgr :TimerManager = new TimerManager();
+    protected var _sg :SimpleGame;
+
+    protected static var log :Log = Log.getLog(QuestTestClient);
 }
 
-}
-
-import com.whirled.avrg.AVRGameControl;
-import flash.display.DisplayObject;
-
-class DisconnectedControl extends AVRGameControl
-{
-    public function DisconnectedControl (disp :DisplayObject)
-    {
-        super(disp);
-    }
-
-    override public function isConnected () :Boolean
-    {
-        return false;
-    }
 }

@@ -7,9 +7,9 @@ import vampire.feeding.*;
 /**
  * A test server for testing the quest system.
  */
-public class TestServer extends OneRoomGameServer
+public class QuestTestServer extends OneRoomGameServer
 {
-    public function TestServer ()
+    public function QuestTestServer ()
     {
         OneRoomGameServer.roomType = TestGameController;
     }
@@ -53,10 +53,6 @@ class TestGameController extends OneRoomGameRoom
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
     {
-        if (e.name == "Client_Hello" && !ArrayUtil.contains(_players, e.senderId)) {
-            _players.push(e.senderId);
-            _gameCtrl.getPlayer(e.senderId).sendMessage("Server_Hello");
-        }
     }
 
     override protected function playerLeft (playerId :int) :void

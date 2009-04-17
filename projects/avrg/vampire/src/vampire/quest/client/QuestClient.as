@@ -1,19 +1,22 @@
 package vampire.quest.client {
 
 import com.threerings.util.Log;
+import com.whirled.avrg.AVRGameControl;
+import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.simplegame.SimpleGame;
 
 import vampire.feeding.FeedingClient;
 import vampire.feeding.FeedingClientSettings;
 import vampire.feeding.PlayerFeedingData;
 import vampire.feeding.variant.Variant;
+import vampire.furni.FurniConstants;
 import vampire.quest.*;
 import vampire.quest.activity.*;
 
 public class QuestClient
 {
-    public static function init (simpleGame :SimpleGame, questData :PlayerQuestData,
-        stats :PlayerQuestStats) :void
+    public static function init (gameCtrl :AVRGameControl, simpleGame :SimpleGame,
+        questData :PlayerQuestData, stats :PlayerQuestStats) :void
     {
         if (_inited) {
             throw new Error("QuestClient already inited");
@@ -23,10 +26,20 @@ public class QuestClient
         Quests.init();
         Locations.init();
 
+        ClientCtx.gameCtrl = gameCtrl;
         ClientCtx.mainLoop = simpleGame.ctx.mainLoop;
         ClientCtx.rsrcs = simpleGame.ctx.rsrcs;
         ClientCtx.questData = questData;
         ClientCtx.stats = stats;
+
+        if (ClientCtx.gameCtrl.isConnected()) {
+            ClientCtx.gameCtrl.player.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM,
+                function (...ignored) :void {
+                    handshakeQuestTotems();
+                });
+
+            handshakeQuestTotems();
+        }
 
         ClientCtx.stats.addEventListener(PlayerStatEvent.STAT_CHANGED, checkQuestCompletion);
         ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_COMPLETED, onQuestCompleted);
@@ -121,6 +134,23 @@ public class QuestClient
     public static function get isReady () :Boolean
     {
         return _resourcesLoaded;
+    }
+
+    protected static function handshakeQuestTotems () :void
+    {
+        for each (var furniId :String in ClientCtx.gameCtrl.room.getEntityIds("furni")) {
+            var setTotemClickCallback :Function = ClientCtx.gameCtrl.room.getEntityProperty(
+                FurniConstants.ENTITY_PROP_SET_CLICK_CALLBACK, furniId) as Function;
+            if (setTotemClickCallback != null) {
+                log.info("Found Quest Totem", "entityId", furniId);
+                setTotemClickCallback(questTotemClicked);
+            }
+        }
+    }
+
+    protected static function questTotemClicked (totemType :String, totemEntityId :String) :void
+    {
+        log.info("questTotemClicked", "totemType", totemType, "entityId", totemEntityId);
     }
 
     protected static var _debugPanel :StatDebugPanel;

@@ -8,14 +8,22 @@ import flash.events.MouseEvent;
 
 public class QuestTotem
 {
-    public function QuestTotem (ctrl :FurniControl, media :MovieClip, totemType :String)
+    public function QuestTotem (ctrl :FurniControl, totemType :String)
     {
         _ctrl = ctrl;
         _ctrl.registerPropertyProvider(propertyProvider);
 
-        _totemTypeId = totemTypeId;
+        _totemType = totemType;
+    }
 
-        media.addEventListener(MouseEvent.CLICK, onClicked);
+    public function showActivityPanel () :void
+    {
+        if (_clickCallbackRef != null) {
+            var callback :Function = _clickCallbackRef.get() as Function;
+            if (callback != null) {
+                callback(_totemType, _ctrl.getMyEntityId());
+            }
+        }
     }
 
     protected function propertyProvider (key :String) :Object
@@ -26,16 +34,6 @@ public class QuestTotem
 
         default:
             return null;
-        }
-    }
-
-    protected function onClicked (e :MouseEvent) :void
-    {
-        if (_clickCallbackRef != null) {
-            var callback :Function = _clickCallbackRef.get() as Function;
-            if (callback != null) {
-                callback(_totemType);
-            }
         }
     }
 

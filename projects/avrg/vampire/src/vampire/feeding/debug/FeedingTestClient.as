@@ -13,11 +13,11 @@ import flash.utils.Timer;
 import vampire.data.Logic;
 import vampire.feeding.*;
 
-public class TestClient extends Sprite
+public class FeedingTestClient extends Sprite
 {
-    public function TestClient ()
+    public function FeedingTestClient ()
     {
-        log.info("Starting TestClient");
+        log.info("Starting FeedingTestClient");
 
         _gameCtrl = new AVRGameControl(this);
         FeedingClient.init(this, _gameCtrl);
@@ -106,7 +106,7 @@ public class TestClient extends Sprite
     protected var _curGame :FeedingClient;
     protected var _handshakeTimer :Timer;
 
-    protected static var log :Log = Log.getLog(TestClient);
+    protected static var log :Log = Log.getLog(FeedingTestClient);
 }
 
 }

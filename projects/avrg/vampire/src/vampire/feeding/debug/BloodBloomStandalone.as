@@ -23,8 +23,8 @@ public class BloodBloomStandalone extends Sprite
     {
         var c :Class;
         c = vampire.feeding.server.Server;
-        c = vampire.feeding.debug.TestClient;
-        c = vampire.feeding.debug.TestServer;
+        c = vampire.feeding.debug.FeedingTestClient;
+        c = vampire.feeding.debug.FeedingTestServer;
         c = vampire.avatar.VampireBody;
     }
 

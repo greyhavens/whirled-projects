@@ -7,9 +7,9 @@ import vampire.feeding.*;
 /**
  * A test server for running standalone Blood Bloom games.
  */
-public class TestServer extends OneRoomGameServer
+public class FeedingTestServer extends OneRoomGameServer
 {
-    public function TestServer ()
+    public function FeedingTestServer ()
     {
         OneRoomGameServer.roomType = TestGameController;
         FeedingServer.init(this.gameCtrl);

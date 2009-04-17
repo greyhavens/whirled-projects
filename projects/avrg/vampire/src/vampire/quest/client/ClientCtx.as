@@ -1,5 +1,6 @@
 package vampire.quest.client {
 
+import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
 
@@ -11,6 +12,7 @@ import vampire.quest.PlayerQuestStats;
 
 public class ClientCtx
 {
+    public static var gameCtrl :AVRGameControl;
     public static var mainLoop :MainLoop;
     public static var rsrcs :ResourceManager;
     public static var questData :PlayerQuestData;
