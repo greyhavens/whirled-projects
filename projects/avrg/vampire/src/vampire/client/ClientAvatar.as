@@ -13,8 +13,8 @@ package vampire.client
     import com.whirled.net.MessageReceivedEvent;
     import com.whirled.net.PropertyChangedEvent;
 
+    import vampire.avatar.AvatarConstants;
     import vampire.avatar.AvatarEndMovementNotifier;
-    import vampire.avatar.VampireBodyBase;
     import vampire.data.Codes;
     import vampire.data.VConstants;
     import vampire.net.messages.MovePredAfterFeedingMsg;
@@ -73,7 +73,7 @@ public class ClientAvatar extends SimObject
         var level :int = ClientContext.model.level;
         //Let's hear when the avatar arrived at a destination
         var setLevel :Function = _ctrl.room.getEntityProperty(
-                                                VampireBodyBase.ENTITY_PROPERTY_SET_PLAYER_LEVEL,
+                                                AvatarConstants.ENTITY_PROPERTY_SET_PLAYER_LEVEL,
                                                 ClientContext.ourEntityId) as Function;
         if (setLevel != null) {
             setLevel(level);

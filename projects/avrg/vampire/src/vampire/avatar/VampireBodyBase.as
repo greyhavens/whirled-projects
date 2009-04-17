@@ -6,9 +6,6 @@ import flash.display.MovieClip;
 
 public class VampireBodyBase extends MovieClipBody
 {
-    public static const ENTITY_PROPERTY_IS_LEGAL_AVATAR :String = "IsLegalVampireAvatar";
-    public static const ENTITY_PROPERTY_SET_PLAYER_LEVEL :String = "SetPlayerLevel";
-
     public function VampireBodyBase (ctrl :AvatarControl, media :MovieClip, width: int,
                                      height :int = -1)
     {
@@ -27,10 +24,10 @@ public class VampireBodyBase extends MovieClipBody
     {
         switch(key) {
         // You must wear a legal avatar to play the game
-        case ENTITY_PROPERTY_IS_LEGAL_AVATAR:
+        case AvatarConstants.ENTITY_PROPERTY_IS_LEGAL_AVATAR:
             return true;
 
-        case ENTITY_PROPERTY_SET_PLAYER_LEVEL:
+        case AvatarConstants.ENTITY_PROPERTY_SET_PLAYER_LEVEL:
             return setPlayerLevel as Object;
 
         // The rest of the properties are provided by the movement notifier.
