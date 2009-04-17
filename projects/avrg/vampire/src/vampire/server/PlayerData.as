@@ -57,12 +57,16 @@ public class PlayerData extends EventHandlerManager
         //Make sure we are not over the limit, due to changing level requirements.
         xp = Logic.maxXPGivenXPAndInvites(xp, invites);
 
+        //Make sure we have our current name
+        name = _ctrl.getPlayerName();
+
         //Better empty than null
         if (progenyIds == null) {
             progenyIds = [];
         }
 
         log.info("Logging in", "playerId", playerId,
+                "name", name,
                 "xp",  xp,
                 "level", level,
                 "sire", sire,
@@ -385,10 +389,16 @@ public class PlayerData extends EventHandlerManager
 
     public function get name () :String
     {
-        if (_ctrl != null && _ctrl.isConnected()) {
-            return _ctrl.getPlayerName();
-        }
-        return "";
+        return _propsUndater.get(Codes.PLAYER_PROP_NAME) as String;
+//        if (_ctrl != null && _ctrl.isConnected()) {
+//            return _ctrl.getPlayerName();
+//        }
+//        return "";
+    }
+
+    public function set name (newName :String) :void
+    {
+        _propsUndater.put(Codes.PLAYER_PROP_NAME, newName);
     }
 
     public function get level () :int
