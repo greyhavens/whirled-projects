@@ -5,8 +5,6 @@ import com.whirled.contrib.avrg.RoomDragger;
 import com.whirled.contrib.simplegame.objects.DraggableObject;
 import com.whirled.contrib.simplegame.objects.Dragger;
 
-import fakeavrg.PropertySubControlFake;
-
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.Sprite;
@@ -15,10 +13,12 @@ import flash.text.TextField;
 import flash.text.TextFieldType;
 
 import vampire.data.Codes;
-import vampire.data.Logic;
 import vampire.data.VConstants;
 import vampire.net.messages.DebugMsg;
 import vampire.net.messages.SendGlobalMsg;
+import vampire.server.PlayerData;
+import vampire.server.ServerContext;
+import vampire.server.ServerLogic;
 
 public class AdminPanel extends DraggableObject
 {
@@ -27,6 +27,13 @@ public class AdminPanel extends DraggableObject
         super.addedToDB();
         setup();
         ClientContext.centerOnViewableRoom(displayObject);
+    }
+
+    override protected function update (dt:Number) :void
+    {
+        if (VConstants.LOCAL_DEBUG_MODE && _playerData != null) {
+            _playerData.update(dt);
+        }
     }
 
     override public function get objectName () :String
@@ -52,6 +59,13 @@ public class AdminPanel extends DraggableObject
 
     protected function setup() :void
     {
+
+        if (VConstants.LOCAL_DEBUG_MODE) {
+            _playerData = new PlayerData(ClientContext.ctrl.player);
+            ServerContext.server.players.put(_playerData.playerId, _playerData);
+        }
+
+
         var panelWidth :int = 300;
         _draggableSprite.graphics.beginFill(0xffffff);
         _draggableSprite.graphics.drawRect(0,0,panelWidth,300);
@@ -190,101 +204,85 @@ public class AdminPanel extends DraggableObject
     {
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LEVEL_UP).toBytes());
 
-//        if(VConstants.LOCAL_DEBUG_MODE) {
-//
-//            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
-//
+        if(VConstants.LOCAL_DEBUG_MODE) {
+            ServerLogic.increaseLevel(_playerData);
+//            var props :PropertySubControlFake = PropertySubControlFake(ClientContext.ctrl.player.props);
 //            var currentLevel :Number = ClientContext.model.level;
-//            trace("currentLevel=" + currentLevel);
 //            var xpNeededForNextLevel :int = Logic.xpNeededForLevel(currentLevel + 1) - ClientContext.model.xp;
-//            trace("xpNeededForNextLevel=" + xpNeededForNextLevel);
 //            var invitesNeededForNextLevel :int = Logic.invitesNeededForLevel(currentLevel + 1);
-//            trace("invitesNeededForNextLevel=" + invitesNeededForNextLevel);
-//            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES, invitesNeededForNextLevel);
-//            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, ClientContext.model.xp + xpNeededForNextLevel);
-//        }
+//            props.set(Codes.PLAYER_PROP_XP, ClientContext.model.xp + xpNeededForNextLevel);
+//            props.set(Codes.PLAYER_PROP_INVITES, invitesNeededForNextLevel);
+        }
     }
 
     protected function loseLevel(... ignored) :void
     {
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LEVEL_DOWN).toBytes());
-
-//        if(VConstants.LOCAL_DEBUG_MODE) {
-//
-//            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
-//
+        if(VConstants.LOCAL_DEBUG_MODE) {
+            ServerLogic.decreaseLevel(_playerData);
+//            var props :PropertySubControlFake = PropertySubControlFake(ClientContext.ctrl.player.props);
 //            var currentLevel :Number = ClientContext.model.level;
 //            if(currentLevel > 1) {
 //                var newXp :int = Logic.xpNeededForLevel(currentLevel - 1);
-//                props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, newXp);
+//                props.set(Codes.PLAYER_PROP_XP, newXp);
 //            }
-//
-//        }
+        }
     }
 
     protected function gainXP(... ignored) :void
     {
         trace("Sending gainXP debug");
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_GAIN_XP).toBytes());
-//        if(VConstants.LOCAL_DEBUG_MODE) {
-//            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
+        if(VConstants.LOCAL_DEBUG_MODE) {
+            ServerLogic.addXP(_playerData.playerId, 500);
+//            var props :PropertySubControlFake = PropertySubControlFake(ClientContext.ctrl.player.props);
 //            var currentXP:int = ClientContext.model.xp;
 //            var invites:int = ClientContext.model.invites;
 //            currentXP += 500;
-//
 //            currentXP = Math.min(currentXP, Logic.maxXPGivenXPAndInvites(currentXP, invites));
-//
-//            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, Math.max(0,currentXP));
-//        }
+//            props.set(Codes.PLAYER_PROP_XP, Math.max(0,currentXP));
+        }
     }
 
     protected function loseXP(... ignored) :void
     {
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LOSE_XP).toBytes());
-//        if(VConstants.LOCAL_DEBUG_MODE) {
-//
-//            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
-//
+        if(VConstants.LOCAL_DEBUG_MODE) {
+            ServerLogic.addXP(_playerData.playerId, -500);
+//            var props :PropertySubControlFake = PropertySubControlFake(ClientContext.ctrl.player.props);
 //            var currentXP:int = ClientContext.model.xp;
 //            var invites:int = ClientContext.model.invites;
 //            currentXP -= 500;
-//
 //            currentXP = Math.min(currentXP, Logic.maxXPGivenXPAndInvites(currentXP, invites));
-//
-//            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, Math.max(0,currentXP));
-//        }
+//            props.set(Codes.PLAYER_PROP_XP, Math.max(0,currentXP));
+        }
     }
 
 
     protected function gainInvite(... ignored) :void
     {
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_ADD_INVITE).toBytes());
-
-//        if(VConstants.LOCAL_DEBUG_MODE) {
-//
-//            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
-//
+        if(VConstants.LOCAL_DEBUG_MODE) {
+            _playerData.addToInviteTally();
+//            ServerLogic.Lo(_playerData.playerId, -500);
+//            var props :PropertySubControlFake = PropertySubControlFake(ClientContext.ctrl.player.props);
 //            var currentInvites:int = ClientContext.model.invites;
-//
-//            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES, Math.max(0,currentInvites + 1));
-//            trace("Current invites=" + ClientContext.model.invites);
-//        }
+//            props.set(Codes.PLAYER_PROP_INVITES, Math.max(0,currentInvites + 1));
+        }
     }
 
     protected function loseInvite(... ignored) :void
     {
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LOSE_INVITE).toBytes());
-//        if(VConstants.LOCAL_DEBUG_MODE) {
-//
-//            var props :PropertyGetSubControlFake = PropertyGetSubControlFake(ClientContext.ctrl.room.props);
-//
+        if(VConstants.LOCAL_DEBUG_MODE) {
+            _playerData.invites = Math.max(0, _playerData.invites - 1);
+//            var props :PropertySubControlFake = PropertySubControlFake(ClientContext.ctrl.player.props);
 //            var currentInvites:int = ClientContext.model.invites;
-//
-//            props.setIn(Codes.playerRoomPropKey(ClientContext.ourPlayerId), Codes.ROOM_PROP_PLAYER_DICT_INDEX_INVITES, Math.max(0,currentInvites - 1));
-//            trace("Current invites=" + ClientContext.model.invites);
-//        }
+//            props.set(Codes.PLAYER_PROP_INVITES, Math.max(0,currentInvites + 1));
+        }
     }
 
+    protected var _playerData :PlayerData;
     protected var _displaySprite :Sprite = new Sprite();
     protected var _draggableSprite :Sprite = new Sprite();
     protected var _menuSprite :Sprite = new Sprite();

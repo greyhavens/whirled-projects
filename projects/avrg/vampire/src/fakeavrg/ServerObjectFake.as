@@ -4,6 +4,7 @@ import com.whirled.ServerObject;
 
 import flash.display.DisplayObject;
 
+//This doesn't work!!!  Cannot extend DisplayObject
 public class ServerObjectFake extends ServerObject
 {
     public function ServerObjectFake(realDisplayRoot :DisplayObject)
