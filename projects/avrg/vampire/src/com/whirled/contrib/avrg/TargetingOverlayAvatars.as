@@ -39,7 +39,7 @@ public class TargetingOverlayAvatars extends TargetingOverlay
         super.addedToDB();
         //Check for missing avatars/HUDs every second.  Lets not overload the client on checking.
         var avatarCheckTimer :SimpleTimer = new SimpleTimer(1, checkAvatarsAndUsersMatch, true, "avatarCheck");
-        db.addObject(avatarCheckTimer);
+        addSimObject(avatarCheckTimer);
     }
 
     override protected function update(dt:Number) :void
@@ -130,7 +130,8 @@ public class TargetingOverlayAvatars extends TargetingOverlay
 //            trace("Creating avatarHUD for " + userId);
             if(!_avatars.containsKey(userId)) {
                 var playerAvatar :AvatarHUD = createPlayerAvatar(userId);
-                mode.addSceneObject(playerAvatar, _paintableOverlay);
+                addSceneObject(playerAvatar, _paintableOverlay);
+//                mode.addSceneObject(playerAvatar, _paintableOverlay);
                 _avatars.put(userId, playerAvatar);
             }
 
@@ -144,18 +145,18 @@ public class TargetingOverlayAvatars extends TargetingOverlay
             }
         }
 
-        _avatars.forEach(function(userId :int, avatar :AvatarHUD) :void {
-            var playerId :int = avatar.playerId;
-
-            //Add the avatar to the db if not yet added.
-            if(avatar.db == null) {
-                mode.addSceneObject(avatar, _paintableOverlay);
-            }
-
-            if(avatar.sprite != null && !_paintableOverlay.contains(avatar.sprite)) {
-                _paintableOverlay.addChild(avatar.sprite);
-            }
-        });
+//        _avatars.forEach(function(userId :int, avatar :AvatarHUD) :void {
+//            var playerId :int = avatar.playerId;
+//
+//            //Add the avatar to the db if not yet added.
+//            if(avatar.db == null) {
+//                mode.addSceneObject(avatar, _paintableOverlay);
+//            }
+//
+//            if(avatar.sprite != null && !_paintableOverlay.contains(avatar.sprite)) {
+//                _paintableOverlay.addChild(avatar.sprite);
+//            }
+//        });
     }
 
     public function getAvatar(playerId :int) :AvatarHUD

@@ -1,9 +1,12 @@
 package com.whirled.contrib.avrg
 {
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
-import com.whirled.contrib.simplegame.objects.SceneObjectParent;
+import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.objects.SceneObject;
 
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
@@ -11,7 +14,7 @@ import flash.geom.Rectangle;
 /**
  * Generic room targeting overlay.  May delete this class in the future.
  */
-public class TargetingOverlay extends SceneObjectParent
+public class TargetingOverlay extends SceneObject
 {
     /**
     *
@@ -27,7 +30,6 @@ public class TargetingOverlay extends SceneObjectParent
         _displaySprite.addChild(_paintableOverlay);
         _paintableOverlay.mouseChildren = true;
         _paintableOverlay.mouseEnabled = false;
-        _displaySprite.addChild(_paintableOverlay);
 
 
         _targetClickedCallback = targetClickedCallback;
@@ -96,6 +98,7 @@ public class TargetingOverlay extends SceneObjectParent
 
     protected function handleMouseClick(e :MouseEvent) :void
     {
+        trace("test1111");
         var mouseClickedPlayerId :int = 0;
         var mouseClickedRect :Rectangle;
 
@@ -118,6 +121,76 @@ public class TargetingOverlay extends SceneObjectParent
             _paintableOverlay.graphics.clear();
         }
     }
+
+
+
+
+
+
+
+        override protected function addedToDB () :void
+    {
+        super.addedToDB();
+        for each (var sim :SimObject in _yetToAddToDB) {
+            db.addObject(sim);
+        }
+        _yetToAddToDB = null;
+    }
+
+    protected function addSimObject (s :SimObject) :void
+    {
+        if (db != null) {
+            db.addObject(s);
+        }
+        else {
+            _yetToAddToDB.push(s);
+        }
+        _subObjects.push(s);
+    }
+    protected function addSceneObject (s :SceneObject, parent :DisplayObjectContainer = null) :void
+    {
+        if (parent != null) {
+            parent.addChild(s.displayObject);
+        }
+        else {
+            _displaySprite.addChild(s.displayObject);
+        }
+        addSimObject(s);
+    }
+
+    protected function destroySimObject (s :SimObject) :void
+    {
+        if (s.isLiveObject) {
+            s.destroySelf();
+        }
+        ArrayUtil.removeAll(_subObjects, s);
+    }
+
+    override protected function destroyed () :void
+    {
+        super.destroyed();
+        for each (var child :SimObject in _subObjects) {
+            if (child.isLiveObject) {
+                child.destroySelf();
+            }
+        }
+    }
+
+//    override public function get displayObject () :DisplayObject
+//    {
+//        return _displaySprite;
+//    }
+
+    protected var _displaySprite :Sprite = new Sprite();
+    protected var _subObjects :Array = new Array();
+    protected var _yetToAddToDB :Array = new Array();
+
+
+
+
+
+
+
 
     /**
     * Another sprite is used to paint on, so it can be detached from the _displaySprite if neccesary.

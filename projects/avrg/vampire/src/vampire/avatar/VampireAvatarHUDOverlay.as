@@ -8,6 +8,7 @@ import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.avrg.AvatarHUD;
 import com.whirled.contrib.avrg.TargetingOverlayAvatars;
 
+import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 import framework.FakeAVRGContext;
@@ -33,11 +34,16 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
 
         //If an avatar changes state, make sure we are updated.
         _paintableOverlay.mouseEnabled = true;
+
         registerListener(_ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED,
             function(e :AVRGameRoomEvent) :void {
                 setDisplayMode(_displayMode);
             }
         );
+
+        registerListener(_paintableOverlay, MouseEvent.MOUSE_DOWN, function (...ignored) :void {
+            trace("_paintableOverlay MOUSE_DOWN");
+        });
 
 
         //If you click outside the feeding buttons, return to the default display.
