@@ -38,15 +38,15 @@ public class VampireBody extends VampireBodyBase
         }
 
         loadConfig();
-        _playerLevel = _ctrl.getMemory(MEMORY_PLAYER_LEVEL) as int;
+        //_playerLevel = _ctrl.getMemory(MEMORY_PLAYER_LEVEL) as int;
 
         _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED,
             function (e :ControlEvent) :void {
                 if (e.name == MEMORY_CONFIG) {
                     loadConfig();
-                } else if (e.name == MEMORY_PLAYER_LEVEL) {
+                } /*else if (e.name == MEMORY_PLAYER_LEVEL) {
                     _playerLevel = _ctrl.getMemory(MEMORY_PLAYER_LEVEL) as int;
-                }
+                }*/
             });
 
         // Any state with "feeding" or "bared" in its name should not have its
@@ -59,11 +59,11 @@ public class VampireBody extends VampireBodyBase
         }
     }
 
-    override protected function setPlayerLevel (newLevel :int) :void
+    /*override protected function setPlayerLevel (newLevel :int) :void
     {
         super.setPlayerLevel(newLevel);
         saveMemory(MEMORY_PLAYER_LEVEL, newLevel);
-    }
+    }*/
 
     protected function createConfigPanel () :Sprite
     {
@@ -318,7 +318,7 @@ public class VampireBody extends VampireBodyBase
     protected var _nonFaceConfigurableMovies :Array = [];
 
     protected static const MEMORY_CONFIG :String = "VampatarConfig";
-    protected static const MEMORY_PLAYER_LEVEL :String = "PlayerLevel";
+    //protected static const MEMORY_PLAYER_LEVEL :String = "PlayerLevel";
 }
 
 }
