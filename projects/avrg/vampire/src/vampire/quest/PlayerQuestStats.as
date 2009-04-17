@@ -41,6 +41,13 @@ public class PlayerQuestStats extends EventDispatcher
         return getStat(name) as int;
     }
 
+    public function offsetIntStat (name :String, incr :int) :void
+    {
+        if (incr != 0) {
+            setStat(name, getIntStat(name) + incr);
+        }
+    }
+
     public function statExists (name :String) :Boolean
     {
         return (getStat(name) != null);

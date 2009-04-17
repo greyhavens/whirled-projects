@@ -2,23 +2,15 @@ package vampire.quest.activity {
 
 import vampire.quest.activity.ActivityParams;
 
-public class CorruptionActivityParams extends ActivityParams
+public class CorruptionActivityParams extends BloodBloomActivityParams
 {
-    public var preyName :String;
-    public var totalBlood :int;
-
-    public var awardedStatName :String;
-    public var awardedStatIncrement :int;
+    public var corruptionBlood :int;
 
     public function CorruptionActivityParams (minPlayers :int, maxPlayers :int, preyName :String,
-        totalBlood :int, awardedStatName :String, awardedStatIncrement :int)
+        awardedStatName :String, awardedStatIncrement :int, corruptionBlood :int)
     {
-        super(minPlayers, maxPlayers);
-
-        this.preyName = preyName;
-        this.totalBlood = totalBlood;
-        this.awardedStatName = awardedStatName;
-        this.awardedStatIncrement = awardedStatIncrement;
+        super(minPlayers, maxPlayers, preyName, awardedStatName, awardedStatIncrement);
+        this.corruptionBlood = corruptionBlood;
     }
 }
 

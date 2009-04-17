@@ -19,6 +19,7 @@ import flash.text.TextField;
 import vampire.data.VConstants;
 import vampire.feeding.*;
 import vampire.feeding.net.*;
+import vampire.quest.activity.BloodBloomActivityParams;
 
 public class LobbyMode extends AppMode
 {
@@ -130,6 +131,10 @@ public class LobbyMode extends AppMode
 
         updateBloodBondIndicator();
 
+        if (this.isPostRoundLobby) {
+            giveActivityCompletionAward();
+        }
+
         showRoundTimer(false);
         if (this.isWaitingForNextRound) {
             // ask the server to tell us how much time is remaining in the current round (it
@@ -160,6 +165,16 @@ public class LobbyMode extends AppMode
 ////            }
 ////        }
 //    }
+
+    protected function giveActivityCompletionAward () :void
+    {
+        if (ClientCtx.clientSettings.activityParams != null &&
+            ClientCtx.clientSettings.activityParams.awardedStatName != null) {
+            ClientCtx.clientSettings.playerStats.offsetIntStat(
+                ClientCtx.clientSettings.activityParams.awardedStatName,
+                ClientCtx.clientSettings.activityParams.awardedStatIncrement);
+        }
+    }
 
     protected function showRoundTimer (show :Boolean, remainingTime :Number = 0) :void
     {

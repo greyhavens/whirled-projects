@@ -30,7 +30,10 @@ public class QuestClient
 
         ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_COMPLETED,
             function (e :PlayerQuestEvent) :void {
-                ClientCtx.mainLoop.topMode.addSceneObject(new QuestCompletedNotification(e.quest));
+                var note :QuestCompletedNotification = new QuestCompletedNotification(e.quest);
+                note.x = (ClientCtx.mainLoop.topMode.modeSprite.width - note.width) * 0.5;
+                note.y = 15;
+                ClientCtx.mainLoop.topMode.addSceneObject(note);
             });
 
         // load resources
@@ -67,7 +70,7 @@ public class QuestClient
                 },
                 ClientCtx.questData,
                 ClientCtx.stats,
-                activity.params));
+                activity.params as BloodBloomActivityParams));
             ClientCtx.mainLoop.topMode.modeSprite.addChild(feedingGame);
             break;
 

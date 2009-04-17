@@ -18,6 +18,7 @@ import flash.utils.getTimer;
 import vampire.feeding.*;
 import vampire.feeding.net.*;
 import vampire.feeding.variant.VariantSettings;
+import vampire.quest.activity.BloodBloomActivityParams;
 import vampire.quest.activity.CorruptionActivityParams;
 
 public class ClientCtx
@@ -115,8 +116,8 @@ public class ClientCtx
 
     public static function get aiPreyName () :String
     {
-        if (clientSettings.activityParams is CorruptionActivityParams) {
-            return CorruptionActivityParams(clientSettings.activityParams).preyName;
+        if (clientSettings.activityParams != null) {
+            return clientSettings.activityParams.preyName;
         } else if (clientSettings.spOnly) {
             return clientSettings.spPreyName;
         } else {

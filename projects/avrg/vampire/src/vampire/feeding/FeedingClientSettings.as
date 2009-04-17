@@ -3,6 +3,7 @@ package vampire.feeding {
 import vampire.quest.PlayerQuestData;
 import vampire.quest.PlayerQuestStats;
 import vampire.quest.activity.ActivityParams;
+import vampire.quest.activity.BloodBloomActivityParams;
 
 public class FeedingClientSettings
 {
@@ -12,7 +13,7 @@ public class FeedingClientSettings
     public var gameCompleteCallback :Function;
     public var playerQuestData :PlayerQuestData;
     public var playerStats :PlayerQuestStats;
-    public var activityParams :ActivityParams;
+    public var activityParams :BloodBloomActivityParams;
 
     // Valid only if spOnly is true
     public var spPreyName :String;
@@ -25,7 +26,7 @@ public class FeedingClientSettings
     public static function spSettings (preyName :String, preyBloodStrain :int, variant :int,
         playerData :PlayerFeedingData, gameCompleteCallback :Function,
         playerQuestData :PlayerQuestData = null, playerStats :PlayerQuestStats = null,
-        activityParams :ActivityParams = null) :FeedingClientSettings
+        activityParams :BloodBloomActivityParams = null) :FeedingClientSettings
     {
         var settings :FeedingClientSettings = new FeedingClientSettings();
         settings.spOnly = true;
@@ -42,7 +43,7 @@ public class FeedingClientSettings
 
     public static function mpSettings (gameId :int, playerData :PlayerFeedingData,
         gameCompleteCallback :Function, playerQuestData :PlayerQuestData = null,
-        playerStats :PlayerQuestStats = null, activityParams :ActivityParams = null)
+        playerStats :PlayerQuestStats = null, activityParams :BloodBloomActivityParams = null)
         :FeedingClientSettings
     {
         var settings :FeedingClientSettings = new FeedingClientSettings();

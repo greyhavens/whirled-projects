@@ -13,10 +13,10 @@ public class QuestCompletedNotification extends SceneObject
 {
     public function QuestCompletedNotification (quest :QuestDesc)
     {
+        _sprite = new Sprite();
+
         var text :String = '"' + quest.displayName + '" completed!';
         var tf :TextField = TextBits.createText(text, 3, 0, 0x00ff00);
-        tf.x = -tf.width * 0.5;
-        tf.y = -tf.height * 0.5;
         _sprite.addChild(tf);
 
         addTask(new SerialTask(
