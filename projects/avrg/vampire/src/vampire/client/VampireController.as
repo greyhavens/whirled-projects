@@ -104,7 +104,7 @@ public class VampireController extends Controller
             [VampireController.QUIT, null]);
 
         if (ClientContext.gameMode.getObjectNamed(popup.objectName) == null) {
-            ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
+            ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.layerHighPriority);
             ClientContext.centerOnViewableRoom(popup.displayObject);
             ClientContext.animateEnlargeFromMouseClick(popup);
         }
@@ -117,8 +117,8 @@ public class VampireController extends Controller
                 ClientContext.game.ctx.mainLoop.topMode.getObjectNamed(AdminPanel.NAME);
 
             if (hierarchySceneObject == null) {
-                ClientContext.game.ctx.mainLoop.topMode.addSceneObject(new AdminPanel(),
-                    ClientContext.game.ctx.mainLoop.topMode.modeSprite);
+                ClientContext.gameMode.addSceneObject(new AdminPanel(),
+                    ClientContext.gameMode.layerHighPriority);
             }
 
             else {
@@ -141,7 +141,7 @@ public class VampireController extends Controller
             if (help == null) {
                 help = new HelpPopup(startFrame, lineage, playerCenter);
                 ClientContext.gameMode.addSceneObject(help,
-                    ClientContext.game.ctx.mainLoop.topMode.modeSprite);
+                    ClientContext.gameMode.layerLowPriority);
 
                 help.x = ClientContext.ctrl.local.getPaintableArea().width/2;
                 help.y = ClientContext.ctrl.local.getPaintableArea().height/2;
@@ -199,7 +199,8 @@ public class VampireController extends Controller
                 var popup :PopupQuery = new PopupQuery(
                     VConstants.POPUP_MESSAGE_FEED_CONFIRM + targetId,
                     "Waiting for " + targetName + "'s permission to feed...");
-                ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
+                ClientContext.gameMode.addSceneObject(popup,
+                    ClientContext.gameMode.layerMediumPriority);
                 ClientContext.centerOnViewableRoom(popup.displayObject);
                 ClientContext.animateEnlargeFromMouseClick(popup);
 
@@ -341,7 +342,7 @@ public class VampireController extends Controller
     {
         handleShowPopupMessage("NewLevel",
             VConstants.TEXT_NEW_LEVEL + newLevel + "!",
-            ClientContext.gameMode.lowPriorityLayer,
+            ClientContext.gameMode.layerMediumPriority,
             ["More info"], [function() :void {ClientContext.controller.handleShowIntro("blood")}]);
     }
     public function handleRecruit () :void
@@ -398,6 +399,7 @@ public class VampireController extends Controller
     public function handleShowPreyLineage (playerId :int) :void
     {
         var lineage :Lineage = ClientContext.gameMode.roomModel.getLineage(playerId);
+        trace("handleShowPreyLineage, playerId=" + playerId + ", lineage=" + lineage);
         handleShowIntro("target", lineage, playerId);
     }
 

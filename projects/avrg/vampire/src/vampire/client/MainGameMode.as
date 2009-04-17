@@ -75,6 +75,7 @@ public class MainGameMode extends AppMode
 
         //Layer the sprites
         modeSprite.addChild(_spriteLayerLowPriority);
+        modeSprite.addChild(_spriteLayerMedPriority);
         modeSprite.addChild(_spriteLayerFeedingGame);
         modeSprite.addChild(_spriteLayerHighPriority);
 
@@ -177,7 +178,7 @@ public class MainGameMode extends AppMode
 
         //Create the overlay for individual avatars
         ClientContext.avatarOverlay = new VampireAvatarHUDOverlay(ClientContext.ctrl);
-        addSceneObject(ClientContext.avatarOverlay, modeSprite);
+        addSceneObject(ClientContext.avatarOverlay, _spriteLayerLowPriority);
 
         //Add the main HUD
         _hud = new HUD();
@@ -239,7 +240,7 @@ public class MainGameMode extends AppMode
         }
 
         if (!e.isAllowedToFeed) {
-            ClientContext.controller.handleShowPopupMessage(null, e.preyName + " has denied your request to feed", lowPriorityLayer);
+            ClientContext.controller.handleShowPopupMessage(null, e.preyName + " has denied your request to feed", layerLowPriority);
         }
     }
     protected function handleStartFeedingClientMsg (msg :StartFeedingClientMsg) :void
@@ -373,7 +374,7 @@ public class MainGameMode extends AppMode
             for each (var msg :String in _feedbackMessageQueue) {
                 if (msg.substr(0, Codes.POPUP_PREFIX.length) == Codes.POPUP_PREFIX) {
                     ClientContext.controller.handleShowPopupMessage("ServerPopup",
-                        msg.substring(Codes.POPUP_PREFIX.length), lowPriorityLayer);
+                        msg.substring(Codes.POPUP_PREFIX.length), layerLowPriority);
                 }
                 else {
                     ClientContext.ctrl.local.feedback(msg);
@@ -398,12 +399,17 @@ public class MainGameMode extends AppMode
         return getObjectNamed(VampireAvatarHUDOverlay.NAME) as VampireAvatarHUDOverlay;
     }
 
-    public function get lowPriorityLayer () :Sprite
+    public function get layerLowPriority () :Sprite
     {
         return _spriteLayerLowPriority;
     }
+    
+    public function get layerMediumPriority () :Sprite
+    {
+        return _spriteLayerMedPriority;
+    }
 
-    public function get highPriorityLayer () :Sprite
+    public function get layerHighPriority () :Sprite
     {
         return _spriteLayerHighPriority;
     }
@@ -418,6 +424,7 @@ public class MainGameMode extends AppMode
     //Layer the sprites for allowing popup messages over and under the feeding game
     protected var _spriteLayerFeedingGame :Sprite = new Sprite();
     protected var _spriteLayerHighPriority :Sprite = new Sprite();
+    protected var _spriteLayerMedPriority :Sprite = new Sprite();
     protected var _spriteLayerLowPriority :Sprite = new Sprite();
 
     protected static const log :Log = Log.getLog(MainGameMode);
