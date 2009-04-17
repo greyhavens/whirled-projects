@@ -15,7 +15,9 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
+import vampire.client.events.LineageUpdatedEvent;
 import vampire.data.Codes;
+import vampire.data.Lineage;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingClient;
 import vampire.feeding.FeedingClientSettings;
@@ -79,50 +81,11 @@ public class MainGameMode extends AppMode
         modeSprite.addChild(_spriteLayerFeedingGame);
         modeSprite.addChild(_spriteLayerHighPriority);
 
+
         ClientContext.model = new PlayerModel();
         addObject(ClientContext.model);
 
-        addObject(new RoomModel());
-
-
-//        ClientContext.model.lineage = LineageDebug.createBasicLineage(10, 7, 50000);
-////        trace("Lineage: " + ClientContext.model.lineage);
-//
-//        var bytes :ByteArray = new ByteArray();
-//        ClientContext.model.lineage.writeExternal(bytes);
-//        trace("Before compression: " + bytes.length);
-//        bytes.compress();
-//        trace("After compression: " + bytes.length);
-//
-//        ClientContext.model.lineage = new LineageSubSet().fromLineage(ClientContext.model.lineage, 19);
-//        trace("Subset " + ClientContext.model.lineage);
-
-//        ClientContext.model.lineage.setPlayerSire(1, 0);
-//        LineageDebug.addRandomPlayersToLineage(ClientContext.model.lineage, 200);
-
-
-//        var subLinButton :SimpleTextButton = new SimpleTextButton("SublineagePlayer 2");
-//        modeSprite.addChild(subLinButton);
-//        subLinButton.x = 300;
-//        subLinButton.y = 10;
-//        subLinButton.addEventListener(MouseEvent.CLICK, function(...ignored) :void {
-//            var sub :LineageSubSet = new LineageSubSet().fromLineage(ClientContext.model.lineage, 2);
-//            trace("Lineage: " + ClientContext.model.lineage);
-//            trace("Subset: " + sub);
-//            var view :LineageViewBase = new LineageViewBase(sub, 1);
-//            var spriteDB :SpriteObjectDB = new SpriteObjectDB();
-//            spriteDB.addSceneObject(view);
-//            ClientContext.gameMode.modeSprite.addChild(spriteDB);
-//            ClientContext.centerOnViewableRoom(view.displayObject);
-//
-//        });
-
-
-
-
-
-
-
+        addObject(new LineagesClient());
 
         //If there is a share token, send the invitee to the server
         var inviterId :int = ClientContext.ctrl.local.getInviterMemberId();
@@ -135,30 +98,30 @@ public class MainGameMode extends AppMode
         }
 
 
-//        if (VConstants.LOCAL_DEBUG_MODE) {
-//
-//            var lineage :Lineage = new Lineage();
+        if (VConstants.LOCAL_DEBUG_MODE) {
+
+            var lineage :Lineage = new Lineage();
 //            LineageDebug.addRandomPlayersToLineage(lineage, 10);
-////                lineage.setPlayerSire(1, 2);
-////                lineage.setPlayerSire(3, 1);
-////                lineage.setPlayerSire(4, 1);
-////                lineage.setPlayerSire(5, 1);
-////                lineage.setPlayerSire(6, 5);
-////                lineage.setPlayerSire(7, 6);
-////                lineage.setPlayerSire(8, 6);
-////                lineage.setPlayerSire(9, 1);
-////                lineage.setPlayerSire(10, 1);
-////                lineage.setPlayerSire(11, 1);
-////                lineage.setPlayerSire(12, 1);
-////                lineage.setPlayerSire(13, 1);
-////                lineage.setPlayerSire(14, 1);
-//            var msg :LineageUpdatedEvent = new LineageUpdatedEvent(lineage, ClientContext.ourPlayerId);
-//            ClientContext.model.lineage = lineage;
-//            ClientContext.model.dispatchEvent(msg);
-//
+                lineage.setPlayerSire(1, 2);
+                lineage.setPlayerSire(3, 1);
+                lineage.setPlayerSire(4, 1);
+                lineage.setPlayerSire(5, 1);
+                lineage.setPlayerSire(6, 5);
+                lineage.setPlayerSire(7, 6);
+                lineage.setPlayerSire(8, 6);
+                lineage.setPlayerSire(9, 1);
+                lineage.setPlayerSire(10, 1);
+                lineage.setPlayerSire(11, 1);
+                lineage.setPlayerSire(12, 1);
+                lineage.setPlayerSire(13, 1);
+                lineage.setPlayerSire(14, 1);
+            var msg :LineageUpdatedEvent = new LineageUpdatedEvent(lineage, ClientContext.ourPlayerId);
+            ClientContext.model.lineage = lineage;
+            ClientContext.model.dispatchEvent(msg);
+
 //            var lineagedebug :LineageDebug = new LineageDebug();
-////            addObject(lineagedebug);
-//        }
+//            addObject(lineagedebug);
+        }
 
         //Init the feeding game, if we're not testing.
         if (!VConstants.LOCAL_DEBUG_MODE) {
@@ -194,7 +157,7 @@ public class MainGameMode extends AppMode
 
 
         //Add the client load balancer
-        addObject(new LoadBalancerClient(ClientContext.ctrl, modeSprite));
+        addObject(new LoadBalancerClient(ClientContext.ctrl, layerLowPriority));
 
         //Add a debug panel for admins
         if(ClientContext.isAdmin(ClientContext.ourPlayerId) || VConstants.LOCAL_DEBUG_MODE) {
@@ -384,20 +347,15 @@ public class MainGameMode extends AppMode
         }
     }
 
-    public function get roomModel () :RoomModel
+    public function get roomModel () :LineagesClient
     {
-        return getObjectNamed(RoomModel.NAME) as RoomModel;
+        return getObjectNamed(LineagesClient.NAME) as LineagesClient;
     }
 
     public function get hud () :HUD
     {
-        return getObjectNamed(HUD.NAME) as HUD;
+        return _hud;
     }
-
-//    public function get avatarOverlay () :VampireAvatarHUDOverlay
-//    {
-//        return getObjectNamed(VampireAvatarHUDOverlay.NAME) as VampireAvatarHUDOverlay;
-//    }
 
     public function get layerLowPriority () :Sprite
     {
