@@ -31,6 +31,9 @@ import flash.utils.IExternalizable;
 public class Lineage extends SimObject
     implements IExternalizable, Equalable
 {
+
+
+
     public function setPlayerSire (playerId :int, sireId :int) :void
     {
         if (playerId == sireId) {
@@ -435,6 +438,7 @@ public class Lineage extends SimObject
 
     public function readExternal (input:IDataInput) :void
     {
+        isConnectedToLilith = input.readBoolean();
         _playerId2Node.clear();
         _playerId2Name.clear();
 
@@ -451,6 +455,7 @@ public class Lineage extends SimObject
 
     public function writeExternal (output:IDataOutput) :void
     {
+        output.writeBoolean(isConnectedToLilith);
         var players :Array = _playerId2Node.keys();
         output.writeInt(players.length);
 
@@ -481,6 +486,8 @@ public class Lineage extends SimObject
             lineage.setPlayerSire(id, getSireId(id));
             lineage.setPlayerName(id, getPlayerName(id));
         }
+
+        lineage.isConnectedToLilith = isMemberOfLineage(playerId);
 
         return lineage;
     }
@@ -529,6 +536,8 @@ public class Lineage extends SimObject
 
     protected var _playerId2Node :HashMap = new HashMap();
     public var _playerId2Name :HashMap = new HashMap();
+
+    public var isConnectedToLilith :Boolean;
 
     public static const NAME :String = "Lineage";
 

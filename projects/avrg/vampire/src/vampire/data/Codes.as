@@ -95,7 +95,7 @@ public class Codes
                                                 PLAYER_PROP_BLOODBOND_NAME,
                                                 PLAYER_PROP_FEEDING_DATA,
                                                 PLAYER_PROP_PROGENY_IDS,
-                                                PLAYER_PROP_LINEAGE,
+//                                                PLAYER_PROP_LINEAGE,
                                                 PLAYER_PROP_INVITES,
                                               ];
 

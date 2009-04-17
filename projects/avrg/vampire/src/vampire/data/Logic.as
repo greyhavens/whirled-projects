@@ -24,10 +24,18 @@ public class Logic
 
     public static function maxXPGivenXPAndInvites(xp :Number, invites :int) :Number
     {
-        var newLevel :int = Logic.levelGivenCurrentXpAndInvites(xp, invites);
-        var maxXpForCurrentLevel :int = Logic.xpNeededForLevel(newLevel + 1);
+        var maxLevelInvites :int = maxLevelFromInvites(invites);
+        var maxLevelXP :int = levelFromXp(xp);
 
-        return maxXpForCurrentLevel;
+        if (maxLevelInvites < maxLevelXP) {
+            return xpNeededForLevel(maxLevelInvites + 1) - 1;
+        }
+        return xp;
+
+//        var newLevel :int = Logic.levelGivenCurrentXpAndInvites(xp, invites);
+//        var maxXpForCurrentLevel :int = Logic.xpNeededForLevel(newLevel + 1);
+//
+//        return maxXpForCurrentLevel;
     }
     public static function levelGivenCurrentXpAndInvites(xp :Number, invites :int = 0) :int
     {
@@ -118,13 +126,26 @@ public class Logic
         return playerId == VConstants.UBER_VAMP_ID;
     }
 
+    public static function maxLevelFromInvites (invites :int) :int
+    {
+        var maxLevel :int = VConstants.MAXIMUM_VAMPIRE_LEVEL;
+        for each(var levelAndInviteMin :Array in LEVEL_INVITE_CAPS) {
+            var levelCap :int = levelAndInviteMin[0];
+            var minInvites :int = levelAndInviteMin[1];
+
+            if (invites < minInvites) {
+                maxLevel = Math.min(maxLevel, levelCap - 1);
+            }
+        }
+        return maxLevel;
+    }
+
     /**
     * [level, minimum number of invites]
     */
     public static const LEVEL_INVITE_CAPS :Array = [
         [5, 1],
         [10, 2],
-//        [10000, 10000]
     ]
 
 }
