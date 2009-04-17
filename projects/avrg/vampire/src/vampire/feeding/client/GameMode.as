@@ -265,7 +265,7 @@ public class GameMode extends AppMode
     protected function onRoundOver (results :RoundOverMsg) :void
     {
         ClientCtx.lastRoundResults = results;
-        if (!ClientCtx.isConnected) {
+        if (ClientCtx.clientSettings.spOnly) {
             ClientCtx.mainLoop.changeMode(new LobbyMode(LobbyMode.LOBBY, results));
         }
     }
@@ -340,8 +340,8 @@ public class GameMode extends AppMode
             addObject(countdownTicker);
         }
 
-        // In offline testing mode, the game is considered over when our local timer ends
-        if (!ClientCtx.isConnected && GameCtx.timeLeft == 0) {
+        // In singleplayer, the game is considered over when our local timer ends
+        if (ClientCtx.clientSettings.spOnly && GameCtx.timeLeft == 0) {
             GameCtx.gameOver = true;
         }
 
