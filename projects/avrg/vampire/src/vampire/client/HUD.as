@@ -68,7 +68,9 @@ public class HUD extends DraggableObject
 
     override protected function createDragger () :Dragger
     {
-        return new RoomDragger(ClientContext.ctrl, this.draggableObject, this.displayObject);
+        return new RoomDragger(ClientContext.ctrl, this.draggableObject, this.displayObject, function (...ignored) :void {
+            trace("HUD DRAGGED");
+        });
     }
 
     override public function get objectName () :String
@@ -278,7 +280,7 @@ public class HUD extends DraggableObject
             _xpText.mouseEnabled = false;
 
             var lineageformat :TextFormat = new TextFormat();
-            lineageformat.font = "JuiceEmbedded";
+            lineageformat.font = "ArnoProLight";
             lineageformat.size = 14;
             lineageformat.align = TextFormatAlign.LEFT;
             lineageformat.bold = false;
@@ -291,7 +293,8 @@ public class HUD extends DraggableObject
         _bloodXPMouseOverSprite.addChild(_xpText);
 
 
-        _xpText.x = ClientContext.model.maxblood/2 - _xpText.getLineMetrics(0).width/2;
+//        _xpText.x = ClientContext.model.maxblood/2 - _xpText.getLineMetrics(0).width/2;
+        _xpText.x = 10;
         _xpText.y = 2;
 
     }
@@ -359,8 +362,8 @@ public class HUD extends DraggableObject
         //Shine
         var shine :MovieClip = findSafely("shine_blood") as MovieClip;
         if (shine != null) {
-            shine.width = maxBlood - 20;
-            shine.x = 10;
+            shine.width = maxBlood - 20 - _xpText.width;
+            shine.x = _xpText.width + 10;
             shine.y = 16;
             _bloodXPMouseOverSprite.parent.addChildAt(shine,
                 _bloodXPMouseOverSprite.parent.numChildren - 2);
