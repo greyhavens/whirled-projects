@@ -43,6 +43,21 @@ public class LineageViewBase extends SceneObjectParent
 
         _selectedPlayerIdCenter = centerPlayerId;
 
+        _lilith = new Sprite();
+        _lilith.graphics.lineStyle(BLOOD_LINEAGE_LINK_THICKNESS, BLOOD_LINEAGE_LINK_COLOR, 1);
+        _lilith.graphics.moveTo(0, 0);
+        _lilith.graphics.lineTo(0, 120);
+        var drop :MovieClip = ClientContext.instantiateMovieClip("HUD", "droplet", true);
+        drop.scaleX = drop.scaleY = 3.0;
+        _lilith.addChild(drop);
+        _lilith.addChild(DropSceneObject.getTextFieldCenteredOn("Lilith", 40, 0));
+        _lilith.y = -100;
+        if (_lineage != null && _lineage.isConnectedToLilith
+            && !_lineage.isPlayer(VConstants.UBER_VAMP_ID)) {
+            _displaySprite.addChild(_lilith);
+        }
+
+
         if (_lineage != null) {
             updateLineage(_selectedPlayerIdCenter);
         }
@@ -497,6 +512,8 @@ public class LineageViewBase extends SceneObjectParent
 
     protected static function drawLineFrom (s :Sprite, x1 :int, y1 :int, x2 :int, y2 :int) :void
     {
+//        s.graphics.lineGradientStyle(GradientType.LINEAR, [BLOOD_LINEAGE_LINK_COLOR, BLOOD_LINEAGE_LINK_COLOR],
+//            [1, 0], [255, 255]);
         s.graphics.lineStyle(BLOOD_LINEAGE_LINK_THICKNESS, BLOOD_LINEAGE_LINK_COLOR);
         s.graphics.moveTo(x1, y1);
         s.graphics.lineTo(x2, y2);
@@ -518,9 +535,17 @@ public class LineageViewBase extends SceneObjectParent
     public function set lineage (lin :Lineage) :void
     {
         _lineage = lin;
+        if (_lineage != null && _lineage.isConnectedToLilith
+            && !_lineage.isPlayer(VConstants.UBER_VAMP_ID)) {
+            _displaySprite.addChild(_lilith);
+        }
+        else {
+            ClientUtil.detach(_lilith);
+        }
         centerLinageOnPlayer(_selectedPlayerIdCenter);
     }
 
+    protected var _lilith :Sprite;
 
     protected var _hierarchyTree :Sprite;
     protected var _lineage :Lineage;
@@ -655,7 +680,7 @@ class DropSceneObject extends SceneObject
         registerListener(_drop, MouseEvent.ROLL_OUT, removeGlowFilter)
     }
 
-    protected static function getTextFieldCenteredOn (text :String, centerX :int, centerY :int) :TextField
+    public static function getTextFieldCenteredOn (text :String, centerX :int, centerY :int) :TextField
     {
         var tf :TextField = TextFieldUtil.createField(text);
         tf.selectable = false;

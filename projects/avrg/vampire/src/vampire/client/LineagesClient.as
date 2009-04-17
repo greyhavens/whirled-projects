@@ -1,12 +1,11 @@
 package vampire.client
 {
 import com.threerings.util.HashMap;
-import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.net.ElementChangedEvent;
-import com.whirled.net.PropertyChangedEvent;
 
 import flash.utils.ByteArray;
+import flash.utils.Dictionary;
 
 import vampire.data.Codes;
 import vampire.data.Lineage;
@@ -14,21 +13,21 @@ import vampire.data.Lineage;
 /**
  * Manages and presents room props and data.
  */
-public class RoomModel extends SimObject
+public class LineagesClient extends SimObject
 {
-    public function RoomModel()
+    public function LineagesClient()
     {
         registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED,
             handleElementChanged);
 
-        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_LEFT,
-            handlePlayerLeft);
-    }
+        var dict :Dictionary = ClientContext.ctrl.room.props.get(Codes.ROOM_PROP_PLAYER_LINEAGE) as Dictionary;
 
-    protected function handlePlayerLeft (e :AVRGameRoomEvent) :void
-    {
-        var playerId :int = e.value as int;
-        _lineages.remove(playerId);
+        if (dict != null) {
+            for each (var playerId :int in ClientContext.ctrl.room.getPlayerIds()) {
+                loadLineageFromBytes(playerId, dict[playerId]);
+            }
+        }
+
     }
 
     protected function handleElementChanged (e :ElementChangedEvent) :void
@@ -41,20 +40,18 @@ public class RoomModel extends SimObject
 
         if(e.name == Codes.ROOM_PROP_PLAYER_LINEAGE) {
             var bytes :ByteArray = e.newValue as ByteArray;
-            if (bytes != null) {
-                bytes.position = 0;
-                var lineage :Lineage = new Lineage();
-                lineage.fromBytes(bytes);
-                _lineages.put(e.index, lineage);
-            }
+            loadLineageFromBytes(e.key, bytes);
         }
     }
 
-    protected function handleRoomPropChanged (e :PropertyChangedEvent) :void
+    protected function loadLineageFromBytes (playerId :int, bytes :ByteArray) :void
     {
-        switch (e.name) {
-            default:
-            break;
+        if (bytes != null) {
+            bytes.position = 0;
+            var lineage :Lineage = new Lineage();
+            lineage.fromBytes(bytes);
+            trace(ClientContext.model.name + " recieved lineage from " + playerId + "=" + lineage);
+            _lineages.put(playerId, lineage);
         }
     }
 
@@ -62,6 +59,13 @@ public class RoomModel extends SimObject
     {
         return _lineages.get(playerId);
     }
+
+    public function isLineage (playerId :int) :Boolean
+    {
+        return _lineages.containsKey(playerId);
+    }
+
+
 
     override public function get objectName () :String
     {
