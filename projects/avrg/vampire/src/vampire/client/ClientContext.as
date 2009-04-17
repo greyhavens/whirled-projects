@@ -41,8 +41,6 @@ public class ClientContext
 
     /**The main game mode to add all game objects.*/
     public static var gameMode :MainGameMode;
-    public static var hud :HUD;
-    public static var avatarOverlay :VampireAvatarHUDOverlay;
     public static var ourPlayerId :int;
     public static var currentClosestPlayerId :int;
 

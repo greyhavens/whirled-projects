@@ -141,7 +141,7 @@ public class VampireController extends Controller
             if (help == null) {
                 help = new HelpPopup(startFrame, lineage, playerCenter);
                 ClientContext.gameMode.addSceneObject(help,
-                    ClientContext.gameMode.layerLowPriority);
+                    ClientContext.gameMode.layerMediumPriority);
 
                 help.x = ClientContext.ctrl.local.getPaintableArea().width/2;
                 help.y = ClientContext.ctrl.local.getPaintableArea().height/2;
@@ -178,7 +178,7 @@ public class VampireController extends Controller
     {
         function sendFeedRequest () :void {
             var targetLocation :Array;
-            var targetAvatar :AvatarHUD = ClientContext.avatarOverlay.getAvatar(targetId);
+            var targetAvatar :AvatarHUD = ClientContext.gameMode.avatarOverlay.getAvatar(targetId);
             if (targetAvatar != null) {
                 targetLocation = targetAvatar.location;
             }
@@ -256,15 +256,15 @@ public class VampireController extends Controller
     {
         var model :PlayerModel = ClientContext.model;
 
-        switch(ClientContext.avatarOverlay.displayMode) {
+        switch(ClientContext.gameMode.avatarOverlay.displayMode) {
 
             //Toggle between showing targets and nothing.
             case VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS:
-            ClientContext.avatarOverlay.setDisplayMode(VampireAvatarHUDOverlay.DISPLAY_MODE_OFF);
+            ClientContext.gameMode.avatarOverlay.setDisplayMode(VampireAvatarHUDOverlay.DISPLAY_MODE_OFF);
             break;
 
             default:
-            ClientContext.avatarOverlay.setDisplayMode(
+            ClientContext.gameMode.avatarOverlay.setDisplayMode(
                 VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS);
             //Show the load balancer
             handleActivateLoadBalancer();

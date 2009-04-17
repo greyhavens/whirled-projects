@@ -12,7 +12,6 @@ import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.objects.SceneObjectPlayMovieClipOnce;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 import com.whirled.contrib.simplegame.tasks.AlphaTask;
-import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.DisplayObject;
@@ -53,7 +52,8 @@ public class HUD extends DraggableObject
 
         //Listen to events that might cause us to update ourselves
         registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, updateOurPlayerState);
-        registerListener(ClientContext.ctrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED, handlePropChanged);
+//        registerListener(ClientContext.ctrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED, handleRoomPropChanged);
+        registerListener(ClientContext.ctrl.player.props, PropertyChangedEvent.PROPERTY_CHANGED, handlePlayerPropChanged);
     }
 
     override public function get displayObject () :DisplayObject
@@ -76,7 +76,7 @@ public class HUD extends DraggableObject
         return NAME;
     }
 
-    protected function handlePropChanged (e :PropertyChangedEvent) :void
+    protected function handlePlayerPropChanged (e :PropertyChangedEvent) :void
     {
         //Check if it is non-player properties changed??
         //Otherwise check for player updates
@@ -88,9 +88,6 @@ public class HUD extends DraggableObject
         var mode :AppMode = ClientContext.gameMode;
 
         switch(e.name) {
-            case Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE:
-                break;
-
             case Codes.PLAYER_PROP_XP:
 
                 if (e.oldValue < e.newValue && !(isNaN(Number(e.oldValue)) || e.oldValue == 0)) {
@@ -100,11 +97,13 @@ public class HUD extends DraggableObject
                     xpUp.y = _hudXP.y;
                     mode.addSceneObject(xpUp, _hudXPParent);
                 }
-                _currentLevel = Logic.levelFromXp(Number(e.newValue));
+                _currentLevel = ClientContext.model.level;//Logic.levelGivenCurrentXpAndInvites(e.newValue, ClientContext.model.invites);
+
+//                Logic.levelFromXp(Number(e.newValue));
 
                 showXP(ClientContext.ourPlayerId);
-                oldLevel = Logic.levelFromXp(Number(e.oldValue));
-                newLevel = Logic.levelFromXp(Number(e.newValue));
+                oldLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.oldValue), ClientContext.model.invites);
+                newLevel = Logic.levelGivenCurrentXpAndInvites(Number(e.newValue), ClientContext.model.invites);
 
                 if (newLevel > oldLevel && newLevel >= 2 && e.oldValue > 0) {
                     ClientContext.controller.handleNewLevel(newLevel);
@@ -191,8 +190,11 @@ public class HUD extends DraggableObject
 
             default:
         }
-
     }
+//    protected function handleRoomPropChanged (e :PropertyChangedEvent) :void
+//    {
+//
+//    }
 
     public function findSafely (name :String) :DisplayObject
     {

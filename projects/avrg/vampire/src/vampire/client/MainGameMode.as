@@ -177,13 +177,13 @@ public class MainGameMode extends AppMode
             handlePlayerLeft);
 
         //Create the overlay for individual avatars
-        ClientContext.avatarOverlay = new VampireAvatarHUDOverlay(ClientContext.ctrl);
-        addSceneObject(ClientContext.avatarOverlay, _spriteLayerLowPriority);
+        _avatarOverlay = new VampireAvatarHUDOverlay(ClientContext.ctrl);
+        addSceneObject(_avatarOverlay, layerLowPriority);
 
         //Add the main HUD
         _hud = new HUD();
-        addSceneObject(_hud, modeSprite);
-        ClientContext.hud = _hud;
+        addSceneObject(_hud, layerLowPriority);
+//        ClientContext.hud = _hud;
 
         //Make sure we start the game standing, not dancing or feeding etc.
         ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
@@ -394,16 +394,16 @@ public class MainGameMode extends AppMode
         return getObjectNamed(HUD.NAME) as HUD;
     }
 
-    public function get avatarOverlay () :VampireAvatarHUDOverlay
-    {
-        return getObjectNamed(VampireAvatarHUDOverlay.NAME) as VampireAvatarHUDOverlay;
-    }
+//    public function get avatarOverlay () :VampireAvatarHUDOverlay
+//    {
+//        return getObjectNamed(VampireAvatarHUDOverlay.NAME) as VampireAvatarHUDOverlay;
+//    }
 
     public function get layerLowPriority () :Sprite
     {
         return _spriteLayerLowPriority;
     }
-    
+
     public function get layerMediumPriority () :Sprite
     {
         return _spriteLayerMedPriority;
@@ -414,12 +414,18 @@ public class MainGameMode extends AppMode
         return _spriteLayerHighPriority;
     }
 
+    public function get avatarOverlay () :VampireAvatarHUDOverlay
+    {
+        return _avatarOverlay;
+    }
+
 
 
     protected var _hud :HUD;
     protected var _feedbackMessageQueue :Array = new Array();
     protected var _clientAvatar :ClientAvatar;
     protected var _feedingGameClient :FeedingClient;
+    protected var _avatarOverlay :VampireAvatarHUDOverlay;
 
     //Layer the sprites for allowing popup messages over and under the feeding game
     protected var _spriteLayerFeedingGame :Sprite = new Sprite();

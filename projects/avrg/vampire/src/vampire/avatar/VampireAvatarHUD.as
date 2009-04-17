@@ -177,7 +177,7 @@ public class VampireAvatarHUD extends AvatarHUD
         _feedButton.registerButtonListener(MouseEvent.CLICK, function (...ignored) :void {
             ClientContext.controller.handleSendFeedRequest(playerId);
 
-            ClientContext.avatarOverlay.setDisplayMode(VampireAvatarHUDOverlay.DISPLAY_MODE_OFF);
+            ClientContext.gameMode.avatarOverlay.setDisplayMode(VampireAvatarHUDOverlay.DISPLAY_MODE_OFF);
         });
 
 
@@ -475,10 +475,12 @@ public class VampireAvatarHUD extends AvatarHUD
             }
         }
 
-        var isPlayerPartOfLineage :Boolean =
-            ClientContext.model.lineage.isMemberOfLineage(ClientContext.ourPlayerId);
+        var isPlayerPartOfLineage :Boolean = ClientContext.model.lineage.isMemberOfLineage(ClientContext.ourPlayerId);
+
         var isAvatarPartOfLineage :Boolean =
-            ClientContext.model.lineage.isMemberOfLineage(playerId);
+            ClientContext.gameMode.roomModel.getLineage(playerId) != null &&
+            ClientContext.gameMode.roomModel.getLineage(playerId).getSireId(playerId) != 0;
+            //ClientContext.model.lineage.isMemberOfLineage(playerId);
 
 //        trace("setDisplayModeSelectableForFeed");
 //

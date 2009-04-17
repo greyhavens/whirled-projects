@@ -130,9 +130,9 @@ public class Tutorial extends AppMode
 
         ClientContext.gameMode.ctx.mainLoop.addUpdatable(this);
 
-        ClientContext.gameMode.modeSprite.addChild(this.modeSprite);
+        ClientContext.gameMode.layerLowPriority.addChild(this.modeSprite);
 
-        //The first reticl starts in the middle
+        //The first reticle starts in the middle
         if(ClientContext.ctrl.local.getRoomBounds()[0] > ClientContext.ctrl.local.getPaintableArea().width) {
             _lastTargetLocationGlobal.x = ClientContext.ctrl.local.getPaintableArea().width/2;
             _lastTargetLocationGlobal.y = ClientContext.ctrl.local.getPaintableArea().height/2;
@@ -338,7 +338,7 @@ public class Tutorial extends AppMode
 
         var sceneObjectName :String = "target: " + buttonName;
 
-        var targetDisplayObject :DisplayObject = ClientContext.hud.findSafely(buttonName);
+        var targetDisplayObject :DisplayObject = ClientContext.gameMode.hud.findSafely(buttonName);
         var targetReticle :SceneObject = createTargetSceneObject(sceneObjectName);
 
 
@@ -397,7 +397,7 @@ public class Tutorial extends AppMode
 
     protected function updateAvatarsWithFeedButtons () :void
     {
-        for each (var avhud :VampireAvatarHUD in ClientContext.avatarOverlay.avatars) {
+        for each (var avhud :VampireAvatarHUD in ClientContext.gameMode.avatarOverlay.avatars) {
 
             var sceneObjectName :String = "target:feed " + avhud.playerId;
             var targetReticle :SceneObject = getObjectNamed(sceneObjectName) as SceneObject;
