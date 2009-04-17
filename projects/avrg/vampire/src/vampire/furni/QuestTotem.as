@@ -3,9 +3,6 @@ package vampire.furni {
 import com.threerings.util.WeakReference;
 import com.whirled.FurniControl;
 
-import flash.display.MovieClip;
-import flash.events.MouseEvent;
-
 public class QuestTotem
 {
     public function QuestTotem (ctrl :FurniControl, totemType :String)
@@ -18,11 +15,8 @@ public class QuestTotem
 
     public function showActivityPanel () :void
     {
-        if (_clickCallbackRef != null) {
-            var callback :Function = _clickCallbackRef.get() as Function;
-            if (callback != null) {
-                callback(_totemType, _ctrl.getMyEntityId());
-            }
+        if (_clickCallback != null) {
+            _clickCallback(_totemType, _ctrl.getMyEntityId());
         }
     }
 
@@ -39,12 +33,12 @@ public class QuestTotem
 
     protected function setClickCallback (clickCallback :Function) :void
     {
-        _clickCallbackRef = new WeakReference(clickCallback);
+        _clickCallback = clickCallback;
     }
 
     protected var _ctrl :FurniControl;
     protected var _totemType :String;
-    protected var _clickCallbackRef :WeakReference;
+    protected var _clickCallback :Function;
 }
 
 }
