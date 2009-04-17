@@ -13,10 +13,8 @@ import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
-import flash.geom.Point;
 import flash.text.TextField;
 
-import vampire.data.VConstants;
 import vampire.net.messages.LoadBalancingMsg;
 
 /**
@@ -43,8 +41,8 @@ public class LoadBalancerClient extends SceneObject
 
         var relocationText :TextField = _panel["relocation_text"] as TextField;
         registerListener(relocationText, MouseEvent.CLICK, function (...ignored) :void {
-            var loc :Point = _ctrl.local.locationToPaintable(0.5, 0, 0);
-            addTask(LocationTask.CreateEaseOut(loc.x, _panel.height / 2, 0.5));
+            var targetX :int = _ctrl.local.getPaintableArea().width / 2;
+            addTask(LocationTask.CreateEaseOut(targetX, _panel.height / 2, 0.5));
         });
         relocationText.text = "Click to hunt elsewhere";
 
