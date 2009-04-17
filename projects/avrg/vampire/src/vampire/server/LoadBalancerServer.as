@@ -3,6 +3,7 @@ package vampire.server
 import com.threerings.util.HashMap;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
+import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.tasks.FunctionTask;
 import com.whirled.contrib.simplegame.tasks.RepeatingTask;
@@ -66,7 +67,7 @@ public class LoadBalancerServer extends SimObject
                     if (_server.isPlayer(playerId)) {
                         var player :PlayerData = _server.getPlayer(playerId);
                         log.debug("Sending " + player.name + " " + roomInfoMessage);
-                        player.ctrl.sendMessage(LoadBalancingMsg.NAME, bytes);
+                        PlayerSubControlServer(player.ctrl).sendMessage(LoadBalancingMsg.NAME, bytes);
                     }
                 }
                 catch(err :Error) {

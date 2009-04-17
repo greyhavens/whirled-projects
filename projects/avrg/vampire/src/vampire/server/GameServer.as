@@ -3,6 +3,7 @@
 
 package vampire.server {
 
+import com.threerings.util.ClassUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControlEvent;
@@ -23,35 +24,41 @@ public class GameServer extends ObjectDB
     {
         trace("Vampire Server initializing...");
         log.info("Vampire Server initializing...");
-        if(ServerContext.ctrl == null) {
+        if(ServerContext.ctrl != null) {
             log.error("AVRServerGameControl should of been initialized already");
-            return;
+            ServerContext.server = this;
+
+            _ctrl = ServerContext.ctrl;
+
+            registerListener(_ctrl.game, AVRGameControlEvent.PLAYER_JOINED_GAME, playerJoinedGame);
+            registerListener(_ctrl.game, AVRGameControlEvent.PLAYER_QUIT_GAME, playerQuitGame);
+            registerListener(_ctrl.game, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
+
+
+    //        ServerContext.lineage = new LineageServer2(this);
+            addObject(new LineageServer(this));
+
+    //        addObject(new LineageServer2(null));
+
+            //Tim's bloodbond game server
+            FeedingServer.init(_ctrl);
+
+            //Add the room population updater
+            addObject(new LoadBalancerServer(this));
+
+            //Add the feeding leaderboard server
+            addObject(new LeaderBoardServer(_ctrl.props, _ctrl.game.props));
+//            return;
+
+            //Start the ticker
+            _startTime = getTimer();
+            _lastTickTime = _startTime;
+            setInterval(tick, SERVER_TICK_UPDATE_MILLISECONDS);
         }
-        ServerContext.server = this;
-
-        _ctrl = ServerContext.ctrl;
-
-        registerListener(_ctrl.game, AVRGameControlEvent.PLAYER_JOINED_GAME, playerJoinedGame);
-        registerListener(_ctrl.game, AVRGameControlEvent.PLAYER_QUIT_GAME, playerQuitGame);
-        registerListener(_ctrl.game, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
-
-        _startTime = getTimer();
-        _lastTickTime = _startTime;
-        setInterval(tick, SERVER_TICK_UPDATE_MILLISECONDS);
-
-//        ServerContext.lineage = new LineageServer2(this);
-        addObject(new LineageServer(this));
-
-//        addObject(new LineageServer2(null));
-
-        //Tim's bloodbond game server
-        FeedingServer.init(_ctrl);
-
-        //Add the room population updater
-        addObject(new LoadBalancerServer(this));
-
-        //Add the feeding leaderboard server
-        addObject(new LeaderBoardServer(_ctrl.props, _ctrl.game.props));
+        else {
+            log.error(ClassUtil.tinyClassName(GameServer) + ": no AVRServerGameControl!!");
+            log.error("Are we running locally???");
+        }
 
     }
 
@@ -252,6 +259,11 @@ public class GameServer extends ObjectDB
     public function get rooms () :HashMap
     {
         return _rooms;
+    }
+
+    public function get players () :HashMap
+    {
+        return _players;
     }
 
 

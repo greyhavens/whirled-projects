@@ -5,11 +5,16 @@ import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
 import com.whirled.contrib.simplegame.ObjectMessage;
+import com.whirled.contrib.simplegame.tasks.FunctionTask;
+import com.whirled.contrib.simplegame.tasks.RepeatingTask;
+import com.whirled.contrib.simplegame.tasks.SerialTask;
+import com.whirled.contrib.simplegame.tasks.TimedTask;
 
 import flash.utils.ByteArray;
 
 import vampire.data.Codes;
 import vampire.data.Lineage;
+import vampire.data.VConstants;
 
 
 public class LineageServer extends Lineage
@@ -17,8 +22,33 @@ public class LineageServer extends Lineage
     public function LineageServer(vserver :GameServer)
     {
         _vserver = vserver;
+
+        addTask(new RepeatingTask(new SerialTask(
+                                            new TimedTask(10),
+                                            new FunctionTask(checkPlayersNames))));
+
+
+
+
 //        registerListener(vserver.control.game, AVRGameControlEvent.PLAYER_JOINED_GAME,
 //            playerJoinedGame);
+    }
+    protected function checkPlayersNames () :void
+    {
+        _vserver.players.forEach(function (playerId :int, player :PlayerData) :void {
+            if (player.name != getPlayerName(playerId)) {
+                setPlayerName(playerId, player.name);
+                _playerIdsResendLineage.add(playerId);
+
+                //Resend the lineage to the sire and grandsire.
+                for each (var sire :int in getAllSiresAndGrandSires(playerId, 2)) {
+                    _playerIdsResendLineage.add(sire);
+                }
+                for each (var child :int in getAllDescendents(playerId, null, 2)) {
+                    _playerIdsResendLineage.add(child);
+                }
+            }
+        });
     }
 
 //    protected function playerJoinedGame (evt :AVRGameControlEvent) :void
@@ -73,6 +103,42 @@ public class LineageServer extends Lineage
             }
         }
         _playerIdsResendLineage.add(player.playerId);
+
+        //Resend the lineage to the sire and grandsire.
+        for each (var sire :int in getAllSiresAndGrandSires(player.playerId, 2)) {
+            _playerIdsResendLineage.add(sire);
+        }
+        for each (var child :int in getAllDescendents(player.playerId, null, 2)) {
+            _playerIdsResendLineage.add(child);
+        }
+        recursivelyLoadSires(player.playerId);
+    }
+
+    protected function recursivelyLoadSires (playerId :int) :void
+    {
+        if (playerId == VConstants.UBER_VAMP_ID) {
+            return;
+        }
+
+        if (playerId == 0) {
+            return;
+        }
+
+        var sireId :int = getSireId(playerId);
+
+        if (sireId == 0) {
+            //There's no sire registered.  Let's load the offline props and check.
+            if (_vserver.isPlayer(playerId)) {
+                return;//Stop here, since the online player has no sire.
+            }
+            else {
+                loadOfflinePlayer(playerId);
+            }
+        }
+        else {
+            recursivelyLoadSires(sireId);
+        }
+
     }
 
     /**
@@ -93,9 +159,11 @@ public class LineageServer extends Lineage
     */
     override protected function update(dt:Number) :void
     {
+//        var playerLineageSentToRoom :HashSet = new HashSet();
+
         _playerIdsResendLineage.forEach(function (playerId :int) :void {
             if (_vserver.isPlayer(playerId)) {
-                var lineage :Lineage = getSubLineage(playerId, 1, 2);
+                var lineage :Lineage = getSubLineage(playerId, -1, 2);
                 log.debug("Setting into " + _vserver.getPlayer(playerId).name+ "'s lineage", "playerId", playerId,
                     "lineage", lineage);
                 var bytes :ByteArray = lineage.toBytes();
@@ -104,8 +172,6 @@ public class LineageServer extends Lineage
                     _vserver.getPlayer(playerId).room.ctrl.props.setIn(
                         Codes.ROOM_PROP_PLAYER_LINEAGE, playerId, bytes);
                 }
-//                var msg :LineageMsg = new LineageMsg(playerId, lineage);
-//                _vserver.getPlayer(playerId).ctrl.sendMessage(LineageMsg.NAME, msg.toBytes());
             }
         });
         _playerIdsResendLineage.clear();
@@ -151,11 +217,13 @@ public class LineageServer extends Lineage
 
                 _playersLoadedFromDB.add(playerId);
                 log.debug("loadOfflinePlayer", "playerId", playerId, "in offline props");
-                setPlayerSire(playerId, sireId);
                 setPlayerName(playerId, name);
+                setPlayerSire(playerId, sireId);
                 for each (var progenyId :int in progenyIds) {
                     setPlayerSire(progenyId, playerId);
                 }
+
+                recursivelyLoadSires(sireId);
 
                 offlinePlayerFinishedLoading(playerId);
 
@@ -175,6 +243,7 @@ public class LineageServer extends Lineage
     {
         log.debug("offlinePlayerFinishedLoading", "playerId", playerId);
         log.debug("offlinePlayerFinishedLoading", "lineage", this);
+        _playersLoadedFromDB.add(playerId);
         if (isVisibleToOnlinePlayer(playerId)) {
             loadOfflinePlayer(getSireId(playerId));
 
@@ -186,6 +255,9 @@ public class LineageServer extends Lineage
         //Resend the lineage to the sire and grandsire.
         for each (var sire :int in getAllSiresAndGrandSires(playerId, 2)) {
             _playerIdsResendLineage.add(sire);
+        }
+        for each (var child :int in getAllDescendents(playerId, null, 2)) {
+            _playerIdsResendLineage.add(child);
         }
     }
 

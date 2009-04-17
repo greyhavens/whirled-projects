@@ -7,6 +7,7 @@ import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
+import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.simplegame.ObjectMessage;
 import com.whirled.contrib.simplegame.net.Message;
 
@@ -341,17 +342,18 @@ public class ServerLogic
 //
 //    }
 
-    protected static function increaseLevel (player :PlayerData) :void
+    public static function increaseLevel (player :PlayerData) :void
     {
+        trace("increaseLevel from " + player.level + " to " + (player.level + 1));
         var xpNeededForNextLevel :Number = Logic.xpNeededForLevel(player.level + 1);
-        log.debug("xpNeededForNextLevel" + xpNeededForNextLevel);
+        log.debug(" xpNeededForNextLevel" + xpNeededForNextLevel);
         var missingXp :Number = xpNeededForNextLevel - player.xp;
-        log.debug("missingXp" + missingXp);
+        log.debug(" missingXp" + missingXp);
         addXP(player.playerId, missingXp);
 //        awardSiresXpEarned(player, missingXp);
     }
 
-    protected static function decreaseLevel (player :PlayerData) :void
+    public static function decreaseLevel (player :PlayerData) :void
     {
         if (player.level > 1) {
             var xpNeededForCurrentLevel :int = Logic.xpNeededForLevel(player.level);
@@ -372,16 +374,20 @@ public class ServerLogic
     {
          if (ServerContext.server.isPlayer(playerId)) {
              var player :PlayerData = ServerContext.server.getPlayer(playerId);
-            log.info("addXP", "current xp=", player.xp);
-
-             var currentLevel :int = Logic.levelGivenCurrentXpAndInvites(player.xp, player.invites);
-
-             var tempxp :Number = player.xp;
-             tempxp += bonus;
-             tempxp = Math.max(tempxp, 0);
-             var newLevel :int = Logic.levelGivenCurrentXpAndInvites(tempxp, player.invites);
-             tempxp = Math.min(tempxp, Logic.maxXPGivenXPAndInvites(tempxp, player.invites));
-             player.xp = tempxp;
+             trace("adding " + bonus + "xp");
+             trace(" before xp=" + player.xp);
+             player.xp = player.xp + bonus;
+             trace(" after xp=" + player.xp);
+//            log.info("   addXP", "current xp=", player.xp + ", bonus=" + bonus);
+//
+//             var currentLevel :int = player.level;//Logic.levelGivenCurrentXpAndInvites(player.xp, player.invites);
+//
+//             var tempxp :Number = player.xp;
+//             tempxp += bonus;
+//             tempxp = Math.max(tempxp, 0);
+//             var newLevel :int = Logic.levelGivenCurrentXpAndInvites(tempxp, player.invites);
+//             tempxp = Math.min(tempxp, Logic.maxXPGivenXPAndInvites(tempxp, player.invites));
+//             player.xp = tempxp;
 
         }
         else {
@@ -518,10 +524,10 @@ public class ServerLogic
     {
         log.debug(msg);
         if (msg.isFemale) {
-            player.ctrl.awardPrize(Trophies.BASIC_AVATAR_FEMALE);
+            PlayerSubControlServer(player.ctrl).awardPrize(Trophies.BASIC_AVATAR_FEMALE);
         }
         else {
-            player.ctrl.awardPrize(Trophies.BASIC_AVATAR_MALE);
+            PlayerSubControlServer(player.ctrl).awardPrize(Trophies.BASIC_AVATAR_MALE);
         }
         player.ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, 1);
     }
@@ -676,7 +682,7 @@ public class ServerLogic
                                                                  player.playerId,
                                                                  true);
 
-            player.ctrl.sendMessage(FeedConfirmMsg.NAME, feedConfirm.toBytes());
+            PlayerSubControlServer(player.ctrl).sendMessage(FeedConfirmMsg.NAME, feedConfirm.toBytes());
 
 //            log.debug("adding to game");
 //            //Add ourselves to a game.  We'll check this later, when we arrive at our location
@@ -703,7 +709,7 @@ public class ServerLogic
                 var preyPlayer :PlayerData = getPlayer(e.targetPlayer);
                 if (preyPlayer != null) {
                     log.debug(player.name + " is asking " + preyPlayer.name + " to feed");
-                    preyPlayer.ctrl.sendMessage(e.name, e.toBytes());
+                    PlayerSubControlServer(player.ctrl).sendMessage(e.name, e.toBytes());
                 }
             }
             else {//Not a player?  Walk to the target, on arrival we'll start up the lobby
@@ -758,7 +764,7 @@ public class ServerLogic
                                                                  requestingPlayer.playerId,
                                                                  e.isAllowedToFeed);
 
-            requestingPlayer.ctrl.sendMessage(FeedConfirmMsg.NAME, feedConfirm.toBytes());
+            PlayerSubControlServer(requestingPlayer.ctrl).sendMessage(FeedConfirmMsg.NAME, feedConfirm.toBytes());
         }
         else {
             log.error("handleFeedConfirmMessage", "requestingPlayer", requestingPlayer);
@@ -930,7 +936,7 @@ public class ServerLogic
                 var msg :MovePredIntoPositionMsg = new MovePredIntoPositionMsg(
                     player.playerId, player.targetId, predLocIndex == 0, predLocIndex, targetLocation);
 
-               player.ctrl.sendMessage(msg.name, msg.toBytes());
+               PlayerSubControlServer(player.ctrl).sendMessage(msg.name, msg.toBytes());
                break;
 
             case VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION:

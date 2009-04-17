@@ -9,6 +9,7 @@ import com.threerings.util.HashMap;
 import com.threerings.util.Hashable;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameRoomEvent;
+import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.avrg.RoomSubControlServer;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.tasks.FunctionTask;
@@ -73,7 +74,7 @@ public class Room extends SimObject
                 var player :PlayerData = getPlayer(playerId);
                 if (player != null) {
                     log.debug("Sending " + player.name + " room name request");
-                    player.ctrl.sendMessage(RoomNameMsg.NAME, new RoomNameMsg().toBytes());
+                    PlayerSubControlServer(player.ctrl).sendMessage(RoomNameMsg.NAME, new RoomNameMsg().toBytes());
                 }
             }
         }

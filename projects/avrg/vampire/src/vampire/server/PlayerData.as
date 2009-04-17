@@ -8,6 +8,7 @@ import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
+import com.whirled.avrg.PlayerSubControlBase;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.EventHandlerManager;
 
@@ -28,7 +29,7 @@ import vampire.data.VConstants;
 public class PlayerData extends EventHandlerManager
     implements Hashable
 {
-    public function PlayerData (ctrl :PlayerSubControlServer)
+    public function PlayerData (ctrl :PlayerSubControlBase)
     {
         if (ctrl == null) {
             log.error("Bad! PlayerData(null).  What happened to the PlayerSubControlServer?  Expect random failures everywhere.");
@@ -105,9 +106,18 @@ public class PlayerData extends EventHandlerManager
         _feedback.push(msg);
     }
 
-    public function get ctrl () :PlayerSubControlServer
+    public function get ctrl () :PlayerSubControlBase
     {
         return _ctrl;
+    }
+
+    /**
+    * For debugging purposes have both sctrl and ctrl.
+    * That way I can run PlayerData instances on the client for testing.
+    */
+    public function get sctrl () :PlayerSubControlServer
+    {
+        return _ctrl as PlayerSubControlServer;
     }
 
     public function get playerId () :int
@@ -160,7 +170,7 @@ public class PlayerData extends EventHandlerManager
 
     public function set xp (newxp :Number) :void
     {
-        _propsUndater.put(Codes.PLAYER_PROP_XP, newxp);//Math.min(newxp, Logic.maxXPGivenXPAndInvites(newxp, invites)));
+        _propsUndater.put(Codes.PLAYER_PROP_XP, Logic.maxXPGivenXPAndInvites(newxp, invites));
     }
 
     public function set state (action :String) :void
@@ -295,6 +305,7 @@ public class PlayerData extends EventHandlerManager
     public function set invites (inv :int) :void
     {
         _propsUndater.put(Codes.PLAYER_PROP_INVITES, inv);
+        _propsUndater.put(Codes.PLAYER_PROP_XP, Logic.maxXPGivenXPAndInvites(xp, invites));
     }
 
     public function set targetLocation (location :Array) :void
@@ -526,12 +537,11 @@ public class PlayerData extends EventHandlerManager
 
     //Basic variables
     protected var _room :Room;
-    protected var _ctrl :PlayerSubControlServer;
+    protected var _ctrl :PlayerSubControlBase;
     protected var _playerId :int;
 
     //Non-persistant variables
     protected var _state :String;
-//    protected var _lineage :Lineage;
     protected var _targetId :int;
     protected var _targetLocation :Array;
     protected var _feedback :Array = [];

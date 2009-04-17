@@ -153,7 +153,7 @@ public class FeedingRecord extends EventCollecter
                     var msg :StartFeedingClientMsg = new StartFeedingClientMsg(playerId,
                         _gameServer.gameId);
 
-                    ServerContext.server.getPlayer(playerId).ctrl.sendMessage(
+                    ServerContext.server.getPlayer(playerId).sctrl.sendMessage(
                         StartFeedingClientMsg.NAME, msg.toBytes());
 //                    _room.getPlayer(playerId).ctrl.sendMessage("StartClient", _gameServer.gameId);
 //                    _room.getPlayer(playerId).ctrl.sendMessage("StartClient", _gameServer.gameId);
@@ -173,7 +173,7 @@ public class FeedingRecord extends EventCollecter
     {
         if (!_primaryPredMoved) {
             var primaryPred :PlayerData = _room.getPlayer(primaryPredatorId);
-            primaryPred.ctrl.sendMessage(MovePredAfterFeedingMsg.NAME,
+            primaryPred.sctrl.sendMessage(MovePredAfterFeedingMsg.NAME,
                 new MovePredAfterFeedingMsg().toBytes());
 //                VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING);
             _primaryPredMoved = true;
@@ -227,7 +227,7 @@ public class FeedingRecord extends EventCollecter
 
         log.debug("Sending start game message to client " + playerId + "=StartClient",
             _gameServer.gameId);
-        _room.getPlayer(playerId).ctrl.sendMessage("StartClient", _gameServer.gameId);
+        _room.getPlayer(playerId).sctrl.sendMessage("StartClient", _gameServer.gameId);
     }
 
     public function onGameStarted () :void
@@ -296,7 +296,7 @@ public class FeedingRecord extends EventCollecter
             if (!_primaryPredMoved && _room != null
                 && _room.getPlayer(primaryPredatorId) != null) {
                 var primaryPred :PlayerData = _room.getPlayer(primaryPredatorId);
-                primaryPred.ctrl.sendMessage(MovePredAfterFeedingMsg.NAME,
+                primaryPred.sctrl.sendMessage(MovePredAfterFeedingMsg.NAME,
                     new MovePredAfterFeedingMsg().toBytes());
 //                primaryPred.ctrl.sendMessage(VConstants.NAMED_EVENT_MOVE_PREDATOR_AFTER_FEEDING);
             }

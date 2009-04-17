@@ -138,11 +138,11 @@ public class LeaderBoardServer extends SimObject
                 });
                 //Create the name string from the players names ordered by individual scores
                 //
-                var lengthAllNames :int = 0;
-                for each (var playerId : int in playerIds) {
-                    var name :String = getPlayerName(playerId);
-                    lengthAllNames += name.length;
-                }
+//                var lengthAllNames :int = 0;
+//                for each (var playerId : int in playerIds) {
+//                    var name :String = getPlayerName(playerId);
+//                    lengthAllNames += name.length;
+//                }
                 var textFieldSize :int = 32;
                 var charsPerName :int = (textFieldSize - (playerIds.length - 1) * 2)
                                         / playerIds.length;
@@ -150,7 +150,6 @@ public class LeaderBoardServer extends SimObject
 
                 var nameString :String = "";
                 playerIds.forEach(function (playerId :int, ...ignored) :void {
-
                     nameString += getPlayerName(playerId).substr(0, charsPerName) + ", ";
                 })
                 //Chop the last comma
@@ -166,9 +165,6 @@ public class LeaderBoardServer extends SimObject
 
     protected function getPlayerName (playerId :int) :String
     {
-        if (localDebug) {
-            return "Player " + playerId;
-        }
         if (ServerContext.server.isPlayer(playerId)) {
             var name :String = ServerContext.server.getPlayer(playerId).name;
             return name;
@@ -203,7 +199,6 @@ public class LeaderBoardServer extends SimObject
     protected static function updateScoreTable (currentScores :Array, score :int, names :String,
         now :Number, scoreLifetime :Number, maxScores :int) :int
     {
-        var maxScore :int = 0;
         //Add the new score
         currentScores.push([score, names, now]);
 
@@ -227,9 +222,14 @@ public class LeaderBoardServer extends SimObject
         currentScores.splice(maxScores);
 
         //Return the highest score
+        var maxScore :int = 0;
         for each (var scoreData :Array in currentScores) {
             maxScore = Math.max(maxScore, scoreData[0]);
         }
+        for each (scoreData in currentScores) {
+            maxScore = Math.min(maxScore, scoreData[0]);
+        }
+
         return maxScore;
     }
 

@@ -1,6 +1,7 @@
 package vampire.server
 {
     import com.threerings.util.Log;
+    import com.whirled.avrg.PlayerSubControlServer;
 
 public class Trophies
 {
@@ -118,7 +119,6 @@ public class Trophies
                 doAward(player, PATRON_PREFIX + minionReq);
             }
         }
-
     }
 
     public static function checkInviteTrophies (player :PlayerData) :void
@@ -130,8 +130,6 @@ public class Trophies
         var inviteCount :int = player.invites;
 
         log.debug("checkInviteTrophies", "player", player.playerId, "inviteCount", inviteCount);
-
-
         for each(var inviteReq :int in INVITE_REQS) {
             if(inviteCount >= inviteReq) {
                 doAward(player, INVITE_PREFIX + inviteReq);
@@ -143,7 +141,9 @@ public class Trophies
     {
         if (!player.ctrl.holdsTrophy(trophy)) {
             log.debug("Awarding", "player", player.playerId, "trophy", trophy);
-            player.ctrl.awardTrophy(trophy);
+            if (player.sctrl != null) {
+                player.sctrl.awardTrophy(trophy);
+            }
         }
     }
 
