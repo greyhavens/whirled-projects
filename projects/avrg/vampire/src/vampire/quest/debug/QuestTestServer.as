@@ -36,8 +36,6 @@ class TestGameController extends OneRoomGameRoom
     override protected function finishInit () :void
     {
         super.finishInit();
-        _events.registerListener(_gameCtrl.game, MessageReceivedEvent.MESSAGE_RECEIVED,
-            onMsgReceived);
     }
 
     override public function shutdown () :void
@@ -50,19 +48,6 @@ class TestGameController extends OneRoomGameRoom
 
         super.shutdown();
     }
-
-    protected function onMsgReceived (e :MessageReceivedEvent) :void
-    {
-    }
-
-    override protected function playerLeft (playerId :int) :void
-    {
-        log.info("Player left server", "playerId", playerId);
-
-        ArrayUtil.removeFirst(_players, playerId);
-    }
-
-    protected var _players :Array = [];
 
     protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _timerMgr :TimerManager = new TimerManager();

@@ -94,15 +94,7 @@ public class MapView extends SceneObject
         _locMarker.x = button.x;
         _locMarker.y = button.y;
 
-        if (_activityView != null) {
-            _activityView.destroySelf();
-            _activityView = null;
-        }
-
-        _activityView = new LocationActivityView(loc);
-        _activityView.x = button.x + 20;
-        _activityView.y = button.y;
-        (this.db as AppMode).addSceneObject(_activityView, _map);
+        QuestClient.showActivityPanel(loc);
     }
 
     override public function get displayObject () :DisplayObject
@@ -112,72 +104,6 @@ public class MapView extends SceneObject
 
     protected var _map :MovieClip;
     protected var _locMarker :MovieClip;
-    protected var _activityView :LocationActivityView;
 }
 
-}
-
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import flash.display.Sprite;
-
-import vampire.quest.*;
-import vampire.quest.activity.*;
-import vampire.quest.client.*;
-
-import flash.text.TextField;
-import flash.display.SimpleButton;
-import com.threerings.flash.SimpleTextButton;
-import flash.events.MouseEvent;
-import flash.display.Graphics;
-import flash.display.DisplayObject;
-
-class LocationActivityView extends SceneObject
-{
-    public function LocationActivityView (loc :LocationDesc)
-    {
-        _loc = loc;
-
-        var layout :Sprite = new Sprite();
-        if (loc.activities.length == 0) {
-            var tf :TextField = TextBits.createText("Nothing to do here.", 1.2, 0, 0xffffff);
-            tf.x = -tf.width * 0.5;
-            layout.addChild(tf);
-
-        } else {
-            for each (var activity :ActivityDesc in loc.activities) {
-                var btn :SimpleButton = makeActivityButton(activity);
-                btn.x = -btn.width * 0.5;
-                btn.y = layout.height;
-                layout.addChild(btn);
-            }
-        }
-
-        layout.x = layout.width * 0.5;
-        layout.y = 0;
-        _sprite = new Sprite();
-        _sprite.addChild(layout);
-        var g :Graphics = _sprite.graphics;
-        g.beginFill(0);
-        g.drawRect(0, 0, _sprite.width, _sprite.height);
-        g.endFill();
-    }
-
-    protected function makeActivityButton (activity :ActivityDesc) :SimpleButton
-    {
-        var btn :SimpleButton = new SimpleTextButton(activity.displayName);
-        registerListener(btn, MouseEvent.CLICK,
-            function (...ignored) :void {
-                QuestClient.beginActivity(activity);
-            });
-        return btn;
-    }
-
-    override public function get displayObject () :DisplayObject
-    {
-        return _sprite;
-    }
-
-    protected var _loc :LocationDesc;
-
-    protected var _sprite :Sprite;
 }

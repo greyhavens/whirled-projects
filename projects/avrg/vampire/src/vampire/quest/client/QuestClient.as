@@ -57,23 +57,6 @@ public class QuestClient
             });
     }
 
-    protected static function checkQuestCompletion (...ignored) :void
-    {
-        for each (var quest :QuestDesc in ClientCtx.questData.activeQuests) {
-            if (quest.isComplete(ClientCtx.stats)) {
-                ClientCtx.questData.completeQuest(quest.id);
-            }
-        }
-    }
-
-    protected static function onQuestCompleted (e :PlayerQuestEvent) :void
-    {
-        var note :QuestCompletedNotification = new QuestCompletedNotification(e.quest);
-        note.x = (ClientCtx.mainLoop.topMode.modeSprite.width - note.width) * 0.5;
-        note.y = 15;
-        ClientCtx.mainLoop.topMode.addSceneObject(note);
-    }
-
     public static function beginActivity (activity :ActivityDesc) :void
     {
         if (activity.params.isLobbied) {
@@ -83,27 +66,18 @@ public class QuestClient
         }
     }
 
-    protected static function beginSpActivity (activity :ActivityDesc) :void
+    public static function showActivityPanel (loc :LocationDesc) :void
     {
-        switch (activity.type) {
-        case ActivityDesc.TYPE_CORRUPTION:
-            var feedingGame :FeedingClient = FeedingClient.create(FeedingClientSettings.spSettings(
-                "", 0,
-                Variant.CORRUPTION,
-                new PlayerFeedingData(),
-                function () :void {
-                    feedingGame.shutdown();
-                    feedingGame.parent.removeChild(feedingGame);
-                },
-                ClientCtx.questData,
-                ClientCtx.stats,
-                activity.params as BloodBloomActivityParams));
-            ClientCtx.mainLoop.topMode.modeSprite.addChild(feedingGame);
-            break;
+        hideActivityPanel();
+        _activityPanel = new ActivityPanel(loc);
+        ClientCtx.mainLoop.topMode.addSceneObject(_activityPanel);
+    }
 
-        default:
-            log.warning("Unrecognized activity type", "activity", activity);
-            break;
+    public static function hideActivityPanel () :void
+    {
+        if (_activityPanel != null) {
+            _activityPanel.destroySelf();
+            _activityPanel = null;
         }
     }
 
@@ -136,6 +110,47 @@ public class QuestClient
         return _resourcesLoaded;
     }
 
+    protected static function checkQuestCompletion (...ignored) :void
+    {
+        for each (var quest :QuestDesc in ClientCtx.questData.activeQuests) {
+            if (quest.isComplete(ClientCtx.stats)) {
+                ClientCtx.questData.completeQuest(quest.id);
+            }
+        }
+    }
+
+    protected static function onQuestCompleted (e :PlayerQuestEvent) :void
+    {
+        var note :QuestCompletedNotification = new QuestCompletedNotification(e.quest);
+        note.x = (ClientCtx.mainLoop.topMode.modeSprite.width - note.width) * 0.5;
+        note.y = 15;
+        ClientCtx.mainLoop.topMode.addSceneObject(note);
+    }
+
+    protected static function beginSpActivity (activity :ActivityDesc) :void
+    {
+        switch (activity.type) {
+        case ActivityDesc.TYPE_CORRUPTION:
+            var feedingGame :FeedingClient = FeedingClient.create(FeedingClientSettings.spSettings(
+                "", 0,
+                Variant.CORRUPTION,
+                new PlayerFeedingData(),
+                function () :void {
+                    feedingGame.shutdown();
+                    feedingGame.parent.removeChild(feedingGame);
+                },
+                ClientCtx.questData,
+                ClientCtx.stats,
+                activity.params as BloodBloomActivityParams));
+            ClientCtx.mainLoop.topMode.modeSprite.addChild(feedingGame);
+            break;
+
+        default:
+            log.warning("Unrecognized activity type", "activity", activity);
+            break;
+        }
+    }
+
     protected static function handshakeQuestTotems () :void
     {
         for each (var furniId :String in ClientCtx.gameCtrl.room.getEntityIds("furni")) {
@@ -151,8 +166,15 @@ public class QuestClient
     protected static function questTotemClicked (totemType :String, totemEntityId :String) :void
     {
         log.info("questTotemClicked", "totemType", totemType, "entityId", totemEntityId);
+        var loc :LocationDesc = Locations.getLocationByName(totemType);
+        if (loc == null) {
+            log.warning("No location for Quest Totem", "totemType", totemType);
+        } else {
+            showActivityPanel(loc);
+        }
     }
 
+    protected static var _activityPanel :ActivityPanel;
     protected static var _debugPanel :StatDebugPanel;
     protected static var _questPanel :QuestPanel;
 
