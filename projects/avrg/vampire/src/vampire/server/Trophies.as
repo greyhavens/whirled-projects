@@ -72,10 +72,8 @@ public class Trophies
         "multiplier10",
         "multiplier20",
         "multiplier30",
-        "multiplier40",
-        "multiplier80",
     ];
-    public static const MULTIPLIER_REQS :Array = [ 10, 20, 30, 40, 80 ];
+    public static const MULTIPLIER_REQS :Array = [ 10, 20, 30 ];
 
     // Awarded for collecting special blood strains
     //      - Apex Predator
