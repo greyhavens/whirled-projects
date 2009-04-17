@@ -3,8 +3,6 @@ package vampire.quest.client {
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.SimpleGame;
 
-import flash.display.Sprite;
-
 import vampire.feeding.FeedingClient;
 import vampire.feeding.FeedingClientSettings;
 import vampire.feeding.PlayerFeedingData;
@@ -29,6 +27,11 @@ public class QuestClient
         ClientCtx.rsrcs = simpleGame.ctx.rsrcs;
         ClientCtx.questData = questData;
         ClientCtx.stats = stats;
+
+        ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_COMPLETED,
+            function (e :PlayerQuestEvent) :void {
+                ClientCtx.mainLoop.topMode.addSceneObject(new QuestCompletedNotification(e.quest));
+            });
 
         // load resources
         ClientCtx.rsrcs.queueResourceLoad("swf", "map", { embeddedClass: SWF_MAP });
@@ -58,7 +61,12 @@ public class QuestClient
                 "", 0,
                 Variant.CORRUPTION,
                 new PlayerFeedingData(),
-                function () :void {},
+                function () :void {
+                    feedingGame.shutdown();
+                    feedingGame.parent.removeChild(feedingGame);
+                },
+                ClientCtx.questData,
+                ClientCtx.stats,
                 activity.params));
             ClientCtx.mainLoop.topMode.modeSprite.addChild(feedingGame);
             break;

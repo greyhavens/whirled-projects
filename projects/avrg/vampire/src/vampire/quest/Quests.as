@@ -14,7 +14,7 @@ public class Quests
         testQuest.name = "TestQuest";
         testQuest.displayName = "Monster Whacker";
         testQuest.description = "Go to the Battleground and kill 3 monsters";
-        makeCollectionRequirement(testQuest, "Monster", 3);
+        makeCollectionRequirement(testQuest, "monster_kills", 3);
         addQuest(testQuest);
     }
 

@@ -27,11 +27,11 @@ public class Locations
         battleground.activities.push(new ActivityDesc(
             ActivityDesc.TYPE_CORRUPTION,
             "Whack a small monster",
-            new CorruptionActivityParams(1, 1, 100, "Monster", 1)));
+            new CorruptionActivityParams(1, 1, "Small Monster", 100, "monster_kills", 1)));
         battleground.activities.push(new ActivityDesc(
             ActivityDesc.TYPE_CORRUPTION,
             "Whack a LARGE monster",
-            new CorruptionActivityParams(1, 5, 500, "Monster", 3)));
+            new CorruptionActivityParams(1, 5, "LARGE Monster", 500, "monster_kills", 3)));
     }
 
     public static function getLocationList () :Array
