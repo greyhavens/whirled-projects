@@ -68,9 +68,7 @@ public class HUD extends DraggableObject
 
     override protected function createDragger () :Dragger
     {
-        return new RoomDragger(ClientContext.ctrl, this.draggableObject, this.displayObject, function (...ignored) :void {
-            trace("HUD DRAGGED");
-        });
+        return new RoomDragger(ClientContext.ctrl, this.draggableObject, this.displayObject);
     }
 
     override public function get objectName () :String
