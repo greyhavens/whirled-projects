@@ -56,7 +56,7 @@ public class AvatarEndMovementNotifier
     {
         switch(key) {
 
-            case ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK:
+            case AvatarConstants.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK:
                 return setArrivedCallback as Object;
 
            default:
@@ -154,13 +154,6 @@ public class AvatarEndMovementNotifier
 
 
     protected var _events :EventHandlerManager = new EventHandlerManager();
-
-
-    /**
-    * Provide a function that takes as an argument another function.  We store the function
-    * argument and call it when we arrive a a destination.
-    */
-    public static const ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK :String = "ArrivedCallback";
 
 
     protected static const log :Log = Log.getLog(AvatarEndMovementNotifier);

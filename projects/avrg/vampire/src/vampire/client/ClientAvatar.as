@@ -14,7 +14,6 @@ package vampire.client
     import com.whirled.net.PropertyChangedEvent;
 
     import vampire.avatar.AvatarConstants;
-    import vampire.avatar.AvatarEndMovementNotifier;
     import vampire.data.Codes;
     import vampire.data.VConstants;
     import vampire.net.messages.MovePredAfterFeedingMsg;
@@ -102,7 +101,7 @@ public class ClientAvatar extends SimObject
         //so just to make sure, set our callback on the avatar to null
         if (_ctrl != null && _ctrl.isConnected()) {
             var setAvatarArrivedCallback :Function = _ctrl.room.getEntityProperty(
-                AvatarEndMovementNotifier.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
+                AvatarConstants.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
 
             if(setAvatarArrivedCallback != null) {
                 setAvatarArrivedCallback(null);
@@ -286,7 +285,7 @@ public class ClientAvatar extends SimObject
     {
         //Let's hear when the avatar arrived at a destination
         var setAvatarArrivedCallback :Function = _ctrl.room.getEntityProperty(
-            AvatarEndMovementNotifier.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
+            AvatarConstants.ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK, ClientContext.ourEntityId) as Function;
 
         if(setAvatarArrivedCallback != null) {
             setAvatarArrivedCallback(avatarArrivedAtDestination);

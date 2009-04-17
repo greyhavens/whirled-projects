@@ -6,6 +6,7 @@ public class AvatarConstants
     public static const FACE_UNLOCK_LEVEL :int = 20;
     public static const ENTITY_PROPERTY_IS_LEGAL_AVATAR :String = "IsLegalVampireAvatar";
     public static const ENTITY_PROPERTY_SET_PLAYER_LEVEL :String = "SetPlayerLevel";
+    public static const ENTITY_PROPERTY_SET_AVATAR_ARRIVED_CALLBACK :String = "ArrivedCallback";
 }
 
 }
