@@ -22,9 +22,6 @@ public class QuestDesc
     // function isCompleted (stats :PlayerQuestStats) :Boolean
     public var isCompletedFn :Function;
 
-    // Costs
-    public var completionCost :int; // pay this much quest juice to finish
-
     // Rewards
     public var favorReward :int;
 

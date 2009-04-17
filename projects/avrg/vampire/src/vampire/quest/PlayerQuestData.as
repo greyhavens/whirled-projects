@@ -58,10 +58,18 @@ public class PlayerQuestData extends EventDispatcher
         return (dict != null && dict[questId] !== undefined);
     }
 
-    public function get activeQuests () :Array
+    public function get activeQuestIds () :Array
     {
         var quests :Dictionary = _props.get(PROP_ACTIVE_QUESTS) as Dictionary;
         return (quests != null ? Util.keys(quests) : []);
+    }
+
+    public function get activeQuests () :Array
+    {
+        return this.activeQuestIds.map(
+            function (questId :int, ...ignored) :QuestDesc {
+                return Quests.getQuest(questId);
+            });
     }
 
     public function set curLocation (locDesc :LocationDesc) :void

@@ -28,13 +28,10 @@ public class QuestClient
         ClientCtx.questData = questData;
         ClientCtx.stats = stats;
 
-        ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_COMPLETED,
-            function (e :PlayerQuestEvent) :void {
-                var note :QuestCompletedNotification = new QuestCompletedNotification(e.quest);
-                note.x = (ClientCtx.mainLoop.topMode.modeSprite.width - note.width) * 0.5;
-                note.y = 15;
-                ClientCtx.mainLoop.topMode.addSceneObject(note);
-            });
+        ClientCtx.stats.addEventListener(PlayerStatEvent.STAT_CHANGED, checkQuestCompletion);
+        ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_COMPLETED, onQuestCompleted);
+
+        checkQuestCompletion();
 
         // load resources
         ClientCtx.rsrcs.queueResourceLoad("swf", "map", { embeddedClass: SWF_MAP });
@@ -45,6 +42,23 @@ public class QuestClient
             function (err :String) :void {
                 log.error("Error loading resources: " + err);
             });
+    }
+
+    protected static function checkQuestCompletion (...ignored) :void
+    {
+        for each (var quest :QuestDesc in ClientCtx.questData.activeQuests) {
+            if (quest.isComplete(ClientCtx.stats)) {
+                ClientCtx.questData.completeQuest(quest.id);
+            }
+        }
+    }
+
+    protected static function onQuestCompleted (e :PlayerQuestEvent) :void
+    {
+        var note :QuestCompletedNotification = new QuestCompletedNotification(e.quest);
+        note.x = (ClientCtx.mainLoop.topMode.modeSprite.width - note.width) * 0.5;
+        note.y = 15;
+        ClientCtx.mainLoop.topMode.addSceneObject(note);
     }
 
     public static function beginActivity (activity :ActivityDesc) :void

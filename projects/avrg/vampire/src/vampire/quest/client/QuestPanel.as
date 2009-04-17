@@ -54,7 +54,7 @@ public class QuestPanel extends DraggableObject
                 removeQuest(e.questId);
             });
 
-        for each (var questId :int in ClientCtx.questData.activeQuests) {
+        for each (var questId :int in ClientCtx.questData.activeQuestIds) {
             addQuest(questId);
         }
     }
@@ -154,13 +154,6 @@ class ActiveQuestView extends SceneObject
         _tfStatus = new TextField();
         _sprite.addChild(_tfStatus);
 
-        _completeButton = new SimpleTextButton("Complete");
-        _sprite.addChild(_completeButton);
-        registerOneShotCallback(_completeButton, MouseEvent.CLICK,
-            function (...ignored) :void {
-                ClientCtx.questData.completeQuest(_questId);
-            });
-
         registerListener(ClientCtx.stats, PlayerStatEvent.STAT_CHANGED,
             function (statName :String) :void {
                 updateView();
@@ -183,18 +176,10 @@ class ActiveQuestView extends SceneObject
     {
         var desc :QuestDesc = this.questDesc;
 
-        if (desc.isComplete(ClientCtx.stats)) {
-            _completeButton.x = _tfName.x + _tfName.width + 10;
-            _completeButton.visible = true;
-            _tfStatus.visible = false;
-        } else {
-            var text :String = desc.description + " " + desc.getProgressText(ClientCtx.stats);
-            TextBits.initTextField(_tfStatus, text, 1.3, 0,
-                0xffffff);
-            _tfStatus.x = _tfName.x + _tfName.width + 5;
-            _tfStatus.visible = true;
-            _completeButton.visible = false;
-        }
+        var text :String = desc.description + " " + desc.getProgressText(ClientCtx.stats);
+        TextBits.initTextField(_tfStatus, text, 1.3, 0,
+            0xffffff);
+        _tfStatus.x = _tfName.x + _tfName.width + 5;
     }
 
     public function get questId () :int
@@ -207,5 +192,4 @@ class ActiveQuestView extends SceneObject
     protected var _sprite :Sprite;
     protected var _tfName :TextField;
     protected var _tfStatus :TextField;
-    protected var _completeButton :SimpleButton;
 }

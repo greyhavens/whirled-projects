@@ -8,6 +8,8 @@ import com.whirled.net.PropertySubControl;
 
 import flash.events.EventDispatcher;
 
+[Event(name="StatChanged", type="vampire.quest.PlayerStatEvent")]
+
 public class PlayerQuestStats extends EventDispatcher
 {
     public function PlayerQuestStats (props :PropertySubControl)
