@@ -73,8 +73,7 @@ public class LoadBalancerClient extends SceneObject
             log.error("activate", "_parent", _parent);
         }
 
-        var loc :Point = _ctrl.local.locationToPaintable(0.5, 0, 0);
-        x = loc.x;
+        x = _ctrl.local.getPaintableArea().width / 2;
         y = -92;
 
         if (_timeSinceLoadMessageSent >= MIN_TIME_BETWEEN_MESSAGES) {
