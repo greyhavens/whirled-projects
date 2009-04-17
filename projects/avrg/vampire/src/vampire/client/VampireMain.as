@@ -120,6 +120,9 @@ public class VampireMain extends Sprite
     [Embed(source="../../../rsrc/JUICE___.TTF", fontFamily="JuiceEmbedded")]
     public const JuiceEmbeddedFont:Class;
 
+    [Embed(source="../../../rsrc/ArnoPro-LightDisplay.otf", fontFamily="ArnoProLight")]
+    public const ArnoProLightEmbeddedFont:Class;
+
 }
 
 }
