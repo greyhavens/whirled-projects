@@ -117,9 +117,7 @@ public class Tutorial extends AppMode
     public function deactivateTutorial (...ignored) :void
     {
         ClientContext.gameMode.ctx.mainLoop.removeUpdatable(this);
-        if (ClientContext.gameMode.modeSprite.contains(this.modeSprite)) {
-            ClientContext.gameMode.modeSprite.removeChild(this.modeSprite);
-        }
+        ClientUtil.detach(this.modeSprite);
         resetTargets();
         _active = false;
     }
