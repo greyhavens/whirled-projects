@@ -5,10 +5,6 @@ import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
 import com.whirled.contrib.simplegame.ObjectMessage;
-import com.whirled.contrib.simplegame.tasks.FunctionTask;
-import com.whirled.contrib.simplegame.tasks.RepeatingTask;
-import com.whirled.contrib.simplegame.tasks.SerialTask;
-import com.whirled.contrib.simplegame.tasks.TimedTask;
 
 import flash.utils.ByteArray;
 
@@ -23,15 +19,22 @@ public class LineageServer extends Lineage
     {
         _vserver = vserver;
 
-        addTask(new RepeatingTask(new SerialTask(
-                                            new TimedTask(10),
-                                            new FunctionTask(checkPlayersNames))));
+//        addTask(new RepeatingTask(new SerialTask(
+//                                            new TimedTask(10),
+//                                            new FunctionTask(checkPlayersNames))));
 
 
 
 
 //        registerListener(vserver.control.game, AVRGameControlEvent.PLAYER_JOINED_GAME,
 //            playerJoinedGame);
+
+
+    }
+
+    public function resendPlayerLineage (playerId :int) :void
+    {
+        _playerIdsResendLineage.add(playerId);
     }
     protected function checkPlayersNames () :void
     {
@@ -128,7 +131,7 @@ public class LineageServer extends Lineage
 
         if (sireId == 0) {
             //There's no sire registered.  Let's load the offline props and check.
-            if (_vserver.isPlayer(playerId)) {
+            if (_vserver.isPlayer(playerId) || getPlayerName(sireId) != null) {
                 return;//Stop here, since the online player has no sire.
             }
             else {

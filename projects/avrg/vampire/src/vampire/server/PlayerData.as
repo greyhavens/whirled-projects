@@ -231,7 +231,7 @@ public class PlayerData extends EventHandlerManager
             try {
                 if (_room != null) {
                     _room.playerEntered(thisPlayer);
-//                    ServerContext.server.lineage.playerEnteredRoom(thisPlayer, _room);
+//                    ServerContext.server.lineage.resendPlayerLineage(thisPlayer.playerId);
                     thisPlayer.state = VConstants.PLAYER_STATE_DEFAULT;
                     ServerLogic.updateAvatarState(thisPlayer);
                 }

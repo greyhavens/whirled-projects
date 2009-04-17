@@ -709,7 +709,7 @@ public class ServerLogic
                 var preyPlayer :PlayerData = getPlayer(e.targetPlayer);
                 if (preyPlayer != null) {
                     log.debug(player.name + " is asking " + preyPlayer.name + " to feed");
-                    PlayerSubControlServer(player.ctrl).sendMessage(e.name, e.toBytes());
+                    preyPlayer.sctrl.sendMessage(e.name, e.toBytes());
                 }
             }
             else {//Not a player?  Walk to the target, on arrival we'll start up the lobby

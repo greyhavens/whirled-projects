@@ -38,8 +38,6 @@ public class GameServer extends ObjectDB
     //        ServerContext.lineage = new LineageServer2(this);
             addObject(new LineageServer(this));
 
-    //        addObject(new LineageServer2(null));
-
             //Tim's bloodbond game server
             FeedingServer.init(_ctrl);
 
@@ -48,7 +46,6 @@ public class GameServer extends ObjectDB
 
             //Add the feeding leaderboard server
             addObject(new LeaderBoardServer(_ctrl.props, _ctrl.game.props));
-//            return;
 
             //Start the ticker
             _startTime = getTimer();
