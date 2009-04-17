@@ -32,26 +32,10 @@ public class QuestClient
         ClientCtx.questData = questData;
         ClientCtx.stats = stats;
 
-        if (ClientCtx.gameCtrl.isConnected()) {
-            ClientCtx.gameCtrl.player.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM,
-                function (...ignored) :void {
-                    handshakeQuestTotems();
-                });
-
-            handshakeQuestTotems();
-        }
-
-        ClientCtx.stats.addEventListener(PlayerStatEvent.STAT_CHANGED, checkQuestCompletion);
-        ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_COMPLETED, onQuestCompleted);
-
-        checkQuestCompletion();
-
         // load resources
         ClientCtx.rsrcs.queueResourceLoad("swf", "map", { embeddedClass: SWF_MAP });
         ClientCtx.rsrcs.loadQueuedResources(
-            function () :void {
-                _resourcesLoaded = true;
-            },
+            onResourcesLoaded,
             function (err :String) :void {
                 log.error("Error loading resources: " + err);
             });
@@ -108,6 +92,25 @@ public class QuestClient
     public static function get isReady () :Boolean
     {
         return _resourcesLoaded;
+    }
+
+    protected static function onResourcesLoaded () :void
+    {
+        _resourcesLoaded = true;
+
+        if (ClientCtx.gameCtrl.isConnected()) {
+            ClientCtx.gameCtrl.player.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM,
+                function (...ignored) :void {
+                    handshakeQuestTotems();
+                });
+
+            handshakeQuestTotems();
+        }
+
+        ClientCtx.stats.addEventListener(PlayerStatEvent.STAT_CHANGED, checkQuestCompletion);
+        ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_COMPLETED, onQuestCompleted);
+
+        checkQuestCompletion();
     }
 
     protected static function checkQuestCompletion (...ignored) :void

@@ -1,6 +1,6 @@
 package vampire.furni {
 
-import com.threerings.util.WeakReference;
+import com.threerings.util.Log;
 import com.whirled.FurniControl;
 
 public class QuestTotem
@@ -16,7 +16,10 @@ public class QuestTotem
     public function showActivityPanel () :void
     {
         if (_clickCallback != null) {
+            log.info("showActivityPanel");
             _clickCallback(_totemType, _ctrl.getMyEntityId());
+        } else {
+            log.info("Not connected to the game; no activity panel will show.");
         }
     }
 
@@ -33,12 +36,17 @@ public class QuestTotem
 
     protected function setClickCallback (clickCallback :Function) :void
     {
+        log.info((clickCallback != null ? "connected to game" : "disconnected from game"),
+            "entityId", _ctrl.getMyEntityId());
+
         _clickCallback = clickCallback;
     }
 
     protected var _ctrl :FurniControl;
     protected var _totemType :String;
     protected var _clickCallback :Function;
+
+    protected static var log :Log = Log.getLog(QuestTotem);
 }
 
 }
