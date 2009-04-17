@@ -138,20 +138,30 @@ public class LeaderBoardServer extends SimObject
                 });
                 //Create the name string from the players names ordered by individual scores
                 //
-//                var lengthAllNames :int = 0;
-//                for each (var playerId : int in playerIds) {
-//                    var name :String = getPlayerName(playerId);
-//                    lengthAllNames += name.length;
-//                }
+                var lengthAllNames :int = 0;
+                for each (var playerId : int in playerIds) {
+                    var name :String = getPlayerName(playerId);
+                    lengthAllNames += name.length;
+                }
                 var textFieldSize :int = 32;
-                var charsPerName :int = (textFieldSize - (playerIds.length - 1) * 2)
-                                        / playerIds.length;
-                charsPerName = Math.max(charsPerName, VConstants.MAX_CHARS_IN_LINEAGE_NAME);
+
+                var charsAvailable :int = textFieldSize - (playerIds.length - 1) * 2;
 
                 var nameString :String = "";
-                playerIds.forEach(function (playerId :int, ...ignored) :void {
-                    nameString += getPlayerName(playerId).substr(0, charsPerName) + ", ";
-                })
+                if (charsAvailable >= lengthAllNames) {
+                    playerIds.forEach(function (playerId :int, ...ignored) :void {
+                        nameString += getPlayerName(playerId) + ", ";
+                    })
+                }
+                else {
+
+                    var charsPerName :int = (textFieldSize - (playerIds.length - 1) * 2)
+                                            / playerIds.length;
+                    charsPerName = Math.max(charsPerName, VConstants.MAX_CHARS_IN_LINEAGE_NAME);
+                    playerIds.forEach(function (playerId :int, ...ignored) :void {
+                        nameString += getPlayerName(playerId).substr(0, charsPerName) + ", ";
+                    })
+                }
                 //Chop the last comma
                 nameString = nameString.substr(0, nameString.length - 2);
                 updateScores(totalScore, nameString);
