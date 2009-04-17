@@ -216,7 +216,7 @@ public class BloodBloom extends FeedingClient
 
         if (ClientCtx.clientSettings.spOnly) {
             ClientCtx.variantSettings = Variant.getSettings(ClientCtx.clientSettings.spVariant);
-            ClientCtx.mainLoop.unwindToMode(new GameMode());
+            ClientCtx.mainLoop.unwindToMode(new LobbyMode(LobbyMode.LOBBY));
 
         } else {
             _events.registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);

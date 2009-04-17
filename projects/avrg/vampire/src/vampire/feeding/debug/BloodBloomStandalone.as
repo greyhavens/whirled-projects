@@ -51,15 +51,18 @@ public class BloodBloomStandalone extends Sprite
 
     protected function startGame () :void
     {
-        var settings :FeedingClientSettings = FeedingClientSettings.spSettings(
+        var game :FeedingClient = FeedingClient.create(FeedingClientSettings.spSettings(
             "Standalone Prey",
             Rand.nextIntRange(0, VConstants.UNIQUE_BLOOD_STRAINS, Rand.STREAM_COSMETIC),
             VARIANT,
             new PlayerFeedingData(),
-            function () :void { log.info("onGameComplete"); },
-            null);
+            function () :void {
+                game.shutdown();
+                game.parent.removeChild(game);
+            },
+            null));
 
-        addChild(new BloodBloom(settings));
+        addChild(game);
     }
 
     protected var _timerMgr :TimerManager = new TimerManager();

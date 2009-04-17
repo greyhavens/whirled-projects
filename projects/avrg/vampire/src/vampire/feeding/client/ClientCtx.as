@@ -18,6 +18,7 @@ import flash.utils.getTimer;
 import vampire.feeding.*;
 import vampire.feeding.net.*;
 import vampire.feeding.variant.VariantSettings;
+import vampire.quest.activity.CorruptionActivityParams;
 
 public class ClientCtx
 {
@@ -114,17 +115,23 @@ public class ClientCtx
 
     public static function get aiPreyName () :String
     {
-        return (clientSettings.spOnly ? clientSettings.spPreyName :
-            props.get(Props.AI_PREY_NAME) as String);
+        if (clientSettings.activityParams is CorruptionActivityParams) {
+            return CorruptionActivityParams(clientSettings.activityParams).preyName;
+        } else if (clientSettings.spOnly) {
+            return clientSettings.spPreyName;
+        } else {
+            return props.get(Props.AI_PREY_NAME) as String;
+        }
     }
 
     public static function get preyBloodType () :int
     {
         if (Constants.DEBUG_FORCE_SPECIAL_BLOOD_STRAIN) {
             return 0;
+        } else if (clientSettings.spOnly) {
+            return clientSettings.spPreyBloodStrain;
         } else {
-            return (clientSettings.spOnly ? clientSettings.spPreyBloodStrain :
-                props.get(Props.PREY_BLOOD_TYPE) as int);
+            return props.get(Props.PREY_BLOOD_TYPE) as int;
         }
     }
 

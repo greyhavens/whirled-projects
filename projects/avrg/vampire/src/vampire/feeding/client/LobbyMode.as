@@ -35,9 +35,11 @@ public class LobbyMode extends AppMode
     {
         super.setup();
 
-        registerListener(ClientCtx.props, PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
-        registerListener(ClientCtx.props, ElementChangedEvent.ELEMENT_CHANGED, onPropChanged);
-        registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
+        if (!ClientCtx.clientSettings.spOnly) {
+            registerListener(ClientCtx.props, PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
+            registerListener(ClientCtx.props, ElementChangedEvent.ELEMENT_CHANGED, onPropChanged);
+            registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
+        }
 
         _panelMovie = ClientCtx.instantiateMovieClip("blood", "popup_panel");
         _modeSprite.addChild(_panelMovie);
@@ -45,9 +47,12 @@ public class LobbyMode extends AppMode
         var contents :MovieClip = _panelMovie["draggable"];
 
         // Leaderboard is not used yet
-        var leaderboard :SceneObject = new LeaderBoardClient(contents["leaderboard"]);
-        leaderboard.visible = false;
-        addObject(leaderboard);
+        var leaderboardMovie :MovieClip = contents["leaderboard"];
+        leaderboardMovie.visible = false;
+        if (!ClientCtx.clientSettings.spOnly) {
+            var leaderboard :SceneObject = new LeaderBoardClient(leaderboardMovie);
+            addObject(leaderboard);
+        }
 
         // Make the lobby draggable
         addObject(new RoomDragger(ClientCtx.gameCtrl, contents, _panelMovie));
@@ -63,10 +68,10 @@ public class LobbyMode extends AppMode
         instructionsStrain.visible = false;
         instructionsCorruption.visible = false;
 
-        if (ClientCtx.playerData.timesPlayed >= Constants.MIN_GAMES_BEFORE_LEADERBOARD_SHOWN) {
+        if (!ClientCtx.clientSettings.spOnly &&
+            ClientCtx.playerData.timesPlayed >= Constants.MIN_GAMES_BEFORE_LEADERBOARD_SHOWN) {
             leaderboard.visible = true;
-        }
-        else if (this.isPreGameLobby && ClientCtx.playerData.timesPlayed == 0) {
+        } else if (this.isPreGameLobby && ClientCtx.playerData.timesPlayed == 0) {
             instructionsBasic.visible = true;
         } else if ((this.isPreGameLobby || Rand.nextBoolean(Rand.STREAM_COSMETIC)) &&
                    ClientCtx.playerCanCollectPreyStrain) {
@@ -91,7 +96,11 @@ public class LobbyMode extends AppMode
         registerListener(_startButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 if (_startButton.visible) {
-                    ClientCtx.msgMgr.sendMessage(new CloseLobbyMsg());
+                    if (ClientCtx.clientSettings.spOnly) {
+                        ClientCtx.mainLoop.unwindToMode(new GameMode());
+                    } else {
+                        ClientCtx.msgMgr.sendMessage(new CloseLobbyMsg());
+                    }
                 }
             });
 
@@ -314,7 +323,10 @@ public class LobbyMode extends AppMode
 
     protected function get isBloodBondForming () :Boolean
     {
-        return (this.isLobby && ClientCtx.allPlayerIds.length == 2 && !ClientCtx.preyIsAi);
+        return (!ClientCtx.clientSettings.spOnly &&
+                this.isLobby &&
+                ClientCtx.allPlayerIds.length == 2 &&
+                !ClientCtx.preyIsAi);
     }
 
     protected function onPropChanged (e :PropertyChangedEvent) :void
