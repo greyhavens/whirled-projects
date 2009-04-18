@@ -1,6 +1,5 @@
 package vampire.quest {
 
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.StringUtil;
 
 import vampire.Util;
@@ -10,34 +9,20 @@ public class LocationDesc
     // Unique name
     public var name :String;
 
-    // the set of locations connected to this one, and the costs to move to
-    // each of those locations
-    public var connectedLocs :Array = []; // Array<LocationConnection>
-
-    // the set of activities available at this Location
-    public var activities :Array = []; // Array<ActivityDesc>
+    // Cost to enter this location
+    public var cost :int;
 
     // flavor
     public var displayName :String;
 
-    public function LocationDesc (name :String, displayName :String)
+    // the set of activities available at this Location
+    public var activities :Array = []; // Array<ActivityDesc>
+
+    public function LocationDesc (name :String, displayName :String, cost :int)
     {
         this.name = name;
         this.displayName = displayName;
-    }
-
-    public function isConnectedTo (loc :LocationDesc) :Boolean
-    {
-        return (getMovementCost(loc) >= 0);
-    }
-
-    public function getMovementCost (dest :LocationDesc) :int
-    {
-        var lc :LocationConnection = ArrayUtil.findIf(connectedLocs,
-            function (lc :LocationConnection) :Boolean {
-                return lc.loc == dest;
-            });
-        return (lc != null ? lc.cost : -1);
+        this.cost = cost;
     }
 
     public function get id () :int

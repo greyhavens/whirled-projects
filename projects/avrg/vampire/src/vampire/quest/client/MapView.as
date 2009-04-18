@@ -48,10 +48,9 @@ public class MapView extends SceneObject
     {
         registerListener(getLocButton(loc), MouseEvent.CLICK,
             function (...ignored) :void {
-                var cost :int = ClientCtx.questData.curLocation.getMovementCost(loc);
-                if (cost >= 0 && cost <= ClientCtx.questData.questJuice) {
+                if (loc.cost >= 0 && loc.cost <= ClientCtx.questData.questJuice) {
                     ClientCtx.questData.curLocation = loc;
-                    ClientCtx.questData.questJuice -= cost;
+                    ClientCtx.questData.questJuice -= loc.cost;
                 }
             });
     }
@@ -62,26 +61,12 @@ public class MapView extends SceneObject
             var button :SimpleButton = getLocButton(loc);
             var available :Boolean = ClientCtx.questData.isAvailableLocation(loc);
             button.visible = available;
-            for each (var connectedLoc :LocationConnection in loc.connectedLocs) {
-                var connectionMovie :MovieClip = getConnectionView(loc, connectedLoc.loc);
-                connectionMovie.visible =
-                    (available && ClientCtx.questData.isAvailableLocation(connectedLoc.loc));
-            }
         }
     }
 
     protected function getLocButton (loc :LocationDesc) :SimpleButton
     {
         return _map["loc_" + loc.name];
-    }
-
-    protected function getConnectionView (a :LocationDesc, b :LocationDesc) :MovieClip
-    {
-        var view :MovieClip = _map[a.name + "_to_" + b.name];
-        if (view == null) {
-            view = _map[b.name + "_to_" + a.name];
-        }
-        return view;
     }
 
     protected function movedToLocation (loc :LocationDesc) :void

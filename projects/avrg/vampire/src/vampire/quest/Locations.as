@@ -12,16 +12,12 @@ public class Locations
         _inited = true;
 
         // create some dummy Locations
-        var homeBase :LocationDesc = new LocationDesc("HomeBase", "Home Base");
-        var battleground :LocationDesc = new LocationDesc("Battleground", "Battleground");
-        var dragons :LocationDesc = new LocationDesc("Dragons", "Here Be Dragons");
+        var homeBase :LocationDesc = new LocationDesc("HomeBase", "Home Base", 0);
+        var battleground :LocationDesc = new LocationDesc("Battleground", "Battleground", 10);
+        var dragons :LocationDesc = new LocationDesc("Dragons", "Here Be Dragons", 10);
         addLocation(homeBase);
         addLocation(battleground);
         addLocation(dragons);
-
-        makeTwoWayConnection("HomeBase", "Battleground", 10);
-        makeTwoWayConnection("Battleground", "Dragons", 10);
-        makeTwoWayConnection("HomeBase", "Dragons", 30);
 
         // add some activities
         battleground.activities.push(new ActivityDesc(
@@ -64,27 +60,6 @@ public class Locations
         if (!_inited) {
             throw new Error("Locations.init has not been called");
         }
-    }
-
-    protected static function makeTwoWayConnection (aName :String, bName :String, cost :int)
-        :void
-    {
-        var a :LocationDesc = getLocationByName(aName);
-        var b :LocationDesc = getLocationByName(bName);
-        if (a == null) {
-            throw new Error("Unrecognized Location [name=" + aName + "]");
-        }
-        if (b == null) {
-            throw new Error("Unrecognized Location [name=" + bName + "]");
-        }
-
-        if (a.isConnectedTo(b) || b.isConnectedTo(a)) {
-            throw new Error(
-                "Locations are already connected [aName=" + aName + " bName=" + bName + "]");
-        }
-
-        a.connectedLocs.push(new LocationConnection(b, cost));
-        b.connectedLocs.push(new LocationConnection(a, cost));
     }
 
     protected static function validate (desc :LocationDesc, validateNotDuplicate :Boolean) :Boolean

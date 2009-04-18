@@ -41,6 +41,11 @@ public class QuestClient
             });
     }
 
+    public static function shutdown () :void
+    {
+        handshakeQuestTotems(false);
+    }
+
     public static function beginActivity (activity :ActivityDesc) :void
     {
         if (activity.params.isLobbied) {
@@ -101,10 +106,10 @@ public class QuestClient
         if (ClientCtx.gameCtrl.isConnected()) {
             ClientCtx.gameCtrl.player.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM,
                 function (...ignored) :void {
-                    handshakeQuestTotems();
+                    handshakeQuestTotems(true);
                 });
 
-            handshakeQuestTotems();
+            handshakeQuestTotems(true);
         }
 
         ClientCtx.stats.addEventListener(PlayerStatEvent.STAT_CHANGED, checkQuestCompletion);
@@ -154,14 +159,14 @@ public class QuestClient
         }
     }
 
-    protected static function handshakeQuestTotems () :void
+    protected static function handshakeQuestTotems (connect :Boolean) :void
     {
         for each (var furniId :String in ClientCtx.gameCtrl.room.getEntityIds("furni")) {
             var setTotemClickCallback :Function = ClientCtx.gameCtrl.room.getEntityProperty(
                 FurniConstants.ENTITY_PROP_SET_CLICK_CALLBACK, furniId) as Function;
             if (setTotemClickCallback != null) {
                 log.info("Found Quest Totem", "entityId", furniId);
-                setTotemClickCallback(questTotemClicked);
+                setTotemClickCallback(connect ? questTotemClicked : null);
             }
         }
     }
