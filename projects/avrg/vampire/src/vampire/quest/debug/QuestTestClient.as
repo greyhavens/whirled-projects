@@ -20,7 +20,8 @@ public class QuestTestClient extends Sprite
     {
         log.info("Starting QuestTestClient");
 
-        _events.registerListener(this, Event.UNLOAD, onQuit);
+        //_events.registerListener(this, Event.UNLOAD, onQuit);
+        _events.registerListener(this, Event.REMOVED_FROM_STAGE, onQuit);
 
         // Init simplegame
         var config :Config = new Config();
@@ -62,6 +63,7 @@ public class QuestTestClient extends Sprite
     {
         _events.freeAllHandlers();
         _timerMgr.shutdown();
+        QuestClient.shutdown();
     }
 
     protected var _gameCtrl :AVRGameControl;
