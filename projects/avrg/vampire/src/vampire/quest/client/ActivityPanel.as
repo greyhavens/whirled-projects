@@ -1,7 +1,7 @@
 package vampire.quest.client {
 
 import com.threerings.flash.SimpleTextButton;
-import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.objects.DraggableObject;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -13,7 +13,7 @@ import flash.text.TextField;
 import vampire.quest.*;
 import vampire.quest.activity.*;
 
-public class ActivityPanel extends SceneObject
+public class ActivityPanel extends DraggableObject
 {
     public function ActivityPanel (loc :LocationDesc)
     {

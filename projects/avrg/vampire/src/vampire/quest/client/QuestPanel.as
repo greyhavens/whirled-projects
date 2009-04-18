@@ -21,8 +21,6 @@ public class QuestPanel extends DraggableObject
         _uiLayer = new Sprite();
         _sprite.addChild(_uiLayer);
 
-        ClientCtx.mainLoop.topMode.addSceneObject(new MapView(), _uiLayer);
-
         var g :Graphics = _draggableLayer.graphics;
         g.lineStyle(1, 0xffffff);
         g.beginFill(0);
@@ -31,13 +29,13 @@ public class QuestPanel extends DraggableObject
 
         _tfQuestJuice = new TextField();
         _tfQuestJuice.x = 10;
-        _tfQuestJuice.y = 340;
+        _tfQuestJuice.y = 10;
         _draggableLayer.addChild(_tfQuestJuice);
         updateQuestJuice();
 
         var title :TextField = TextBits.createText("Quests", 2, 0, 0xffffff);
         title.x = (_sprite.width - title.width) * 0.5;
-        title.y = 350;
+        title.y = 20;
         _draggableLayer.addChild(title);
 
         registerListener(ClientCtx.questData, PlayerJuiceEvent.QUEST_JUICE_CHANGED,
@@ -90,7 +88,7 @@ public class QuestPanel extends DraggableObject
 
     protected function updateQuestViews () :void
     {
-        var y :Number = 380;
+        var y :Number = 50;
         for each (var questView :ActiveQuestView in _activeQuestViews) {
             questView.x = 10;
             questView.y = y;
@@ -123,8 +121,8 @@ public class QuestPanel extends DraggableObject
     protected var _draggableLayer :Sprite;
     protected var _uiLayer :Sprite;
 
-    protected static const WIDTH :Number = 700;
-    protected static const HEIGHT :Number = 500;
+    protected static const WIDTH :Number = 600;
+    protected static const HEIGHT :Number = 150;
 }
 
 }

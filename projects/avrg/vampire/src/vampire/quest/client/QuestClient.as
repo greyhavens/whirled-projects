@@ -33,12 +33,12 @@ public class QuestClient
         ClientCtx.stats = stats;
 
         // load resources
-        ClientCtx.rsrcs.queueResourceLoad("swf", "map", { embeddedClass: SWF_MAP });
-        ClientCtx.rsrcs.loadQueuedResources(
+        /*ClientCtx.rsrcs.loadQueuedResources(
             onResourcesLoaded,
             function (err :String) :void {
                 log.error("Error loading resources: " + err);
-            });
+            });*/
+        onResourcesLoaded();
     }
 
     public static function shutdown () :void
@@ -73,7 +73,7 @@ public class QuestClient
     public static function showDebugPanel (show :Boolean) :void
     {
         if (_debugPanel == null && show) {
-            _debugPanel = new StatDebugPanel();
+            _debugPanel = new DebugPanel();
             ClientCtx.mainLoop.topMode.addSceneObject(_debugPanel);
         }
 
@@ -183,14 +183,11 @@ public class QuestClient
     }
 
     protected static var _activityPanel :ActivityPanel;
-    protected static var _debugPanel :StatDebugPanel;
+    protected static var _debugPanel :DebugPanel;
     protected static var _questPanel :QuestPanel;
 
     protected static var _inited :Boolean;
     protected static var _resourcesLoaded :Boolean;
-
-    [Embed(source="../../../../rsrc/quest/map_mockup.swf", mimeType="application/octet-stream")]
-    protected static const SWF_MAP :Class;
 
     protected static var log :Log = Log.getLog(QuestClient);
 }

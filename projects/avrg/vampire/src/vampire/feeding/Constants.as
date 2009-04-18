@@ -13,7 +13,7 @@ public class Constants
     public static const DEBUG_DISABLE_ROOM_OVERLAY :Boolean = false;
     public static const DEBUG_STANDARD_UPDATE_INTERVAL :Boolean = false;
 
-    public static const GAME_TIME :Number = 60 * 2;
+    public static const GAME_TIME :Number = 3;//60 * 2;
 
     public static const MIN_GAMES_BEFORE_LEADERBOARD_SHOWN :int = 10;
 
