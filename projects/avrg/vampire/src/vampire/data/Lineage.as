@@ -467,7 +467,7 @@ public class Lineage extends SimObject
     }
 
     /**
-    * Returns Lineage up to and including grandsire and grandchildren.
+    * Returns Lineage up to and including sire and grandchildren.
     */
     public function getSubLineage (playerId :int, levelsAbove :int = 1,
         levelsBelow :int = 2) :Lineage
@@ -477,14 +477,18 @@ public class Lineage extends SimObject
         var players2Add :Array = [playerId];
 
 
-        players2Add = players2Add.concat(getAllSiresAndGrandSires(playerId,
-            levelsAbove - 1));
+//        players2Add = players2Add.concat(getAllSiresAndGrandSires(playerId,
+//            levelsAbove));
         players2Add = players2Add.concat(getAllDescendents(playerId, null,
             levelsBelow));
 
         for each (var id :int in players2Add) {
-            lineage.setPlayerSire(id, getSireId(id));
+            var sireId :int = getSireId(id);
+            lineage.setPlayerSire(id, sireId);
             lineage.setPlayerName(id, getPlayerName(id));
+            if (sireId != 0) {
+                lineage.setPlayerName(sireId, getPlayerName(sireId));
+            }
         }
 
         lineage.isConnectedToLilith = isMemberOfLineage(playerId);
