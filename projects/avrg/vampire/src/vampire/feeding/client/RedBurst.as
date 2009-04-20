@@ -23,10 +23,10 @@ public class RedBurst extends CellBurst
         return null;
     }
 
-    public function RedBurst (fromCell :Cell, sequence :BurstSequence)
+    public function RedBurst (fromCell :Cell, cascade :BurstCascade)
     {
         super(fromCell.type, Constants.RED_BURST_RADIUS_MIN, Constants.RED_BURST_RADIUS_MAX,
-              fromCell.multiplier, sequence);
+              fromCell.multiplier, cascade);
     }
 
     override protected function beginBurst () :void
@@ -50,8 +50,8 @@ public class RedBurst extends CellBurst
 
     override protected function removedFromDB () :void
     {
-        if (!_burstCompleted && _sequence != null) {
-            _sequence.removeCellBurst(this);
+        if (!_burstCompleted && _cascade != null) {
+            _cascade.removeCellBurst(this);
         }
     }
 
@@ -87,7 +87,7 @@ public class RedBurst extends CellBurst
                 }
 
             } else {
-                GameObjects.createRedBurst(cell, _sequence);
+                GameObjects.createRedBurst(cell, _cascade);
             }
         }
     }

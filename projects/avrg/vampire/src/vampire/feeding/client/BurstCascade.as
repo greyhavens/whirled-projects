@@ -13,14 +13,14 @@ import flash.text.TextField;
 import vampire.feeding.*;
 import vampire.server.Trophies;
 
-public class BurstSequence extends SceneObject
+public class BurstCascade extends SceneObject
 {
-    public static function get sequenceExists () :Boolean
+    public static function get cascadeExists () :Boolean
     {
         return (GameCtx.gameMode.getObjectRefsInGroup(GROUP_NAME).length > 0);
     }
 
-    public function BurstSequence ()
+    public function BurstCascade ()
     {
         _tf = TextBits.createText("");
         _sprite = SpriteUtil.createSprite();
@@ -95,12 +95,12 @@ public class BurstSequence extends SceneObject
 
     override protected function update (dt :Number) :void
     {
-        var isSequenceAlive :Boolean = !GameCtx.gameOver && ArrayUtil.findIf(_bursts,
+        var isAlive :Boolean = !GameCtx.gameOver && ArrayUtil.findIf(_bursts,
             function (burstRef :SimObjectRef) :Boolean {
                 return !burstRef.isNull;
             });
 
-        if (!isSequenceAlive) {
+        if (!isAlive) {
             deliverPayload();
             destroySelf();
 
@@ -186,7 +186,7 @@ public class BurstSequence extends SceneObject
     protected var _sprite :Sprite;
     protected var _tf :TextField;
 
-    protected static const GROUP_NAME :String = "BurstSequence";
+    protected static const GROUP_NAME :String = "BurstCascade";
 
     protected static const TYPE_NORMAL :int = 0;
     protected static const TYPE_CORRUPTION :int = 1;

@@ -21,10 +21,10 @@ public class GameObjects
         fromCell.destroySelf();
     }
 
-    public static function createRedBurst (fromCell :Cell, sequence :BurstSequence = null)
+    public static function createRedBurst (fromCell :Cell, cascade :BurstCascade = null)
         :RedBurst
     {
-        var obj :RedBurst = new RedBurst(fromCell, sequence);
+        var obj :RedBurst = new RedBurst(fromCell, cascade);
         var loc :Point =
             fromCell.displayObject.parent.localToGlobal(new Point(fromCell.x, fromCell.y));
         loc = GameCtx.cellLayer.globalToLocal(loc);
@@ -38,7 +38,7 @@ public class GameObjects
     }
 
     public static function createCorruptionBurst (fromObj :CollidableObj,
-        sequence :BurstSequence) :CorruptionBurst
+        cascade :BurstCascade) :CorruptionBurst
     {
         var wasAttachedToCursor :Boolean;
         var isBlackBurst :Boolean = true;
@@ -54,7 +54,7 @@ public class GameObjects
         }
 
         var obj :CorruptionBurst = new CorruptionBurst(isBlackBurst, wasAttachedToCursor,
-                                                       multiplier, sequence);
+                                                       multiplier, cascade);
 
         var loc :Point =
             fromObj.displayObject.parent.localToGlobal(new Point(fromObj.x, fromObj.y));

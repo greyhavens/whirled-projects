@@ -373,7 +373,7 @@ public class GameMode extends AppMode
 
     protected function get canEndGameNow () :Boolean
     {
-        return (!BurstSequence.sequenceExists &&
+        return (!BurstCascade.cascadeExists &&
                 !GameCtx.score.isPlayingScoreAnim &&
                 !RoomOverlay.exists);
     }
