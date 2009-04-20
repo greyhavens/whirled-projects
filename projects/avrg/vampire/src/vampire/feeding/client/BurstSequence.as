@@ -149,15 +149,17 @@ public class BurstSequence extends SceneObject
         }
 
         // trophies
-        ClientCtx.awardTrophySequence(
-            Trophies.CASCADE_TROPHIES,
-            Trophies.CASCADE_REQS,
-            this.totalValue);
+        if (_type == TYPE_NORMAL) {
+            ClientCtx.awardTrophySequence(
+                Trophies.CASCADE_TROPHIES,
+                Trophies.CASCADE_REQS,
+                this.totalValue);
 
-        ClientCtx.awardTrophySequence(
-            Trophies.MULTIPLIER_TROPHIES,
-            Trophies.MULTIPLIER_REQS,
-            this.multiplier);
+            ClientCtx.awardTrophySequence(
+                Trophies.MULTIPLIER_TROPHIES,
+                Trophies.MULTIPLIER_REQS,
+                this.multiplier);
+        }
     }
 
     protected function get createMultiplier () :Boolean
