@@ -23,7 +23,6 @@ import flash.geom.Rectangle;
 
 import vampire.Util;
 import vampire.avatar.AvatarConstants;
-import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.data.VConstants;
 
 /**
@@ -89,9 +88,13 @@ public class ClientContext
 
     public static function getPlayerName (playerId :int) :String
     {
+        if (playerId == ClientContext.ourPlayerId) {
+            return ctrl.player.getPlayerName();
+        }
         if (ctrl.game.getOccupantName(playerId) != null) {
             return ctrl.game.getOccupantName(playerId);
         }
+
 //        SharedPlayerStateClient.
 //        if (ctrl != null && ctrl.isConnected() && !VConstants.LOCAL_DEBUG_MODE) {
 //            var avatar :AVRGameAvatar = ctrl.room.getAvatarInfo(playerId);
@@ -100,7 +103,7 @@ public class ClientContext
 //            }
 //        }
 //
-        return "Player " + playerId.toString();
+        return null;//"Player " + playerId.toString();
     }
 
 //    public static function isPlayerProps () :Boolean
