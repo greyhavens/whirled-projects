@@ -399,8 +399,13 @@ public class LineageViewBase extends SceneObjectParent
             if (_lineage._playerId2Name.containsKey(playerId)) {
                 playerName = _lineage._playerId2Name.get(playerId) as String;
             }
+
+            if (playerName == null) {
+                ClientContext.getPlayerName(playerId);
+            }
+
             if (playerName == null || playerName.length == 0) {
-                playerName = "Player " + playerId;//ClientContext.getPlayerName(playerId);
+                playerName = "Player " + playerId;
             }
 
             playerName = playerName.substring(0, VConstants.MAX_CHARS_IN_LINEAGE_NAME);
@@ -454,7 +459,7 @@ public class LineageViewBase extends SceneObjectParent
         drop.addTask(AlphaTask.CreateEaseIn(1.0, 0.4));
 
 //            _displaySprite.addChild(drop.displayObject);
-        if (!_lineage.isLeaf(playerId)) {
+//        if (!_lineage.isLeaf(playerId)) {
             var addListenersAfterAPause :SerialTask = new SerialTask();
             addListenersAfterAPause.addTask(new TimedTask(0.6));
             addListenersAfterAPause.addTask(new FunctionTask(function () :void {
@@ -462,7 +467,7 @@ public class LineageViewBase extends SceneObjectParent
                 drop.enableMouseListeners();
             }));
             drop.addTask(addListenersAfterAPause);
-        }
+//        }
         if (drop.displayObject.parent != null) {
             drop.displayObject.parent.setChildIndex(drop.displayObject,
                 drop.displayObject.parent.numChildren - 1);
@@ -543,6 +548,11 @@ public class LineageViewBase extends SceneObjectParent
             ClientUtil.detach(_lilith);
         }
         centerLinageOnPlayer(_selectedPlayerIdCenter);
+    }
+
+    public function get lineage () :Lineage
+    {
+        return _lineage;
     }
 
     protected var _lilith :Sprite;
