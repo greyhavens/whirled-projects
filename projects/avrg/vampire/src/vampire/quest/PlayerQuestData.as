@@ -20,7 +20,7 @@ import flash.utils.Dictionary;
 
 public class PlayerQuestData extends EventDispatcher
 {
-    public static const STATUS_NOT_ADDED :int = -1;
+    public static const STATUS_NOT_ADDED :int = 0;
     public static const STATUS_ACTIVE :int = 1;
     public static const STATUS_COMPLETE :int = 2;
 
@@ -59,7 +59,9 @@ public class PlayerQuestData extends EventDispatcher
     public function getQuestStatus (questId :int) :int
     {
         var dict :Dictionary = _props.get(PROP_QUESTS) as Dictionary;
-        return (dict != null && dict[questId] !== undefined ? dict[questId] : STATUS_NOT_ADDED);
+        // if the questId isn't in the dictionary, dict[questId] will be undefined, and
+        // int(undefined) == 0 == STATUS_NOT_ADDED, so returning dict[questId] is safe here
+        return (dict != null ? dict[questId] : STATUS_NOT_ADDED);
     }
 
     public function get activeQuestIds () :Array
