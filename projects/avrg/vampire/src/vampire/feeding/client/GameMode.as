@@ -5,7 +5,6 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControlEvent;
-import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.net.*;

@@ -19,7 +19,7 @@ import flash.text.TextField;
 import vampire.data.VConstants;
 import vampire.feeding.*;
 import vampire.feeding.net.*;
-import vampire.quest.activity.BloodBloomActivityParams;
+import vampire.quest.activity.*;
 
 public class LobbyMode extends AppMode
 {
@@ -168,11 +168,20 @@ public class LobbyMode extends AppMode
 
     protected function giveActivityCompletionAward () :void
     {
-        if (ClientCtx.clientSettings.activityParams != null &&
-            ClientCtx.clientSettings.activityParams.awardedStatName != null) {
-            ClientCtx.clientSettings.playerStats.offsetIntStat(
-                ClientCtx.clientSettings.activityParams.awardedStatName,
-                ClientCtx.clientSettings.activityParams.awardedStatIncrement);
+        // If this was a quest-based activity, give appropriate awards
+        if (ClientCtx.clientSettings.activityParams != null) {
+            var success :Boolean = true;
+            if (ClientCtx.isCorruption) {
+                var params :CorruptionActivityParams =
+                    ClientCtx.clientSettings.activityParams as CorruptionActivityParams;
+                success = (_results.totalScore >= params.corruptionBlood);
+            }
+
+            if (success && ClientCtx.clientSettings.activityParams.awardedStatName != null) {
+                ClientCtx.clientSettings.playerStats.offsetIntStat(
+                    ClientCtx.clientSettings.activityParams.awardedStatName,
+                    ClientCtx.clientSettings.activityParams.awardedStatIncrement);
+            }
         }
     }
 
