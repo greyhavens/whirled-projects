@@ -74,7 +74,7 @@ public class PlayerQuestData extends EventDispatcher
 
     public function set curLocation (locDesc :LocationDesc) :void
     {
-        _props.set(PROP_CUR_LOC, locDesc.id);
+        _props.set(PROP_CUR_LOC, locDesc.id, true);
     }
 
     public function get curLocation () :LocationDesc

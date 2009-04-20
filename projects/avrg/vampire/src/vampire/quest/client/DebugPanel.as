@@ -70,7 +70,7 @@ public class DebugPanel extends GenericDraggableWindow
     protected function addLocation (loc :LocationDesc) :void
     {
         createButton(loc.displayName, function (...ignored) :void {
-            QuestClient.showActivityPanel(loc);
+            QuestClient.goToLocation(loc);
         });
     }
 

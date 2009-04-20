@@ -47,6 +47,23 @@ public class QuestClient
         handshakeQuestTotems(false);
     }
 
+    public static function goToLocation (loc :LocationDesc) :void
+    {
+        if (ClientCtx.questData.curLocation != loc) {
+            if (loc.travelCost <= ClientCtx.questData.questJuice) {
+                // TODO: display "you will lose juice" question
+                ClientCtx.questData.questJuice -= loc.travelCost;
+                ClientCtx.questData.curLocation = loc;
+            } else {
+                // TODO: display "not enough juice" notification
+            }
+        }
+
+        if (ClientCtx.questData.curLocation == loc) {
+            showActivityPanel(loc);
+        }
+    }
+
     public static function beginActivity (activity :ActivityDesc) :void
     {
         if (activity.params.isLobbied) {
@@ -188,7 +205,7 @@ public class QuestClient
         if (loc == null) {
             log.warning("No location for Quest Totem", "totemType", totemType);
         } else {
-            showActivityPanel(loc);
+            goToLocation(loc);
         }
     }
 
