@@ -4,8 +4,7 @@ import com.threerings.util.StringUtil;
 
 import flash.text.TextField;
 
-import vampire.quest.LocationDesc;
-import vampire.quest.PlayerLocationEvent;
+import vampire.quest.*;
 
 public class DebugPanel extends GenericDraggableWindow
 {
@@ -33,8 +32,26 @@ public class DebugPanel extends GenericDraggableWindow
             setStatusText("Stat", "name", name, "val", ClientCtx.stats.getStat(name));
         });
 
+        createButton("Reset Stats", function (...ignored) :void {
+            for each (var statName :String in ClientCtx.stats.getStatNames()) {
+                ClientCtx.stats.clearStat(statName);
+            }
+        });
+
         createButton("List Stats", function (...ignored) :void {
             setStatusText("Stats", "names", ClientCtx.stats.getStatNames());
+        });
+
+        createButton("+Juice", function (...ignored) :void {
+            ClientCtx.questData.questJuice += 20;
+        });
+
+        createButton("-Juice", function (...ignored) :void {
+            ClientCtx.questData.questJuice = Math.max(ClientCtx.questData.questJuice - 20, 0);
+        });
+
+        createButton("Add Test Quest", function (...ignored) :void {
+            ClientCtx.questData.addQuest(Quests.getQuestByName("TestQuest").id);
         });
 
         createNewLayoutRow(15);
