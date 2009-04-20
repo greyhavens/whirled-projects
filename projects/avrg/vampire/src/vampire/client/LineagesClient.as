@@ -19,15 +19,12 @@ public class LineagesClient extends SimObject
     {
         registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED,
             handleElementChanged);
-
         var dict :Dictionary = ClientContext.ctrl.room.props.get(Codes.ROOM_PROP_PLAYER_LINEAGE) as Dictionary;
-
         if (dict != null) {
             for each (var playerId :int in ClientContext.ctrl.room.getPlayerIds()) {
                 loadLineageFromBytes(playerId, dict[playerId]);
             }
         }
-
     }
 
     protected function handleElementChanged (e :ElementChangedEvent) :void
