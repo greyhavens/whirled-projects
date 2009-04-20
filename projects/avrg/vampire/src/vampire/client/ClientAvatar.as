@@ -18,7 +18,6 @@ package vampire.client
     import vampire.data.VConstants;
     import vampire.net.messages.MovePredAfterFeedingMsg;
     import vampire.net.messages.MovePredIntoPositionMsg;
-    import vampire.net.messages.PlayerArrivedAtLocationMsg;
 
 
 /**
@@ -191,8 +190,6 @@ public class ClientAvatar extends SimObject
         if (avatar != null && avatar.x == targetX && avatar.y == targetY && avatar.z == targetZ) {
             //We are already at the feeding position
             _movingPredatorIntoPosition = false;
-            _ctrl.agent.sendMessage(PlayerArrivedAtLocationMsg.NAME,
-                new PlayerArrivedAtLocationMsg().toBytes());
         }
         else {
             _movingPredatorIntoPosition = true;
@@ -214,7 +211,6 @@ public class ClientAvatar extends SimObject
     protected function handleAvatarChanged (e :AVRGameRoomEvent) :void
     {
         checkForAvatarSwitch(e);
-        checkForBaredModeViaAvatarMenu(e);
         setAvatarCurrentLevel();
     }
 
@@ -254,32 +250,6 @@ public class ClientAvatar extends SimObject
         }
 
     }
-    /**
-    * We can go into 'bared' mode via the game HUD menu, or via the regular avatar menu.
-    * Therefore, we must listen to changes in the avatar and check if we have gone into
-    * bared mode.
-    */
-    protected function checkForBaredModeViaAvatarMenu (e :AVRGameRoomEvent) :void
-    {
-        var playerAvatarChangedId :int = int(e.value);
-
-        //We are only allowed to change our own avatar.
-        if(playerAvatarChangedId != _ctrl.player.getPlayerId()) {
-            return;
-        }
-
-        //Do as if we have pushed the 'Bared" button.
-        var avatar :AVRGameAvatar = _ctrl.room.getAvatarInfo(playerAvatarChangedId);
-        if(avatar != null) {
-
-            var isBared :Boolean = ClientContext.model.state == VConstants.PLAYER_STATE_BARED ||
-                ClientContext.model.state == VConstants.PLAYER_STATE_FEEDING_PREY;
-            //If we change our avatar to bared, but we are not in the bared player state.
-            if(!isBared && avatar.state == VConstants.AVATAR_STATE_BARED) {
-                ClientContext.controller.handleChangeState(VConstants.PLAYER_STATE_BARED);
-            }
-        }
-    }
 
     protected function resetAvatarCallbackFunctions () :void
     {
@@ -312,8 +282,6 @@ public class ClientAvatar extends SimObject
         //If our player moved, inform the server.
         if (playerId == _ctrl.player.getPlayerId()) {
             var locationFromProps :Array = ClientContext.model.location;
-            _ctrl.agent.sendMessage(PlayerArrivedAtLocationMsg.NAME,
-                new PlayerArrivedAtLocationMsg().toBytes());
 
             //And if this is our avatar, and we have a target to stand behind,
             //make sure we are in the same orientation.

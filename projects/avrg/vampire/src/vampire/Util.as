@@ -16,7 +16,6 @@ import vampire.net.messages.LoadBalancingMsg;
 import vampire.net.messages.MovePredAfterFeedingMsg;
 import vampire.net.messages.MovePredIntoPositionMsg;
 import vampire.net.messages.NonPlayerIdsInRoomMsg;
-import vampire.net.messages.PlayerArrivedAtLocationMsg;
 import vampire.net.messages.RequestStateChangeMsg;
 import vampire.net.messages.RoomNameMsg;
 import vampire.net.messages.SendGlobalMsg;
@@ -70,7 +69,6 @@ public class Util
         mgr.addMessageType(MovePredIntoPositionMsg);
         mgr.addMessageType(MovePredAfterFeedingMsg);
         mgr.addMessageType(NonPlayerIdsInRoomMsg);
-        mgr.addMessageType(PlayerArrivedAtLocationMsg);
         mgr.addMessageType(RequestStateChangeMsg);
         mgr.addMessageType(RoomNameMsg);
         mgr.addMessageType(SendGlobalMsg);

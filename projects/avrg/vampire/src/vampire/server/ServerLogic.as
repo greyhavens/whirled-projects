@@ -25,7 +25,6 @@ import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.FeedingDataMsg;
 import vampire.net.messages.GameStartedMsg;
 import vampire.net.messages.MovePredIntoPositionMsg;
-import vampire.net.messages.PlayerArrivedAtLocationMsg;
 import vampire.net.messages.RequestStateChangeMsg;
 import vampire.net.messages.RoomNameMsg;
 import vampire.net.messages.SendGlobalMsg;
@@ -456,9 +455,6 @@ public class ServerLogic
                     var playerStarted :PlayerData = getPlayer(gameStarted.playerId);
                     handleGameStartedMessage(playerStarted, gameStarted);
                 }
-                else if (msg is PlayerArrivedAtLocationMsg) {
-                    handlePlayerArrivedAtLocation(player);
-                }
                 else if (msg is SendGlobalMsg) {
                     var globalMessage :String = SendGlobalMsg(msg).message;
                     ServerContext.server.addGlobalFeedback(globalMessage);
@@ -531,33 +527,6 @@ public class ServerLogic
         }
         player.ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, 1);
     }
-    protected static function handlePlayerArrivedAtLocation (player :PlayerData) :void
-    {
-        log.debug("handlePlayerArrivedAtLocation, ignored");
-//        log.debug(player.playerId + " message " + PlayerArrivedAtLocationMsg.NAME,
-//            "player", player.playerId, "state", player.state);
-//
-//        switch (player.state) {
-//            case VConstants.PLAYER_STATE_MOVING_TO_FEED:
-//            stateChange(player,  VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION);
-//            break;
-//
-//            //If we are in a game or lobby, and we move, break off the game.
-////            case VConstants.PLAYER_STATE_FEEDING_PREDATOR:
-////            case VConstants.PLAYER_STATE_FEEDING_PREY:
-////            case VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION:
-////            var game :FeedingRecord = player.room.bloodBloomGameManager.getGame(player.playerId);
-////            if (game != null) {
-////                game.playerLeavesGame(player.playerId, true);
-////                stateChange(player, VConstants.PLAYER_STATE_DEFAULT);
-////            }
-////            break;
-//
-//            default:
-//            break;
-//        }
-    }
-
 
     /**
     * Keep track of invites for trophies.
