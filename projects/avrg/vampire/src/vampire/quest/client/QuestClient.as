@@ -1,6 +1,7 @@
 package vampire.quest.client {
 
 import com.threerings.util.Log;
+import com.threerings.util.MethodQueue;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.simplegame.SimpleGame;
@@ -38,7 +39,7 @@ public class QuestClient
             function (err :String) :void {
                 log.error("Error loading resources: " + err);
             });*/
-        onResourcesLoaded();
+        MethodQueue.callLater(onResourcesLoaded);
     }
 
     public static function shutdown () :void
@@ -113,6 +114,7 @@ public class QuestClient
         }
 
         ClientCtx.stats.addEventListener(PlayerStatEvent.STAT_CHANGED, checkQuestCompletion);
+        ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_ADDED, onQuestAdded);
         ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_COMPLETED, onQuestCompleted);
 
         checkQuestCompletion();
@@ -125,6 +127,14 @@ public class QuestClient
                 ClientCtx.questData.completeQuest(quest.id);
             }
         }
+    }
+
+    protected static function onQuestAdded (e :PlayerQuestEvent) :void
+    {
+        var note :QuestAddedNotification = new QuestAddedNotification(e.quest);
+        note.x = (ClientCtx.mainLoop.topMode.modeSprite.width - note.width) * 0.5;
+        note.y = 15;
+        ClientCtx.mainLoop.topMode.addSceneObject(note);
     }
 
     protected static function onQuestCompleted (e :PlayerQuestEvent) :void
