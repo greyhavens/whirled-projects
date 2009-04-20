@@ -343,13 +343,9 @@ public class ServerLogic
 
     public static function increaseLevel (player :PlayerData) :void
     {
-        trace("increaseLevel from " + player.level + " to " + (player.level + 1));
         var xpNeededForNextLevel :Number = Logic.xpNeededForLevel(player.level + 1);
-        log.debug(" xpNeededForNextLevel" + xpNeededForNextLevel);
         var missingXp :Number = xpNeededForNextLevel - player.xp;
-        log.debug(" missingXp" + missingXp);
         addXP(player.playerId, missingXp);
-//        awardSiresXpEarned(player, missingXp);
     }
 
     public static function decreaseLevel (player :PlayerData) :void
@@ -361,33 +357,11 @@ public class ServerLogic
         }
     }
 
-//    protected static function removeBlood(player :PlayerData, amount :Number) :void
-//    {
-//        if (!player.isDead()) {
-//            player.setBlood(player.blood - amount); // note: setBlood clamps this to [0, maxBlood]
-//        }
-//    }
-
-
     public static function addXP (playerId :int, bonus :Number) :void
     {
          if (ServerContext.server.isPlayer(playerId)) {
              var player :PlayerData = ServerContext.server.getPlayer(playerId);
-             trace("adding " + bonus + "xp");
-             trace(" before xp=" + player.xp);
              player.xp = player.xp + bonus;
-             trace(" after xp=" + player.xp);
-//            log.info("   addXP", "current xp=", player.xp + ", bonus=" + bonus);
-//
-//             var currentLevel :int = player.level;//Logic.levelGivenCurrentXpAndInvites(player.xp, player.invites);
-//
-//             var tempxp :Number = player.xp;
-//             tempxp += bonus;
-//             tempxp = Math.max(tempxp, 0);
-//             var newLevel :int = Logic.levelGivenCurrentXpAndInvites(tempxp, player.invites);
-//             tempxp = Math.min(tempxp, Logic.maxXPGivenXPAndInvites(tempxp, player.invites));
-//             player.xp = tempxp;
-
         }
         else {
 
@@ -418,8 +392,6 @@ public class ServerLogic
         try{
 
             // handle messages that make (at least some) sense even if we're between rooms
-//            log.debug(playerId + " handleMessage() ", "name", name, "value", value);
-
             //Attempt to handle Message type message first
             var msg :Message = ServerContext.msg.deserializeMessage(name, value);
             log.debug(playerId + " handleMessage() GameMessage: ", "name", name, "value", msg);
@@ -546,7 +518,6 @@ public class ServerLogic
         if (ServerContext.server.isPlayer(inviterId)) {
             var inviter :PlayerData = ServerContext.server.getPlayer(inviterId);
             inviter.addToInviteTally();
-//            Trophies.checkInviteTrophies(inviter);
         }
         else {
             //Add to offline database
@@ -972,116 +943,6 @@ public class ServerLogic
 
     }
 
-
-
-//    public static function enteredRoom (player :PlayerData, evt :AVRGamePlayerEvent) :void
-//    {
-//
-//        log.info(VConstants.DEBUG_MINION + " Player entered room {{{", "player", toString());
-//        log.debug(VConstants.DEBUG_MINION + " hierarchy=" + ServerContext.server.lineage);
-//
-////        log.debug(Constants.DEBUG_MINION + " Player enteredRoom, already on the database=" + toString());
-////        log.debug(Constants.DEBUG_MINION + " Player enteredRoom, hierarch=" + ServerContext.minionHierarchy);
-//
-////            var thisPlayer :PlayerData = this;
-//            var room :Room = ServerContext.vserver.getRoom(int(evt.value));
-//            ServerContext.vserver.control.doBatch(function () :void {
-//                try {
-//                    if (room != null) {
-////                        var minionsBytes :ByteArray = ServerContext.minionHierarchy.toBytes();
-////                        ServerContext.serverLogBroadcast.log("enteredRoom, sending hierarchy=" + ServerContext.minionHierarchy);
-////                        _room.ctrl.props.set(Codes.ROOM_PROP_MINION_HIERARCHY, minionsBytes);
-//
-//                        room.playerEntered(player);
-//                        ServerContext.server.lineage.playerEnteredRoom(player, room);
-//                        player.updateAvatarState();
-//                    }
-//                    else {
-//                        log.error("WTF, enteredRoom called, but room == null???");
-//                    }
-//                }
-//                catch(err:Error)
-//                {
-//                    log.error(err.getStackTrace());
-//                }
-//            });
-//
-//        //Make sure we are the right color when we enter a room.
-////        handleChangeColorScheme((isVampire() ? VConstants.COLOR_SCHEME_VAMPIRE : VConstants.COLOR_SCHEME_HUMAN));
-////        setIntoRoomProps();
-//
-//        log.debug(VConstants.DEBUG_MINION + "after _room.playerEntered");
-//        log.debug(VConstants.DEBUG_MINION + "hierarchy=" + ServerContext.server.lineage);
-//
-//    }
-
-//    public static function updateAvatarState(player :PlayerData) :void
-//    {
-//        var newState :String = "Default";
-//
-//        if (player.state == VConstants.AVATAR_STATE_BARED) {
-//            newState = player.state;
-//        }
-//
-//        if (player.state == VConstants.AVATAR_STATE_FEEDING ||
-//            player.state == VConstants.GAME_MODE_FEED_FROM_NON_PLAYER) {
-//            newState = VConstants.AVATAR_STATE_FEEDING;
-//        }
-//
-//        if (newState != player.avatarState) {
-//            log.debug(player.playerId + " updateAvatarState(" + newState + "), when action=" + player.state);
-//            player.setAvatarState(newState);
-//        }
-//    }
-
-//    /**
-//    * If the avatar moves, break off the feeding/baring.
-//    */
-//    protected static function handleAvatarMoved (player :PlayerData, userIdMoved :int) :void
-//    {
-//        //Moving nullifies any action we are currently doing, except if we are heading to
-//        //feed.
-//
-//        switch (player.state) {
-//
-//            case VConstants.PLAYER_STATE_MOVING_TO_FEED:
-//
-////            case VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER:
-//                break;//Don't change our state if we are moving into position
-//
-//            case VConstants.PLAYER_STATE_FEEDING_PREDATOR:
-//            case VConstants.PLAYER_STATE_FEEDING_PREY:
-//            case VConstants.PLAYER_STATE_BARED:
-////                var victim :PlayerData = ServerContext.server.getPlayer(player.targetId);
-////                if (victim != null) {
-////                    victim.setState(VConstants.AVATAR_STATE_DEFAULT);
-////                }
-////                else {
-////                    log.error("avatarMoved(), we shoud be breaking off a victim, but there is no victim.");
-////                }
-//                stateChange(player, VConstants.PLAYER_STATE_DEFAULT);
-////                player.setState(VConstants.AVATAR_STATE_DEFAULT);
-//                break;
-//
-////            case VConstants.AVATAR_STATE_BARED:
-//////                var predator :PlayerData = ServerContext.server.getPlayer(player.targetId);
-//////                if (predator != null) {
-//////                    predator.setState(VConstants.AVATAR_STATE_DEFAULT);
-//////                }
-//////                else {
-//////                    log.error("avatarMoved(), we shoud be breaking off a victim, but there is no victim.");
-//////                }
-//////                player.setState(VConstants.AVATAR_STATE_DEFAULT);
-////                stateChange(player, VConstants.PLAYER_STATE_DEFAULT);
-////                break;
-//
-//
-////            case VConstants.GAME_MODE_FEED_FROM_NON_PLAYER:
-//            default :
-//                player.state = VConstants.AVATAR_STATE_DEFAULT;
-//        }
-//    }
-
    public static function bloodBloomRoundOver (gameRecord :FeedingRecord, finalScores :HashMap) :void
     {
         log.debug("bloodBloomRoundOver()", "gameRecord", gameRecord);
@@ -1300,19 +1161,7 @@ public class ServerLogic
             break;
 
         }
-
-//        var currentAvatarState :String = player.avatarState;
-            player.avatarState = newAvatarState;
-//        var currentAvatarState :String = player.avatar != null ? player.avatar.state : "Default";
-//
-//        if (newAvatarState != currentAvatarState) {
-//            log.debug(player.name + " updateAvatarState(" + newAvatarState + "), when action=" + playerState);
-////            player.ctrl.setAvatarState(newAvatarState);
-////            player.setAvatarState(newAvatarState);
-//        }
-//        else {
-//            log.debug(player.name + " updateAvatarState(" + newAvatarState + "), but not changing since we are=" + currentAvatarState);
-//        }
+        player.avatarState = newAvatarState;
     }
 
 
