@@ -7,6 +7,7 @@ package vampire.net.messages
     public class FeedRequestMsg extends BaseGameMsg
     {
         public function FeedRequestMsg(playerId :int = 0,
+                                            predId :int = 0,
                                             targetPlayerId :int = 0,
                                             targetPlayerName :String = null,
                                             targetLocationX :Number = 0,
@@ -15,6 +16,7 @@ package vampire.net.messages
                                            )
         {
             super(playerId);
+            _predId = predId;
             _targetPlayerId = targetPlayerId;
             _targetPlayerName = targetPlayerName == null ? "" : targetPlayerName;
             _targetX = targetLocationX;
@@ -25,6 +27,7 @@ package vampire.net.messages
         override public function fromBytes (bytes :ByteArray) :void
         {
             super.fromBytes(bytes);
+            _predId = bytes.readInt();
             _targetPlayerId = bytes.readInt();
             _targetPlayerName = bytes.readUTF();
             _targetX = bytes.readFloat();
@@ -35,6 +38,7 @@ package vampire.net.messages
         override public function toBytes (bytes :ByteArray = null) :ByteArray
         {
             var bytes :ByteArray = super.toBytes(bytes);
+            bytes.writeInt(_predId);
             bytes.writeInt(_targetPlayerId);
             bytes.writeUTF(_targetPlayerName);
             bytes.writeFloat(_targetX);
@@ -55,7 +59,10 @@ package vampire.net.messages
 
         override public function toString() :String
         {
-            return ClassUtil.tinyClassName(this) + ": player=" + _playerId + ", eating " + targetName;
+            return ClassUtil.tinyClassName(this)
+                + ": player=" + _playerId
+                + ", targetPlayerId=" + _targetPlayerId;
+                + ", eating=" + targetName;
         }
 
         public function get targetX () :Number
@@ -75,7 +82,12 @@ package vampire.net.messages
            return _targetPlayerName;
         }
 
+        public function get predId () :int
+        {
+           return _predId;
+        }
 
+        protected var _predId :int;
         protected var _targetPlayerId :int;
         protected var _targetPlayerName :String;
         protected var _targetX :Number;
