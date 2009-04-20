@@ -12,7 +12,7 @@ import flash.display.Sprite;
  * A SceneObject with children scene objects.  The children use the db, but need to be disposed
  * of with the parent.
  */
-public class SceneObjectParent extends DraggableObject
+public class SceneObjectParent extends SceneObject
 {
     override protected function addedToDB () :void
     {
@@ -31,7 +31,9 @@ public class SceneObjectParent extends DraggableObject
         else {
             _yetToAddToDB.push(s);
         }
-        _subObjects.push(s);
+        if (!ArrayUtil.contains(_subObjects, s)) {
+            _subObjects.push(s);
+        }
     }
     protected function addSceneObject (s :SceneObject, parent :DisplayObjectContainer = null) :void
     {
@@ -66,6 +68,17 @@ public class SceneObjectParent extends DraggableObject
     {
         return _displaySprite;
     }
+
+    protected function destroyChildren () :void
+    {
+        for each (var child :SimObject in _subObjects) {
+            if (child.isLiveObject) {
+                child.destroySelf();
+            }
+        }
+        _subObjects = [];
+    }
+
 
     protected var _displaySprite :Sprite = new Sprite();
     protected var _subObjects :Array = new Array();
