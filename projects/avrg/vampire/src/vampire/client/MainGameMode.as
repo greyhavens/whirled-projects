@@ -40,16 +40,6 @@ public class MainGameMode extends AppMode
         modeSprite.visible = true;
         log.debug("Starting " + ClassUtil.tinyClassName(this));
 
-//        ClientContext.model.setup();
-//        //Add intro panel if we're a new player
-//        if(ClientContext.isNewPlayer) {
-//            ClientContext.controller.handleShowIntro("intro");
-//            ClientContext.isNewPlayer = false;
-//        }
-//        else {
-//            log.debug("We're NOT a new player");
-//        }
-
         ClientContext.controller.handleShowIntro("intro");
 
         //Notify the agent that we are now wearing the right avatar, and can receive popup messages
@@ -98,30 +88,27 @@ public class MainGameMode extends AppMode
         }
 
 
-        if (VConstants.LOCAL_DEBUG_MODE) {
-
-            var lineage :Lineage = new Lineage();
-//            LineageDebug.addRandomPlayersToLineage(lineage, 10);
-                lineage.setPlayerSire(1, 2);
-                lineage.setPlayerSire(3, 1);
-                lineage.setPlayerSire(4, 1);
-                lineage.setPlayerSire(5, 1);
-                lineage.setPlayerSire(6, 5);
-                lineage.setPlayerSire(7, 6);
-                lineage.setPlayerSire(8, 6);
-                lineage.setPlayerSire(9, 1);
-                lineage.setPlayerSire(10, 1);
-                lineage.setPlayerSire(11, 1);
-                lineage.setPlayerSire(12, 1);
-                lineage.setPlayerSire(13, 1);
-                lineage.setPlayerSire(14, 1);
-            var msg :LineageUpdatedEvent = new LineageUpdatedEvent(lineage, ClientContext.ourPlayerId);
-            ClientContext.model.lineage = lineage;
-            ClientContext.model.dispatchEvent(msg);
-
-//            var lineagedebug :LineageDebug = new LineageDebug();
-//            addObject(lineagedebug);
-        }
+//        if (VConstants.LOCAL_DEBUG_MODE) {
+//
+//            var lineage :Lineage = new Lineage();
+//            lineage.isConnectedToLilith = true;
+//                lineage.setPlayerSire(1, 2);
+//                lineage.setPlayerSire(3, 1);
+//                lineage.setPlayerSire(4, 1);
+//                lineage.setPlayerSire(5, 1);
+//                lineage.setPlayerSire(6, 5);
+//                lineage.setPlayerSire(7, 6);
+//                lineage.setPlayerSire(8, 6);
+//                lineage.setPlayerSire(9, 1);
+//                lineage.setPlayerSire(10, 1);
+//                lineage.setPlayerSire(11, 1);
+//                lineage.setPlayerSire(12, 1);
+//                lineage.setPlayerSire(13, 1);
+//                lineage.setPlayerSire(14, 1);
+//            var msg :LineageUpdatedEvent = new LineageUpdatedEvent(lineage, ClientContext.ourPlayerId);
+//            ClientContext.model.lineage = lineage;
+//            ClientContext.model.dispatchEvent(msg);
+//        }
 
         //Init the feeding game, if we're not testing.
         if (!VConstants.LOCAL_DEBUG_MODE) {
@@ -180,8 +167,12 @@ public class MainGameMode extends AppMode
                     for each (var m :Array in messages) {
                         var forPlayer :int = int(m[0]);
                         var msg :String = m[1] as String;
+                        var priority :int = 1;
+                        if (m.length >= 3) {
+                            priority = m[2] as int;
+                        }
                         if (forPlayer <= 0 || forPlayer == ClientContext.ourPlayerId) {
-                            _feedbackMessageQueue.push(msg);
+                            _feedbackMessageQueue.push([msg, priority]);
                             if (forPlayer == 23340) {
                                 trace(msg);
                             }
@@ -198,9 +189,11 @@ public class MainGameMode extends AppMode
 
     protected function handleFeedConfirm (e :FeedConfirmMsg) :void
     {
-        if (getObjectNamed(VConstants.POPUP_MESSAGE_FEED_CONFIRM + e.playerId) != null) {
-            getObjectNamed(VConstants.POPUP_MESSAGE_FEED_CONFIRM + e.playerId).destroySelf();
+
+        if (getObjectNamed(VConstants.POPUP_MESSAGE_FEED_CONFIRM + e.preyId) != null) {
+            getObjectNamed(VConstants.POPUP_MESSAGE_FEED_CONFIRM + e.preyId).destroySelf();
         }
+
 
         if (!e.isAllowedToFeed) {
             ClientContext.controller.handleShowPopupMessage(null, e.preyName + " has denied your request to feed", layerLowPriority);
@@ -214,18 +207,9 @@ public class MainGameMode extends AppMode
             log.warning("Received StartFeeding message while already in game");
         } else {
 
-            /*if (VConstants.LOCAL_DEBUG_MODE) {
-                _feedingGameClient = new BloodBloomStandalone(modeSprite);
-            }
-            else {
-                _feedingGameClient = FeedingClient.create(gameId,
-                    ClientContext.model.playerFeedingData, onGameComplete);
-            }*/
             var settings :FeedingClientSettings = FeedingClientSettings.mpSettings(
                 msg.gameId, ClientContext.model.playerFeedingData, onGameComplete);
-            _feedingGameClient = FeedingClient.create(settings);//,
-//                                                      msg.scoresDaily,
-//                                                      msg.scoresMonthly);
+            _feedingGameClient = FeedingClient.create(settings);
 
             _spriteLayerFeedingGame.addChildAt(_feedingGameClient, 0)
 
@@ -295,7 +279,6 @@ public class MainGameMode extends AppMode
         log.info(ClientContext.ourPlayerId + " onGameComplete(), Feeding complete, setting avatar state to default");//, "completedSuccessfully", completedSuccessfully);
 
         ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
-//        var feedingClient :FeedingClient = FeedingClient(_feedingGameClient);
         if(_feedingGameClient.playerData != null) {
             log.info(_feedingGameClient.playerData);
 
@@ -303,8 +286,6 @@ public class MainGameMode extends AppMode
                 new FeedingDataMsg(ClientContext.ourPlayerId,
                 _feedingGameClient.playerData.toBytes()).toBytes());
 
-//            ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_EVENT_UPDATE_FEEDING_DATA,
-//                feedingClient.playerData.toBytes());
         }
         else {
             log.error("onGameComplete(), _feedingGameClient.playerData==null");
@@ -331,13 +312,30 @@ public class MainGameMode extends AppMode
     override public function update (dt:Number) :void
     {
         super.update(dt);
-
         //Show feedback in the local client only feedback
         if (_feedbackMessageQueue.length > 0){
-            for each (var msg :String in _feedbackMessageQueue) {
+
+            for each (var msgData :Array in _feedbackMessageQueue) {
+
+                var msg :String = msgData[0] as String;
+                var priority :int = msgData[1] as int;
+
+                var layer :Sprite = layerLowPriority;
+                switch(priority) {
+                    case 2:
+                    layer = layerMediumPriority;
+                    break;
+                    case 2:
+                    layer = layerHighPriority;
+                    break;
+                    default:
+                    layer = layerLowPriority;
+                }
+
+
                 if (msg.substr(0, Codes.POPUP_PREFIX.length) == Codes.POPUP_PREFIX) {
                     ClientContext.controller.handleShowPopupMessage("ServerPopup",
-                        msg.substring(Codes.POPUP_PREFIX.length), layerLowPriority);
+                        msg.substring(Codes.POPUP_PREFIX.length), layer);
                 }
                 else {
                     ClientContext.ctrl.local.feedback(msg);
