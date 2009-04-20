@@ -37,7 +37,9 @@ package vampire.client
             _displaySprite.addChild(_hudHelp);
 
             _targetLineageView = new LineageViewBase(otherLineage, playerCenter);
-            _myLineageView = new LineageView();
+//            _myLineageView = new LineageView();
+            _myLineageView = new LineageViewBase(ClientContext.gameMode.roomModel.getLineage(
+                ClientContext.ourPlayerId), ClientContext.ourPlayerId);
 
 
             //Go to the first frame where all the buttons are.  Even though not all buttons are
@@ -391,9 +393,17 @@ package vampire.client
 
         public function centerLineageOnPlayer (playerId :int) :void
         {
-            if (ClientContext.ourPlayerId == playerId &&
-                ClientContext.model.lineage.getSireId(ClientContext.ourPlayerId) == 0
-                && ClientContext.model.lineage.getProgenyCount(ClientContext.ourPlayerId) == 0) {
+            if (_myLineageView == null || _myLineageView.lineage == null) {
+                log.error("centerLineageOnPlayer", "_myLineageView", _myLineageView);
+                return;
+            }
+            if (!_myLineageView.lineage.isSireExisting(ClientContext.ourPlayerId) &&
+                _myLineageView.lineage.getProgenyCount(ClientContext.ourPlayerId) == 0) {
+
+
+//            ClientContext.ourPlayerId == playerId &&
+//                ClientContext.model.lineage.getSireId(ClientContext.ourPlayerId) == 0
+//                && ClientContext.model.lineage.getProgenyCount(ClientContext.ourPlayerId) == 0) {
 
                 _getSiresButton.mouseEnabled = true;
                 _getSiresButton.visible = true;
