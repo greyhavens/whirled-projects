@@ -44,12 +44,12 @@ public class QuestPanel extends DraggableObject
             });
         registerListener(ClientCtx.questData, PlayerQuestEvent.QUEST_ADDED,
             function (e :PlayerQuestEvent) :void {
-                addQuest(e.questId);
+                addQuest(e.quest.id);
             });
         registerListener(ClientCtx.questData, PlayerQuestEvent.QUEST_COMPLETED,
             function (e :PlayerQuestEvent) :void {
-                showQuestCompleted(e.questId);
-                removeQuest(e.questId);
+                showQuestCompleted(e.quest.id);
+                removeQuest(e.quest.id);
             });
 
         for each (var questId :int in ClientCtx.questData.activeQuestIds) {

@@ -20,6 +20,10 @@ import flash.utils.Dictionary;
 
 public class PlayerQuestData extends EventDispatcher
 {
+    public static const STATUS_NOT_ADDED :int = -1;
+    public static const STATUS_ACTIVE :int = 1;
+    public static const STATUS_COMPLETE :int = 2;
+
     public function PlayerQuestData (props :PropertySubControl) :void
     {
         _props = new NamespacePropControl(NAMESPACE, props);
@@ -44,24 +48,32 @@ public class PlayerQuestData extends EventDispatcher
 
     public function addQuest (questId :int) :void
     {
-        _props.setIn(PROP_ACTIVE_QUESTS, questId, true);
+        _props.setIn(PROP_QUESTS, questId, STATUS_ACTIVE);
     }
 
     public function completeQuest (questId :int) :void
     {
-        _props.setIn(PROP_ACTIVE_QUESTS, questId, null);
+        _props.setIn(PROP_QUESTS, questId, STATUS_COMPLETE);
     }
 
-    public function isActiveQuest (questId :int) :Boolean
+    public function getQuestStatus (questId :int) :int
     {
-        var dict :Dictionary = _props.get(PROP_ACTIVE_QUESTS) as Dictionary;
-        return (dict != null && dict[questId] !== undefined);
+        var dict :Dictionary = _props.get(PROP_QUESTS) as Dictionary;
+        return (dict != null && dict[questId] !== undefined ? dict[questId] : STATUS_NOT_ADDED);
     }
 
     public function get activeQuestIds () :Array
     {
-        var quests :Dictionary = _props.get(PROP_ACTIVE_QUESTS) as Dictionary;
-        return (quests != null ? Util.keys(quests) : []);
+        var quests :Dictionary = _props.get(PROP_QUESTS) as Dictionary;
+        if (quests == null) {
+            return [];
+
+        } else {
+            return Util.keys(quests).filter(
+                function (questId :int, ...ignored) :Boolean {
+                    return (getQuestStatus(questId) == STATUS_ACTIVE);
+                });
+        }
     }
 
     public function get activeQuests () :Array
@@ -139,11 +151,25 @@ public class PlayerQuestData extends EventDispatcher
 
     protected function onElementChanged (e :ElementChangedEvent) :void
     {
-        if (e.name == PROP_ACTIVE_QUESTS) {
+        if (e.name == PROP_QUESTS) {
             var questId :int = e.key;
-            var eventType :String = (e.newValue != null ? PlayerQuestEvent.QUEST_ADDED :
-                PlayerQuestEvent.QUEST_COMPLETED);
-            dispatchEvent(new PlayerQuestEvent(eventType, questId));
+            var quest :QuestDesc = Quests.getQuest(questId);
+            if (quest == null) {
+                log.warning("Unrecognized questId", "id", questId);
+                return;
+            }
+
+            var eventType :String;
+            if (e.newValue == STATUS_ACTIVE) {
+                eventType = PlayerQuestEvent.QUEST_ADDED;
+            } else if (e.newValue == STATUS_COMPLETE) {
+                eventType = PlayerQuestEvent.QUEST_COMPLETED;
+            } else {
+                log.warning("Unrecognized quest status", "quest", quest, "status", e.newValue);
+                return;
+            }
+
+            dispatchEvent(new PlayerQuestEvent(eventType, quest));
 
         } else if (e.name == PROP_AVAIL_LOCS) {
             var locId :int = e.key;
@@ -161,7 +187,7 @@ public class PlayerQuestData extends EventDispatcher
     protected var _props :PropertySubControl;
     protected var _events :EventHandlerManager = new EventHandlerManager();
 
-    protected static const PROP_ACTIVE_QUESTS :String = NetConstants.makePersistent("ActiveQuests");
+    protected static const PROP_QUESTS :String = NetConstants.makePersistent("Quests");
     protected static const PROP_AVAIL_LOCS :String = NetConstants.makePersistent("AvailLocs");
     protected static const PROP_CUR_LOC :String = NetConstants.makePersistent("CurLoc");
     protected static const PROP_QUEST_JUICE :String = NetConstants.makePersistent("QuestJuice");

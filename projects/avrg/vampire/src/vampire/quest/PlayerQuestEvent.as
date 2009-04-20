@@ -7,22 +7,17 @@ public class PlayerQuestEvent extends Event
     public static const QUEST_ADDED :String = "QuestAdded";
     public static const QUEST_COMPLETED :String = "QuestCompleted";
 
-    public var questId :int;
+    public var quest :QuestDesc;
 
-    public function PlayerQuestEvent (type :String, questId :int)
+    public function PlayerQuestEvent (type :String, quest :QuestDesc)
     {
         super(type);
-        this.questId = questId;
-    }
-
-    public function get quest () :QuestDesc
-    {
-        return Quests.getQuest(questId);
+        this.quest = quest;
     }
 
     override public function clone () :Event
     {
-        return new PlayerQuestEvent(type, questId);
+        return new PlayerQuestEvent(type, quest);
     }
 }
 
