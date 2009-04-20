@@ -1,5 +1,6 @@
 package vampire.quest.client {
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.StringUtil;
 
 import flash.text.TextField;
@@ -50,8 +51,12 @@ public class DebugPanel extends GenericDraggableWindow
             ClientCtx.questData.questJuice = Math.max(ClientCtx.questData.questJuice - 20, 0);
         });
 
-        createButton("Add Test Quest", function (...ignored) :void {
+        createButton("Reset Debug Quest", function (...ignored) :void {
+            ClientCtx.questData.questJuice = 100;
             ClientCtx.questData.addQuest(Quests.getQuestByName("TestQuest").id);
+            ClientCtx.questData.addAvailableLocation(Locations.getLocationByName("HomeBase"));
+            ClientCtx.questData.addAvailableLocation(Locations.getLocationByName("Battleground"));
+            ClientCtx.questData.curLocation = Locations.getLocationByName("HomeBase");
         });
 
         createNewLayoutRow(15);
@@ -69,9 +74,13 @@ public class DebugPanel extends GenericDraggableWindow
 
     protected function addLocation (loc :LocationDesc) :void
     {
-        createButton(loc.displayName, function (...ignored) :void {
-            QuestClient.goToLocation(loc);
-        });
+        if (!ArrayUtil.contains(_locs, loc)) {
+            createButton(loc.displayName, function (...ignored) :void {
+                QuestClient.goToLocation(loc);
+            });
+
+            _locs.push(loc);
+        }
     }
 
     protected function getEnteredName () :String
@@ -97,6 +106,7 @@ public class DebugPanel extends GenericDraggableWindow
 
     protected var _nameField :TextField;
     protected var _valueField :TextField;
+    protected var _locs :Array = [];
 }
 
 }

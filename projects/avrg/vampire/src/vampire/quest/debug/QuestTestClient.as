@@ -38,12 +38,6 @@ public class QuestTestClient extends Sprite
         FeedingClient.init(this, _gameCtrl);
         QuestClient.init(_gameCtrl, _sg, questData, stats);
 
-        questData.questJuice = 100;
-        questData.addQuest(Quests.getQuestByName("TestQuest").id);
-        questData.addAvailableLocation(Locations.getLocationByName("HomeBase"));
-        questData.addAvailableLocation(Locations.getLocationByName("Battleground"));
-        questData.curLocation = Locations.getLocationByName("HomeBase");
-
         var waitLoop :ManagedTimer = _timerMgr.runForever(50,
             function (...ignored) :void {
                 if (QuestClient.isReady) {

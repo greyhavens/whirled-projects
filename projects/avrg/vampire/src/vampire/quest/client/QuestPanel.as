@@ -65,18 +65,17 @@ public class QuestPanel extends DraggableObject
 
     protected function addQuest (questId :int) :void
     {
-        var questView :ActiveQuestView = new ActiveQuestView(questId);
-        ClientCtx.mainLoop.topMode.addSceneObject(questView, _sprite);
-        _activeQuestViews.push(questView);
-        updateQuestViews();
+        if (!questViewExists(questId)) {
+            var questView :ActiveQuestView = new ActiveQuestView(questId);
+            ClientCtx.mainLoop.topMode.addSceneObject(questView, _sprite);
+            _activeQuestViews.push(questView);
+            updateQuestViews();
+        }
     }
 
     protected function removeQuest (questId :int) :void
     {
-        var idx :int = ArrayUtil.indexIf(_activeQuestViews,
-            function (questView :ActiveQuestView) :Boolean {
-                return questView.questId == questId;
-            });
+        var idx :int = getQuestViewIdx(questId);
 
         if (idx >= 0) {
             var questView :ActiveQuestView = _activeQuestViews[idx];
@@ -84,6 +83,19 @@ public class QuestPanel extends DraggableObject
             _activeQuestViews.splice(idx, 1);
             updateQuestViews();
         }
+    }
+
+    protected function getQuestViewIdx (questId :int) :int
+    {
+        return ArrayUtil.indexIf(_activeQuestViews,
+            function (questView :ActiveQuestView) :Boolean {
+                return questView.questId == questId;
+            });
+    }
+
+    protected function questViewExists (questId :int) :Boolean
+    {
+        return (getQuestViewIdx(questId) >= 0);
     }
 
     protected function updateQuestViews () :void
