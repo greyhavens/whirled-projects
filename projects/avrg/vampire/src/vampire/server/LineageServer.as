@@ -5,6 +5,10 @@ import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
 import com.whirled.contrib.simplegame.ObjectMessage;
+import com.whirled.contrib.simplegame.tasks.FunctionTask;
+import com.whirled.contrib.simplegame.tasks.RepeatingTask;
+import com.whirled.contrib.simplegame.tasks.SerialTask;
+import com.whirled.contrib.simplegame.tasks.TimedTask;
 
 import flash.utils.ByteArray;
 
@@ -19,9 +23,9 @@ public class LineageServer extends Lineage
     {
         _vserver = vserver;
 
-//        addTask(new RepeatingTask(new SerialTask(
-//                                            new TimedTask(10),
-//                                            new FunctionTask(checkPlayersNames))));
+        addTask(new RepeatingTask(new SerialTask(
+                                            new TimedTask(10),
+                                            new FunctionTask(checkPlayersNames))));
 
 
 
@@ -41,15 +45,7 @@ public class LineageServer extends Lineage
         _vserver.players.forEach(function (playerId :int, player :PlayerData) :void {
             if (player.name != getPlayerName(playerId)) {
                 setPlayerName(playerId, player.name);
-                _playerIdsResendLineage.add(playerId);
-
-                //Resend the lineage to the sire and grandsire.
-                for each (var sire :int in getAllSiresAndGrandSires(playerId, 2)) {
-                    _playerIdsResendLineage.add(sire);
-                }
-                for each (var child :int in getAllDescendents(playerId, null, 2)) {
-                    _playerIdsResendLineage.add(child);
-                }
+                playerUpdated(playerId);
             }
         });
     }
@@ -166,15 +162,15 @@ public class LineageServer extends Lineage
 
         _playerIdsResendLineage.forEach(function (playerId :int) :void {
             if (_vserver.isPlayer(playerId)) {
-                var lineage :Lineage = getSubLineage(playerId, -1, 2);
+                var lineage :Lineage = getSubLineage(playerId, 1, 2);
                 log.debug("Setting into " + _vserver.getPlayer(playerId).name+ "'s lineage", "playerId", playerId,
                     "lineage", lineage);
                 var bytes :ByteArray = lineage.toBytes();
                 _vserver.getPlayer(playerId).lineage = bytes;
-                if (_vserver.getPlayer(playerId).room != null) {
-                    _vserver.getPlayer(playerId).room.ctrl.props.setIn(
-                        Codes.ROOM_PROP_PLAYER_LINEAGE, playerId, bytes);
-                }
+//                if (_vserver.getPlayer(playerId).room != null) {
+//                    _vserver.getPlayer(playerId).room.ctrl.props.setIn(
+//                        Codes.ROOM_PROP_PLAYER_LINEAGE, playerId, bytes);
+//                }
             }
         });
         _playerIdsResendLineage.clear();
@@ -193,6 +189,22 @@ public class LineageServer extends Lineage
             super.setPlayerSire(playerId, sireId);
             updateProgenyIds(sireId, playerId);
             offlinePlayerFinishedLoading(playerId);
+            playerUpdated(playerId);
+            playerUpdated(sireId);
+        }
+    }
+
+    /**
+    * When a player is updated, reupload the lineages of all players that can see her.
+    */
+    protected function playerUpdated (playerId :int) :void
+    {
+        _playerIdsResendLineage.add(playerId);
+        for each (var sire :int in getAllSiresAndGrandSires(playerId, 2)) {
+            _playerIdsResendLineage.add(sire);
+        }
+        for each (var child :int in getAllDescendents(playerId, null, 2)) {
+            _playerIdsResendLineage.add(child);
         }
     }
 

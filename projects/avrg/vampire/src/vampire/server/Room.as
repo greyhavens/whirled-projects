@@ -149,7 +149,7 @@ public class Room extends SimObject
         }
         log.debug("room.playerLeft, removing from feeding games " + player.name);
 
-        _bloodBloomGameManager.playerQuitsGame(player.playerId);
+        _bloodBloomGameManager.playerQuitsGameOrRoom(player.playerId);
         //Delete the lineage for this player
         _ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, player.playerId, null);
     }
@@ -171,6 +171,7 @@ public class Room extends SimObject
 
             //Send feedback messages.
             if(_feedbackMessageQueue.length > 0) {
+                log.debug("room " + _ctrl.getRoomName() + " sending messages=" + _feedbackMessageQueue);
                 _ctrl.props.set(Codes.ROOM_PROP_FEEDBACK, _feedbackMessageQueue.slice());
                 _feedbackMessageQueue.splice(0);
             }
@@ -197,6 +198,7 @@ public class Room extends SimObject
                 log.debug("Room " + roomId + ", Setting primary preds=" + primaryPreds);
                 _ctrl.props.set(Codes.ROOM_PROP_PRIMARY_PREDS, primaryPreds);
             }
+
 
         }
         catch (e :Error) {
@@ -292,10 +294,10 @@ public class Room extends SimObject
         return _players.keys();
     }
 
-    public function addFeedback (msg :String, playerId :int = 0) :void
+    public function addFeedback (msg :String, priority :int = 1, playerId :int = 0) :void
     {
         log.debug(playerId + " " + msg);
-        _feedbackMessageQueue.push([playerId, msg]);
+        _feedbackMessageQueue.push([playerId, msg, priority]);
     }
 
     public function get bloodBloomGameManager () :FeedingManager

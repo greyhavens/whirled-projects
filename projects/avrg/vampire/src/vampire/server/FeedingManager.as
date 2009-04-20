@@ -1,47 +1,28 @@
 package vampire.server
 {
-    import com.threerings.util.ClassUtil;
-    import com.threerings.util.HashMap;
-    import com.threerings.util.HashSet;
-    import com.threerings.util.Log;
-    import com.whirled.contrib.simplegame.SimObject;
-
-    import vampire.data.VConstants;
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.ClassUtil;
+import com.threerings.util.HashSet;
+import com.threerings.util.Log;
+import com.whirled.contrib.simplegame.SimObject;
 
 public class FeedingManager extends SimObject
 {
     public function FeedingManager(room :Room)
     {
         _room = room;
-
     }
 
     override protected function destroyed () :void
     {
         var gamesShutdown :HashSet = new HashSet();
-        _playerId2Game.forEach(function(playerId :int, game :FeedingRecord) :void {
-            if(!gamesShutdown.contains(game.gameServer.gameId)) {
-                gamesShutdown.add(game.gameServer.gameId);
-                game.shutdown();
-            }
-        });
-        _playerId2Game.clear();
+
+        for each (var game :FeedingRecord in _games) {
+            game.shutdown();
+        }
+
         _games.splice(0);
         _room = null;
-    }
-
-
-
-    public function predatorBeginsGame(predatorId :int) :void
-    {
-        var gameRecord :FeedingRecord = _playerId2Game.get(predatorId) as FeedingRecord;
-        if(gameRecord != null) {
-            log.debug("predatorBeginsGame ", "predatorId", predatorId);
-            gameRecord.startLobby();
-        }
-        else {
-            log.debug("predatorBeginsGame, but no game for that record", "predatorId", predatorId);
-        }
     }
 
     protected function get nextBloodBloomGameId() :int
@@ -53,51 +34,80 @@ public class FeedingManager extends SimObject
         preyLocation :Array) :FeedingRecord
     {
         log.debug("begin requestFeed ", "predatorId", predatorId, "preyId", preyId,
-            "preyName", preyName);
-//            "BloodBloomManager", this);
+            "preyName", preyName, "this", this);
 
-        var currentGame :FeedingRecord = _playerId2Game.get(predatorId) as FeedingRecord;
-        if(currentGame != null) {
-            if(currentGame.preyId == preyId) {
-                log.debug(predatorId + " doing nothing, prey is already in a game I am also in. Game=" + currentGame);
-            }
-            else {
-                currentGame.playerLeavesGame(predatorId);
-                _playerId2Game.remove(predatorId);
-                log.debug(predatorId + "  I am alrady in a game with a different prey, so leaving that game. Game=" + currentGame);
-            }
-        }
+//        var currentGame :FeedingRecord = _playerId2Game.get(predatorId) as FeedingRecord;
 
-
-        if(_playerId2Game.containsKey(preyId)) {
-            log.debug(predatorId + " requestFeed, adding to existing game");
-            var gameRecord :FeedingRecord = _playerId2Game.get(preyId) as FeedingRecord;
-            gameRecord.addPredator(predatorId, preyLocation);
-            _playerId2Game.put(predatorId, gameRecord);
-//            if(!gameRecord.isStarted) {
+        var currentPredGame :FeedingRecord = getGame(predatorId);
+        if(currentPredGame != null) {
+            log.debug(predatorId + " doing nothing, I am already in a game. Game=" + currentPredGame);
+            return currentPredGame;
+//            if(currentGame.preyId == preyId) {
+//                log.debug(predatorId + " doing nothing, prey is already in a game I am also in. Game=" + currentGame);
 //            }
 //            else {
-//                _room.addFeedback("You cannot join a game already in progress.", predatorId);
+//                log.debug(predatorId + "  I am alrady in a game with a different prey.  Staying in the current game=" + currentGame);
+////                currentGame.playerLeavesGame(predatorId);
+////                _playerId2Game.remove(predatorId);
+////                log.debug(predatorId + "  I am alrady in a game with a different prey, so leaving that game. Game=" + currentGame);
+////                return null;
 //            }
-            return gameRecord;
+        }
+
+        var currentPreyGame :FeedingRecord = getGame(preyId);
+
+        if (currentPreyGame != null) {
+            log.debug(predatorId + " requestFeed, prey is already in game, joining lobby", "currentPreyGame", currentPreyGame);
+            currentPreyGame.joinLobby(predatorId);
+            log.debug(predatorId + " requestFeed, after joining lobby", "currentPreyGame", currentPreyGame);
+            return currentPreyGame;
         }
         else {
             log.debug(predatorId + " requestFeed, creating a new game");
             return createNewBloodBloomGameRecord(predatorId, preyId, preyName, preyLocation);
         }
+
+
+//        if(_playerId2Game.containsKey(preyId)) {
+//            log.debug(predatorId + " requestFeed, adding to existing game");
+//            var gameRecord :FeedingRecord = _playerId2Game.get(preyId) as FeedingRecord;
+//            gameRecord.addPredator(predatorId, preyLocation);
+//            _playerId2Game.put(predatorId, gameRecord);
+////            if(!gameRecord.isStarted) {
+////            }
+////            else {
+////                _room.addFeedback("You cannot join a game already in progress.", predatorId);
+////            }
+//            return gameRecord;
+//        }
+//        else {
+//            log.debug(predatorId + " requestFeed, creating a new game");
+//            return createNewBloodBloomGameRecord(predatorId, preyId, preyName, preyLocation);
+//        }
     }
 
-    protected function gameFinishedCallback (record :FeedingRecord) :void
+    public function getGame (playerId :int) :FeedingRecord
     {
-        for each(var playerId :int in record.playerIds) {
-            _playerId2Game.remove(playerId);
+//        log.info(
+        for each (var record :FeedingRecord in _games) {
+            if (ArrayUtil.contains(record.gameServer.playerIds, playerId)) {
+                return record;
+            }
         }
+        return null;
     }
 
-    protected function playerLeavesCallback (playerId :int) :void
-    {
-        _playerId2Game.remove(playerId);
-    }
+//    protected function gameFinishedCallback (record :FeedingRecord) :void
+//    {
+//        for each(var playerId :int in record.playerIds) {
+//            _playerId2Game.remove(playerId);
+//        }
+//    }
+
+//    protected function playerLeavesCallback (playerId :int) :void
+//    {
+//        _playerId2Game.remove(playerId);
+//    }
 
     override protected function update (dt :Number) :void
     {
@@ -111,26 +121,30 @@ public class FeedingManager extends SimObject
     protected function removeFinishedGames () :void
     {
         var index :int = 0;
-        while(index < _games.length) {
+        while (index < _games.length) {
             var gameRecord :FeedingRecord = _games[index] as FeedingRecord;
-            if(gameRecord != null && gameRecord.isFinished) {
-                log.debug("Removing finished BloodBloomGameRecord");
+            if (gameRecord == null ||
+                gameRecord.gameServer == null ||
+                gameRecord.gameServer.playerIds.length == 0) {
+
                 _games.splice(index, 1);
-                gameRecord.predators.forEach(function(predatorId :int) :void {
-                    if(_playerId2Game.get(predatorId) == gameRecord) {
-                        _playerId2Game.remove(predatorId);
-                    }
-                });
+
+//                log.debug("Removing finished BloodBloomGameRecord");
+//                gameRecord.predators.forEach(function(predatorId :int) :void {
+//                    if(_playerId2Game.get(predatorId) == gameRecord) {
+//                        _playerId2Game.remove(predatorId);
+//                    }
+//                });
 
                 //Set the avatars to the default state after a game.
-                for each(var playerId :int in gameRecord.playerIds) {
-                    if(_room.isPlayer(playerId)) {
-                        ServerLogic.stateChange(_room.getPlayer(playerId), VConstants.PLAYER_STATE_DEFAULT);
-                    }
-                }
+//                for each(var playerId :int in gameRecord.playerIds) {
+//                    if(_room.isPlayer(playerId)) {
+//                        ServerLogic.stateChange(_room.getPlayer(playerId), VConstants.PLAYER_STATE_DEFAULT);
+//                    }
+//                }
 
-                _playerId2Game.remove(gameRecord.preyId);
-                gameRecord.shutdown();
+//                _playerId2Game.remove(gameRecord.preyId);
+//                gameRecord.shutdown();
             }
             else {
                 index++;
@@ -138,52 +152,67 @@ public class FeedingManager extends SimObject
         }
     }
 
-    public function playerQuitsGame (playerId :int) :void
+    public function playerQuitsGameOrRoom (playerId :int) :void
     {
-        if(_playerId2Game.containsKey(playerId)) {
-            var gameRecord :FeedingRecord = _playerId2Game.get(playerId) as FeedingRecord;
-            gameRecord.playerLeavesGame(playerId, true);
-//            gameRecord.removePlayer(playerId);
-            _playerId2Game.remove(playerId);
+        for each (var record :FeedingRecord in _games) {
+            record.playerLeavesGame(playerId);
         }
-        else {
-            log.debug("playerQuitsGame, player not a mamber of any game", "playerId", playerId);
-        }
+//        var record :FeedingRecord = getGame(playerId);
+//        if (record != null) {
+//            record.playerLeavesGame(playerId);
+//        }
+//        else {
+//            log.debug("playerQuitsGame, player not a mamber of any game", "playerId", playerId);
+//        }
+
+
+//        if(_playerId2Game.containsKey(playerId)) {
+//            var gameRecord :FeedingRecord = _playerId2Game.get(playerId) as FeedingRecord;
+//            gameRecord.playerLeavesGame(playerId, true);
+////            gameRecord.removePlayer(playerId);
+//            _playerId2Game.remove(playerId);
+//        }
     }
 
-    public function isPredatorInGame (playerId :int) :Boolean
-    {
-        if(!_playerId2Game.containsKey(playerId)) {
-//            log.debug("isPredatorInGame(" + playerId + "), but no key in _playerId2Game, _playerId2Game.keys=" + _playerId2Game.keys());
-            return false;
-        }
-
-        var game :FeedingRecord = _playerId2Game.get(playerId) as FeedingRecord;
-
-        var isPredator :Boolean = game.isPredator(playerId);
-        log.debug("isPredatorInGame(" + playerId + ") returning " + isPredator);
-        return isPredator;
-    }
+//    public function isPredatorInGame (playerId :int) :Boolean
+//    {
+//        if(!_playerId2Game.containsKey(playerId)) {
+////            log.debug("isPredatorInGame(" + playerId + "), but no key in _playerId2Game, _playerId2Game.keys=" + _playerId2Game.keys());
+//            return false;
+//        }
+//
+//        var game :FeedingRecord = _playerId2Game.get(playerId) as FeedingRecord;
+//
+//        var isPredator :Boolean = game.isPredator(playerId);
+//        log.debug("isPredatorInGame(" + playerId + ") returning " + isPredator);
+//        return isPredator;
+//    }
 
     public function isPreyInGame (playerId :int) :Boolean
     {
-        if(!_playerId2Game.containsKey(playerId)) {
-            return false;
+        var record :FeedingRecord = getGame(playerId);
+        if (record != null) {
+            return record.gameServer.preyId == playerId;
         }
+        return false;
 
-        var game :FeedingRecord = _playerId2Game.get(playerId) as FeedingRecord;
-        return game.isPrey(playerId);
+//        if(!_playerId2Game.containsKey(playerId)) {
+//            return false;
+//        }
+//
+//        var game :FeedingRecord = _playerId2Game.get(playerId) as FeedingRecord;
+//        return game.isPrey(playerId);
     }
 
-    public function getGame(playerId :int) :FeedingRecord
-    {
-        if(!_playerId2Game.containsKey(playerId)) {
-            log.debug("getGame(" + playerId + "), but us=" + toString());
-            return null;
-        }
-
-        return _playerId2Game.get(playerId) as FeedingRecord;
-    }
+//    public function getGame(playerId :int) :FeedingRecord
+//    {
+//        if(!_playerId2Game.containsKey(playerId)) {
+//            log.debug("getGame(" + playerId + "), but us=" + toString());
+//            return null;
+//        }
+//
+//        return _playerId2Game.get(playerId) as FeedingRecord;
+//    }
 
 
     protected function createNewBloodBloomGameRecord(predatorId :int, preyId :int,
@@ -192,44 +221,54 @@ public class FeedingManager extends SimObject
         log.debug("createNewBloodBloomGameRecord ", "predatorId", predatorId, "preyId", preyId,
             "preyName", preyName);
         var gameRecord :FeedingRecord = new FeedingRecord(_room,
-            nextBloodBloomGameId, predatorId, preyId, preyName, preyLocation,
-            gameFinishedCallback, playerLeavesCallback);
-        _playerId2Game.put(predatorId, gameRecord);
-        if(preyId > 0) {
-            _playerId2Game.put(preyId, gameRecord);
-        }
+            nextBloodBloomGameId, predatorId, preyId, preyName, preyLocation);//,
+//            gameFinishedCallback, playerLeavesCallback);
+//        _playerId2Game.put(predatorId, gameRecord);
+//        if(preyId > 0) {
+//            _playerId2Game.put(preyId, gameRecord);
+//        }
         _games.push(gameRecord);
 
         return gameRecord;
     }
 
-    public function get players() :Array
-    {
-        var keys :Array = _playerId2Game.keys();
-        keys.sort();
-        return keys;
-    }
+//    public function get players() :Array
+//    {
+//
+//
+//        var keys :Array = _playerId2Game.keys();
+//        keys.sort();
+//        return keys;
+//    }
 
     public function get unavailablePlayers() :Array
     {
          var playerids :Array = new Array();
-         _playerId2Game.forEach(function(playerId :int, game :FeedingRecord) :void {
-
-             if (game.isPredator(playerId)){
-                 playerids.push(playerId);
+         for each (var record :FeedingRecord in _games) {
+             for each (var predId :int in record.gameServer.predatorIds) {
+                 playerids.push(predId);
              }
-//             else if (game.isStarted){
+         }
+
+
+//
+//         _playerId2Game.forEach(function(playerId :int, game :FeedingRecord) :void {
+//
+//             if (game.isPredator(playerId)){
 //                 playerids.push(playerId);
 //             }
-         });
+////             else if (game.isStarted){
+////                 playerids.push(playerId);
+////             }
+//         });
          return playerids;
     }
 
     public function get primaryPreds() :Array
     {
          var playerids :Array = new Array();
-         for each (var game :FeedingRecord in _games) {
-             playerids.push(game.primaryPredatorId);
+         for each (var record :FeedingRecord in _games) {
+             playerids.push(record.gameServer.primaryPredatorId);
          }
          return playerids;
     }
@@ -237,14 +276,14 @@ public class FeedingManager extends SimObject
     override public function toString() :String
     {
         return ClassUtil.tinyClassName(this)
-            + "\n _games.length=" + _games.length
-            + "\n _playerId2Game.size()=" + _playerId2Game.size()
-            + "\n _playerId2Game.keys()=" + _playerId2Game.keys()
+            + "\n games.length=" + _games.length
+//            + "\n playerId2Game.size()=" + _playerId2Game.size()
+//            + "\n playerId2Game.keys()=" + _playerId2Game.keys()
             + "\n games listed:\n  " + _games.join("\n  ")
     }
 
     protected var _room :Room;
-    protected var _playerId2Game :HashMap = new HashMap();
+//    protected var _playerId2Game :HashMap = new HashMap();
     protected var _games :Array = new Array();
     protected var _bloodBloomIdCounter :int = 0;
 

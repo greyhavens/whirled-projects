@@ -103,11 +103,12 @@ public class PlayerData extends EventHandlerManager
     public function set lineage (b :ByteArray) :void
     {
         _propsUndater.put(Codes.PLAYER_PROP_LINEAGE, b);
+        _updateLineage = true;
     }
 
-    public function addFeedback (msg :String) :void
+    public function addFeedback (msg :String, priority :int = 1) :void
     {
-        _feedback.push(msg);
+        _feedback.push([msg, priority]);
     }
 
     public function get ctrl () :PlayerSubControlBase
@@ -289,10 +290,27 @@ public class PlayerData extends EventHandlerManager
 
             //Copy the feedback to the room
             if (_feedback.length > 0) {
-                for each (var msg :String in _feedback) {
-                    room.addFeedback(msg, playerId);
+                log.debug(_ctrl.getPlayerName() + " updateRoom, adding feedback=" + _feedback);
+                for each (var msgData :Array in _feedback) {
+                    room.addFeedback(msgData[0] as String, msgData[1] as int, playerId);
                 }
                 _feedback.splice(0);
+            }
+
+//            var roomDict :Dictionary =
+//                _room.ctrl.props.get(Codes.ROOM_PROP_PLAYER_LINEAGE) as Dictionary;
+//            if (roomDict == null) {
+//                roomDict = new Dictionary();
+//                _room.ctrl.props.set(Codes.ROOM_PROP_PLAYER_LINEAGE, roomDict, true);
+//            }
+//
+//            if (PlayerPropertiesUpdater.isByteArraysDifferent(roomDict[playerId], lineage)) {
+//                _room.ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, playerId, lineage, true);
+//            }
+
+            if (_updateLineage) {
+                _room.ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, playerId, lineage, true);
+                _updateLineage = false;
             }
 
         }
@@ -504,6 +522,12 @@ public class PlayerData extends EventHandlerManager
         }
 
         _propsUndater.update(dt);
+        updateRoom();
+
+
+        if (avatar != null && avatar.state != _avatarState) {
+            _ctrl.setAvatarState(_avatarState);
+        }
     }
 
     /**
@@ -545,6 +569,18 @@ public class PlayerData extends EventHandlerManager
         _xpFeedback += bonus;
     }
 
+    public function get avatarState() :String
+    {
+        return _avatarState;
+    }
+
+    public function set avatarState(newAvatarState :String) :void
+    {
+        _avatarState = newAvatarState;
+    }
+
+
+
     //Basic variables
     protected var _room :Room;
     protected var _ctrl :PlayerSubControlBase;
@@ -552,11 +588,14 @@ public class PlayerData extends EventHandlerManager
 
     //Non-persistant variables
     protected var _state :String;
+    protected var _avatarState :String;
     protected var _targetId :int;
     protected var _targetLocation :Array;
     protected var _feedback :Array = [];
     protected var _xpFeedbackTime :Number = 0;
     protected var _xpFeedback :Number = 0;
+
+    protected var _updateLineage :Boolean = true;
 
     //Stores props copied to the client
     protected var _propsUndater :PlayerPropertiesUpdater;

@@ -137,7 +137,7 @@ public class GameServer extends ObjectDB
         //Add the global messages to each room
         _rooms.forEach(function(roomId :int, room :Room) :void {
             for each(var globalMessage :String in _globalFeedback) {
-                room.addFeedback(globalMessage, 0);
+                room.addFeedback(globalMessage, 1, 0);
             }
         });
 

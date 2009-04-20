@@ -533,28 +533,29 @@ public class ServerLogic
     }
     protected static function handlePlayerArrivedAtLocation (player :PlayerData) :void
     {
-        log.debug(player.playerId + " message " + PlayerArrivedAtLocationMsg.NAME,
-            "player", player.playerId, "state", player.state);
-
-        switch (player.state) {
-            case VConstants.PLAYER_STATE_MOVING_TO_FEED:
-            stateChange(player,  VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION);
-            break;
-
-            //If we are in a game or lobby, and we move, break off the game.
-//            case VConstants.PLAYER_STATE_FEEDING_PREDATOR:
-//            case VConstants.PLAYER_STATE_FEEDING_PREY:
-//            case VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION:
-//            var game :FeedingRecord = player.room.bloodBloomGameManager.getGame(player.playerId);
-//            if (game != null) {
-//                game.playerLeavesGame(player.playerId, true);
-//                stateChange(player, VConstants.PLAYER_STATE_DEFAULT);
-//            }
+        log.debug("handlePlayerArrivedAtLocation, ignored");
+//        log.debug(player.playerId + " message " + PlayerArrivedAtLocationMsg.NAME,
+//            "player", player.playerId, "state", player.state);
+//
+//        switch (player.state) {
+//            case VConstants.PLAYER_STATE_MOVING_TO_FEED:
+//            stateChange(player,  VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION);
 //            break;
-
-            default:
-            break;
-        }
+//
+//            //If we are in a game or lobby, and we move, break off the game.
+////            case VConstants.PLAYER_STATE_FEEDING_PREDATOR:
+////            case VConstants.PLAYER_STATE_FEEDING_PREY:
+////            case VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION:
+////            var game :FeedingRecord = player.room.bloodBloomGameManager.getGame(player.playerId);
+////            if (game != null) {
+////                game.playerLeavesGame(player.playerId, true);
+////                stateChange(player, VConstants.PLAYER_STATE_DEFAULT);
+////            }
+////            break;
+//
+//            default:
+//            break;
+//        }
     }
 
 
@@ -663,43 +664,42 @@ public class ServerLogic
         if (player.room.bloodBloomGameManager.isPreyInGame(e.targetPlayer)
             || !isPlayer(e.targetPlayer)) {
 
+            log.info("Prey is already in a game (or it's a non-player)");
             //Make sure the prey immediately goes into bared mode
-            if (isPlayer(e.targetPlayer)) {
-                stateChange(getPlayer(e.targetPlayer), VConstants.PLAYER_STATE_BARED);
-            }
+//            if (isPlayer(e.targetPlayer)) {
+//                stateChange(getPlayer(e.targetPlayer), VConstants.PLAYER_STATE_BARED);
+//            }
 
             game = player.room.bloodBloomGameManager.requestFeed(
-                e.playerId,
+                e.predId,
                 e.targetPlayer,
                 e.targetName,
                 [e.targetX, e.targetY, e.targetZ]);//Prey location
 
-            stateChange(player, VConstants.PLAYER_STATE_MOVING_TO_FEED);
+            if (game != null) {
+                stateChange(player, VConstants.PLAYER_STATE_MOVING_TO_FEED);
 
 
-            var feedConfirm :FeedConfirmMsg = new FeedConfirmMsg(e.playerId,
-                                                                 e.targetName,
-                                                                 player.playerId,
-                                                                 true);
 
-            PlayerSubControlServer(player.ctrl).sendMessage(FeedConfirmMsg.NAME, feedConfirm.toBytes());
+                var feedConfirm :FeedConfirmMsg = new FeedConfirmMsg(e.playerId,
+                                                                     e.targetPlayer,
+                                                                     e.targetName,
+                                                                     e.predId,
+                                                                     true);
 
-//            log.debug("adding to game");
-//            //Add ourselves to a game.  We'll check this later, when we arrive at our location
-//            game = player.room.bloodBloomGameManager.requestFeed(
-//                e.playerId,
-//                (e.targetPlayer != 0 ? e.targetPlayer : -1),//BB used -1 as the AI player
-//                [e.targetX, e.targetY, e.targetZ]);//Prey location
-//
-//            if (!game.isStarted) {
-//
-//                stateChange(player, VConstants.PLAYER_STATE_MOVING_TO_FEED);
-////                if (player.room.isPlayer(e.targetPlayer)) {
-////                }
-////                else {
-////                    stateChange(player, VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER);
-////                }
-//            }
+                PlayerSubControlServer(player.ctrl).sendMessage(FeedConfirmMsg.NAME,
+                    feedConfirm.toBytes());
+
+            }
+            else {
+                log.error("handleFeedRequestMessage", "game", game,
+                    "e.targetPlayer", e.targetPlayer,
+                    "player.room.bloodBloomGameManager.isPreyInGame(e.targetPlayer)",
+                    player.room.bloodBloomGameManager.isPreyInGame(e.targetPlayer));
+
+            }
+
+
         }
         else {
             //If the prey is a player, ask permission.  Otherwise start up the lobby
@@ -760,6 +760,7 @@ public class ServerLogic
 
         if (requestingPlayer != null) {
             var feedConfirm :FeedConfirmMsg = new FeedConfirmMsg(prey.playerId,
+                                                                 prey.playerId,
                                                                  prey.name,
                                                                  requestingPlayer.playerId,
                                                                  e.isAllowedToFeed);
@@ -799,16 +800,8 @@ public class ServerLogic
 
 
         ServerContext.server.lineage.setPlayerSire(player.playerId, targetPlayerId);
+        player.sire = targetPlayerId;
         log.info(player.playerId + " then setting sire(" + ServerContext.server.lineage.getSireId(player.playerId) + ")");
-        player.sire = ServerContext.server.lineage.getSireId(player.playerId);
-
-//        ServerContext.minionHierarchy.updatePlayer(targetPlayerId);
-//        ServerContext.server.lineage.updatePlayer(player.playerId);
-//        ServerContext.minionHierarchy.updateIntoRoomProps();
-
-//        if (oldSire != 0) {
-//            ServerContext.server.lineage.updatePlayer(oldSire);
-//        }
     }
 
 //    public static function makeMinion(player :PlayerData, targetPlayerId :int) :void
@@ -879,11 +872,11 @@ public class ServerLogic
             case VConstants.PLAYER_STATE_BARED:
 
                 //If I'm feeding, just break off the feed.
-                if (room.bloodBloomGameManager.isPredatorInGame(playerId)) {
-                    room.bloodBloomGameManager.playerQuitsGame(playerId);
-                    player.state = VConstants.PLAYER_STATE_DEFAULT;
-                    break;
-                }
+//                if (room.bloodBloomGameManager.isPredatorInGame(playerId)) {
+//                    room.bloodBloomGameManager.playerQuitsGameOrRoom(playerId);
+//                    player.state = VConstants.PLAYER_STATE_DEFAULT;
+//                    break;
+//                }
 
 //                //If we are alrady in bare mode, toggle it, unless we are in a game.
 //                //Then we should quit the game to get out of bared mode
@@ -894,7 +887,7 @@ public class ServerLogic
 //                    }
 //                }
 
-                //Otherwise, go into bared mode.  Whay not?
+                //Otherwise, go into bared mode.  Why not?
                 player.state = newState;
                 break;
 
@@ -937,24 +930,23 @@ public class ServerLogic
                     player.playerId, player.targetId, predLocIndex == 0, predLocIndex, targetLocation);
 
                PlayerSubControlServer(player.ctrl).sendMessage(msg.name, msg.toBytes());
+               stateChange(player, VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION);
                break;
 
             case VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION:
 
-                game = room.bloodBloomGameManager.getGame(playerId);
-
-
-
-                if (game == null) {
-                    log.error("actionChange(" + newState + ") but no game. We should have already registered.");
-                    log.error("_room._bloodBloomGameManager=" + room.bloodBloomGameManager);
-                    break;
-                }
-
-                if (game.isFinished) {
-                    log.error("actionChange(" + newState + ") but game finished");
-                    break;
-                }
+//                game = room.bloodBloomGameManager.getGame(playerId);
+//
+//                if (game == null) {
+//                    log.error("actionChange(" + newState + ") but no game. We should have already registered.");
+//                    log.error("_room._bloodBloomGameManager=" + room.bloodBloomGameManager);
+//                    break;
+//                }
+//
+//                if (game.isFinished) {
+//                    log.error("actionChange(" + newState + ") but game finished");
+//                    break;
+//                }
 
 //                if (!ArrayUtil.contains(game.gameServer.predatorIds, playerId)) {
 //                    game.gameServer.addPredator(playerId);
@@ -969,14 +961,14 @@ public class ServerLogic
 
                 player.state = newState;
 //                plaupdateAvatarState();
-                if (game.isLobbyStarted) {
-                    log.debug("    Joining lobby...");
-                    game.joinLobby(player.playerId);
-                }
-                else {
-                    log.debug("    Starting lobby...");
-                    game.startLobby();
-                }
+//                if (game.isLobbyStarted) {
+//                    log.debug("    Joining lobby...");
+//                    game.joinLobby(player.playerId);
+//                }
+//                else {
+//                    log.debug("    Starting lobby...");
+//                    game.startLobby();
+//                }
 //                if (game.multiplePredators) {
 //                    if (!game.isCountDownTimerStarted) {
 //                        game.startCountDownTimer();
@@ -1073,53 +1065,53 @@ public class ServerLogic
 //        }
 //    }
 
-    /**
-    * If the avatar moves, break off the feeding/baring.
-    */
-    protected static function handleAvatarMoved (player :PlayerData, userIdMoved :int) :void
-    {
-        //Moving nullifies any action we are currently doing, except if we are heading to
-        //feed.
-
-        switch (player.state) {
-
-            case VConstants.PLAYER_STATE_MOVING_TO_FEED:
-
-//            case VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER:
-                break;//Don't change our state if we are moving into position
-
-            case VConstants.PLAYER_STATE_FEEDING_PREDATOR:
-            case VConstants.PLAYER_STATE_FEEDING_PREY:
-            case VConstants.PLAYER_STATE_BARED:
-//                var victim :PlayerData = ServerContext.server.getPlayer(player.targetId);
-//                if (victim != null) {
-//                    victim.setState(VConstants.AVATAR_STATE_DEFAULT);
-//                }
-//                else {
-//                    log.error("avatarMoved(), we shoud be breaking off a victim, but there is no victim.");
-//                }
-                stateChange(player, VConstants.PLAYER_STATE_DEFAULT);
-//                player.setState(VConstants.AVATAR_STATE_DEFAULT);
-                break;
-
-//            case VConstants.AVATAR_STATE_BARED:
-////                var predator :PlayerData = ServerContext.server.getPlayer(player.targetId);
-////                if (predator != null) {
-////                    predator.setState(VConstants.AVATAR_STATE_DEFAULT);
+//    /**
+//    * If the avatar moves, break off the feeding/baring.
+//    */
+//    protected static function handleAvatarMoved (player :PlayerData, userIdMoved :int) :void
+//    {
+//        //Moving nullifies any action we are currently doing, except if we are heading to
+//        //feed.
+//
+//        switch (player.state) {
+//
+//            case VConstants.PLAYER_STATE_MOVING_TO_FEED:
+//
+////            case VConstants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER:
+//                break;//Don't change our state if we are moving into position
+//
+//            case VConstants.PLAYER_STATE_FEEDING_PREDATOR:
+//            case VConstants.PLAYER_STATE_FEEDING_PREY:
+//            case VConstants.PLAYER_STATE_BARED:
+////                var victim :PlayerData = ServerContext.server.getPlayer(player.targetId);
+////                if (victim != null) {
+////                    victim.setState(VConstants.AVATAR_STATE_DEFAULT);
 ////                }
 ////                else {
 ////                    log.error("avatarMoved(), we shoud be breaking off a victim, but there is no victim.");
 ////                }
-////                player.setState(VConstants.AVATAR_STATE_DEFAULT);
 //                stateChange(player, VConstants.PLAYER_STATE_DEFAULT);
+////                player.setState(VConstants.AVATAR_STATE_DEFAULT);
 //                break;
-
-
-//            case VConstants.GAME_MODE_FEED_FROM_NON_PLAYER:
-            default :
-                player.state = VConstants.AVATAR_STATE_DEFAULT;
-        }
-    }
+//
+////            case VConstants.AVATAR_STATE_BARED:
+//////                var predator :PlayerData = ServerContext.server.getPlayer(player.targetId);
+//////                if (predator != null) {
+//////                    predator.setState(VConstants.AVATAR_STATE_DEFAULT);
+//////                }
+//////                else {
+//////                    log.error("avatarMoved(), we shoud be breaking off a victim, but there is no victim.");
+//////                }
+//////                player.setState(VConstants.AVATAR_STATE_DEFAULT);
+////                stateChange(player, VConstants.PLAYER_STATE_DEFAULT);
+////                break;
+//
+//
+////            case VConstants.GAME_MODE_FEED_FROM_NON_PLAYER:
+//            default :
+//                player.state = VConstants.AVATAR_STATE_DEFAULT;
+//        }
+//    }
 
    public static function bloodBloomRoundOver (gameRecord :FeedingRecord, finalScores :HashMap) :void
     {
@@ -1138,8 +1130,8 @@ public class ServerLogic
         if (gameRecord.gameServer.lastRoundScore == 0) {
             log.debug("score==0 so no blood lost or gained.");
 
-            if (gameRecord.playerIds != null) {
-                for each (var playerId :int in gameRecord.playerIds) {
+            if (gameRecord.gameServer.playerIds != null) {
+                for each (var playerId :int in gameRecord.gameServer.playerIds) {
                     if (srv.isPlayer(playerId)) {
                         var player :PlayerData = srv.getPlayer(playerId);
                         player.addFeedback("You scored 0, no blood!");
@@ -1180,40 +1172,52 @@ public class ServerLogic
 
             if (preyIsPlayer && preyPlayer != null) {
                 //Check if we don't have a sire.  The prey vampire becomes it.
+                log.debug("server.lineage.isMemberOfLineage("+pred.playerId+")=" +
+                    ServerContext.server.lineage.isMemberOfLineage(pred.playerId));
+
+                log.debug("server.lineage.isMemberOfLineage("+preyId+")=" +
+                    ServerContext.server.lineage.isMemberOfLineage(preyId));
+
                 if (!ServerContext.server.lineage.isMemberOfLineage(pred.playerId)) {
                     if (ServerContext.server.lineage.isMemberOfLineage(preyId)) {
                         makeSire(pred,  preyPlayer.playerId);
+                        log.info("Showing sire feedback popup.");
                         pred.addFeedback(Codes.POPUP_PREFIX + preyPlayer.name +
-                            " has become your sire!");
+                            " is now your sire!", 3);
+
+                        preyPlayer.addFeedback(Codes.POPUP_PREFIX + pred.name +
+                            " is now one of your progeny!", 3);
 
                         //Award coins to the sire
                         preyPlayer.ctrl.completeTask(Codes.TASK_ACQUIRE_PROGENY_ID,
                             Codes.TASK_ACQUIRE_PROGENY_SCORE);
+                        pred.ctrl.completeTask(Codes.TASK_ACQUIRE_PROGENY_ID,
+                            Codes.TASK_ACQUIRE_PROGENY_SCORE);
 
-                        //Award to sires two levels up
-                        var numberOfGrandGenerationsToAward :int = 2;
-
-                        var currentSireId :int = ServerContext.server.lineage.getSireId(
-                            preyPlayer.playerId);
-                        var generations :int = 1;
-
-                        while (currentSireId != 0 && generations <= 2) {
-                            if (srv.isPlayer(currentSireId)
-                                && srv.getPlayer(currentSireId).room != null) {
-                                var grandSirePlayer :PlayerData = srv.getPlayer(currentSireId);
-
-                                //Tell the sire she's got children
-                                grandSirePlayer.room.addFeedback(Codes.POPUP_PREFIX +
-                                    pred.name + " has joined your Lineage! ", currentSireId);
-
-                                //Award coins to the sire(s)
-                                grandSirePlayer.ctrl.completeTask(Codes.TASK_ACQUIRE_PROGENY_ID,
-                                    Codes.TASK_ACQUIRE_PROGENY_SCORE/10);
-
-                            }
-                            currentSireId = ServerContext.server.lineage.getSireId(currentSireId);
-                            generations++;
-                        }
+//                        //Award to sires two levels up
+//                        var numberOfGrandGenerationsToAward :int = 2;
+//
+//                        var currentSireId :int = ServerContext.server.lineage.getSireId(
+//                            preyPlayer.playerId);
+//                        var generations :int = 1;
+//
+//                        while (currentSireId != 0 && generations <= 2) {
+//                            if (srv.isPlayer(currentSireId)
+//                                && srv.getPlayer(currentSireId).room != null) {
+//                                var grandSirePlayer :PlayerData = srv.getPlayer(currentSireId);
+//
+//                                //Tell the sire she's got children
+//                                grandSirePlayer.room.addFeedback(Codes.POPUP_PREFIX +
+//                                    pred.name + " has joined your Lineage! ", currentSireId);
+//
+//                                //Award coins to the sire(s)
+//                                grandSirePlayer.ctrl.completeTask(Codes.TASK_ACQUIRE_PROGENY_ID,
+//                                    Codes.TASK_ACQUIRE_PROGENY_SCORE/10);
+//
+//                            }
+//                            currentSireId = ServerContext.server.lineage.getSireId(currentSireId);
+//                            generations++;
+//                        }
 
 //                        var preySireId :int = ServerContext.server.lineage.getSireId(preyPlayer.playerId);
 //
@@ -1282,10 +1286,10 @@ public class ServerLogic
         }
 
         if (preyIsPlayer && preyPlayer != null) {
-            awardXP(gameRecord.preyId, xpGained, xpFormatted);
+            awardXP(gameRecord.gameServer.preyId, xpGained, xpFormatted);
         }
 
-        gameRecord.predators.forEach(function(predId :int) :void {
+        gameRecord.gameServer.predatorIds.forEach(function(predId :int, ...ignored) :void {
             //Only award xp if the pred score was > 0
             //This also excludes players that loin the lobby after the feed is started.
             if (finalScores.get(predId) > 0) {
@@ -1329,16 +1333,17 @@ public class ServerLogic
         }
 
 //        var currentAvatarState :String = player.avatarState;
-        var currentAvatarState :String = player.avatar != null ? player.avatar.state : "Default";
-
-        if (newAvatarState != currentAvatarState) {
-            log.debug(player.name + " updateAvatarState(" + newAvatarState + "), when action=" + playerState);
-            player.ctrl.setAvatarState(newAvatarState);
-//            player.setAvatarState(newAvatarState);
-        }
-        else {
-            log.debug(player.name + " updateAvatarState(" + newAvatarState + "), but not changing since we are=" + currentAvatarState);
-        }
+            player.avatarState = newAvatarState;
+//        var currentAvatarState :String = player.avatar != null ? player.avatar.state : "Default";
+//
+//        if (newAvatarState != currentAvatarState) {
+//            log.debug(player.name + " updateAvatarState(" + newAvatarState + "), when action=" + playerState);
+////            player.ctrl.setAvatarState(newAvatarState);
+////            player.setAvatarState(newAvatarState);
+//        }
+//        else {
+//            log.debug(player.name + " updateAvatarState(" + newAvatarState + "), but not changing since we are=" + currentAvatarState);
+//        }
     }
 
 
