@@ -188,8 +188,9 @@ public class VampireController extends Controller
 
 
             var targetName :String = ClientContext.model.getAvatarName(targetId);
-            var msg :FeedRequestMsg = new FeedRequestMsg(ClientContext.ourPlayerId, targetId,
-                targetName, targetLocation[0], targetLocation[1], targetLocation[2]);
+            var msg :FeedRequestMsg = new FeedRequestMsg(ClientContext.ourPlayerId,
+                ClientContext.ourPlayerId, targetId, targetName,
+                targetLocation[0], targetLocation[1], targetLocation[2]);
 
             log.debug(ClientContext.ctrl + " handleSendFeedRequest() sending " + msg)
             ClientContext.ctrl.agent.sendMessage(FeedRequestMsg.NAME, msg.toBytes());
@@ -224,9 +225,11 @@ public class VampireController extends Controller
 
         //Show a popup if we aren't connected to the Lineage, and we choose a sire that is
 //        trace(ClientContext.ourPlayerId + " lineage=" + ClientContext.model.lineage);
-        var targetIsVampireAndLineageMemberAndOnline :Boolean =
-            ClientContext.model.lineage.isMemberOfLineage(targetId)
-            && ClientContext.model.isPlayer(targetId);
+        var targetIsVampireAndLineageMemberAndOnline :Boolean = ClientContext.gameMode.roomModel.isLineage(targetId) &&
+            ClientContext.gameMode.roomModel.getLineage(targetId).isConnectedToLilith;
+
+//            ClientContext.model.lineage.isMemberOfLineage(targetId)
+//            && ClientContext.model.isPlayer(targetId);
         if (!ClientContext.model.lineage.isMemberOfLineage(ClientContext.ourPlayerId)
             && targetIsVampireAndLineageMemberAndOnline) {
 
@@ -312,7 +315,7 @@ public class VampireController extends Controller
     {
 //        var targetName :String = ClientContext.model.getAvatarName(playerId);
         var msg :FeedConfirmMsg = new FeedConfirmMsg(ClientContext.ourPlayerId,
-            ClientContext.model.name, playerId, true);
+            ClientContext.ourPlayerId, ClientContext.model.name, playerId, true);
         ClientContext.ctrl.agent.sendMessage(FeedConfirmMsg.NAME, msg.toBytes());
 
         //If you accept one feed request, you accept all concurrent feed request,
@@ -323,7 +326,8 @@ public class VampireController extends Controller
                 ClientContext.gameMode.getObjectNamed(popupName).destroySelf();
 
                 if (playerId != playerIdWaiting) {
-                    msg = new FeedConfirmMsg(ClientContext.ourPlayerId, ClientContext.model.name, playerIdWaiting, true);
+                    msg = new FeedConfirmMsg(ClientContext.ourPlayerId, ClientContext.ourPlayerId,
+                        ClientContext.model.name, playerIdWaiting, true);
                     ClientContext.ctrl.agent.sendMessage(FeedConfirmMsg.NAME, msg.toBytes());
                 }
             }
@@ -334,7 +338,7 @@ public class VampireController extends Controller
     {
         var targetName :String = ClientContext.model.getAvatarName(playerId);
         var msg :FeedConfirmMsg = new FeedConfirmMsg(ClientContext.ourPlayerId,
-            targetName, playerId, false);
+            ClientContext.ourPlayerId, targetName, playerId, false);
         ClientContext.ctrl.agent.sendMessage(FeedConfirmMsg.NAME, msg.toBytes());
     }
 
