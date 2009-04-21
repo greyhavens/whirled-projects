@@ -39,6 +39,8 @@ public class PlayerData extends EventHandlerManager
         _ctrl = ctrl;
         _playerId = ctrl.getPlayerId();
 
+        log.info("Logging in", "playerId", playerId, "_ctrl.props.get(Codes.PLAYER_PROP_NAME)", _ctrl.props.get(Codes.PLAYER_PROP_NAME));
+
         //Setup the data container.  This will only update values that are changed.
         _propsUndater = new PropertiesUpdater(_ctrl.props, Codes.PLAYER_PROPS_UPDATED);
 
@@ -64,6 +66,8 @@ public class PlayerData extends EventHandlerManager
         if (progenyIds == null) {
             progenyIds = [];
         }
+
+
 
         log.info("Logging in", "playerId", playerId,
                 "name", name,
