@@ -5,10 +5,6 @@ public class SerialStatement
 {
     public function addStatement (statement :Statement) :void
     {
-        if (_hasBegun) {
-            throw new Error("Already running");
-        }
-
         _statements.push(statement);
     }
 

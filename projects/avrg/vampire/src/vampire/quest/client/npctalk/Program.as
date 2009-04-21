@@ -49,6 +49,11 @@ public class Program
         _routineStack.push(routine);
     }
 
+    public function hasRoutine (name :String) :Boolean
+    {
+        return (getRoutine(name) != null);
+    }
+
     protected function popRoutine () :void
     {
         _routineStack.pop();

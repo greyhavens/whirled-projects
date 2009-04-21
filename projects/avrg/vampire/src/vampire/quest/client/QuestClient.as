@@ -1,10 +1,10 @@
 package vampire.quest.client {
 
 import com.threerings.util.Log;
-import com.threerings.util.MethodQueue;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.simplegame.SimpleGame;
+import com.whirled.contrib.simplegame.resource.XmlResource;
 
 import vampire.feeding.FeedingClient;
 import vampire.feeding.FeedingClientSettings;
@@ -13,6 +13,7 @@ import vampire.feeding.variant.Variant;
 import vampire.furni.FurniConstants;
 import vampire.quest.*;
 import vampire.quest.activity.*;
+import vampire.quest.client.npctalk.*;
 
 public class QuestClient
 {
@@ -34,12 +35,12 @@ public class QuestClient
         ClientCtx.stats = stats;
 
         // load resources
-        /*ClientCtx.rsrcs.loadQueuedResources(
+        ClientCtx.rsrcs.queueResourceLoad("xml", "dialogTest", { embeddedClass: DIALOG_TEST });
+        ClientCtx.rsrcs.loadQueuedResources(
             onResourcesLoaded,
             function (err :String) :void {
                 log.error("Error loading resources: " + err);
-            });*/
-        MethodQueue.callLater(onResourcesLoaded);
+            });
     }
 
     public static function shutdown () :void
@@ -135,6 +136,10 @@ public class QuestClient
         ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_COMPLETED, onQuestCompleted);
 
         checkQuestCompletion();
+
+        // dialog test
+        var dialogTest :XmlResource = ClientCtx.rsrcs.getResource("dialogTest") as XmlResource;
+        var program :Program = ProgramParser.parse(dialogTest.xml);
     }
 
     protected static function checkQuestCompletion (...ignored) :void
@@ -215,6 +220,9 @@ public class QuestClient
 
     protected static var _inited :Boolean;
     protected static var _resourcesLoaded :Boolean;
+
+    [Embed(source="../../../../rsrc/quest/DialogTest.xml", mimeType="application/octet-stream")]
+    protected static const DIALOG_TEST :Class;
 
     protected static var log :Log = Log.getLog(QuestClient);
 }

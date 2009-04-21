@@ -1,0 +1,5 @@
+<Program>
+	<Routine name="main">
+		<Say speaker="Lilith" text="Hey sexy vampire, let's kill all humans"/>
+	</Routine>
+</Program>

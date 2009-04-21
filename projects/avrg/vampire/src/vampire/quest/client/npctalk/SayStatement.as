@@ -12,6 +12,7 @@ public class SayStatement
     public function update (dt :Number) :Number
     {
         ProgramCtx.view.say(_speakerName, _text);
+        return 0;
     }
 
     public function get isDone () :Boolean

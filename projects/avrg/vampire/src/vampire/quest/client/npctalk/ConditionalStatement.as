@@ -34,6 +34,11 @@ public class ConditionalStatement
         return _statement.update(dt);
     }
 
+    public function get isDone () :Boolean
+    {
+        return _statement.isDone;
+    }
+
     protected var _ifExprs :Array = [];
     protected var _ifStatements :Array = [];
     protected var _else :Statement;
