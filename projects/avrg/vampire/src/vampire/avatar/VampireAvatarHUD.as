@@ -317,9 +317,9 @@ public class VampireAvatarHUD extends AvatarHUD
             }
         }
 
-        var isPlayerPartOfLineage :Boolean =
+        var isPlayerPartOfLineage :Boolean = ClientContext.model.lineage != null && (
             ClientContext.model.lineage.isMemberOfLineage(ClientContext.ourPlayerId) ||
-            ClientContext.model.lineage.isConnectedToLilith;
+            ClientContext.model.lineage.isConnectedToLilith);
 
         var isAvatarPartOfLineage :Boolean =
             ClientContext.gameMode.lineages.getLineage(playerId) != null &&
