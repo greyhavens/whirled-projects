@@ -225,12 +225,12 @@ public class VampireController extends Controller
 
         //Show a popup if we aren't connected to the Lineage, and we choose a sire that is
 //        trace(ClientContext.ourPlayerId + " lineage=" + ClientContext.model.lineage);
-        var targetIsVampireAndLineageMemberAndOnline :Boolean = ClientContext.gameMode.roomModel.isLineage(targetId) &&
-            ClientContext.gameMode.roomModel.getLineage(targetId).isConnectedToLilith;
+        var targetIsVampireAndLineageMemberAndOnline :Boolean = ClientContext.gameMode.lineages.isLineage(targetId) &&
+            ClientContext.gameMode.lineages.getLineage(targetId).isConnectedToLilith;
 
 //            ClientContext.model.lineage.isMemberOfLineage(targetId)
 //            && ClientContext.model.isPlayer(targetId);
-        if (!ClientContext.model.lineage.isMemberOfLineage(ClientContext.ourPlayerId)
+        if (!ClientContext.model.lineage.isConnectedToLilith
             && targetIsVampireAndLineageMemberAndOnline) {
 
             var con :VampireController = ClientContext.controller;
@@ -402,7 +402,7 @@ public class VampireController extends Controller
 
     public function handleShowPreyLineage (playerId :int) :void
     {
-        var lineage :Lineage = ClientContext.gameMode.roomModel.getLineage(playerId);
+        var lineage :Lineage = ClientContext.gameMode.lineages.getLineage(playerId);
         trace("handleShowPreyLineage, playerId=" + playerId + ", lineage=" + lineage);
         handleShowIntro("target", lineage, playerId);
     }
