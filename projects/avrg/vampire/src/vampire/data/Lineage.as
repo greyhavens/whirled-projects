@@ -392,10 +392,9 @@ public class Lineage extends SimObject
     {
         if (name != null && name != "") {
             _playerId2Name.put(playerId, name);
-//            log.debug(" setPlayerName()", "playerId", playerId, "name", name);
             return true;
         }
-        log.debug(" setPlayerName(), FAILED", "playerId", playerId, "name", name);
+        log.error("setPlayerName", "playerId", playerId, "name", name);
         return false;
     }
 
