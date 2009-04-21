@@ -9,9 +9,16 @@ public class SayStatement
         _text = text;
     }
 
+    public function addResponse (text :String, id :String) :void
+    {
+        _responses.push(text);
+        _ids.push(id);
+    }
+
     public function update (dt :Number) :Number
     {
         ProgramCtx.view.say(_speakerName, _text);
+        ProgramCtx.view.setResponses(_responses, _ids);
         return 0;
     }
 
@@ -22,5 +29,7 @@ public class SayStatement
 
     protected var _speakerName :String;
     protected var _text :String;
+    protected var _responses :Array = [];
+    protected var _ids :Array = [];
 }
 }

@@ -37,6 +37,9 @@ public class ProgramParser
         case "Say":
             return parseSayStatement(xml);
 
+        case "WaitResponse":
+            return parseWaitResponseStatement(xml);
+
         default:
             throw new XmlReadError("Unrecognized statement type '" + type + "'");
         }
@@ -95,11 +98,36 @@ public class ProgramParser
         return statement;
     }
 
-    protected static function parseSayStatement (xml :XML) :SayStatement
+    protected static function parseSayStatement (xml :XML) :Statement
     {
-        return new SayStatement(
+        var sayStatement :SayStatement = new SayStatement(
             XmlReader.getStringAttr(xml, "speaker"),
             XmlReader.getStringAttr(xml, "text"));
+
+        var hasResponse :Boolean;
+        for each (var responseXml :XML in xml.Response) {
+            sayStatement.addResponse(
+                XmlReader.getStringAttr(responseXml, "id"),
+                XmlReader.getStringAttr(responseXml, "text"));
+            hasResponse = true;
+        }
+
+        // If there are any response statements, add a WaitResponseStatement
+        // immediately after the SayStatement.
+        if (hasResponse) {
+            var serialStatment :SerialStatement = new SerialStatement();
+            serialStatment.addStatement(sayStatement);
+            serialStatment.addStatement(new WaitResponseStatement());
+            return serialStatment;
+
+        } else {
+            return sayStatement;
+        }
+    }
+
+    protected static function parseWaitResponseStatement (xml :XML) :WaitResponseStatement
+    {
+        return new WaitResponseStatement();
     }
 
     protected static function parseExpr (xml :XML) :Expr
@@ -112,8 +140,14 @@ public class ProgramParser
         case "Or":
             return parseOrExpr(xml);
 
-        case "Value":
-            return parseValueExpr(xml);
+        case "String":
+            return parseStringExpr(xml);
+
+        case "Number":
+            return parseNumberExpr(xml);
+
+        case "Response":
+            return parseResponseExpr(xml);
 
         case "Equals":
             return parseBinaryCompExpr(xml, BinaryCompExpr.EQUALS);
@@ -153,9 +187,19 @@ public class ProgramParser
         return expr;
     }
 
-    protected static function parseValueExpr (xml :XML) :ValueExpr
+    protected static function parseStringExpr (xml :XML) :ValueExpr
+    {
+        return new ValueExpr(XmlReader.getStringAttr(xml, "val"));
+    }
+
+    protected static function parseNumberExpr (xml :XML) :ValueExpr
     {
         return new ValueExpr(XmlReader.getNumberAttr(xml, "val"));
+    }
+
+    protected static function parseResponseExpr (xml :XML) :ResponseExpr
+    {
+        return new ResponseExpr();
     }
 
     protected static function parseBinaryCompExpr (xml :XML, type :int) :BinaryCompExpr

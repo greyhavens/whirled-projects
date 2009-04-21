@@ -14,7 +14,15 @@ public class SerialStatement
             _curStatement = _statements.shift();
         }
 
-        return (_curStatement != null ? _curStatement.update(dt) : 0);
+        var time :Number = 0;
+        if (_curStatement != null) {
+            time = _curStatement.update(dt);
+            if (_curStatement.isDone) {
+                _curStatement = null;
+            }
+        }
+
+        return time;
     }
 
     public function get isDone () :Boolean
