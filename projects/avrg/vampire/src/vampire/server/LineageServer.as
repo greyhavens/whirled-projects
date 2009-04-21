@@ -26,14 +26,6 @@ public class LineageServer extends Lineage
         addTask(new RepeatingTask(new SerialTask(
                                             new TimedTask(10),
                                             new FunctionTask(checkPlayersNames))));
-
-
-
-
-//        registerListener(vserver.control.game, AVRGameControlEvent.PLAYER_JOINED_GAME,
-//            playerJoinedGame);
-
-
     }
 
     public function resendPlayerLineage (playerId :int) :void
@@ -50,25 +42,6 @@ public class LineageServer extends Lineage
         });
     }
 
-//    protected function playerJoinedGame (evt :AVRGameControlEvent) :void
-//    {
-//        log.info("playerJoinedGame() " + evt);
-//        var playerId :int = int(evt.value);
-//
-//        var pctrl :PlayerSubControlServer = _vserver.control.getPlayer(playerId);
-//        if (pctrl == null) {
-//            log.error("playerJoinedGame, Could not get PlayerSubControlServer for player!");
-//            return;
-//        }
-//
-//        //Get the sire, grandsire, children and grandchildren.
-//        //They will come in at an unknown later time, so we'll likely have to send
-//        //multiple updates.
-//
-//
-//
-//    }
-
     /**
     * Update the relevant players online, and offline.
     *
@@ -84,20 +57,19 @@ public class LineageServer extends Lineage
 
         log.error("playerJoined, setting name", "player.name", player.name);
         setPlayerName(player.playerId, player.name);
-        //Don't load this player again in the current session
-        _playersLoadedFromDB.add(player.playerId);
         //First add the player as progeny to sire, whether online or offline
         if (player.sire != 0) {
-            log.error("playerJoined, setting sire", "player.name", player.sire);
+            log.debug("playerJoined, setting sire", "player.sire", player.sire);
             setPlayerSire(player.playerId, player.sire);
-            if (!_playersLoadedFromDB.contains(player.sire)) {
+
+            if (!isPlayerName(player.sire)) {
                 loadOfflinePlayer(player.sire);
             }
         }
         //Then add the progeny to the lineage,
         for each (var progeny :int in player.progenyIds) {
             setPlayerSire(progeny, player.playerId);
-            if (!_playersLoadedFromDB.contains(progeny)) {
+            if (!isPlayerName(progeny)) {
                 loadOfflinePlayer(progeny);
             }
         }
@@ -112,6 +84,8 @@ public class LineageServer extends Lineage
         }
         recursivelyLoadSires(player.playerId);
     }
+
+
 
     protected function recursivelyLoadSires (playerId :int) :void
     {
@@ -158,7 +132,7 @@ public class LineageServer extends Lineage
     */
     override protected function update(dt:Number) :void
     {
-//        var playerLineageSentToRoom :HashSet = new HashSet();
+        super.update(dt);
 
         _playerIdsResendLineage.forEach(function (playerId :int) :void {
             if (_vserver.isPlayer(playerId)) {
@@ -167,10 +141,6 @@ public class LineageServer extends Lineage
                     "lineage", lineage);
                 var bytes :ByteArray = lineage.toBytes();
                 _vserver.getPlayer(playerId).lineage = bytes;
-//                if (_vserver.getPlayer(playerId).room != null) {
-//                    _vserver.getPlayer(playerId).room.ctrl.props.setIn(
-//                        Codes.ROOM_PROP_PLAYER_LINEAGE, playerId, bytes);
-//                }
             }
         });
         _playerIdsResendLineage.clear();
@@ -191,6 +161,10 @@ public class LineageServer extends Lineage
             offlinePlayerFinishedLoading(playerId);
             playerUpdated(playerId);
             playerUpdated(sireId);
+        }
+        else {
+            log.debug("setPlayerSire", "playerId", playerId, "sireId", sireId,
+                "getSireId(" + playerId + ")", getSireId(playerId));
         }
     }
 
@@ -214,7 +188,7 @@ public class LineageServer extends Lineage
             return;
         }
 
-        if (_playersLoadedFromDB.contains(playerId)) {
+        if (isPlayerName(playerId)) {
             return;
         }
 
@@ -230,8 +204,9 @@ public class LineageServer extends Lineage
                 var sireId :int = props.get(Codes.PLAYER_PROP_SIRE) as int;
                 var name :String = props.get(Codes.PLAYER_PROP_NAME) as String;
 
-                _playersLoadedFromDB.add(playerId);
-                log.debug("loadOfflinePlayer", "playerId", playerId, "in offline props");
+                log.debug("loadOfflinePlayer", "playerId", playerId, "sireId", sireId,
+                    "name", name);
+
                 setPlayerName(playerId, name);
                 setPlayerSire(playerId, sireId);
                 for each (var progenyId :int in progenyIds) {
@@ -249,6 +224,12 @@ public class LineageServer extends Lineage
             });
     }
 
+    override public function setPlayerName(playerId:int, name:String):Boolean
+    {
+        log.debug("setPlayerName", "playerId", playerId, "name", name);
+        return super.setPlayerName(playerId, name);
+    }
+
     /**
     * When an offline player finishes loading, we might want to
     * load it's sire or childrens if there are players who need
@@ -258,7 +239,6 @@ public class LineageServer extends Lineage
     {
         log.debug("offlinePlayerFinishedLoading", "playerId", playerId);
         log.debug("offlinePlayerFinishedLoading", "lineage", this);
-        _playersLoadedFromDB.add(playerId);
         if (isVisibleToOnlinePlayer(playerId)) {
             loadOfflinePlayer(getSireId(playerId));
 
@@ -343,13 +323,6 @@ public class LineageServer extends Lineage
     }
 
     protected var _vserver :GameServer;
-
-    /**
-    * Once a player is loaded from offline, they don't need to be loaded again.
-    * Record their id here to remember.
-    */
-    protected var _playersLoadedFromDB :HashSet = new HashSet();
-
     protected var _playerIdsResendLineage :HashSet = new HashSet();
 
     public static const MESSAGE_PLAYER_JOINED_GAME :String = "Message: Player Joined";
