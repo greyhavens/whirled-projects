@@ -21,6 +21,7 @@ import vampire.net.messages.RoomNameMsg;
 import vampire.net.messages.SendGlobalMsg;
 import vampire.net.messages.ShareTokenMsg;
 import vampire.net.messages.StartFeedingClientMsg;
+import vampire.net.messages.StatsMsg;
 import vampire.net.messages.SuccessfulFeedMsg;
 
 
@@ -74,6 +75,7 @@ public class Util
         mgr.addMessageType(SendGlobalMsg);
         mgr.addMessageType(ShareTokenMsg);
         mgr.addMessageType(StartFeedingClientMsg);
+        mgr.addMessageType(StatsMsg);
         mgr.addMessageType(SuccessfulFeedMsg);
     }
 
