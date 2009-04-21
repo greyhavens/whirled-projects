@@ -12,6 +12,7 @@ import vampire.feeding.FeedingClient;
 import vampire.furni.QuestTotem;
 import vampire.quest.*;
 import vampire.quest.client.*;
+import vampire.quest.client.npctalk.TalkView;
 
 [SWF(width="700", height="500", frameRate="30")]
 public class QuestClientStandalone extends Sprite
@@ -50,6 +51,11 @@ public class QuestClientStandalone extends Sprite
     {
         QuestClient.showDebugPanel(true);
         QuestClient.showQuestPanel(true);
+
+        var talkView :TalkView = new TalkView();
+        talkView.say("Lilith", "Hey there sexy vampire, let's kill all humans");
+        talkView.setResponses([ "Let's do it", "I don't wanna" ], [ "yes", "no" ]);
+        _sg.ctx.mainLoop.topMode.addSceneObject(talkView);
     }
 
     protected var _sg :SimpleGame;

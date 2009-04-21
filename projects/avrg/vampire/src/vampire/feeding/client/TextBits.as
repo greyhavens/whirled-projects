@@ -45,12 +45,6 @@ public class TextBits
 
         tf.text = text;
 
-        if (wordWrap) {
-            // if the text isn't as wide as maxWidth, shrink the TextField
-            tf.width = tf.textWidth + TEXT_WIDTH_PAD;
-            tf.height = tf.textHeight + TEXT_HEIGHT_PAD;
-        }
-
         var format :TextFormat = tf.defaultTextFormat;
         format.align = align;
         format.font = FONT_NAMES[font];
@@ -61,6 +55,12 @@ public class TextBits
         }
 
         tf.setTextFormat(format);
+
+        if (wordWrap) {
+            // if the text isn't as wide as maxWidth, shrink the TextField
+            tf.width = tf.textWidth + TEXT_WIDTH_PAD;
+            tf.height = tf.textHeight + TEXT_HEIGHT_PAD;
+        }
     }
 
     protected static const TEXT_WIDTH_PAD :int = 5;
