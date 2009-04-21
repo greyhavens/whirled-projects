@@ -16,6 +16,7 @@ import com.whirled.net.MessageReceivedEvent;
 import flash.utils.getTimer;
 import flash.utils.setInterval;
 
+import vampire.data.Codes;
 import vampire.feeding.FeedingServer;
 
 public class GameServer extends ObjectDB
@@ -51,12 +52,28 @@ public class GameServer extends ObjectDB
             _startTime = getTimer();
             _lastTickTime = _startTime;
             setInterval(tick, SERVER_TICK_UPDATE_MILLISECONDS);
+
+            //Add stats monitoring
+            addObject(new Analyser());
+
+            //Add this time to the list of server reboots
+            recordBootTime();
         }
         else {
             log.error(ClassUtil.tinyClassName(GameServer) + ": no AVRServerGameControl!!");
             log.error("Are we running locally???");
         }
 
+    }
+
+    protected function recordBootTime () :void
+    {
+        var reboottimes :Array = _ctrl.props.get(Codes.AGENT_PROP_SERVER_REBOOTS) as Array;
+        if (reboottimes == null) {
+            reboottimes = [];
+        }
+        reboottimes.push(new Date().time);
+        _ctrl.props.set(Codes.AGENT_PROP_SERVER_REBOOTS, reboottimes, true);
     }
 
     public function get control () :AVRServerGameControl
