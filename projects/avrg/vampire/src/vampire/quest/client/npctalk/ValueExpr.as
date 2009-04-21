@@ -1,9 +1,9 @@
 package vampire.quest.client.npctalk {
 
-public class StaticExpr
+public class ValueExpr
     implements Expr
 {
-    public function StaticExpr (val :*)
+    public function ValueExpr (val :*)
     {
         _val = val;
     }

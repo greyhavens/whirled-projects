@@ -11,7 +11,7 @@ public class OrExpr
     public function eval () :*
     {
         for each (var expr :Expr in _exprs) {
-            if (Boolean(expr.eval()) {
+            if (Boolean(expr.eval())) {
                 return true;
             }
         }

@@ -1,6 +1,7 @@
 package vampire.quest.client.npctalk {
 
 public class BinaryCompExpr
+    implements Expr
 {
     public static const EQUALS :int = 0;
     public static const LT :int = 1;
