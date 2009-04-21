@@ -209,6 +209,11 @@ public class LeaderBoardServer extends SimObject
     protected static function updateScoreTable (currentScores :Array, score :int, names :String,
         now :Number, scoreLifetime :Number, maxScores :int) :int
     {
+        //Remove wacky scores
+        currentScores = currentScores.filter(function (scoreData :Array, ...ignored) :Boolean {
+            return scoreData[0] < VConstants.MAX_THEORETICAL_FEEDING_SCORE;
+        });
+
         //Add the new score
         currentScores.push([score, names, now]);
 
