@@ -38,7 +38,11 @@ public class MainGameMode extends AppMode
         modeSprite.visible = true;
         log.debug("Starting " + ClassUtil.tinyClassName(this));
 
-        ClientContext.controller.handleShowIntro("intro");
+        if (ClientContext.model.xp < VConstants.MIN_XP_TO_HIDE_HELP) {
+            ClientContext.controller.handleShowIntro("intro");
+        }
+
+        ClientContext.controller.handleActivateLoadBalancer();
 
         //Notify the agent that we are now wearing the right avatar, and can receive popup messages
         ClientContext.ctrl.agent.sendMessage(GameStartedMsg.NAME,
