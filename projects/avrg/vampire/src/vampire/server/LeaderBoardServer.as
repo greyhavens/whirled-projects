@@ -64,7 +64,10 @@ public class LeaderBoardServer extends SimObject
                 scoresLessTime.push(score.slice(0, 2));
             }
 
-            var currentScore :Array = props.get(propName) as Array;
+            scoresLessTime = scoresLessTime.filter(function (scoreData :Array, ...ignored) :Boolean {
+                return scoreData[0] < VConstants.MAX_THEORETICAL_FEEDING_SCORE;
+            });
+
             props.set(propName, scoresLessTime, true);
         }
     }
@@ -120,6 +123,8 @@ public class LeaderBoardServer extends SimObject
                         totalScore += score;
                     }
                 });
+
+                totalScore = totalScore / playerScores.size();
 
                 //Sort the player ids by score
                 var playerIds :Array = playerScores.keys();
