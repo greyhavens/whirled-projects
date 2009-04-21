@@ -34,7 +34,7 @@ public class PopupLineage extends DraggableObject
 
         ClientContext.centerOnViewableRoom(_displaySprite);
 
-        var lineage :Lineage = ClientContext.gameMode.roomModel.getLineage(playerCenter);
+        var lineage :Lineage = ClientContext.gameMode.lineages.getLineage(playerCenter);
 
         _lineageView = new LineageViewBase(lineage, playerCenter);
     }

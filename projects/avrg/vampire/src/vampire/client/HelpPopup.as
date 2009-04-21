@@ -38,7 +38,7 @@ package vampire.client
 
             _targetLineageView = new LineageViewBase(otherLineage, playerCenter);
 //            _myLineageView = new LineageView();
-            _myLineageView = new LineageViewBase(ClientContext.gameMode.roomModel.getLineage(
+            _myLineageView = new LineageViewBase(ClientContext.gameMode.lineages.getLineage(
                 ClientContext.ourPlayerId), ClientContext.ourPlayerId);
 
 
