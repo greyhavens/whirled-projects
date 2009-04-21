@@ -146,10 +146,10 @@ public class LoadBalancerClient extends SceneObject
     protected function updateUI () :void
     {
         //Change the text if there is no-one in the room.
-        if (_ctrl.room.getPlayerIds().length <= 1) {
-            TextField(_panel["relocation_text"]).text = ""
-                 + "Choose another hunting ground...";
-        }
+//        if (_ctrl.room.getPlayerIds().length <= 1) {
+//            TextField(_panel["relocation_text"]).text = ""
+//                 + "Choose another hunting ground...";
+//        }
 
         for (var ii :int = 0; ii < 4; ++ii) {
 
