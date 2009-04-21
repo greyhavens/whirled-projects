@@ -1029,53 +1029,6 @@ public class ServerLogic
                         pred.ctrl.completeTask(Codes.TASK_ACQUIRE_PROGENY_ID,
                             Codes.TASK_ACQUIRE_PROGENY_SCORE);
 
-//                        //Award to sires two levels up
-//                        var numberOfGrandGenerationsToAward :int = 2;
-//
-//                        var currentSireId :int = ServerContext.server.lineage.getSireId(
-//                            preyPlayer.playerId);
-//                        var generations :int = 1;
-//
-//                        while (currentSireId != 0 && generations <= 2) {
-//                            if (srv.isPlayer(currentSireId)
-//                                && srv.getPlayer(currentSireId).room != null) {
-//                                var grandSirePlayer :PlayerData = srv.getPlayer(currentSireId);
-//
-//                                //Tell the sire she's got children
-//                                grandSirePlayer.room.addFeedback(Codes.POPUP_PREFIX +
-//                                    pred.name + " has joined your Lineage! ", currentSireId);
-//
-//                                //Award coins to the sire(s)
-//                                grandSirePlayer.ctrl.completeTask(Codes.TASK_ACQUIRE_PROGENY_ID,
-//                                    Codes.TASK_ACQUIRE_PROGENY_SCORE/10);
-//
-//                            }
-//                            currentSireId = ServerContext.server.lineage.getSireId(currentSireId);
-//                            generations++;
-//                        }
-
-//                        var preySireId :int = ServerContext.server.lineage.getSireId(preyPlayer.playerId);
-//
-//
-//
-//                        if (preyPlayer.sire
-//
-//                        for each(var sireId :int in
-//                            ServerContext.server.lineage.getAllSiresAndGrandSires(pred.playerId).toArray()) {
-//
-//                            if (srv.isPlayer(sireId)
-//                                && srv.getPlayer(sireId).room != null) {
-//
-//                                //Tell the sire she's got children
-//                                srv.getPlayer(sireId).room.addFeedback(Codes.POPUP_PREFIX +
-//                                    pred.name + " has joined your Lineage! ", sireId);
-//
-//                                //Award coins to the sire(s)
-//                                preyPlayer.ctrl.completeTask(Codes.TASK_ACQUIRE_PROGENY_ID,
-//                                    Codes.TASK_ACQUIRE_PROGENY_SCORE/10);
-//
-//                            }
-//                        }
                     }
                     else {
                         pred.addFeedback(preyPlayer.name + " is not part of the Lineage (Progeny of Lilith).  Feed from a Lineage member to join.");
