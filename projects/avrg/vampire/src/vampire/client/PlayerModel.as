@@ -42,8 +42,8 @@ public class PlayerModel extends SimObject
         _lineage = new Lineage();
 
         registerListener(_roomProps, PropertyChangedEvent.PROPERTY_CHANGED, handleRoomPropChanged);
-        registerListener(ClientContext.ctrl.player.props,
-            PropertyChangedEvent.PROPERTY_CHANGED, handlePlayerPropChanged);
+//        registerListener(ClientContext.ctrl.player.props,
+//            PropertyChangedEvent.PROPERTY_CHANGED, handlePlayerPropChanged);
         registerListener(_playerProps, ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
 
     }
@@ -61,19 +61,19 @@ public class PlayerModel extends SimObject
         }
     }
 
-    protected function handlePlayerPropChanged (e :PropertyChangedEvent) :void
-    {
-        switch (e.name) {
-            case Codes.PLAYER_PROP_LINEAGE:
-            _lineage = new Lineage();
-            _lineage.fromBytes(e.newValue as ByteArray);
-            dispatchEvent(new LineageUpdatedEvent(_lineage));
-            break;
-
-            default:
-            break;
-        }
-    }
+//    protected function handlePlayerPropChanged (e :PropertyChangedEvent) :void
+//    {
+//        switch (e.name) {
+//            case Codes.PLAYER_PROP_LINEAGE:
+//            _lineage = new Lineage();
+//            _lineage.fromBytes(e.newValue as ByteArray);
+//            dispatchEvent(new LineageUpdatedEvent(_lineage));
+//            break;
+//
+//            default:
+//            break;
+//        }
+//    }
 
 
 
@@ -189,14 +189,15 @@ public class PlayerModel extends SimObject
 
     public function get lineage() :Lineage
     {
-        return _lineage;
+        return ClientContext.gameMode.lineages.getLineage(ClientContext.ourPlayerId);
+//        return _lineage;
     }
 
     //For debugging
-    public function set lineage(h :Lineage) :void
-    {
-        _lineage = h;
-    }
+//    public function set lineage(h :Lineage) :void
+//    {
+//        _lineage = h;
+//    }
 
     public function get hotspot () :Array
     {
