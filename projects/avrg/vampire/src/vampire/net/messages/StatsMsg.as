@@ -1,5 +1,7 @@
 package vampire.net.messages
 {
+import flash.utils.ByteArray;
+
 public class StatsMsg extends BaseGameMsg
 {
     public function StatsMsg(playerId:int = 0, stats :String = null)
@@ -20,7 +22,7 @@ public class StatsMsg extends BaseGameMsg
         return bytes;
     }
 
-    override public function get statsString () :String
+    public function get statsString () :String
     {
        return _statString;
     }
