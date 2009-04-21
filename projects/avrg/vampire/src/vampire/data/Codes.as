@@ -5,12 +5,8 @@ import com.whirled.net.NetConstants;
 public class Codes
 {
 
-//    public static function playerRoomPropKey (playerId :int) :String
-//    {
-//        return Codes.ROOM_PROP_PREFIX_PLAYER_DICT + playerId;
-//    }
+    public static const AGENT_PROP_SERVER_REBOOTS :String = "reboots";
 
-//    public static const ROOM_PROP_LINEAGE :String = "hierarchy";
     public static const ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE :String = "noFeedingPlayers";
     public static const ROOM_PROP_PRIMARY_PREDS :String = "primaryPreds";
     public static const ROOM_PROP_FEEDBACK :String = "feedback";
@@ -22,29 +18,16 @@ public class Codes
     /** Pplayer name.  Needed even when player is offline*/
     public static const PLAYER_PROP_NAME:String = NetConstants.makePersistent("playerName");
 
-    /** Current amount of blood*/
-//    public static const PLAYER_PROP_BLOOD :String = NetConstants.makePersistent("blood");
-
-    /** Current amount of blood*/
+    /** Current amount of xp*/
     public static const PLAYER_PROP_XP :String = NetConstants.makePersistent("xp");
 
     /** XP gained while asleep */
     public static const PLAYER_PROP_XP_SLEEP :String = NetConstants.makePersistent("xp_sleep");
 
-    /** Blood type.  Used for bonuses in BloodBloom.*/
-//    public static const PLAYER_PROP_BlOOD_TYPE :String = NetConstants.makePersistent("bloodType");
-
-    /** Current level.  This controls the max amount of blood*/
-//    public static const PLAYER_PROP_PREFIX_LEVEL :String = NetConstants.makePersistent("level");
-
     /**
-    * Blood slowly drains away, even when you are asleep.  When starting a game, lose an amount
-    * of blood proportional to how long you have been asleep.
-    *
-    * In addition, new players have a value == 1.  This allows new players to be detected by
-    * the client so e.g. the intro screen can be shown.
+    * Record the cumulative minutes each player plays for analysis.
     */
-    public static const PLAYER_PROP_LAST_TIME_AWAKE :String = NetConstants.makePersistent("time_last_awake");
+    public static const PLAYER_PROP_TIME :String = NetConstants.makePersistent("time_last_awake");
 
     /**
     * The vampire who makes you into a vampire.
@@ -71,11 +54,10 @@ public class Codes
     */
     public static const PLAYER_PROP_PROGENY_IDS :String = NetConstants.makePersistent("progeny");
 
-
     /**
     * Players own sub-lineage.
     */
-    public static const PLAYER_PROP_LINEAGE :String = "lineage";
+//    public static const PLAYER_PROP_LINEAGE :String = "lineage";
 
     public static const PLAYER_PROP_STATE :String = "state";
 
@@ -85,8 +67,6 @@ public class Codes
     */
     public static const PLAYER_PROP_INVITES :String = NetConstants.makePersistent("invites");
 
-//    public static const PLAYER_PROP_AVATAR_STATE :String = "avatarState";
-
     public static const PLAYER_PROPS_UPDATED :Array = [
                                                 PLAYER_PROP_NAME,
                                                 PLAYER_PROP_XP,
@@ -95,7 +75,7 @@ public class Codes
                                                 PLAYER_PROP_BLOODBOND_NAME,
                                                 PLAYER_PROP_FEEDING_DATA,
                                                 PLAYER_PROP_PROGENY_IDS,
-                                                PLAYER_PROP_LINEAGE,
+                                                PLAYER_PROP_TIME,
                                                 PLAYER_PROP_INVITES,
                                               ];
 
