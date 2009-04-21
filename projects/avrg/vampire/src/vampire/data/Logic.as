@@ -31,11 +31,6 @@ public class Logic
             return xpNeededForLevel(maxLevelInvites + 1) - 1;
         }
         return xp;
-
-//        var newLevel :int = Logic.levelGivenCurrentXpAndInvites(xp, invites);
-//        var maxXpForCurrentLevel :int = Logic.xpNeededForLevel(newLevel + 1);
-//
-//        return maxXpForCurrentLevel;
     }
     public static function levelGivenCurrentXpAndInvites(xp :Number, invites :int = 0) :int
     {
