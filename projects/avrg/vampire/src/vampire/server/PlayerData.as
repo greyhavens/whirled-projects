@@ -40,7 +40,7 @@ public class PlayerData extends EventHandlerManager
         _playerId = ctrl.getPlayerId();
 
         //Setup the data container.  This will only update values that are changed.
-        _propsUndater = new PlayerPropertiesUpdater(_ctrl.props, Codes.PLAYER_PROPS_UPDATED);
+        _propsUndater = new PropertiesUpdater(_ctrl.props, Codes.PLAYER_PROPS_UPDATED);
 
 
         registerListener(_ctrl, AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
@@ -67,6 +67,8 @@ public class PlayerData extends EventHandlerManager
 
         log.info("Logging in", "playerId", playerId,
                 "name", name,
+                "_ctrl.getPlayerName()", _ctrl.getPlayerName(),
+                "_ctrl.props.get(Codes.PLAYER_PROP_NAME)", _ctrl.props.get(Codes.PLAYER_PROP_NAME),
                 "xp",  xp,
                 "level", level,
                 "sire", sire,
@@ -97,12 +99,14 @@ public class PlayerData extends EventHandlerManager
 
     public function get lineage () :ByteArray
     {
-        return _propsUndater.get(Codes.PLAYER_PROP_LINEAGE) as ByteArray;
+        return _lineage;
+//        return _propsUndater.get(Codes.PLAYER_PROP_LINEAGE) as ByteArray;
     }
 
     public function set lineage (b :ByteArray) :void
     {
-        _propsUndater.put(Codes.PLAYER_PROP_LINEAGE, b);
+        _lineage = b;
+//        _propsUndater.put(Codes.PLAYER_PROP_LINEAGE, b);
         _updateLineage = true;
     }
 
@@ -479,7 +483,7 @@ public class PlayerData extends EventHandlerManager
 
     public function addProgeny (progenyId :int) :void
     {
-        var p :Array = progenyIds;
+        var p :Array = progenyIds.slice();
         if (p == null) {
             p = new Array();
         }
@@ -517,7 +521,11 @@ public class PlayerData extends EventHandlerManager
             Trophies.checkInviteTrophies(this);
         }
 
-        if (_propsUndater.isNeedingUpdate(Codes.PLAYER_PROP_LINEAGE)) {
+//        if (_propsUndater.isNeedingUpdate(Codes.PLAYER_PROP_LINEAGE)) {
+//            Trophies.checkMinionTrophies(this);
+//        }
+
+        if (_updateLineage) {
             Trophies.checkMinionTrophies(this);
         }
 
@@ -594,11 +602,12 @@ public class PlayerData extends EventHandlerManager
     protected var _feedback :Array = [];
     protected var _xpFeedbackTime :Number = 0;
     protected var _xpFeedback :Number = 0;
+    protected var _lineage :ByteArray;
 
     protected var _updateLineage :Boolean = true;
 
     //Stores props copied to the client
-    protected var _propsUndater :PlayerPropertiesUpdater;
+    protected var _propsUndater :PropertiesUpdater;
 
     protected static const log :Log = Log.getLog(PlayerData);
 
