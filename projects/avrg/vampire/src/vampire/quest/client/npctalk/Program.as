@@ -11,11 +11,14 @@ public class Program
         }
     }
 
-    public function begin () :void
+    public function run () :void
     {
         if (_routineStack != null) {
             throw new Error("Already running");
         }
+
+        ProgramCtx.init();
+        ProgramCtx.program = this;
 
         _routineStack = [];
         callRoutine("main");

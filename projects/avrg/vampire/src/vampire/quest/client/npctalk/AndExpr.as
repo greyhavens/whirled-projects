@@ -19,7 +19,7 @@ public class AndExpr
         return true;
     }
 
-    protected var _exprs :Array;
+    protected var _exprs :Array = [];
 }
 
 }

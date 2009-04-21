@@ -19,7 +19,7 @@ public class OrExpr
         return false;
     }
 
-    protected var _exprs :Array;
+    protected var _exprs :Array = [];
 }
 
 }
