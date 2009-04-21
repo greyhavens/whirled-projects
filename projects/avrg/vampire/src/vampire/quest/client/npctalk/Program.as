@@ -23,19 +23,16 @@ public class Program
 
         _routineStack = [];
         _routineState = [];
-        _scheduledRoutineNames = [];
+        _scheduledRoutineName = null;
         callRoutine("main");
     }
 
     public function update (dt :Number) :void
     {
         while (dt > 0) {
-            if (_scheduledRoutineNames.length > 0) {
-                for each (var name :String in _scheduledRoutineNames) {
-                    callRoutine(name);
-                }
-
-                _scheduledRoutineNames = [];
+            if (_scheduledRoutineName != null) {
+                callRoutine(_scheduledRoutineName);
+                _scheduledRoutineName = null;
             }
 
             var cur :Routine = this.curRoutine;
@@ -60,7 +57,15 @@ public class Program
 
     public function scheduleRoutine (name :String) :void
     {
-        _scheduledRoutineNames.push(name);
+        if (name == null) {
+            throw new ArgumentError("name cannot be null");
+        }
+
+        if (_scheduledRoutineName != null) {
+            throw new Error("Only one routine can be scheduled at a time; how did this happen?");
+        }
+
+        _scheduledRoutineName = name;
     }
 
     protected function callRoutine (name :String) :void
@@ -103,7 +108,7 @@ public class Program
     protected var _routines :HashMap = new HashMap();
     protected var _routineStack :Array;
     protected var _routineState :Array;
-    protected var _scheduledRoutineNames :Array;
+    protected var _scheduledRoutineName :String;
 }
 
 }
