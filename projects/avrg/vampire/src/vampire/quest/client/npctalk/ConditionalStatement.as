@@ -14,7 +14,7 @@ public class ConditionalStatement
         _else = statement;
     }
 
-    public function begin () :void
+    public function update (dt :Number) :Number
     {
         // determine which statement to evaluate
         if (_statement == null) {
@@ -31,17 +31,7 @@ public class ConditionalStatement
             }
         }
 
-        _statement.begin();
-    }
-
-    public function update (dt :Number) :void
-    {
         return _statement.update(dt);
-    }
-
-    public function isDone () :Boolean
-    {
-        return _statement.isDone();
     }
 
     protected var _ifExprs :Array = [];

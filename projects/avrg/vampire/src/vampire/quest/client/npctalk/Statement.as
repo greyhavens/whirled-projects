@@ -2,9 +2,9 @@ package vampire.quest.client.npctalk {
 
 public interface Statement
 {
-    function begin () :void;
-    function update (dt :Number) :void;
-    function isDone () :Boolean;
+    // returns the amount of time the update took, up to dt
+    function update (dt :Number) :Number;
+    function get isDone () :Boolean;
 }
 
 }

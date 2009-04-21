@@ -1,7 +1,7 @@
 package vampire.quest.client.npctalk {
 
 /**
- * Expressions evaluation to some value
+ * Expressions evaluate to some value
  */
 public interface Expr
 {

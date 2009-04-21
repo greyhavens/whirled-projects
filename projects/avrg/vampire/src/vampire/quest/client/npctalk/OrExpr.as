@@ -1,15 +1,8 @@
 package vampire.quest.client.npctalk {
 
-import com.threerings.util.ArrayUtil;
-
 public class OrExpr
     implements Expr
 {
-    public function OrExpr (...exprs)
-    {
-        _exprs = exprs;
-    }
-
     public function addExpr (expr :Expr) :void
     {
         _exprs.push(expr);
