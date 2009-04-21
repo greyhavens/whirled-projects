@@ -39,18 +39,12 @@ public class ConditionalStatement
                     cState.statement = _else;
                     cState.statementState = _else.createState();
                 } else {
-                    cState.statement = NoopStatement.INSTANCE;
+                    return Status.CompletedInstantly;
                 }
             }
         }
 
         return cState.statement.update(dt, cState.statementState);
-    }
-
-    public function isDone (state :Object) :Boolean
-    {
-        var cState :ConditionalState = ConditionalState(state);
-        return cState.statement.isDone(cState.statementState);
     }
 
     protected var _ifExprs :Array = [];

@@ -23,11 +23,6 @@ public class Routine
         return _statement.update(dt, state);
     }
 
-    public function isDone (state :Object) :Boolean
-    {
-        return _statement.isDone(state);
-    }
-
     protected var _name :String;
     protected var _statement :Statement;
 }

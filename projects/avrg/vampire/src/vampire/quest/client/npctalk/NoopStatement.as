@@ -13,12 +13,7 @@ public class NoopStatement
 
     public function update (dt :Number, state :Object) :Number
     {
-        return 0;
-    }
-
-    public function isDone (state :Object) :Boolean
-    {
-        return true;
+        return Status.CompletedInstantly;
     }
 }
 

@@ -11,17 +11,7 @@ public class WaitResponseStatement
 
     public function update (dt :Number, state :Object) :Number
     {
-        return (this.gotResponse ? 0 : dt);
-    }
-
-    public function isDone (state :Object) :Boolean
-    {
-        return this.gotResponse;
-    }
-
-    protected function get gotResponse () :Boolean
-    {
-        return (ProgramCtx.lastResponseId != null);
+        return (ProgramCtx.lastResponseId != null ? Status.CompletedInstantly : Status.Incomplete);
     }
 
     protected var _responses :Array = [];

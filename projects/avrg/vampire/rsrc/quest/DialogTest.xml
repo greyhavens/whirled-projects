@@ -1,5 +1,27 @@
 <Program>
-	<Routine name="main">
-		<Say speaker="Lilith" text="Hey sexy vampire, let's kill all humans"/>
-	</Routine>
+	
+<Routine name="main">
+	<Say speaker="Lilith" text="Hey sexy vampire, let's kill all humans">
+		<Response id="yes" text="Let's do it"/>
+		<Response id="no" text="I don't wanna"/>
+	</Say>
+	<HandleResponse>
+		<Response id="yes"><CallRoutine name="KillAllHumans"/></Response>
+		<Response id="no"><CallRoutine name="Angry"/></Response>
+	</HandleResponse>
+</Routine>
+
+<Routine name="KillAllHumans">
+	<Say speaker="Lilith" text="Take this quest">
+		<Response id="ok" text="OK"/>
+	</Say>
+</Routine>
+
+<Routine name="Angry">
+	<Say speaker="Lilith" text="Don't argue with me">
+		<Response id="ok" text="..."/>
+	</Say>
+	<CallRoutine name="main"/>
+</Routine>
+
 </Program>

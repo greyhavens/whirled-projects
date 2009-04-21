@@ -16,13 +16,8 @@ public class CallRoutineStatement
 
     public function update (dt :Number, state :Object) :Number
     {
-        ProgramCtx.program.callRoutine(_routineName);
-        return 0; // completes immediately
-    }
-
-    public function isDone (state :Object) :Boolean
-    {
-        return true;
+        ProgramCtx.program.scheduleRoutine(_routineName);
+        return Status.CompletedInstantly;
     }
 
     protected var _routineName :String;

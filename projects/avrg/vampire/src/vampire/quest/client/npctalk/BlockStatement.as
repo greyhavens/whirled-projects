@@ -22,25 +22,17 @@ public class BlockStatement
             blockState.curState = blockState.cur.createState();
         }
 
-        var time :Number = 0;
-        if (blockState.cur != null) {
-            time = blockState.cur.update(dt, blockState.curState);
-            if (blockState.cur.isDone(blockState.curState)) {
-                blockState.cur = null;
-            }
-        }
+        if (blockState.cur == null) {
+            return Status.CompletedInstantly;
 
-        return time;
-    }
-
-    public function isDone (state :Object) :Boolean
-    {
-        var blockState :BlockState = BlockState(state);
-
-        if (blockState.cur != null && !blockState.cur.isDone(blockState.curState)) {
-            return false;
         } else {
-            return blockState.nextIdx < _statements.length;
+            var curStatus :Number = blockState.cur.update(dt, blockState.curState);
+            if (Status.isComplete(curStatus)) {
+                blockState.cur = null;
+                return (blockState.nextIdx >= _statements.length ? curStatus : Status.Incomplete);
+            } else {
+                return Status.Incomplete;
+            }
         }
     }
 
@@ -48,8 +40,8 @@ public class BlockStatement
 }
 
 }
-    import vampire.quest.client.npctalk.Statement;
 
+import vampire.quest.client.npctalk.Statement;
 
 class BlockState
 {

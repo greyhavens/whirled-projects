@@ -25,12 +25,7 @@ public class SayStatement
     {
         ProgramCtx.view.say(_speakerName, _text);
         ProgramCtx.view.setResponses(_ids, _responses);
-        return 0;
-    }
-
-    public function isDone (state :Object) :Boolean
-    {
-        return true;
+        return Status.CompletedInstantly;
     }
 
     protected var _speakerName :String;

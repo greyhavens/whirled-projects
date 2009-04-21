@@ -23,15 +23,32 @@ public class Program
 
         _routineStack = [];
         _routineState = [];
+        _scheduledRoutineNames = [];
         callRoutine("main");
     }
 
     public function update (dt :Number) :void
     {
-        while (this.curRoutine != null && dt > 0) {
-            dt -= this.curRoutine.update(dt, this.curState);
-            if (this.curRoutine.isDone(this.curState)) {
+        while (dt > 0) {
+            if (_scheduledRoutineNames.length > 0) {
+                for each (var name :String in _scheduledRoutineNames) {
+                    callRoutine(name);
+                }
+
+                _scheduledRoutineNames = [];
+            }
+
+            var cur :Routine = this.curRoutine;
+            if (cur == null) {
+                break;
+            }
+
+            var status :Number = cur.update(dt, this.curState);
+            if (Status.isComplete(status)) {
                 popRoutine();
+                dt -= status;
+            } else {
+                break;
             }
         }
     }
@@ -41,7 +58,12 @@ public class Program
         return (_routineStack.length == 0);
     }
 
-    public function callRoutine (name :String) :void
+    public function scheduleRoutine (name :String) :void
+    {
+        _scheduledRoutineNames.push(name);
+    }
+
+    protected function callRoutine (name :String) :void
     {
         var routine :Routine = getRoutine(name);
         if (routine == null) {
@@ -81,6 +103,7 @@ public class Program
     protected var _routines :HashMap = new HashMap();
     protected var _routineStack :Array;
     protected var _routineState :Array;
+    protected var _scheduledRoutineNames :Array;
 }
 
 }

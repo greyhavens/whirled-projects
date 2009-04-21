@@ -4,9 +4,8 @@ public interface Statement
 {
     // can be null
     function createState () :Object;
-    // returns the amount of time the update took, up to dt
+    // returns a value from Status
     function update (dt :Number, state :Object) :Number;
-    function isDone (state :Object) :Boolean;
 }
 
 }
