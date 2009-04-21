@@ -1049,6 +1049,14 @@ public class ServerLogic
         //Then handle experience.  ATM everyone gets xp=score
         var numPlayers :Number = predIds.length + (gameRecord.gameServer.preyId != 0 ? 1 : 0);
         var playerScore :Number = gameRecord.gameServer.lastRoundScore / numPlayers;
+
+        //Check for wildly huge scores.  Probably a bug
+        if (gameRecord.gameServer.lastRoundScore > VConstants.MAX_THEORETICAL_FEEDING_SCORE) {
+            log.error("Score error?", "MAX_THEORETICAL_FEEDING_SCORE",
+                VConstants.MAX_THEORETICAL_FEEDING_SCORE, "gameRecord.gameServer.lastRoundScore",
+                gameRecord.gameServer.lastRoundScore);
+            return;
+        }
         //Update the highest possible score.  We use this to scale the coin payout
         ServerContext.topBloodBloomScore = Math.max(ServerContext.topBloodBloomScore, playerScore);
         var xpGained :Number = playerScore * VConstants.XP_GAINED_FROM_FEEDING_PER_BLOOD_UNIT;

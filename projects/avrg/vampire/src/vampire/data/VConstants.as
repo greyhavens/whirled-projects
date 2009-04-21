@@ -28,6 +28,8 @@ public class VConstants
     public static const MAX_CHARS_IN_LINEAGE_NAME :int = 10;
     public static const MAX_HIGH_SCORES :int = 10;
 
+    public static const MAX_THEORETICAL_FEEDING_SCORE :int = 50000;
+
     /**
     * If you're not related to the ubervamp
     */
@@ -56,7 +58,7 @@ public class VConstants
     */
     public static const XP_GAIN_FRACTION_SHARED_WITH_IMMEDIATE_SIRE :Number = 0.1;
 
-    public static const XP_GAIN_FRACTION_SHARED_WITH_GRANDSIRES :Number = 0.01;
+    public static const XP_GAIN_FRACTION_SHARED_WITH_GRANDSIRES :Number = 0.05;
 
     /**
     * For every unit of blood gained from feeding, how much experience is gained.
