@@ -5,6 +5,7 @@ import com.threerings.util.ClassUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.EventCollecter;
+import com.whirled.contrib.simplegame.ObjectMessage;
 
 import vampire.data.Logic;
 import vampire.data.VConstants;
@@ -176,6 +177,12 @@ public class FeedingRecord extends EventCollecter
 
     public function onGameStarted () :void
     {
+        //Notify the analyser
+        if (_room != null) {
+            _room.db.sendMessageToNamedObject(new ObjectMessage(Analyser.MSG_RECEIVED_FEED,
+                                                                _gameServer.playerIds.slice()),
+                                              Analyser.NAME);
+        }
     }
 
     public function onRoundComplete (finalScores :HashMap) :void

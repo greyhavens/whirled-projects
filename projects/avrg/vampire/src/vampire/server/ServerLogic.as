@@ -79,6 +79,11 @@ public class ServerLogic
         }
 
         function awardXP(sireId :int, awardXP :Number) :void {
+
+            ServerContext.server.sendMessageToNamedObject(
+                new ObjectMessage(Analyser.MSG_RECEIVED_PROGENY_PAYOUT, [sireId, awardXP]),
+                Analyser.NAME);
+
             if (ServerContext.server.isPlayer(sireId)) {
                 var sire :PlayerData = ServerContext.server.getPlayer(sireId);
                 log.debug("awarding sire " + sire.name + ", xp=" + awardXP);
@@ -497,7 +502,7 @@ public class ServerLogic
         else {
             PlayerSubControlServer(player.ctrl).awardPrize(Trophies.BASIC_AVATAR_MALE);
         }
-        player.ctrl.props.set(Codes.PLAYER_PROP_LAST_TIME_AWAKE, 1);
+        player.ctrl.props.set(Codes.PLAYER_PROP_TIME, 1);
     }
 
     /**
