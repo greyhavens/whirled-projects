@@ -322,13 +322,13 @@ public class VampireAvatarHUD extends AvatarHUD
             ClientContext.model.lineage.isConnectedToLilith;
 
         var isAvatarPartOfLineage :Boolean =
-            ClientContext.gameMode.roomModel.getLineage(playerId) != null &&
-            ClientContext.gameMode.roomModel.getLineage(playerId).isConnectedToLilith;
+            ClientContext.gameMode.lineages.getLineage(playerId) != null &&
+            ClientContext.gameMode.lineages.getLineage(playerId).isConnectedToLilith;
             //ClientContext.model.lineage.isMemberOfLineage(playerId);
 
         var avatarHasNoSire :Boolean =
-            ClientContext.gameMode.roomModel.getLineage(playerId) == null ||
-            !ClientContext.gameMode.roomModel.getLineage(playerId).isSireExisting(playerId);
+            ClientContext.gameMode.lineages.getLineage(playerId) == null ||
+            !ClientContext.gameMode.lineages.getLineage(playerId).isSireExisting(playerId);
 
         if (isPlayerPartOfLineage) {
             if (avatarHasNoSire) {
