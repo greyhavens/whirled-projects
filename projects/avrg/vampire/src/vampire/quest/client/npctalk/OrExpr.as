@@ -7,9 +7,7 @@ public class OrExpr
 {
     public function OrExpr (...exprs)
     {
-        for each (var expr in exprs) {
-            addExpr(expr);
-        }
+        _exprs = exprs;
     }
 
     public function addExpr (expr :Expr) :void
@@ -28,7 +26,7 @@ public class OrExpr
         return false;
     }
 
-    protected var _exprs :Array = [];
+    protected var _exprs :Array;
 }
 
 }

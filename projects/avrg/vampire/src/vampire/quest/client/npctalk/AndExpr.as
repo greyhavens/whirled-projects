@@ -7,9 +7,7 @@ public class AndExpr
 {
     public function AndExpr (...exprs)
     {
-        for each (var expr in exprs) {
-            addExpr(expr);
-        }
+        _exprs = exprs;
     }
 
     public function addExpr (expr :Expr) :void
@@ -28,7 +26,7 @@ public class AndExpr
         return true;
     }
 
-    protected var _exprs :Array = [];
+    protected var _exprs :Array;
 }
 
 }
