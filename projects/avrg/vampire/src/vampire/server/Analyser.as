@@ -9,6 +9,7 @@ import com.whirled.contrib.simplegame.tasks.SerialTask;
 import com.whirled.contrib.simplegame.tasks.TimedTask;
 import com.whirled.net.MessageReceivedEvent;
 
+import vampire.data.Codes;
 import vampire.net.messages.StatsMsg;
 
 /**
@@ -43,10 +44,7 @@ public class Analyser extends SimObject
         }
     }
 
-    protected function createStatsString () :String
-    {
-        return "test stats";
-    }
+
 
     override protected function update (dt:Number) :void
     {
@@ -89,6 +87,16 @@ public class Analyser extends SimObject
             }
             break;
 
+//            case MSG_RECEIVED_FEEDING_XP_PAYOUT:
+//            data = msg.data as Array;
+//            if (data != null) {
+//                playerId = data[0] as int;
+//                payout = data[1] as Number;
+//                currentPayout = _playerXpEarnedFromFeeding.get(playerId) as Number;
+//                _playerXpEarnedFromFeeding.put(playerId, currentPayout + payout);
+//            }
+//            break;
+
             case MSG_RECEIVED_FEED:
             data = msg.data as Array;
             if (data != null) {
@@ -110,6 +118,32 @@ public class Analyser extends SimObject
     override public function get objectName () :String
     {
         return NAME;
+    }
+
+    protected function createStatsString () :String
+    {
+        var s :String = new String();
+        s += "\n>>>>BeginStats";
+        s += "\nServerReboots=" + ServerContext.ctrl.props.get(Codes.AGENT_PROP_SERVER_REBOOTS);
+        s += "\nTimeStarted=" + _timeStarted;
+        s += "\nNow=" + new Date().time;
+        s += stringHashMap(_playTime, "TimeLoggedIn");
+        s += stringHashMap(_playerPlayersFeeding, "FeedingPlayers");
+        s += stringHashMap(_progenyPayout, "DescendentsPayout");
+        s += stringHashMap(_playerCoinPayout, "FeedingCoinPayout");
+        s += stringHashMap(_playerXpEarnedFromFeeding, "FeedingXPEarned");
+        s += "\nFeedingPlayers=" + _playerCountInFeedingGames;
+        s += "\n<<<<EndStats";
+        return s;
+    }
+
+    protected function stringHashMap (hash :HashMap, keyPrefix :String = "") :String
+    {
+        var s :String = new String();
+        hash.forEach(function (playerId :int, data :Object) :void {
+            s += "\n" + keyPrefix + playerId + "=" + data;
+        });
+        return s;
     }
 
     protected var _timeStarted :Number;

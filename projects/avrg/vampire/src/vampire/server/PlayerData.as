@@ -11,6 +11,7 @@ import com.whirled.avrg.OfflinePlayerPropertyControl;
 import com.whirled.avrg.PlayerSubControlBase;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.EventHandlerManager;
+import com.whirled.contrib.simplegame.ObjectMessage;
 
 import flash.utils.ByteArray;
 
@@ -91,7 +92,10 @@ public class PlayerData extends EventHandlerManager
         switch (e.name) {
             case Codes.TASK_FEEDING:
             var coins :int = e.value as int;
-//            addFeedback("You gained " + xpFormatted + " experience and " + coins +" coins from feeding!");
+            //Notify the analyser
+            ServerContext.server.sendMessageToNamedObject(
+                new ObjectMessage(Analyser.MSG_RECEIVED_FEEDING_COINS_PAYOUT, [playerId, coins]),
+                Analyser.NAME);
             break;
         }
     }

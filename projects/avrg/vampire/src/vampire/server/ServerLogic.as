@@ -1065,6 +1065,12 @@ public class ServerLogic
             if (p != null) {
                 addXP(p.playerId, xp);
                 p.addFeedback("You gained " + xpFormatted + " experience from feeding!");
+
+                //Notify the analyser
+                ServerContext.server.sendMessageToNamedObject(
+                    new ObjectMessage(Analyser.MSG_RECEIVED_FEEDING_XP_PAYOUT, [playerId, xp]),
+                    Analyser.NAME);
+
                 //Add some bonus xp to your blood bond, if they are online
                 awardBloodBondedXpEarned(p, xp);
                 //Add some bonus xp to your sires
