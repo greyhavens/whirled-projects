@@ -15,9 +15,7 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
-import vampire.client.events.LineageUpdatedEvent;
 import vampire.data.Codes;
-import vampire.data.Lineage;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingClient;
 import vampire.feeding.FeedingClientSettings;
@@ -75,7 +73,8 @@ public class MainGameMode extends AppMode
         ClientContext.model = new PlayerModel();
         addObject(ClientContext.model);
 
-        addObject(new LineagesClient());
+        _lineages = new LineagesClient();
+        addObject(_lineages);
 
         //If there is a share token, send the invitee to the server
         var inviterId :int = ClientContext.ctrl.local.getInviterMemberId();
@@ -151,7 +150,12 @@ public class MainGameMode extends AppMode
             var debug :SimpleTextButton = new SimpleTextButton("Admin");
             Command.bind(debug, MouseEvent.CLICK, VampireController.SHOW_DEBUG);
             modeSprite.addChild(debug);
+
+            //And for admins, listen to stats messages.
+            addObject(new AnalyserClient());
         }
+
+
 
 
     }
@@ -345,9 +349,10 @@ public class MainGameMode extends AppMode
         }
     }
 
-    public function get roomModel () :LineagesClient
+    public function get lineages () :LineagesClient
     {
-        return getObjectNamed(LineagesClient.NAME) as LineagesClient;
+        return _lineages;
+//        return getObjectNamed(LineagesClient.NAME) as LineagesClient;
     }
 
     public function get hud () :HUD
@@ -378,6 +383,7 @@ public class MainGameMode extends AppMode
 
 
     protected var _hud :HUD;
+    protected var _lineages :LineagesClient;
     protected var _feedbackMessageQueue :Array = new Array();
     protected var _clientAvatar :ClientAvatar;
     protected var _feedingGameClient :FeedingClient;

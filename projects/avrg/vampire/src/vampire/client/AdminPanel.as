@@ -16,6 +16,7 @@ import vampire.data.Codes;
 import vampire.data.VConstants;
 import vampire.net.messages.DebugMsg;
 import vampire.net.messages.SendGlobalMsg;
+import vampire.net.messages.StatsMsg;
 import vampire.server.PlayerData;
 import vampire.server.ServerContext;
 import vampire.server.ServerLogic;
@@ -175,6 +176,12 @@ public class AdminPanel extends DraggableObject
         loseInviteButton.addEventListener(MouseEvent.CLICK, loseInvite);
         _menuSprite.addChild(loseInviteButton);
 
+        var statsButton :SimpleTextButton = new SimpleTextButton("Stats to flashlog");
+        statsButton.x = addInviteButton.x;
+        statsButton.y = addInviteButton.y + 50;
+        statsButton.addEventListener(MouseEvent.CLICK, getStats);
+        _menuSprite.addChild(statsButton);
+
 
 //        var addAllBloodButton :SimpleTextButton = new SimpleTextButton("+20 Blood Room");
 //        addAllBloodButton.x = loseInviteButton.x;
@@ -200,6 +207,10 @@ public class AdminPanel extends DraggableObject
 
     }
 
+    protected function getStats(... ignored) :void
+    {
+        ClientContext.ctrl.agent.sendMessage(StatsMsg.NAME, new StatsMsg().toBytes());
+    }
     protected function gainLevel(... ignored) :void
     {
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LEVEL_UP).toBytes());
