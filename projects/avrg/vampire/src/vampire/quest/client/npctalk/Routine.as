@@ -13,14 +13,19 @@ public class Routine
         return _name;
     }
 
-    public function update (dt :Number) :Number
+    public function createState () :Object
     {
-        return _statement.update(dt);
+        return _statement.createState();
     }
 
-    public function get isDone () :Boolean
+    public function update (dt :Number, state :Object) :Number
     {
-        return _statement.isDone;
+        return _statement.update(dt, state);
+    }
+
+    public function isDone (state :Object) :Boolean
+    {
+        return _statement.isDone(state);
     }
 
     protected var _name :String;

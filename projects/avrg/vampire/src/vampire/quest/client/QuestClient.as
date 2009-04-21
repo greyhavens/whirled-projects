@@ -113,6 +113,13 @@ public class QuestClient
         }
     }
 
+    public static function showDialogTest () :void
+    {
+        var dialogTest :XmlResource = ClientCtx.rsrcs.getResource("dialogTest") as XmlResource;
+        var talkView :TalkView = new TalkView(ProgramParser.parse(dialogTest.xml));
+        ClientCtx.mainLoop.topMode.addSceneObject(talkView);
+    }
+
     public static function get isReady () :Boolean
     {
         return _resourcesLoaded;
@@ -136,10 +143,6 @@ public class QuestClient
         ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_COMPLETED, onQuestCompleted);
 
         checkQuestCompletion();
-
-        // dialog test
-        var dialogTest :XmlResource = ClientCtx.rsrcs.getResource("dialogTest") as XmlResource;
-        var program :Program = ProgramParser.parse(dialogTest.xml);
     }
 
     protected static function checkQuestCompletion (...ignored) :void

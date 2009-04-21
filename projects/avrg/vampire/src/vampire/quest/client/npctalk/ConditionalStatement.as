@@ -14,37 +14,56 @@ public class ConditionalStatement
         _else = statement;
     }
 
-    public function update (dt :Number) :Number
+    public function createState () :Object
     {
+        return new ConditionalState();
+    }
+
+    public function update (dt :Number, state :Object) :Number
+    {
+        var cState :ConditionalState = ConditionalState(state);
+
         // determine which statement to evaluate
-        if (_statement == null) {
+        if (cState.statement == null) {
             for (var ii :int = 0; ii < _ifExprs.length; ++ii) {
                 var expr :Expr = _ifExprs[ii];
                 if (Boolean(expr.eval())) {
-                    _statement = _ifStatements[ii];
+                    cState.statement = _ifStatements[ii];
+                    cState.statementState = cState.statement.createState();
                     break;
                 }
             }
 
-            if (_statement == null) {
-                _statement = (_else != null ? _else : NoopStatement.INSTANCE);
+            if (cState.statement == null) {
+                if (_else != null) {
+                    cState.statement = _else;
+                    cState.statementState = _else.createState();
+                } else {
+                    cState.statement = NoopStatement.INSTANCE;
+                }
             }
         }
 
-        return _statement.update(dt);
+        return cState.statement.update(dt, cState.statementState);
     }
 
-    public function get isDone () :Boolean
+    public function isDone (state :Object) :Boolean
     {
-        return _statement.isDone;
+        var cState :ConditionalState = ConditionalState(state);
+        return cState.statement.isDone(cState.statementState);
     }
 
     protected var _ifExprs :Array = [];
     protected var _ifStatements :Array = [];
     protected var _else :Statement;
-
-    // the statement we're actually evaluating
-    protected var _statement :Statement;
 }
 
+}
+
+import vampire.quest.client.npctalk.Statement;
+
+class ConditionalState
+{
+    public var statement :Statement;
+    public var statementState :Object;
 }

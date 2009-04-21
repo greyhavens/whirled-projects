@@ -51,11 +51,7 @@ public class QuestClientStandalone extends Sprite
     {
         QuestClient.showDebugPanel(true);
         QuestClient.showQuestPanel(true);
-
-        var talkView :TalkView = new TalkView();
-        talkView.say("Lilith", "Hey there sexy vampire, let's kill all humans");
-        talkView.setResponses([ "Let's do it", "I don't wanna" ], [ "yes", "no" ]);
-        _sg.ctx.mainLoop.topMode.addSceneObject(talkView);
+        QuestClient.showDialogTest();
     }
 
     protected var _sg :SimpleGame;

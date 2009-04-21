@@ -9,20 +9,26 @@ public class SayStatement
         _text = text;
     }
 
-    public function addResponse (text :String, id :String) :void
+    public function addResponse (id :String, text :String) :void
     {
-        _responses.push(text);
         _ids.push(id);
+        _responses.push(text);
     }
 
-    public function update (dt :Number) :Number
+    public function createState () :Object
+    {
+        // stateless
+        return null;
+    }
+
+    public function update (dt :Number, state :Object) :Number
     {
         ProgramCtx.view.say(_speakerName, _text);
-        ProgramCtx.view.setResponses(_responses, _ids);
+        ProgramCtx.view.setResponses(_ids, _responses);
         return 0;
     }
 
-    public function get isDone () :Boolean
+    public function isDone (state :Object) :Boolean
     {
         return true;
     }

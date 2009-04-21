@@ -8,13 +8,19 @@ public class CallRoutineStatement
         _routineName = routineName;
     }
 
-    public function update (dt :Number) :Number
+    public function createState () :Object
+    {
+        // stateless
+        return null;
+    }
+
+    public function update (dt :Number, state :Object) :Number
     {
         ProgramCtx.program.callRoutine(_routineName);
         return 0; // completes immediately
     }
 
-    public function get isDone () :Boolean
+    public function isDone (state :Object) :Boolean
     {
         return true;
     }

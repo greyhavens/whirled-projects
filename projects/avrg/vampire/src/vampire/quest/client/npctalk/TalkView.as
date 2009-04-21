@@ -13,8 +13,10 @@ import vampire.quest.client.TextBits;
 
 public class TalkView extends DraggableObject
 {
-    public function TalkView ()
+    public function TalkView (program :Program)
     {
+        _program = program;
+
         _sprite = new Sprite();
         var g :Graphics = _sprite.graphics;
         g.lineStyle(3, 0xffffff);
@@ -26,6 +28,18 @@ public class TalkView extends DraggableObject
         _sprite.addChild(_tfSpeaker);
         _tfSpeech = new TextField();
         _sprite.addChild(_tfSpeech);
+    }
+
+    override protected function addedToDB () :void
+    {
+        super.addedToDB();
+        _program.run(this);
+    }
+
+    override protected function update (dt :Number) :void
+    {
+        super.update(dt);
+        _program.update(dt);
     }
 
     override public function get displayObject () :DisplayObject
@@ -41,7 +55,7 @@ public class TalkView extends DraggableObject
         updateView();
     }
 
-    public function setResponses (responses :Array, ids :Array) :void
+    public function setResponses (ids :Array, responses :Array) :void
     {
         if (responses.length != ids.length) {
             throw new Error("responses.length != ids.length");
@@ -69,6 +83,9 @@ public class TalkView extends DraggableObject
             _responseButtons.push(textButton);
             _sprite.addChild(textButton);
         }
+
+        // Clear the last response out every time a new set of responses is created
+        ProgramCtx.lastResponseId = null;
 
         updateView();
     }

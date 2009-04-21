@@ -3,23 +3,28 @@ package vampire.quest.client.npctalk {
 public class WaitResponseStatement
     implements Statement
 {
-    public function update (dt :Number) :Number
+    public function createState () :Object
     {
-        if (!_gotResponse) {
-            _gotResponse = (ProgramCtx.lastResponseId != null);
-        }
-
-        return (_gotResponse ? 0 : dt);
+        // stateless
+        return null;
     }
 
-    public function get isDone () :Boolean
+    public function update (dt :Number, state :Object) :Number
     {
-        return _gotResponse;
+        return (this.gotResponse ? 0 : dt);
+    }
+
+    public function isDone (state :Object) :Boolean
+    {
+        return this.gotResponse;
+    }
+
+    protected function get gotResponse () :Boolean
+    {
+        return (ProgramCtx.lastResponseId != null);
     }
 
     protected var _responses :Array = [];
     protected var _ids :Array = [];
-
-    protected var _gotResponse :Boolean;
 }
 }

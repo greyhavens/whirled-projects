@@ -18,8 +18,8 @@ public class BinaryCompExpr
 
     public function eval () :*
     {
-        var lval :Number = _lhs.eval();
-        var rval :Number = _rhs.eval();
+        var lval :* = _lhs.eval();
+        var rval :* = _rhs.eval();
 
         switch (_type) {
         case EQUALS:

@@ -11,7 +11,7 @@ public class Program
         }
     }
 
-    public function run () :void
+    public function run (talkView :TalkView) :void
     {
         if (_routineStack != null) {
             throw new Error("Already running");
@@ -19,16 +19,18 @@ public class Program
 
         ProgramCtx.init();
         ProgramCtx.program = this;
+        ProgramCtx.view = talkView;
 
         _routineStack = [];
+        _routineState = [];
         callRoutine("main");
     }
 
     public function update (dt :Number) :void
     {
         while (this.curRoutine != null && dt > 0) {
-            dt -= this.curRoutine.update(dt);
-            if (this.curRoutine.isDone) {
+            dt -= this.curRoutine.update(dt, this.curState);
+            if (this.curRoutine.isDone(this.curState)) {
                 popRoutine();
             }
         }
@@ -47,6 +49,7 @@ public class Program
         }
 
         _routineStack.push(routine);
+        _routineState.push(routine.createState());
     }
 
     public function hasRoutine (name :String) :Boolean
@@ -57,6 +60,7 @@ public class Program
     protected function popRoutine () :void
     {
         _routineStack.pop();
+        _routineState.pop();
     }
 
     protected function getRoutine (name :String) :Routine
@@ -69,8 +73,14 @@ public class Program
         return (_routineStack.length > 0 ? _routineStack[_routineStack.length - 1] : null);
     }
 
+    protected function get curState () :Object
+    {
+        return (_routineState.length > 0 ? _routineState[_routineState.length - 1] : null);
+    }
+
     protected var _routines :HashMap = new HashMap();
     protected var _routineStack :Array;
+    protected var _routineState :Array;
 }
 
 }

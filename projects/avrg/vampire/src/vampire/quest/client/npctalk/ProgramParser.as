@@ -21,7 +21,7 @@ public class ProgramParser
     {
         return new Routine(
             XmlReader.getStringAttr(xml, "name"),
-            parseSerialStatement(xml));
+            parseBlockStatement(xml));
     }
 
     protected static function parseStatement (xml :XML) :Statement
@@ -29,7 +29,7 @@ public class ProgramParser
         var type :String = xml.name().localName;
         switch (type) {
         case "Block":
-            return parseSerialStatement(xml);
+            return parseBlockStatement(xml);
 
         case "Conditional":
             return parseConditionalStatement(xml);
@@ -40,14 +40,20 @@ public class ProgramParser
         case "WaitResponse":
             return parseWaitResponseStatement(xml);
 
+        case "HandleResponse":
+            return parseHandleResponseStatement(xml);
+
+        case "CallRoutine":
+            return parseCallRoutineStatement(xml);
+
         default:
             throw new XmlReadError("Unrecognized statement type '" + type + "'");
         }
     }
 
-    protected static function parseSerialStatement (xml :XML) :SerialStatement
+    protected static function parseBlockStatement (xml :XML) :BlockStatement
     {
-        var statement :SerialStatement = new SerialStatement();
+        var statement :BlockStatement = new BlockStatement();
         for each (var xmlChild :XML in xml.children()) {
             statement.addStatement(parseStatement(xmlChild));
         }
@@ -115,10 +121,10 @@ public class ProgramParser
         // If there are any response statements, add a WaitResponseStatement
         // immediately after the SayStatement.
         if (hasResponse) {
-            var serialStatment :SerialStatement = new SerialStatement();
-            serialStatment.addStatement(sayStatement);
-            serialStatment.addStatement(new WaitResponseStatement());
-            return serialStatment;
+            var blockStatement :BlockStatement = new BlockStatement();
+            blockStatement.addStatement(sayStatement);
+            blockStatement.addStatement(new WaitResponseStatement());
+            return blockStatement;
 
         } else {
             return sayStatement;
@@ -128,6 +134,30 @@ public class ProgramParser
     protected static function parseWaitResponseStatement (xml :XML) :WaitResponseStatement
     {
         return new WaitResponseStatement();
+    }
+
+    protected static function parseHandleResponseStatement (xml :XML) :Statement
+    {
+        // a "HandleResponse" statement is a Conditional
+        var conditional :ConditionalStatement = new ConditionalStatement();
+
+        for each (var responseXml :XML in xml.Response) {
+            var responseId :String = XmlReader.getStringAttr(responseXml, "id");
+            // If response = id, then
+            conditional.addIf(
+                new BinaryCompExpr(
+                    new ResponseExpr(),
+                    new ValueExpr(responseId),
+                    BinaryCompExpr.EQUALS),
+                parseBlockStatement(responseXml));
+        }
+
+        return conditional;
+    }
+
+    protected static function parseCallRoutineStatement (xml :XML) :CallRoutineStatement
+    {
+        return new CallRoutineStatement(XmlReader.getStringAttr(xml, "name"));
     }
 
     protected static function parseExpr (xml :XML) :Expr
