@@ -58,7 +58,7 @@ package vampire.client
         protected function isFirstTimePlayer() :Boolean
         {
             var lastTimeAwake :Number = Number(ClientContext.ctrl.player.props.get(
-                Codes.PLAYER_PROP_LAST_TIME_AWAKE));
+                Codes.PLAYER_PROP_TIME));
 
             //The last is debugging in whirled dev
             if (isNaN(lastTimeAwake) || lastTimeAwake == 0) {
