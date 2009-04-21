@@ -1,5 +1,6 @@
 package vampire.client
 {
+import com.threerings.flash.DisplayUtil;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
@@ -43,8 +44,9 @@ public class LoadBalancerClient extends SceneObject
         registerListener(relocationText, MouseEvent.CLICK, function (...ignored) :void {
             var targetX :int = _ctrl.local.getPaintableArea().width / 2;
             addTask(LocationTask.CreateEaseOut(targetX, _panel.height / 2, 0.5));
+            ClientContext.tutorial.clickedHuntingGrounds();
         });
-        relocationText.text = "Click to hunt elsewhere";
+        relocationText.text = "Choose a Hunting Ground";
 
 
 
@@ -78,14 +80,15 @@ public class LoadBalancerClient extends SceneObject
             _ctrl.agent.sendMessage(LoadBalancingMsg.NAME, new LoadBalancingMsg().toBytes());
             _timeSinceLoadMessageSent = 0;
         }
-        var relocationText :TextField = _panel["relocation_text"] as TextField;
-        if (ClientContext.getAvatarIds().length == 1) {
-            relocationText.text = "Your prey has vanished. Click to hunt elsewhere.";
-        }
-        else {
-            relocationText.text = "This room is crowded. Click to hunt elsewhere.";
-        }
+    }
 
+    public function findSafely (name :String) :DisplayObject
+    {
+        var o :DisplayObject = DisplayUtil.findInHierarchy(_displaySprite, name);
+        if (o == null) {
+            throw new Error("Cannot find object: " + name);
+        }
+        return o;
     }
 
     public function deactivate (...ignored) :void
@@ -208,6 +211,7 @@ public class LoadBalancerClient extends SceneObject
     }
     protected function moveToRoom (roomId :int) :void
     {
+        ClientContext.tutorial.clickedHuntingGroundsRoom();
         if (roomId != 0) {
             deactivate();
             ClientContext.controller.handleMove(roomId);

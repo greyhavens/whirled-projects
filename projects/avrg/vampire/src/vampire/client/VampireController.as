@@ -230,8 +230,9 @@ public class VampireController extends Controller
 
 //            ClientContext.model.lineage.isMemberOfLineage(targetId)
 //            && ClientContext.model.isPlayer(targetId);
-        if (!ClientContext.model.lineage.isConnectedToLilith
-            && targetIsVampireAndLineageMemberAndOnline) {
+        if (ClientContext.model.lineage != null &&
+            (!ClientContext.model.lineage.isConnectedToLilith
+            && targetIsVampireAndLineageMemberAndOnline)) {
 
             var con :VampireController = ClientContext.controller;
 

@@ -104,11 +104,11 @@ public class Tutorial extends AppMode
         _ctrl = ClientContext.ctrl;
 
         _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
-        setPage(PAGE_NOONE_IN_ROOM);
-
-        if (VConstants.LOCAL_DEBUG_MODE) {
-            _currentChapter = CHAPTER_NAVIGATING_THE_GUI;
-        }
+//        setPage(PAGE_HUNTING_GROUNDS);
+//
+//        if (VConstants.LOCAL_DEBUG_MODE) {
+//            _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
+//        }
 
         deactivateTutorial();
     }
@@ -144,14 +144,15 @@ public class Tutorial extends AppMode
         _active = true;
         if (_currentChapter == CHAPTER_END) {
             _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
-            setPage(PAGE_CLICK_HUD_FEED);
+            setPage(PAGE_HUNTING_GROUNDS);
         }
         else {
             setPage(_currentPage);
         }
 
         if (VConstants.LOCAL_DEBUG_MODE) {
-            _currentChapter = CHAPTER_NAVIGATING_THE_GUI;
+            _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
+            setPage(PAGE_NOONE_IN_ROOM);
         }
     }
 
@@ -280,9 +281,18 @@ public class Tutorial extends AppMode
         var isAloneInRoom :Boolean = ClientContext.getAvatarIds().length == 1;
 
         switch (_currentPage) {
+
+            case PAGE_HUNTING_GROUNDS:
+            if (isAloneInRoom) {
+                setPage(PAGE_NOONE_IN_ROOM);
+                break;
+            }
+            break;
+
+
             case PAGE_NOONE_IN_ROOM:
             if (!isAloneInRoom) {
-                setPage(PAGE_CLICK_HUD_FEED);
+                setPage(PAGE_HUNTING_GROUNDS);
                 break;
             }
             break;
@@ -338,26 +348,11 @@ public class Tutorial extends AppMode
 
         var targetDisplayObject :DisplayObject = ClientContext.gameMode.hud.findSafely(buttonName);
         var targetReticle :SceneObject = createTargetSceneObject(sceneObjectName);
-
-
-
         var parent :DisplayObjectContainer = targetDisplayObject.parent;
         parent.setChildIndex(targetDisplayObject, parent.numChildren - 1);
         addObject(targetReticle);
 
         moveTargetClearlyFromOldTargetLocToNew(targetReticle, targetDisplayObject);
-
-//        targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
-//            targetDisplayObject.parent.getChildIndex(targetDisplayObject));
-//
-//
-////        ClientContext.centerOnViewableRoom(targetReticle.displayObject);
-//        setTargetToLastTargetLocation(targetReticle);
-////        placeTargetToTheRightOfTutorialPopup(targetReticle);
-//        targetReticle.addTask(LocationTask.CreateEaseIn(targetDisplayObject.x, targetDisplayObject.y, 0.5));
-
-//        targetReticle.x = targetDisplayObject.x;
-//        targetReticle.y = targetDisplayObject.y;
     }
 
     protected function moveTargetClearlyFromOldTargetLocToNew (reticle :SceneObject,
@@ -393,6 +388,13 @@ public class Tutorial extends AppMode
         updateAvatarsWithFeedButtons();
     }
 
+    protected function handleNooneInTheRoom () :void
+    {
+    }
+    protected function handleHuntingGrounds () :void
+    {
+    }
+
     protected function updateAvatarsWithFeedButtons () :void
     {
         for each (var avhud :VampireAvatarHUD in ClientContext.gameMode.avatarOverlay.avatars) {
@@ -409,17 +411,6 @@ public class Tutorial extends AppMode
 
                     addObject(targetReticle);
                     moveTargetClearlyFromOldTargetLocToNew(targetReticle, targetDisplayObject);
-
-//                    targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
-//                    targetDisplayObject.parent.getChildIndex(targetDisplayObject));
-//
-//
-//                    ClientContext.centerOnViewableRoom(targetReticle.displayObject);
-//                    targetReticle.addTask(LocationTask.CreateEaseIn(
-//                        targetDisplayObject.x, targetDisplayObject.y, 0.5));
-
-//                    targetReticle.x = avhud.targetUI.x;
-//                    targetReticle.y = avhud.targetUI.y;
                 }
             }
             else {//IF not, make sure there's so target on the avatar
@@ -453,27 +444,11 @@ public class Tutorial extends AppMode
                     ClientContext.gameMode.getObjectNamed(HelpPopup.NAME) as HelpPopup;
                 var targetDisplayObject :DisplayObject = help.findSafely(buttonName);
 
-//                targetReticle.x = targetDisplayObject.x;
-//                targetReticle.y = targetDisplayObject.y;
-
                 addObject(targetReticle);
-
                 moveTargetClearlyFromOldTargetLocToNew(targetReticle, targetDisplayObject);
-
-//                targetDisplayObject.parent.addChildAt(targetReticle.displayObject,
-//                    targetDisplayObject.parent.getChildIndex(targetDisplayObject));
-//
-//
-//                setTargetToLastTargetLocation(targetReticle);
-////                ClientContext.centerOnViewableRoom(targetReticle.displayObject);
-////                trace("in updateTargetingRecticleInHelp,)" + targetReticle.displayObject.x + ", "
-////                    + targetReticle.displayObject.y + ")");
-//                targetReticle.addTask(LocationTask.CreateEaseIn(targetDisplayObject.x, targetDisplayObject.y, 1));
-
             }
         }
         else {
-//            trace("updateTargetingRecticleInHelp, there's no help popup, buttonName="+buttonName);
             if (targetReticle != null && targetReticle.isLiveObject) {
                 targetReticle.destroySelf();
             }
@@ -667,6 +642,38 @@ public class Tutorial extends AppMode
         }
     }
 
+    public function clickedHuntingGrounds () :void
+    {
+        //Move the reticle to a room
+        if (ClientContext.gameMode.getObjectNamed(LoadBalancerClient.NAME) != null) {
+            var lb :LoadBalancerClient = ClientContext.gameMode.getObjectNamed(
+                LoadBalancerClient.NAME) as LoadBalancerClient;
+
+
+            var targetDisplayObject :DisplayObject = lb.findSafely("ground_01") as DisplayObject;
+
+            targetDisplayObject = targetDisplayObject["room_name"] as DisplayObject;
+
+            var sceneObjectName :String = "target: " + "ground_01";
+
+            var targetReticle :SceneObject = createTargetSceneObject(sceneObjectName);
+
+            var parent :DisplayObjectContainer = targetDisplayObject.parent;
+            parent.setChildIndex(targetDisplayObject, parent.numChildren - 1);
+            addObject(targetReticle);
+
+            moveTargetClearlyFromOldTargetLocToNew(targetReticle, targetDisplayObject);
+
+        }
+    }
+
+    public function clickedHuntingGroundsRoom () :void
+    {
+        if (_currentPage == PAGE_NOONE_IN_ROOM || _currentPage == PAGE_HUNTING_GROUNDS) {
+            setPage(PAGE_CLICK_HUD_FEED);
+        }
+    }
+
     protected function placeTargetToTheRightOfTutorialPopup (target :SceneObject) :void
     {
         var left :Point = _tutorialPopup.displayObject.localToGlobal(
@@ -678,14 +685,9 @@ public class Tutorial extends AppMode
     }
 
     protected var _active :Boolean;
-
-//    protected var _pageChanged :Boolean = false;
-
     protected var _pagesSeen :HashSet = new HashSet();
 
     protected var _targets :Array = [];
-
-//    protected var _currentPageIndex :int;
     protected var _currentChapter :String;
     protected var _currentPage :String;
     protected var _tutorialPopup :PopupQuery;
@@ -698,12 +700,12 @@ public class Tutorial extends AppMode
     public static const CHAPTER_LOOKING_FOR_TARGET :String = "Chapter: Looking for target";
 
     public static const PAGE_NOONE_IN_ROOM :String = "NooneInTheRoom";
+    public static const PAGE_HUNTING_GROUNDS :String = "HuntingGrounds";
     public static const PAGE_EVERYONE_LEAVES :String = "EveryoneLeaves";
     public static const PAGE_CLICK_HUD_FEED :String = "ClickHUDFeed";
     public static const PAGE_CLICK_TARGET_FEED :String = "ClickTargetFeed";
     public static const PAGE_LOBBY_PRIMARY_PRED :String = "LobbyPrimPred";
     public static const PAGE_LOBBY_SECOND_PRED :String = "LobbySecondPred";
-//    public static const PAGE_FEEDING :String = "Feeding";
 
 
     public static const CHAPTER_NAVIGATING_THE_GUI :String = "Chapter: GUI Navigation";
@@ -723,7 +725,8 @@ public class Tutorial extends AppMode
     public static const PAGE_END :String = "End";
 
     public static const TUTORIAL_ACTIONS :Array = [
-        [PAGE_NOONE_IN_ROOM, "There's no one here to feed upon, but your \"Me\" tab has convenient links to friendly players..."],
+        [PAGE_NOONE_IN_ROOM, "There's no one here to feed upon. Click \"Choose a Hunting Ground\" at the top of the screen to join some fellow bloodsuckers."],
+        [PAGE_HUNTING_GROUNDS, "Click \"Choose a Hunting Ground\" at the top of the screen and choose a place to join your fellow vamps on the prowl."],
         [PAGE_CLICK_HUD_FEED, "Click \"Hunt\" to see everyone's delicious blood, in all all their varied strains."],
         [PAGE_EVERYONE_LEAVES, "The herd is skittish.  Try chatting up your feast to make them comfortable with their succulent role."],
         [PAGE_CLICK_TARGET_FEED, "Click the Feed button on some tasty morsel and pull up to your feast."],
