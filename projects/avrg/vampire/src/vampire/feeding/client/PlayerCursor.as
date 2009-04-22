@@ -58,6 +58,10 @@ public class PlayerCursor extends CollidableObj
             cell.x = loc.x;
             cell.y = loc.y;
 
+            if (_whiteCellTip.isLive) {
+                _whiteCellTip.object.destroySelf();
+            }
+
             respawnWhiteCell();
 
         } else if (ClientCtx.variantSettings.canDropWhiteCells) {
@@ -71,9 +75,16 @@ public class PlayerCursor extends CollidableObj
         var time :Number = ClientCtx.variantSettings.playerWhiteCellCreationTime;
         var pauseTime :Number = Math.max(time - 0.25, 0);
         var growTime :Number = time - pauseTime;
-        addNamedTask(
-            RESPAWN_WHITE_CELL_TASK,
-            After(pauseTime, TargetedScaleTask.CreateEaseIn(_createdWhiteCell, 1, 1, growTime)));
+
+        var self :PlayerCursor = this;
+        addNamedTask(RESPAWN_WHITE_CELL_TASK, new SerialTask(
+            new TimedTask(pauseTime),
+            TargetedScaleTask.CreateEaseIn(_createdWhiteCell, 1, 1, growTime),
+            new FunctionTask(function () :void {
+                _whiteCellTip =
+                    GameCtx.tipFactory.createTipFromList(
+                        [ TipFactory.CORRUPTION_DROP_WHITE, TipFactory.CORRUPTION_ARTERIES ], self);
+            })));
     }
 
     protected function get isWhiteCellSpawned () :Boolean
@@ -251,6 +262,9 @@ public class PlayerCursor extends CollidableObj
         } else if (this.isWhiteCellSpawned) {
             GameCtx.gameMode.deliverWhiteCell(arteryType);
             respawnWhiteCell();
+            if (_whiteCellTip.isLive) {
+                _whiteCellTip.object.destroySelf();
+            }
         }
     }
 
@@ -262,6 +276,7 @@ public class PlayerCursor extends CollidableObj
     protected var _sprite :Sprite;
     protected var _movie :MovieClip;
     protected var _createdWhiteCell :Sprite;
+    protected var _whiteCellTip :SimObjectRef = SimObjectRef.Null();
 
     protected var _moveDirection :Vector2 = new Vector2();
     protected var _lastMoveTarget :Vector2 = new Vector2();

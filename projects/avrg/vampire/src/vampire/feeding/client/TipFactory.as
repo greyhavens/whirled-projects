@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.objects.*;
 
 public class TipFactory
 {
+    // Normal
     public static const POP_RED :int = 0;
     public static const CASCADE :int = 1;
     public static const GRAB_WHITE :int = 2;
@@ -13,7 +14,15 @@ public class TipFactory
     public static const GET_MULTIPLIER :int = 4;
     public static const GET_SPECIAL :int = 5;
 
-    public static const NUM_TIPS :int = 6;
+    // Corruption
+    public static const CORRUPTION_AVOID_RED :int = 6;
+    public static const CORRUPTION_DROP_WHITE :int = 7;
+    public static const CORRUPTION_CASCADE :int = 8;
+    public static const CORRUPTION_CASCADE_2 :int = 9;
+    public static const CORRUPTION_MULTIPLIER :int = 10;
+    public static const CORRUPTION_ARTERIES :int = 11;
+
+    public static const NUM_TIPS :int = 12;
 
     public function createTip (type :int, owner :SceneObject, followsOwner :Boolean = true)
         :SimObjectRef
@@ -49,10 +58,35 @@ public class TipFactory
         return tip.ref;
     }
 
+    public function createTipFromList (types :Array, owner :SceneObject,
+        followsOwner :Boolean = true) :SimObjectRef
+    {
+        // try to create each tip type in the list, and return when the first one is
+        // successfully created
+        for each (var type :int in types) {
+            var tipRef :SimObjectRef = createTip(type, owner, followsOwner);
+            if (!tipRef.isNull) {
+                return tipRef;
+            }
+        }
+
+        return SimObjectRef.Null();
+    }
+
     protected var _tipCounts :Array = ArrayUtil.create(NUM_TIPS, 0);
 
-    protected static const MAX_TIP_COUNT :Array = [ 1, 1, 2, 2, 2, -1 ];
-    protected static const DEPENDENT_TIP :Array = [ -1, 0, 1, 1, 1, -1 ];
+    protected static const MAX_TIP_COUNT :Array = [
+        1, 1, 2, 2, 2, -1,
+
+        1, 1, 1, 1, 1, 1
+    ];
+
+    protected static const DEPENDENT_TIP :Array = [
+        -1, POP_RED, CASCADE, CASCADE, CASCADE, -1,
+
+        CORRUPTION_DROP_WHITE, -1, CORRUPTION_AVOID_RED, CORRUPTION_CASCADE, CORRUPTION_CASCADE,
+        CORRUPTION_CASCADE_2
+    ];
 }
 
 }
@@ -64,6 +98,13 @@ const TIP_TEXT :Array = [
     "Drag white cells\nto arteries",
     "Catch multipliers\nin cascades",
     "Catch special strains\nin cascades",
+
+    "Avoid popping\nred cells directly",
+    "Click the mouse to\ndrop a white cell",
+    "White cells explode,\ncorrupting reds!",
+    "Corruption saps your\nprey's health",
+    "Multipliers increase\ncorruption potency",
+    "Cross an artery with a\nwhite cell to pump more reds",
 ];
 
 function createTipText (type :int) :TextField

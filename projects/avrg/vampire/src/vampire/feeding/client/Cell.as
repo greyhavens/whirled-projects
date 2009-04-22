@@ -148,7 +148,7 @@ public class Cell extends CollidableObj
     {
         _attachedTo = cursor.ref;
 
-        if (_type == Constants.CELL_WHITE) {
+        if (_type == Constants.CELL_WHITE && !ClientCtx.isCorruption) {
             attachTip(TipFactory.DROP_WHITE);
         }
     }
@@ -205,7 +205,7 @@ public class Cell extends CollidableObj
         this.alpha = 0;
         addTask(new AlphaTask(1, ClientCtx.variantSettings.normalCellBirthTime));
 
-        attachTip(TipFactory.POP_RED);
+        attachTip(ClientCtx.isCorruption ? TipFactory.CORRUPTION_AVOID_RED : TipFactory.POP_RED);
     }
 
     protected function birthWhiteCell () :void
@@ -246,7 +246,9 @@ public class Cell extends CollidableObj
                 GameCtx.gameMode.onWhiteCellBurst();
             })));
 
-        attachTip(TipFactory.GRAB_WHITE);
+        if (!ClientCtx.isCorruption) {
+            attachTip(TipFactory.GRAB_WHITE);
+        }
     }
 
     protected function birthSpecialCell () :void
@@ -268,12 +270,16 @@ public class Cell extends CollidableObj
                 _state = STATE_NORMAL;
             })));
 
-        attachTip(TipFactory.GET_SPECIAL);
+        if (!ClientCtx.isCorruption) {
+            attachTip(TipFactory.GET_SPECIAL);
+        }
     }
 
     protected function birthMultiplierCell () :void
     {
-        attachTip(TipFactory.GET_MULTIPLIER);
+        attachTip(ClientCtx.isCorruption ?
+            TipFactory.CORRUPTION_MULTIPLIER :
+            TipFactory.GET_MULTIPLIER);
     }
 
     override protected function update (dt :Number) :void

@@ -29,7 +29,7 @@ public class BurstCascade extends SceneObject
 
     override protected function addedToDB () :void
     {
-        GameCtx.tipFactory.createTip(TipFactory.CASCADE, this, false);
+        createTip();
     }
 
     override public function get displayObject () :DisplayObject
@@ -41,6 +41,7 @@ public class BurstCascade extends SceneObject
     {
         if (_type < 0) {
             _type = (burst is CorruptionBurst ? TYPE_CORRUPTION : TYPE_NORMAL);
+            createTip();
         }
 
         _bursts.push(burst.ref);
@@ -162,6 +163,23 @@ public class BurstCascade extends SceneObject
         }
     }
 
+    protected function createTip () :void
+    {
+        if (!_createdTip && this.isLiveObject && _type >= 0) {
+            if (ClientCtx.isCorruption) {
+                GameCtx.tipFactory.createTipFromList(
+                    [ TipFactory.CORRUPTION_CASCADE, TipFactory.CORRUPTION_CASCADE_2 ],
+                    this,
+                    false);
+
+            } else {
+                GameCtx.tipFactory.createTip(TipFactory.CASCADE, this, false);
+            }
+
+            _createdTip = true;
+        }
+    }
+
     protected function get createMultiplier () :Boolean
     {
         return this.hasScoreValue;
@@ -182,6 +200,7 @@ public class BurstCascade extends SceneObject
     protected var _lastBurstX :Number = 0;
     protected var _lastBurstY :Number = 0;
     protected var _needsRelocate :Boolean;
+    protected var _createdTip :Boolean;
 
     protected var _sprite :Sprite;
     protected var _tf :TextField;
