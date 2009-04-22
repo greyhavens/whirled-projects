@@ -81,7 +81,9 @@ public class LobbyMode extends AppMode
         instructionsStrain.visible = false;
         instructionsCorruption.visible = false;
 
-        if (!ClientCtx.clientSettings.spOnly &&
+        if (ClientCtx.isCorruption) {
+            instructionsCorruption.visible = true;
+        } else if (!ClientCtx.clientSettings.spOnly &&
             ClientCtx.playerData.timesPlayed >= Constants.MIN_GAMES_BEFORE_LEADERBOARD_SHOWN) {
             leaderboard.visible = true;
         } else if (this.isPreGameLobby && ClientCtx.playerData.timesPlayed == 0) {
