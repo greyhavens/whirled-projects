@@ -54,6 +54,9 @@ public class ProgramParser
         case "CallRoutine":
             return parseCallRoutineStatement(xml);
 
+        case "Wait":
+            return parseWaitStatement(xml);
+
         case "Exit":
             return parseExitStatement(xml);
 
@@ -169,6 +172,11 @@ public class ProgramParser
     protected static function parseCallRoutineStatement (xml :XML) :CallRoutineStatement
     {
         return new CallRoutineStatement(XmlReader.getStringAttr(xml, "name"));
+    }
+
+    protected static function parseWaitStatement (xml :XML) :WaitStatement
+    {
+        return new WaitStatement(XmlReader.getNumberAttr(xml, "seconds"));
     }
 
     protected static function parseExitStatement (xml :XML) :ExitStatement
