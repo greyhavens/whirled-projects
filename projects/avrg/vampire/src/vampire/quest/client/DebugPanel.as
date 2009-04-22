@@ -33,14 +33,20 @@ public class DebugPanel extends GenericDraggableWindow
             setStatusText("Stat", "name", name, "val", ClientCtx.stats.getStat(name));
         });
 
-        createButton("Reset Stats", function (...ignored) :void {
+        createButton("List Stats", function (...ignored) :void {
+            setStatusText("Stats", "names", ClientCtx.stats.getStatNames());
+        });
+
+        createButton("Clear Stats", function (...ignored) :void {
             for each (var statName :String in ClientCtx.stats.getStatNames()) {
                 ClientCtx.stats.clearStat(statName);
             }
         });
 
-        createButton("List Stats", function (...ignored) :void {
-            setStatusText("Stats", "names", ClientCtx.stats.getStatNames());
+        createButton("Clear Quests", function (...ignored) :void {
+            for each (var questId :int in ClientCtx.questData.activeAndCompleteQuestIds) {
+                ClientCtx.questData.debugClearQuest(questId);
+            }
         });
 
         createButton("+Juice", function (...ignored) :void {

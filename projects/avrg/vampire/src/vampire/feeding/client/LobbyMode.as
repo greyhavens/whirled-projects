@@ -11,6 +11,7 @@ import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
+import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
@@ -46,6 +47,17 @@ public class LobbyMode extends AppMode
         _modeSprite.addChild(_panelMovie);
 
         var contents :MovieClip = _panelMovie["draggable"];
+
+        if (ClientCtx.isCorruption) {
+            // swap in a new corruption-themed background
+            var bg :MovieClip = contents["lobby_bg"];
+            var corruptionBg :MovieClip =
+                ClientCtx.instantiateMovieClip("blood", "panel_back_corruption");
+            var parent :DisplayObjectContainer = bg.parent;
+            var idx :int = parent.getChildIndex(bg);
+            parent.removeChildAt(idx);
+            parent.addChildAt(corruptionBg, idx);
+        }
 
         // Leaderboard is not used yet
         var leaderboardMovie :MovieClip = contents["leaderboard"];

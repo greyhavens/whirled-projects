@@ -56,6 +56,12 @@ public class PlayerQuestData extends EventDispatcher
         _props.setIn(PROP_QUESTS, questId, STATUS_COMPLETE);
     }
 
+    public function debugClearQuest (questId :int) :void
+    {
+        // we only do this for debug purposes, never in the normal course of a game
+        _props.setIn(PROP_QUESTS, questId, null);
+    }
+
     public function getQuestStatus (questId :int) :int
     {
         var dict :Dictionary = _props.get(PROP_QUESTS) as Dictionary;
@@ -64,18 +70,18 @@ public class PlayerQuestData extends EventDispatcher
         return (dict != null ? dict[questId] : STATUS_NOT_ADDED);
     }
 
-    public function get activeQuestIds () :Array
+    public function get activeAndCompleteQuestIds () :Array
     {
         var quests :Dictionary = _props.get(PROP_QUESTS) as Dictionary;
-        if (quests == null) {
-            return [];
+        return (quests != null ? Util.keys(quests) : []);
+    }
 
-        } else {
-            return Util.keys(quests).filter(
-                function (questId :int, ...ignored) :Boolean {
-                    return (getQuestStatus(questId) == STATUS_ACTIVE);
-                });
-        }
+    public function get activeQuestIds () :Array
+    {
+        return this.activeAndCompleteQuestIds.filter(
+            function (questId :int, ...ignored) :Boolean {
+                return (getQuestStatus(questId) == STATUS_ACTIVE);
+        });
     }
 
     public function get activeQuests () :Array
