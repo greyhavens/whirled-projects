@@ -1,4 +1,7 @@
 package vampire.quest.client.npctalk {
+    import vampire.quest.QuestDesc;
+    import vampire.quest.Quests;
+
 
 public class ProgramParser
 {
@@ -28,12 +31,7 @@ public class ProgramParser
     {
         var type :String = xml.name().localName;
         switch (type) {
-        case "Block":
-            return parseBlockStatement(xml);
-
-        case "Conditional":
-            return parseConditionalStatement(xml);
-
+        // Vampire-specific
         case "Say":
             return parseSayStatement(xml);
 
@@ -42,6 +40,16 @@ public class ProgramParser
 
         case "HandleResponse":
             return parseHandleResponseStatement(xml);
+
+        case "GiveQuest":
+            return parseGiveQuestStatement(xml);
+
+        // Generic
+        case "Block":
+            return parseBlockStatement(xml);
+
+        case "Conditional":
+            return parseConditionalStatement(xml);
 
         case "CallRoutine":
             return parseCallRoutineStatement(xml);
@@ -160,10 +168,29 @@ public class ProgramParser
         return new CallRoutineStatement(XmlReader.getStringAttr(xml, "name"));
     }
 
+    protected static function parseGiveQuestStatement (xml :XML) :GiveQuestStatement
+    {
+        return new GiveQuestStatement(getQuest(XmlReader.getStringAttr(xml, "name")));
+    }
+
     protected static function parseExpr (xml :XML) :Expr
     {
         var type :String = xml.name().localName;
         switch (type) {
+        // Vampire-specific
+        case "Response":
+            return parseResponseExpr(xml);
+
+        case "IsActiveQuest":
+            return parseHasQuestExpr(xml, HasQuestExpr.IS_ACTIVE);
+
+        case "CompletedQuest":
+            return parseHasQuestExpr(xml, HasQuestExpr.IS_COMPLETE);
+
+        case "SeenQuest":
+            return parseHasQuestExpr(xml, HasQuestExpr.EXISTS);
+
+        // Generic
         case "And":
             return parseAndExpr(xml);
 
@@ -175,9 +202,6 @@ public class ProgramParser
 
         case "Number":
             return parseNumberExpr(xml);
-
-        case "Response":
-            return parseResponseExpr(xml);
 
         case "Equals":
             return parseBinaryCompExpr(xml, BinaryCompExpr.EQUALS);
@@ -232,6 +256,11 @@ public class ProgramParser
         return new ResponseExpr();
     }
 
+    protected static function parseHasQuestExpr (xml :XML, type :int) :HasQuestExpr
+    {
+        return new HasQuestExpr(getQuest(XmlReader.getStringAttr(xml, "name")), type);
+    }
+
     protected static function parseBinaryCompExpr (xml :XML, type :int) :BinaryCompExpr
     {
         var children :XMLList = xml.children();
@@ -240,6 +269,15 @@ public class ProgramParser
         }
 
         return new BinaryCompExpr(parseExpr(children[0]), parseExpr(children[1]), type);
+    }
+
+    protected static function getQuest (questName :String) :QuestDesc
+    {
+        var quest :QuestDesc = Quests.getQuestByName(questName);
+        if (quest == null) {
+            throw new XmlReadError("No quest named '" + questName + "' exists");
+        }
+        return quest;
     }
 }
 
