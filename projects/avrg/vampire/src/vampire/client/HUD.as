@@ -40,6 +40,9 @@ public class HUD extends DraggableObject
     {
 //        super(ClientContext.ctrl, "HUD");
         _hudMC = ClientContext.instantiateMovieClip("HUD", "HUD", true);
+        _hud = new Sprite();
+        _hud.addChild(_hudMC);
+        _displaySprite.addChild(_hud);
     }
 
     override protected function addedToDB() :void
@@ -52,7 +55,6 @@ public class HUD extends DraggableObject
 
         //Listen to events that might cause us to update ourselves
         registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM, updateOurPlayerState);
-//        registerListener(ClientContext.ctrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED, handleRoomPropChanged);
         registerListener(ClientContext.ctrl.player.props, PropertyChangedEvent.PROPERTY_CHANGED, handlePlayerPropChanged);
     }
 
@@ -63,7 +65,7 @@ public class HUD extends DraggableObject
 
     override protected function get draggableObject () :InteractiveObject
     {
-        return _hudMC["draggable"] as InteractiveObject;
+        return findSafely("draggable") as InteractiveObject;
     }
 
     override protected function createDragger () :Dragger
@@ -208,10 +210,7 @@ public class HUD extends DraggableObject
 
     protected function setupUI() :void
     {
-        _hud = new Sprite();
-        _displaySprite.addChild(_hud);
 
-        _hud.addChild(_hudMC);
         //Center the hud graphic
         _hudMC.x = -_hudMC.width/2;
         _hudMC.y = -_hudMC.height/2;
@@ -222,11 +221,14 @@ public class HUD extends DraggableObject
 
         _hudMC.mouseChildren = true;
         _hudMC.mouseEnabled = true;
-
         _hudXP = new Sprite();
-        _hudXPParent = draggableObject as DisplayObjectContainer;
-        _hudXPParent.addChildAt(_hudXP,
-        _hudXPParent.getChildIndex(_hudXPParent.getChildByName("splat")) + 1);
+
+        var splat :DisplayObject = findSafely("splat");
+        _hudXPParent = splat.parent;
+        _hudXPParent.addChildAt(_hudXP, _hudXPParent.getChildIndex(splat) + 1);
+
+        _hudXP.x = draggableObject.x;
+        _hudXP.y = draggableObject.y;
 
         _bloodXPMouseOverSprite = new Sprite();
         _bloodXPMouseOverSceneObject = new SimpleSceneObject(_bloodXPMouseOverSprite, "MouseOverBlood");

@@ -13,6 +13,7 @@ import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.ByteArray;
 
+import vampire.data.VConstants;
 import vampire.net.messages.LoadBalancingMsg;
 
 /**
@@ -45,7 +46,8 @@ public class LoadBalancerServer extends SimObject
         if (_playersRequestedRoomInfo.size() > 0) {
             log.debug("update", "_sortedRoomIds", _sortedRoomIds);
 
-            var roomIds :Array = _sortedRoomIds.slice(0, 5);
+            var roomIds :Array = _sortedRoomIds.slice(0,
+                VConstants.ROOMS_SHOWN_IN_LOAD_BALANCER + 1);
             log.debug("update", "roomIds", roomIds);
             var roomNames :Array = roomIds.map(function (roomId :int, ...ignored) :String {
                 if (_server.isRoom(roomId)) {

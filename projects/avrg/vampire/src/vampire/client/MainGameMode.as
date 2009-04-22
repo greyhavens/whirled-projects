@@ -44,8 +44,6 @@ public class MainGameMode extends AppMode
             ClientContext.controller.handleShowIntro("intro");
         }
 
-        ClientContext.controller.handleActivateLoadBalancer();
-
         //Notify the agent that we are now wearing the right avatar, and can receive popup messages
         ClientContext.ctrl.agent.sendMessage(GameStartedMsg.NAME,
             new GameStartedMsg(ClientContext.ourPlayerId).toBytes());
@@ -142,7 +140,8 @@ public class MainGameMode extends AppMode
         //Add the main HUD
         _hud = new HUD();
         addSceneObject(_hud, layerLowPriority);
-//        ClientContext.hud = _hud;
+        //Add the client load balancer
+        addObject(new LoadBalancerClient(ClientContext.ctrl, _hud));
 
         //Make sure we start the game standing, not dancing or feeding etc.
         ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
@@ -152,8 +151,6 @@ public class MainGameMode extends AppMode
         ClientContext.tutorial = new Tutorial();
 
 
-        //Add the client load balancer
-        addObject(new LoadBalancerClient(ClientContext.ctrl, layerLowPriority));
 
         //Add a debug panel for admins
         if(ClientContext.isAdmin(ClientContext.ourPlayerId) || VConstants.LOCAL_DEBUG_MODE) {

@@ -55,9 +55,6 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
             }
         );
 
-        Command.bind(_paintableOverlay, MouseEvent.CLICK,
-            VampireController.DECTIVATE_LOAD_BALANCER);
-
         if(VConstants.LOCAL_DEBUG_MODE) {
             p1 = new VampireAvatarHUD(ctrl,  1);
             _avatars.put(p1.playerId, p1);

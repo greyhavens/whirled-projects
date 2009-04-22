@@ -59,7 +59,7 @@ public class ClientUtil
 
 
 
-    protected static const ANIMATION_TIME :Number = 0.2;
+    public static const ANIMATION_TIME :Number = 0.2;
     public static const glowFilter :GlowFilter = new GlowFilter(0xffffff);
 }
 }

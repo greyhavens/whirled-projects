@@ -48,8 +48,6 @@ public class VampireController extends Controller
 
     public static const RECRUIT :String = "Recruit";
     public static const MOVE :String = "Move";
-    public static const ACTIVATE_LOAD_BALANCER :String = "ActivateLoadBalancer";
-    public static const DECTIVATE_LOAD_BALANCER :String = "DeactivateLoadBalancer";
 
     public function VampireController (panel :Sprite)
     {
@@ -283,8 +281,6 @@ public class VampireController extends Controller
             default:
             ClientContext.gameMode.avatarOverlay.setDisplayMode(
                 VampireAvatarHUDOverlay.DISPLAY_MODE_SHOW_VALID_TARGETS);
-            //Show the load balancer
-            handleActivateLoadBalancer();
             break;
         }
 
@@ -371,53 +367,12 @@ public class VampireController extends Controller
 
     public function handleMove (roomId :int) :void
     {
-        trace("Moving to room (" + roomId + ")");
         ClientContext.ctrl.player.moveToRoom(roomId);
-    }
-
-    public function handleActivateLoadBalancer () :void
-    {
-//        var popup :PopupQuery = new PopupQuery(
-//            null,
-//            "The scent of blood in the air.  Click on a link to hunt other players\n" +
-//            "     <--------------------");
-//        ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
-//        ClientContext.centerOnViewableRoom(popup.displayObject);
-//        ClientContext.animateEnlargeFromMouseClick(popup);
-//
-//        var quitTimer :SimpleTimer = new SimpleTimer(3, function() :void {
-//            if (popup.isLiveObject) {
-//                popup.destroySelf();
-//            }
-//        });
-//        ClientContext.gameMode.addObject(quitTimer);
-
-        if (ClientContext.gameMode.getObjectNamed(LoadBalancerClient.NAME) != null) {
-            var lb :LoadBalancerClient = ClientContext.gameMode.getObjectNamed(
-                LoadBalancerClient.NAME) as LoadBalancerClient;
-            lb.activate();
-        }
-        else {
-            log.error("handleActivateLoadBalancer, where is the load balancer???");
-        }
-    }
-
-    public function handleDeactivateLoadBalancer () :void
-    {
-        if (ClientContext.gameMode.getObjectNamed(LoadBalancerClient.NAME) != null) {
-            var lb :LoadBalancerClient = ClientContext.gameMode.getObjectNamed(
-                LoadBalancerClient.NAME) as LoadBalancerClient;
-            lb.deactivate();
-        }
-        else {
-            log.error("handleDeactivateLoadBalancer, where is the load balancer???");
-        }
     }
 
     public function handleShowPreyLineage (playerId :int) :void
     {
         var lineage :Lineage = ClientContext.gameMode.lineages.getLineage(playerId);
-        trace("handleShowPreyLineage, playerId=" + playerId + ", lineage=" + lineage);
         handleShowIntro("target", lineage, playerId);
     }
 

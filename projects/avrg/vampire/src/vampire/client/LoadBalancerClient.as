@@ -5,17 +5,25 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.objects.SceneObjectParent;
+import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
+import com.whirled.contrib.simplegame.tasks.FunctionTask;
 import com.whirled.contrib.simplegame.tasks.LocationTask;
+import com.whirled.contrib.simplegame.tasks.ScaleTask;
+import com.whirled.contrib.simplegame.tasks.SerialTask;
+import com.whirled.contrib.simplegame.tasks.TimedTask;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
 import flash.display.InteractiveObject;
 import flash.display.MovieClip;
-import flash.display.Sprite;
+import flash.display.Shape;
 import flash.events.MouseEvent;
+import flash.geom.Point;
+import flash.geom.Rectangle;
 import flash.text.TextField;
 
+import vampire.data.VConstants;
 import vampire.net.messages.LoadBalancingMsg;
 
 /**
@@ -23,63 +31,89 @@ import vampire.net.messages.LoadBalancingMsg;
  * Players can click on a room button to go to that room.
  *
  */
-public class LoadBalancerClient extends SceneObject
+public class LoadBalancerClient extends SceneObjectParent
 {
-    public function LoadBalancerClient(ctrl :AVRGameControl, parent :DisplayObjectContainer)
+    public function LoadBalancerClient(ctrl :AVRGameControl, hud :HUD)
     {
         _ctrl = ctrl;
         registerListener(ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessageReceived);
-        _parent = parent;
 
+        var expanded :MovieClip = hud.findSafely("hunting_grounds_expanded") as MovieClip;
+        var collapsed :MovieClip = hud.findSafely("hunting_grounds_collapsed") as MovieClip;
+        collapsed.mouseEnabled = true;
+
+        ClientUtil.detach(expanded);
+
+        _huntingGroundsExpanded = new SimpleSceneObject(expanded);
+        _huntingGroundsCollapsed = new SimpleSceneObject(collapsed);
+
+        addSimObject(_huntingGroundsExpanded);
+        addSimObject(_huntingGroundsCollapsed);
+
+        _initialContractedLoc = new Point(_huntingGroundsCollapsed.x, _huntingGroundsCollapsed.y);
+
+        collapsed.parent.addChildAt(_displaySprite, collapsed.parent.getChildIndex(collapsed));
+
+        var blackscreen :Shape = new Shape();
+        blackscreen.graphics.beginFill(0);
+        var bounds :Rectangle = _huntingGroundsCollapsed.displayObject.getBounds(_huntingGroundsCollapsed.displayObject.parent);
+        blackscreen.graphics.drawRect(0, 0, bounds.width, bounds.height - 12);
+        blackscreen.graphics.endFill();
+        blackscreen.x = bounds.left;
+        blackscreen.y = bounds.top;
+        _blackScreen = new SimpleSceneObject(blackscreen);
+        addSimObject(_blackScreen);
+
+        _displaySprite.addChild(_blackScreen.displayObject);
+        _displaySprite.addChild(_huntingGroundsCollapsed.displayObject);
+
+        registerListener(collapsed["button_expand"], MouseEvent.CLICK, expand);
+        registerListener(expanded["button_expand"], MouseEvent.CLICK, collapse);
 
         //Send a message when we start, so there is no delay for the player
         _ctrl.agent.sendMessage(LoadBalancingMsg.NAME, new LoadBalancingMsg().toBytes());
 
-        _panel = ClientContext.instantiateMovieClip("HUD", "popup_relocate", true);
-        _panel.mouseChildren = true;
-        _displaySprite.addChild(_panel);
-
-        var relocationText :TextField = _panel["relocation_text"] as TextField;
-        registerListener(relocationText, MouseEvent.CLICK, function (...ignored) :void {
-            var targetX :int = _ctrl.local.getPaintableArea().width / 2;
-            addTask(LocationTask.CreateEaseOut(targetX, _panel.height / 2, 0.5));
-            ClientContext.tutorial.clickedHuntingGrounds();
-        });
-        relocationText.text = "Choose a Hunting Ground";
-
-
-
-        registerListener(_panel["relocate_close"], MouseEvent.CLICK, deactivate);
-
-        for (var ii :int = 0; ii < 4; ++ii) {
-            var ground :MovieClip = _panel["ground_0" + (ii + 1)] as MovieClip;
+        for (var ii :int = 0; ii < VConstants.ROOMS_SHOWN_IN_LOAD_BALANCER; ++ii) {
+            var ground :MovieClip = expanded["ground_0" + (ii + 1)] as MovieClip;
             registerListener(ground, MouseEvent.CLICK, _roomMoveFunctions[ii]);
-            registerListener(ground, MouseEvent.CLICK, deactivate);
             TextField(ground["room_name"]).text = "";
         }
+    }
+
+    protected function expand (...ignored) :void
+    {
+        if (_timeSinceLoadMessageSent >= VConstants.ROOMS_SHOWN_IN_LOAD_BALANCER) {
+            _ctrl.agent.sendMessage(LoadBalancingMsg.NAME, new LoadBalancingMsg().toBytes());
+            _timeSinceLoadMessageSent = 0;
+        }
+
+        _huntingGroundsCollapsed.addTask(new SerialTask(LocationTask.CreateEaseIn(
+        _huntingGroundsExpanded.x, _huntingGroundsExpanded.y, 0.5),
+            new FunctionTask(function () :void {
+                ClientUtil.fadeInSceneObject(_huntingGroundsExpanded, _displaySprite);
+            })));
+
+        var scaleY :Number = (_huntingGroundsExpanded.y - _huntingGroundsCollapsed.y) / (_blackScreen.height - 1);
+
+
+        _blackScreen.addTask(ScaleTask.CreateEaseIn(1, scaleY, 0.5));
+
+    }
+
+    protected function collapse (...ignored) :void
+    {
+        ClientUtil.fadeOutAndDetachSceneObject(_huntingGroundsExpanded);
+        _huntingGroundsCollapsed.addTask(new SerialTask(new TimedTask(ClientUtil.ANIMATION_TIME),
+            LocationTask.CreateEaseIn( _initialContractedLoc.x, _initialContractedLoc.y, 0.5)));
+
+        _blackScreen.addTask(new SerialTask(new TimedTask(ClientUtil.ANIMATION_TIME),
+            ScaleTask.CreateEaseIn(1, 1, 0.5)));
     }
 
     override protected function update (dt:Number) :void
     {
         _timeSinceLoadMessageSent += dt;
-    }
-
-    public function activate () :void
-    {
-        //Send a data request to the server we we init.
-        ClientUtil.fadeInSceneObject(this, _parent);
-        if (_parent == null) {
-            log.error("activate", "_parent", _parent);
-        }
-
-        x = _ctrl.local.getPaintableArea().width / 2;
-        y = -92;
-
-        if (_timeSinceLoadMessageSent >= MIN_TIME_BETWEEN_MESSAGES) {
-            _ctrl.agent.sendMessage(LoadBalancingMsg.NAME, new LoadBalancingMsg().toBytes());
-            _timeSinceLoadMessageSent = 0;
-        }
     }
 
     public function findSafely (name :String) :DisplayObject
@@ -89,11 +123,6 @@ public class LoadBalancerClient extends SceneObject
             throw new Error("Cannot find object: " + name);
         }
         return o;
-    }
-
-    public function deactivate (...ignored) :void
-    {
-        ClientUtil.fadeOutAndDetachSceneObject(this);
     }
 
     override protected function destroyed () :void
@@ -151,12 +180,13 @@ public class LoadBalancerClient extends SceneObject
 //                 + "Choose another hunting ground...";
 //        }
 
-        for (var ii :int = 0; ii < 4; ++ii) {
+        for (var ii :int = 0; ii < VConstants.ROOMS_SHOWN_IN_LOAD_BALANCER; ++ii) {
 
-            removeEventListener(MouseEvent.CLICK, _roomMoveFunctions[ii]);
-
+//            if (_roomMoveFunctions[ii] != null) {
+//                removeEventListener(MouseEvent.CLICK, _roomMoveFunctions[ii]);
+//            }
             var roomId :int = _roomIds[ii];
-            var ground :MovieClip = _panel["ground_0" + (ii + 1)] as MovieClip;
+            var ground :MovieClip = _huntingGroundsExpanded.displayObject["ground_0" + (ii + 1)] as MovieClip;
 
             if (ground != null) {
                 addGlowFilter(ground);
@@ -173,10 +203,10 @@ public class LoadBalancerClient extends SceneObject
         }
     }
 
-    override public function get displayObject () :DisplayObject
-    {
-        return _displaySprite;
-    }
+//    override public function get displayObject () :DisplayObject
+//    {
+//        return _displaySprite;
+//    }
 
     override public function get objectName () :String
     {
@@ -209,11 +239,14 @@ public class LoadBalancerClient extends SceneObject
     {
         moveToRoom(_roomIds[3]);
     }
+    protected function moveToRoom5 (...ignored) :void
+    {
+        moveToRoom(_roomIds[4]);
+    }
     protected function moveToRoom (roomId :int) :void
     {
         ClientContext.tutorial.clickedHuntingGroundsRoom();
         if (roomId != 0) {
-            deactivate();
             ClientContext.controller.handleMove(roomId);
         }
     }
@@ -221,15 +254,20 @@ public class LoadBalancerClient extends SceneObject
     protected var _ctrl :AVRGameControl;
     protected var _roomIds :Array = [];
     protected var _roomNames :Array = [];
-    protected var _roomMoveFunctions :Array = [moveToRoom1, moveToRoom2, moveToRoom3, moveToRoom4];
-    protected var _displaySprite :Sprite = new Sprite();
-    protected var _panel :MovieClip;
-    protected var _parent :DisplayObjectContainer;
+    protected var _roomMoveFunctions :Array = [moveToRoom1,
+                                               moveToRoom2,
+                                               moveToRoom3,
+                                               moveToRoom4,
+                                               moveToRoom5];
+    protected var _huntingGroundsExpanded :SceneObject;
+    protected var _huntingGroundsCollapsed :SceneObject;
+    protected var _blackScreen :SceneObject;
+    protected var _initialContractedLoc :Point;
+
+
 
     protected var _timeSinceLoadMessageSent :Number = 0;
-    protected static const MIN_TIME_BETWEEN_MESSAGES :Number = 5;
 
-    public static const MESSAGE_ACTIVATE :String = "activateLoadBalancer";
     public static const NAME :String = "LoadBalancerClient";
     protected static const log :Log = Log.getLog(LoadBalancerClient);
 }

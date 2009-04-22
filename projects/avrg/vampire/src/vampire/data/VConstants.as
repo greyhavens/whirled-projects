@@ -8,6 +8,7 @@ public class VConstants
     public static const MODE_DEV :Boolean = true;
 
     public static const PLAYERS_IN_ROOM_TRIGGERING_BALANCING :int = 8;
+    public static const ROOMS_SHOWN_IN_LOAD_BALANCER :int = 5;
 
     public static const MIN_XP_TO_HIDE_HELP :Number = 500;
 
