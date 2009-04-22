@@ -120,14 +120,16 @@ public class LobbyMode extends AppMode
         _tfStatus = contents["feedback_text"];
         updateButtonsAndStatus();
 
-        // Total score
+        // Total score, average score
         var total :MovieClip = contents["total"];
+        var average :MovieClip = contents["average"];
+        total.visible = this.isPostRoundLobby;
+        average.visible = this.isPostRoundLobby;
         if (this.isPostRoundLobby) {
-            total.visible = true;
             var tfTotal :TextField = total["player_score"];
             tfTotal.text = String(_results.totalScore);
-        } else {
-            total.visible = false;
+            var tfAverage :TextField = average["player_score"];
+            tfAverage.text = String(_results.totalScore / _results.scores.size());
         }
 
         // Player list
