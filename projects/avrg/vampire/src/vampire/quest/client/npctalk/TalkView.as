@@ -40,7 +40,7 @@ public class TalkView extends DraggableObject
     {
         super.update(dt);
         _program.update(dt);
-        if (_program.isDone) {
+        if (!_program.isRunning) {
             destroySelf();
         }
     }

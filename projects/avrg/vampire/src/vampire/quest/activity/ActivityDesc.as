@@ -2,11 +2,10 @@ package vampire.quest.activity {
 
 import com.threerings.util.StringUtil;
 
-import vampire.quest.activity.ActivityParams;
-
 public class ActivityDesc
 {
     public static const TYPE_CORRUPTION :int = 0;
+    public static const TYPE_NPC_TALK :int = 1;
 
     public var type :int;
     public var params :ActivityParams;

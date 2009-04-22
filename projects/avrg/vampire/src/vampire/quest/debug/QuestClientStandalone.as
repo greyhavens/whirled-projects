@@ -51,7 +51,6 @@ public class QuestClientStandalone extends Sprite
     {
         QuestClient.showDebugPanel(true);
         QuestClient.showQuestPanel(true);
-        QuestClient.showDialogTest();
     }
 
     protected var _sg :SimpleGame;

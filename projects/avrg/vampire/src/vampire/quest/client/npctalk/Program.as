@@ -13,7 +13,7 @@ public class Program
 
     public function run (talkView :TalkView) :void
     {
-        if (_routineStack != null) {
+        if (_isRunning) {
             throw new Error("Already running");
         }
 
@@ -24,14 +24,18 @@ public class Program
         _routineStack = [];
         _routineState = [];
         _scheduledRoutineName = null;
-        _isDone = false;
+        _isRunning = true;
 
         callRoutine("main");
     }
 
     public function update (dt :Number) :void
     {
-        while (this.curRoutine != null && dt > 0 && !_isDone) {
+        if (!_isRunning) {
+            throw new Error("Program is not running");
+        }
+
+        while (_isRunning && this.curRoutine != null && dt > 0) {
             var status :Number = this.curRoutine.update(dt, this.curState);
             if (Status.isComplete(status)) {
                 popRoutine();
@@ -53,9 +57,9 @@ public class Program
         }
     }
 
-    public function get isDone () :Boolean
+    public function get isRunning () :Boolean
     {
-        return _isDone;
+        return _isRunning;
     }
 
     public function scheduleRoutine (name :String) :void
@@ -73,7 +77,7 @@ public class Program
 
     public function exit () :void
     {
-        _isDone = true;
+        _isRunning = false;
     }
 
     protected function callRoutine (name :String) :void
@@ -117,7 +121,7 @@ public class Program
     protected var _routineStack :Array;
     protected var _routineState :Array;
     protected var _scheduledRoutineName :String;
-    protected var _isDone :Boolean;
+    protected var _isRunning :Boolean;
 }
 
 }

@@ -3,6 +3,7 @@ package vampire.quest.client {
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.SimpleGame;
 
 import vampire.feeding.FeedingClient;
@@ -114,12 +115,22 @@ public class QuestClient
         }
     }
 
-    public static function showDialogTest () :void
+    public static function showNpcTalkDialog (programName :String) :void
     {
+        closeNpcTalkDialog();
+
         var dialogTest :NpcTalkResource =
-            ClientCtx.rsrcs.getResource("dialogTest") as NpcTalkResource;
-        var talkView :TalkView = new TalkView(dialogTest.program);
-        ClientCtx.mainLoop.topMode.addSceneObject(talkView);
+            ClientCtx.rsrcs.getResource(programName) as NpcTalkResource;
+        var view :TalkView = new TalkView(dialogTest.program);
+        ClientCtx.mainLoop.topMode.addSceneObject(view);
+        _npcTalkViewRef = view.ref;
+    }
+
+    public static function closeNpcTalkDialog () :void
+    {
+        if (!_npcTalkViewRef.isNull) {
+            _npcTalkViewRef.object.destroySelf();
+        }
     }
 
     public static function get isReady () :Boolean
@@ -190,6 +201,10 @@ public class QuestClient
             ClientCtx.mainLoop.topMode.modeSprite.addChild(feedingGame);
             break;
 
+        case ActivityDesc.TYPE_NPC_TALK:
+            showNpcTalkDialog(NpcTalkActivityParams(activity.params).dialogName);
+            break;
+
         default:
             log.warning("Unrecognized activity type", "activity", activity);
             break;
@@ -222,6 +237,7 @@ public class QuestClient
     protected static var _activityPanel :ActivityPanel;
     protected static var _debugPanel :DebugPanel;
     protected static var _questPanel :QuestPanel;
+    protected static var _npcTalkViewRef :SimObjectRef = SimObjectRef.Null();
 
     protected static var _inited :Boolean;
     protected static var _resourcesLoaded :Boolean;

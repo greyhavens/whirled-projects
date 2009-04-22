@@ -20,6 +20,11 @@ public class Locations
         addLocation(dragons);
 
         // add some activities
+        homeBase.activities.push(new ActivityDesc(
+            ActivityDesc.TYPE_NPC_TALK,
+            "Talk to Lilith",
+            new NpcTalkActivityParams("dialogTest")));
+
         battleground.activities.push(new ActivityDesc(
             ActivityDesc.TYPE_CORRUPTION,
             "Whack a small monster",
