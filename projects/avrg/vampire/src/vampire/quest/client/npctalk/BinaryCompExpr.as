@@ -4,10 +4,11 @@ public class BinaryCompExpr
     implements Expr
 {
     public static const EQUALS :int = 0;
-    public static const LT :int = 1;
-    public static const LTE :int = 2;
-    public static const GT :int = 3;
-    public static const GTE :int = 4;
+    public static const NOT_EQUALS :int = 1;
+    public static const LT :int = 2;
+    public static const LTE :int = 3;
+    public static const GT :int = 4;
+    public static const GTE :int = 5;
 
     public function BinaryCompExpr (lhs :Expr, rhs :Expr, type :int)
     {
@@ -24,6 +25,9 @@ public class BinaryCompExpr
         switch (_type) {
         case EQUALS:
             return lval == rval;
+
+        case NOT_EQUALS:
+            return lval != rval;
 
         case LT:
             return lval < rval;

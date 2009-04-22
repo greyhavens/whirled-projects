@@ -223,6 +223,9 @@ public class ProgramParser
         case "Or":
             return parseOrExpr(xml);
 
+        case "Not":
+            return parseNotExpr(xml);
+
         case "String":
             return parseStringExpr(xml);
 
@@ -231,6 +234,9 @@ public class ProgramParser
 
         case "Equals":
             return parseBinaryCompExpr(xml, BinaryCompExpr.EQUALS);
+
+        case "NotEquals":
+            return parseBinaryCompExpr(xml, BinaryCompExpr.NOT_EQUALS);
 
         case "Less":
             return parseBinaryCompExpr(xml, BinaryCompExpr.LT);
@@ -265,6 +271,16 @@ public class ProgramParser
             expr.addExpr(parseExpr(xmlChild));
         }
         return expr;
+    }
+
+    protected static function parseNotExpr (xml :XML) :NotExpr
+    {
+        var xmlChildren :XMLList = xml.children();
+        if (xmlChildren.length() != 1) {
+            throw new XmlReadError("NotExpr requires 1 expression child");
+        }
+
+        return new NotExpr(parseExpr(xmlChildren[0]));
     }
 
     protected static function parseStringExpr (xml :XML) :ValueExpr
