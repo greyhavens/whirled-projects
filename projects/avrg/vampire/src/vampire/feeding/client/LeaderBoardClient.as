@@ -7,7 +7,7 @@ import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.text.TextField;
 
-import vampire.server.LeaderBoardServer;
+import vampire.server.feeding.LeaderBoardServer;
 
 public class LeaderBoardClient extends SceneObject
 {
