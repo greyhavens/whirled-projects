@@ -7,6 +7,7 @@ import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.net.Message;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
@@ -20,6 +21,7 @@ import vampire.data.VConstants;
 import vampire.feeding.FeedingClient;
 import vampire.feeding.FeedingClientSettings;
 import vampire.net.messages.FeedConfirmMsg;
+import vampire.net.messages.FeedRequestCancelMsg;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.FeedingDataMsg;
 import vampire.net.messages.GameStartedMsg;
@@ -272,6 +274,18 @@ public class MainGameMode extends AppMode
                                                            ClientContext.ctrl.room.getRoomName());
                 log.debug("Sending to agent=" + roomMsg);
                 ClientContext.ctrl.agent.sendMessage(RoomNameMsg.NAME, roomMsg.toBytes());
+            }
+
+            else if (message is FeedRequestCancelMsg) {
+                var feedcancel :FeedRequestCancelMsg = FeedRequestCancelMsg(message);
+                trace(ClientContext.ctrl.player.getPlayerName() + " recieved FeedRequestCancelMsg");
+                var waitinForXPopup :SimObject = getObjectNamed(VampireController.POPUP_PREFIX_FEED_REQUEST +
+                    feedcancel.playerId);
+
+                trace("waitinForXPopup=" + waitinForXPopup);
+                if (waitinForXPopup != null && waitinForXPopup.isLiveObject) {
+                    waitinForXPopup.destroySelf();
+                }
             }
 
         }

@@ -11,6 +11,7 @@ import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.simplegame.ObjectDB;
 import com.whirled.contrib.simplegame.ObjectMessage;
+import com.whirled.contrib.simplegame.net.Message;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.getTimer;
@@ -18,6 +19,8 @@ import flash.utils.setInterval;
 
 import vampire.data.Codes;
 import vampire.feeding.FeedingServer;
+import vampire.server.feeding.LeaderBoardServer;
+import vampire.server.feeding.LogicFeeding;
 
 public class GameServer extends ObjectDB
 {
@@ -55,6 +58,13 @@ public class GameServer extends ObjectDB
 
             //Add stats monitoring
             addObject(new AnalyserServer());
+
+            //Add the general logic event listener
+            addObject(new LogicServer());
+
+            //Add the feeding logic event listener
+            addObject(new LogicFeeding());
+
 
             //Add this time to the list of server reboots
             recordBootTime();
@@ -186,7 +196,9 @@ public class GameServer extends ObjectDB
             }
             //Batch up the resultant network traffic from the message.
             _ctrl.doBatch(function () :void {
-                ServerLogic.handleMessage(player, evt.name, evt.value);
+                var msg :Message = ServerContext.msg.deserializeMessage(evt.name, evt.value);
+                sendMessageToGroup(new ServerObjectMessage(player, msg), GROUP_MESSAGE_LISTENERS);
+//                LogicServer.handleMessage(player, evt.name, evt.value);
             });
         }
         catch(err :Error) {
@@ -293,6 +305,8 @@ public class GameServer extends ObjectDB
     public static const SERVER_TICK_UPDATE_MILLISECONDS :int = 500;
 
     public static var log :Log = Log.getLog(GameServer);
+
+    public static const GROUP_MESSAGE_LISTENERS :String = "Msg Listeners";
 
 }
 }

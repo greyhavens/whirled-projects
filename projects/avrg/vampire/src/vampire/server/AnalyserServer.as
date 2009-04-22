@@ -135,18 +135,19 @@ public class AnalyserServer extends SimObject
 
     protected function createStatsString () :String
     {
+        var statsPrefix :String = "#GAMEDATA#";
         var s :String = new String();
-        s += "\n>>>>BeginStats";
-        s += "\nServerReboots=" + ServerContext.ctrl.props.get(Codes.AGENT_PROP_SERVER_REBOOTS);
-        s += "\nTimeStarted=" + _timeStarted;
-        s += "\nNow=" + new Date().time;
-        s += stringHashMap(_playTime, "TimeLoggedIn_");
-        s += stringHashMap(_playerPlayersFeeding, "FeedingPlayers_");
-        s += stringHashMap(_progenyPayout, "DescendentsPayout_");
-        s += stringHashMap(_playerCoinPayout, "FeedingCoinPayout_");
-        s += stringHashMap(_playerXpEarnedFromFeeding, "FeedingXPEarned_");
-        s += "\nFeedingPlayers=" + _playerCountInFeedingGames;
-        s += "\n<<<<EndStats";
+        s += "\n" + statsPrefix + ">>>>BeginStats";
+        s += "\n" + statsPrefix + "ServerReboots=" + ServerContext.ctrl.props.get(Codes.AGENT_PROP_SERVER_REBOOTS);
+        s += "\n" + statsPrefix + "TimeStarted=" + _timeStarted;
+        s += "\n" + statsPrefix + "Now=" + new Date().time;
+        s += stringHashMap(_playTime, statsPrefix + "TimeLoggedIn_");
+        s += stringHashMap(_playerPlayersFeeding, statsPrefix + "FeedingPlayers_");
+        s += stringHashMap(_progenyPayout, statsPrefix + "DescendentsPayout_");
+        s += stringHashMap(_playerCoinPayout, statsPrefix + "FeedingCoinPayout_");
+        s += stringHashMap(_playerXpEarnedFromFeeding, statsPrefix + "FeedingXPEarned_");
+        s += "\n" + statsPrefix + "FeedingPlayers=" + _playerCountInFeedingGames;
+        s += "\n" + statsPrefix + "<<<<EndStats";
         return s;
     }
 

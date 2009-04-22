@@ -10,6 +10,9 @@ package vampire.client
     import com.whirled.contrib.simplegame.SimObject;
     import com.whirled.contrib.simplegame.net.Message;
     import com.whirled.contrib.simplegame.objects.SimpleTimer;
+    import com.whirled.contrib.simplegame.tasks.FunctionTask;
+    import com.whirled.contrib.simplegame.tasks.SerialTask;
+    import com.whirled.contrib.simplegame.tasks.TimedTask;
     import com.whirled.net.MessageReceivedEvent;
     import com.whirled.net.PropertyChangedEvent;
 
@@ -39,8 +42,6 @@ public class ClientAvatar extends SimObject
     {
         //If the avatar is changed, reset the callbacks.
         registerListener(_ctrl.room, AVRGameRoomEvent.AVATAR_CHANGED, handleAvatarChanged);
-        //If we start moving, and we are in bared mode, change to default mode.
-        registerListener(_ctrl.room, AVRGameRoomEvent.PLAYER_MOVED, handlePlayerMoved);
         registerListener(_ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessageReceived);
 
@@ -116,7 +117,10 @@ public class ClientAvatar extends SimObject
         if (msg != null) {
 
             if (msg is MovePredAfterFeedingMsg) {
-                handleMovePredAfterFeedingMsg();
+                //Delay this so the avatar has time to show the stop feeding animation
+                addTask(new SerialTask(new TimedTask(3), new FunctionTask(function () :void {
+                    handleMovePredAfterFeedingMsg();
+                })));
             }
             else if (msg is MovePredIntoPositionMsg) {
                 handleMovePredIntoPositionMsg(MovePredIntoPositionMsg(msg));
@@ -194,17 +198,6 @@ public class ClientAvatar extends SimObject
         else {
             _movingPredatorIntoPosition = true;
             ClientContext.ctrl.player.setAvatarLocation(targetX, targetY, targetZ, degs);
-        }
-    }
-
-    protected function handlePlayerMoved (e :AVRGameRoomEvent) :void
-    {
-        var playerMovedId :int = int(e.value);
-        if(playerMovedId == _ctrl.player.getPlayerId()) {
-            if(ClientContext.model.state == VConstants.AVATAR_STATE_BARED) {
-                ClientContext.controller.handleChangeState(VConstants.AVATAR_STATE_DEFAULT);
-                ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
-            }
         }
     }
 
@@ -309,6 +302,10 @@ public class ClientAvatar extends SimObject
                 //Reset our target
                 _avatarIdToStandBehind = 0;
             }
+
+            //And get into feeding state
+            _ctrl.player.setAvatarState(VConstants.AVATAR_STATE_FEEDING);
+            _movingPredatorIntoPosition = false;
         }
 
     }

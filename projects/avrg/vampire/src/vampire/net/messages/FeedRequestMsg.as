@@ -12,8 +12,8 @@ package vampire.net.messages
                                             targetPlayerName :String = null,
                                             targetLocationX :Number = 0,
                                             targetLocationY :Number = 0,
-                                            targetLocationZ :Number = 0
-                                           )
+                                            targetLocationZ :Number = 0,
+                                            targetLocationAngle :Number = 0)
         {
             super(playerId);
             _predId = predId;
@@ -22,6 +22,7 @@ package vampire.net.messages
             _targetX = targetLocationX;
             _targetY = targetLocationY;
             _targetZ = targetLocationZ;
+            _targetAngle = targetLocationAngle;
         }
 
         override public function fromBytes (bytes :ByteArray) :void
@@ -33,6 +34,7 @@ package vampire.net.messages
             _targetX = bytes.readFloat();
             _targetY = bytes.readFloat();
             _targetZ = bytes.readFloat();
+            _targetAngle = bytes.readFloat();
         }
 
         override public function toBytes (bytes :ByteArray = null) :ByteArray
@@ -44,6 +46,7 @@ package vampire.net.messages
             bytes.writeFloat(_targetX);
             bytes.writeFloat(_targetY);
             bytes.writeFloat(_targetZ);
+            bytes.writeFloat(_targetAngle);
             return bytes;
         }
 
@@ -77,6 +80,11 @@ package vampire.net.messages
         {
            return _targetZ;
         }
+        public function get targetAngle () :Number
+        {
+           return _targetAngle;
+        }
+
         public function get targetName () :String
         {
            return _targetPlayerName;
@@ -93,6 +101,7 @@ package vampire.net.messages
         protected var _targetX :Number;
         protected var _targetY :Number;
         protected var _targetZ :Number;
+        protected var _targetAngle :Number;
 
         public static const NAME :String = "Message: Request Feed";
 

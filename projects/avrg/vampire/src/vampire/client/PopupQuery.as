@@ -25,8 +25,11 @@ import flash.text.TextFormatAlign;
 
 public class PopupQuery extends DraggableObject
 {
-    public function PopupQuery (name :String, message :String,
-        buttonNames :Array = null, commandsOrFunctions :Array = null)
+    public function PopupQuery (name :String,
+                                message :String,
+                                buttonNames :Array = null,
+                                commandsOrFunctions :Array = null,
+                                onClose :Function = null)
     {
         super();
         _name = name;
@@ -50,6 +53,9 @@ public class PopupQuery extends DraggableObject
         //Close button shuts the popup
         registerListener(_closeButton, MouseEvent.CLICK, function (e :MouseEvent) :void {
             destroySelf();
+            if (onClose != null) {
+                onClose();
+            }
         });
 
         _popupText = _popupPanel["popup_text"] as TextField;

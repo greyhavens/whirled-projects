@@ -21,6 +21,7 @@ import flash.utils.ByteArray;
 
 import vampire.data.Codes;
 import vampire.net.messages.RoomNameMsg;
+import vampire.server.feeding.FeedingManager;
 
 public class Room extends SimObject
     implements Hashable
@@ -64,6 +65,9 @@ public class Room extends SimObject
 
         //And since we have just started up, send a request immediately.
         sendAPlayerRequestForRoomName();
+
+        _bloodBloomGameManager = new FeedingManager(this);
+//        db.addObject(_bloodBloomGameManager);
     }
 
     protected function sendAPlayerRequestForRoomName () :void
@@ -239,7 +243,7 @@ public class Room extends SimObject
 //            registerListener(_ctrl, AVRGameRoomEvent.PLAYER_MOVED, handlePlayerMoved);
 //            registerListener(_ctrl, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
 
-            _bloodBloomGameManager = new FeedingManager(this);
+
 //            _roomDB.addObject(bloodBloomGameManager);
 
         }
@@ -272,6 +276,7 @@ public class Room extends SimObject
 ////            }
 ////            _players.clear();
             _ctrl = null;
+            _bloodBloomGameManager.destroySelf();
 
         }
         catch(err :Error) {

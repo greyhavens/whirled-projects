@@ -1,4 +1,4 @@
-package vampire.server
+package vampire.server.feeding
 {
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
@@ -15,6 +15,7 @@ import com.whirled.net.PropertySubControl;
 import fakeavrg.PropertySubControlFake;
 
 import vampire.data.VConstants;
+import vampire.server.ServerContext;
 
 /**
  * Manages high scores on the server.

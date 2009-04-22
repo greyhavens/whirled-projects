@@ -51,7 +51,7 @@ public class PlayerData extends EventHandlerManager
         registerListener(_ctrl, AVRGamePlayerEvent.TASK_COMPLETED, handleTaskCompleted);
 
         //Start in the default state
-        _state = VConstants.AVATAR_STATE_DEFAULT;
+//        _state = VConstants.AVATAR_STATE_DEFAULT;
 
         if (isNaN(xp)) {
             xp = 0;
@@ -190,10 +190,10 @@ public class PlayerData extends EventHandlerManager
         _propsUndater.put(Codes.PLAYER_PROP_XP, Logic.maxXPGivenXPAndInvites(newxp, invites));
     }
 
-    public function set state (action :String) :void
-    {
-        _state = action;
-    }
+//    public function set state (action :String) :void
+//    {
+//        _state = action;
+//    }
 
     protected function get targetPlayer () :PlayerData
     {
@@ -412,10 +412,10 @@ public class PlayerData extends EventHandlerManager
         _propsUndater.put(Codes.PLAYER_PROP_SIRE, newsire);
     }
 
-    public function get state () :String
-    {
-        return _state;
-    }
+//    public function get state () :String
+//    {
+//        return _state;
+//    }
 
     public function get name () :String
     {
@@ -536,9 +536,11 @@ public class PlayerData extends EventHandlerManager
         _propsUndater.update(dt);
         updateRoom();
 
-        if (avatar != null && avatar.state != _avatarState) {
-            _ctrl.setAvatarState(_avatarState);
-        }
+
+
+//        if (avatar != null && avatar.state != _avatarState) {
+//            _ctrl.setAvatarState(_avatarState);
+//        }
     }
 
 //    /**
@@ -558,37 +560,37 @@ public class PlayerData extends EventHandlerManager
 ////        Trophies.checkMinionTrophies(this);
 //    }
 
-    public function isVictim() :Boolean
-    {
-        if (state != VConstants.AVATAR_STATE_BARED) {
-            return false;
-        }
-
-        var predator :PlayerData = ServerContext.server.getPlayer(targetId);
-        if (predator == null) {
-            return false;
-        }
-
-        if (predator.state == VConstants.AVATAR_STATE_FEEDING && predator.targetId == playerId) {
-            return true;
-        }
-        return false;
-    }
+//    public function isVictim() :Boolean
+//    {
+//        if (state != VConstants.AVATAR_STATE_BARED) {
+//            return false;
+//        }
+//
+//        var predator :PlayerData = ServerContext.server.getPlayer(targetId);
+//        if (predator == null) {
+//            return false;
+//        }
+//
+//        if (predator.state == VConstants.AVATAR_STATE_FEEDING && predator.targetId == playerId) {
+//            return true;
+//        }
+//        return false;
+//    }
 
     public function addXPBonusNotification (bonus :Number) :void
     {
         _xpFeedback += bonus;
     }
 
-    public function get avatarState() :String
-    {
-        return _avatarState;
-    }
-
-    public function set avatarState(newAvatarState :String) :void
-    {
-        _avatarState = newAvatarState;
-    }
+//    public function get avatarState() :String
+//    {
+//        return _avatarState;
+//    }
+//
+//    public function set avatarState(newAvatarState :String) :void
+//    {
+//        _avatarState = newAvatarState;
+//    }
 
 
 
@@ -598,8 +600,8 @@ public class PlayerData extends EventHandlerManager
     protected var _playerId :int;
 
     //Non-persistant variables
-    protected var _state :String;
-    protected var _avatarState :String;
+//    protected var _state :String;
+//    protected var _avatarState :String;
     protected var _targetId :int;
     protected var _targetLocation :Array;
     protected var _feedback :Array = [];

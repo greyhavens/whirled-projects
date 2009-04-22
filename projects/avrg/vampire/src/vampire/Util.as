@@ -8,6 +8,7 @@ import vampire.net.messages.AvatarChosenMsg;
 import vampire.net.messages.BloodBondRequestMsg;
 import vampire.net.messages.DebugMsg;
 import vampire.net.messages.FeedConfirmMsg;
+import vampire.net.messages.FeedRequestCancelMsg;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.FeedingDataMsg;
 import vampire.net.messages.GameStartedMsg;
@@ -64,6 +65,7 @@ public class Util
         mgr.addMessageType(FeedConfirmMsg);
         mgr.addMessageType(FeedingDataMsg);
         mgr.addMessageType(FeedRequestMsg);
+        mgr.addMessageType(FeedRequestCancelMsg);
         mgr.addMessageType(GameStartedMsg);
         mgr.addMessageType(LineageMsg);
         mgr.addMessageType(LoadBalancingMsg);

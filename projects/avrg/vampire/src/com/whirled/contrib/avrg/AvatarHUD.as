@@ -237,7 +237,7 @@ public class AvatarHUD extends SceneObject
     protected var _ctrl :AVRGameControl;
     protected var _timeSinceLastUpdate :Number = 0;
     protected static const UPDATE_INTERVAL_SECONDS :Number = 0.01;
-    protected static const EMPTY_LOCATION :Array = [0,0,0];
+    protected static const EMPTY_LOCATION :Array = [0,0,0,0];
     protected static const log :Log = Log.getLog(AvatarHUD);
 }
 }

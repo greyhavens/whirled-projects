@@ -49,7 +49,7 @@ public class LineageServer extends Lineage
     protected function playerJoined (player :PlayerData) :void
     {
         if (player == null) {
-            log.error("playerJoinedOrChanged", "player", player,
+            log.warning("playerJoinedOrChanged", "player", player,
                 " but no PlayerData.  Maybe we are ahead of the game server?");
             return;
         }

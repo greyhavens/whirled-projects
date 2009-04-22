@@ -15,6 +15,7 @@ import vampire.avatar.VampireAvatarHUDOverlay;
 import vampire.data.Lineage;
 import vampire.data.VConstants;
 import vampire.net.messages.FeedConfirmMsg;
+import vampire.net.messages.FeedRequestCancelMsg;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.RequestStateChangeMsg;
 
@@ -25,7 +26,7 @@ import vampire.net.messages.RequestStateChangeMsg;
  */
 public class VampireController extends Controller
 {
-    public static const CHANGE_STATE :String = "ChangeState";
+//    public static const CHANGE_STATE :String = "ChangeState";
     public static const QUIT :String = "Quit";
     public static const QUIT_POPUP :String = "ShowQuitPopup";
 
@@ -55,38 +56,38 @@ public class VampireController extends Controller
         setControlledPanel(panel);
     }
 
-    public function handleChangeState (state :String) :void
-    {
-        log.debug("handleChangeState("+state+")");
-
-        switch(state) {
-            case VConstants.PLAYER_STATE_BARED:
-//            case VConstants.PLAYER_STATE_FEEDING_PREY:
-
-            //If we are already bared, toggle us out of bared state to the default state.
-            if (ClientContext.model.state == VConstants.PLAYER_STATE_BARED) {
-                ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
-                ClientContext.ctrl.agent.sendMessage(RequestStateChangeMsg.NAME,
-                    new RequestStateChangeMsg(ClientContext.ourPlayerId,
-                        VConstants.PLAYER_STATE_DEFAULT).toBytes());
-            }
-            else {//Otherwise, put us in bared mode
-                ClientContext.ctrl.agent.sendMessage(RequestStateChangeMsg.NAME,
-                    new RequestStateChangeMsg(ClientContext.ourPlayerId,
-                        VConstants.PLAYER_STATE_BARED).toBytes());
-            }
-            break;
-
-            //If we want to feed on someone, but we are already in bared mode,
-            //first stop bared mode.
-//            case :VConstants.PLAYER_STATE_FEEDING_PREDATOR:
+//    public function handleChangeState (state :String) :void
+//    {
+//        log.debug("handleChangeState("+state+")");
+//
+//        switch(state) {
+//            case VConstants.PLAYER_STATE_BARED:
+////            case VConstants.PLAYER_STATE_FEEDING_PREY:
+//
+//            //If we are already bared, toggle us out of bared state to the default state.
+//            if (ClientContext.model.state == VConstants.PLAYER_STATE_BARED) {
+//                ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
+//                ClientContext.ctrl.agent.sendMessage(RequestStateChangeMsg.NAME,
+//                    new RequestStateChangeMsg(ClientContext.ourPlayerId,
+//                        VConstants.PLAYER_STATE_DEFAULT).toBytes());
+//            }
+//            else {//Otherwise, put us in bared mode
+//                ClientContext.ctrl.agent.sendMessage(RequestStateChangeMsg.NAME,
+//                    new RequestStateChangeMsg(ClientContext.ourPlayerId,
+//                        VConstants.PLAYER_STATE_BARED).toBytes());
+//            }
 //            break;
-
-            default:
-            break;
-        }
-
-    }
+//
+//            //If we want to feed on someone, but we are already in bared mode,
+//            //first stop bared mode.
+////            case :VConstants.PLAYER_STATE_FEEDING_PREDATOR:
+////            break;
+//
+//            default:
+//            break;
+//        }
+//
+//    }
 
     public function handleQuit () :void
     {
@@ -190,7 +191,7 @@ public class VampireController extends Controller
             var targetName :String = ClientContext.model.getAvatarName(targetId);
             var msg :FeedRequestMsg = new FeedRequestMsg(ClientContext.ourPlayerId,
                 ClientContext.ourPlayerId, targetId, targetName,
-                targetLocation[0], targetLocation[1], targetLocation[2]);
+                targetLocation[0], targetLocation[1], targetLocation[2], targetLocation[3]);
 
             log.debug(ClientContext.ctrl + " handleSendFeedRequest() sending " + msg)
             ClientContext.ctrl.agent.sendMessage(FeedRequestMsg.NAME, msg.toBytes());
@@ -199,7 +200,19 @@ public class VampireController extends Controller
             if (ArrayUtil.contains(ClientContext.model.playerIds, targetId)) {
                 var popup :PopupQuery = new PopupQuery(
                     VConstants.POPUP_MESSAGE_FEED_CONFIRM + targetId,
-                    "Waiting for " + targetName + "'s permission to feed...");
+                    "Waiting for " + targetName + "'s permission to feed...",
+                    null,
+                    null,
+                    function () :void {
+                        trace("Sending " + new FeedRequestCancelMsg(ClientContext.ourPlayerId, targetId));
+                        ClientContext.ctrl.agent.sendMessage(FeedRequestCancelMsg.NAME,
+                        new FeedRequestCancelMsg(ClientContext.ourPlayerId, targetId).toBytes());
+                    });
+
+
+
+
+
                 ClientContext.gameMode.addSceneObject(popup,
                     ClientContext.gameMode.layerMediumPriority);
                 ClientContext.centerOnViewableRoom(popup.displayObject);

@@ -19,7 +19,7 @@ import vampire.net.messages.SendGlobalMsg;
 import vampire.net.messages.StatsMsg;
 import vampire.server.PlayerData;
 import vampire.server.ServerContext;
-import vampire.server.ServerLogic;
+import vampire.server.LogicServer;
 
 public class AdminPanel extends DraggableObject
 {
@@ -216,7 +216,7 @@ public class AdminPanel extends DraggableObject
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LEVEL_UP).toBytes());
 
         if(VConstants.LOCAL_DEBUG_MODE) {
-            ServerLogic.increaseLevel(_playerData);
+            LogicServer.increaseLevel(_playerData);
 //            var props :PropertySubControlFake = PropertySubControlFake(ClientContext.ctrl.player.props);
 //            var currentLevel :Number = ClientContext.model.level;
 //            var xpNeededForNextLevel :int = Logic.xpNeededForLevel(currentLevel + 1) - ClientContext.model.xp;
@@ -230,7 +230,7 @@ public class AdminPanel extends DraggableObject
     {
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LEVEL_DOWN).toBytes());
         if(VConstants.LOCAL_DEBUG_MODE) {
-            ServerLogic.decreaseLevel(_playerData);
+            LogicServer.decreaseLevel(_playerData);
 //            var props :PropertySubControlFake = PropertySubControlFake(ClientContext.ctrl.player.props);
 //            var currentLevel :Number = ClientContext.model.level;
 //            if(currentLevel > 1) {
@@ -244,7 +244,7 @@ public class AdminPanel extends DraggableObject
     {
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_GAIN_XP).toBytes());
         if(VConstants.LOCAL_DEBUG_MODE) {
-            ServerLogic.addXP(_playerData.playerId, 500);
+            LogicServer.addXP(_playerData.playerId, 500);
 //            var props :PropertySubControlFake = PropertySubControlFake(ClientContext.ctrl.player.props);
 //            var currentXP:int = ClientContext.model.xp;
 //            var invites:int = ClientContext.model.invites;
@@ -258,7 +258,7 @@ public class AdminPanel extends DraggableObject
     {
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LOSE_XP).toBytes());
         if(VConstants.LOCAL_DEBUG_MODE) {
-            ServerLogic.addXP(_playerData.playerId, -500);
+            LogicServer.addXP(_playerData.playerId, -500);
 //            var props :PropertySubControlFake = PropertySubControlFake(ClientContext.ctrl.player.props);
 //            var currentXP:int = ClientContext.model.xp;
 //            var invites:int = ClientContext.model.invites;
