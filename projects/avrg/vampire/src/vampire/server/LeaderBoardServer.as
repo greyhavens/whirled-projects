@@ -45,6 +45,13 @@ public class LeaderBoardServer extends SimObject
         addTask(new SerialTask(
                 new TimedTask(4),
                 new FunctionTask(function () :void {
+
+//                    _propsServer.set(AGENT_PROP_SCORES_DAILY, [], true);
+//                    _propsServer.set(AGENT_PROP_SCORES_MONTHLY, [], true);
+//
+//                    updateScoresIntoProps([], GLOBAL_PROP_SCORES_DAILY, _propsGlobal);
+//                    updateScoresIntoProps([], GLOBAL_PROP_SCORES_MONTHLY, _propsGlobal);
+
                     updateScoresIntoProps(_propsServer.get(AGENT_PROP_SCORES_DAILY) as Array,
                         GLOBAL_PROP_SCORES_DAILY, _propsGlobal);
                     updateScoresIntoProps(_propsServer.get(AGENT_PROP_SCORES_MONTHLY) as Array,
@@ -64,9 +71,10 @@ public class LeaderBoardServer extends SimObject
                 scoresLessTime.push(score.slice(0, 2));
             }
 
-            scoresLessTime = scoresLessTime.filter(function (scoreData :Array, ...ignored) :Boolean {
-                return scoreData[0] < VConstants.MAX_THEORETICAL_FEEDING_SCORE;
-            });
+            //Remove wacky scores
+//            scoresLessTime = scoresLessTime.filter(function (scoreData :Array, ...ignored) :Boolean {
+//                return scoreData[0] < VConstants.MAX_THEORETICAL_FEEDING_SCORE;
+//            });
 
             props.set(propName, scoresLessTime, true);
         }
@@ -195,6 +203,12 @@ public class LeaderBoardServer extends SimObject
 
         if (score > _localHighScoreDay || scoresAndNamesDay == null || scoresAndNamesDay.length < NUMBER_HIGH_SCORES_DAILY) {
             tempScores = scoresAndNamesDay != null ? scoresAndNamesDay.slice() : [];
+            //Remove wacky scores
+            tempScores = tempScores.filter(function (scoreData :Array, ...ignored) :Boolean {
+                return scoreData[0] < VConstants.MAX_THEORETICAL_FEEDING_SCORE;
+            });
+
+
             _localHighScoreDay =
                 updateScoreTable(tempScores, score, names, time, DAY_SECONDS, NUMBER_HIGH_SCORES_DAILY);
                 updateScoresIntoProps(tempScores, GLOBAL_PROP_SCORES_DAILY, _propsGlobal);
@@ -202,6 +216,11 @@ public class LeaderBoardServer extends SimObject
         }
         if (score > _localHighScoreMnth || scoresAndNamesMonth == null || scoresAndNamesMonth.length < NUMBER_HIGH_SCORES_MONTHLY) {
             tempScores = scoresAndNamesMonth != null ? scoresAndNamesMonth.slice() : [];
+            //Remove wacky scores
+            tempScores = tempScores.filter(function (scoreData :Array, ...ignored) :Boolean {
+                return scoreData[0] < VConstants.MAX_THEORETICAL_FEEDING_SCORE;
+            });
+
             _localHighScoreMnth =
                 updateScoreTable(tempScores, score, names, time, MONTH_SECONDS, NUMBER_HIGH_SCORES_MONTHLY);
                 updateScoresIntoProps(tempScores, GLOBAL_PROP_SCORES_MONTHLY, _propsGlobal);
@@ -214,11 +233,6 @@ public class LeaderBoardServer extends SimObject
     protected static function updateScoreTable (currentScores :Array, score :int, names :String,
         now :Number, scoreLifetime :Number, maxScores :int) :int
     {
-        //Remove wacky scores
-        currentScores = currentScores.filter(function (scoreData :Array, ...ignored) :Boolean {
-            return scoreData[0] < VConstants.MAX_THEORETICAL_FEEDING_SCORE;
-        });
-
         //Add the new score
         currentScores.push([score, names, now]);
 
