@@ -4,6 +4,8 @@ import com.threerings.util.Log;
 import com.whirled.FurniControl;
 
 import flash.display.MovieClip;
+import flash.events.Event;
+import flash.events.MouseEvent;
 import flash.system.ApplicationDomain;
 
 public class QuestTotem
@@ -35,6 +37,11 @@ public class QuestTotem
             _notInGamePanel = instantiateMovieClip("not_in_game");
             if (_notInGamePanel != null) {
                 _media.addChild(_notInGamePanel);
+                _notInGamePanel.addEventListener(MouseEvent.CLICK,
+                    function (e :Event) :void {
+                        e.stopImmediatePropagation();
+                        showNotInGamePanel(false);
+                    });
             }
 
         } else if (!show && _notInGamePanel != null) {
