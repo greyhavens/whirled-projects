@@ -24,35 +24,38 @@ public class Program
         _routineStack = [];
         _routineState = [];
         _scheduledRoutineName = null;
+        _isDone = false;
+
         callRoutine("main");
     }
 
     public function update (dt :Number) :void
     {
-        while (dt > 0) {
+        while (this.curRoutine != null && dt > 0 && !_isDone) {
+            var status :Number = this.curRoutine.update(dt, this.curState);
+            if (Status.isComplete(status)) {
+                popRoutine();
+                dt -= status;
+            }
+
             if (_scheduledRoutineName != null) {
                 callRoutine(_scheduledRoutineName);
                 _scheduledRoutineName = null;
             }
 
-            var cur :Routine = this.curRoutine;
-            if (cur == null) {
+            if (Status.isIncomplete(status)) {
                 break;
             }
+        }
 
-            var status :Number = cur.update(dt, this.curState);
-            if (Status.isComplete(status)) {
-                popRoutine();
-                dt -= status;
-            } else {
-                break;
-            }
+        if (this.curRoutine == null) {
+            exit();
         }
     }
 
     public function get isDone () :Boolean
     {
-        return (_routineStack.length == 0);
+        return _isDone;
     }
 
     public function scheduleRoutine (name :String) :void
@@ -66,6 +69,11 @@ public class Program
         }
 
         _scheduledRoutineName = name;
+    }
+
+    public function exit () :void
+    {
+        _isDone = true;
     }
 
     protected function callRoutine (name :String) :void
@@ -109,6 +117,7 @@ public class Program
     protected var _routineStack :Array;
     protected var _routineState :Array;
     protected var _scheduledRoutineName :String;
+    protected var _isDone :Boolean;
 }
 
 }

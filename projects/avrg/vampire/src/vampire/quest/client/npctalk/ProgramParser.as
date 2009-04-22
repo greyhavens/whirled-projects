@@ -54,6 +54,9 @@ public class ProgramParser
         case "CallRoutine":
             return parseCallRoutineStatement(xml);
 
+        case "Exit":
+            return parseExitStatement(xml);
+
         default:
             throw new XmlReadError("Unrecognized statement type '" + type + "'");
         }
@@ -166,6 +169,11 @@ public class ProgramParser
     protected static function parseCallRoutineStatement (xml :XML) :CallRoutineStatement
     {
         return new CallRoutineStatement(XmlReader.getStringAttr(xml, "name"));
+    }
+
+    protected static function parseExitStatement (xml :XML) :ExitStatement
+    {
+        return new ExitStatement();
     }
 
     protected static function parseGiveQuestStatement (xml :XML) :GiveQuestStatement

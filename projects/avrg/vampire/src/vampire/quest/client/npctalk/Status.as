@@ -15,5 +15,10 @@ public class Status
         return status >= 0;
     }
 
+    public static function isIncomplete (status :Number) :Boolean
+    {
+        return status < 0;
+    }
+
 }
 }

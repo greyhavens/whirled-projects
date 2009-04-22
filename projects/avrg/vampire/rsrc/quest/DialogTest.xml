@@ -12,15 +12,19 @@
 </Routine>
 
 <Routine name="KillAllHumans">
-	<Say speaker="Lilith" text="Take this quest">
-		<Response id="ok" text="OK"/>
-	</Say>
+	<Conditional>
+		<If><SeenQuest name="TestQuest"/>
+			<Say speaker="Lilith" text="Looks like you already have that quest."><Response id="ok" text="Indeed"/></Say>
+		</If>
+		<Else>
+			<Say speaker="Lilith" text="Take this quest"><Response id="ok" text="OK"/></Say>
+			<GiveQuest name="TestQuest"/>
+		</Else>
+	</Conditional>
 </Routine>
 
 <Routine name="Angry">
-	<Say speaker="Lilith" text="Don't argue with me">
-		<Response id="ok" text="..."/>
-	</Say>
+	<Say speaker="Lilith" text="Don't argue with me"><Response id="ok" text="..."/></Say>
 	<CallRoutine name="main"/>
 </Routine>
 

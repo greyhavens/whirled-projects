@@ -40,6 +40,9 @@ public class TalkView extends DraggableObject
     {
         super.update(dt);
         _program.update(dt);
+        if (_program.isDone) {
+            destroySelf();
+        }
     }
 
     override public function get displayObject () :DisplayObject
