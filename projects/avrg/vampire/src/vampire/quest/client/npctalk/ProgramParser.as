@@ -1,7 +1,6 @@
 package vampire.quest.client.npctalk {
-    import vampire.quest.QuestDesc;
-    import vampire.quest.Quests;
 
+import vampire.quest.*;
 
 public class ProgramParser
 {
@@ -43,6 +42,9 @@ public class ProgramParser
 
         case "GiveQuest":
             return parseGiveQuestStatement(xml);
+
+        case "GiveLocation":
+            return parseGiveLocationStatement(xml);
 
         // Generic
         case "Block":
@@ -189,6 +191,11 @@ public class ProgramParser
         return new GiveQuestStatement(getQuest(XmlReader.getStringAttr(xml, "name")));
     }
 
+    protected static function parseGiveLocationStatement (xml :XML) :GiveLocationStatement
+    {
+        return new GiveLocationStatement(getLoc(XmlReader.getStringAttr(xml, "name")));
+    }
+
     protected static function parseExpr (xml :XML) :Expr
     {
         var type :String = xml.name().localName;
@@ -205,6 +212,9 @@ public class ProgramParser
 
         case "SeenQuest":
             return parseHasQuestExpr(xml, HasQuestExpr.EXISTS);
+
+        case "HasLocation":
+            return parseHasLocationExpr(xml);
 
         // Generic
         case "And":
@@ -277,6 +287,11 @@ public class ProgramParser
         return new HasQuestExpr(getQuest(XmlReader.getStringAttr(xml, "name")), type);
     }
 
+    protected static function parseHasLocationExpr (xml :XML) :HasLocationExpr
+    {
+        return new HasLocationExpr(getLoc(XmlReader.getStringAttr(xml, "name")));
+    }
+
     protected static function parseBinaryCompExpr (xml :XML, type :int) :BinaryCompExpr
     {
         var children :XMLList = xml.children();
@@ -293,7 +308,18 @@ public class ProgramParser
         if (quest == null) {
             throw new XmlReadError("No quest named '" + questName + "' exists");
         }
+
         return quest;
+    }
+
+    protected static function getLoc (locName :String) :LocationDesc
+    {
+        var loc :LocationDesc = Locations.getLocationByName(locName);
+        if (loc == null) {
+            throw new XmlReadError("No location named '" + locName + "' exists");
+        }
+
+        return loc;
     }
 }
 
