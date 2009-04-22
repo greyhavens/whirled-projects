@@ -4,7 +4,6 @@ import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.simplegame.SimpleGame;
-import com.whirled.contrib.simplegame.resource.XmlResource;
 
 import vampire.feeding.FeedingClient;
 import vampire.feeding.FeedingClientSettings;
@@ -34,8 +33,10 @@ public class QuestClient
         ClientCtx.questData = questData;
         ClientCtx.stats = stats;
 
+        ClientCtx.rsrcs.registerResourceType("npcTalk", NpcTalkResource);
+
         // load resources
-        ClientCtx.rsrcs.queueResourceLoad("xml", "dialogTest", { embeddedClass: DIALOG_TEST });
+        ClientCtx.rsrcs.queueResourceLoad("npcTalk", "dialogTest", { embeddedClass: DIALOG_TEST });
         ClientCtx.rsrcs.loadQueuedResources(
             onResourcesLoaded,
             function (err :String) :void {
@@ -115,8 +116,9 @@ public class QuestClient
 
     public static function showDialogTest () :void
     {
-        var dialogTest :XmlResource = ClientCtx.rsrcs.getResource("dialogTest") as XmlResource;
-        var talkView :TalkView = new TalkView(ProgramParser.parse(dialogTest.xml));
+        var dialogTest :NpcTalkResource =
+            ClientCtx.rsrcs.getResource("dialogTest") as NpcTalkResource;
+        var talkView :TalkView = new TalkView(dialogTest.program);
         ClientCtx.mainLoop.topMode.addSceneObject(talkView);
     }
 
