@@ -394,7 +394,7 @@ public class Lineage extends SimObject
             _playerId2Name.put(playerId, name);
             return true;
         }
-        log.error("setPlayerName", "playerId", playerId, "name", name);
+        log.debug("setPlayerName", "playerId", playerId, "name", name);
         return false;
     }
 

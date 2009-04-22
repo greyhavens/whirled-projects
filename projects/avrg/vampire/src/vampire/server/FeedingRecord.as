@@ -28,6 +28,7 @@ public class FeedingRecord extends EventCollecter
     {
         _room = room;
         _gameId = gameId;
+        _preyId = preyId;
         startLobby(preyId, preyName, predatorId);
     }
 
@@ -112,6 +113,10 @@ public class FeedingRecord extends EventCollecter
 
         var prey :Boolean = _gameServer.preyId == playerId;
 
+        if (!prey && !ArrayUtil.contains(_predatorIndex, playerId)) {
+            _predatorIndex.push(playerId);
+        }
+
         ServerLogic.stateChange(player, prey ? VConstants.PLAYER_STATE_FEEDING_PREY :
             VConstants.PLAYER_STATE_FEEDING_PREDATOR);
     }
@@ -121,11 +126,34 @@ public class FeedingRecord extends EventCollecter
     */
     protected function movePrimaryPred () :void
     {
-        var primaryPredatorId :int = _gameServer.primaryPredatorId;
-        if (!_primaryPredMoved && _room.isPlayer(primaryPredatorId)) {
+        if (_predatorIndex == null || _predatorIndex.length == 0) {
+            return;
+        }
+        var primaryPredatorId :int = _predatorIndex[0] as int;
+        //Only move the predator if the room and player are valid
+        if (!_primaryPredMoved && _room != null && _room.isPlayer(primaryPredatorId)
+            && _primaryPredInitialLocation != null) {
+
             var primaryPred :PlayerData = _room.getPlayer(primaryPredatorId);
-            primaryPred.sctrl.sendMessage(MovePredAfterFeedingMsg.NAME,
-                new MovePredAfterFeedingMsg().toBytes());
+
+            //If the prey is a non-player, or if a player and they haven't moved, move the pred
+            var isPreyPlayer :Boolean = _room.isPlayer(_preyId);
+            var isPreyInSameLocation :Boolean = true;
+            if (isPreyPlayer) {
+                var preyPlayer :PlayerData = _room.getPlayer(_preyId);
+                isPreyInSameLocation = ArrayUtil.equals(_preyInitialLocation, preyPlayer.location);
+            }
+
+            //If the predator has moved, don't move it again
+            var isPredInSameLocation :Boolean =
+                ArrayUtil.equals(_primaryPredInitialLocation, primaryPred.location);
+
+
+            if (isPreyInSameLocation && isPredInSameLocation) {
+                primaryPred.sctrl.sendMessage(MovePredAfterFeedingMsg.NAME,
+                    new MovePredAfterFeedingMsg().toBytes());
+            }
+
             _primaryPredMoved = true;
         }
     }
@@ -141,20 +169,21 @@ public class FeedingRecord extends EventCollecter
         }
 
         //Force all predator avatars out of the feeding state
-        if (playerId == _gameServer.preyId) {
-
-            for each (var predId :int in _gameServer.predatorIds) {
-                if (ServerContext.server.isPlayer(predId)) {
-                    var pred :PlayerData = ServerContext.server.getPlayer(predId);
-                    ServerLogic.stateChange(pred, VConstants.PLAYER_STATE_DEFAULT);
-                }
-            }
-
-            if(_room != null && _room.isPlayer(_gameServer.primaryPredatorId)) {
-                movePrimaryPred();
-            }
-        }
-        else if (playerId == _gameServer.primaryPredatorId) {
+//        if (playerId == _gameServer.preyId) {
+//
+//            for each (var predId :int in _gameServer.predatorIds) {
+//                if (ServerContext.server.isPlayer(predId)) {
+//                    var pred :PlayerData = ServerContext.server.getPlayer(predId);
+//                    ServerLogic.stateChange(pred, VConstants.PLAYER_STATE_DEFAULT);
+//                }
+//            }
+//
+//            if(_room != null && _room.isPlayer(_gameServer.primaryPredatorId)) {
+//                movePrimaryPred();
+//            }
+//        }
+//        else
+        if (playerId == _predatorIndex[0]) {
             movePrimaryPred();
         }
     }
@@ -179,9 +208,16 @@ public class FeedingRecord extends EventCollecter
     {
         //Notify the analyser
         if (_room != null) {
-            _room.db.sendMessageToNamedObject(new ObjectMessage(Analyser.MSG_RECEIVED_FEED,
+            _room.db.sendMessageToNamedObject(new ObjectMessage(AnalyserServer.MSG_RECEIVED_FEED,
                                                                 _gameServer.playerIds.slice()),
-                                              Analyser.NAME);
+                                              AnalyserServer.NAME);
+        }
+
+        if (ServerContext.server.isPlayer(_gameServer.preyId)) {
+            _preyInitialLocation = ServerContext.server.getPlayer(_gameServer.preyId).location;
+        }
+        if (ServerContext.server.isPlayer(_predatorIndex[0])) {
+            _primaryPredInitialLocation = ServerContext.server.getPlayer(_predatorIndex[0]).location;
         }
     }
 
@@ -272,6 +308,10 @@ public class FeedingRecord extends EventCollecter
     * the primary pred on game completion.
     */
     protected var _primaryPredMoved:Boolean = false;
+
+    protected var _primaryPredInitialLocation :Array;
+    protected var _preyInitialLocation :Array;
+    protected var _preyId :int;
 
     /**
     * A list of predators in the order they request to feed.  Does *not* remove predators

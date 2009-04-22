@@ -104,7 +104,7 @@ public class Tutorial extends AppMode
         _ctrl = ClientContext.ctrl;
 
         _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
-//        setPage(PAGE_HUNTING_GROUNDS);
+        setPage(PAGE_NOONE_IN_ROOM);
 //
 //        if (VConstants.LOCAL_DEBUG_MODE) {
 //            _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
@@ -144,7 +144,7 @@ public class Tutorial extends AppMode
         _active = true;
         if (_currentChapter == CHAPTER_END) {
             _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
-            setPage(PAGE_HUNTING_GROUNDS);
+            setPage(PAGE_NOONE_IN_ROOM);
         }
         else {
             setPage(_currentPage);
@@ -660,6 +660,11 @@ public class Tutorial extends AppMode
 
             var parent :DisplayObjectContainer = targetDisplayObject.parent;
             parent.setChildIndex(targetDisplayObject, parent.numChildren - 1);
+
+            if (getObjectNamed(sceneObjectName) != null) {
+                getObjectNamed(sceneObjectName).destroySelf();
+            }
+
             addObject(targetReticle);
 
             moveTargetClearlyFromOldTargetLocToNew(targetReticle, targetDisplayObject);

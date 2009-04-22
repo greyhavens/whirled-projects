@@ -48,14 +48,12 @@ public class LineageServer extends Lineage
     */
     protected function playerJoined (player :PlayerData) :void
     {
-        log.error("playerJoined", "player", player);
         if (player == null) {
             log.error("playerJoinedOrChanged", "player", player,
                 " but no PlayerData.  Maybe we are ahead of the game server?");
             return;
         }
 
-        log.error("playerJoined, setting name", "player.name", player.name);
         setPlayerName(player.playerId, player.name);
         //First add the player as progeny to sire, whether online or offline
         if (player.sire != 0) {

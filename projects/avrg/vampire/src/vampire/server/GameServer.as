@@ -54,7 +54,7 @@ public class GameServer extends ObjectDB
             setInterval(tick, SERVER_TICK_UPDATE_MILLISECONDS);
 
             //Add stats monitoring
-            addObject(new Analyser());
+            addObject(new AnalyserServer());
 
             //Add this time to the list of server reboots
             recordBootTime();

@@ -15,7 +15,7 @@ import vampire.net.messages.StatsMsg;
 /**
  * Builds statistics of player data and player patterns
  */
-public class Analyser extends SimObject
+public class AnalyserServer extends SimObject
 {
 
     override protected function addedToDB () :void
@@ -31,6 +31,11 @@ public class Analyser extends SimObject
 
         registerListener(ServerContext.server.control.game, MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessage);
+
+        addTask(new RepeatingTask(new SerialTask(
+                                                new TimedTask(60*10),//Every 10mins pipe stats to log
+                                                new FunctionTask(dumpStatsToLogAndReset)
+                                                )));
     }
 
     protected function handleMessage (evt :MessageReceivedEvent) :void
@@ -41,9 +46,17 @@ public class Analyser extends SimObject
                 ServerContext.server.getPlayer(evt.senderId).sctrl.sendMessage(StatsMsg.NAME,
                     statsMsg.toBytes());
             }
+
+            dumpStatsToLogAndReset();
         }
     }
 
+    protected function dumpStatsToLogAndReset () :void
+    {
+        var s :String = createStatsString();
+        trace(s);
+        clearStats();
+    }
 
 
     override protected function update (dt:Number) :void
@@ -127,11 +140,11 @@ public class Analyser extends SimObject
         s += "\nServerReboots=" + ServerContext.ctrl.props.get(Codes.AGENT_PROP_SERVER_REBOOTS);
         s += "\nTimeStarted=" + _timeStarted;
         s += "\nNow=" + new Date().time;
-        s += stringHashMap(_playTime, "TimeLoggedIn");
-        s += stringHashMap(_playerPlayersFeeding, "FeedingPlayers");
-        s += stringHashMap(_progenyPayout, "DescendentsPayout");
-        s += stringHashMap(_playerCoinPayout, "FeedingCoinPayout");
-        s += stringHashMap(_playerXpEarnedFromFeeding, "FeedingXPEarned");
+        s += stringHashMap(_playTime, "TimeLoggedIn_");
+        s += stringHashMap(_playerPlayersFeeding, "FeedingPlayers_");
+        s += stringHashMap(_progenyPayout, "DescendentsPayout_");
+        s += stringHashMap(_playerCoinPayout, "FeedingCoinPayout_");
+        s += stringHashMap(_playerXpEarnedFromFeeding, "FeedingXPEarned_");
         s += "\nFeedingPlayers=" + _playerCountInFeedingGames;
         s += "\n<<<<EndStats";
         return s;
@@ -144,6 +157,17 @@ public class Analyser extends SimObject
             s += "\n" + keyPrefix + playerId + "=" + data;
         });
         return s;
+    }
+
+    protected function clearStats () :void
+    {
+        _timeStarted = new Date().time;
+        _playTime.clear();
+        _playerPlayersFeeding.clear();
+        _progenyPayout.clear();
+        _playerCoinPayout.clear();
+        _playerXpEarnedFromFeeding.clear();
+        _playerCountInFeedingGames = [];
     }
 
     protected var _timeStarted :Number;

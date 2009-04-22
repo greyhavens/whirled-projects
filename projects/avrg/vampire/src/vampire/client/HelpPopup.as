@@ -108,12 +108,9 @@ package vampire.client
             registerListener(SimpleButton(findSafely("button_totutorial")), MouseEvent.CLICK,
                 function (e :MouseEvent) :void {
                     destroySelf();
-                    if (ClientContext.model.xp == 0) {
-                        ClientContext.tutorial.activateTutorial();
-//                        showTututorialOnClose = false;
-                    }
-//                    showTututorialOnClose = false;
-//                    ClientContext.tutorial.activateTutorial();
+                    ClientContext.tutorial.activateTutorial();
+//                    if (ClientContext.model.xp < VConstants.MIN_XP_TO_HIDE_HELP) {
+//                    }
                 });
             registerListener(SimpleButton(findSafely("button_tobloodbond")), MouseEvent.CLICK,
                 function (e :MouseEvent) :void {
@@ -127,10 +124,9 @@ package vampire.client
                 function (e :MouseEvent) :void {
                     destroySelf();
                     //If you don't have any xp, start the tutorial regardless.
-//                    if (ClientContext.model.xp == 0 && showTututorialOnClose) {
-//                        ClientContext.tutorial.activateTutorial();
-//                        showTututorialOnClose = false;
-//                    }
+                    if (ClientContext.model.xp == 0) {
+                        ClientContext.tutorial.activateTutorial();
+                    }
                 });
 
             registerListener(SimpleButton(findSafely("button_torecruiting")), MouseEvent.CLICK,

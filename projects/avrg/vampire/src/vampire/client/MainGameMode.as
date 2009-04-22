@@ -52,6 +52,10 @@ public class MainGameMode extends AppMode
         _clientAvatar = new ClientAvatar(ClientContext.ctrl);
         addObject(_clientAvatar);
 
+        //Welcome the player with a link to the group
+        ClientContext.ctrl.local.feedback("Welcome to Vampire Whirled!  " +
+        "Join the group and read the latest updates: http://www.whirled.com/#groups-d_11220");
+
     }
 
     override protected function setup () :void

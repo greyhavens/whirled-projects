@@ -242,7 +242,6 @@ public class AdminPanel extends DraggableObject
 
     protected function gainXP(... ignored) :void
     {
-        trace("Sending gainXP debug");
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_GAIN_XP).toBytes());
         if(VConstants.LOCAL_DEBUG_MODE) {
             ServerLogic.addXP(_playerData.playerId, 500);
