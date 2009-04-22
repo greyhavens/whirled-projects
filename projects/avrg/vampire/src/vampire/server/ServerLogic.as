@@ -81,8 +81,8 @@ public class ServerLogic
         function awardXP(sireId :int, awardXP :Number) :void {
 
             ServerContext.server.sendMessageToNamedObject(
-                new ObjectMessage(Analyser.MSG_RECEIVED_PROGENY_PAYOUT, [sireId, awardXP]),
-                Analyser.NAME);
+                new ObjectMessage(AnalyserServer.MSG_RECEIVED_PROGENY_PAYOUT, [sireId, awardXP]),
+                AnalyserServer.NAME);
 
             if (ServerContext.server.isPlayer(sireId)) {
                 var sire :PlayerData = ServerContext.server.getPlayer(sireId);
@@ -1076,8 +1076,8 @@ public class ServerLogic
 
                 //Notify the analyser
                 ServerContext.server.sendMessageToNamedObject(
-                    new ObjectMessage(Analyser.MSG_RECEIVED_FEEDING_XP_PAYOUT, [playerId, xp]),
-                    Analyser.NAME);
+                    new ObjectMessage(AnalyserServer.MSG_RECEIVED_FEEDING_XP_PAYOUT, [playerId, xp]),
+                    AnalyserServer.NAME);
 
                 //Add some bonus xp to your blood bond, if they are online
                 awardBloodBondedXpEarned(p, xp);
@@ -1102,38 +1102,44 @@ public class ServerLogic
 
     /**
     * Maps the player state to the visible avatar state, and update if necessary.
+    * Don't call this in an update loop.
     */
     public static function updateAvatarState (player :PlayerData) :void
     {
         if (player == null || player.avatar == null || player.room == null) {
             return;
         }
-        var newAvatarState :String = VConstants.AVATAR_STATE_DEFAULT;
+//        var newAvatarState :String = VConstants.AVATAR_STATE_DEFAULT;
         var playerState :String = player.state;
 
         switch (playerState) {
+
+            case VConstants.PLAYER_STATE_DEFAULT:
+            player.avatarState = VConstants.AVATAR_STATE_DEFAULT;
+            break;
+
             case VConstants.PLAYER_STATE_BARED:
-            newAvatarState = VConstants.AVATAR_STATE_BARED;
+            player.avatarState = VConstants.AVATAR_STATE_BARED;
             break;
 
             case VConstants.PLAYER_STATE_FEEDING_PREDATOR:
-            newAvatarState = VConstants.AVATAR_STATE_FEEDING;
+            player.avatarState = VConstants.AVATAR_STATE_FEEDING;
             break;
 
             case VConstants.PLAYER_STATE_FEEDING_PREY:
-            newAvatarState = VConstants.AVATAR_STATE_BARED;
+            player.avatarState = VConstants.AVATAR_STATE_BARED;
             break;
 
             case VConstants.PLAYER_STATE_MOVING_TO_FEED:
-            newAvatarState = VConstants.AVATAR_STATE_DEFAULT;
+            player.avatarState = VConstants.AVATAR_STATE_DEFAULT;
             break;
 
             case VConstants.PLAYER_STATE_ARRIVED_AT_FEEDING_LOCATION:
-            newAvatarState = VConstants.AVATAR_STATE_FEEDING;
+            player.avatarState = VConstants.AVATAR_STATE_FEEDING;
             break;
 
         }
-        player.avatarState = newAvatarState;
+//        player.avatarState = newAvatarState;
     }
 
 

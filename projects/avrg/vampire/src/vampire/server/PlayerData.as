@@ -94,8 +94,8 @@ public class PlayerData extends EventHandlerManager
             var coins :int = e.value as int;
             //Notify the analyser
             ServerContext.server.sendMessageToNamedObject(
-                new ObjectMessage(Analyser.MSG_RECEIVED_FEEDING_COINS_PAYOUT, [playerId, coins]),
-                Analyser.NAME);
+                new ObjectMessage(AnalyserServer.MSG_RECEIVED_FEEDING_COINS_PAYOUT, [playerId, coins]),
+                AnalyserServer.NAME);
             break;
         }
     }
@@ -245,8 +245,8 @@ public class PlayerData extends EventHandlerManager
                 if (_room != null) {
                     _room.playerEntered(thisPlayer);
 //                    ServerContext.server.lineage.resendPlayerLineage(thisPlayer.playerId);
-                    thisPlayer.state = VConstants.PLAYER_STATE_DEFAULT;
-                    ServerLogic.updateAvatarState(thisPlayer);
+//                    thisPlayer.state = VConstants.PLAYER_STATE_DEFAULT;
+//                    ServerLogic.updateAvatarState(thisPlayer);
                 }
                 else {
                     log.error("WTF, enteredRoom called, but room == null???");
@@ -529,10 +529,6 @@ public class PlayerData extends EventHandlerManager
             Trophies.checkInviteTrophies(this);
         }
 
-//        if (_propsUndater.isNeedingUpdate(Codes.PLAYER_PROP_LINEAGE)) {
-//            Trophies.checkMinionTrophies(this);
-//        }
-
         if (_updateLineage) {
             Trophies.checkMinionTrophies(this);
         }
@@ -540,28 +536,27 @@ public class PlayerData extends EventHandlerManager
         _propsUndater.update(dt);
         updateRoom();
 
-
         if (avatar != null && avatar.state != _avatarState) {
             _ctrl.setAvatarState(_avatarState);
         }
     }
 
-    /**
-    * We never delete the progeny array, only add to it.
-    * This is because the Lineage is changing from only the sire stored with the player, to
-    * both sires and progeny.  However, players must log on at least once for the changes to
-    * occur.
-    */
-    public function updateProgeny(progeny :Array) :void
-    {
-//        for each (var newProgenyId :int in progeny) {
-//            if (!ArrayUtil.contains(_progenyIds, newProgenyId)) {
-//                _progenyIds.push(newProgenyId);
-//            }
-//        }
-//        _progenyIds = _progenyIds.sort();
-//        Trophies.checkMinionTrophies(this);
-    }
+//    /**
+//    * We never delete the progeny array, only add to it.
+//    * This is because the Lineage is changing from only the sire stored with the player, to
+//    * both sires and progeny.  However, players must log on at least once for the changes to
+//    * occur.
+//    */
+//    public function updateProgeny(progeny :Array) :void
+//    {
+////        for each (var newProgenyId :int in progeny) {
+////            if (!ArrayUtil.contains(_progenyIds, newProgenyId)) {
+////                _progenyIds.push(newProgenyId);
+////            }
+////        }
+////        _progenyIds = _progenyIds.sort();
+////        Trophies.checkMinionTrophies(this);
+//    }
 
     public function isVictim() :Boolean
     {
