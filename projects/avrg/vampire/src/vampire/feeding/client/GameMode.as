@@ -50,7 +50,7 @@ public class GameMode extends AppMode
                         onCreateMultiplier(CreateMultiplierMsg.create(
                             Constants.NULL_PLAYER,
                             loc.x, loc.y,
-                            Math.min(multiplier + 1, Constants.MAX_MULTIPLIER)));
+                            Math.min(multiplier, Constants.MAX_MULTIPLIER)));
                     }),
                     new SelfDestructTask()));
                 addObject(sendMultiplierObj);
