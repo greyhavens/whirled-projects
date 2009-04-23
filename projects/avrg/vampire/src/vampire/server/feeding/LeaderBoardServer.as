@@ -243,8 +243,8 @@ public class LeaderBoardServer extends SimObject
 
 
 
-    protected static function updateScoreTable (currentScores :Array, score :int, names :String,
-        now :Number, scoreLifetime :Number, maxScores :int) :int
+    protected static function updateScoreTable (currentScores :Array, score :Number, names :String,
+        now :Number, scoreLifetime :Number, maxScores :int) :Number
     {
         //Add the new score
         currentScores.push([score, names, now]);
