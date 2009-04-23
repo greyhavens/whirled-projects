@@ -182,6 +182,15 @@ public class AdminPanel extends DraggableObject
         statsButton.addEventListener(MouseEvent.CLICK, getStats);
         _menuSprite.addChild(statsButton);
 
+        var resetScoresButton :SimpleTextButton = new SimpleTextButton("Reset scores");
+        resetScoresButton.x = statsButton.x;
+        resetScoresButton.y = statsButton.y + 50;
+        resetScoresButton.addEventListener(MouseEvent.CLICK, function (...ignored) :void {
+            ClientContext.ctrl.agent.sendMessage(
+                DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_RESET_HIGH_SCORES).toBytes());
+        });
+        _menuSprite.addChild(resetScoresButton);
+
 
 //        var addAllBloodButton :SimpleTextButton = new SimpleTextButton("+20 Blood Room");
 //        addAllBloodButton.x = loseInviteButton.x;

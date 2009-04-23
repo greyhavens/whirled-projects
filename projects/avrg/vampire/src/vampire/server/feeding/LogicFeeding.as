@@ -16,6 +16,7 @@ package vampire.server.feeding
     import vampire.Util;
     import vampire.data.Codes;
     import vampire.data.VConstants;
+    import vampire.net.messages.DebugMsg;
     import vampire.net.messages.FeedConfirmMsg;
     import vampire.net.messages.FeedRequestCancelMsg;
     import vampire.net.messages.FeedRequestMsg;
@@ -72,12 +73,33 @@ public class LogicFeeding extends SimObject
                         player.feedingData = bytes;
                     }
                 }
+                else if (msg is DebugMsg) {
+                    var debugMsg :DebugMsg = DebugMsg(msg);
+                    handleDebug(player, debugMsg);
+                }
             }
         }
         catch(err :Error) {
             log.error(err.getStackTrace());
         }
 
+    }
+
+    protected static function handleDebug (player :PlayerData, debugMsg :DebugMsg) :void
+    {
+        log.debug("handleDebug", "player", player, "debugMsg", debugMsg);
+        switch (debugMsg.type) {
+            case DebugMsg.DEBUG_RESET_HIGH_SCORES:
+            var leaderboard :LeaderBoardServer = ServerContext.server.getObjectNamed(
+                LeaderBoardServer.NAME) as LeaderBoardServer;
+            if (leaderboard != null) {
+                leaderboard.resetScores();
+            }
+            break;
+
+            default:
+            break;
+        }
     }
 
 

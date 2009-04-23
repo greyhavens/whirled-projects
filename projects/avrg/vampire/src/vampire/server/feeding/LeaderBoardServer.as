@@ -34,6 +34,18 @@ public class LeaderBoardServer extends SimObject
         _propsGlobal = propsGlobal;
     }
 
+    public function resetScores () :void
+    {
+        _localHighScoreDay = 0;
+        _localHighScoreMnth = 0;
+
+        _propsServer.set(AGENT_PROP_SCORES_DAILY, [], true);
+        _propsServer.set(AGENT_PROP_SCORES_MONTHLY, [], true);
+
+        _propsGlobal.set(GLOBAL_PROP_SCORES_DAILY, [], true);
+        _propsGlobal.set(GLOBAL_PROP_SCORES_MONTHLY, [], true);
+    }
+
     override protected function addedToDB () :void
     {
         super.addedToDB();

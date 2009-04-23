@@ -201,7 +201,6 @@ public class LogicServer extends SimObject
             break;
 
             default:
-            log.debug("No registered debug type: " + debugMsg);
             break;
         }
     }
