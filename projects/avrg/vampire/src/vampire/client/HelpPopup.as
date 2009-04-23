@@ -27,6 +27,7 @@ package vampire.client
     import vampire.data.VConstants;
     import vampire.feeding.Constants;
     import vampire.feeding.PlayerFeedingData;
+    import vampire.feeding.client.ClientCtx;
 
     public class HelpPopup extends DraggableObject
     {
@@ -85,6 +86,10 @@ package vampire.client
             registerListener(SimpleButton(findSafely("menu_tobloodbond")), MouseEvent.CLICK,
                 function (e :MouseEvent) :void {
                     gotoFrame("bloodbond");
+                });
+            registerListener(SimpleButton(findSafely("menu_toleaderboard")), MouseEvent.CLICK,
+                function (e :MouseEvent) :void {
+                    gotoFrame("leaderboard");
                 });
 
             //Wire up the buttons
@@ -160,8 +165,73 @@ package vampire.client
                     gotoFrame("lineage");
                 });
 
+            updateScoresFromProps();
+
             gotoFrame(startframe);
 
+
+            registerListener(ClientCtx.gameCtrl.game.props, PropertyChangedEvent.PROPERTY_CHANGED,
+                handlePropertyChangedEvent);
+
+
+        }
+
+        protected function handlePropertyChangedEvent (e: PropertyChangedEvent) :void
+        {
+            var ii :int;
+            var scores :Array;
+            if (e.name == VConstants.GLOBAL_PROP_SCORES_DAILY) {
+
+                setTextFromPropScores(e.newValue as Array,
+                                      "today_0",
+                                      VConstants.NUMBER_HIGH_SCORES_DAILY);
+            }
+            else if (e.name == VConstants.GLOBAL_PROP_SCORES_MONTHLY) {
+
+                setTextFromPropScores(e.newValue as Array,
+                                      "monthly_0",
+                                      VConstants.NUMBER_HIGH_SCORES_MONTHLY);
+            }
+        }
+
+        protected function updateScoresFromProps (...ignored) :void
+        {
+            setTextFromPropScores(
+                ClientCtx.gameCtrl.game.props.get(VConstants.GLOBAL_PROP_SCORES_DAILY) as Array,
+                "today_0",
+                VConstants.NUMBER_HIGH_SCORES_DAILY);
+
+            setTextFromPropScores(
+                ClientCtx.gameCtrl.game.props.get(VConstants.GLOBAL_PROP_SCORES_MONTHLY) as Array,
+                "monthly_0",
+                VConstants.NUMBER_HIGH_SCORES_MONTHLY);
+
+        }
+
+        protected function setTextFromPropScores (scores :Array, textFieldName :String,
+            textFieldCount :int) :void
+        {
+            var ii :int;
+            //Set text null
+            for (ii = 0; ii < textFieldCount; ++ii) {
+                TextField(_hudHelp[textFieldName + (ii+1) ]["player_name"]).text = "";
+                TextField(_hudHelp[textFieldName + (ii+1) ]["player_score"]).text = "";
+            }
+
+            if (scores != null) {
+                for (ii = 0; ii < textFieldCount && ii < scores.length; ++ii) {
+
+                    var score :Array = scores[ii] as Array;
+                    if (score != null && score.length >= 2) {
+                        var scorePanel :MovieClip =
+                            _hudHelp[textFieldName + (ii+1) ] as MovieClip;
+                        if (scorePanel != null) {
+                            TextField(scorePanel["player_name"]).text = "" + score[1];
+                            TextField(scorePanel["player_score"]).text = "" + int(score[0]);
+                        }
+                    }
+                }
+            }
 
         }
 
