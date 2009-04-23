@@ -54,6 +54,7 @@ public class DebugMsg extends BaseGameMsg
     public static const DEBUG_LEVEL_DOWN :String = "DEBUG: LevelDown";
     public static const DEBUG_ADD_INVITE :String = "DEBUG: AddInvite";
     public static const DEBUG_LOSE_INVITE :String = "DEBUG: LoseInvite";
+    public static const DEBUG_RESET_HIGH_SCORES :String = "DEBUG: ResetLeaderBOard";
     public static const NAME :String = "Message :Debug";
 }
 }
