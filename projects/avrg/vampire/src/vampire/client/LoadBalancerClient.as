@@ -41,19 +41,19 @@ public class LoadBalancerClient extends SceneObjectParent
 
         var expanded :MovieClip = hud.findSafely("hunting_grounds_expanded") as MovieClip;
         var collapsed :MovieClip = hud.findSafely("hunting_grounds_collapsed") as MovieClip;
+        collapsed.parent.addChildAt(_displaySprite, collapsed.parent.getChildIndex(collapsed));
         collapsed.mouseEnabled = true;
 
-        ClientUtil.detach(expanded);
 
         _huntingGroundsExpanded = new SimpleSceneObject(expanded);
         _huntingGroundsCollapsed = new SimpleSceneObject(collapsed);
 
         addSimObject(_huntingGroundsExpanded);
         addSimObject(_huntingGroundsCollapsed);
+        ClientUtil.detach(expanded);
 
         _initialContractedLoc = new Point(_huntingGroundsCollapsed.x, _huntingGroundsCollapsed.y);
 
-        collapsed.parent.addChildAt(_displaySprite, collapsed.parent.getChildIndex(collapsed));
 
         var blackscreen :Shape = new Shape();
         blackscreen.graphics.beginFill(0);
@@ -83,6 +83,7 @@ public class LoadBalancerClient extends SceneObjectParent
 
     protected function expand (...ignored) :void
     {
+
         if (_timeSinceLoadMessageSent >= VConstants.ROOMS_SHOWN_IN_LOAD_BALANCER) {
             _ctrl.agent.sendMessage(LoadBalancingMsg.NAME, new LoadBalancingMsg().toBytes());
             _timeSinceLoadMessageSent = 0;
@@ -99,6 +100,7 @@ public class LoadBalancerClient extends SceneObjectParent
 
         _blackScreen.addTask(ScaleTask.CreateEaseIn(1, scaleY, 0.5));
 
+        ClientContext.tutorial.clickedHuntingGrounds();
     }
 
     protected function collapse (...ignored) :void
@@ -245,7 +247,8 @@ public class LoadBalancerClient extends SceneObjectParent
     }
     protected function moveToRoom (roomId :int) :void
     {
-        ClientContext.tutorial.clickedHuntingGroundsRoom();
+        collapse();
+        ClientContext.tutorial.clickedRoom();
         if (roomId != 0) {
             ClientContext.controller.handleMove(roomId);
         }

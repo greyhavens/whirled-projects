@@ -103,6 +103,8 @@ public class Tutorial extends AppMode
         modeSprite.mouseChildren = true;
         _ctrl = ClientContext.ctrl;
 
+
+
         _currentChapter = CHAPTER_LOOKING_FOR_TARGET;
         setPage(PAGE_NOONE_IN_ROOM);
 //
@@ -282,17 +284,24 @@ public class Tutorial extends AppMode
 
         switch (_currentPage) {
 
-            case PAGE_HUNTING_GROUNDS:
+            case PAGE_HUNTING_GROUNDS_COLLAPSED:
             if (isAloneInRoom) {
                 setPage(PAGE_NOONE_IN_ROOM);
                 break;
             }
             break;
 
+//            case PAGE_HUNTING_GROUNDS_EXPANDED:
+//            if (isAloneInRoom) {
+//                setPage(PAGE_NOONE_IN_ROOM);
+//                break;
+//            }
+//            break;
+
 
             case PAGE_NOONE_IN_ROOM:
             if (!isAloneInRoom) {
-                setPage(PAGE_HUNTING_GROUNDS);
+                setPage(PAGE_HUNTING_GROUNDS_COLLAPSED);
                 break;
             }
             break;
@@ -393,6 +402,60 @@ public class Tutorial extends AppMode
     }
     protected function handleHuntingGrounds () :void
     {
+        if (ClientContext.gameMode.getObjectNamed(LoadBalancerClient.NAME) != null) {
+            var lb :LoadBalancerClient = ClientContext.gameMode.getObjectNamed(
+                LoadBalancerClient.NAME) as LoadBalancerClient;
+
+
+            var targetDisplayObject :DisplayObject =
+                lb.findSafely("hunting_grounds_collapsed") as DisplayObject;
+
+            var sceneObjectName :String = "target: " + "hunting_grounds_collapsed";
+
+            var targetReticle :SceneObject = createTargetSceneObject(sceneObjectName);
+
+            var parent :DisplayObjectContainer = targetDisplayObject.parent;
+            parent.setChildIndex(targetDisplayObject, parent.numChildren - 1);
+
+            if (getObjectNamed(sceneObjectName) != null) {
+                getObjectNamed(sceneObjectName).destroySelf();
+            }
+
+            addObject(targetReticle);
+
+            moveTargetClearlyFromOldTargetLocToNew(targetReticle, targetDisplayObject);
+
+        }
+    }
+
+    protected function handleHuntingGroundsExpanded () :void
+    {
+        //Move the reticle to a room
+        if (ClientContext.gameMode.getObjectNamed(LoadBalancerClient.NAME) != null) {
+            var lb :LoadBalancerClient = ClientContext.gameMode.getObjectNamed(
+                LoadBalancerClient.NAME) as LoadBalancerClient;
+
+
+            var targetDisplayObject :DisplayObject = lb.findSafely("ground_01") as DisplayObject;
+
+            targetDisplayObject = targetDisplayObject["room_name"] as DisplayObject;
+
+            var sceneObjectName :String = "target: " + "ground_01";
+
+            var targetReticle :SceneObject = createTargetSceneObject(sceneObjectName);
+
+            var parent :DisplayObjectContainer = targetDisplayObject.parent;
+            parent.setChildIndex(targetDisplayObject, parent.numChildren - 1);
+
+            if (getObjectNamed(sceneObjectName) != null) {
+                getObjectNamed(sceneObjectName).destroySelf();
+            }
+
+            addObject(targetReticle);
+
+            moveTargetClearlyFromOldTargetLocToNew(targetReticle, targetDisplayObject);
+
+        }
     }
 
     protected function updateAvatarsWithFeedButtons () :void
@@ -526,7 +589,7 @@ public class Tutorial extends AppMode
                 _tutorialPopup = new PopupQuery(
                                             "tutorial",
                                             getPageMessage(_currentPage),
-                                            [],//["Close tutorial"],
+                                            [],
                                             [deactivateTutorial]);
 
 
@@ -642,39 +705,48 @@ public class Tutorial extends AppMode
         }
     }
 
+    public function clickedRoom () :void
+    {
+        if (_currentPage == PAGE_HUNTING_GROUNDS_EXPANDED) {
+            setPage(PAGE_CLICK_HUD_FEED);
+        }
+    }
     public function clickedHuntingGrounds () :void
     {
-        //Move the reticle to a room
-        if (ClientContext.gameMode.getObjectNamed(LoadBalancerClient.NAME) != null) {
-            var lb :LoadBalancerClient = ClientContext.gameMode.getObjectNamed(
-                LoadBalancerClient.NAME) as LoadBalancerClient;
-
-
-            var targetDisplayObject :DisplayObject = lb.findSafely("ground_01") as DisplayObject;
-
-            targetDisplayObject = targetDisplayObject["room_name"] as DisplayObject;
-
-            var sceneObjectName :String = "target: " + "ground_01";
-
-            var targetReticle :SceneObject = createTargetSceneObject(sceneObjectName);
-
-            var parent :DisplayObjectContainer = targetDisplayObject.parent;
-            parent.setChildIndex(targetDisplayObject, parent.numChildren - 1);
-
-            if (getObjectNamed(sceneObjectName) != null) {
-                getObjectNamed(sceneObjectName).destroySelf();
-            }
-
-            addObject(targetReticle);
-
-            moveTargetClearlyFromOldTargetLocToNew(targetReticle, targetDisplayObject);
-
+        if (_currentPage == PAGE_HUNTING_GROUNDS_COLLAPSED) {
+            setPage(PAGE_HUNTING_GROUNDS_EXPANDED);
         }
+//        //Move the reticle to a room
+//        if (ClientContext.gameMode.getObjectNamed(LoadBalancerClient.NAME) != null) {
+//            var lb :LoadBalancerClient = ClientContext.gameMode.getObjectNamed(
+//                LoadBalancerClient.NAME) as LoadBalancerClient;
+//
+//
+//            var targetDisplayObject :DisplayObject = lb.findSafely("ground_01") as DisplayObject;
+//
+//            targetDisplayObject = targetDisplayObject["room_name"] as DisplayObject;
+//
+//            var sceneObjectName :String = "target: " + "ground_01";
+//
+//            var targetReticle :SceneObject = createTargetSceneObject(sceneObjectName);
+//
+//            var parent :DisplayObjectContainer = targetDisplayObject.parent;
+//            parent.setChildIndex(targetDisplayObject, parent.numChildren - 1);
+//
+//            if (getObjectNamed(sceneObjectName) != null) {
+//                getObjectNamed(sceneObjectName).destroySelf();
+//            }
+//
+//            addObject(targetReticle);
+//
+//            moveTargetClearlyFromOldTargetLocToNew(targetReticle, targetDisplayObject);
+//
+//        }
     }
 
     public function clickedHuntingGroundsRoom () :void
     {
-        if (_currentPage == PAGE_NOONE_IN_ROOM || _currentPage == PAGE_HUNTING_GROUNDS) {
+        if (_currentPage == PAGE_NOONE_IN_ROOM || _currentPage == PAGE_HUNTING_GROUNDS_COLLAPSED) {
             setPage(PAGE_CLICK_HUD_FEED);
         }
     }
@@ -705,7 +777,8 @@ public class Tutorial extends AppMode
     public static const CHAPTER_LOOKING_FOR_TARGET :String = "Chapter: Looking for target";
 
     public static const PAGE_NOONE_IN_ROOM :String = "NooneInTheRoom";
-    public static const PAGE_HUNTING_GROUNDS :String = "HuntingGrounds";
+    public static const PAGE_HUNTING_GROUNDS_COLLAPSED :String = "HuntingGrounds";
+    public static const PAGE_HUNTING_GROUNDS_EXPANDED :String = "HuntingGroundsExpanded";
     public static const PAGE_EVERYONE_LEAVES :String = "EveryoneLeaves";
     public static const PAGE_CLICK_HUD_FEED :String = "ClickHUDFeed";
     public static const PAGE_CLICK_TARGET_FEED :String = "ClickTargetFeed";
@@ -731,7 +804,8 @@ public class Tutorial extends AppMode
 
     public static const TUTORIAL_ACTIONS :Array = [
         [PAGE_NOONE_IN_ROOM, "There's no one here to feed upon. Click \"Choose a Hunting Ground\" at the top of the screen to join some fellow bloodsuckers."],
-        [PAGE_HUNTING_GROUNDS, "Click \"Choose a Hunting Ground\" at the top of the screen and choose a place to join your fellow vamps on the prowl."],
+        [PAGE_HUNTING_GROUNDS_COLLAPSED, "Click \"Hunting Ground\" and choose a place to join your fellow vamps on the prowl."],
+        [PAGE_HUNTING_GROUNDS_EXPANDED, "Choose a place to join your fellow vamps on the prowl."],
         [PAGE_CLICK_HUD_FEED, "Click \"Hunt\" to see everyone's delicious blood, in all all their varied strains."],
         [PAGE_EVERYONE_LEAVES, "The herd is skittish.  Try chatting up your feast to make them comfortable with their succulent role."],
         [PAGE_CLICK_TARGET_FEED, "Click the Feed button on some tasty morsel and pull up to your feast."],
