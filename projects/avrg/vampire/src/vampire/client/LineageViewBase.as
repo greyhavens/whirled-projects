@@ -181,7 +181,7 @@ public class LineageViewBase extends SceneObjectParent
                     getTextFieldCenteredOn((1 + grandSireCount) + " Superior GrandSire" +
                     (grandSireCount > 2 ? "s" : ""), startX, startY, false, !left));
                 _volatileUIComponents.push(sireTextSO);
-                addSceneObject(sireTextSO, s);
+                addSimObject(sireTextSO, s);
 
 //                s.addChild();
             }
@@ -221,7 +221,7 @@ public class LineageViewBase extends SceneObjectParent
             //The button
             var button_page_left :SimpleButton = ClientContext.instantiateButton("HUD", "button_hierarchy_no_mouse");
             var buttonLeftSO :SceneObject = new SimpleSceneObject(button_page_left);
-            addSceneObject(buttonLeftSO, s);
+            addSimObject(buttonLeftSO, s);
             _volatileUIComponents.push(buttonLeftSO);
             buttonLeftSO.x = locations[0].x - 25;
             buttonLeftSO.y = startY + yInc;
@@ -236,7 +236,7 @@ public class LineageViewBase extends SceneObjectParent
             textPageLeft.mouseEnabled = true;
             var textLeftSO :SceneObject = new SimpleSceneObject(textPageLeft);
             _volatileUIComponents.push(textLeftSO);
-            addSceneObject(textLeftSO, s);
+            addSimObject(textLeftSO, s);
 //            s.addChild(textPageLeft);
             registerListener(textPageLeft, MouseEvent.CLICK, showPreviousPage);
 //            Command.bind(textPageLeft, MouseEvent.CLICK, showPreviousPage);
@@ -248,7 +248,7 @@ public class LineageViewBase extends SceneObjectParent
             var buttonRightSO :SceneObject = new SimpleSceneObject(button_page_right);
             buttonRightSO.x = locations[locations.length - 1].x + 25;
             buttonRightSO.y = startY + yInc;
-            addSceneObject(buttonRightSO, s);
+            addSimObject(buttonRightSO, s);
             _volatileUIComponents.push(buttonRightSO);
 //            s.addChild(button_page_right);
             registerListener(button_page_right, MouseEvent.CLICK, showNextPage);
@@ -258,7 +258,7 @@ public class LineageViewBase extends SceneObjectParent
             var textPageRight :TextField = getTextFieldCenteredOn("More", locations[locations.length - 1].x + 25, startY + yInc - 40, true, left);
             var textRightSO :SceneObject = new SimpleSceneObject(textPageRight);
             _volatileUIComponents.push(textRightSO);
-            addSceneObject(textRightSO, s);
+            addSimObject(textRightSO, s);
             textPageRight.mouseEnabled = true;
 //            s.addChild(textPageRight);
             registerListener(textPageRight, MouseEvent.CLICK, showNextPage);
@@ -304,7 +304,7 @@ public class LineageViewBase extends SceneObjectParent
 
                     buttonDownSO.x = locations[i].x - button_hiararchy.width;
                     buttonDownSO.y = locations[i].y + yInc + buttonDownSO.width / 2 + 12;
-                    addSceneObject(buttonDownSO, s);
+                    addSimObject(buttonDownSO, s);
                     _volatileUIComponents.push(buttonDownSO);
 
                     var centerId :int;
@@ -323,7 +323,7 @@ public class LineageViewBase extends SceneObjectParent
                     var subProgenyTextField :TextField = getTextFieldCenteredOn(subProgenyCount + "", locations[i].x + 4, locations[i].y +1*yInc, true, left);
                     var subProgenyTextSO :SceneObject = new SimpleSceneObject(subProgenyTextField);
                     subProgenyTextField.mouseEnabled = true;
-                    addSceneObject(subProgenyTextSO, s);
+                    addSimObject(subProgenyTextSO, s);
                     _volatileUIComponents.push(subProgenyTextSO);
                     if (!_lineage.isLeaf(progenyIds[i])) {
                         centerId = progenyIds[i];
@@ -412,7 +412,7 @@ public class LineageViewBase extends SceneObjectParent
 
             drop = new DropSceneObject(playerId, playerName, updateLineage);
 
-            addSceneObject(drop);
+            addSimObject(drop);
             drop.alpha = 0;
             _player2Drop.put(playerId, drop);
 //            trace("Creating drop for " + playerId);

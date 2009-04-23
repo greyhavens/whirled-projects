@@ -65,6 +65,9 @@ public class PopupQuery extends DraggableObject
         _displaySprite.addChild(_popupText);
 
         _buttonHeight = SimpleButton(_popupPanel["button_01"]).height;
+//        if (buttonNames != null && buttonNames.length > 2) {
+//            _buttonHeight = _buttonHeight * 2 + 5;
+//        }
 
         _isBottomButtons = buttonNames != null && buttonNames.length > 0;
 
@@ -192,12 +195,21 @@ public class PopupQuery extends DraggableObject
 
 
 
-        for (var i :int = 0; i < buttonNames.length && i < 2; i++) {
+        for (var i :int = 0; i < buttonNames.length && i < 3; i++) {
 
-            var b :SimpleButton = _popupPanel["button_0" + (i + 1)] as SimpleButton;
+            var b :InteractiveObject;
+
+            if (i < 2) {
+                b = _popupPanel["button_0" + (i + 1)] as SimpleButton;
+            }
+            else {
+                b = ClientContext.instantiateMovieClip("HUD", "button_template", false);
+            }
+
             if (b == null) {
                 continue;
             }
+
             _buttonPanelSprite.addChild(b);
 //            _popupPanel.addChild(b);
             //If there is only one button, position it in between the two buttons.

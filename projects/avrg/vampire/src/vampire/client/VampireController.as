@@ -250,8 +250,8 @@ public class VampireController extends Controller
             var popup :PopupQuery = new PopupQuery(
                     "MakeSire",
                     VConstants.TEXT_CONFIM_SIRE,
-                    ["Yes", "No", "More Info"],
-                    [sendFeedRequest, null, function() :void {con.handleShowIntro("lineage");}]);
+                    ["Yes", "No: More Info"],
+                    [sendFeedRequest, function() :void {con.handleShowIntro("lineage");}]);
 
             if (ClientContext.gameMode.getObjectNamed(popup.objectName) == null) {
                 ClientContext.gameMode.addSceneObject(popup, ClientContext.gameMode.modeSprite);
