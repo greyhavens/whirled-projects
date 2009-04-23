@@ -291,12 +291,12 @@ public class PlayerData extends EventHandlerManager
         try {
 
             if (_ctrl == null || !_ctrl.isConnected()) {
-                log.error("setIntoRoomProps() but ", "_ctrl", _ctrl);
+                log.error("updateRoom() but ", "_ctrl", _ctrl);
                 return;
             }
 
             if (_room == null || _room.ctrl == null || !_room.ctrl.isConnected()) {
-                log.error("setIntoRoomProps() but ", "room", room);
+                log.error("updateRoom() but ", "room", room);
                 return;
             }
 
