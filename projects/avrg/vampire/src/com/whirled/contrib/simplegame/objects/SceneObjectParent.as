@@ -2,6 +2,7 @@ package com.whirled.contrib.simplegame.objects
 {
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.components.SceneComponent;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -9,8 +10,8 @@ import flash.display.Sprite;
 
 
 /**
- * A SceneObject with children scene objects.  The children use the db, but need to be disposed
- * of with the parent.
+ * A SceneObject with children SimObjects.  The children use the db, but are destroyed
+ * with the parent.
  */
 public class SceneObjectParent extends SceneObject
 {
@@ -23,7 +24,7 @@ public class SceneObjectParent extends SceneObject
         _yetToAddToDB = null;
     }
 
-    protected function addSimObject (s :SimObject) :void
+    protected function addSimObjectInternal (s :SimObject) :void
     {
         if (db != null) {
             db.addObject(s);
@@ -35,15 +36,23 @@ public class SceneObjectParent extends SceneObject
             _subObjects.push(s);
         }
     }
-    protected function addSceneObject (s :SceneObject, parent :DisplayObjectContainer = null) :void
+
+    public function addSimObject (obj :SimObject, displayParent :DisplayObjectContainer = null) :void
     {
-        if (parent != null) {
-            parent.addChild(s.displayObject);
+        if (obj is SceneComponent) {
+            // Attach the object to a display parent.
+            var disp :DisplayObject = (obj as SceneComponent).displayObject;
+            if (null == disp) {
+                throw new Error("obj must return a non-null displayObject to be attached " +
+                                "to a display parent");
+            }
+
+            if (displayParent == null) {
+                displayParent = _displaySprite;
+            }
+            displayParent.addChild(disp);
         }
-        else {
-            _displaySprite.addChild(s.displayObject);
-        }
-        addSimObject(s);
+        addSimObjectInternal(obj);
     }
 
     protected function destroySimObject (s :SimObject) :void
