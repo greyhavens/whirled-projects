@@ -6,6 +6,7 @@ import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.net.Message;
@@ -95,27 +96,6 @@ public class MainGameMode extends AppMode
         }
 
 
-//        if (VConstants.LOCAL_DEBUG_MODE) {
-//
-//            var lineage :Lineage = new Lineage();
-//            lineage.isConnectedToLilith = true;
-//                lineage.setPlayerSire(1, 2);
-//                lineage.setPlayerSire(3, 1);
-//                lineage.setPlayerSire(4, 1);
-//                lineage.setPlayerSire(5, 1);
-//                lineage.setPlayerSire(6, 5);
-//                lineage.setPlayerSire(7, 6);
-//                lineage.setPlayerSire(8, 6);
-//                lineage.setPlayerSire(9, 1);
-//                lineage.setPlayerSire(10, 1);
-//                lineage.setPlayerSire(11, 1);
-//                lineage.setPlayerSire(12, 1);
-//                lineage.setPlayerSire(13, 1);
-//                lineage.setPlayerSire(14, 1);
-//            var msg :LineageUpdatedEvent = new LineageUpdatedEvent(lineage, ClientContext.ourPlayerId);
-//            ClientContext.model.lineage = lineage;
-//            ClientContext.model.dispatchEvent(msg);
-//        }
 
         //Init the feeding game, if we're not testing.
         if (!VConstants.LOCAL_DEBUG_MODE) {
@@ -131,7 +111,11 @@ public class MainGameMode extends AppMode
 
         //Listen for the player leaving the room, shut down the client then
         registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.LEFT_ROOM,
-            handlePlayerLeft);
+            handleOurPlayerLeftRoom);
+
+        //Listen for the player leaving the room, shut down the client then
+        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_LEFT,
+            handlePlayerLeftRoom);
 
         //Create the overlay for individual avatars
         _avatarOverlay = new VampireAvatarHUDOverlay(ClientContext.ctrl);
@@ -140,7 +124,7 @@ public class MainGameMode extends AppMode
         //Add the main HUD
         _hud = new HUD();
         addSceneObject(_hud, layerLowPriority);
-        //Add the client load balancer
+        //Add the client load balancer, which depends on the HUD
         addObject(new LoadBalancerClient(ClientContext.ctrl, _hud));
 
         //Make sure we start the game standing, not dancing or feeding etc.
@@ -163,8 +147,39 @@ public class MainGameMode extends AppMode
         }
 
 
+//        if (VConstants.LOCAL_DEBUG_MODE) {
+//
+//            var lineage :Lineage = new Lineage();
+//            lineage.isConnectedToLilith = true;
+//                lineage.setPlayerSire(1, 2);
+//                lineage.setPlayerSire(3, 1);
+//                lineage.setPlayerSire(4, 1);
+//                lineage.setPlayerSire(5, 1);
+//                lineage.setPlayerSire(6, 5);
+//                lineage.setPlayerSire(7, 6);
+//                lineage.setPlayerSire(8, 6);
+//                lineage.setPlayerSire(9, 1);
+//                lineage.setPlayerSire(10, 1);
+//                lineage.setPlayerSire(11, 1);
+//                lineage.setPlayerSire(12, 1);
+//                lineage.setPlayerSire(13, 1);
+//                lineage.setPlayerSire(14, 1);
+//            var msg :LineageUpdatedEvent = new LineageUpdatedEvent(lineage, ClientContext.ourPlayerId);
+//            ClientContext.model.lineage = lineage;
+//            ClientContext.model.dispatchEvent(msg);
+//        }
 
 
+    }
+
+    protected function handlePlayerLeftRoom (e :AVRGameRoomEvent) :void
+    {
+        //Remove any outstanding feed requests from the leaving player
+        var feedRequest :SimObject =
+            getObjectNamed(VampireController.POPUP_PREFIX_FEED_REQUEST + e.value);
+        if (feedRequest != null && feedRequest.isLiveObject) {
+            feedRequest.destroySelf();
+        }
     }
 
     protected function handleRoomPropChanged (e :PropertyChangedEvent) :void
@@ -289,7 +304,7 @@ public class MainGameMode extends AppMode
 
     }
 
-    protected function handlePlayerLeft (e :AVRGamePlayerEvent) :void
+    protected function handleOurPlayerLeftRoom (e :AVRGamePlayerEvent) :void
     {
         shutDownFeedingClient();
     }
