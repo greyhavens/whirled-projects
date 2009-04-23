@@ -330,20 +330,24 @@ public class VampireAvatarHUD extends AvatarHUD
             ClientContext.gameMode.lineages.getLineage(playerId) == null ||
             !ClientContext.gameMode.lineages.getLineage(playerId).isSireExisting(playerId);
 
-        if (isPlayerPartOfLineage) {
-            if (avatarHasNoSire) {
-                _target_UI.addChild(buttonFresh);
+        //Only add a button if there is some kind of lineage
+        if (ClientContext.gameMode.lineages.getLineage(playerId) != null) {
+
+            if (isPlayerPartOfLineage) {
+                if (avatarHasNoSire) {
+                    _target_UI.addChild(buttonFresh);
+                }
+                else {
+                    _target_UI.addChild(buttonLineage);
+                }
             }
             else {
-                _target_UI.addChild(buttonLineage);
-            }
-        }
-        else {
-            if (isAvatarPartOfLineage && ClientContext.model.isPlayer(playerId)) {
-                _target_UI.addChild(buttonJoin);
-            }
-            else {
-                _target_UI.addChild(buttonLineage);
+                if (isAvatarPartOfLineage && ClientContext.model.isPlayer(playerId)) {
+                    _target_UI.addChild(buttonJoin);
+                }
+                else {
+                    _target_UI.addChild(buttonLineage);
+                }
             }
         }
     }
