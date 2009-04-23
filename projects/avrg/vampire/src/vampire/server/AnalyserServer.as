@@ -25,7 +25,7 @@ public class AnalyserServer extends SimObject
 
         //Every minute, increment play time
         addTask(new RepeatingTask(new SerialTask(
-                                                new TimedTask(1),
+                                                new TimedTask(60),
                                                 new FunctionTask(incrementPlayerTimes)
                                                 )));
 
