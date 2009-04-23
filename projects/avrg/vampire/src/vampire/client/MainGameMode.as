@@ -307,6 +307,16 @@ public class MainGameMode extends AppMode
     protected function handleOurPlayerLeftRoom (e :AVRGamePlayerEvent) :void
     {
         shutDownFeedingClient();
+
+        //Remove outstanding feed requests.
+        for each( var s :SimObject in getObjectsInGroup(PopupQuery.GROUP)) {
+            if (s.objectName.indexOf(VConstants.POPUP_MESSAGE_FEED_CONFIRM) > -1) {
+                s.destroySelf();
+            }
+            if (s.objectName.indexOf(VampireController.POPUP_PREFIX_FEED_REQUEST) > -1) {
+                s.destroySelf();
+            }
+        }
     }
 
 
