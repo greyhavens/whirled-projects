@@ -38,8 +38,7 @@ public class GameServer extends ObjectDB
             registerListener(_ctrl.game, AVRGameControlEvent.PLAYER_QUIT_GAME, playerQuitGame);
             registerListener(_ctrl.game, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
 
-
-    //        ServerContext.lineage = new LineageServer2(this);
+            //Add the lineage server
             addObject(new LineageServer(this));
 
             //Tim's bloodbond game server
