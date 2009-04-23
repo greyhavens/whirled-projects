@@ -138,8 +138,8 @@ public class LeaderBoardServer extends SimObject
             var playerScores :HashMap = msg.data as HashMap;
             if (playerScores != null) {
                 //Get the total score
-                var totalScore :int = 0;
-                playerScores.forEach(function (playerId :int, score :int) :void {
+                var totalScore :Number = 0;
+                playerScores.forEach(function (playerId :int, score :Number) :void {
                     if (score > 0) {
                         totalScore += score;
                     }
@@ -150,8 +150,8 @@ public class LeaderBoardServer extends SimObject
                 //Sort the player ids by score
                 var playerIds :Array = playerScores.keys();
                 playerIds.sort(function(playerId1 :int, playerId2 :int) :int {
-                    var score1 :int = playerScores.get(playerId1);
-                    var score2 :int = playerScores.get(playerId2);
+                    var score1 :Number = playerScores.get(playerId1);
+                    var score2 :Number = playerScores.get(playerId2);
                     if (score1 > score2) {
                         return -1;
                     }
@@ -208,7 +208,7 @@ public class LeaderBoardServer extends SimObject
         return "Player " + playerId;
     }
 
-    protected function updateScores (score :int, names :String) :void
+    protected function updateScores (score :Number, names :String) :void
     {
         var time :Number = new Date().time;
 
@@ -251,8 +251,8 @@ public class LeaderBoardServer extends SimObject
 
         //Sort the scores
         currentScores.sort(function (scoreData1 :Array, scoreData2 :Array) :int {
-            var score1 :int = scoreData1[0];
-            var score2 :int = scoreData2[0];
+            var score1 :Number = scoreData1[0];
+            var score2 :Number = scoreData2[0];
             if (score1 > score2) {
                 return -1;
             }
@@ -269,7 +269,7 @@ public class LeaderBoardServer extends SimObject
         currentScores.splice(maxScores);
 
         //Return the highest score
-        var maxScore :int = 0;
+        var maxScore :Number = 0;
         for each (var scoreData :Array in currentScores) {
             maxScore = Math.max(maxScore, scoreData[0]);
         }
@@ -347,8 +347,8 @@ public class LeaderBoardServer extends SimObject
     /**Distribute the scores to all clients*/
     protected var _propsGlobal :PropertySubControl;
 
-    protected var _localHighScoreDay :int = 0;
-    protected var _localHighScoreMnth :int = 0;
+    protected var _localHighScoreDay :Number = 0;
+    protected var _localHighScoreMnth :Number = 0;
 
     protected var localDebug :Boolean = false;
 
