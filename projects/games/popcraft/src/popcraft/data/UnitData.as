@@ -1,6 +1,7 @@
 package popcraft.data {
 
 import com.whirled.contrib.simplegame.util.*;
+import com.whirled.contrib.XmlReader;
 
 import popcraft.*;
 import popcraft.util.*;

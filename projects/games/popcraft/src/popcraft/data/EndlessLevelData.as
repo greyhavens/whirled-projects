@@ -1,9 +1,9 @@
 package popcraft.data {
 
 import com.threerings.util.ArrayUtil;
+import com.whirled.contrib.XmlReader;
 
 import popcraft.*;
-import popcraft.util.XmlReader;
 
 public class EndlessLevelData
 {

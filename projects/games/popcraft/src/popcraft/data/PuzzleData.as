@@ -1,8 +1,9 @@
 package popcraft.data {
 
+import com.whirled.contrib.XmlReader;
+
 import popcraft.*;
 import popcraft.util.IntValueTable;
-import popcraft.util.XmlReader;
 
 public class PuzzleData
 {

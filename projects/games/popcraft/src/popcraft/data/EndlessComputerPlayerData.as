@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import popcraft.util.XmlReader;
+import com.whirled.contrib.XmlReader;
 
 public class EndlessComputerPlayerData extends ComputerPlayerData
 {

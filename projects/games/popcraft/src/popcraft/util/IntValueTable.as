@@ -1,6 +1,7 @@
 package popcraft.util {
 
 import com.threerings.util.Assert;
+import com.whirled.contrib.XmlReader;
 
 /**
  * A simple utility class that stores a table of values.

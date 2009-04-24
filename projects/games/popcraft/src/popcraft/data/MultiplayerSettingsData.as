@@ -1,7 +1,8 @@
 package popcraft.data {
 
+import com.whirled.contrib.XmlReader;
+
 import popcraft.*;
-import popcraft.util.XmlReader;
 
 public class MultiplayerSettingsData
 {

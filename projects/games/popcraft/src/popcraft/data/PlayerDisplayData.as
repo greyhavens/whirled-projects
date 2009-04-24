@@ -1,11 +1,11 @@
 package popcraft.data {
 
 import com.whirled.contrib.simplegame.resource.ImageResource;
+import com.whirled.contrib.XmlReader;
 
 import flash.display.DisplayObject;
 
 import popcraft.*;
-import popcraft.util.XmlReader;
 
 public class PlayerDisplayData
 {

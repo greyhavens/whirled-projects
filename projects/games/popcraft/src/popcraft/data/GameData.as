@@ -2,6 +2,7 @@ package popcraft.data {
 
 import com.threerings.util.SortedHashMap;
 import com.whirled.contrib.simplegame.util.*;
+import com.whirled.contrib.XmlReader;
 
 import popcraft.*;
 import popcraft.util.*;

@@ -1,8 +1,7 @@
 package popcraft.data {
 
 import com.threerings.flash.Vector2;
-
-import popcraft.util.XmlReader;
+import com.whirled.contrib.XmlReader;
 
 public class BaseLocationData
 {

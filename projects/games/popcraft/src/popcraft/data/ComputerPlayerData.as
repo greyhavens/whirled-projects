@@ -1,11 +1,8 @@
 package popcraft.data {
 
-import com.whirled.contrib.simplegame.resource.ImageResource;
-
-import flash.display.DisplayObject;
+import com.whirled.contrib.XmlReader;
 
 import popcraft.*;
-import popcraft.game.ComputerPlayerAI;
 import popcraft.util.*;
 
 public class ComputerPlayerData

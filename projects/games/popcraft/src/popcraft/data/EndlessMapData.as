@@ -2,9 +2,9 @@ package popcraft.data {
 
 import com.threerings.flash.Vector2;
 import com.threerings.util.HashMap;
+import com.whirled.contrib.XmlReader;
 
 import popcraft.*;
-import popcraft.util.XmlReader;
 
 public class EndlessMapData
 {

@@ -1,10 +1,9 @@
 package popcraft.data {
 
-import popcraft.util.XmlReader;
-
 import com.whirled.contrib.simplegame.util.IntRange;
 import com.whirled.contrib.simplegame.util.NumRange;
 import com.whirled.contrib.simplegame.util.Rand;
+import com.whirled.contrib.XmlReader;
 
 public class DaySequenceData
 {
