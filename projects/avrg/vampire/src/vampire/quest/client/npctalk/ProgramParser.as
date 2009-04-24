@@ -49,6 +49,12 @@ public class ProgramParser
         case "GiveActivity":
             return parseGiveActivityStatement(xml);
 
+        case "SetProp":
+            return parseSetPropStatement(xml);
+
+        case "ClearProp":
+            return parseClearPropStatement(xml);
+
         // Generic
         case "Block":
             return parseBlockStatement(xml);
@@ -199,6 +205,26 @@ public class ProgramParser
         return new GiveActivityStatement(getActivity(XmlReader.getStringAttr(xml, "name")));
     }
 
+    protected static function parseSetPropStatement (xml :XML) :SetQuestPropStatement
+    {
+        var propName :String = XmlReader.getStringAttr(xml, "name");
+        var expr :Expr;
+        if (XmlReader.hasAttribute(xml, "number")) {
+            expr = new ValueExpr(XmlReader.getNumberAttr(xml, "number"));
+        } else if (XmlReader.hasAttribute(xml, "string")) {
+            expr = new ValueExpr(XmlReader.getStringAttr(xml, "string"));
+        } else {
+            expr = new ValueExpr(true);
+        }
+
+        return new SetQuestPropStatement(propName, expr);
+    }
+
+    protected static function parseClearPropStatement (xml :XML) :ClearQuestPropStatement
+    {
+        return new ClearQuestPropStatement(XmlReader.getStringAttr(xml, "name"));
+    }
+
     protected static function parseExpr (xml :XML) :Expr
     {
         var type :String = xml.name().localName;
@@ -218,6 +244,12 @@ public class ProgramParser
 
         case "HasActivity":
             return parseHasActivityExpr(xml);
+
+        case "HasProp":
+            return parseHasPropExpr(xml);
+
+        case "PropValue":
+            return parsePropValueExpr(xml);
 
         // Generic
         case "And":
@@ -309,6 +341,16 @@ public class ProgramParser
     protected static function parseHasActivityExpr (xml :XML) :HasActivityExpr
     {
         return new HasActivityExpr(getActivity(XmlReader.getStringAttr(xml, "name")));
+    }
+
+    protected static function parseHasPropExpr (xml :XML) :HasQuestPropExpr
+    {
+        return new HasQuestPropExpr(XmlReader.getStringAttr(xml, "name"));
+    }
+
+    protected static function parsePropValueExpr (xml :XML) :QuestPropValExpr
+    {
+        return new QuestPropValExpr(XmlReader.getStringAttr(xml, "name"));
     }
 
     protected static function parseBinaryCompExpr (xml :XML, type :int) :BinaryCompExpr
