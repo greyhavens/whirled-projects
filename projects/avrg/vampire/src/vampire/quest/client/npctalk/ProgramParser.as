@@ -1,5 +1,8 @@
 package vampire.quest.client.npctalk {
 
+import com.whirled.contrib.XmlReadError;
+import com.whirled.contrib.XmlReader;
+
 import vampire.quest.*;
 
 public class ProgramParser
