@@ -12,6 +12,7 @@ import vampire.data.Logic;
 import vampire.data.VConstants;
 import vampire.feeding.Constants;
 import vampire.feeding.FeedingHost;
+import vampire.feeding.FeedingRoundResults;
 import vampire.feeding.FeedingServer;
 import vampire.feeding.variant.Variant;
 import vampire.net.messages.MovePredAfterFeedingMsg;
@@ -221,9 +222,11 @@ public class FeedingRecord extends EventCollecter
         }
     }
 
-    public function onRoundComplete (finalScores :HashMap) :void
+    //public function onRoundComplete (finalScores :HashMap) :void
+    public function onRoundComplete (results :FeedingRoundResults) :void
     {
-        log.debug("roundCompleteCallback", "scores", Util.hashmapToString(finalScores));
+        // TODO: Dion
+        /*log.debug("roundCompleteCallback", "scores", Util.hashmapToString(finalScores));
         try {
             if(_gameServer != null) {
 
@@ -241,7 +244,7 @@ public class FeedingRecord extends EventCollecter
         }
         catch(err :Error) {
             log.error(err.getStackTrace());
-        }
+        }*/
     }
 
     public function onGameComplete () :void

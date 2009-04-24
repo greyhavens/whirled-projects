@@ -209,11 +209,6 @@ public class Server extends FeedingServer
         return _gameStarted;
     }
 
-    override public function get lastRoundScore () :int
-    {
-        return _ctx.lastRoundScore;
-    }
-
     protected function updateLobbyLeader () :void
     {
         if (!ArrayUtil.contains(_ctx.playerIds, _ctx.lobbyLeader)) {

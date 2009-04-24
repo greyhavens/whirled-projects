@@ -3,59 +3,20 @@ package vampire.feeding.net {
 import com.threerings.util.HashMap;
 import com.whirled.contrib.simplegame.net.Message;
 
-import flash.utils.ByteArray;
+import vampire.feeding.FeedingRoundResults;
 
-public class RoundOverMsg
+public class RoundOverMsg extends FeedingRoundResults
     implements Message
 {
     public static const NAME :String = "RoundOver";
 
-    public var scores :HashMap; // Map<playerId, score>
-
-    public static function create (scores :HashMap) :RoundOverMsg
+    public static function create (scores :HashMap, initialPlayerCount :int) :RoundOverMsg
     {
         var msg :RoundOverMsg = new RoundOverMsg();
         msg.scores = scores;
+        msg.initialPlayerCount = initialPlayerCount;
 
         return msg;
-    }
-
-    public function get totalScore () :int
-    {
-        var score :int;
-        scores.forEach(
-            function (playerId :int, playerScore :int) :void {
-                score += playerScore;
-            });
-        return score;
-    }
-
-    public function toBytes (ba :ByteArray = null) :ByteArray
-    {
-        if (ba == null) {
-            ba = new ByteArray();
-        }
-
-        ba.writeByte(scores.size());
-        scores.forEach(
-            function (playerId :int, score :int) :void {
-                ba.writeInt(playerId);
-                ba.writeInt(score);
-            });
-
-        return ba;
-    }
-
-    public function fromBytes (ba :ByteArray) :void
-    {
-        scores = new HashMap();
-
-        var numScores :int = ba.readByte();
-        for (var ii :int = 0; ii < numScores; ++ii) {
-            var playerId :int = ba.readInt();
-            var score :int = ba.readInt();
-            scores.put(playerId, score);
-        }
     }
 
     public function get name () :String

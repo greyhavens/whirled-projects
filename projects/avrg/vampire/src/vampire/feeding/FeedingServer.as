@@ -133,15 +133,6 @@ public class FeedingServer
     }
 
     /**
-     * Returns the final score for this game. Valid only after the game has ended.
-     */
-    public function get lastRoundScore () :int
-    {
-        // Overridden by Server
-        return 0;
-    }
-
-    /**
      * @private
      */
     public function FeedingServer ()

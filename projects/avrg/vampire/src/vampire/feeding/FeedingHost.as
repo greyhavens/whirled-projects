@@ -8,7 +8,7 @@ public interface FeedingHost
     function onGameStarted () :void;
 
     /** Called after a successful round of feeding. */
-    function onRoundComplete (finalScores :HashMap) :void;
+    function onRoundComplete (results :FeedingRoundResults) :void;
 
     /** Called when the game is completed (after all players leave). */
     function onGameComplete () :void;

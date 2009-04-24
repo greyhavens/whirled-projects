@@ -41,7 +41,7 @@ class TestGameController extends OneRoomGameRoom
         log.info("onGameStarted");
     }
 
-    public function onRoundComplete (finalScores :HashMap) :void
+    public function onRoundComplete (results :FeedingRoundResults) :void
     {
         log.info("onRoundComplete");
     }
@@ -208,5 +208,5 @@ class TestGameController extends OneRoomGameRoom
     protected var _timerMgr :TimerManager = new TimerManager();
 
     protected static const MIN_PLAYERS :int = 1;
-    protected static const VARIANT :int = Variant.CORRUPTION;
+    protected static const VARIANT :int = Variant.NORMAL;
 }

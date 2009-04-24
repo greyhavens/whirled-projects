@@ -101,7 +101,8 @@ public class LogicFeeding extends SimObject
 
     public static function bloodBloomRoundOver (gameRecord :FeedingRecord, finalScores :HashMap) :void
     {
-        log.debug("bloodBloomRoundOver()", "gameRecord", gameRecord);
+        // TODO: Dion
+        /*log.debug("bloodBloomRoundOver()", "gameRecord", gameRecord);
         var srv :GameServer = ServerContext.server;
 
         if (gameRecord == null) {
@@ -113,6 +114,7 @@ public class LogicFeeding extends SimObject
             return;
         }
 
+        // TODO: Dion
         if (gameRecord.gameServer.lastRoundScore == 0) {
             log.debug("score==0 so no blood lost or gained.");
 
@@ -253,7 +255,7 @@ public class LogicFeeding extends SimObject
             if (finalScores.get(predId) > 0) {
                 awardXP(predId, xpGained, xpFormatted);
             }
-        });
+        });*/
     }
 
         /**

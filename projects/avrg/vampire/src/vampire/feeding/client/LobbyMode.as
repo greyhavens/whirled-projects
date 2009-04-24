@@ -28,7 +28,7 @@ public class LobbyMode extends AppMode
     public static const LOBBY :int = 0;
     public static const WAIT_FOR_NEXT_ROUND :int = 1;
 
-    public function LobbyMode (type :int, roundResults :RoundOverMsg = null) :void
+    public function LobbyMode (type :int, roundResults :FeedingRoundResults = null) :void
     {
         _type = type;
         _results = roundResults;
@@ -132,7 +132,7 @@ public class LobbyMode extends AppMode
             var tfTotal :TextField = total["player_score"];
             tfTotal.text = String(_results.totalScore);
             var tfAverage :TextField = average["player_score"];
-            tfAverage.text = String(_results.totalScore / _results.scores.size());
+            tfAverage.text = String(_results.averageScore);
         }
 
         // Player list
@@ -329,6 +329,13 @@ public class LobbyMode extends AppMode
                     }
                 });
 
+            for (var ii :int = 0; ii < _results.initialPlayerCount - _results.scores.size(); ++ii) {
+                obj = {};
+                obj["player_name"] = "(Left early!)";
+                obj["player_score"] = 0;
+                listData.push(obj);
+            }
+
             // Anyone who joined the game while the round was in progress doesn't have a score
             for each (playerId in ClientCtx.allPlayerIds) {
                 if (playerId != ClientCtx.preyId && !_results.scores.containsKey(playerId)) {
@@ -416,7 +423,7 @@ public class LobbyMode extends AppMode
     protected var _playerList :SimpleListController;
 
     protected var _type :int;
-    protected var _results :RoundOverMsg;
+    protected var _results :FeedingRoundResults;
     protected var _showedRoundTimer :Boolean;
 
     protected static const NUMBERS :Array = [

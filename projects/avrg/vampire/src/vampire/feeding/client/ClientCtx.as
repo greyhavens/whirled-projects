@@ -18,8 +18,6 @@ import flash.utils.getTimer;
 import vampire.feeding.*;
 import vampire.feeding.net.*;
 import vampire.feeding.variant.VariantSettings;
-import vampire.quest.activity.BloodBloomActivityParams;
-import vampire.quest.activity.CorruptionActivityParams;
 
 public class ClientCtx
 {
@@ -32,7 +30,7 @@ public class ClientCtx
     // Initialized every time a new feeding takes place
     public static var clientSettings :FeedingClientSettings;
     public static var awardedTrophies :HashSet;
-    public static var lastRoundResults :RoundOverMsg;
+    public static var lastRoundResults :FeedingRoundResults;
     public static var variantSettings :VariantSettings;
     // Valid only if clientSettings.spOnly is false
     public static var props :NamespacePropGetControl;

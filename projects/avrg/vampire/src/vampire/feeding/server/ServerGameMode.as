@@ -25,6 +25,7 @@ public class ServerGameMode extends ServerMode
         // will participate in the round. Anyone who joins during the round will
         // have to wait for the next one to start
         _playersInGame = _ctx.playerIds.slice();
+        _initialPlayerCount = _playersInGame.length;
         _ctx.props.set(Props.GAME_PLAYERS, FeedingUtil.arrayToDict(_playersInGame), true);
 
         _state = STATE_PLAYING;
@@ -44,7 +45,6 @@ public class ServerGameMode extends ServerMode
         if (_playersInGame.length == 0) {
             // End the round immediately, without reporting anything (there
             // may be other players waiting to play the game)
-            _ctx.lastRoundScore = 0;
             _ctx.server.setMode(Constants.MODE_LOBBY);
 
         } else if (_state == STATE_WAITING_FOR_SCORES) {
@@ -110,15 +110,11 @@ public class ServerGameMode extends ServerMode
     protected function endRoundIfReady () :void
     {
         if (_playersNeedingScoreUpdate.length == 0) {
-            var totalScore :int;
-            _finalScores.forEach(
-                function (playerId :int, score :int) :void {
-                    totalScore += score;
-                });
-            _ctx.lastRoundScore = totalScore;
+            var roundOverMsg :RoundOverMsg = RoundOverMsg.create(_finalScores, _initialPlayerCount);
+            var averageScore :int = roundOverMsg.averageScore;
+            _ctx.feedingHost.onRoundComplete(roundOverMsg);
             // Send the final scores to the clients.
-            _ctx.feedingHost.onRoundComplete(_finalScores);
-            _ctx.sendMessage(RoundOverMsg.create(_finalScores));
+            _ctx.sendMessage(roundOverMsg);
 
             // If there are two people playing the game, a predator and a prey, and they
             // aren't already blood bonded with each other, increment the blood bond progress
@@ -159,6 +155,7 @@ public class ServerGameMode extends ServerMode
     protected var _state :int;
     protected var _playersInGame :Array;
     protected var _playersNeedingScoreUpdate :Array;
+    protected var _initialPlayerCount :int; // the number of players that began the round
     protected var _finalScores :HashMap; // Map<playerId, score>
     protected var _startTime :int;
 

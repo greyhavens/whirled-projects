@@ -26,8 +26,6 @@ public class ServerCtx
     public var playerIds :Array;
     public var feedingHost :FeedingHost;
 
-    public var lastRoundScore :int;
-
     public function get preyId () :int
     {
         return props.get(Props.PREY_ID) as int;
