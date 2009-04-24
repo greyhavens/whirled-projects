@@ -67,8 +67,8 @@ public class AnalyserServer extends SimObject
     protected function incrementPlayerTimes () :void
     {
         ServerContext.server.players.forEach(function (playerId :int, data :PlayerData) :void {
-            var time :int = _playTime.get(playerId) as int;
-            _playTime.put(playerId, time + 1);
+            var time :int = _playStartTime.get(playerId) as int;
+            _playStartTime.put(playerId, time + 1);
         });
     }
 
@@ -141,7 +141,7 @@ public class AnalyserServer extends SimObject
         s += "\n" + statsPrefix + "ServerReboots=" + ServerContext.ctrl.props.get(Codes.AGENT_PROP_SERVER_REBOOTS);
         s += "\n" + statsPrefix + "TimeStarted=" + _timeStarted;
         s += "\n" + statsPrefix + "Now=" + new Date().time;
-        s += stringHashMap(_playTime, statsPrefix + "TimeLoggedIn_");
+        s += stringHashMap(_playStartTime, statsPrefix + "TimeLoggedIn_");
         s += stringHashMap(_playerPlayersFeeding, statsPrefix + "FeedingPlayers_");
         s += stringHashMap(_progenyPayout, statsPrefix + "DescendentsPayout_");
         s += stringHashMap(_playerCoinPayout, statsPrefix + "FeedingCoinPayout_");
@@ -163,7 +163,7 @@ public class AnalyserServer extends SimObject
     protected function clearStats () :void
     {
         _timeStarted = new Date().time;
-        _playTime.clear();
+        _playStartTime.clear();
         _playerPlayersFeeding.clear();
         _progenyPayout.clear();
         _playerCoinPayout.clear();
@@ -172,7 +172,8 @@ public class AnalyserServer extends SimObject
     }
 
     protected var _timeStarted :Number;
-    protected var _playTime :HashMap = new HashMap();//playerId to cumulative play time in mins
+    protected var _playStartTime :HashMap = new HashMap();//playerId to cumulative play time in mins
+    protected var _playEndTime :HashMap = new HashMap();//playerId to cumulative play time in mins
     protected var _playerPlayersFeeding :HashMap = new HashMap();//playerId to feeding players
     protected var _progenyPayout :HashMap = new HashMap();//playerId to payout from progeny
     protected var _playerCoinPayout :HashMap = new HashMap();//playerId to payout

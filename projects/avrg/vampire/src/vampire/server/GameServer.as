@@ -58,13 +58,6 @@ public class GameServer extends ObjectDB
             //Add stats monitoring
             addObject(new AnalyserServer());
 
-            //Add the general logic event listener
-            addObject(new LogicServer());
-
-            //Add the feeding logic event listener
-            addObject(new LogicFeeding());
-
-
             //Add this time to the list of server reboots
             recordBootTime();
         }
@@ -196,8 +189,8 @@ public class GameServer extends ObjectDB
             //Batch up the resultant network traffic from the message.
             _ctrl.doBatch(function () :void {
                 var msg :Message = ServerContext.msg.deserializeMessage(evt.name, evt.value);
-                sendMessageToGroup(new ServerObjectMessage(player, msg), GROUP_MESSAGE_LISTENERS);
-//                LogicServer.handleMessage(player, evt.name, evt.value);
+                LogicServer.handleMessage(player, msg);
+                LogicFeeding.handleMessage(player, msg);
             });
         }
         catch(err :Error) {
@@ -304,9 +297,6 @@ public class GameServer extends ObjectDB
     public static const SERVER_TICK_UPDATE_MILLISECONDS :int = 500;
 
     public static var log :Log = Log.getLog(GameServer);
-
-    public static const GROUP_MESSAGE_LISTENERS :String = "Msg Listeners";
-
 }
 }
 

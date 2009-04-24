@@ -33,22 +33,6 @@ package vampire.server.feeding
 public class LogicFeeding extends SimObject
 {
 
-    override public function getObjectGroup (groupNum :int) :String
-    {
-        switch (groupNum) {
-            case 0: return GameServer.GROUP_MESSAGE_LISTENERS;
-            // 1 is the number of groups this class defines
-            default: return super.getObjectGroup(groupNum - 1);
-        }
-    }
-
-    override protected function receiveMessage (msg:ObjectMessage) :void
-    {
-        if (msg is ServerObjectMessage) {
-            handleMessage(ServerObjectMessage(msg).player, ServerObjectMessage(msg).msg);
-        }
-    }
-
     public static function handleMessage (player :PlayerData, msg :Message) :void
     {
         var room :Room = player.room;
