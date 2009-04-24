@@ -12,6 +12,7 @@ import com.whirled.contrib.simplegame.tasks.TimedTask;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.ByteArray;
+import flash.utils.setInterval;
 
 import vampire.data.VConstants;
 import vampire.net.messages.LoadBalancingMsg;
@@ -28,8 +29,8 @@ public class LoadBalancerServer extends SimObject
     public function LoadBalancerServer (server :GameServer)
     {
         _server = server;
-
         registerListener(_server.control.game, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
+        setInterval(refreshLowPopulationRoomData, ROOM_POPULATION_REFRESH_RATE);
     }
 
     protected function handleMessage (evt :MessageReceivedEvent) :void
@@ -78,16 +79,6 @@ public class LoadBalancerServer extends SimObject
             });
             _playersRequestedRoomInfo.clear();
         }
-    }
-
-    override protected function addedToDB () :void
-    {
-        super.addedToDB();
-        //Set up the timed function using tasks.
-        var serialTask :SerialTask = new SerialTask();
-        serialTask.addTask(new TimedTask(ROOM_POPULATION_REFRESH_RATE));
-        serialTask.addTask(new FunctionTask(refreshLowPopulationRoomData));
-        addTask(new RepeatingTask(serialTask));
     }
 
     override protected function destroyed () :void
@@ -215,7 +206,10 @@ public class LoadBalancerServer extends SimObject
 
     protected var _playersRequestedRoomInfo :HashSet = new HashSet();
 
-    protected static const ROOM_POPULATION_REFRESH_RATE :Number = 5;
+    /**
+    * Resort the rooms every 5 seconds.
+    */
+    protected static const ROOM_POPULATION_REFRESH_RATE :int = 5000;
     protected static const log :Log = Log.getLog(LoadBalancerServer);
 
 }
