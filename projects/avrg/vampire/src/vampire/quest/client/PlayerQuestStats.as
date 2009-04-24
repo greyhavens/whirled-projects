@@ -1,6 +1,7 @@
 package vampire.quest.client {
 
 import com.whirled.contrib.EventHandlerManager;
+import com.whirled.contrib.ImmediatePropControl;
 import com.whirled.contrib.namespc.*;
 import com.whirled.net.NetConstants;
 import com.whirled.net.PropertyChangedEvent;
@@ -16,7 +17,7 @@ public class PlayerQuestStats extends EventDispatcher
 {
     public function PlayerQuestStats (props :PropertySubControl)
     {
-        _props = new NamespacePropControl(NAMESPACE, props);
+        _props = new ImmediatePropControl(new NamespacePropControl(NAMESPACE, props));
         _events.registerListener(_props, PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
     }
 

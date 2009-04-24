@@ -3,6 +3,7 @@ package vampire.quest.client {
 import com.threerings.util.Log;
 import com.threerings.util.Util;
 import com.whirled.contrib.EventHandlerManager;
+import com.whirled.contrib.ImmediatePropControl;
 import com.whirled.contrib.namespc.NamespacePropControl;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.NetConstants;
@@ -28,7 +29,7 @@ public class PlayerQuestData extends EventDispatcher
 
     public function PlayerQuestData (props :PropertySubControl) :void
     {
-        _props = new NamespacePropControl(NAMESPACE, props);
+        _props = new ImmediatePropControl(new NamespacePropControl(NAMESPACE, props));
         _events.registerListener(_props, ElementChangedEvent.ELEMENT_CHANGED, onElementChanged);
         _events.registerListener(_props, PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
     }
