@@ -58,7 +58,7 @@ public class QuestClient
             ClientCtx.questData.curLocation = loc;
         }
 
-        showActivityPanel(loc);
+        showLocationPanel(loc);
     }
 
     public static function beginActivity (activity :ActivityDesc) :void
@@ -70,18 +70,26 @@ public class QuestClient
         }
     }
 
-    public static function showActivityPanel (loc :LocationDesc) :void
+    public static function showLocationPanel (loc :LocationDesc) :void
     {
-        hideActivityPanel();
-        _activityPanel = new ActivityPanel(loc);
-        ClientCtx.mainLoop.topMode.addSceneObject(_activityPanel);
+        if (_locationPanel != null && _locationPanel.loc == loc) {
+            _locationPanel.visible = true;
+
+        } else {
+            if (_locationPanel != null) {
+                _locationPanel.destroySelf();
+                _locationPanel = null;
+            }
+
+            _locationPanel = new LocationPanel(loc);
+            ClientCtx.mainLoop.topMode.addSceneObject(_locationPanel);
+        }
     }
 
-    public static function hideActivityPanel () :void
+    public static function hideLocationPanel () :void
     {
-        if (_activityPanel != null) {
-            _activityPanel.destroySelf();
-            _activityPanel = null;
+        if (_locationPanel != null) {
+            _locationPanel.visible = false;
         }
     }
 
@@ -228,7 +236,7 @@ public class QuestClient
         }
     }
 
-    protected static var _activityPanel :ActivityPanel;
+    protected static var _locationPanel :LocationPanel;
     protected static var _debugPanel :DebugPanel;
     protected static var _questPanel :QuestPanel;
     protected static var _npcTalkViewRef :SimObjectRef = SimObjectRef.Null();

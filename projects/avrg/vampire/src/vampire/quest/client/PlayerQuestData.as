@@ -17,7 +17,7 @@ import vampire.quest.*;
 
 [Event(name="QuestAdded", type="vampire.quest.PlayerQuestEvent")]
 [Event(name="QuestCompleted", type="vampire.quest.PlayerQuestEvent")]
-[Event(name="LocationAdded", type="vampire.quest.PlayerLocationEvent")]
+[Event(name="ActivityAdded", type="vampire.quest.ActivityEvent")]
 [Event(name="MovedToLocation", type="vampire.quest.PlayerLocationEvent")]
 [Event(name="QuestJuiceChanged", type="vampire.quest.PlayerJuiceEvent")]
 
