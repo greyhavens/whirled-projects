@@ -1,10 +1,13 @@
 package vampire.quest {
 
 import com.threerings.util.HashMap;
+import com.threerings.util.StringUtil;
+import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.PropertySubControl;
 
 import flash.events.EventDispatcher;
+import flash.utils.Dictionary;
 
 /**
  * Provides a safe way of managing properties on a client, as long as the client is
@@ -114,6 +117,11 @@ public class SafeClientPropControl extends EventDispatcher
         }
 
         return keys;
+    }
+
+    public function getTargetId () :int
+    {
+        return _propCtrl.getTargetId();
     }
 
     protected var _propCtrl :PropertySubControl;
