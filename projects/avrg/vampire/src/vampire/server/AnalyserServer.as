@@ -203,73 +203,83 @@ public class AnalyserServer extends SimObject
         var playerIds :Array = allPlayerIds.toArray();
         playerIds.sort();
 
+        var sep :String = ", ";
+        function cleanData (dataString :Object) :String {
+            if (isNaN(parseFloat(dataString.toString()))) {
+                return sep;
+            }
+            else {
+                return sep + dataString.toString();
+            }
+        }
+
         for each (playerId in playerIds) {
             s += "\n" + playerId;
             for each (header in TABLE_COLUMNS) {
 
                 switch(header) {
                     case START_TIME:
-                    s += "," + _playStartTime.get(playerId);
+                    s += cleanData(_playStartTime.get(playerId));
                     break;
 
                     case END_TIME:
-                    s += "," + (_playEndTime.containsKey(playerId) ?
-                        nanToZero(_playEndTime.get(playerId)) : "0");
+                    s += cleanData(_playEndTime.containsKey(playerId) ?
+                        nanToZero(_playEndTime.get(playerId)) : "");
                     break;
 
                     case PROGENY_PAYOUT:
-                    s += "," + nanToZero(_progenyPayout.get(playerId));
+                    s += cleanData(nanToZero(_progenyPayout.get(playerId)));
                     break;
 
                     case XP_FROM_FEEDING:
-                    s += "," + nanToZero(_playerXpEarnedFromFeeding.get(playerId));
+                    s += cleanData(nanToZero(_playerXpEarnedFromFeeding.get(playerId)));
                     break;
 
                     case FEEDING_GAMES:
-                    s += "," + nanToZero(_playerFeedingGames.get(playerId));
+                    s += cleanData(nanToZero(_playerFeedingGames.get(playerId)));
                     break;
 
                     case MEAN_FEEDING_SCORE:
-                    s += "," + nanToZero(_playerMeanFeedingScore.get(playerId));
+                    s += cleanData(nanToZero(_playerMeanFeedingScore.get(playerId)));
                     break;
 
                     case BLOODBOND:
                     if (ServerContext.server.isPlayer(playerId)) {
-                        s += "," + ServerContext.server.getPlayer(playerId).bloodbond;
+                        s += cleanData(ServerContext.server.getPlayer(playerId).bloodbond);
                     }
                     else {
-                        s += "," + nanToZero(_playerBloodBond.get(playerId));
+                        s += cleanData(nanToZero(_playerBloodBond.get(playerId)));
                     }
                     break;
 
                     case PROGENY:
-                    s += "," + ServerContext.server.lineage.getProgenyCount(playerId);
+                    s += cleanData(ServerContext.server.lineage.getProgenyCount(playerId));
                     break;
 
                     case GRANDPROGENY:
-                    s += "," + (ServerContext.server.lineage.getAllDescendentsCount(playerId,2) -
+                    s += cleanData(ServerContext.server.lineage.getAllDescendentsCount(playerId,2) -
                         ServerContext.server.lineage.getProgenyCount(playerId));
                     break;
 
                     case SIRE:
-                    s += "," + ServerContext.server.lineage.getSireId(playerId);
+                    s += cleanData(ServerContext.server.lineage.getSireId(playerId));
                     break;
 
                     case LEVEL:
                     if (ServerContext.server.isPlayer(playerId)) {
-                        s += "," + ServerContext.server.getPlayer(playerId).level;
+                        s += cleanData(ServerContext.server.getPlayer(playerId).level);
                     }
                     else {
-                        s += "," + _playerLevel.get(playerId);
+                        s += cleanData(_playerLevel.get(playerId));
                     }
                     break;
 
                     case INVITES:
                     if (ServerContext.server.isPlayer(playerId)) {
-                        s += "," + ServerContext.server.getPlayer(playerId).invites;
+                        s += cleanData(ServerContext.server.getPlayer(playerId).invites);
                     }
                     else {
-                        s += "," + _playerInvites.get(playerId);
+                        s += cleanData(_playerInvites.get(playerId));
                     }
                     break;
                 }
