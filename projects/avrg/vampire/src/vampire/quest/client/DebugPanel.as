@@ -60,22 +60,16 @@ public class DebugPanel extends GenericDraggableWindow
         createButton("Reset Debug Quest", function (...ignored) :void {
             ClientCtx.questData.questJuice = 100;
             ClientCtx.questData.addQuest(Quests.getQuestByName("TestQuest").id);
-            ClientCtx.questData.addAvailableLocation(Locations.getLocationByName("HomeBase"));
-            ClientCtx.questData.addAvailableLocation(Locations.getLocationByName("Battleground"));
+            ClientCtx.questData.addAvailableActivity(Activities.getActivityByName("whack_small"));
             ClientCtx.questData.curLocation = Locations.getLocationByName("HomeBase");
         });
 
         createNewLayoutRow(15);
         layoutElement(TextBits.createText("Locations", 1.2));
         createNewLayoutRow();
-        for each (var loc :LocationDesc in ClientCtx.questData.availableLocations) {
+        for each (var loc :LocationDesc in Locations.getLocationList()) {
             addLocation(loc);
         }
-
-        registerListener(ClientCtx.questData, PlayerLocationEvent.LOCATION_ADDED,
-            function (e :PlayerLocationEvent) :void {
-                addLocation(e.location);
-            });
     }
 
     protected function addLocation (loc :LocationDesc) :void

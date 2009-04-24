@@ -9,6 +9,10 @@ public class Quests
 {
     public static function init () :void
     {
+        if (_inited) {
+            throw new Error("already inited");
+        }
+
         _inited = true;
 
         // create a test quest

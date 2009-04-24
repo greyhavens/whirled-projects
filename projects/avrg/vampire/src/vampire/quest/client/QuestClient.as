@@ -27,6 +27,7 @@ public class QuestClient
 
         Quests.init();
         Locations.init();
+        Activities.init();
 
         ClientCtx.gameCtrl = gameCtrl;
         ClientCtx.mainLoop = simpleGame.ctx.mainLoop;
@@ -37,6 +38,7 @@ public class QuestClient
         ClientCtx.rsrcs.registerResourceType("npcTalk", NpcTalkResource);
 
         // load resources
+        ClientCtx.rsrcs.queueResourceLoad("swf", "quest", { embeddedClass: SWF_QUEST });
         ClientCtx.rsrcs.queueResourceLoad("npcTalk", "dialogTest", { embeddedClass: DIALOG_TEST });
         ClientCtx.rsrcs.loadQueuedResources(
             onResourcesLoaded,
@@ -53,18 +55,10 @@ public class QuestClient
     public static function goToLocation (loc :LocationDesc) :void
     {
         if (ClientCtx.questData.curLocation != loc) {
-            if (loc.travelCost <= ClientCtx.questData.questJuice) {
-                // TODO: display "you will lose juice" question
-                ClientCtx.questData.questJuice -= loc.travelCost;
-                ClientCtx.questData.curLocation = loc;
-            } else {
-                // TODO: display "not enough juice" notification
-            }
+            ClientCtx.questData.curLocation = loc;
         }
 
-        if (ClientCtx.questData.curLocation == loc) {
-            showActivityPanel(loc);
-        }
+        showActivityPanel(loc);
     }
 
     public static function beginActivity (activity :ActivityDesc) :void
@@ -241,6 +235,9 @@ public class QuestClient
 
     protected static var _inited :Boolean;
     protected static var _resourcesLoaded :Boolean;
+
+    [Embed(source="../../../../rsrc/quest/quest.swf", mimeType="application/octet-stream")]
+    protected static const SWF_QUEST :Class;
 
     [Embed(source="../../../../rsrc/quest/DialogTest.xml", mimeType="application/octet-stream")]
     protected static const DIALOG_TEST :Class;

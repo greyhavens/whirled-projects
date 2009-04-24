@@ -110,28 +110,15 @@ public class PlayerQuestData extends EventDispatcher
         }
     }
 
-    public function addAvailableLocation (loc :LocationDesc) :void
+    public function addAvailableActivity (desc :ActivityDesc) :void
     {
-        _props.setIn(PROP_AVAIL_LOCS, loc.id, true);
+        _props.setIn(PROP_AVAIL_ACTIVITIES, desc.id, true);
     }
 
-    public function get availableLocations () :Array
+    public function isAvailableActivity (desc :ActivityDesc) :Boolean
     {
-        var dict :Dictionary = _props.get(PROP_AVAIL_LOCS) as Dictionary;
-        if (dict != null) {
-            return Util.keys(dict).map(
-                function (locId :int, ...ignored) :LocationDesc {
-                    return Locations.getLocation(locId);
-                });
-        } else {
-            return [];
-        }
-    }
-
-    public function isAvailableLocation (loc :LocationDesc) :Boolean
-    {
-        var dict :Dictionary = _props.get(PROP_AVAIL_LOCS) as Dictionary;
-        return (dict != null && dict[loc.id] !== undefined);
+        var dict :Dictionary = _props.get(PROP_AVAIL_ACTIVITIES) as Dictionary;
+        return (dict != null && dict[desc.id] !== undefined);
     }
 
     protected function onPropChanged (e :PropertyChangedEvent) :void
@@ -182,15 +169,15 @@ public class PlayerQuestData extends EventDispatcher
 
             dispatchEvent(new PlayerQuestEvent(eventType, quest));
 
-        } else if (e.name == PROP_AVAIL_LOCS) {
-            var locId :int = e.key;
-            var loc :LocationDesc = Locations.getLocation(locId);
+        } else if (e.name == PROP_AVAIL_ACTIVITIES) {
+            var activityId :int = e.key;
+            var activity :ActivityDesc = Activities.getActivity(activityId);
             if (e.newValue == null) {
-                log.warning("An available location was removed", "id", locId, "loc", loc);
-            } else if (loc == null) {
-                log.warning("An unrecognized location was added", "id", locId);
+                log.warning("An activity was removed", "id", activityId, "activity", activity);
+            } else if (activity == null) {
+                log.warning("An unrecognized activity was added", "id", activityId);
             } else {
-                dispatchEvent(new PlayerLocationEvent(PlayerLocationEvent.LOCATION_ADDED, loc));
+                dispatchEvent(new ActivityEvent(ActivityEvent.ACTIVITY_ADDED, activity));
             }
         }
     }
@@ -199,7 +186,8 @@ public class PlayerQuestData extends EventDispatcher
     protected var _events :EventHandlerManager = new EventHandlerManager();
 
     protected static const PROP_QUESTS :String = NetConstants.makePersistent("Quests");
-    protected static const PROP_AVAIL_LOCS :String = NetConstants.makePersistent("AvailLocs");
+    protected static const PROP_AVAIL_ACTIVITIES :String =
+        NetConstants.makePersistent("AvailActivities");
     protected static const PROP_CUR_LOC :String = NetConstants.makePersistent("CurLoc");
     protected static const PROP_QUEST_JUICE :String = NetConstants.makePersistent("QuestJuice");
 

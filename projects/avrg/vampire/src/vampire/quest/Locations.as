@@ -9,30 +9,19 @@ public class Locations
 {
     public static function init () :void
     {
+        if (_inited) {
+            throw new Error("already inited");
+        }
+
         _inited = true;
 
         // create some dummy Locations
-        var homeBase :LocationDesc = new LocationDesc("HomeBase", "Home Base", 0);
-        var battleground :LocationDesc = new LocationDesc("Battleground", "Battleground", 10);
-        var dragons :LocationDesc = new LocationDesc("Dragons", "Here Be Dragons", 10);
+        var homeBase :LocationDesc = new LocationDesc("HomeBase", "Home Base");
+        var battleground :LocationDesc = new LocationDesc("Battleground", "Battleground");
+        var dragons :LocationDesc = new LocationDesc("Dragons", "Here Be Dragons");
         addLocation(homeBase);
         addLocation(battleground);
         addLocation(dragons);
-
-        // add some activities
-        homeBase.activities.push(new ActivityDesc(
-            ActivityDesc.TYPE_NPC_TALK,
-            "Talk to Lilith",
-            new NpcTalkActivityParams("dialogTest")));
-
-        battleground.activities.push(new ActivityDesc(
-            ActivityDesc.TYPE_CORRUPTION,
-            "Whack a small monster",
-            new CorruptionActivityParams(1, 1, "Small Monster", "monster_kills", 1, 100)));
-        battleground.activities.push(new ActivityDesc(
-            ActivityDesc.TYPE_CORRUPTION,
-            "Whack a LARGE monster",
-            new CorruptionActivityParams(1, 5, "LARGE Monster", "monster_kills", 3, 500)));
     }
 
     public static function getLocationList () :Array

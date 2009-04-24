@@ -9,20 +9,16 @@ public class LocationDesc
     // Unique name
     public var name :String;
 
-    // Cost to enter this location
-    public var travelCost :int;
-
     // flavor
     public var displayName :String;
 
     // the set of activities available at this Location
     public var activities :Array = []; // Array<ActivityDesc>
 
-    public function LocationDesc (name :String, displayName :String, travelCost :int)
+    public function LocationDesc (name :String, displayName :String)
     {
         this.name = name;
         this.displayName = displayName;
-        this.travelCost = travelCost;
     }
 
     public function get id () :int
