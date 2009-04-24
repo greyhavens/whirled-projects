@@ -3,11 +3,11 @@ package redrover.data {
 import com.threerings.util.StringUtil;
 import com.whirled.contrib.simplegame.util.NumRange;
 import com.whirled.contrib.simplegame.util.Rand;
+import com.whirled.contrib.XmlReader;
+import com.whirled.contrib.XmlReadError;
 
 import redrover.*;
 import redrover.util.IntValueTable;
-import redrover.util.XmlReadError;
-import redrover.util.XmlReader;
 
 public class LevelData
 {
