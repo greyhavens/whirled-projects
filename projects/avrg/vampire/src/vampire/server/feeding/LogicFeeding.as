@@ -159,7 +159,7 @@ public class LogicFeeding extends SimObject
             LeaderBoardServer.NAME);
 
         var predIds :Array = [];
-        finalScores.forEach(function (playerId :int, score :int) :void {
+        finalScores.forEach(function (playerId :int, score :Number) :void {
             if (score > 0 && playerId != gameRecord.preyId) {
                 predIds.push(playerId);
             }

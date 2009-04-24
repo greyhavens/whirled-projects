@@ -42,8 +42,8 @@ public class LeaderBoardServer extends SimObject
         _propsServer.set(AGENT_PROP_SCORES_DAILY, [], true);
         _propsServer.set(AGENT_PROP_SCORES_MONTHLY, [], true);
 
-        _propsGlobal.set(GLOBAL_PROP_SCORES_DAILY, [], true);
-        _propsGlobal.set(GLOBAL_PROP_SCORES_MONTHLY, [], true);
+        _propsGlobal.set(VConstants.GLOBAL_PROP_SCORES_DAILY, [], true);
+        _propsGlobal.set(VConstants.GLOBAL_PROP_SCORES_MONTHLY, [], true);
     }
 
     override protected function addedToDB () :void
@@ -62,13 +62,13 @@ public class LeaderBoardServer extends SimObject
 //                    _propsServer.set(AGENT_PROP_SCORES_DAILY, [], true);
 //                    _propsServer.set(AGENT_PROP_SCORES_MONTHLY, [], true);
 //
-//                    updateScoresIntoProps([], GLOBAL_PROP_SCORES_DAILY, _propsGlobal);
-//                    updateScoresIntoProps([], GLOBAL_PROP_SCORES_MONTHLY, _propsGlobal);
+//                    updateScoresIntoProps([], VConstants.GLOBAL_PROP_SCORES_DAILY, _propsGlobal);
+//                    updateScoresIntoProps([], VConstants.GLOBAL_PROP_SCORES_MONTHLY, _propsGlobal);
 
                     updateScoresIntoProps(_propsServer.get(AGENT_PROP_SCORES_DAILY) as Array,
-                        GLOBAL_PROP_SCORES_DAILY, _propsGlobal);
+                        VConstants.GLOBAL_PROP_SCORES_DAILY, _propsGlobal);
                     updateScoresIntoProps(_propsServer.get(AGENT_PROP_SCORES_MONTHLY) as Array,
-                        GLOBAL_PROP_SCORES_MONTHLY, _propsGlobal);
+                        VConstants.GLOBAL_PROP_SCORES_MONTHLY, _propsGlobal);
                 })));
 
     }
@@ -214,7 +214,9 @@ public class LeaderBoardServer extends SimObject
 
         var tempScores :Array;
 
-        if (score > _localHighScoreDay || scoresAndNamesDay == null || scoresAndNamesDay.length < NUMBER_HIGH_SCORES_DAILY) {
+        if (score > _localHighScoreDay || scoresAndNamesDay == null
+            || scoresAndNamesDay.length < VConstants.NUMBER_HIGH_SCORES_DAILY) {
+
             tempScores = scoresAndNamesDay != null ? scoresAndNamesDay.slice() : [];
             //Remove wacky scores
             tempScores = tempScores.filter(function (scoreData :Array, ...ignored) :Boolean {
@@ -223,11 +225,13 @@ public class LeaderBoardServer extends SimObject
 
 
             _localHighScoreDay =
-                updateScoreTable(tempScores, score, names, time, DAY_SECONDS, NUMBER_HIGH_SCORES_DAILY);
-                updateScoresIntoProps(tempScores, GLOBAL_PROP_SCORES_DAILY, _propsGlobal);
+                updateScoreTable(tempScores, score, names, time, DAY_SECONDS, VConstants.NUMBER_HIGH_SCORES_DAILY);
+                updateScoresIntoProps(tempScores, VConstants.GLOBAL_PROP_SCORES_DAILY, _propsGlobal);
                 updateScoresIntoProps(tempScores, AGENT_PROP_SCORES_DAILY, _propsServer);
         }
-        if (score > _localHighScoreMnth || scoresAndNamesMonth == null || scoresAndNamesMonth.length < NUMBER_HIGH_SCORES_MONTHLY) {
+        if (score > _localHighScoreMnth || scoresAndNamesMonth == null
+            || scoresAndNamesMonth.length < VConstants.NUMBER_HIGH_SCORES_MONTHLY) {
+
             tempScores = scoresAndNamesMonth != null ? scoresAndNamesMonth.slice() : [];
             //Remove wacky scores
             tempScores = tempScores.filter(function (scoreData :Array, ...ignored) :Boolean {
@@ -235,8 +239,8 @@ public class LeaderBoardServer extends SimObject
             });
 
             _localHighScoreMnth =
-                updateScoreTable(tempScores, score, names, time, MONTH_SECONDS, NUMBER_HIGH_SCORES_MONTHLY);
-                updateScoresIntoProps(tempScores, GLOBAL_PROP_SCORES_MONTHLY, _propsGlobal);
+                updateScoreTable(tempScores, score, names, time, MONTH_SECONDS, VConstants.NUMBER_HIGH_SCORES_MONTHLY);
+                updateScoresIntoProps(tempScores, VConstants.GLOBAL_PROP_SCORES_MONTHLY, _propsGlobal);
                 updateScoresIntoProps(tempScores, AGENT_PROP_SCORES_MONTHLY, _propsServer);
         }
     }
@@ -353,17 +357,15 @@ public class LeaderBoardServer extends SimObject
     protected var localDebug :Boolean = false;
 
     public static const MESSAGE_LEADER_BOARD_MESSAGE_SCORES :String = "Message: new scores";
-    public static const GLOBAL_PROP_SCORES_DAILY :String = "HighScoresFeedingDaily";
-    public static const GLOBAL_PROP_SCORES_MONTHLY :String = "HighScoresFeedingMonthy";
+
 
     protected static const AGENT_PROP_SCORES_DAILY :String =
-        NetConstants.makePersistent(GLOBAL_PROP_SCORES_DAILY);
+        NetConstants.makePersistent(VConstants.GLOBAL_PROP_SCORES_DAILY);
 
     protected static const AGENT_PROP_SCORES_MONTHLY :String =
-        NetConstants.makePersistent(GLOBAL_PROP_SCORES_MONTHLY);
+        NetConstants.makePersistent(VConstants.GLOBAL_PROP_SCORES_MONTHLY);
 
-    public static const NUMBER_HIGH_SCORES_DAILY :int = 5;
-    public static const NUMBER_HIGH_SCORES_MONTHLY :int = 3;
+
     protected static const DAY_SECONDS :Number = 86400;
     protected static const MONTH_SECONDS :Number = 18144000;
     public static const NAME :String = "LeaderBoardServer";
