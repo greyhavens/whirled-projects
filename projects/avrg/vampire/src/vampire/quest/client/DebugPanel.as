@@ -23,6 +23,12 @@ public class DebugPanel extends GenericDraggableWindow
 
         createNewLayoutRow(15);
 
+        createButton("Quests", function (...ignored) :void {
+            QuestClient.showQuestPanel(true);
+        });
+
+        createNewLayoutRow(15);
+
         // buttons
         createButton("Set Stat", function (...ignored) :void {
             ClientCtx.stats.setStat(getEnteredName(), getEnteredVal());

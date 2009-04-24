@@ -1,42 +1,30 @@
 package vampire.quest.client {
 
-import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.objects.DraggableObject;
 
 import flash.display.DisplayObject;
-import flash.display.Graphics;
 import flash.display.InteractiveObject;
+import flash.display.MovieClip;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 import flash.text.TextField;
 
+import vampire.client.SimpleListController;
 import vampire.quest.*;
 
 public class QuestPanel extends DraggableObject
 {
-    public function QuestPanel () :void
+    public function QuestPanel ()
     {
-        _sprite = new Sprite();
-        _draggableLayer = new Sprite();
-        _sprite.addChild(_draggableLayer);
-        _uiLayer = new Sprite();
-        _sprite.addChild(_uiLayer);
+        _panelMovie = ClientCtx.instantiateMovieClip("quest", "quest_panel");
+        _draggable = _panelMovie["draggable"];
 
-        var g :Graphics = _draggableLayer.graphics;
-        g.lineStyle(1, 0xffffff);
-        g.beginFill(0);
-        g.drawRect(0, 0, WIDTH, HEIGHT);
-        g.endFill();
-
-        _tfQuestJuice = new TextField();
-        _tfQuestJuice.x = 10;
-        _tfQuestJuice.y = 10;
-        _draggableLayer.addChild(_tfQuestJuice);
-        updateQuestJuice();
-
-        var title :TextField = TextBits.createText("Quests", 2, 0, 0xffffff);
-        title.x = (_sprite.width - title.width) * 0.5;
-        title.y = 20;
-        _draggableLayer.addChild(title);
+        var closeBtn :SimpleButton = _panelMovie["close"];
+        registerListener(closeBtn, MouseEvent.CLICK,
+            function (...ignored) :void {
+                QuestClient.showQuestPanel(false);
+            });
 
         registerListener(ClientCtx.questData, PlayerJuiceEvent.QUEST_JUICE_CHANGED,
             function (e :PlayerJuiceEvent) :void {
@@ -44,162 +32,75 @@ public class QuestPanel extends DraggableObject
             });
         registerListener(ClientCtx.questData, PlayerQuestEvent.QUEST_ADDED,
             function (e :PlayerQuestEvent) :void {
-                addQuest(e.quest.id);
+                updateQuests();
             });
         registerListener(ClientCtx.questData, PlayerQuestEvent.QUEST_COMPLETED,
             function (e :PlayerQuestEvent) :void {
-                showQuestCompleted(e.quest.id);
-                removeQuest(e.quest.id);
+                showQuestCompleted(e.quest);
+                updateQuests();
             });
 
-        for each (var questId :int in ClientCtx.questData.activeQuestIds) {
-            addQuest(questId);
+        // Player list
+        _questList = new SimpleListController(
+            [],
+            _draggable,
+            "quest_",
+            [ "quest_name", "quest_description" ],
+            _panelMovie["button_up"],
+            _panelMovie["button_down"]);
+
+        updateQuests();
+    }
+
+    override protected function addedToDB () :void
+    {
+        super.addedToDB();
+        this.db.addObject(_questList);
+    }
+
+    override protected function removedFromDB () :void
+    {
+        _questList.destroySelf();
+    }
+
+    protected function updateQuests () :void
+    {
+        var listData :Array = [];
+        for each (var quest :QuestDesc in ClientCtx.questData.activeQuests) {
+            var entry :Object = {};
+            entry["quest_name"] = quest.displayName;
+            entry["quest_description"] = quest.description;
+
+            listData.push(entry);
         }
+
+        _questList.data = listData;
     }
 
     protected function updateQuestJuice () :void
     {
-        var text :String = "Quest Juice: " + ClientCtx.questData.questJuice;
-        TextBits.initTextField(_tfQuestJuice, text, 1.3, 0, 0x00ff00);
+        var tfJuice :TextField = _draggable["juice_total"];
+        tfJuice.text = String(ClientCtx.questData.questJuice);
     }
 
-    protected function addQuest (questId :int) :void
-    {
-        if (!questViewExists(questId)) {
-            var questView :ActiveQuestView = new ActiveQuestView(questId);
-            ClientCtx.mainLoop.topMode.addSceneObject(questView, _sprite);
-            _activeQuestViews.push(questView);
-            updateQuestViews();
-        }
-    }
-
-    protected function removeQuest (questId :int) :void
-    {
-        var idx :int = getQuestViewIdx(questId);
-
-        if (idx >= 0) {
-            var questView :ActiveQuestView = _activeQuestViews[idx];
-            questView.destroySelf();
-            _activeQuestViews.splice(idx, 1);
-            updateQuestViews();
-        }
-    }
-
-    protected function getQuestViewIdx (questId :int) :int
-    {
-        return ArrayUtil.indexIf(_activeQuestViews,
-            function (questView :ActiveQuestView) :Boolean {
-                return questView.questId == questId;
-            });
-    }
-
-    protected function questViewExists (questId :int) :Boolean
-    {
-        return (getQuestViewIdx(questId) >= 0);
-    }
-
-    protected function updateQuestViews () :void
-    {
-        var y :Number = 50;
-        for each (var questView :ActiveQuestView in _activeQuestViews) {
-            questView.x = 10;
-            questView.y = y;
-
-            y += questView.height + 5;
-        }
-    }
-
-    protected function showQuestCompleted (questId :int) :void
+    protected function showQuestCompleted (quest :QuestDesc) :void
     {
 
     }
 
     override public function get displayObject () :DisplayObject
     {
-        return _sprite;
+        return _panelMovie;
     }
 
     override protected function get draggableObject () :InteractiveObject
     {
-        return _draggableLayer;
+        return _draggable;
     }
 
-    protected var _locationViews :Array = [];
-    protected var _activeQuestViews :Array = [];
-
-    protected var _tfQuestJuice :TextField;
-
-    protected var _sprite :Sprite;
-    protected var _draggableLayer :Sprite;
-    protected var _uiLayer :Sprite;
-
-    protected static const WIDTH :Number = 600;
-    protected static const HEIGHT :Number = 150;
+    protected var _panelMovie :MovieClip;
+    protected var _draggable :MovieClip;
+    protected var _questList :SimpleListController;
 }
 
-}
-
-import flash.display.Sprite;
-import flash.text.TextField;
-import flash.display.SimpleButton;
-
-import vampire.quest.*;
-import vampire.quest.client.*;
-import com.threerings.flash.SimpleTextButton;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import flash.events.MouseEvent;
-import flash.display.DisplayObject;
-
-class ActiveQuestView extends SceneObject
-{
-    public function ActiveQuestView (questId :int)
-    {
-        _questId = questId;
-
-        _sprite = new Sprite();
-
-        _tfName = TextBits.createText(this.questDesc.displayName, 1.3, 0, 0x0000ff);
-        _sprite.addChild(_tfName);
-
-        _tfStatus = new TextField();
-        _sprite.addChild(_tfStatus);
-
-        registerListener(ClientCtx.stats, PlayerStatEvent.STAT_CHANGED,
-            function (statName :String) :void {
-                updateView();
-            });
-
-        updateView();
-    }
-
-    override public function get displayObject () :DisplayObject
-    {
-        return _sprite;
-    }
-
-    protected function get questDesc () :QuestDesc
-    {
-        return Quests.getQuest(_questId);
-    }
-
-    protected function updateView () :void
-    {
-        var desc :QuestDesc = this.questDesc;
-
-        var text :String = desc.description + " " + desc.getProgressText(ClientCtx.stats);
-        TextBits.initTextField(_tfStatus, text, 1.3, 0,
-            0xffffff);
-        _tfStatus.x = _tfName.x + _tfName.width + 5;
-    }
-
-    public function get questId () :int
-    {
-        return _questId;
-    }
-
-    protected var _questId :int;
-
-    protected var _sprite :Sprite;
-    protected var _tfName :TextField;
-    protected var _tfStatus :TextField;
 }
