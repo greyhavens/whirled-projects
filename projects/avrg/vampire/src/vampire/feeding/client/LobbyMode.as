@@ -17,6 +17,7 @@ import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 
+import vampire.client.SimpleListController;
 import vampire.data.VConstants;
 import vampire.feeding.*;
 import vampire.feeding.net.*;
