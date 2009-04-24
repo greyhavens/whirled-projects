@@ -2,7 +2,7 @@ package vampire.feeding {
 
 import vampire.quest.activity.BloodBloomActivityParams;
 import vampire.quest.client.PlayerQuestData;
-import vampire.quest.client.PlayerQuestStats;
+import vampire.quest.client.PlayerQuestProps;
 
 public class FeedingClientSettings
 {
@@ -11,7 +11,7 @@ public class FeedingClientSettings
     public var playerData :PlayerFeedingData;
     public var gameCompleteCallback :Function;
     public var playerQuestData :PlayerQuestData;
-    public var playerStats :PlayerQuestStats;
+    public var playerQuestProps :PlayerQuestProps;
     public var activityParams :BloodBloomActivityParams;
 
     // Valid only if spOnly is true
@@ -24,7 +24,7 @@ public class FeedingClientSettings
 
     public static function spSettings (preyName :String, preyBloodStrain :int, variant :int,
         playerData :PlayerFeedingData, gameCompleteCallback :Function,
-        playerQuestData :PlayerQuestData = null, playerStats :PlayerQuestStats = null,
+        playerQuestData :PlayerQuestData = null, playerQuestProps :PlayerQuestProps = null,
         activityParams :BloodBloomActivityParams = null) :FeedingClientSettings
     {
         var settings :FeedingClientSettings = new FeedingClientSettings();
@@ -35,14 +35,14 @@ public class FeedingClientSettings
         settings.playerData = playerData.clone();
         settings.gameCompleteCallback = gameCompleteCallback;
         settings.playerQuestData = playerQuestData;
-        settings.playerStats = playerStats;
+        settings.playerQuestProps = playerQuestProps;
         settings.activityParams = activityParams;
         return settings;
     }
 
     public static function mpSettings (gameId :int, playerData :PlayerFeedingData,
         gameCompleteCallback :Function, playerQuestData :PlayerQuestData = null,
-        playerStats :PlayerQuestStats = null, activityParams :BloodBloomActivityParams = null)
+        playerQuestProps :PlayerQuestProps = null, activityParams :BloodBloomActivityParams = null)
         :FeedingClientSettings
     {
         var settings :FeedingClientSettings = new FeedingClientSettings();
@@ -51,7 +51,7 @@ public class FeedingClientSettings
         settings.playerData = playerData.clone();
         settings.gameCompleteCallback = gameCompleteCallback;
         settings.playerQuestData = playerQuestData;
-        settings.playerStats = playerStats;
+        settings.playerQuestProps = playerQuestProps;
         settings.activityParams = activityParams;
         return settings;
     }

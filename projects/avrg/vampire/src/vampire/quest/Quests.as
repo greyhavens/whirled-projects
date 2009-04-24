@@ -3,7 +3,7 @@ package vampire.quest {
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 
-import vampire.quest.client.PlayerQuestStats;
+import vampire.quest.client.PlayerQuestProps;
 
 public class Quests
 {
@@ -46,12 +46,12 @@ public class Quests
     protected static function makeCollectionRequirement (desc :QuestDesc, statName :String,
         num :int) :void
     {
-        desc.relevantStats.push(statName);
-        desc.isCompletedFn = function (stats :PlayerQuestStats) :Boolean {
-            return stats.getIntStat(statName) >= num;
+        desc.relevantProps.push(statName);
+        desc.isCompletedFn = function (props :PlayerQuestProps) :Boolean {
+            return props.getIntProp(statName) >= num;
         };
-        desc.getProgressTextFn = function (stats :PlayerQuestStats) :String {
-            var cur :int = stats.getIntStat(statName);
+        desc.getProgressTextFn = function (props :PlayerQuestProps) :String {
+            var cur :int = props.getIntProp(statName);
             var remaining :int = Math.max(num - cur, 0);
             return "(" + remaining + " remaining)";
         }

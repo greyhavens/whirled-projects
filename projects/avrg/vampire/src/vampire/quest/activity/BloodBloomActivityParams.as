@@ -6,17 +6,17 @@ public class BloodBloomActivityParams extends ActivityParams
 {
     public var preyName :String;
 
-    public var awardedStatName :String;
-    public var awardedStatIncrement :int;
+    public var awardedPropName :String;
+    public var awardedPropIncrement :int;
 
     public function BloodBloomActivityParams (minPlayers :int, maxPlayers :int, preyName :String,
-        awardedStatName :String, awardedStatIncrement :int)
+        awardedPropName :String, awardedPropIncrement :int)
     {
         super(minPlayers, maxPlayers);
 
         this.preyName = preyName;
-        this.awardedStatName = awardedStatName;
-        this.awardedStatIncrement = awardedStatIncrement;
+        this.awardedPropName = awardedPropName;
+        this.awardedPropIncrement = awardedPropIncrement;
     }
 }
 

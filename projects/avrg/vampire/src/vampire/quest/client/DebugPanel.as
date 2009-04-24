@@ -30,22 +30,22 @@ public class DebugPanel extends GenericDraggableWindow
         createNewLayoutRow(15);
 
         // buttons
-        createButton("Set Stat", function (...ignored) :void {
-            ClientCtx.stats.setStat(getEnteredName(), getEnteredVal());
+        createButton("Set Prop", function (...ignored) :void {
+            ClientCtx.questProps.setProp(getEnteredName(), getEnteredVal());
         });
 
-        createButton("Get Stat", function (...ignored) :void {
+        createButton("Get Prop", function (...ignored) :void {
             var name :String = getEnteredName();
-            setStatusText("Stat", "name", name, "val", ClientCtx.stats.getStat(name));
+            setStatusText("Prop", "name", name, "val", ClientCtx.questProps.getProp(name));
         });
 
-        createButton("List Stats", function (...ignored) :void {
-            setStatusText("Stats", "names", ClientCtx.stats.getStatNames());
+        createButton("List Props", function (...ignored) :void {
+            setStatusText("Props", "names", ClientCtx.questProps.getPropNames());
         });
 
-        createButton("Clear Stats", function (...ignored) :void {
-            for each (var statName :String in ClientCtx.stats.getStatNames()) {
-                ClientCtx.stats.clearStat(statName);
+        createButton("Clear Props", function (...ignored) :void {
+            for each (var statName :String in ClientCtx.questProps.getPropNames()) {
+                ClientCtx.questProps.clearProp(statName);
             }
         });
 

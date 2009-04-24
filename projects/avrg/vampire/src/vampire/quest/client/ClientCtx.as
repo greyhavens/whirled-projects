@@ -13,7 +13,7 @@ public class ClientCtx
     public static var mainLoop :MainLoop;
     public static var rsrcs :ResourceManager;
     public static var questData :PlayerQuestData;
-    public static var stats :PlayerQuestStats;
+    public static var questProps :PlayerQuestProps;
 
     public static function instantiateBitmap (name :String) :Bitmap
     {

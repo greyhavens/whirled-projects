@@ -18,7 +18,7 @@ import vampire.quest.client.npctalk.*;
 public class QuestClient
 {
     public static function init (gameCtrl :AVRGameControl, simpleGame :SimpleGame,
-        questData :PlayerQuestData, stats :PlayerQuestStats) :void
+        questData :PlayerQuestData, questProps :PlayerQuestProps) :void
     {
         if (_inited) {
             throw new Error("QuestClient already inited");
@@ -33,7 +33,7 @@ public class QuestClient
         ClientCtx.mainLoop = simpleGame.ctx.mainLoop;
         ClientCtx.rsrcs = simpleGame.ctx.rsrcs;
         ClientCtx.questData = questData;
-        ClientCtx.stats = stats;
+        ClientCtx.questProps = questProps;
 
         ClientCtx.rsrcs.registerResourceType("npcTalk", NpcTalkResource);
 
@@ -143,7 +143,7 @@ public class QuestClient
             handshakeQuestTotems(true);
         }
 
-        ClientCtx.stats.addEventListener(PlayerStatEvent.STAT_CHANGED, checkQuestCompletion);
+        ClientCtx.questProps.addEventListener(QuestPropEvent.PROP_CHANGED, checkQuestCompletion);
         ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_ADDED, onQuestAdded);
         ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_COMPLETED, onQuestCompleted);
 
@@ -153,7 +153,7 @@ public class QuestClient
     protected static function checkQuestCompletion (...ignored) :void
     {
         for each (var quest :QuestDesc in ClientCtx.questData.activeQuests) {
-            if (quest.isComplete(ClientCtx.stats)) {
+            if (quest.isComplete(ClientCtx.questProps)) {
                 ClientCtx.questData.completeQuest(quest.id);
             }
         }
@@ -188,7 +188,7 @@ public class QuestClient
                     feedingGame.parent.removeChild(feedingGame);
                 },
                 ClientCtx.questData,
-                ClientCtx.stats,
+                ClientCtx.questProps,
                 activity.params as BloodBloomActivityParams));
             ClientCtx.mainLoop.topMode.modeSprite.addChild(feedingGame);
             break;

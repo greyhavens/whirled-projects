@@ -4,15 +4,15 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.StringUtil;
 
 import vampire.Util;
-import vampire.quest.client.PlayerQuestStats;
+import vampire.quest.client.PlayerQuestProps;
 
 public class QuestDesc
 {
     // Unique name
     public var name :String;
 
-    // A list of stats that this quest cares about
-    public var relevantStats :Array = [];
+    // A list of quest props that this quest cares about
+    public var relevantProps :Array = [];
 
     // Requirements for quest availability
     public var requiredQuests :Array = []; // list of ids
@@ -20,7 +20,7 @@ public class QuestDesc
     public var maxLevel :int = int.MAX_VALUE;
 
     // A function that returns true if the quest is completed
-    // function isCompleted (stats :PlayerQuestStats) :Boolean
+    // function isCompleted (questProps :PlayerQuestProps) :Boolean
     public var isCompletedFn :Function;
 
     // Rewards
@@ -31,7 +31,7 @@ public class QuestDesc
     public var description :String = "";
 
     // A function that returns flavor text describing the progress that has been made on the quest
-    // function getProgressText (stats :PlayerQuestStats) :String
+    // function getProgressText (questProps :PlayerQuestProps) :String
     public var getProgressTextFn :Function;
 
     public function get id () :int
@@ -44,19 +44,19 @@ public class QuestDesc
         return StringUtil.simpleToString(this, [ "name", "id", "displayName" ]);
     }
 
-    public function isRelevantStat (statName :String) :Boolean
+    public function isRelevantProp (propName :String) :Boolean
     {
-        return ArrayUtil.contains(this.relevantStats, statName);
+        return ArrayUtil.contains(this.relevantProps, propName);
     }
 
-    public function isComplete (stats :PlayerQuestStats) :Boolean
+    public function isComplete (props :PlayerQuestProps) :Boolean
     {
-        return this.isCompletedFn(stats);
+        return this.isCompletedFn(props);
     }
 
-    public function getProgressText (stats :PlayerQuestStats) :String
+    public function getProgressText (props :PlayerQuestProps) :String
     {
-        return this.getProgressTextFn(stats);
+        return this.getProgressTextFn(props);
     }
 
     public static function getId (name :String) :int

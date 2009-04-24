@@ -7,9 +7,9 @@ public class CorruptionActivityParams extends BloodBloomActivityParams
     public var corruptionBlood :int;
 
     public function CorruptionActivityParams (minPlayers :int, maxPlayers :int, preyName :String,
-        awardedStatName :String, awardedStatIncrement :int, corruptionBlood :int)
+        awardedPropName :String, awardedPropIncrement :int, corruptionBlood :int)
     {
-        super(minPlayers, maxPlayers, preyName, awardedStatName, awardedStatIncrement);
+        super(minPlayers, maxPlayers, preyName, awardedPropName, awardedPropIncrement);
         this.corruptionBlood = corruptionBlood;
     }
 }

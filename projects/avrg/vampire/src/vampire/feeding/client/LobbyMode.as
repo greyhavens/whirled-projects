@@ -194,10 +194,10 @@ public class LobbyMode extends AppMode
                 success = (_results.totalScore >= params.corruptionBlood);
             }
 
-            if (success && ClientCtx.clientSettings.activityParams.awardedStatName != null) {
-                ClientCtx.clientSettings.playerStats.offsetIntStat(
-                    ClientCtx.clientSettings.activityParams.awardedStatName,
-                    ClientCtx.clientSettings.activityParams.awardedStatIncrement);
+            if (success && ClientCtx.clientSettings.activityParams.awardedPropName != null) {
+                ClientCtx.clientSettings.playerQuestProps.offsetIntProp(
+                    ClientCtx.clientSettings.activityParams.awardedPropName,
+                    ClientCtx.clientSettings.activityParams.awardedPropIncrement);
             }
         }
     }
