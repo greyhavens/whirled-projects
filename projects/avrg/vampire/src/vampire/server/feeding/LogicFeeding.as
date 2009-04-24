@@ -2,7 +2,6 @@ package vampire.server.feeding
 {
     import com.threerings.flash.MathUtil;
     import com.threerings.flash.Vector2;
-    import com.threerings.util.HashMap;
     import com.threerings.util.Log;
     import com.whirled.avrg.AVRGameAvatar;
     import com.whirled.avrg.OfflinePlayerPropertyControl;
@@ -16,6 +15,7 @@ package vampire.server.feeding
     import vampire.Util;
     import vampire.data.Codes;
     import vampire.data.VConstants;
+    import vampire.feeding.FeedingRoundResults;
     import vampire.net.messages.DebugMsg;
     import vampire.net.messages.FeedConfirmMsg;
     import vampire.net.messages.FeedRequestCancelMsg;
@@ -28,7 +28,6 @@ package vampire.server.feeding
     import vampire.server.PlayerData;
     import vampire.server.Room;
     import vampire.server.ServerContext;
-    import vampire.server.ServerObjectMessage;
 
 public class LogicFeeding extends SimObject
 {
@@ -99,38 +98,24 @@ public class LogicFeeding extends SimObject
         return ServerContext.server.isPlayer(playerId);
     }
 
-    public static function bloodBloomRoundOver (gameRecord :FeedingRecord, finalScores :HashMap) :void
+    public static function bloodBloomRoundOver (gameRecord :FeedingRecord,
+        results :FeedingRoundResults) :void
     {
-        // TODO: Dion
-        /*log.debug("bloodBloomRoundOver()", "gameRecord", gameRecord);
+        log.debug("bloodBloomRoundOver()", "gameRecord", gameRecord);
         var srv :GameServer = ServerContext.server;
 
         if (gameRecord == null) {
             log.error("bloodBloomRoundOver gameRecord==null");
             return;
         }
-        if (gameRecord.gameServer == null) {
-            log.error("bloodBloomRoundOver gameRecord.gameServer==null");
+        if (results == null) {
+            log.error("bloodBloomRoundOver", "results", results);
             return;
         }
 
-        // TODO: Dion
-        if (gameRecord.gameServer.lastRoundScore == 0) {
-            log.debug("score==0 so no blood lost or gained.");
-
-            if (gameRecord.gameServer.playerIds != null) {
-                for each (var playerId :int in gameRecord.gameServer.playerIds) {
-                    if (srv.isPlayer(playerId)) {
-                        var player :PlayerData = srv.getPlayer(playerId);
-                        player.addFeedback("You scored 0, no blood!");
-                    }
-                }
-            }
-            else {
-                log.error("bloodBloomRoundOver gameRecord.playerIds == null");
-            }
-            return;
-        }
+        //Reference these once since they require computing
+        var averageScore :Number = results.averageScore;
+        var totalScore :Number = results.totalScore;
 
         var room :Room = gameRecord.room;
 
@@ -141,11 +126,12 @@ public class LogicFeeding extends SimObject
         //Send the LeaderBoard the scores
         log.debug("Sending message to LeaderBoardServer");
         ServerContext.server.sendMessageToNamedObject(
-            new ObjectMessage(LeaderBoardServer.MESSAGE_LEADER_BOARD_MESSAGE_SCORES, finalScores),
+            new ObjectMessage(LeaderBoardServer.MESSAGE_LEADER_BOARD_MESSAGE_SCORES,
+                results.scores),
             LeaderBoardServer.NAME);
 
         var predIds :Array = [];
-        finalScores.forEach(function (playerId :int, score :Number) :void {
+        results.scores.forEach(function (playerId :int, score :Number) :void {
             if (score > 0 && playerId != gameRecord.preyId) {
                 predIds.push(playerId);
             }
@@ -200,26 +186,21 @@ public class LogicFeeding extends SimObject
 
 
         //Then handle experience.  ATM everyone gets xp=score
-        var numPlayers :Number = finalScores.size();//predIds.length + (gameRecord.gameServer.preyId != 0 ? 1 : 0);
-        log.debug("End of feeding round, numPlayers=" + numPlayers);
-        log.debug("End of feeding round, finalScores=" + Util.hashmapToString(finalScores));
-
-
-        var playerScore :Number = gameRecord.gameServer.lastRoundScore / numPlayers;
+        log.debug("End of feeding round, numPlayers=" + results.initialPlayerCount);
 
         //Check for wildly huge scores.  Probably a bug
-        if (gameRecord.gameServer.lastRoundScore > VConstants.MAX_THEORETICAL_FEEDING_SCORE) {
+        if (averageScore > VConstants.MAX_THEORETICAL_FEEDING_SCORE) {
             log.error("Score error?", "MAX_THEORETICAL_FEEDING_SCORE",
-                VConstants.MAX_THEORETICAL_FEEDING_SCORE, "gameRecord.gameServer.lastRoundScore",
-                gameRecord.gameServer.lastRoundScore);
+                VConstants.MAX_THEORETICAL_FEEDING_SCORE, "averageScore",
+                averageScore);
             return;
         }
         //Update the highest possible score.  We use this to scale the coin payout
-        ServerContext.topBloodBloomScore = Math.max(ServerContext.topBloodBloomScore, playerScore);
-        var xpGained :Number = playerScore * VConstants.XP_GAINED_FROM_FEEDING_PER_BLOOD_UNIT;
+        ServerContext.topBloodBloomScore = Math.max(ServerContext.topBloodBloomScore, averageScore);
+        var xpGained :Number = averageScore * VConstants.XP_GAINED_FROM_FEEDING_PER_BLOOD_UNIT;
         var xpFormatted :String = Util.formatNumberForFeedback(xpGained);
         //The score between [0,1]
-        var feedingScoreScaled :Number = playerScore / ServerContext.topBloodBloomScore;
+        var feedingScoreScaled :Number = averageScore / ServerContext.topBloodBloomScore;
 
         function awardXP(playerId :int, xp :Number, xpFormatted :String) :void {
             if (xp == 0) {
@@ -234,7 +215,7 @@ public class LogicFeeding extends SimObject
                 //Notify the analyser
                 ServerContext.server.sendMessageToNamedObject(
                     new ObjectMessage(AnalyserServer.MSG_RECEIVED_FEEDING_PAYOUT,
-                        [playerId, xp, finalScores.get(playerId)]),
+                        [playerId, xp, results.scores.get(playerId)]),
                     AnalyserServer.NAME);
 
                 //Add some bonus xp to your blood bond, if they are online
@@ -252,10 +233,10 @@ public class LogicFeeding extends SimObject
         gameRecord.gameServer.predatorIds.forEach(function(predId :int, ...ignored) :void {
             //Only award xp if the pred score was > 0
             //This also excludes players that loin the lobby after the feed is started.
-            if (finalScores.get(predId) > 0) {
+            if (results.scores.get(predId) > 0) {
                 awardXP(predId, xpGained, xpFormatted);
             }
-        });*/
+        });
     }
 
         /**

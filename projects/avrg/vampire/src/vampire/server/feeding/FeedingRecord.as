@@ -222,29 +222,17 @@ public class FeedingRecord extends EventCollecter
         }
     }
 
-    //public function onRoundComplete (finalScores :HashMap) :void
     public function onRoundComplete (results :FeedingRoundResults) :void
     {
-        // TODO: Dion
-        /*log.debug("roundCompleteCallback", "scores", Util.hashmapToString(finalScores));
         try {
-            if(_gameServer != null) {
-
-                var score :Number = _gameServer.lastRoundScore;
-                log.debug("Score=" + score);
-                var selfref :FeedingRecord = this;
-                ServerContext.server.control.doBatch(function() :void {
-                    LogicFeeding.bloodBloomRoundOver(selfref, finalScores);
-                });
-
-            }
-            else {
-                log.error("roundCompleteCallback, but gameserver is null, no points!");
-            }
+            var selfref :FeedingRecord = this;
+            ServerContext.server.control.doBatch(function() :void {
+                LogicFeeding.bloodBloomRoundOver(selfref, results);
+            });
         }
         catch(err :Error) {
             log.error(err.getStackTrace());
-        }*/
+        }
     }
 
     public function onGameComplete () :void
