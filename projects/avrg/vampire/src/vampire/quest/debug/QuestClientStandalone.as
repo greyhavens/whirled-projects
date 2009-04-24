@@ -14,7 +14,7 @@ import vampire.quest.*;
 import vampire.quest.client.*;
 import vampire.quest.client.npctalk.TalkView;
 
-[SWF(width="700", height="500", frameRate="30")]
+[SWF(width="1000", height="700", frameRate="30")]
 public class QuestClientStandalone extends Sprite
 {
     QuestTestClient;

@@ -59,6 +59,7 @@ public class QuestPanel extends DraggableObject
             _panelMovie["button_down"]);
 
         updateQuests();
+        updateQuestJuice();
     }
 
     public function showLocationPanel (loc :LocationDesc) :void
