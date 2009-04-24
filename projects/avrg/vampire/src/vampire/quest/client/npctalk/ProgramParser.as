@@ -46,8 +46,8 @@ public class ProgramParser
         case "GiveQuest":
             return parseGiveQuestStatement(xml);
 
-        case "GiveLocation":
-            return parseGiveLocationStatement(xml);
+        case "GiveActivity":
+            return parseGiveActivityStatement(xml);
 
         // Generic
         case "Block":
@@ -194,9 +194,9 @@ public class ProgramParser
         return new GiveQuestStatement(getQuest(XmlReader.getStringAttr(xml, "name")));
     }
 
-    protected static function parseGiveLocationStatement (xml :XML) :GiveLocationStatement
+    protected static function parseGiveActivityStatement (xml :XML) :GiveActivityStatement
     {
-        return new GiveLocationStatement(getLoc(XmlReader.getStringAttr(xml, "name")));
+        return new GiveActivityStatement(getActivity(XmlReader.getStringAttr(xml, "name")));
     }
 
     protected static function parseExpr (xml :XML) :Expr
@@ -216,8 +216,8 @@ public class ProgramParser
         case "SeenQuest":
             return parseHasQuestExpr(xml, HasQuestExpr.EXISTS);
 
-        case "HasLocation":
-            return parseHasLocationExpr(xml);
+        case "HasActivity":
+            return parseHasActivityExpr(xml);
 
         // Generic
         case "And":
@@ -306,9 +306,9 @@ public class ProgramParser
         return new HasQuestExpr(getQuest(XmlReader.getStringAttr(xml, "name")), type);
     }
 
-    protected static function parseHasLocationExpr (xml :XML) :HasLocationExpr
+    protected static function parseHasActivityExpr (xml :XML) :HasActivityExpr
     {
-        return new HasLocationExpr(getLoc(XmlReader.getStringAttr(xml, "name")));
+        return new HasActivityExpr(getActivity(XmlReader.getStringAttr(xml, "name")));
     }
 
     protected static function parseBinaryCompExpr (xml :XML, type :int) :BinaryCompExpr
@@ -339,6 +339,16 @@ public class ProgramParser
         }
 
         return loc;
+    }
+
+    protected static function getActivity (activityName :String) :ActivityDesc
+    {
+        var activity :ActivityDesc = Activities.getActivityByName(activityName);
+        if (activity == null) {
+            throw new XmlReadError("No activity named '" + activityName + "' exists");
+        }
+
+        return activity;
     }
 }
 

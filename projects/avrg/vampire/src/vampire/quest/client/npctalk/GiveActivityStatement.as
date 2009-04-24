@@ -3,12 +3,12 @@ package vampire.quest.client.npctalk {
 import vampire.quest.*;
 import vampire.quest.client.*;
 
-public class GiveLocationStatement
+public class GiveActivityStatement
     implements Statement
 {
-    public function GiveLocationStatement (loc :LocationDesc)
+    public function GiveActivityStatement (activity :ActivityDesc)
     {
-        _loc = loc;
+        _activity = activity;
     }
 
     public function createState () :Object
@@ -19,11 +19,11 @@ public class GiveLocationStatement
 
     public function update (dt :Number, state :Object) :Number
     {
-        ClientCtx.questData.addAvailableLocation(_loc);
+        ClientCtx.questData.addAvailableActivity(_activity);
         return Status.CompletedInstantly;
     }
 
-    protected var _loc :LocationDesc;
+    protected var _activity :ActivityDesc;
 }
 
 }
