@@ -3,7 +3,7 @@ package vampire.quest.client {
 import com.threerings.flash.SimpleTextButton;
 import com.threerings.util.HashMap;
 import com.whirled.contrib.ColorMatrix;
-import com.whirled.contrib.simplegame.objects.DraggableObject;
+import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
@@ -16,7 +16,7 @@ import flash.text.TextField;
 import vampire.quest.*;
 import vampire.quest.activity.*;
 
-public class LocationPanel extends DraggableObject
+public class LocationPanel extends SceneObject
 {
     public function LocationPanel (loc :LocationDesc)
     {

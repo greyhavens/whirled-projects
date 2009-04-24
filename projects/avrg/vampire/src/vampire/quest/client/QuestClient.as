@@ -72,24 +72,14 @@ public class QuestClient
 
     public static function showLocationPanel (loc :LocationDesc) :void
     {
-        if (_locationPanel != null && _locationPanel.loc == loc) {
-            _locationPanel.visible = true;
-
-        } else {
-            if (_locationPanel != null) {
-                _locationPanel.destroySelf();
-                _locationPanel = null;
-            }
-
-            _locationPanel = new LocationPanel(loc);
-            ClientCtx.mainLoop.topMode.addSceneObject(_locationPanel);
-        }
+        showQuestPanel(true);
+        _questPanel.showLocationPanel(loc);
     }
 
     public static function hideLocationPanel () :void
     {
-        if (_locationPanel != null) {
-            _locationPanel.visible = false;
+        if (_questPanel != null) {
+            _questPanel.hideLocationPanel();
         }
     }
 
@@ -236,7 +226,6 @@ public class QuestClient
         }
     }
 
-    protected static var _locationPanel :LocationPanel;
     protected static var _debugPanel :DebugPanel;
     protected static var _questPanel :QuestPanel;
     protected static var _npcTalkViewRef :SimObjectRef = SimObjectRef.Null();
