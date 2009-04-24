@@ -3,6 +3,8 @@ package vampire.quest {
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 
+import vampire.quest.client.PlayerQuestStats;
+
 public class Quests
 {
     public static function init () :void

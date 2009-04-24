@@ -1,4 +1,4 @@
-package vampire.quest {
+package vampire.quest.client {
 
 import com.threerings.util.Log;
 import com.threerings.util.Util;
@@ -11,6 +11,8 @@ import com.whirled.net.PropertySubControl;
 
 import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
+
+import vampire.quest.*;
 
 [Event(name="QuestAdded", type="vampire.quest.PlayerQuestEvent")]
 [Event(name="QuestCompleted", type="vampire.quest.PlayerQuestEvent")]

@@ -1,4 +1,4 @@
-package vampire.quest {
+package vampire.quest.client {
 
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.namespc.*;
@@ -7,6 +7,8 @@ import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.PropertySubControl;
 
 import flash.events.EventDispatcher;
+
+import vampire.quest.*;
 
 [Event(name="StatChanged", type="vampire.quest.PlayerStatEvent")]
 

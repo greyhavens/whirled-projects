@@ -4,6 +4,7 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.StringUtil;
 
 import vampire.Util;
+import vampire.quest.client.PlayerQuestStats;
 
 public class QuestDesc
 {

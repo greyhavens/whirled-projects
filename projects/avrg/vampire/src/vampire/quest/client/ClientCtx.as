@@ -7,9 +7,6 @@ import com.whirled.contrib.simplegame.resource.*;
 import flash.display.Bitmap;
 import flash.display.MovieClip;
 
-import vampire.quest.PlayerQuestData;
-import vampire.quest.PlayerQuestStats;
-
 public class ClientCtx
 {
     public static var gameCtrl :AVRGameControl;

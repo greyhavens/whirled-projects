@@ -1,9 +1,8 @@
 package vampire.feeding {
 
-import vampire.quest.PlayerQuestData;
-import vampire.quest.PlayerQuestStats;
-import vampire.quest.activity.ActivityParams;
 import vampire.quest.activity.BloodBloomActivityParams;
+import vampire.quest.client.PlayerQuestData;
+import vampire.quest.client.PlayerQuestStats;
 
 public class FeedingClientSettings
 {
