@@ -7,7 +7,7 @@ import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.text.TextField;
 
-import vampire.server.feeding.LeaderBoardServer;
+import vampire.data.VConstants;
 
 public class LeaderBoardClient extends SceneObject
 {
@@ -22,39 +22,33 @@ public class LeaderBoardClient extends SceneObject
 
     protected function handlePropertyChangedEvent (e: PropertyChangedEvent) :void
     {
-        trace("handlePropertyChangedEvent e=" + e);
         var ii :int;
         var scores :Array;
-        if (e.name == LeaderBoardServer.GLOBAL_PROP_SCORES_DAILY) {
+        if (e.name == VConstants.GLOBAL_PROP_SCORES_DAILY) {
 
             setTextFromPropScores(e.newValue as Array,
                                   "today_0",
-                                  LeaderBoardServer.NUMBER_HIGH_SCORES_DAILY);
+                                  VConstants.NUMBER_HIGH_SCORES_DAILY);
         }
-        else if (e.name == LeaderBoardServer.GLOBAL_PROP_SCORES_MONTHLY) {
+        else if (e.name == VConstants.GLOBAL_PROP_SCORES_MONTHLY) {
 
             setTextFromPropScores(e.newValue as Array,
                                   "monthly_0",
-                                  LeaderBoardServer.NUMBER_HIGH_SCORES_MONTHLY);
+                                  VConstants.NUMBER_HIGH_SCORES_MONTHLY);
         }
     }
 
     protected function updateScoresFromProps (...ignored) :void
     {
-        trace("updateScoresFromProps, daily="
-            + ClientCtx.gameCtrl.game.props.get(LeaderBoardServer.GLOBAL_PROP_SCORES_DAILY)
-            + ", monthly="
-            + ClientCtx.gameCtrl.game.props.get(LeaderBoardServer.GLOBAL_PROP_SCORES_MONTHLY));
-
         setTextFromPropScores(
-            ClientCtx.gameCtrl.game.props.get(LeaderBoardServer.GLOBAL_PROP_SCORES_DAILY) as Array,
+            ClientCtx.gameCtrl.game.props.get(VConstants.GLOBAL_PROP_SCORES_DAILY) as Array,
             "today_0",
-            LeaderBoardServer.NUMBER_HIGH_SCORES_DAILY);
+            VConstants.NUMBER_HIGH_SCORES_DAILY);
 
         setTextFromPropScores(
-            ClientCtx.gameCtrl.game.props.get(LeaderBoardServer.GLOBAL_PROP_SCORES_MONTHLY) as Array,
+            ClientCtx.gameCtrl.game.props.get(VConstants.GLOBAL_PROP_SCORES_MONTHLY) as Array,
             "monthly_0",
-            LeaderBoardServer.NUMBER_HIGH_SCORES_MONTHLY);
+            VConstants.NUMBER_HIGH_SCORES_MONTHLY);
 
     }
 
@@ -77,7 +71,7 @@ public class LeaderBoardClient extends SceneObject
                         _leaderBoardPanel[textFieldName + (ii+1) ] as MovieClip;
                     if (scorePanel != null) {
                         TextField(scorePanel["player_name"]).text = "" + score[1];
-                        TextField(scorePanel["player_score"]).text = score[0];
+                        TextField(scorePanel["player_score"]).text = "" + int(score[0]);
                     }
                 }
             }
