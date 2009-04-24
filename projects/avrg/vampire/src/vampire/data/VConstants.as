@@ -5,7 +5,7 @@ import com.threerings.flash.Vector2;
 public class VConstants
 {
     public static var LOCAL_DEBUG_MODE :Boolean = false;
-    public static const MODE_DEV :Boolean = true;
+    public static const MODE_DEV :Boolean = false;
 
     public static const PLAYERS_IN_ROOM_TRIGGERING_BALANCING :int = 8;
     public static const ROOMS_SHOWN_IN_LOAD_BALANCER :int = 5;
@@ -34,7 +34,7 @@ public class VConstants
     /**
     * If you're not related to the ubervamp
     */
-    public static const UBER_VAMP_ID :int = MODE_DEV ? 12 : 383387;
+    public static const UBER_VAMP_ID :int = MODE_DEV ? 382856 : 383387;
     //ubervamp localhost == 12
     //ubervamp dev.whirled == 1877, 382856
     //uvervamp Whirled == 383387
@@ -104,6 +104,11 @@ public class VConstants
     public static const TEXT_CONFIM_SIRE :String = "If you feed from this Lineage vampire, " +
         "they will become your permanent sire, allowing you to draw power from your progeny.  " +
         "Are you sure?";
+
+    public static const GLOBAL_PROP_SCORES_DAILY :String = "HighScoresFeedingDaily";
+    public static const GLOBAL_PROP_SCORES_MONTHLY :String = "HighScoresFeedingMonthy";
+    public static const NUMBER_HIGH_SCORES_DAILY :int = 5;
+    public static const NUMBER_HIGH_SCORES_MONTHLY :int = 3;
 
     protected static const p4 :Number = Math.cos(Math.PI/4);
     public static const PREDATOR_LOCATIONS_RELATIVE_TO_PREY :Array = [

@@ -243,7 +243,7 @@ public class HUD extends DraggableObject
             _bloodXPMouseOverSceneObject.addTask(AlphaTask.CreateEaseIn(0, 0.3));
         });
 
-        _hudXPParent.addChild(_bloodXPMouseOverSprite);
+        _hudXPParent.addChildAt(_bloodXPMouseOverSprite, _hudXPParent.getChildIndex(_hudXP) + 1);
         db.addObject(_bloodXPMouseOverSceneObject);
 
         var hudHelp :SimpleButton = SimpleButton(findSafely("button_menu"));

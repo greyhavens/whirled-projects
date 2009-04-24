@@ -231,7 +231,8 @@ public class LogicFeeding extends SimObject
 
                 //Notify the analyser
                 ServerContext.server.sendMessageToNamedObject(
-                    new ObjectMessage(AnalyserServer.MSG_RECEIVED_FEEDING_XP_PAYOUT, [playerId, xp]),
+                    new ObjectMessage(AnalyserServer.MSG_RECEIVED_FEEDING_PAYOUT,
+                        [playerId, xp, finalScores.get(playerId)]),
                     AnalyserServer.NAME);
 
                 //Add some bonus xp to your blood bond, if they are online

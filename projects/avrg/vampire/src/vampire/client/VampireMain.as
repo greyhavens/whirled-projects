@@ -123,6 +123,7 @@ public class VampireMain extends Sprite
     [Embed(source="../../../rsrc/ArnoPro-LightDisplay.otf", fontFamily="ArnoProLight")]
     public const ArnoProLightEmbeddedFont:Class;
 
+
 }
 
 }

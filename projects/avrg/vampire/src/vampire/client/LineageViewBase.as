@@ -63,6 +63,8 @@ public class LineageViewBase extends SceneObjectParent
         }
     }
 
+
+
     public function addPopupBackground () :void
     {
         var popupPanel :MovieClip = ClientContext.instantiateMovieClip("HUD", "popup", false);

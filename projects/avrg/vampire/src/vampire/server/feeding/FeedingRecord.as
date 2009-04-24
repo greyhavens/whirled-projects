@@ -213,20 +213,12 @@ public class FeedingRecord extends EventCollecter
 
     public function onGameStarted () :void
     {
-        _playerIdsWhenGameStarted = _gameServer.playerIds.slice();
         //Notify the analyser
         if (_room != null) {
             _room.db.sendMessageToNamedObject(new ObjectMessage(AnalyserServer.MSG_RECEIVED_FEED,
-                                                                _playerIdsWhenGameStarted),
+                                                                _gameServer.playerIds.slice()),
                                               AnalyserServer.NAME);
         }
-
-//        if (ServerContext.server.isPlayer(_gameServer.preyId)) {
-//            _preyInitialLocation = ServerContext.server.getPlayer(_gameServer.preyId).location;
-//        }
-//        if (ServerContext.server.isPlayer(_predatorIndex[0])) {
-//            _primaryPredInitialLocation = ServerContext.server.getPlayer(_predatorIndex[0]).location;
-//        }
     }
 
     public function onRoundComplete (finalScores :HashMap) :void
@@ -330,7 +322,7 @@ public class FeedingRecord extends EventCollecter
 //    protected var _primaryPredInitialLocation :Array;
     protected var _preyInitialLocation :Array;
     protected var _preyId :int;
-    protected var _playerIdsWhenGameStarted :Array;
+//    protected var _playerIdsWhenGameStarted :Array;
 
     protected var _gameFinishedCallback :Function;
     /**

@@ -110,6 +110,16 @@ public class PopupQuery extends DraggableObject
         _displaySprite.addChildAt(_buttonPanelSprite, _displaySprite.numChildren);
     }
 
+    override public function getObjectGroup (groupNum :int) :String
+    {
+        switch (groupNum) {
+            case 0: return GROUP;
+            // 2 is the number of groups this class defines
+            default: return super.getObjectGroup(groupNum - 1);
+        }
+    }
+
+
     override protected function update(dt:Number) :void
     {
         //Make sure the popup is always on top.
@@ -367,6 +377,7 @@ public class PopupQuery extends DraggableObject
     protected static const GAP_BETWEEN_BUTTON_AND_PANEL_BOTTOM :int = 4;
     protected static const GAP_ABOVE_AND_BELOW_TEXT :int = 18;//15;
 
+    public static const GROUP :String = "Group";
     protected static const log :Log = Log.getLog(PopupQuery);
 
 }
