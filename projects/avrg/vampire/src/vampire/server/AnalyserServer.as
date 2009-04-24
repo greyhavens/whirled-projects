@@ -7,9 +7,11 @@ import com.whirled.contrib.simplegame.ObjectMessage;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.net.MessageReceivedEvent;
 
+import flash.utils.ByteArray;
 import flash.utils.setInterval;
 
 import vampire.data.Codes;
+import vampire.data.Logic;
 import vampire.net.messages.StatsMsg;
 
 /**
@@ -33,7 +35,16 @@ public class AnalyserServer extends SimObject
             handleMessage);
 
         //Dump stats to logs every 10 minutes.
-        setInterval(dumpStatsToLogAndReset, DUMP_STATS_INTERVAL);
+        setInterval(dumpStatsToLog, DUMP_STATS_INTERVAL);
+
+        setInterval(countPlayersOnline, INTERVAL_COUNT_PLAYERS);
+
+        countPlayersOnline();
+    }
+
+    protected function countPlayersOnline () :void
+    {
+        _playersOnlineEachMinute.push(ServerContext.server.players.size());
     }
 
     /**
@@ -43,6 +54,7 @@ public class AnalyserServer extends SimObject
     {
         _playStartTime.put(e.value, new Date().time);
         _playEndTime.remove(e.value);
+        _playersStarted++;
     }
 
     protected function handlePlayerQuitGame (e :AVRGameControlEvent) :void
@@ -53,28 +65,36 @@ public class AnalyserServer extends SimObject
         _playerBloodBond.put(e.value,
             ServerContext.ctrl.getPlayer(e.value as int).props.get(Codes.PLAYER_PROP_BLOODBOND));
 
-        _playEndTime.put(e.value, new Date().time);
+        _playerInvites.put(e.value,
+            ServerContext.ctrl.getPlayer(e.value as int).props.get(Codes.PLAYER_PROP_INVITES));
 
+        _playerLevel.put(e.value, Logic.levelGivenCurrentXpAndInvites(
+            ServerContext.ctrl.getPlayer(e.value as int).props.get(Codes.PLAYER_PROP_XP) as Number,
+            ServerContext.ctrl.getPlayer(e.value as int).props.get(Codes.PLAYER_PROP_INVITES) as int));
+
+        _playEndTime.put(e.value, new Date().time);
+        _playersQuit++;
     }
 
     protected function handleMessage (evt :MessageReceivedEvent) :void
     {
         if (evt.name == StatsMsg.NAME) {
-            var statsMsg :StatsMsg = new StatsMsg(evt.senderId, createStatsString());
             if (ServerContext.server.isPlayer(evt.senderId)) {
+                var s :String = createStatsString();
+                var sBytes :ByteArray = new ByteArray();
+                sBytes.writeUTF(s);
+                sBytes.compress();
+                var statsMsg :StatsMsg = new StatsMsg(evt.senderId, sBytes);
                 ServerContext.server.getPlayer(evt.senderId).sctrl.sendMessage(StatsMsg.NAME,
                     statsMsg.toBytes());
             }
-
-            dumpStatsToLogAndReset();
         }
     }
 
-    protected function dumpStatsToLogAndReset () :void
+    protected function dumpStatsToLog () :void
     {
         var s :String = createStatsString();
         trace(s);
-//        clearStats();
     }
 
     protected function incrementPlayerTimes () :void
@@ -157,44 +177,114 @@ public class AnalyserServer extends SimObject
         var headerAndHash :Array;
         var playerId :int;
         var allPlayerIds :HashSet = new HashSet();
-        function addPlayerIds (playerId :int, data :Object) :void {
-            allPlayerIds.add(playerId);
+        function addPlayerIds (p :int, data :Object) :void {
+            allPlayerIds.add(p);
         }
 
         var s :String = new String();
-//        s += "\n" + statsPrefix + ">>>>BeginStats\n";
+        s += "\n>>>>BeginStats\n";
+        s += "\n>>>>BeginTable\n";
+
+        s += "PlayerId";
+        for each (header in TABLE_COLUMNS) {
+            s += ", " + header;
+        }
 
         for each (headerAndHash in _tableColumnLabelsAndHashMaps) {
-            header = header[0] as String;
-            hash = header[1] as HashMap;
-            s += ", " + header;
+            hash = headerAndHash[1] as HashMap;
             hash.forEach(addPlayerIds);
         }
+
+        ServerContext.server.players.forEach(function (id :int, p :PlayerData) :void {
+            allPlayerIds.add(id);
+        });
 
 
         var playerIds :Array = allPlayerIds.toArray();
         playerIds.sort();
 
-//        for each
+        for each (playerId in playerIds) {
+            s += "\n" + playerId;
+            for each (header in TABLE_COLUMNS) {
 
-        for each (headerAndHash in _tableColumnLabelsAndHashMaps) {
-            header = header[0] as String;
-            hash = header[1] as HashMap;
-            s += ", " + header;
+                switch(header) {
+                    case START_TIME:
+                    s += "," + _playStartTime.get(playerId);
+                    break;
+
+                    case END_TIME:
+                    s += "," + (_playEndTime.containsKey(playerId) ?
+                        nanToZero(_playEndTime.get(playerId)) : "0");
+                    break;
+
+                    case PROGENY_PAYOUT:
+                    s += "," + nanToZero(_progenyPayout.get(playerId));
+                    break;
+
+                    case XP_FROM_FEEDING:
+                    s += "," + nanToZero(_playerXpEarnedFromFeeding.get(playerId));
+                    break;
+
+                    case FEEDING_GAMES:
+                    s += "," + nanToZero(_playerFeedingGames.get(playerId));
+                    break;
+
+                    case MEAN_FEEDING_SCORE:
+                    s += "," + nanToZero(_playerMeanFeedingScore.get(playerId));
+                    break;
+
+                    case BLOODBOND:
+                    if (ServerContext.server.isPlayer(playerId)) {
+                        s += "," + ServerContext.server.getPlayer(playerId).bloodbond;
+                    }
+                    else {
+                        s += "," + nanToZero(_playerBloodBond.get(playerId));
+                    }
+                    break;
+
+                    case PROGENY:
+                    s += "," + ServerContext.server.lineage.getProgenyCount(playerId);
+                    break;
+
+                    case GRANDPROGENY:
+                    s += "," + (ServerContext.server.lineage.getAllDescendentsCount(playerId,2) -
+                        ServerContext.server.lineage.getProgenyCount(playerId));
+                    break;
+
+                    case SIRE:
+                    s += "," + ServerContext.server.lineage.getSireId(playerId);
+                    break;
+
+                    case LEVEL:
+                    if (ServerContext.server.isPlayer(playerId)) {
+                        s += "," + ServerContext.server.getPlayer(playerId).level;
+                    }
+                    else {
+                        s += "," + _playerLevel.get(playerId);
+                    }
+                    break;
+
+                    case INVITES:
+                    if (ServerContext.server.isPlayer(playerId)) {
+                        s += "," + ServerContext.server.getPlayer(playerId).invites;
+                    }
+                    else {
+                        s += "," + _playerInvites.get(playerId);
+                    }
+                    break;
+                }
+            }
+
         }
-
-
-//        var statsPrefix :String = "#GAMEDATA#";
-//        s += "\n" + statsPrefix + "ServerReboots=" + ServerContext.ctrl.props.get(Codes.AGENT_PROP_SERVER_REBOOTS);
-//        s += "\n" + statsPrefix + "TimeStarted=" + _timeStarted;
-//        s += "\n" + statsPrefix + "Now=" + new Date().time;
-//        s += stringHashMap(_playStartTime, statsPrefix + "TimeLoggedIn_");
-//        s += stringHashMap(_playerPlayersFeeding, statsPrefix + "FeedingPlayers_");
-//        s += stringHashMap(_progenyPayout, statsPrefix + "DescendentsPayout_");
-//        s += stringHashMap(_playerCoinPayout, statsPrefix + "FeedingCoinPayout_");
-//        s += stringHashMap(_playerXpEarnedFromFeeding, statsPrefix + "FeedingXPEarned_");
-//        s += "\n" + statsPrefix + "FeedingPlayers=" + _playerCountInFeedingGames;
-//        s += "\n" + statsPrefix + "<<<<EndStats";
+        s += "\n<<<<EndTable\n";
+        s += "\n" + PLAYERS_ONLINE_NOW + "=" + ServerContext.server.players.size();
+        s += "\n" + PLAYERS_ONLINE_EACH_MINUTE + "=" + _playersOnlineEachMinute.slice().join(", ");
+        s += "\n" + PLAYERS_IN_EACH_FEEDING_GAME + "=" + _playerCountInFeedingGames.slice().join(", ");
+        s += "\n" + PLAYERS_STARTED + "=" + _playersStarted;
+        s += "\n" + PLAYERS_QUIT + "=" + _playersQuit;
+        s += "\n" + STATS_START_RECORDING_TIME + "=" + _timeStarted;
+        s += "\n" + STATS_DUMP_TIME + "=" + new Date().time;
+        s += "\n<<<<EndStats";
         return s;
     }
 
@@ -207,7 +297,7 @@ public class AnalyserServer extends SimObject
         return s;
     }
 
-    protected var _timeStarted :Number;
+    protected var _timeStarted :Number = 0;
     protected var _playStartTime :HashMap = new HashMap();//playerId to cumulative play time in mins
     protected var _playEndTime :HashMap = new HashMap();//playerId to cumulative play time in mins
     protected var _progenyPayout :HashMap = new HashMap();//playerId to payout from progeny
@@ -216,31 +306,67 @@ public class AnalyserServer extends SimObject
     protected var _playerFeedingGames :HashMap = new HashMap();//playerId to feeding games played
     protected var _playerMeanFeedingScore :HashMap = new HashMap();
     protected var _playerBloodBond :HashMap = new HashMap();
-    protected var _playerProgeny :HashMap = new HashMap();
-    protected var _playerGrandProgeny :HashMap = new HashMap();
-    protected var _playerSire :HashMap = new HashMap();
+    protected var _playerLevel :HashMap = new HashMap();
+    protected var _playerInvites :HashMap = new HashMap();
     protected var _playerCountInFeedingGames :Array = [];
+    protected var _playersOnlineEachMinute :Array = [];
+    protected var _playersStarted :int = 0;
+    protected var _playersQuit :int = 0;
 
-    protected var _tableColumnLabelsAndHashMaps :Array =
-        [
-            ["StartTime", _playStartTime],
-            ["EndTime", _playEndTime],
-            ["ProgenyPayout", _progenyPayout],
-//            ["CoinPayout", _playerCoinPayout],
-            ["XPFromFeeding", _playerXpEarnedFromFeeding],
-            ["FeedingGames", _playerFeedingGames],
-            ["MeanFeedingScore", _playerMeanFeedingScore],
-            ["BloodBond", _playerBloodBond],
-            ["Progeny", _playerProgeny],
-            ["GrandProgeny", _playerGrandProgeny],
-            ["Sire", _playerSire],
-        ];
 
     public static const DUMP_STATS_INTERVAL :int = 1000*60*10;//10 minutes
+    public static const INTERVAL_COUNT_PLAYERS :int = 1000*60;//1 minute
     public static const MSG_RECEIVED_FEEDING_PAYOUT :String = "StatMsg: Feeding XP";
     public static const MSG_RECEIVED_FEEDING_COINS_PAYOUT :String = "StatMsg: Feeding Coins";
     public static const MSG_RECEIVED_PROGENY_PAYOUT :String = "StatMsg: Progeny Payout";
     public static const MSG_RECEIVED_FEED :String = "StatMsg: Feed";
+
+    protected static const STATS_START_RECORDING_TIME :String = "StatsStartTime";
+    protected static const STATS_DUMP_TIME :String = "StatsDumpTime";
+    protected static const START_TIME :String = "StartTime";
+    protected static const END_TIME :String = "EndTime";
+    protected static const PROGENY_PAYOUT :String = "ProgenyPayout";
+    protected static const XP_FROM_FEEDING :String = "XPFromFeeding";
+    protected static const FEEDING_GAMES :String = "FeedingGames";
+    protected static const MEAN_FEEDING_SCORE :String = "MeanFeedingScore";
+    protected static const BLOODBOND :String = "BloodBond";
+    protected static const PROGENY :String = "Progeny";
+    protected static const GRANDPROGENY :String = "GrandProgeny";
+    protected static const SIRE :String = "Sire";
+    protected static const LEVEL :String = "Level";
+    protected static const INVITES :String = "Invites";
+    protected static const PLAYERS_IN_EACH_FEEDING_GAME :String = "PlayersInEachFeedingGame";
+    protected static const PLAYERS_ONLINE_EACH_MINUTE :String = "PlayersOnlineEachMinute";
+    protected static const PLAYERS_ONLINE_NOW :String = "PlayersOnlineNow";
+    protected static const PLAYERS_STARTED :String = "PlayersStarted";
+    protected static const PLAYERS_QUIT :String = "PlayersQuit";
+
+    protected var _tableColumnLabelsAndHashMaps :Array =
+        [
+            [START_TIME, _playStartTime],
+            [END_TIME, _playEndTime],
+            [PROGENY_PAYOUT, _progenyPayout],
+            [XP_FROM_FEEDING, _playerXpEarnedFromFeeding],
+            [FEEDING_GAMES, _playerFeedingGames],
+            [MEAN_FEEDING_SCORE, _playerMeanFeedingScore],
+            [BLOODBOND, _playerBloodBond],
+        ];
+
+    protected var TABLE_COLUMNS :Array =
+        [
+            START_TIME,
+            END_TIME,
+            PROGENY_PAYOUT,
+            XP_FROM_FEEDING,
+            FEEDING_GAMES,
+            MEAN_FEEDING_SCORE,
+            BLOODBOND,
+            PROGENY,
+            GRANDPROGENY,
+            SIRE,
+            LEVEL,
+            INVITES
+        ];
 
 
     public static const NAME :String = "Analyser";
