@@ -24,8 +24,10 @@ public class AnalyserClient extends SimObject
                 log.error("handleMessageReceived, cannot convert to StatsMsg", "e", e);
                 return;
             }
-            trace("Stats=\n");
-            trace(msg.statsString);
+            var bytes :ByteArray = msg.compressedString;
+            bytes.uncompress();
+            var s :String = bytes.readUTF();
+            trace(s);
         }
     }
 
