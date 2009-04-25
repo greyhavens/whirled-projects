@@ -49,6 +49,16 @@ public class PlayerQuestData extends EventDispatcher
         _props.set(PROP_QUEST_JUICE, val);
     }
 
+    public function get lastJuiceRefresh () :Number
+    {
+        return _props.get(PROP_LAST_JUICE_REFRESH) as Number;
+    }
+
+    public function set lastJuiceRefesh (val :Number) :void
+    {
+        _props.set(PROP_LAST_JUICE_REFRESH, val);
+    }
+
     public function addQuest (questId :int) :void
     {
         _props.setIn(PROP_QUESTS, questId, STATUS_ACTIVE);
@@ -190,6 +200,8 @@ public class PlayerQuestData extends EventDispatcher
         NetConstants.makePersistent("AvailActivities");
     protected static const PROP_CUR_LOC :String = NetConstants.makePersistent("CurLoc");
     protected static const PROP_QUEST_JUICE :String = NetConstants.makePersistent("QuestJuice");
+    protected static const PROP_LAST_JUICE_REFRESH :String =
+        NetConstants.makePersistent("LastJuiceRefresh");
 
     protected static const NAMESPACE :String = "pqd";
 

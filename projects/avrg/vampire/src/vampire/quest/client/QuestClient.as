@@ -6,6 +6,8 @@ import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.SimpleGame;
 
+import flash.utils.getTimer;
+
 import vampire.feeding.FeedingClient;
 import vampire.feeding.FeedingClientSettings;
 import vampire.feeding.PlayerFeedingData;
@@ -50,6 +52,11 @@ public class QuestClient
     public static function shutdown () :void
     {
         handshakeQuestTotems(false);
+    }
+
+    public static function checkQuestJuiceRefresh () :void
+    {
+        // TODO
     }
 
     public static function goToLocation (loc :LocationDesc) :void
