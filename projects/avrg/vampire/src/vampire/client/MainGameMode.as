@@ -117,6 +117,10 @@ public class MainGameMode extends AppMode
         registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_LEFT,
             handlePlayerLeftRoom);
 
+        //Listen for the player leaving the room, shut down the client then
+        registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM,
+            handleOurPlayerEnteredRoom);
+
         //Create the overlay for individual avatars
         _avatarOverlay = new VampireAvatarHUDOverlay(ClientContext.ctrl);
         addSceneObject(_avatarOverlay, layerLowPriority);
@@ -321,6 +325,14 @@ public class MainGameMode extends AppMode
         //Make sure we are in the 'default' avatar state.
         ClientContext.ctrl.player.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
     }
+
+    protected function handleOurPlayerEnteredRoom (e :AVRGamePlayerEvent) :void
+    {
+        //Make sure we are in the 'default' avatar state.
+        ClientContext.ctrl.player.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
+    }
+
+
 
 
 
