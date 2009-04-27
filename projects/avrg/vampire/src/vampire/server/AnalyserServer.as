@@ -7,7 +7,6 @@ import com.whirled.contrib.simplegame.ObjectMessage;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.ByteArray;
-import flash.utils.clearInterval;
 import flash.utils.setInterval;
 
 import vampire.data.Codes;
@@ -182,6 +181,7 @@ public class AnalyserServer extends SimObjectServer
         }
 
         var s :String = new String();
+        try {
         s += "\n>>>>BeginStats\n";
         s += "\n>>>>BeginTable\n";
 
@@ -205,6 +205,9 @@ public class AnalyserServer extends SimObjectServer
 
         var sep :String = ", ";
         function cleanData (dataString :Object) :String {
+            if (dataString == null) {
+                return sep;
+            }
             if (isNaN(parseFloat(dataString.toString()))) {
                 return sep;
             }
@@ -295,6 +298,10 @@ public class AnalyserServer extends SimObjectServer
         s += "\n" + STATS_START_RECORDING_TIME + "=" + _timeStarted;
         s += "\n" + STATS_DUMP_TIME + "=" + new Date().time;
         s += "\n<<<<EndStats";
+        }
+        catch (e :Error) {
+            trace(e);
+        }
         return s;
     }
 
