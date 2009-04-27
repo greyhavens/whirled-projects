@@ -102,7 +102,12 @@ public class ScoreHelpQuitView extends SceneObject
     override protected function update (dt :Number) :void
     {
         if (_displayedBloodCount != _lastDisplayedBloodCount) {
-            _tf.text = String(_displayedBloodCount);
+            var bloodCount :int = _displayedBloodCount;
+            if (ClientCtx.isCorruption) {
+                bloodCount -= ClientCtx.requiredBlood;
+            }
+
+            _tf.text = String(bloodCount);
             _lastDisplayedBloodCount = _displayedBloodCount;
         }
     }

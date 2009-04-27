@@ -105,6 +105,11 @@ public class ClientCtx
         return true;
     }
 
+    public static function get requiredBlood () :int
+    {
+        return (clientSettings.activityParams != null ? clientSettings.activityParams.minScore : 0);
+    }
+
     public static function get allPlayerIds () :Array
     {
         if (clientSettings.spOnly) {
