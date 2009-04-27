@@ -317,6 +317,9 @@ public class MainGameMode extends AppMode
                 s.destroySelf();
             }
         }
+
+        //Make sure we are in the 'default' avatar state.
+        ClientContext.ctrl.player.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
     }
 
 
