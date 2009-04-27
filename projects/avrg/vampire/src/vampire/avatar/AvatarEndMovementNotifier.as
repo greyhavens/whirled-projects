@@ -15,7 +15,7 @@ import flash.events.Event;
  * 2) Any non-player avatar moves.
  *
  * This class notifies the client when avatars stop moving.  Unfortunately, it
- * has to be compiled into an avatar, as only Avatar (Entitys) can listen to these events.
+ * has to be compiled into an avatar, as only Avatar (Entity types) can listen to these events.
  */
 public class AvatarEndMovementNotifier
 {
@@ -25,8 +25,6 @@ public class AvatarEndMovementNotifier
 
         //Only the controlling instance updates, listens to events, and has custom properties.
         if(_ctrl.hasControl()) {
-//            _ctrl.registerPropertyProvider(propertyProvider);
-
             _events.registerListener(_ctrl, ControlEvent.ENTITY_MOVED, handleEntityMoved);
             _events.registerListener(_ctrl, ControlEvent.ENTITY_LEFT, handleEntityLeft);
             _events.registerListener(_ctrl, ControlEvent.ENTITY_ENTERED, handleEntityEntered);
@@ -118,8 +116,8 @@ public class AvatarEndMovementNotifier
         }
         else {
 
-            //Because when the entity arrives, the locaiton info is stale,
-            //this holds a record of the correct location.
+            //Because when the entity arrives, the location info is stale,
+            //tso we hold a record of the correct location.
             var entityLocation :Array = e.value as Array;
             _locations.put(userIdMoved, entityLocation.slice());
         }
