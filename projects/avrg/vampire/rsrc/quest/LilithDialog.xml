@@ -19,15 +19,14 @@
 	</Routine>
 	
 	<Routine name="IntroPandorasBox">
-		<Say speaker="Lilith" text="No visitors! I'm very -"/>
-		<Wait seconds="0.5"/>
-		<Say speaker="Lilith" text="No visitors! I'm very - Oh!"/>
-		<Wait seconds="0.25"/>
+		<Say speaker="Lilith" text="No visitors! I'm very -">
+			<Response text="(More)"/>
+		</Say>
 		<Say speaker="Lilith" text="No visitors! I'm very - Oh! Aren't you delicious. All right, little one, you like to stick your neck out?">
 			<Response text="Depends on who's biting."/>
 		</Say>
 		<Say speaker="Lilith" text="Marvelous, kitten! I'm throwing a party tonight at Pandora's Box. You'll be on the list.">
-			<Response text="(Continue)"/>
+			<Response text="(More)"/>
 		</Say>
 		<Say speaker="Lilith" text="Marvelous, kitten! I'm throwing a party tonight at Pandora's Box. You'll be on the list. Well... you'll be on the menu.">
 			<Response id="yes" text="Sounds like fun."/>
@@ -36,15 +35,16 @@
 		<HandleResponse>
 			<Response id="yes">
 				<Say speaker="Lilith" text="Mmm. Good feastling. Now, off with you!">
-					<Response text="(Continue)"/>
+					<Response text="(More)"/>
 				</Say>
 				<CallRoutine name="GivePandorasBox"/>
 			</Response>
 			<Response id="no">
-				<Say speaker="Lilith" text="Child. Whether safely under my wing or alone on the street, make no mistake..."/>
-				<Wait seconds="0.5"/>
+				<Say speaker="Lilith" text="Child. Whether safely under my wing or alone on the street, make no mistake...">
+					<Response text="(More)"/>
+				</Say>
 				<Say speaker="Lilith" text="Child. Whether safely under my wing or alone on the street, make no mistake... You are ALWAYS food.">
-					<Response text="(Continue)"/>
+					<Response text="(More)"/>
 				</Say>
 				<CallRoutine name="GivePandorasBox"/>
 			</Response>
@@ -58,17 +58,15 @@
 	</Routine>
 	
 	<Routine name="HasPandorasBox">
-		<Say speaker="Lilith" text="I have no time for you, kitten."/>
-		<Wait seconds="0.25"/>
 		<Say speaker="Lilith" text="Off with you, kitten. Come speak to me after you've sampled the cuisine at Pandora's Box">
-			<Response text="(Continue)"/>
+			<Response text="(More)"/>
 		</Say>
 		<Exit/>
 	</Routine>
 	
 	<Routine name="IntroTheHunger">
 		<Say speaker="Lilith" text="Too bad the quest's not implemented!">
-			<Response text="(Continue)"/>
+			<Response text="(More)"/>
 		</Say>
 		<Exit/>
 	</Routine>
