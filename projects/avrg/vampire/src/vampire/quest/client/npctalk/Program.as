@@ -2,6 +2,8 @@ package vampire.quest.client.npctalk {
 
 import com.threerings.util.HashMap;
 
+import vampire.quest.client.NpcTalkPanel;
+
 public class Program
 {
     public function addRoutine (routine :Routine) :void
@@ -11,7 +13,7 @@ public class Program
         }
     }
 
-    public function run (talkView :TalkView) :void
+    public function run (talkView :NpcTalkPanel) :void
     {
         if (_isRunning) {
             throw new Error("Already running");

@@ -118,7 +118,7 @@ public class QuestClient
 
         var dialogTest :NpcTalkResource =
             ClientCtx.rsrcs.getResource(programName) as NpcTalkResource;
-        var view :TalkView = new TalkView(dialogTest.program);
+        var view :NpcTalkPanel = new NpcTalkPanel(dialogTest.program);
         ClientCtx.mainLoop.topMode.addSceneObject(view);
         _npcTalkViewRef = view.ref;
     }

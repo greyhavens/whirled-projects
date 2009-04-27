@@ -12,7 +12,6 @@ import vampire.feeding.FeedingClient;
 import vampire.furni.QuestTotem;
 import vampire.quest.*;
 import vampire.quest.client.*;
-import vampire.quest.client.npctalk.TalkView;
 
 [SWF(width="1000", height="700", frameRate="30")]
 public class QuestClientStandalone extends Sprite

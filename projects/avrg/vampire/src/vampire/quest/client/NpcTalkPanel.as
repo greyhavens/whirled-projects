@@ -1,4 +1,4 @@
-package vampire.quest.client.npctalk {
+package vampire.quest.client {
 
 import com.whirled.contrib.simplegame.objects.DraggableObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
@@ -6,15 +6,14 @@ import com.whirled.contrib.simplegame.resource.SwfResource;
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.MovieClip;
-import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 
-import vampire.quest.client.*;
+import vampire.quest.client.npctalk.*;
 
-public class TalkView extends DraggableObject
+public class NpcTalkPanel extends DraggableObject
 {
-    public function TalkView (program :Program)
+    public function NpcTalkPanel (program :Program)
     {
         _program = program;
 
