@@ -30,6 +30,10 @@ public class GameMode extends AppMode
 
     public function sendMultiplier (multiplier :int, x :int, y :int) :void
     {
+        if (GameCtx.gameOver) {
+            return;
+        }
+
         if (GameCtx.isMultiplayer) {
             ClientCtx.msgMgr.sendMessage(CreateMultiplierMsg.create(
                 ClientCtx.localPlayerId,
@@ -60,6 +64,10 @@ public class GameMode extends AppMode
 
     public function deliverWhiteCell (arteryType :int) :void
     {
+        if (GameCtx.gameOver) {
+            return;
+        }
+
         GameCtx.heart.deliverWhiteCell();
 
         // show the delivery animation
