@@ -96,7 +96,7 @@ public class BurstCascade extends SceneObject
 
     override protected function update (dt :Number) :void
     {
-        var isAlive :Boolean = !GameCtx.gameOver && ArrayUtil.findIf(_bursts,
+        var isAlive :Boolean = ArrayUtil.findIf(_bursts,
             function (burstRef :SimObjectRef) :Boolean {
                 return !burstRef.isNull;
             });
@@ -140,7 +140,8 @@ public class BurstCascade extends SceneObject
             GameCtx.score.addBlood(loc.x, loc.y, this.totalValue, 0);
         }
 
-        if (_totalBursts >= Constants.CREATE_BONUS_BURST_SIZE && this.createMultiplier) {
+        if (!GameCtx.gameOver && _totalBursts >= Constants.CREATE_BONUS_BURST_SIZE &&
+            this.createMultiplier) {
             // Send a multiplier to the other players
             var multiplierSize :int = Math.min(this.multiplier + 1, Constants.MAX_MULTIPLIER);
             GameCtx.gameMode.sendMultiplier(multiplierSize, this.x, this.y);

@@ -347,7 +347,7 @@ public class GameMode extends AppMode
         super.update(dt);
 
         // If the game is over, wait for animations to complete before actually ending things
-        if (GameCtx.gameOver && this.canEndGameNow && !_performedEndGameLogic) {
+        if (GameCtx.gameOver && !_performedEndGameLogic && this.canEndGameNow) {
 
             // End the game manually if we're in standalone mode;
             // otherwise we'll wait for the actual RoundOverMsg to come in
