@@ -4,10 +4,10 @@ import com.threerings.util.HashMap;
 import com.threerings.util.HashSet;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.ObjectMessage;
-import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.ByteArray;
+import flash.utils.clearInterval;
 import flash.utils.setInterval;
 
 import vampire.data.Codes;
@@ -17,7 +17,7 @@ import vampire.net.messages.StatsMsg;
 /**
  * Builds statistics of player data and player patterns
  */
-public class AnalyserServer extends SimObject
+public class AnalyserServer extends SimObjectServer
 {
 
     override protected function addedToDB () :void
@@ -35,9 +35,9 @@ public class AnalyserServer extends SimObject
             handleMessage);
 
         //Dump stats to logs every 10 minutes.
-        setInterval(dumpStatsToLog, DUMP_STATS_INTERVAL);
+        addIntervalId(setInterval(dumpStatsToLog, DUMP_STATS_INTERVAL));
 
-        setInterval(countPlayersOnline, INTERVAL_COUNT_PLAYERS);
+        addIntervalId(setInterval(countPlayersOnline, INTERVAL_COUNT_PLAYERS));
 
         countPlayersOnline();
     }
@@ -306,6 +306,7 @@ public class AnalyserServer extends SimObject
         });
         return s;
     }
+
 
     protected var _timeStarted :Number = 0;
     protected var _playStartTime :HashMap = new HashMap();//playerId to cumulative play time in mins

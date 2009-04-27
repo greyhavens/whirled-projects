@@ -4,11 +4,6 @@ import com.threerings.util.HashMap;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.whirled.avrg.PlayerSubControlServer;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.tasks.FunctionTask;
-import com.whirled.contrib.simplegame.tasks.RepeatingTask;
-import com.whirled.contrib.simplegame.tasks.SerialTask;
-import com.whirled.contrib.simplegame.tasks.TimedTask;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.ByteArray;
@@ -24,13 +19,13 @@ import vampire.net.messages.LoadBalancingMsg;
  * player can click and be transported to.
  *
  */
-public class LoadBalancerServer extends SimObject
+public class LoadBalancerServer extends SimObjectServer
 {
     public function LoadBalancerServer (server :GameServer)
     {
         _server = server;
         registerListener(_server.control.game, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
-        setInterval(refreshLowPopulationRoomData, ROOM_POPULATION_REFRESH_RATE);
+        addIntervalId(setInterval(refreshLowPopulationRoomData, ROOM_POPULATION_REFRESH_RATE));
     }
 
     protected function handleMessage (evt :MessageReceivedEvent) :void
@@ -83,6 +78,7 @@ public class LoadBalancerServer extends SimObject
 
     override protected function destroyed () :void
     {
+        super.destroyed();
         _server = null;
     }
 
