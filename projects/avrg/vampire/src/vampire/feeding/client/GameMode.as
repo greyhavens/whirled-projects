@@ -191,13 +191,13 @@ public class GameMode extends AppMode
             GameCtx.specialStrainTallyView.x = Constants.GAME_CTR.x;
             GameCtx.specialStrainTallyView.y = Constants.GAME_CTR.y;
             addSceneObject(GameCtx.specialStrainTallyView, GameCtx.effectLayer);
+
+            // this will handle spawning the special Blood Hunt cells
+            GameCtx.specialCellSpawner = new SpecialCellSpawner();
+            addObject(GameCtx.specialCellSpawner);
         }
 
         GameCtx.cursor = GameObjects.createPlayerCursor();
-
-        // this will handle spawning the special Blood Hunt cells
-        GameCtx.specialCellSpawner = new SpecialCellSpawner();
-        addObject(GameCtx.specialCellSpawner);
 
         // create some non-interactive debris that floats around the heart
         for (var ii :int = 0; ii < Constants.DEBRIS_COUNT; ++ii) {

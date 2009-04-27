@@ -8,7 +8,7 @@ public class SpecialCellSpawner extends SimObject
 {
     override protected function update (dt :Number) :void
     {
-        if (!Constants.DEBUG_FORCE_SPECIAL_BLOOD_STRAIN && !this.canCollectPreyStrain) {
+        if (!this.canCollectPreyStrain) {
             destroySelf();
             return;
         }
@@ -30,7 +30,6 @@ public class SpecialCellSpawner extends SimObject
     {
         // Is there a special blood strain to collect from the prey? Can we collect it?
         return (!ClientCtx.isPrey &&
-                !ClientCtx.preyIsAi &&
                 ClientCtx.preyBloodType >= 0 &&
                 ClientCtx.playerData.canCollectStrainFromPlayer(ClientCtx.preyBloodType,
                                                                 ClientCtx.preyId));

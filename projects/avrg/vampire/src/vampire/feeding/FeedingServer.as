@@ -19,7 +19,7 @@ public class FeedingServer
     /**
      * Kicks off a new feeding game with the given players.
      *
-     * @param roodId the room that the feeding is taking place in
+     * @param roomId the room that the feeding is taking place in
      *
      * @param preyId the occupantId of the player acting as the prey, or 0 if the prey
      * is an AI player
