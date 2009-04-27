@@ -48,6 +48,10 @@ public class QuestPanel extends DraggableObject
                 showQuestCompleted(e.quest);
                 updateQuests();
             });
+        registerListener(ClientCtx.questProps, QuestPropEvent.PROP_CHANGED,
+            function (e :QuestPropEvent) :void {
+                updateQuests();
+            });
 
         // Player list
         _questList = new SimpleListController(
@@ -92,7 +96,7 @@ public class QuestPanel extends DraggableObject
 
             task.addTask(LocationTask.CreateEaseOut(
                 _locationPanel.x,
-                _panelMovie.height - 10,
+                _panelMovie.height,
                 PANEL_SLIDE_TIME));
             _locationPanel.addNamedTask("ShowHide", task, true);
         }
@@ -109,7 +113,7 @@ public class QuestPanel extends DraggableObject
 
         if (_locationPanel != null) {
             if (_locationPanel.visible) {
-                _locationPanel.y = _panelMovie.height - 10;
+                _locationPanel.y = _panelMovie.height;
 
                 var task :SerialTask = new SerialTask();
                 task.addTask(LocationTask.CreateEaseOut(
@@ -151,7 +155,8 @@ public class QuestPanel extends DraggableObject
         for each (var quest :QuestDesc in ClientCtx.questData.activeQuests) {
             var entry :Object = {};
             entry["quest_name"] = quest.displayName;
-            entry["quest_description"] = quest.description;
+            entry["quest_description"] =
+                quest.description + " " + quest.getProgressText(ClientCtx.questProps);
 
             listData.push(entry);
         }
