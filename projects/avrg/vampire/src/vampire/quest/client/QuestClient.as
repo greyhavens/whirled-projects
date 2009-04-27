@@ -6,8 +6,6 @@ import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.SimpleGame;
 
-import flash.utils.getTimer;
-
 import vampire.feeding.FeedingClient;
 import vampire.feeding.FeedingClientSettings;
 import vampire.feeding.PlayerFeedingData;
@@ -184,10 +182,27 @@ public class QuestClient
 
     protected static function beginSpActivity (activity :ActivityDesc) :void
     {
+        var feedingGame :FeedingClient;
+
         switch (activity.type) {
+        case ActivityDesc.TYPE_FEEDING:
+            feedingGame = FeedingClient.create(FeedingClientSettings.spSettings(
+                "", -1,
+                Variant.NORMAL,
+                new PlayerFeedingData(),
+                function () :void {
+                    feedingGame.shutdown();
+                    feedingGame.parent.removeChild(feedingGame);
+                },
+                ClientCtx.questData,
+                ClientCtx.questProps,
+                activity.params as BloodBloomActivityParams));
+            ClientCtx.mainLoop.topMode.modeSprite.addChild(feedingGame);
+            break;
+
         case ActivityDesc.TYPE_CORRUPTION:
-            var feedingGame :FeedingClient = FeedingClient.create(FeedingClientSettings.spSettings(
-                "", 0,
+            feedingGame = FeedingClient.create(FeedingClientSettings.spSettings(
+                "", -1,
                 Variant.CORRUPTION,
                 new PlayerFeedingData(),
                 function () :void {
