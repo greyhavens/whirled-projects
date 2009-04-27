@@ -127,7 +127,7 @@ public class LogicFeeding extends SimObject
         log.debug("Sending message to LeaderBoardServer");
         ServerContext.server.sendMessageToNamedObject(
             new ObjectMessage(LeaderBoardServer.MESSAGE_LEADER_BOARD_MESSAGE_SCORES,
-                results.scores),
+                [averageScore, results.scores]),
             LeaderBoardServer.NAME);
 
         var predIds :Array = [];

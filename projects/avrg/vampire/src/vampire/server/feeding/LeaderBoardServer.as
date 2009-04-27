@@ -135,18 +135,9 @@ public class LeaderBoardServer extends SimObject
         var scoresMonthTemp :Array = scoresAndNamesMonth != null ? scoresAndNamesMonth : [];
 
         if (msg != null && msg.name == MESSAGE_LEADER_BOARD_MESSAGE_SCORES) {
-            var playerScores :HashMap = msg.data as HashMap;
+            var averageScore :Number = msg.data[0] as Number;
+            var playerScores :HashMap = msg.data[1] as HashMap;
             if (playerScores != null) {
-                //Get the total score
-                var totalScore :Number = 0;
-                playerScores.forEach(function (playerId :int, score :Number) :void {
-                    if (score > 0) {
-                        totalScore += score;
-                    }
-                });
-
-                totalScore = totalScore / playerScores.size();
-
                 //Sort the player ids by score
                 var playerIds :Array = playerScores.keys();
                 playerIds.sort(function(playerId1 :int, playerId2 :int) :int {
@@ -190,7 +181,7 @@ public class LeaderBoardServer extends SimObject
                 }
                 //Chop the last comma
                 nameString = nameString.substr(0, nameString.length - 2);
-                updateScores(totalScore, nameString);
+                updateScores(averageScore, nameString);
 
             }
             else {
