@@ -94,7 +94,7 @@ public class AVRGameControlFake extends AVRGameControl
     }
 
     /** @private */
-    override protected function setUserProps (o :Object) :void
+    override public function setUserProps (o :Object) :void
     {
         super.setUserProps(o);
         o["requestMobSprite_v1"] = requestMobSprite_v1;
