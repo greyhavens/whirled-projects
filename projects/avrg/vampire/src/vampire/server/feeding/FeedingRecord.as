@@ -94,7 +94,8 @@ public class FeedingRecord extends EventCollecter
                                                 Variant.NORMAL,
                                                 this);
 
-        log.debug("starting gameServer", "gameId", _gameServer.gameId ,"roomId", _room.roomId, "predId", predId, "gamePreyId", gamePreyId);
+        log.debug("starting gameServer", "gameId", _gameServer.gameId ,"roomId", _room.roomId,
+            "predId", predId, "preyId", preyId, "preyBloodType", preyBloodType);
 
         ServerContext.ctrl.doBatch(function () :void {
             for each (var playerId :int in _gameServer.playerIds) {
