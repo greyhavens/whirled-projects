@@ -52,24 +52,22 @@ public class SpriteObjectDB extends Sprite
         return (getTimer() / 1000); // getTimer() returns a value in milliseconds
     }
 
-    public function addSceneObject (obj :SimObject)
-        :SimObjectRef
+    public function addSimObject (obj :SimObject,
+        displayParent :DisplayObjectContainer = null) :SimObjectRef
     {
+        if (obj is SceneComponent) {
+            // Attach the object to a display parent.
+            var disp :DisplayObject = (obj as SceneComponent).displayObject;
+            if (null == disp) {
+                throw new Error("obj must return a non-null displayObject to be attached " +
+                                "to a display parent");
+            }
 
-        if (!(obj is SceneComponent)) {
-            throw new Error("obj must implement SceneComponent");
+            if (displayParent == null) {
+                displayParent = this;
+            }
+            displayParent.addChild(disp);
         }
-
-        // Attach the object to a display parent.
-        // (This is purely a convenience - the client is free to do the attaching themselves)
-        var disp :DisplayObject = (obj as SceneComponent).displayObject;
-        if (null == disp) {
-            throw new Error("obj must return a non-null displayObject to be attached " +
-                            "to a display parent");
-        }
-
-        addChild(disp);
-
         return _db.addObject(obj);
     }
 
@@ -101,6 +99,11 @@ public class SpriteObjectDB extends Sprite
         }
 
         _db.destroyObject(ref);
+    }
+
+    public function get db () :ObjectDB
+    {
+        return _db;
     }
 
     protected var _lastTime :Number;
