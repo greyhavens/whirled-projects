@@ -35,8 +35,9 @@ public class LocationPanel extends SceneObject
 
         for (var ii :int = 0; ii < loc.activities.length; ++ii) {
             var activity :ActivityDesc = loc.activities[ii];
-            var button :MovieClip =
-                createActivityButton(activity, ClientCtx.questData.isAvailableActivity(activity));
+            var isAvailable :Boolean =
+                !(activity.requiresUnlock) || ClientCtx.questData.isActivityUnlocked(activity);
+            var button :MovieClip = createActivityButton(activity, isAvailable);
             var pt :Point = (ii < BUTTON_LOCS.length ? BUTTON_LOCS[ii] : new Point(0, 0));
             button.x = pt.x;
             button.y = pt.y;

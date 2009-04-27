@@ -15,13 +15,20 @@ public class Quests
 
         _inited = true;
 
-        // create a test quest
-        var testQuest :QuestDesc = new QuestDesc();
-        testQuest.name = "TestQuest";
-        testQuest.displayName = "Monster Whacker";
-        testQuest.description = "Go to the Battleground and kill 3 monsters";
-        makeCollectionRequirement(testQuest, "monster_kills", 3);
-        addQuest(testQuest);
+        /* Lilith Quests */
+        var pandorasBox :QuestDesc = new QuestDesc();
+        pandorasBox.name = "pandora_quest";
+        pandorasBox.displayName = "Pandora's Box";
+        pandorasBox.description = "Drain 10 partiers at the Pandora's Box nightclub";
+        makeCollectionRequirement(pandorasBox, "pandora_feedings", 10);
+        addQuest(pandorasBox);
+
+        var theHunger :QuestDesc = new QuestDesc();
+        theHunger.name = "hunger_quest";
+        theHunger.displayName = "The Hunger";
+        theHunger.description = "(placeholder)";
+        makeCollectionRequirement(theHunger, "hunger_feedings", 10);
+        addQuest(theHunger);
     }
 
     public static function getQuest (questId :int) :QuestDesc

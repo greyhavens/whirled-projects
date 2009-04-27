@@ -186,18 +186,12 @@ public class LobbyMode extends AppMode
     protected function giveActivityCompletionAward () :void
     {
         // If this was a quest-based activity, give appropriate awards
-        if (ClientCtx.clientSettings.activityParams != null) {
-            var success :Boolean = true;
-            if (ClientCtx.isCorruption) {
-                var params :CorruptionActivityParams =
-                    ClientCtx.clientSettings.activityParams as CorruptionActivityParams;
-                success = (_results.totalScore >= params.corruptionBlood);
-            }
-
-            if (success && ClientCtx.clientSettings.activityParams.awardedPropName != null) {
-                ClientCtx.clientSettings.playerQuestProps.offsetIntProp(
-                    ClientCtx.clientSettings.activityParams.awardedPropName,
-                    ClientCtx.clientSettings.activityParams.awardedPropIncrement);
+        var params :BloodBloomActivityParams = ClientCtx.clientSettings.activityParams;
+        if (params != null) {
+            var success :Boolean = (_results.totalScore >= params.minScore);
+            if (success && params.awardedPropName != null) {
+                ClientCtx.clientSettings.playerQuestProps.offsetIntProp(params.awardedPropName,
+                    params.awardedPropIncrement);
             }
         }
     }

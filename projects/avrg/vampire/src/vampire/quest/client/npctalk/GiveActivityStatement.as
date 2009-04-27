@@ -19,7 +19,7 @@ public class GiveActivityStatement
 
     public function update (dt :Number, state :Object) :Number
     {
-        ClientCtx.questData.addAvailableActivity(_activity);
+        ClientCtx.questData.unlockActivity(_activity);
         return Status.CompletedInstantly;
     }
 

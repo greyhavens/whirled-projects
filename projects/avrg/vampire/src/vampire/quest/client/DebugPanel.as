@@ -66,7 +66,7 @@ public class DebugPanel extends GenericDraggableWindow
         createButton("Reset Debug Quest", function (...ignored) :void {
             ClientCtx.questData.questJuice = 100;
             ClientCtx.questData.addQuest(Quests.getQuestByName("TestQuest").id);
-            ClientCtx.questData.addAvailableActivity(Activities.getActivityByName("whack_small"));
+            ClientCtx.questData.unlockActivity(Activities.getActivityByName("whack_small"));
             ClientCtx.questData.curLocation = Locations.getLocationByName("HomeBase");
         });
 

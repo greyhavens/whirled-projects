@@ -41,7 +41,7 @@ public class QuestClient
 
         // load resources
         ClientCtx.rsrcs.queueResourceLoad("swf", "quest", { embeddedClass: SWF_QUEST });
-        ClientCtx.rsrcs.queueResourceLoad("npcTalk", "dialogTest", { embeddedClass: DIALOG_TEST });
+        ClientCtx.rsrcs.queueResourceLoad("npcTalk", "LilithDialog", { embeddedClass: LILITH_DIALOG });
         ClientCtx.rsrcs.loadQueuedResources(
             onResourcesLoaded,
             function (err :String) :void {
@@ -243,8 +243,8 @@ public class QuestClient
     [Embed(source="../../../../rsrc/quest/quest.swf", mimeType="application/octet-stream")]
     protected static const SWF_QUEST :Class;
 
-    [Embed(source="../../../../rsrc/quest/DialogTest.xml", mimeType="application/octet-stream")]
-    protected static const DIALOG_TEST :Class;
+    [Embed(source="../../../../rsrc/quest/LilithDialog.xml", mimeType="application/octet-stream")]
+    protected static const LILITH_DIALOG :Class;
 
     protected static var log :Log = Log.getLog(QuestClient);
 }

@@ -13,7 +13,7 @@ public class HasActivityExpr
 
     public function eval () :*
     {
-        return ClientCtx.questData.isAvailableActivity(_activity);
+        return ClientCtx.questData.isActivityUnlocked(_activity);
     }
 
     protected var _activity :ActivityDesc;

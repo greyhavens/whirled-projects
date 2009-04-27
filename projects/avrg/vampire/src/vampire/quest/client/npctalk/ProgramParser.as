@@ -138,7 +138,7 @@ public class ProgramParser
         var hasResponse :Boolean;
         for each (var responseXml :XML in xml.Response) {
             sayStatement.addResponse(
-                XmlReader.getStringAttr(responseXml, "id"),
+                XmlReader.getStringAttr(responseXml, "id", ""),
                 XmlReader.getStringAttr(responseXml, "text"));
             hasResponse = true;
         }
@@ -233,7 +233,7 @@ public class ProgramParser
         case "Response":
             return parseResponseExpr(xml);
 
-        case "IsActiveQuest":
+        case "HasQuest":
             return parseHasQuestExpr(xml, HasQuestExpr.IS_ACTIVE);
 
         case "CompletedQuest":

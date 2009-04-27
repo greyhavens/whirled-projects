@@ -15,13 +15,8 @@ public class Locations
 
         _inited = true;
 
-        // create some dummy Locations
-        var homeBase :LocationDesc = new LocationDesc("HomeBase", "Home Base");
-        var battleground :LocationDesc = new LocationDesc("Battleground", "Battleground");
-        var dragons :LocationDesc = new LocationDesc("Dragons", "Here Be Dragons");
-        addLocation(homeBase);
-        addLocation(battleground);
-        addLocation(dragons);
+        // create the locations
+        addLocation(new LocationDesc("HomeBase", "Home Base"));
     }
 
     public static function getLocationList () :Array

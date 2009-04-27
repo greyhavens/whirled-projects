@@ -120,12 +120,12 @@ public class PlayerQuestData extends EventDispatcher
         }
     }
 
-    public function addAvailableActivity (desc :ActivityDesc) :void
+    public function unlockActivity (desc :ActivityDesc) :void
     {
         _props.setIn(PROP_AVAIL_ACTIVITIES, desc.id, true);
     }
 
-    public function isAvailableActivity (desc :ActivityDesc) :Boolean
+    public function isActivityUnlocked (desc :ActivityDesc) :Boolean
     {
         var dict :Dictionary = _props.get(PROP_AVAIL_ACTIVITIES) as Dictionary;
         return (dict != null && dict[desc.id] !== undefined);

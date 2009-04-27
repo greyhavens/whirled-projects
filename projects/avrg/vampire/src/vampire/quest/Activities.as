@@ -22,23 +22,18 @@ public class Activities
             ActivityDesc.TYPE_NPC_TALK,
             "talk_lilith",
             "Talk to Lilith",
-            new NpcTalkActivityParams("dialogTest")));
-
-        // Battleground activities
-        var battleground :LocationDesc = Locations.getLocationByName("Battleground");
-        addActivity(new ActivityDesc(
-            battleground,
-            ActivityDesc.TYPE_CORRUPTION,
-            "whack_small",
-            "Whack a small monster",
-            new CorruptionActivityParams(1, 1, "Small Monster", "monster_kills", 1, 100)));
+            0,  // no juice
+            false, // always unlocked
+            new NpcTalkActivityParams("LilithDialog")));
 
         addActivity(new ActivityDesc(
-            battleground,
-            ActivityDesc.TYPE_CORRUPTION,
-            "whack_large",
-            "Whack a LARGE monster",
-            new CorruptionActivityParams(1, 5, "LARGE Monster", "monster_kills", 3, 500)));
+            homeBase,
+            ActivityDesc.TYPE_FEEDING,
+            "pandora_activity",
+            "Pandora's Box",
+            0,  // no juice
+            true, // locked
+            new BloodBloomActivityParams(1, 1, "Club Kid", 100, "pandora_feedings", 1)));
     }
 
     public static function getActivity (id :int) :ActivityDesc

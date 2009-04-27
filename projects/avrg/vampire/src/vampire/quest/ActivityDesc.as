@@ -8,7 +8,8 @@ import vampire.quest.activity.ActivityParams;
 public class ActivityDesc
 {
     public static const TYPE_CORRUPTION :int = 0;
-    public static const TYPE_NPC_TALK :int = 1;
+    public static const TYPE_FEEDING :int = 1;
+    public static const TYPE_NPC_TALK :int = 2;
 
     // Unique Name
     public var name :String;
@@ -18,21 +19,26 @@ public class ActivityDesc
 
     public var type :int;
 
-    public var displayName :String;
-    public var params :ActivityParams;
-
     // the amount of quest juice it takes to do this activity
     public var juiceCost :int;
 
+    // Does this activity need to be unlocked, or is it available to anyone?
+    public var requiresUnlock :Boolean;
+
+    public var displayName :String;
+
+    public var params :ActivityParams;
+
     public function ActivityDesc (loc :LocationDesc, type :int, name :String, displayName :String,
-        params :ActivityParams, juiceCost :int = 0)
+        juiceCost :int, requiresUnlock :Boolean, params :ActivityParams)
     {
         this.loc = loc;
         this.type = type;
         this.name = name;
         this.displayName = displayName;
-        this.params = params;
         this.juiceCost = juiceCost;
+        this.requiresUnlock = requiresUnlock;
+        this.params = params;
 
         loc.activities.push(this);
     }
