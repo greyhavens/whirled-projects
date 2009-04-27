@@ -1,0 +1,75 @@
+<Program>
+	<!-- Select quests to give to the player.
+		 1. Pandora's Box (10 AI Feeding Games)
+		 2. The Hunger (10 Whirled Feeding Games)
+		 3. Corruption
+	-->
+	<Routine name="main">
+		<Conditional>
+			<If><Not><HasQuest name="pandora_quest"/></Not>
+				<CallRoutine name="IntroPandorasBox"/>
+			</If>
+			<ElseIf><HasQuest name="pandora_quest"/>
+				<CallRoutine name="HasPandorasBox"/>
+			</ElseIf>
+			<ElseIf><Not><HasQuest name="hunger_quest"/></Not>
+				<CallRoutine name="IntroTheHunger"/>
+			</ElseIf>
+		</Conditional>
+	</Routine>
+	
+	<Routine name="IntroPandorasBox">
+		<Say speaker="Lilith" text="No visitors! I'm very -"/>
+		<Wait seconds="0.5"/>
+		<Say speaker="Lilith" text="No visitors! I'm very - Oh!"/>
+		<Wait seconds="0.25"/>
+		<Say speaker="Lilith" text="No visitors! I'm very - Oh! Aren't you delicious. All right, little one, you like to stick your neck out?">
+			<Response text="Depends on who's biting."/>
+		</Say>
+		<Say speaker="Lilith" text="Marvelous, kitten! I'm throwing a party tonight at Pandora's Box. You'll be on the list.">
+			<Response text="(Continue)"/>
+		</Say>
+		<Say speaker="Lilith" text="Marvelous, kitten! I'm throwing a party tonight at Pandora's Box. You'll be on the list. Well... you'll be on the menu.">
+			<Response id="yes" text="Sounds like fun."/>
+			<Response id="no" text='"On the menu?" No thanks.'/>
+		</Say>
+		<HandleResponse>
+			<Response id="yes">
+				<Say speaker="Lilith" text="Mmm. Good feastling. Now, off with you!">
+					<Response text="(Continue)"/>
+				</Say>
+				<CallRoutine name="GivePandorasBox"/>
+			</Response>
+			<Response id="no">
+				<Say speaker="Lilith" text="Child. Whether safely under my wing or alone on the street, make no mistake..."/>
+				<Wait seconds="0.5"/>
+				<Say speaker="Lilith" text="Child. Whether safely under my wing or alone on the street, make no mistake... You are ALWAYS food.">
+					<Response text="(Continue)"/>
+				</Say>
+				<CallRoutine name="GivePandorasBox"/>
+			</Response>
+		</HandleResponse>
+	</Routine>
+	
+	<Routine name="GivePandorasBox">
+		<GiveActivity name="pandora_activity"/>
+		<GiveQuest name="pandora_quest"/>
+		<Exit/>
+	</Routine>
+	
+	<Routine name="HasPandorasBox">
+		<Say speaker="Lilith" text="I have no time for you, kitten."/>
+		<Wait seconds="0.25"/>
+		<Say speaker="Lilith" text="Off with you, kitten. Come speak to me after you've sampled the cuisine at Pandora's Box">
+			<Response text="(Continue)"/>
+		</Say>
+		<Exit/>
+	</Routine>
+	
+	<Routine name="IntroTheHunger">
+		<Say speaker="Lilith" text="Too bad the quest's not implemented!">
+			<Response text="(Continue)"/>
+		</Say>
+		<Exit/>
+	</Routine>
+</Program>
