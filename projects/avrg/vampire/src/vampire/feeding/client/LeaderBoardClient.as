@@ -71,7 +71,7 @@ public class LeaderBoardClient extends SceneObject
                         _leaderBoardPanel[textFieldName + (ii+1) ] as MovieClip;
                     if (scorePanel != null) {
                         TextField(scorePanel["player_name"]).text = "" + score[1];
-                        TextField(scorePanel["player_score"]).text = "" + int(score[0]);
+                        TextField(scorePanel["player_score"]).text = "" + Math.ceil(score[0]);
                     }
                 }
             }
