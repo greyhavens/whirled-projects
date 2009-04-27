@@ -3,6 +3,7 @@ package vampire.feeding.client {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
+import com.threerings.util.Util;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.namespc.*;
 import com.whirled.contrib.simplegame.MainLoop;
@@ -13,6 +14,7 @@ import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.geom.Rectangle;
+import flash.utils.Dictionary;
 import flash.utils.getTimer;
 
 import vampire.feeding.*;
@@ -35,8 +37,6 @@ public class ClientCtx
     // Valid only if clientSettings.spOnly is false
     public static var props :NamespacePropGetControl;
     public static var msgMgr :ClientMsgMgr;
-    public static var allPlayerIds :Array;  // includes people waiting in the lobby for next round
-    public static var gamePlayerIds :Array;
 
     public static function get isCorruption () :Boolean
     {
@@ -56,8 +56,6 @@ public class ClientCtx
         variantSettings = null;
         props = null;
         msgMgr = null;
-        allPlayerIds = null;
-        gamePlayerIds = null;
     }
 
     public static function centerInRoom (disp :DisplayObject) :void
@@ -105,6 +103,26 @@ public class ClientCtx
         }
 
         return true;
+    }
+
+    public static function get allPlayerIds () :Array
+    {
+        if (clientSettings.spOnly) {
+            return [ localPlayerId ];
+        } else {
+            var dict :Dictionary = ClientCtx.props.get(Props.ALL_PLAYERS) as Dictionary;
+            return (dict != null ? Util.keys(dict) : []);
+        }
+    }
+
+    public static function get gamePlayerIds () :Array
+    {
+        if (clientSettings.spOnly) {
+            return [ localPlayerId ];
+        } else {
+            var dict :Dictionary = ClientCtx.props.get(Props.GAME_PLAYERS) as Dictionary;
+            return (dict != null ? Util.keys(dict) : []);
+        }
     }
 
     public static function get preyId () :int

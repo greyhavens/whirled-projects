@@ -129,34 +129,10 @@ public class BloodBloom extends FeedingClient
 
     protected function onPropChanged (e :PropertyChangedEvent) :void
     {
-        if (e.name == Props.ALL_PLAYERS) {
-            updateAllPlayers();
-        } else if (e.name == Props.GAME_PLAYERS) {
-            updateGamePlayers();
-        } else if (e.name == Props.MODE_NAME) {
+        if (e.name == Props.MODE_NAME) {
             updateMode();
         } else if (e.name == Props.VARIANT) {
             updateVariant();
-        }
-    }
-
-    protected function updateAllPlayers () :void
-    {
-        var playerDict :Dictionary = ClientCtx.props.get(Props.ALL_PLAYERS) as Dictionary;
-        if (playerDict == null) {
-            ClientCtx.allPlayerIds = [];
-        } else {
-            ClientCtx.allPlayerIds = Util.keys(playerDict);
-        }
-    }
-
-    protected function updateGamePlayers () :void
-    {
-        var playerDict :Dictionary = ClientCtx.props.get(Props.GAME_PLAYERS) as Dictionary;
-        if (playerDict == null) {
-            ClientCtx.gamePlayerIds = [];
-        } else {
-            ClientCtx.gamePlayerIds = Util.keys(playerDict);
         }
     }
 
@@ -226,8 +202,6 @@ public class BloodBloom extends FeedingClient
                 onPropChanged, false, int.MAX_VALUE);
 
             updateVariant();
-            updateAllPlayers();
-            updateGamePlayers();
             updateMode();
         }
     }
