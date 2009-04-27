@@ -81,10 +81,17 @@ public class QuestClient
         _questPanel.showLocationPanel(loc);
     }
 
-    public static function hideLocationPanel () :void
+    public static function showLastDisplayedLocationPanel () :void
+    {
+        if (_questPanel != null && _questPanel.lastDisplayedLocation != null) {
+            showLocationPanel(_questPanel.lastDisplayedLocation);
+        }
+    }
+
+    public static function hideDockedPanel (destroy :Boolean) :void
     {
         if (_questPanel != null) {
-            _questPanel.hideLocationPanel();
+            _questPanel.hideDockedPanel(destroy);
         }
     }
 
@@ -114,20 +121,14 @@ public class QuestClient
 
     public static function showNpcTalkDialog (programName :String) :void
     {
-        closeNpcTalkDialog();
-
-        var dialogTest :NpcTalkResource =
-            ClientCtx.rsrcs.getResource(programName) as NpcTalkResource;
-        var view :NpcTalkPanel = new NpcTalkPanel(dialogTest.program);
-        ClientCtx.mainLoop.topMode.addSceneObject(view);
-        _npcTalkViewRef = view.ref;
-    }
-
-    public static function closeNpcTalkDialog () :void
-    {
-        if (!_npcTalkViewRef.isNull) {
-            _npcTalkViewRef.object.destroySelf();
+        var rsrc :NpcTalkResource = ClientCtx.rsrcs.getResource(programName) as NpcTalkResource;
+        if (rsrc == null) {
+            log.warning("Can't show NpcTalkPanel; no resource named '" + programName + "' exists.");
+            return;
         }
+
+        showQuestPanel(true);
+        _questPanel.showNpcTalkPanel(rsrc.program);
     }
 
     public static function get isReady () :Boolean
@@ -250,7 +251,6 @@ public class QuestClient
 
     protected static var _debugPanel :DebugPanel;
     protected static var _questPanel :QuestPanel;
-    protected static var _npcTalkViewRef :SimObjectRef = SimObjectRef.Null();
 
     protected static var _inited :Boolean;
     protected static var _resourcesLoaded :Boolean;

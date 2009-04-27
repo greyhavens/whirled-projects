@@ -1,6 +1,6 @@
 package vampire.quest.client {
 
-import com.whirled.contrib.simplegame.objects.DraggableObject;
+import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
@@ -11,7 +11,7 @@ import flash.text.TextField;
 
 import vampire.quest.client.npctalk.*;
 
-public class NpcTalkPanel extends DraggableObject
+public class NpcTalkPanel extends SceneObject
 {
     public function NpcTalkPanel (program :Program)
     {
@@ -43,9 +43,14 @@ public class NpcTalkPanel extends DraggableObject
     override protected function update (dt :Number) :void
     {
         super.update(dt);
-        _program.update(dt);
-        if (!_program.isRunning) {
-            destroySelf();
+
+        if (_program != null) {
+            _program.update(dt);
+            if (!_program.isRunning) {
+                QuestClient.hideDockedPanel(true);
+                QuestClient.showLastDisplayedLocationPanel();
+                _program = null;
+            }
         }
     }
 

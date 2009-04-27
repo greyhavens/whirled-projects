@@ -30,7 +30,7 @@ public class LocationPanel extends SceneObject
         var btnClose :SimpleButton = _panelMovie["close"];
         registerListener(btnClose, MouseEvent.CLICK,
             function (...ignored) :void {
-                QuestClient.hideLocationPanel();
+                QuestClient.hideDockedPanel(false);
             });
 
         for (var ii :int = 0; ii < loc.activities.length; ++ii) {
