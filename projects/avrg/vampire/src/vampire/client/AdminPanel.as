@@ -27,7 +27,8 @@ public class AdminPanel extends DraggableObject
     {
         super.addedToDB();
         setup();
-        ClientContext.centerOnViewableRoom(displayObject);
+        x = 100;
+        y = 100;
     }
 
     override protected function update (dt:Number) :void
@@ -69,9 +70,8 @@ public class AdminPanel extends DraggableObject
 
         var panelWidth :int = 300;
         _draggableSprite.graphics.beginFill(0xffffff);
-        _draggableSprite.graphics.drawRect(0,0,panelWidth,300);
+        _draggableSprite.graphics.drawRect(0,0,panelWidth,400);
         _draggableSprite.graphics.endFill();
-//        _draggableSprite.mouseEnabled = true;
         _displaySprite.addChild(_draggableSprite);
 
 
@@ -125,20 +125,6 @@ public class AdminPanel extends DraggableObject
             }
         });
 
-
-
-//        var getBloodButton :SimpleTextButton = new SimpleTextButton("+Blood");
-//        getBloodButton.x = 10;
-//        getBloodButton.y = 50;
-//        getBloodButton.addEventListener(MouseEvent.CLICK, gainBlood);
-//        _menuSprite.addChild(getBloodButton);
-//
-//        var loseBloodButton :SimpleTextButton = new SimpleTextButton("-Blood");
-//        loseBloodButton.x = startX; + 50;
-//        loseBloodButton.y = getBloodButton.y;
-//        loseBloodButton.addEventListener(MouseEvent.CLICK, loseBlood);
-//        _menuSprite.addChild(loseBloodButton);
-
         var addLevelButton :SimpleTextButton = new SimpleTextButton("+Level");
         addLevelButton.x = startX;
         addLevelButton.y = startY + 50;
@@ -185,31 +171,22 @@ public class AdminPanel extends DraggableObject
         var resetScoresButton :SimpleTextButton = new SimpleTextButton("Reset scores");
         resetScoresButton.x = statsButton.x;
         resetScoresButton.y = statsButton.y + 50;
-        resetScoresButton.addEventListener(MouseEvent.CLICK, function (...ignored) :void {
+        registerListener(resetScoresButton, MouseEvent.CLICK, function (...ignored) :void {
             ClientContext.ctrl.agent.sendMessage(
                 DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_RESET_HIGH_SCORES).toBytes());
         });
         _menuSprite.addChild(resetScoresButton);
 
+        var getLineageButton :SimpleTextButton = new SimpleTextButton("Lineage to logs");
+        getLineageButton.x = resetScoresButton.x;
+        getLineageButton.y = resetScoresButton.y + 40;
+        registerListener(getLineageButton, MouseEvent.CLICK, function (...ignored) :void {
+            ClientContext.ctrl.agent.sendMessage(
+                DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_GET_TOP_LINEAGE).toBytes());
+        });
+        _menuSprite.addChild(getLineageButton);
 
-//        var addAllBloodButton :SimpleTextButton = new SimpleTextButton("+20 Blood Room");
-//        addAllBloodButton.x = loseInviteButton.x;
-//        addAllBloodButton.y = addInviteButton.y + 50;
-//        registerListener(addAllBloodButton, MouseEvent.CLICK, function(...ignored) :void {
-//            ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_MESSAGE_DEBUG_GIVE_BLOOD_ALL_ROOM);
-//        });
-//        _menuSprite.addChild(addAllBloodButton);
 
-//        var resetMySireButton :SimpleTextButton = new SimpleTextButton("Reset Sire");
-//        resetMySireButton.x = addAllBloodButton.x;
-//        resetMySireButton.y = addAllBloodButton.y + 50;
-//        registerListener(resetMySireButton, MouseEvent.CLICK, function(...ignored) :void {
-//            ClientContext.ctrl.agent.sendMessage(VConstants.NAMED_MESSAGE_DEBUG_RESET_MY_SIRE);
-//        });
-//        _menuSprite.addChild(resetMySireButton);
-
-//        _menuSprite.x = -_menuSprite.width / 2;
-//        _menuSprite.y = -_menuSprite.height / 2;
         _displaySprite.addChild(_menuSprite);
 
 
@@ -226,12 +203,6 @@ public class AdminPanel extends DraggableObject
 
         if(VConstants.LOCAL_DEBUG_MODE) {
             LogicServer.increaseLevel(_playerData);
-//            var props :PropertySubControlFake = PropertySubControlFake(ClientContext.ctrl.player.props);
-//            var currentLevel :Number = ClientContext.model.level;
-//            var xpNeededForNextLevel :int = Logic.xpNeededForLevel(currentLevel + 1) - ClientContext.model.xp;
-//            var invitesNeededForNextLevel :int = Logic.invitesNeededForLevel(currentLevel + 1);
-//            props.set(Codes.PLAYER_PROP_XP, ClientContext.model.xp + xpNeededForNextLevel);
-//            props.set(Codes.PLAYER_PROP_INVITES, invitesNeededForNextLevel);
         }
     }
 
@@ -240,12 +211,6 @@ public class AdminPanel extends DraggableObject
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LEVEL_DOWN).toBytes());
         if(VConstants.LOCAL_DEBUG_MODE) {
             LogicServer.decreaseLevel(_playerData);
-//            var props :PropertySubControlFake = PropertySubControlFake(ClientContext.ctrl.player.props);
-//            var currentLevel :Number = ClientContext.model.level;
-//            if(currentLevel > 1) {
-//                var newXp :int = Logic.xpNeededForLevel(currentLevel - 1);
-//                props.set(Codes.PLAYER_PROP_XP, newXp);
-//            }
         }
     }
 
@@ -254,12 +219,6 @@ public class AdminPanel extends DraggableObject
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_GAIN_XP).toBytes());
         if(VConstants.LOCAL_DEBUG_MODE) {
             LogicServer.addXP(_playerData.playerId, 500);
-//            var props :PropertySubControlFake = PropertySubControlFake(ClientContext.ctrl.player.props);
-//            var currentXP:int = ClientContext.model.xp;
-//            var invites:int = ClientContext.model.invites;
-//            currentXP += 500;
-//            currentXP = Math.min(currentXP, Logic.maxXPGivenXPAndInvites(currentXP, invites));
-//            props.set(Codes.PLAYER_PROP_XP, Math.max(0,currentXP));
         }
     }
 
@@ -268,12 +227,6 @@ public class AdminPanel extends DraggableObject
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LOSE_XP).toBytes());
         if(VConstants.LOCAL_DEBUG_MODE) {
             LogicServer.addXP(_playerData.playerId, -500);
-//            var props :PropertySubControlFake = PropertySubControlFake(ClientContext.ctrl.player.props);
-//            var currentXP:int = ClientContext.model.xp;
-//            var invites:int = ClientContext.model.invites;
-//            currentXP -= 500;
-//            currentXP = Math.min(currentXP, Logic.maxXPGivenXPAndInvites(currentXP, invites));
-//            props.set(Codes.PLAYER_PROP_XP, Math.max(0,currentXP));
         }
     }
 
@@ -283,10 +236,6 @@ public class AdminPanel extends DraggableObject
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_ADD_INVITE).toBytes());
         if(VConstants.LOCAL_DEBUG_MODE) {
             _playerData.addToInviteTally();
-//            ServerLogic.Lo(_playerData.playerId, -500);
-//            var props :PropertySubControlFake = PropertySubControlFake(ClientContext.ctrl.player.props);
-//            var currentInvites:int = ClientContext.model.invites;
-//            props.set(Codes.PLAYER_PROP_INVITES, Math.max(0,currentInvites + 1));
         }
     }
 
@@ -295,9 +244,6 @@ public class AdminPanel extends DraggableObject
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_LOSE_INVITE).toBytes());
         if(VConstants.LOCAL_DEBUG_MODE) {
             _playerData.invites = Math.max(0, _playerData.invites - 1);
-//            var props :PropertySubControlFake = PropertySubControlFake(ClientContext.ctrl.player.props);
-//            var currentInvites:int = ClientContext.model.invites;
-//            props.set(Codes.PLAYER_PROP_INVITES, Math.max(0,currentInvites + 1));
         }
     }
 

@@ -5,12 +5,9 @@ import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
 import com.whirled.contrib.simplegame.ObjectMessage;
-import com.whirled.contrib.simplegame.tasks.FunctionTask;
-import com.whirled.contrib.simplegame.tasks.RepeatingTask;
-import com.whirled.contrib.simplegame.tasks.SerialTask;
-import com.whirled.contrib.simplegame.tasks.TimedTask;
 
 import flash.utils.ByteArray;
+import flash.utils.clearInterval;
 
 import vampire.data.Codes;
 import vampire.data.Lineage;
@@ -22,16 +19,21 @@ public class LineageServer extends Lineage
     public function LineageServer(vserver :GameServer)
     {
         _vserver = vserver;
-
-        addTask(new RepeatingTask(new SerialTask(
-                                            new TimedTask(10),
-                                            new FunctionTask(checkPlayersNames))));
+        //Test this off.
+//        addIntervalId(setInterval(checkPlayersNames, 1000*10));
+        loadOfflinePlayer(VConstants.UBER_VAMP_ID);
     }
 
     public function resendPlayerLineage (playerId :int) :void
     {
         _playerIdsResendLineage.add(playerId);
     }
+
+    /**
+    * Problem: loading players names in their offline data sometimes results in nulls,
+    * although later they have
+    *
+    */
     protected function checkPlayersNames () :void
     {
         _vserver.players.forEach(function (playerId :int, player :PlayerData) :void {
@@ -111,6 +113,8 @@ public class LineageServer extends Lineage
         }
 
     }
+
+
 
     /**
     * The server tells us when a new PlayerData object is created.
@@ -235,7 +239,7 @@ public class LineageServer extends Lineage
     */
     protected function offlinePlayerFinishedLoading (playerId :int) :void
     {
-        log.debug("offlinePlayerFinishedLoading", "playerId", playerId);
+        log.debug("offlinePlayerFinishedLoading", "playerId", playerId, "prog", getProgenyIds(playerId));
         log.debug("offlinePlayerFinishedLoading", "lineage", this);
         if (isVisibleToOnlinePlayer(playerId)) {
             loadOfflinePlayer(getSireId(playerId));
@@ -244,6 +248,15 @@ public class LineageServer extends Lineage
                 loadOfflinePlayer(progenyId);
             }
         }
+
+        //Load some levels of descendents of Lilith.
+        if (playerId == VConstants.UBER_VAMP_ID || (isMemberOfLineage(playerId) &&
+            getNumberOfSiresAbove(playerId) < VConstants.GENERATIONS_BELOW_LILITH_FURN_LINEAGE)) {
+                log.debug("Loading descendents of Lilith", "playerId", playerId, "prog", getProgenyIds(playerId));
+                for each (var childId :int in getProgenyIds(playerId)) {
+                    loadOfflinePlayer(childId);
+                }
+            }
 
         //Resend the lineage to the sire and grandsire.
         for each (var sire :int in getAllSiresAndGrandSires(playerId, 2)) {
@@ -315,6 +328,19 @@ public class LineageServer extends Lineage
         }
     }
 
+    override protected function destroyed () :void
+    {
+        super.destroyed();
+        for each (var id :uint in _intervalIds) {
+            clearInterval(id);
+        }
+    }
+
+    protected function addIntervalId (id :uint) :void
+    {
+        _intervalIds.push(id);
+    }
+
     override public function get objectName () :String
     {
         return NAME;
@@ -322,6 +348,8 @@ public class LineageServer extends Lineage
 
     protected var _vserver :GameServer;
     protected var _playerIdsResendLineage :HashSet = new HashSet();
+
+    protected var _intervalIds :Array = [];
 
     public static const MESSAGE_PLAYER_JOINED_GAME :String = "Message: Player Joined";
     public static const NAME :String = "LineageServer";

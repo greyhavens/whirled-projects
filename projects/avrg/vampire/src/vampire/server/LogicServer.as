@@ -1,13 +1,9 @@
 package vampire.server
 {
 
-import com.threerings.flash.MathUtil;
-import com.threerings.flash.Vector2;
 import com.threerings.util.Log;
-import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
 import com.whirled.avrg.PlayerSubControlServer;
-import com.whirled.contrib.simplegame.ObjectMessage;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.net.Message;
 
@@ -15,22 +11,17 @@ import flash.utils.ByteArray;
 
 import vampire.Util;
 import vampire.data.Codes;
+import vampire.data.Lineage;
 import vampire.data.Logic;
 import vampire.data.VConstants;
 import vampire.net.messages.AvatarChosenMsg;
 import vampire.net.messages.BloodBondRequestMsg;
 import vampire.net.messages.DebugMsg;
-import vampire.net.messages.FeedConfirmMsg;
-import vampire.net.messages.FeedRequestCancelMsg;
-import vampire.net.messages.FeedRequestMsg;
-import vampire.net.messages.FeedingDataMsg;
 import vampire.net.messages.GameStartedMsg;
-import vampire.net.messages.MovePredIntoPositionMsg;
 import vampire.net.messages.RoomNameMsg;
 import vampire.net.messages.SendGlobalMsg;
 import vampire.net.messages.ShareTokenMsg;
-import vampire.server.feeding.FeedingRecord;
-import vampire.server.feeding.LogicFeeding;
+import vampire.net.messages.StatsMsg;
 
 
 
@@ -175,6 +166,28 @@ public class LogicServer extends SimObject
 
             case DebugMsg.DEBUG_LOSE_INVITE:
             player.invites = Math.max(0, player.invites - 1);
+            break;
+
+            case DebugMsg.DEBUG_GET_TOP_LINEAGE:
+            var ln :Lineage = ServerContext.server.lineage.getSubLineage(VConstants.UBER_VAMP_ID,
+                1, VConstants.GENERATIONS_BELOW_LILITH_FURN_LINEAGE);
+            log.debug(DebugMsg.DEBUG_GET_TOP_LINEAGE, "lineage total", ServerContext.server.lineage);
+
+//            var s :String = "";
+//            s += "Names";
+//            for each (var playerId :int in ln.playerIds) {
+//                s += "\n" + playerId + "=" + ln.getPlayerName(playerId);
+//            }
+//            s += "Sires";
+//            for each (playerId in ln.playerIds) {
+//                s += "\n" + playerId + "=" + ln.getSireId(playerId);
+//            }
+            var bytes :ByteArray = ln.toBytes();
+//            bytes.writeUTF(s);
+            bytes.compress();
+
+            var msg :StatsMsg = new StatsMsg(0, StatsMsg.TYPE_LINEAGE, bytes);
+            player.sctrl.sendMessage(StatsMsg.NAME, msg.toBytes());
             break;
 
             default:

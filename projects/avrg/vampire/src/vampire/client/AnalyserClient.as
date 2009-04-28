@@ -6,6 +6,9 @@ import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.ByteArray;
 
+import mx.utils.Base64Encoder;
+
+import vampire.data.Lineage;
 import vampire.net.messages.StatsMsg;
 
 public class AnalyserClient extends SimObject
@@ -24,10 +27,33 @@ public class AnalyserClient extends SimObject
                 log.error("handleMessageReceived, cannot convert to StatsMsg", "e", e);
                 return;
             }
-            var bytes :ByteArray = msg.compressedString;
-            bytes.uncompress();
-            var s :String = bytes.readUTF();
-            trace(s);
+            var s :String;
+            var bytes :ByteArray;
+            switch (msg.type) {
+                case StatsMsg.TYPE_STATS:
+                bytes = msg.data;
+                bytes.uncompress();
+                s = bytes.readUTF();
+                trace(s);
+                break;
+
+                case StatsMsg.TYPE_LINEAGE:
+                bytes = msg.data;
+                bytes.uncompress();
+                var enc :Base64Encoder = new Base64Encoder();
+                enc.insertNewLines = false;
+                enc.encodeBytes(bytes);
+                s = enc.toString();
+                trace("Lineage (base64 encoded)");
+                trace(s);
+                trace("\n");
+
+                var ln :Lineage = new Lineage();
+                ln.fromBytes(bytes);
+                trace("\Lineage:");
+                trace(ln);
+                break;
+            }
         }
     }
 

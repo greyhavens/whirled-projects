@@ -78,12 +78,15 @@ public class AnalyserServer extends SimObjectServer
     protected function handleMessage (evt :MessageReceivedEvent) :void
     {
         if (evt.name == StatsMsg.NAME) {
-            if (ServerContext.server.isPlayer(evt.senderId)) {
+            var msg :StatsMsg =
+                ServerContext.msg.deserializeMessage(StatsMsg.NAME, evt.value) as StatsMsg;
+
+            if (msg.type == StatsMsg.TYPE_STATS && ServerContext.server.isPlayer(evt.senderId)) {
                 var s :String = createStatsString();
                 var sBytes :ByteArray = new ByteArray();
                 sBytes.writeUTF(s);
                 sBytes.compress();
-                var statsMsg :StatsMsg = new StatsMsg(evt.senderId, sBytes);
+                var statsMsg :StatsMsg = new StatsMsg(evt.senderId, StatsMsg.TYPE_STATS, sBytes);
                 ServerContext.server.getPlayer(evt.senderId).sctrl.sendMessage(StatsMsg.NAME,
                     statsMsg.toBytes());
             }
