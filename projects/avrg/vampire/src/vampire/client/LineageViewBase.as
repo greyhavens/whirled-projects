@@ -29,11 +29,20 @@ import flash.text.TextFormatAlign;
 import vampire.data.Lineage;
 import vampire.data.VConstants;
 
+/**
+ * ClientContext.instantiateMovieClip("HUD", "droplet", true);
+ * ClientContext.instantiateButton("HUD", "button_hierarchy_no_mouse");
+ */
 public class LineageViewBase extends SceneObjectParent
 {
 
-    public function LineageViewBase (lineage :Lineage = null, centerPlayerId :int = 0)
+    public function LineageViewBase (dropCreation :Function,
+                                     lineageIconCreation :Function,
+                                     lineage :Lineage = null,
+                                     centerPlayerId :int = 0)
     {
+        _dropCreation = dropCreation;
+        _lineageIconCreation = lineageIconCreation;
         _lineage = lineage;
         _hierarchyTree = new Sprite();
 
@@ -47,7 +56,7 @@ public class LineageViewBase extends SceneObjectParent
         _lilith.graphics.lineStyle(BLOOD_LINEAGE_LINK_THICKNESS, BLOOD_LINEAGE_LINK_COLOR, 1);
         _lilith.graphics.moveTo(0, 0);
         _lilith.graphics.lineTo(0, 120);
-        var drop :MovieClip = ClientContext.instantiateMovieClip("HUD", "droplet", true);
+        var drop :MovieClip = dropCreation() as MovieClip;
         drop.scaleX = drop.scaleY = 3.0;
         _lilith.addChild(drop);
         _lilith.addChild(DropSceneObject.getTextFieldCenteredOn("Lilith", 40, 0));
@@ -61,21 +70,6 @@ public class LineageViewBase extends SceneObjectParent
         if (_lineage != null) {
             updateLineage(_selectedPlayerIdCenter);
         }
-    }
-
-
-
-    public function addPopupBackground () :void
-    {
-        var popupPanel :MovieClip = ClientContext.instantiateMovieClip("HUD", "popup", false);
-        ClientUtil.detach(DisplayObject(popupPanel["button_01"]));
-        ClientUtil.detach(DisplayObject(popupPanel["button_02"]));
-        displaySprite.addChildAt(popupPanel, 0);
-        //Close button shuts the popup
-        var closeButton :SimpleButton = popupPanel["button_close"] as SimpleButton;
-        registerListener(closeButton, MouseEvent.CLICK, function (e :MouseEvent) :void {
-            destroySelf();
-        });
     }
 
     override public function get objectName () :String
@@ -221,7 +215,7 @@ public class LineageViewBase extends SceneObjectParent
         //Draw the page left/right buttons.
         if (startProgenyViewIndex > 0) {
             //The button
-            var button_page_left :SimpleButton = ClientContext.instantiateButton("HUD", "button_hierarchy_no_mouse");
+            var button_page_left :SimpleButton = _lineageIconCreation() as SimpleButton;
             var buttonLeftSO :SceneObject = new SimpleSceneObject(button_page_left);
             addSimObject(buttonLeftSO, s);
             _volatileUIComponents.push(buttonLeftSO);
@@ -246,7 +240,7 @@ public class LineageViewBase extends SceneObjectParent
         }
         //Show the more sub progeny button
         if (startProgenyViewIndex + MAX_PROGENY_SHOWN < progenyCount) {
-            var button_page_right :SimpleButton = ClientContext.instantiateButton("HUD", "button_hierarchy_no_mouse");
+            var button_page_right :SimpleButton = _lineageIconCreation() as SimpleButton;
             var buttonRightSO :SceneObject = new SimpleSceneObject(button_page_right);
             buttonRightSO.x = locations[locations.length - 1].x + 25;
             buttonRightSO.y = startY + yInc;
@@ -412,7 +406,7 @@ public class LineageViewBase extends SceneObjectParent
 
             playerName = playerName.substring(0, VConstants.MAX_CHARS_IN_LINEAGE_NAME);
 
-            drop = new DropSceneObject(playerId, playerName, updateLineage);
+            drop = new DropSceneObject(_dropCreation, playerId, playerName, updateLineage);
 
             addSimObject(drop);
             drop.alpha = 0;
@@ -580,6 +574,9 @@ public class LineageViewBase extends SceneObjectParent
     protected var _volatileUIComponents :Array = new Array();
     protected var _visiblePlayers :HashSet = new HashSet();
 
+    protected var _dropCreation :Function;
+    protected var _lineageIconCreation :Function;
+
 
     public static const BLOOD_LINEAGE_LINK_COLOR :int = 0xcc0000;
     public static const BLOOD_LINEAGE_LINK_THICKNESS :int = 3;
@@ -617,9 +614,10 @@ import vampire.data.VConstants;
 
 class DropSceneObject extends SceneObject
 {
-    public function DropSceneObject (playerId :int, playerName :String,
+    public function DropSceneObject (dropCreation :Function, playerId :int, playerName :String,
         centerLineage :Function)
     {
+        _dropCreation = dropCreation;
         _playerId = playerId;
         _centerLineageFunction = centerLineage;
 
@@ -629,7 +627,7 @@ class DropSceneObject extends SceneObject
         _displaySprite.addChild(_nameText);
 
         try {
-            _drop = ClientContext.instantiateMovieClip("HUD", "droplet", true);
+            _drop = dropCreation() as MovieClip;
         }
         catch(e :Error) {
             _drop = new MovieClip();
@@ -752,4 +750,7 @@ class DropSceneObject extends SceneObject
     protected var _centerLineageFunction :Function;
     protected var _displaySprite :Sprite = new Sprite();
     protected var _glowFilter :GlowFilter = new GlowFilter(0xffffff);
+    protected var _dropCreation :Function;
+
+
 }

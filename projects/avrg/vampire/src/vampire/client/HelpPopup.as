@@ -37,10 +37,20 @@ package vampire.client
             _hudHelp = ClientContext.instantiateMovieClip("HUD", "popup_help", false);
             _displaySprite.addChild(_hudHelp);
 
-            _targetLineageView = new LineageViewBase(otherLineage, playerCenter);
+            function getDrop () :MovieClip {
+                return ClientContext.instantiateMovieClip("HUD", "droplet", true);
+            }
+            function getLineageButton () :SimpleButton {
+                return ClientContext.instantiateButton("HUD", "button_hierarchy_no_mouse");
+            }
+
+            _targetLineageView = new LineageViewBase(getDrop, getLineageButton, otherLineage,
+                playerCenter);
+
 //            _myLineageView = new LineageView();
-            _myLineageView = new LineageViewBase(ClientContext.gameMode.lineages.getLineage(
-                ClientContext.ourPlayerId), ClientContext.ourPlayerId);
+            _myLineageView = new LineageViewBase(getDrop, getLineageButton,
+                ClientContext.gameMode.lineages.getLineage( ClientContext.ourPlayerId),
+                ClientContext.ourPlayerId);
 
 
             //Go to the first frame where all the buttons are.  Even though not all buttons are
@@ -170,7 +180,7 @@ package vampire.client
             gotoFrame(startframe);
 
 
-            registerListener(ClientCtx.gameCtrl.game.props, PropertyChangedEvent.PROPERTY_CHANGED,
+            registerListener(ClientContext.ctrl.game.props, PropertyChangedEvent.PROPERTY_CHANGED,
                 handlePropertyChangedEvent);
 
 
@@ -196,6 +206,9 @@ package vampire.client
 
         protected function updateScoresFromProps (...ignored) :void
         {
+            if (VConstants.LOCAL_DEBUG_MODE) {
+                return;
+            }
             setTextFromPropScores(
                 ClientCtx.gameCtrl.game.props.get(VConstants.GLOBAL_PROP_SCORES_DAILY) as Array,
                 "today_0",
