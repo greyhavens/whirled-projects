@@ -1,6 +1,8 @@
 package vampire.client
 {
 import com.threerings.util.HashMap;
+import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.net.ElementChangedEvent;
 
@@ -19,6 +21,33 @@ public class LineagesClient extends SimObject
     {
         registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED,
             handleElementChanged);
+        handleOurPlayerEnteredRoom(null);
+        //Listen for the player leaving the room, shut down the client then
+        registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM,
+            handleOurPlayerEnteredRoom);
+
+        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_LEFT,
+            handlePlayerLeftRoom);
+
+        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_ENTERED,
+            handlePlayerEnteredRoom);
+    }
+
+    protected function handlePlayerLeftRoom (e :AVRGameRoomEvent) :void
+    {
+        _lineages.remove(e.value);
+    }
+
+    protected function handlePlayerEnteredRoom (e :AVRGameRoomEvent) :void
+    {
+        var dict :Dictionary = ClientContext.ctrl.room.props.get(Codes.ROOM_PROP_PLAYER_LINEAGE) as Dictionary;
+        if (dict != null) {
+            loadLineageFromBytes(e.value as int, dict[e.value]);
+        }
+    }
+
+    protected function handleOurPlayerEnteredRoom (...ignored) :void
+    {
         var dict :Dictionary = ClientContext.ctrl.room.props.get(Codes.ROOM_PROP_PLAYER_LINEAGE) as Dictionary;
         if (dict != null) {
             for each (var playerId :int in ClientContext.ctrl.room.getPlayerIds()) {
