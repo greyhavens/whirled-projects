@@ -13,11 +13,14 @@ import com.whirled.contrib.simplegame.net.Message;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
+import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
+import vampire.client.events.LineageUpdatedEvent;
 import vampire.data.Codes;
+import vampire.data.Lineage;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingClient;
 import vampire.feeding.FeedingClientSettings;
@@ -56,6 +59,10 @@ public class MainGameMode extends AppMode
         //Welcome the player with a link to the group
         ClientContext.ctrl.local.feedback("Welcome to Vampire Whirled!  " +
         "Join the group and read the latest updates: http://www.whirled.com/#groups-d_11220");
+
+
+        var test :MovieClip = ClientContext.instantiateMovieClip("grael", "popup_lineage", true);
+        trace("test=" + test);
 
     }
 
@@ -146,31 +153,6 @@ public class MainGameMode extends AppMode
             //And for admins, listen to stats messages.
             addObject(new AnalyserClient());
         }
-
-
-//        if (VConstants.LOCAL_DEBUG_MODE) {
-//
-//            var lineage :Lineage = new Lineage();
-//            lineage.isConnectedToLilith = true;
-//                lineage.setPlayerSire(1, 2);
-//                lineage.setPlayerSire(3, 1);
-//                lineage.setPlayerSire(4, 1);
-//                lineage.setPlayerSire(5, 1);
-//                lineage.setPlayerSire(6, 5);
-//                lineage.setPlayerSire(7, 6);
-//                lineage.setPlayerSire(8, 6);
-//                lineage.setPlayerSire(9, 1);
-//                lineage.setPlayerSire(10, 1);
-//                lineage.setPlayerSire(11, 1);
-//                lineage.setPlayerSire(12, 1);
-//                lineage.setPlayerSire(13, 1);
-//                lineage.setPlayerSire(14, 1);
-//            var msg :LineageUpdatedEvent = new LineageUpdatedEvent(lineage, ClientContext.ourPlayerId);
-//            ClientContext.model.lineage = lineage;
-//            ClientContext.model.dispatchEvent(msg);
-//        }
-
-
     }
 
     protected function handlePlayerLeftRoom (e :AVRGameRoomEvent) :void

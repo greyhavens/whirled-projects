@@ -11,6 +11,7 @@ import flash.utils.Dictionary;
 
 import vampire.data.Codes;
 import vampire.data.Lineage;
+import vampire.data.VConstants;
 
 /**
  * Manages and presents room props and data.
@@ -31,6 +32,32 @@ public class LineagesClient extends SimObject
 
         registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_ENTERED,
             handlePlayerEnteredRoom);
+
+
+
+        if (VConstants.LOCAL_DEBUG_MODE) {
+
+            var lineage :Lineage = new Lineage();
+            lineage.isConnectedToLilith = true;
+                lineage.setPlayerSire(1, 2);
+                lineage.setPlayerSire(3, 1);
+                lineage.setPlayerSire(4, 1);
+                lineage.setPlayerSire(5, 1);
+                lineage.setPlayerSire(6, 5);
+                lineage.setPlayerSire(7, 6);
+                lineage.setPlayerSire(8, 6);
+                lineage.setPlayerSire(9, 1);
+                lineage.setPlayerSire(10, 1);
+                lineage.setPlayerSire(11, 1);
+                lineage.setPlayerSire(12, 1);
+                lineage.setPlayerSire(13, 1);
+                lineage.setPlayerSire(14, 1);
+//            var msg :LineageUpdatedEvent = new LineageUpdatedEvent(lineage, ClientContext.ourPlayerId);
+//            ClientContext.model.lineage = lineage;
+//            ClientContext.model.dispatchEvent(msg);
+
+            _lineages.put(ClientContext.ourPlayerId, lineage);
+        }
     }
 
     protected function handlePlayerLeftRoom (e :AVRGameRoomEvent) :void
