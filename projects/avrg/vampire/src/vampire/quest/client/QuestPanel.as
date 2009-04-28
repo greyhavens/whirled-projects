@@ -61,7 +61,7 @@ public class QuestPanel extends DraggableObject
             [],
             _draggable,
             "quest_",
-            [ "quest_name", "quest_description" ],
+            [ "quest_name", "quest_description", "quest_progress" ],
             _panelMovie["button_up"],
             _panelMovie["button_down"]);
 
