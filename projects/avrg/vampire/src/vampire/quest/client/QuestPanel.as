@@ -193,8 +193,8 @@ public class QuestPanel extends DraggableObject
         for each (var quest :QuestDesc in ClientCtx.questData.activeQuests) {
             var entry :Object = {};
             entry["quest_name"] = quest.displayName;
-            entry["quest_description"] =
-                quest.description + " " + quest.getProgressText(ClientCtx.questProps);
+            entry["quest_description"] = quest.description;
+            entry["quest_progress"] = quest.getProgressText(ClientCtx.questProps);
 
             listData.push(entry);
         }

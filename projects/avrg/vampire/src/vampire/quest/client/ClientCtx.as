@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Bitmap;
 import flash.display.MovieClip;
+import flash.display.SimpleButton;
 
 public class ClientCtx
 {
@@ -29,6 +30,11 @@ public class ClientCtx
             className,
             disableMouseInteraction,
             fromCache);
+    }
+
+    public static function instantiateButton (rsrcName :String, className :String) :SimpleButton
+    {
+        return SwfResource.instantiateButton(rsrcs, rsrcName, className);
     }
 }
 

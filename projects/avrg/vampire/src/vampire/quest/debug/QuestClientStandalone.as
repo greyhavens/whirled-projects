@@ -7,6 +7,7 @@ import com.whirled.net.PropertySubControl;
 
 import flash.display.Sprite;
 
+import vampire.avatar.VampireBody;
 import vampire.debug.LocalPropertySubControl;
 import vampire.feeding.FeedingClient;
 import vampire.furni.QuestTotem;
@@ -18,6 +19,7 @@ public class QuestClientStandalone extends Sprite
 {
     QuestTestClient;
     QuestTotem;
+    VampireBody;
 
     public function QuestClientStandalone ()
     {
