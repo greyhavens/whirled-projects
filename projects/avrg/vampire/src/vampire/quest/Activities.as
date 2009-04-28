@@ -33,7 +33,16 @@ public class Activities
             "Pandora's Box",
             0,  // no juice
             true, // locked
-            new BloodBloomActivityParams(1, 1, "Club Kid", 100, "pandora_feedings", 1)));
+            new BloodBloomActivityParams(1, 1, "Pandora's Box Partier", 100, "pandora_feedings", 1)));
+
+        addActivity(new ActivityDesc(
+            homeBase,
+            ActivityDesc.TYPE_CORRUPTION,
+            "temp_corruption",
+            "Playtest Corruption",
+            0,
+            false,
+            new BloodBloomActivityParams(1, 1, "Corrupted Human", 100)));
     }
 
     public static function getActivity (id :int) :ActivityDesc

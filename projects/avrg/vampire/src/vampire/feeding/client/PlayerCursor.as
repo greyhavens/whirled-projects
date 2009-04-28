@@ -258,9 +258,9 @@ public class PlayerCursor extends CollidableObj
 
         // Deliver a white cell to the heart
         if (numWhiteCells > 0) {
-            GameCtx.gameMode.deliverWhiteCell(arteryType);
+            GameCtx.heart.deliverWhiteCell(arteryType);
         } else if (this.isWhiteCellSpawned) {
-            GameCtx.gameMode.deliverWhiteCell(arteryType);
+            GameCtx.heart.deliverWhiteCell(arteryType);
             respawnWhiteCell();
             if (_whiteCellTip.isLive) {
                 _whiteCellTip.object.destroySelf();

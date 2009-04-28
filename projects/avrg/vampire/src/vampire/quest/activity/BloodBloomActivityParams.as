@@ -11,7 +11,7 @@ public class BloodBloomActivityParams extends ActivityParams
     public var awardedPropIncrement :int;
 
     public function BloodBloomActivityParams (minPlayers :int, maxPlayers :int, preyName :String,
-        minScore :int, awardedPropName :String, awardedPropIncrement :int)
+        minScore :int, awardedPropName :String = null, awardedPropIncrement :int = 0)
     {
         super(minPlayers, maxPlayers);
 

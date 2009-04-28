@@ -62,21 +62,6 @@ public class GameMode extends AppMode
         }
     }
 
-    public function deliverWhiteCell (arteryType :int) :void
-    {
-        if (GameCtx.gameOver) {
-            return;
-        }
-
-        GameCtx.heart.deliverWhiteCell();
-
-        // show the delivery animation
-        var artery :MovieClip = _arteries[arteryType];
-        artery.gotoAndPlay(2);
-
-        _sparkles.gotoAndPlay(2);
-    }
-
     public function onHeartbeat () :void
     {
         // spawn new red cells
@@ -143,24 +128,10 @@ public class GameMode extends AppMode
         bg.y = Constants.GAME_CTR.y;
         GameCtx.bgLayer.addChild(bg);
 
-        var heartMovie :MovieClip = ClientCtx.instantiateMovieClip("blood",
-            (isCorruption ? "circulatory_corruption" : "circulatory"));
-        heartMovie.x = Constants.GAME_CTR.x;
-        heartMovie.y = Constants.GAME_CTR.y;
-        GameCtx.heartLayer.addChild(heartMovie);
-
-        _arteries = ArrayUtil.create(2, null);
-        _arteries[Constants.ARTERY_TOP] = heartMovie["artery_top"];
-        _arteries[Constants.ARTERY_BOTTOM] = heartMovie["artery_bottom"];
-
-        _sparkles = heartMovie["sparkles"];
-
-        _countdown = heartMovie["countdown"];
-        _countdown.visible = false;
-        _countdown.gotoAndStop(0);
-
-        GameCtx.heart = new Heart(heartMovie["heart"]);
-        GameCtx.gameMode.addObject(GameCtx.heart);
+        GameCtx.heart = new Heart();
+        GameCtx.heart.x = Constants.GAME_CTR.x;
+        GameCtx.heart.y = Constants.GAME_CTR.y;
+        addSceneObject(GameCtx.heart, GameCtx.heartLayer);
 
         // spawn white cells on a timer separate from the heartbeat
         if (ClientCtx.variantSettings.boardCreatesWhiteCells) {
@@ -303,6 +274,10 @@ public class GameMode extends AppMode
 
     protected function addMultiplierToBoard (multiplier :int, loc :Vector2, playerId :int) :void
     {
+        if (GameCtx.gameOver) {
+            return;
+        }
+
         var cell :Cell = GameObjects.createCell(Constants.CELL_MULTIPLIER, true, multiplier);
         cell.x = loc.x;
         cell.y = loc.y;
@@ -338,14 +313,6 @@ public class GameMode extends AppMode
         }
 
         GameCtx.timeLeft = Math.max(GameCtx.timeLeft - dt, 0);
-
-        if (GameCtx.timeLeft <= 10 && !_countdown.visible) {
-            _countdown.visible = true;
-            // tick the countdown one frame per second
-            var countdownTicker :SimObject = new SimObject();
-            countdownTicker.addTask(new ShowFramesTask(_countdown, 0, -1, GameCtx.timeLeft));
-            addObject(countdownTicker);
-        }
 
         // In singleplayer, the game is considered over when our local timer ends
         if (ClientCtx.clientSettings.spOnly && GameCtx.timeLeft == 0) {
@@ -394,9 +361,6 @@ public class GameMode extends AppMode
     }
 
     protected var _playerType :int;
-    protected var _arteries :Array;
-    protected var _sparkles :MovieClip;
-    protected var _countdown :MovieClip;
     protected var _musicChannel :AudioChannel;
     protected var _performedEndGameLogic :Boolean;
 
