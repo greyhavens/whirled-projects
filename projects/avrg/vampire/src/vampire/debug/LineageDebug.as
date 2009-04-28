@@ -7,7 +7,6 @@ package vampire.debug
     import vampire.client.events.LineageUpdatedEvent;
     import vampire.data.Lineage;
     import vampire.server.GameServer;
-    import vampire.server.LineageServer;
 
 public class LineageDebug extends SimObject
 {
@@ -21,7 +20,7 @@ public class LineageDebug extends SimObject
         if (_localdt >= GameServer.SERVER_TICK_UPDATE_MILLISECONDS/1000.0) {
             _localdt = 0;
             trace("adding random players");
-            addRandomPlayersToLineage(ClientContext.model.lineage, LineageServer.MAX_LINEAGE_NODES_WRITTEN_TO_A_ROOM_PROPS_PER_UPDATE);
+            addRandomPlayersToLineage(ClientContext.model.lineage, MAX_LINEAGE_NODES_WRITTEN_TO_A_ROOM_PROPS_PER_UPDATE);
 
             var msg :LineageUpdatedEvent = new LineageUpdatedEvent(ClientContext.model.lineage, ClientContext.ourPlayerId);
             ClientContext.model.dispatchEvent(msg);
@@ -138,6 +137,6 @@ public class LineageDebug extends SimObject
         }
         return randomLetters;
     }
-
+    public static const MAX_LINEAGE_NODES_WRITTEN_TO_A_ROOM_PROPS_PER_UPDATE :int = 40;
 }
 }

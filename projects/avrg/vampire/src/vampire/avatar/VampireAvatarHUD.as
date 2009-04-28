@@ -316,7 +316,8 @@ public class VampireAvatarHUD extends AvatarHUD
                 d.parent.removeChild(d);
             }
         }
-
+        
+        
         var isPlayerPartOfLineage :Boolean = ClientContext.model.lineage != null && (
             ClientContext.model.lineage.isMemberOfLineage(ClientContext.ourPlayerId) ||
             ClientContext.model.lineage.isConnectedToLilith);
@@ -324,12 +325,13 @@ public class VampireAvatarHUD extends AvatarHUD
         var isAvatarPartOfLineage :Boolean =
             ClientContext.gameMode.lineages.getLineage(playerId) != null &&
             ClientContext.gameMode.lineages.getLineage(playerId).isConnectedToLilith;
-            //ClientContext.model.lineage.isMemberOfLineage(playerId);
 
         var avatarHasNoSire :Boolean =
             ClientContext.gameMode.lineages.getLineage(playerId) == null ||
             !ClientContext.gameMode.lineages.getLineage(playerId).isSireExisting(playerId);
-
+        
+        
+        
         //Only add a button if there is some kind of lineage
         if (ClientContext.gameMode.lineages.getLineage(playerId) != null) {
 
