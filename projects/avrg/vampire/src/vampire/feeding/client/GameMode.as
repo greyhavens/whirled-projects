@@ -147,12 +147,6 @@ public class GameMode extends AppMode
             addObject(whiteCellSpawner);
         }
 
-        GameCtx.sentMultiplierIndicator = new SentMultiplierIndicator(
-            ClientCtx.isPredator ?
-            BONUS_SENT_INDICATOR_PREDATOR_LOC :
-            BONUS_SENT_INDICATOR_PREY_LOC);
-        addSceneObject(GameCtx.sentMultiplierIndicator, GameCtx.effectLayer);
-
         var timerView :TimerView = new TimerView();
         timerView.x = Constants.GAME_CTR.x;
         timerView.y = Constants.GAME_CTR.y;
@@ -175,6 +169,12 @@ public class GameMode extends AppMode
             GameCtx.specialCellSpawner = new SpecialCellSpawner();
             addObject(GameCtx.specialCellSpawner);
         }
+
+        GameCtx.sentMultiplierIndicator = new SentMultiplierIndicator(
+            GameCtx.specialStrainTallyView != null ?
+            BONUS_INDICATOR_STRAIN_LOC :
+            BONUS_INDICATOR_NOSTRAIN_LOC);
+        addSceneObject(GameCtx.sentMultiplierIndicator, GameCtx.effectLayer);
 
         GameCtx.cursor = GameObjects.createPlayerCursor();
 
@@ -366,8 +366,8 @@ public class GameMode extends AppMode
 
     protected static var log :Log = Log.getLog(GameMode);
 
-    protected static const BONUS_SENT_INDICATOR_PREDATOR_LOC :Vector2 = new Vector2(267, 276);
-    protected static const BONUS_SENT_INDICATOR_PREY_LOC :Vector2 = new Vector2(267, 306);
+    protected static const BONUS_INDICATOR_STRAIN_LOC :Vector2 = new Vector2(267, 276);
+    protected static const BONUS_INDICATOR_NOSTRAIN_LOC :Vector2 = new Vector2(267, 304);
 }
 
 }
