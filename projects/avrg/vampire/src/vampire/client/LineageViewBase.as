@@ -295,7 +295,7 @@ public class LineageViewBase extends SceneObjectParent
                     drawLineFrom(s, locations[i].x, locations[i].y, locations[i].x, locations[i].y - yInc);
                 }
                 else {
-                    var button_hiararchy :SimpleButton = ClientContext.instantiateButton("HUD", "button_hierarchy_no_mouse");
+                    var button_hiararchy :SimpleButton = _lineageIconCreation() as SimpleButton;
                     var buttonDownSO :SceneObject = new SimpleSceneObject(button_hiararchy);
 
                     buttonDownSO.x = locations[i].x - button_hiararchy.width;
@@ -394,10 +394,6 @@ public class LineageViewBase extends SceneObjectParent
             var playerName :String = null;
             if (_lineage._playerId2Name.containsKey(playerId)) {
                 playerName = _lineage._playerId2Name.get(playerId) as String;
-            }
-
-            if (playerName == null) {
-                ClientContext.getPlayerName(playerId);
             }
 
             if (playerName == null || playerName.length == 0) {
@@ -607,7 +603,6 @@ import flash.display.Sprite;
 import vampire.client.LineageViewBase;
 import flash.filters.GlowFilter;
 import flash.display.InteractiveObject;
-import vampire.client.ClientContext;
 import flash.display.Shape;
 import vampire.data.Lineage;
 import vampire.data.VConstants;
