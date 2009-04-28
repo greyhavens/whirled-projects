@@ -1,19 +1,22 @@
-package vampire.client
-{
-    import com.whirled.contrib.simplegame.objects.SceneObject;
-    import com.whirled.contrib.simplegame.tasks.AlphaTask;
-    import com.whirled.contrib.simplegame.tasks.FunctionTask;
-    import com.whirled.contrib.simplegame.tasks.SelfDestructTask;
-    import com.whirled.contrib.simplegame.tasks.SerialTask;
+package vampire.client {
 
-    import flash.display.DisplayObject;
-    import flash.display.DisplayObjectContainer;
-    import flash.display.SimpleButton;
-    import flash.filters.GlowFilter;
-    import flash.text.TextField;
+import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.tasks.AlphaTask;
+import com.whirled.contrib.simplegame.tasks.FunctionTask;
+import com.whirled.contrib.simplegame.tasks.SelfDestructTask;
+import com.whirled.contrib.simplegame.tasks.SerialTask;
+
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
+import flash.display.SimpleButton;
+import flash.filters.GlowFilter;
+import flash.text.TextField;
 
 public class ClientUtil
 {
+    public static const ANIMATION_TIME :Number = 0.2;
+    public static const GLOW_FILTER :GlowFilter = new GlowFilter(0xffffff);
+
     public static function detach (d :DisplayObject) :void
     {
         if (d != null && d.parent != null) {
@@ -80,8 +83,5 @@ public class ClientUtil
         setText(button.overState);
         setText(button.hitTestState);
     }
-
-    public static const ANIMATION_TIME :Number = 0.2;
-    public static const glowFilter :GlowFilter = new GlowFilter(0xffffff);
 }
 }

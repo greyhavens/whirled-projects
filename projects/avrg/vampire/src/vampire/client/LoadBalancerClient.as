@@ -218,7 +218,7 @@ public class LoadBalancerClient extends SceneObjectParent
     protected function addGlowFilter(obj : InteractiveObject) :void
     {
         registerListener(obj, MouseEvent.ROLL_OVER, function(...ignored) :void {
-            obj.filters = [ClientUtil.glowFilter];
+            obj.filters = [ClientUtil.GLOW_FILTER];
         });
         registerListener(obj, MouseEvent.ROLL_OUT, function(...ignored) :void {
             obj.filters = [];
