@@ -5,7 +5,7 @@ import com.threerings.flash.Vector2;
 public class VConstants
 {
     public static var LOCAL_DEBUG_MODE :Boolean = false;
-    public static const MODE_DEV :Boolean = false;
+    public static const MODE_DEV :Boolean = true;
 
     public static const PLAYERS_IN_ROOM_TRIGGERING_BALANCING :int = 8;
     public static const ROOMS_SHOWN_IN_LOAD_BALANCER :int = 5;
@@ -23,6 +23,11 @@ public class VConstants
     public static const PLAYER_LINEAGE_LEVELS_DOWN :int = 2;
 
     /**
+    * Generations below Lilith shown in the Lineage furn
+    */
+    public static const GENERATIONS_BELOW_LILITH_FURN_LINEAGE :int = 3;
+
+    /**
     * The max characters in names displayed in the lineage.  Since we cannot display long
     * names, don't persist or transmit them. (shorten them).
     */
@@ -34,7 +39,7 @@ public class VConstants
     /**
     * If you're not related to the ubervamp
     */
-    public static const UBER_VAMP_ID :int = MODE_DEV ? 382856 : 383387;
+    public static const UBER_VAMP_ID :int = MODE_DEV ? 12 : 383387;
     //ubervamp localhost == 12
     //ubervamp dev.whirled == 1877, 382856
     //uvervamp Whirled == 383387
