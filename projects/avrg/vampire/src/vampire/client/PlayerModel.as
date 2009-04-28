@@ -190,14 +190,7 @@ public class PlayerModel extends SimObject
     public function get lineage() :Lineage
     {
         return ClientContext.gameMode.lineages.getLineage(ClientContext.ourPlayerId);
-//        return _lineage;
     }
-
-    //For debugging
-//    public function set lineage(h :Lineage) :void
-//    {
-//        _lineage = h;
-//    }
 
     public function get hotspot () :Array
     {
