@@ -58,7 +58,7 @@
 	</Routine>
 	
 	<Routine name="HasPandorasBox">
-		<Say speaker="Lilith" text="Off with you, kitten. Come speak to me after you've sampled the cuisine at Pandora's Box">
+		<Say speaker="Lilith" text="Off with you, kitten. Come speak to me after you've sampled the cuisine at Pandora's Box.">
 			<Response text="(More)"/>
 		</Say>
 		<Exit/>
