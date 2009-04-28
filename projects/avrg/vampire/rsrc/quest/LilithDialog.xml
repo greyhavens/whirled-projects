@@ -20,9 +20,11 @@
 	
 	<Routine name="IntroPandorasBox">
 		<Say speaker="Lilith" text="No visitors! I'm very -" response="(More)"/>
-		<Say speaker="Lilith" text="No visitors! I'm very - Oh! Aren't you delicious. All right, little one, you like to stick your neck out?" response="Depends on who's biting."/>
+		<Say speaker="Lilith" text="No visitors! I'm very - 
+Oh! Aren't you delicious. All right, little one, you like to stick your neck out?" response="Depends on who's biting."/>
 		<Say speaker="Lilith" text="Marvelous, kitten! I'm throwing a party tonight at Pandora's Box. You'll be on the list." response="(More)"/>
-		<Say speaker="Lilith" text="Marvelous, kitten! I'm throwing a party tonight at Pandora's Box. You'll be on the list. Well... you'll be on the menu.">
+		<Say speaker="Lilith" text="Marvelous, kitten! I'm throwing a party tonight at Pandora's Box. You'll be on the list.
+Well... you'll be on the menu.">
 			<Response id="pandora" text="Pandora's Box?"/>
 			<Response id="yes" text="Sounds like fun."/>
 			<Response id="no" text='"On the menu?" No thanks.'/>
@@ -30,8 +32,9 @@
 		<HandleResponse>
 			<Response id="pandora">
 				<Say speaker="Lilith" text="The nightclub around the corner. The music is loud, the drinks are strong..." response="(More)"/>
-				<Say speaker="Lilith" text="The nightclub around the corner. The music is loud, the drinks are strong... and the little lambs that flock there are easily seduced." response="(More)"/>
-				<Say speaker="Lilith" text="Be a good shepherd, kitten, and tend to that flock. Come back when you've drunk your fill." response="Sounds like fun."/>
+				<Say speaker="Lilith" text="The nightclub around the corner. The music is loud, the drinks are strong...
+and the little lambs that flock there are easily seduced." response="(More)"/>
+				<Say speaker="Lilith" text="Cull that flock, kitten. Come back when you've drunk your fill." response="Sounds like fun."/>
 				<CallRoutine name="GivePandorasBox"/>
 			</Response>
 			<Response id="yes">
@@ -40,7 +43,9 @@
 			</Response>
 			<Response id="no">
 				<Say speaker="Lilith" text="Child. Whether safely under my wing or alone on the street, make no mistake..." response="(More)"/>
-				<Say speaker="Lilith" text="Child. Whether safely under my wing or alone on the street, make no mistake... You are ALWAYS food." response="(More)"/>
+				<Say speaker="Lilith" text="Child. Whether safely under my wing or alone on the street, make no mistake...
+You are ALWAYS food." response="(More)"/>
+				<Say speaker="Lilith" text="You WILL visit the Pandora's Box nightclub, you WILL feed on the silly little lambs there, and you WON'T argue with me!" response="(More)"/>
 				<CallRoutine name="GivePandorasBox"/>
 			</Response>
 		</HandleResponse>
