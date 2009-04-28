@@ -22,6 +22,7 @@ public class Program
         ProgramCtx.init();
         ProgramCtx.program = this;
         ProgramCtx.view = talkView;
+        ProgramCtx.vars = new HashMap();
 
         _routineStack = [];
         _routineState = [];
@@ -38,7 +39,7 @@ public class Program
         }
 
         while (_isRunning && this.curRoutine != null && dt > 0) {
-            var status :Number = this.curRoutine.update(dt, this.curState);
+            var status :Number = this.curRoutine.update(dt, this.curRoutineState);
             if (Status.isComplete(status)) {
                 popRoutine();
                 dt -= status;
@@ -75,6 +76,20 @@ public class Program
         }
 
         _scheduledRoutineName = name;
+    }
+
+    public function setVariable (name :String, val :Object) :void
+    {
+        if (val == null) {
+            ProgramCtx.vars.remove(name);
+        } else {
+            ProgramCtx.vars.put(name, val);
+        }
+    }
+
+    public function getVariable (name :String) :Object
+    {
+        return ProgramCtx.vars.get(name);
     }
 
     public function exit () :void
@@ -114,7 +129,7 @@ public class Program
         return (_routineStack.length > 0 ? _routineStack[_routineStack.length - 1] : null);
     }
 
-    protected function get curState () :Object
+    protected function get curRoutineState () :Object
     {
         return (_routineState.length > 0 ? _routineState[_routineState.length - 1] : null);
     }

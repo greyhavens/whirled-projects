@@ -71,6 +71,9 @@ public class ProgramParser
         case "Exit":
             return parseExitStatement(xml);
 
+        case "SetValue":
+            return parseSetVarStatement(xml);
+
         default:
             throw new XmlReadError("Unrecognized statement type '" + type + "'");
         }
@@ -195,6 +198,21 @@ public class ProgramParser
         return new ExitStatement();
     }
 
+    protected static function parseSetVarStatement (xml :XML) :SetVarStatement
+    {
+        var name :String = XmlReader.getStringAttr(xml, "name");
+        var expr :Expr;
+        if (XmlReader.hasAttribute(xml, "number")) {
+            expr = new ValueExpr(XmlReader.getNumberAttr(xml, "number"));
+        } else if (XmlReader.hasAttribute(xml, "string")) {
+            expr = new ValueExpr(XmlReader.getStringAttr(xml, "string"));
+        } else {
+            expr = new ValueExpr(true);
+        }
+
+        return new SetVarStatement(name, expr);
+    }
+
     protected static function parseGiveQuestStatement (xml :XML) :GiveQuestStatement
     {
         return new GiveQuestStatement(getQuest(XmlReader.getStringAttr(xml, "name")));
@@ -285,6 +303,9 @@ public class ProgramParser
         case "GreaterEqual":
             return parseBinaryCompExpr(xml, BinaryCompExpr.GTE);
 
+        case "Value":
+            return parseVarExpr(xml);
+
         default:
             throw new XmlReadError("Unrecognized Expr type '" + type + "'");
         }
@@ -361,6 +382,11 @@ public class ProgramParser
         }
 
         return new BinaryCompExpr(parseExpr(children[0]), parseExpr(children[1]), type);
+    }
+
+    protected static function parseVarExpr (xml :XML) :VarExpr
+    {
+        return new VarExpr(XmlReader.getStringAttr(xml, "name"));
     }
 
     protected static function getQuest (questName :String) :QuestDesc
