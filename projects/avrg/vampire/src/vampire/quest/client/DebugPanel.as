@@ -1,6 +1,7 @@
 package vampire.quest.client {
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
 
 import flash.text.TextField;
@@ -25,6 +26,17 @@ public class DebugPanel extends GenericDraggableWindow
 
         createButton("Quests", function (...ignored) :void {
             QuestClient.showQuestPanel(true);
+        });
+
+        createButton("Reload NPC Dialogs", function (...ignored) :void {
+            QuestDialogLoader.loadQuestDialogs(
+                function () :void {
+                    setStatusText("Successfully loaded NPC Dialogs");
+                },
+                function (err :String) :void {
+                    setStatusText("Error loading NPC Dialogs (see log)");
+                },
+                true);
         });
 
         createNewLayoutRow(15);
@@ -113,6 +125,8 @@ public class DebugPanel extends GenericDraggableWindow
     protected var _nameField :TextField;
     protected var _valueField :TextField;
     protected var _locs :Array = [];
+
+    protected static var log :Log = Log.getLog(DebugPanel);
 }
 
 }

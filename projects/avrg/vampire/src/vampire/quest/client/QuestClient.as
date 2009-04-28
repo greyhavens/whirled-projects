@@ -3,7 +3,6 @@ package vampire.quest.client {
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.SimpleGame;
 
 import vampire.feeding.FeedingClient;
@@ -39,12 +38,20 @@ public class QuestClient
 
         // load resources
         ClientCtx.rsrcs.queueResourceLoad("swf", "quest", { embeddedClass: SWF_QUEST });
-        ClientCtx.rsrcs.queueResourceLoad("npcTalk", "LilithDialog", { embeddedClass: LILITH_DIALOG });
         ClientCtx.rsrcs.loadQueuedResources(
-            onResourcesLoaded,
-            function (err :String) :void {
-                log.error("Error loading resources: " + err);
-            });
+            function () :void {
+                _resourcesLoaded = true;
+                maybeFinishInit();
+            },
+            onResourceLoadErr);
+
+        // load NPC dialogs
+        QuestDialogLoader.loadQuestDialogs(
+            function () :void {
+                _questDialogsLoaded = true;
+                maybeFinishInit();
+            },
+            onResourceLoadErr);
     }
 
     public static function shutdown () :void
@@ -133,12 +140,14 @@ public class QuestClient
 
     public static function get isReady () :Boolean
     {
-        return _resourcesLoaded;
+        return _resourcesLoaded && _questDialogsLoaded;
     }
 
-    protected static function onResourcesLoaded () :void
+    protected static function maybeFinishInit () :void
     {
-        _resourcesLoaded = true;
+        if (!isReady) {
+            return;
+        }
 
         if (ClientCtx.gameCtrl.isConnected()) {
             ClientCtx.gameCtrl.player.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM,
@@ -154,6 +163,10 @@ public class QuestClient
         ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_COMPLETED, onQuestCompleted);
 
         checkQuestCompletion();
+    }
+
+    protected static function onResourceLoadErr (err :String) :void
+    {
     }
 
     protected static function checkQuestCompletion (...ignored) :void
@@ -254,12 +267,10 @@ public class QuestClient
 
     protected static var _inited :Boolean;
     protected static var _resourcesLoaded :Boolean;
+    protected static var _questDialogsLoaded :Boolean;
 
     [Embed(source="../../../../rsrc/quest/quest.swf", mimeType="application/octet-stream")]
     protected static const SWF_QUEST :Class;
-
-    [Embed(source="../../../../rsrc/quest/LilithDialog.xml", mimeType="application/octet-stream")]
-    protected static const LILITH_DIALOG :Class;
 
     protected static var log :Log = Log.getLog(QuestClient);
 }
