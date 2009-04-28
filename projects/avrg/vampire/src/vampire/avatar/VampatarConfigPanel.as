@@ -237,6 +237,7 @@ import flash.geom.Rectangle;
 import flash.geom.Matrix;
 import flash.display.Bitmap;
 import com.whirled.contrib.ColorMatrix;
+import vampire.client.ClientUtil;
 
 function getClass (name :String) :Class
 {
@@ -377,7 +378,7 @@ class Dropdown extends Sprite
             var value :* = items[ii + 1];
 
             var selectButton :SimpleButton = new dropdownClass();
-            setButtonText(selectButton, name);
+            ClientUtil.setButtonText(selectButton, name);
             selectButton.addEventListener(MouseEvent.CLICK, createItemSelectedCallback(ii));
             selectButton.x = (selectButton.width * 0.5);
             selectButton.y = (selectButton.height * 0.5) + yOffset;
@@ -424,7 +425,7 @@ class Dropdown extends Sprite
         var name :String = _items[idx];
         var value :* = _items[idx + 1];
 
-        setButtonText(_button, name);
+        ClientUtil.setButtonText(_button, name);
 
         _onItemSelected(value);
     }
@@ -434,29 +435,6 @@ class Dropdown extends Sprite
         return function (...ignored) :void {
             selectItem(idx);
         };
-    }
-
-    protected static function setButtonText (button :SimpleButton, text :String)
-        :void
-    {
-        // Holy shit, this is an ugly hack. Flash doesn't allow access to named
-        // instances inside SimpleButtons, because they aren't DisplayObjectContainers.
-        // So we iterate the children of the each of the button's display states until we
-        // find a TextField, and use that. This might fail if there are multiple TextFields.
-        var setText :Function = function (disp :DisplayObjectContainer) :void {
-            for (var ii :int = 0; ii < disp.numChildren; ++ii) {
-                var child :DisplayObject = disp.getChildAt(ii);
-                if (child is TextField) {
-                    (child as TextField).text = text;
-                    return;
-                }
-            }
-        }
-
-        setText(button.upState);
-        setText(button.downState);
-        setText(button.overState);
-        setText(button.hitTestState);
     }
 
     protected var _button :SimpleButton;
