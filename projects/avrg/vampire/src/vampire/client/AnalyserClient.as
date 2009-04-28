@@ -39,16 +39,16 @@ public class AnalyserClient extends SimObject
 
                 case StatsMsg.TYPE_LINEAGE:
                 bytes = msg.data;
-                bytes.uncompress();
                 var enc :Base64Encoder = new Base64Encoder();
                 enc.insertNewLines = false;
                 enc.encodeBytes(bytes);
                 s = enc.toString();
-                trace("Lineage (base64 encoded)");
+                trace("Lineage (base64 encoded and compressed)");
                 trace(s);
                 trace("\n");
 
                 var ln :Lineage = new Lineage();
+                bytes.uncompress();
                 ln.fromBytes(bytes);
                 trace("\Lineage:");
                 trace(ln);
