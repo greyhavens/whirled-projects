@@ -113,7 +113,7 @@ public class MainGameMode extends AppMode
         registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.LEFT_ROOM,
             handleOurPlayerLeftRoom);
 
-        //Listen for the player leaving the room, shut down the client then
+        //Listen for a player leaving the room, shut down the client then
         registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_LEFT,
             handlePlayerLeftRoom);
 
@@ -134,11 +134,8 @@ public class MainGameMode extends AppMode
         //Make sure we start the game standing, not dancing or feeding etc.
         ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
 
-
         //Add the tutorial.  It starts deactivated.
         ClientContext.tutorial = new Tutorial();
-
-
 
         //Add a debug panel for admins
         if(ClientContext.isAdmin(ClientContext.ourPlayerId) || VConstants.LOCAL_DEBUG_MODE) {
@@ -321,9 +318,6 @@ public class MainGameMode extends AppMode
                 s.destroySelf();
             }
         }
-
-        //Make sure we are in the 'default' avatar state.
-        ClientContext.ctrl.player.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
     }
 
     protected function handleOurPlayerEnteredRoom (e :AVRGamePlayerEvent) :void
