@@ -139,11 +139,17 @@ public class ProgramParser
             XmlReader.getStringAttr(xml, "text"));
 
         var hasResponse :Boolean;
-        for each (var responseXml :XML in xml.Response) {
-            sayStatement.addResponse(
-                XmlReader.getStringAttr(responseXml, "id", ""),
-                XmlReader.getStringAttr(responseXml, "text"));
+        if (XmlReader.hasAttribute(xml, "response")) {
+            sayStatement.addResponse("", XmlReader.getStringAttr(xml, "response"));
             hasResponse = true;
+
+        } else {
+            for each (var responseXml :XML in xml.Response) {
+                sayStatement.addResponse(
+                    XmlReader.getStringAttr(responseXml, "id", ""),
+                    XmlReader.getStringAttr(responseXml, "text"));
+                hasResponse = true;
+            }
         }
 
         // If there are any response statements, add a WaitResponseStatement
