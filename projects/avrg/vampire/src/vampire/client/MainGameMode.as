@@ -18,9 +18,7 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 import vampire.avatar.VampireAvatarHUDOverlay;
-import vampire.client.events.LineageUpdatedEvent;
 import vampire.data.Codes;
-import vampire.data.Lineage;
 import vampire.data.VConstants;
 import vampire.feeding.FeedingClient;
 import vampire.feeding.FeedingClientSettings;
@@ -32,6 +30,7 @@ import vampire.net.messages.GameStartedMsg;
 import vampire.net.messages.RoomNameMsg;
 import vampire.net.messages.ShareTokenMsg;
 import vampire.net.messages.StartFeedingClientMsg;
+import vampire.quest.client.QuestClient;
 
 public class MainGameMode extends AppMode
 {
@@ -82,7 +81,7 @@ public class MainGameMode extends AppMode
         //Layer the sprites
         modeSprite.addChild(_spriteLayerLowPriority);
         modeSprite.addChild(_spriteLayerMedPriority);
-        modeSprite.addChild(_spriteLayerFeedingGame);
+        modeSprite.addChild(_spriteLayerMinigame);
         modeSprite.addChild(_spriteLayerHighPriority);
 
 
@@ -138,6 +137,9 @@ public class MainGameMode extends AppMode
         //Add the client load balancer, which depends on the HUD
         addObject(new LoadBalancerClient(ClientContext.ctrl, _hud));
 
+        //Add a notifier for the lineage furniture.
+//        addObject(new LineageFurnitureNotifier(ClientContext.ctrl));
+
         //Make sure we start the game standing, not dancing or feeding etc.
         ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
 
@@ -153,6 +155,11 @@ public class MainGameMode extends AppMode
             //And for admins, listen to stats messages.
             addObject(new AnalyserClient());
         }
+
+        //Init the quests
+        QuestClient.init(ClientContext.ctrl, ClientContext.game, this, layerLowPriority,
+            _spriteLayerMinigame, layerHighPriority);
+
     }
 
     protected function handlePlayerLeftRoom (e :AVRGameRoomEvent) :void
@@ -220,7 +227,7 @@ public class MainGameMode extends AppMode
                 msg.gameId, ClientContext.model.playerFeedingData, onGameComplete);
             _feedingGameClient = FeedingClient.create(settings);
 
-            _spriteLayerFeedingGame.addChildAt(_feedingGameClient, 0)
+            _spriteLayerMinigame.addChildAt(_feedingGameClient, 0)
 
             //Notify the tutorial
             ClientContext.tutorial.feedGameStarted();
@@ -273,11 +280,9 @@ public class MainGameMode extends AppMode
 
             else if (message is FeedRequestCancelMsg) {
                 var feedcancel :FeedRequestCancelMsg = FeedRequestCancelMsg(message);
-                trace(ClientContext.ctrl.player.getPlayerName() + " recieved FeedRequestCancelMsg");
                 var waitinForXPopup :SimObject = getObjectNamed(VampireController.POPUP_PREFIX_FEED_REQUEST +
                     feedcancel.playerId);
 
-                trace("waitinForXPopup=" + waitinForXPopup);
                 if (waitinForXPopup != null && waitinForXPopup.isLiveObject) {
                     waitinForXPopup.destroySelf();
                 }
@@ -387,12 +392,16 @@ public class MainGameMode extends AppMode
     public function get lineages () :LineagesClient
     {
         return _lineages;
-//        return getObjectNamed(LineagesClient.NAME) as LineagesClient;
     }
 
     public function get hud () :HUD
     {
         return _hud;
+    }
+
+    public function get furnNotifier () :LineageFurnitureNotifier
+    {
+        return getObjectNamed(LineageFurnitureNotifier.NAME) as LineageFurnitureNotifier;
     }
 
     public function get layerLowPriority () :Sprite
@@ -415,6 +424,12 @@ public class MainGameMode extends AppMode
         return _avatarOverlay;
     }
 
+    override public function shutdown () :void
+    {
+        super.shutdown();
+        QuestClient.shutdown();
+    }
+
 
 
     protected var _hud :HUD;
@@ -425,8 +440,8 @@ public class MainGameMode extends AppMode
     protected var _avatarOverlay :VampireAvatarHUDOverlay;
 
     //Layer the sprites for allowing popup messages over and under the feeding game
-    protected var _spriteLayerFeedingGame :Sprite = new Sprite();
     protected var _spriteLayerHighPriority :Sprite = new Sprite();
+    protected var _spriteLayerMinigame :Sprite = new Sprite();
     protected var _spriteLayerMedPriority :Sprite = new Sprite();
     protected var _spriteLayerLowPriority :Sprite = new Sprite();
 

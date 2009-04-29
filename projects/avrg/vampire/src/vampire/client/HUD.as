@@ -29,6 +29,7 @@ import flash.text.TextFormatAlign;
 import vampire.Util;
 import vampire.data.Codes;
 import vampire.data.Logic;
+import vampire.quest.client.QuestClient;
 
 /**
  * The main game HUD, showing e.g. blood, game notifications, and buttons to select the subgame to
@@ -254,6 +255,15 @@ public class HUD extends DraggableObject
 
         var hudFeed :SimpleButton = SimpleButton(findSafely("button_feed"));
         Command.bind(hudFeed, MouseEvent.CLICK, VampireController.FEED);
+
+        var hudQuests :SimpleButton = SimpleButton(findSafely("button_quests"));
+        registerListener(hudQuests, MouseEvent.CLICK, function (...ignored) :void {
+            QuestClient.showQuestPanel(true);
+            QuestClient.showDebugPanel(true);
+        });
+
+
+
 
 
     }
