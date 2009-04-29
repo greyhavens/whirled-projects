@@ -16,7 +16,6 @@ public class ActivityAddedNotification extends SceneObject
     public function ActivityAddedNotification (activity :ActivityDesc)
     {
         _movie = ClientCtx.instantiateMovieClip("quest", "popup_unlock_site");
-        _movie.gotoAndPlay(1);
 
         var contents :MovieClip = _movie["contents"];
         var tfLocation :TextField = contents["location_name"];

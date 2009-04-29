@@ -7,9 +7,8 @@ import vampire.quest.activity.ActivityParams;
 
 public class ActivityDesc
 {
-    public static const TYPE_CORRUPTION :int = 0;
-    public static const TYPE_FEEDING :int = 1;
-    public static const TYPE_NPC_TALK :int = 2;
+    public static const TYPE_FEEDING :int = 0;
+    public static const TYPE_NPC_TALK :int = 1;
 
     // Unique Name
     public var name :String;

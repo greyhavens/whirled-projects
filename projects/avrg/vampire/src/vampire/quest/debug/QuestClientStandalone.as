@@ -33,12 +33,10 @@ public class QuestClientStandalone extends Sprite
 
         // Init local props
         var localProps :LocalPropertySubControl = new LocalPropertySubControl();
-        var questData :PlayerQuestData = new PlayerQuestData(localProps);
-        var questProps :PlayerQuestProps = new PlayerQuestProps(localProps);
         var gameCtrl :DisconnectedControl = new DisconnectedControl(this);
 
         FeedingClient.init(this, gameCtrl);
-        QuestClient.init(gameCtrl, _sg, appMode, questData, questProps);
+        QuestClient.init(gameCtrl, _sg, appMode, localProps);
 
         var waitLoop :ManagedTimer = _timerMgr.runForever(50,
             function (...ignored) :void {

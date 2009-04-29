@@ -3,6 +3,7 @@ package vampire.quest {
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 
+import vampire.feeding.variant.*;
 import vampire.quest.activity.*;
 
 public class Activities
@@ -26,23 +27,16 @@ public class Activities
             false, // always unlocked
             new NpcTalkActivityParams("LilithDialog")));
 
-        addActivity(new ActivityDesc(
+        addActivity(createPandoraActivity(homeBase));
+
+        /*addActivity(new ActivityDesc(
             homeBase,
             ActivityDesc.TYPE_FEEDING,
-            "pandora_activity",
-            "Pandora's Box",
-            0,  // no juice
-            true, // locked
-            new BloodBloomActivityParams(1, 1, "Pandora's Box Partier", 100, "pandora_feedings", 1)));
-
-        addActivity(new ActivityDesc(
-            homeBase,
-            ActivityDesc.TYPE_CORRUPTION,
             "temp_corruption",
             "Playtest Corruption",
             0,
             false,
-            new BloodBloomActivityParams(1, 1, "Corrupted Human", 100)));
+            new BloodBloomActivityParams(1, 1, "Corrupted Human", 100)));*/
     }
 
     public static function getActivity (id :int) :ActivityDesc
@@ -54,6 +48,27 @@ public class Activities
     public static function getActivityByName (name :String) :ActivityDesc
     {
         return getActivity(ActivityDesc.getId(name));
+    }
+
+    protected static function createPandoraActivity (loc :LocationDesc) :ActivityDesc
+    {
+        var variantSettings :VariantSettings = Variant.normal();
+        var params :BloodBloomActivityParams = new BloodBloomActivityParams(
+            1, 1,
+            "Pandora's Box Partier",
+            -1,
+            100,
+            variantSettings,
+            "pandora_feedings", 1);
+
+        return new ActivityDesc(
+            loc,
+            ActivityDesc.TYPE_FEEDING,
+            "pandora_activity",
+            "Pandora's Box",
+            0,  // no juice
+            true, // locked
+            params);
     }
 
     protected static function addActivity (desc :ActivityDesc) :void

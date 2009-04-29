@@ -107,7 +107,7 @@ public class ClientCtx
 
     public static function get requiredBlood () :int
     {
-        return (clientSettings.activityParams != null ? clientSettings.activityParams.minScore : 0);
+        return (clientSettings.spActivityParams != null ? clientSettings.spActivityParams.minScore : 0);
     }
 
     public static function get allPlayerIds () :Array
@@ -137,10 +137,8 @@ public class ClientCtx
 
     public static function get aiPreyName () :String
     {
-        if (clientSettings.activityParams != null) {
-            return clientSettings.activityParams.preyName;
-        } else if (clientSettings.spOnly) {
-            return clientSettings.spPreyName;
+        if (clientSettings.spActivityParams != null) {
+            return clientSettings.spActivityParams.preyName;
         } else {
             return props.get(Props.AI_PREY_NAME) as String;
         }
@@ -151,7 +149,7 @@ public class ClientCtx
         if (Constants.DEBUG_FORCE_SPECIAL_BLOOD_STRAIN) {
             return 0;
         } else if (clientSettings.spOnly) {
-            return clientSettings.spPreyBloodStrain;
+            return clientSettings.spActivityParams.preyBloodStrain;
         } else {
             return props.get(Props.PREY_BLOOD_TYPE) as int;
         }
@@ -266,8 +264,6 @@ public class ClientCtx
 
         return movie;
     }
-
-
 
     protected static const log :Log = Log.getLog(ClientCtx);
 }

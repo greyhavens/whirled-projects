@@ -186,7 +186,7 @@ public class LobbyMode extends AppMode
     protected function giveActivityCompletionAward () :void
     {
         // If this was a quest-based activity, give appropriate awards
-        var params :BloodBloomActivityParams = ClientCtx.clientSettings.activityParams;
+        var params :BloodBloomActivityParams = ClientCtx.clientSettings.spActivityParams;
         if (params != null) {
             var success :Boolean = (_results.totalScore >= params.minScore);
             if (success && params.awardedPropName != null) {

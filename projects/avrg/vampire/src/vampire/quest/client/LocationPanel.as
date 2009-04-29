@@ -64,10 +64,9 @@ public class LocationPanel extends SceneObject
             buttonName = "site_lilith";
             break;
 
-        case ActivityDesc.TYPE_CORRUPTION:
         case ActivityDesc.TYPE_FEEDING:
         default:
-            buttonName = "hunting_ground_logo";
+            buttonName = "site_pandora";
             break;
         }
 

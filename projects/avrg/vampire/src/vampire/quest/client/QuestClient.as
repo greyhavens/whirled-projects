@@ -5,11 +5,11 @@ import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimpleGame;
+import com.whirled.net.PropertySubControl;
 
 import vampire.feeding.FeedingClient;
 import vampire.feeding.FeedingClientSettings;
 import vampire.feeding.PlayerFeedingData;
-import vampire.feeding.variant.Variant;
 import vampire.furni.FurniConstants;
 import vampire.quest.*;
 import vampire.quest.activity.*;
@@ -18,7 +18,7 @@ import vampire.quest.client.npctalk.*;
 public class QuestClient
 {
     public static function init (gameCtrl :AVRGameControl, simpleGame :SimpleGame,
-        appMode :AppMode, questData :PlayerQuestData, questProps :PlayerQuestProps) :void
+        appMode :AppMode, playerProps :PropertySubControl = null) :void
     {
         if (_inited) {
             throw new Error("QuestClient already inited");
@@ -29,12 +29,16 @@ public class QuestClient
         Locations.init();
         Activities.init();
 
+        if (playerProps == null) {
+            playerProps = gameCtrl.player.props;
+        }
+
         ClientCtx.gameCtrl = gameCtrl;
         ClientCtx.mainLoop = simpleGame.ctx.mainLoop;
         ClientCtx.appMode = appMode;
         ClientCtx.rsrcs = simpleGame.ctx.rsrcs;
-        ClientCtx.questData = questData;
-        ClientCtx.questProps = questProps;
+        ClientCtx.questData = new PlayerQuestData(playerProps);
+        ClientCtx.questProps = new PlayerQuestProps(playerProps);
         ClientCtx.notificationMgr = new NotificationMgr();
 
         ClientCtx.rsrcs.registerResourceType("npcTalk", NpcTalkResource);
@@ -203,32 +207,17 @@ public class QuestClient
 
         switch (activity.type) {
         case ActivityDesc.TYPE_FEEDING:
-            feedingGame = FeedingClient.create(FeedingClientSettings.spSettings(
-                "", -1,
-                Variant.NORMAL,
+            var bbParams :BloodBloomActivityParams = BloodBloomActivityParams(activity.params);
+            var feedingSettings :FeedingClientSettings = FeedingClientSettings.spSettings(
                 new PlayerFeedingData(),
                 function () :void {
                     feedingGame.shutdown();
                     feedingGame.parent.removeChild(feedingGame);
                 },
+                bbParams,
                 ClientCtx.questData,
-                ClientCtx.questProps,
-                activity.params as BloodBloomActivityParams));
-            ClientCtx.appMode.modeSprite.addChild(feedingGame);
-            break;
-
-        case ActivityDesc.TYPE_CORRUPTION:
-            feedingGame = FeedingClient.create(FeedingClientSettings.spSettings(
-                "", -1,
-                Variant.CORRUPTION,
-                new PlayerFeedingData(),
-                function () :void {
-                    feedingGame.shutdown();
-                    feedingGame.parent.removeChild(feedingGame);
-                },
-                ClientCtx.questData,
-                ClientCtx.questProps,
-                activity.params as BloodBloomActivityParams));
+                ClientCtx.questProps);
+            feedingGame = FeedingClient.create(feedingSettings);
             ClientCtx.appMode.modeSprite.addChild(feedingGame);
             break;
 

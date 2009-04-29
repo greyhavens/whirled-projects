@@ -33,11 +33,9 @@ public class QuestTestClient extends Sprite
 
         // Init props
         _gameCtrl = new AVRGameControl(this);
-        var questData :PlayerQuestData = new PlayerQuestData(_gameCtrl.player.props);
-        var questProps :PlayerQuestProps = new PlayerQuestProps(_gameCtrl.player.props);
 
         FeedingClient.init(this, _gameCtrl);
-        QuestClient.init(_gameCtrl, _sg, appMode, questData, questProps);
+        QuestClient.init(_gameCtrl, _sg, appMode);
 
         var waitLoop :ManagedTimer = _timerMgr.runForever(50,
             function (...ignored) :void {

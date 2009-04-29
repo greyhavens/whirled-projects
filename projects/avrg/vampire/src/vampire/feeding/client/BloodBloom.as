@@ -191,7 +191,7 @@ public class BloodBloom extends FeedingClient
         }
 
         if (ClientCtx.clientSettings.spOnly) {
-            ClientCtx.variantSettings = Variant.getSettings(ClientCtx.clientSettings.spVariant);
+            ClientCtx.variantSettings = ClientCtx.clientSettings.spActivityParams.variantSettings;
             ClientCtx.mainLoop.unwindToMode(new LobbyMode(LobbyMode.LOBBY));
 
         } else {

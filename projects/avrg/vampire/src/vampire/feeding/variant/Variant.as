@@ -2,6 +2,7 @@ package vampire.feeding.variant {
 
 public class Variant
 {
+    public static const CUSTOM_ACTIVITY :int = -1;
     public static const INVALID :int = 0;
     public static const NORMAL :int = 1;
     public static const CORRUPTION :int = 2;
@@ -26,7 +27,7 @@ public class Variant
         return settings;
     }
 
-    protected static function normal () :VariantSettings
+    public static function normal () :VariantSettings
     {
         var settings :VariantSettings = new VariantSettings();
 
@@ -46,7 +47,7 @@ public class Variant
         return settings;
     }
 
-    protected static function corruption () :VariantSettings
+    public static function corruption () :VariantSettings
     {
         var settings :VariantSettings = new VariantSettings();
 
