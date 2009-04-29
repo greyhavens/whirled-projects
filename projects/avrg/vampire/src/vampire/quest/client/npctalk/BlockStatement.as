@@ -3,9 +3,13 @@ package vampire.quest.client.npctalk {
 public class BlockStatement
     implements Statement
 {
-    public function addStatement (statement :Statement) :void
+    public function addStatement (statement :Statement, idx :int = -1) :void
     {
-        _statements.push(statement);
+        if (idx >= 0 && idx < _statements.length) {
+            _statements.splice(idx, 0, statement);
+        } else {
+            _statements.push(statement);
+        }
     }
 
     public function createState () :Object
@@ -17,23 +21,29 @@ public class BlockStatement
     {
         var blockState :BlockState = BlockState(state);
 
-        if (blockState.cur == null && blockState.nextIdx < _statements.length) {
-            blockState.cur = _statements[blockState.nextIdx++];
-            blockState.curState = blockState.cur.createState();
-        }
+        var totalTime :Number = 0;
+        while (totalTime < dt && !ProgramCtx.program.hasInterrupt) {
+            if (blockState.cur == null && blockState.nextIdx < _statements.length) {
+                blockState.cur = _statements[blockState.nextIdx++];
+                blockState.curState = blockState.cur.createState();
+            }
 
-        if (blockState.cur == null) {
-            return Status.CompletedInstantly;
+            if (blockState.cur == null) {
+                return Status.CompletedAfter(totalTime);
 
-        } else {
-            var curStatus :Number = blockState.cur.update(dt, blockState.curState);
-            if (Status.isComplete(curStatus)) {
-                blockState.cur = null;
-                return (blockState.nextIdx >= _statements.length ? curStatus : Status.Incomplete);
             } else {
-                return Status.Incomplete;
+                var curStatus :Number = blockState.cur.update(dt, blockState.curState);
+                if (Status.isComplete(curStatus)) {
+                    totalTime += curStatus;
+                    blockState.cur = null;
+
+                } else {
+                    return Status.Incomplete;
+                }
             }
         }
+
+        return Status.Incomplete;
     }
 
     protected var _statements :Array = [];

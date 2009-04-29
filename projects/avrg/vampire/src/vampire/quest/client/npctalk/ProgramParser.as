@@ -37,8 +37,8 @@ public class ProgramParser
         case "Say":
             return parseSayStatement(xml);
 
-        case "WaitResponse":
-            return parseWaitResponseStatement(xml);
+        case "AddResponse":
+            return parseAddResponseStatement(xml);
 
         case "HandleResponse":
             return parseHandleResponseStatement(xml);
@@ -138,53 +138,46 @@ public class ProgramParser
             XmlReader.getStringAttr(xml, "speaker"),
             XmlReader.getStringAttr(xml, "text"));
 
-        var hasResponse :Boolean;
-        if (XmlReader.hasAttribute(xml, "response")) {
-            sayStatement.addResponse("", XmlReader.getStringAttr(xml, "response"));
-            hasResponse = true;
+        var childStatements :BlockStatement;
+        if (xml.children().length() > 0) {
+            childStatements = parseBlockStatement(xml);
 
-        } else {
-            for each (var responseXml :XML in xml.Response) {
-                sayStatement.addResponse(
-                    XmlReader.getStringAttr(responseXml, "id", ""),
-                    XmlReader.getStringAttr(responseXml, "text"));
-                hasResponse = true;
-            }
+        } else if (XmlReader.hasAttribute(xml, "response")) {
+            // add an implicit AddResponse statement
+            childStatements = new BlockStatement();
+            childStatements.addStatement(
+                new AddResponseStatement("", XmlReader.getStringAttr(xml, "response")));
         }
 
-        // If there are any response statements, add a WaitResponseStatement
-        // immediately after the SayStatement.
-        if (hasResponse) {
-            var blockStatement :BlockStatement = new BlockStatement();
-            blockStatement.addStatement(sayStatement);
-            blockStatement.addStatement(new WaitResponseStatement());
-            return blockStatement;
-
+        // If SayStatement has any children, they execute immediately after the Say, and we
+        // add an implicit WaitResponseStatement at the end
+        if (childStatements != null) {
+            childStatements.addStatement(sayStatement, 0);
+            childStatements.addStatement(new WaitResponseStatement());
+            return childStatements;
         } else {
             return sayStatement;
         }
     }
 
-    protected static function parseWaitResponseStatement (xml :XML) :WaitResponseStatement
+    protected static function parseAddResponseStatement (xml :XML) :AddResponseStatement
     {
-        return new WaitResponseStatement();
+        return new AddResponseStatement(
+            XmlReader.getStringAttr(xml, "id", ""),
+            XmlReader.getStringAttr(xml, "text"));
     }
 
     protected static function parseHandleResponseStatement (xml :XML) :Statement
     {
         // a "HandleResponse" statement is a Conditional
         var conditional :ConditionalStatement = new ConditionalStatement();
-
-        for each (var responseXml :XML in xml.Response) {
-            var responseId :String = XmlReader.getStringAttr(responseXml, "id");
-            // If response = id, then
-            conditional.addIf(
-                new BinaryCompExpr(
-                    new ResponseExpr(),
-                    new ValueExpr(responseId),
-                    BinaryCompExpr.EQUALS),
-                parseBlockStatement(responseXml));
-        }
+        var responseId :String = XmlReader.getStringAttr(xml, "id");
+        conditional.addIf(
+            new BinaryCompExpr(
+                new ResponseExpr(),
+                new ValueExpr(responseId),
+                BinaryCompExpr.EQUALS),
+            parseBlockStatement(xml));
 
         return conditional;
     }
@@ -254,9 +247,6 @@ public class ProgramParser
         var type :String = xml.name().localName;
         switch (type) {
         // Vampire-specific
-        case "Response":
-            return parseResponseExpr(xml);
-
         case "HasQuest":
             return parseHasQuestExpr(xml, HasQuestExpr.IS_ACTIVE);
 
@@ -353,11 +343,6 @@ public class ProgramParser
     protected static function parseNumberExpr (xml :XML) :ValueExpr
     {
         return new ValueExpr(XmlReader.getNumberAttr(xml, "val"));
-    }
-
-    protected static function parseResponseExpr (xml :XML) :ResponseExpr
-    {
-        return new ResponseExpr();
     }
 
     protected static function parseHasQuestExpr (xml :XML, type :int) :HasQuestExpr

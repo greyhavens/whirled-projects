@@ -32,6 +32,14 @@ public class Program
         callRoutine("main");
     }
 
+    public function get hasInterrupt () :Boolean
+    {
+        // if hasInterrupt is true, BlockStatements, and anything else that
+        // might execute sub-statements needs to stop executing and return
+        // immediately, because program flow has changed
+        return _scheduledRoutineName != null;
+    }
+
     public function update (dt :Number) :void
     {
         if (!_isRunning) {

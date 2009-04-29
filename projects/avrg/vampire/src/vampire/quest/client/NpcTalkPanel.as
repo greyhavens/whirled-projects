@@ -88,6 +88,7 @@ public class NpcTalkPanel extends SceneObject
         _tfSpeech.text = text;
 
         // Clear the last response out every time something new is said
+        clearResponses();
         ProgramCtx.lastResponseId = null;
     }
 
