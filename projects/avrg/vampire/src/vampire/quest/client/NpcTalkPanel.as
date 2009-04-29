@@ -28,7 +28,6 @@ public class NpcTalkPanel extends SceneObject
         _tfSpeech.text = "";
 
         for (var ii :int = 0; ii < BUTTON_LOCS.length; ++ii) {
-            //var responseButton :ResponseButton = new ResponseButton();
             var responseButton :SimpleButton = ClientCtx.instantiateButton("quest", "button_bubble");
             createResponseHandler(responseButton, ii);
             _responseButtons.push(responseButton);
@@ -39,7 +38,7 @@ public class NpcTalkPanel extends SceneObject
             _npcPanel.addChild(responseButton);
         }
 
-        //setResponses([], []);
+        clearResponses();
     }
 
     override protected function addedToDB () :void
@@ -70,6 +69,11 @@ public class NpcTalkPanel extends SceneObject
                 QuestClient.hideDockedPanel(true);
                 QuestClient.showLastDisplayedLocationPanel();
                 _program = null;
+                return;
+            }
+
+            if (_needResponseUpdate) {
+                updateResponses();
             }
         }
     }
@@ -82,6 +86,9 @@ public class NpcTalkPanel extends SceneObject
     public function say (speakerName :String, text :String) :void
     {
         _tfSpeech.text = text;
+
+        // Clear the last response out every time something new is said
+        ProgramCtx.lastResponseId = null;
     }
 
     public function setResponses (ids :Array, responses :Array) :void
@@ -91,19 +98,39 @@ public class NpcTalkPanel extends SceneObject
         }
 
         _curResponseIds = ids;
+        _curResponses = responses;
+        _needResponseUpdate = true;
+    }
+
+    public function clearResponses () :void
+    {
+        setResponses([], []);
+    }
+
+    public function addResponse (id :String, response :String) :void
+    {
+        _curResponseIds.push(id);
+        _curResponses.push(response);
+        _needResponseUpdate = true;
+    }
+
+    protected function updateResponses () :void
+    {
+        if (_curResponseIds.length != _curResponses.length) {
+            throw new Error("responses.length != ids.length");
+        }
 
         for (var ii :int = 0; ii < _responseButtons.length; ++ii) {
             var button :SimpleButton = _responseButtons[ii];
-            if (ii < responses.length) {
+            if (ii < _curResponses.length) {
                 button.visible = true;
-                ClientUtil.setButtonText(button, responses[ii]);
+                ClientUtil.setButtonText(button, _curResponses[ii]);
             } else {
                 button.visible = false;
             }
         }
 
-        // Clear the last response out every time a new set of responses is created
-        ProgramCtx.lastResponseId = null;
+        _needResponseUpdate = false;
     }
 
     protected function createResponseHandler (button :InteractiveObject, idx :int) :void
@@ -122,7 +149,9 @@ public class NpcTalkPanel extends SceneObject
     protected var _tfSpeech :TextField;
     protected var _responseButtons :Array = [];
 
+    protected var _curResponses :Array = [];
     protected var _curResponseIds :Array = [];
+    protected var _needResponseUpdate :Boolean;
 
     protected static const BUTTON_LOCS :Array = [
         new Point(205, 163), new Point(205, 206), new Point(205, 249)
