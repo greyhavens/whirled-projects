@@ -137,11 +137,12 @@ public class GameMode extends AppMode
             var whiteCellSpawner :SimObject = new SimObject();
             whiteCellSpawner.addTask(new RepeatingTask(
                 new VariableTimedTask(
-                    Constants.WHITE_CELL_CREATION_TIME.min,
-                    Constants.WHITE_CELL_CREATION_TIME.max,
+                    ClientCtx.variantSettings.boardWhiteCellCreationTime.min,
+                    ClientCtx.variantSettings.boardWhiteCellCreationTime.max,
                     Rand.STREAM_GAME),
                 new FunctionTask(function () :void {
-                    spawnCells(Constants.CELL_WHITE, Constants.WHITE_CELL_CREATION_COUNT.next());
+                    spawnCells(Constants.CELL_WHITE,
+                        ClientCtx.variantSettings.boardWhiteCellCreationCount.next());
                 })));
             addObject(whiteCellSpawner);
         }

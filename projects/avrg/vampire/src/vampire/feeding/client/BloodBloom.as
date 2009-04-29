@@ -168,8 +168,7 @@ public class BloodBloom extends FeedingClient
         var variant :int = ClientCtx.props.get(Props.VARIANT_ID) as int;
 
         if (ClientCtx.variantSettings != null) {
-            log.error("Variant changed!", "oldVariant", ClientCtx.variantSettings.variant,
-                      "newVariant", variant);
+            log.error("Variant changed!", "newVariant", variant);
 
         } else if (variant > Variant.INVALID) {
             ClientCtx.variantSettings = Variant.getSettings(variant);

@@ -19,8 +19,8 @@ public class Quests
         var pandorasBox :QuestDesc = new QuestDesc();
         pandorasBox.name = "pandora_quest";
         pandorasBox.displayName = "Open the Box";
-        pandorasBox.description = "Drain 10 partiers at the Pandora's Box nightclub";
-        makeCollectionRequirement(pandorasBox, "pandora_feedings", 10);
+        pandorasBox.description = "Drain 5 partiers at the Pandora's Box nightclub";
+        makeCollectionRequirement(pandorasBox, "pandora_feedings", 5);
         addQuest(pandorasBox);
 
         var theHunger :QuestDesc = new QuestDesc();

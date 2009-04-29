@@ -48,9 +48,6 @@ public class Constants
     public static const BURST_BLACK :int = 3;
     public static const BURST_SPECIAL :int = 4;
 
-    public static const WHITE_CELL_CREATION_TIME :NumRange = new NumRange(7, 9, Rand.STREAM_GAME);
-    public static const WHITE_CELL_CREATION_COUNT :IntRange = new IntRange(1, 3, Rand.STREAM_GAME);
-
     public static const SPECIAL_CELL_CREATION_TIME :NumRange =
         new NumRange(30, 90, Rand.STREAM_GAME);
     public static const MAX_COLLECTIONS_PER_STRAIN :int = 3;

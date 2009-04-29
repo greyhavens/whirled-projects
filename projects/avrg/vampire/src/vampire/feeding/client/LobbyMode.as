@@ -127,7 +127,7 @@ public class LobbyMode extends AppMode
         var total :MovieClip = contents["total"];
         var average :MovieClip = contents["average"];
         total.visible = this.isPostRoundLobby;
-        average.visible = this.isPostRoundLobby;
+        average.visible = this.isPostRoundLobby && !ClientCtx.clientSettings.spOnly;
         if (this.isPostRoundLobby) {
             var tfTotal :TextField = total["player_score"];
             tfTotal.text = String(_results.totalScore);
@@ -273,6 +273,10 @@ public class LobbyMode extends AppMode
                     statusText += "\n" + diffString + " more will forge a Blood Bond.";
                 }
             }
+        }
+
+        if (ClientCtx.variantSettings.customDescription != null) {
+            statusText = ClientCtx.variantSettings.customDescription;
         }
 
         if (statusText != null) {

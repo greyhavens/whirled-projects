@@ -89,6 +89,11 @@ public class Activities
         variantSettings.gameTime = 45;
         variantSettings.heartbeatTime = 1;
         variantSettings.cursorSpeed = 100;
+        variantSettings.customDescription =
+            "You've dragged a dazed, excited partier into a " +
+            "dark corner of the club. Drain them, quickly! " +
+            "(Drain 100 blood in 45 seconds.)";
+
         var params :BloodBloomActivityParams = new BloodBloomActivityParams(
             1, 1,
             "Pandora's Box Partier",

@@ -1,6 +1,10 @@
 package vampire.feeding.variant {
-    import vampire.feeding.Constants;
 
+import com.whirled.contrib.simplegame.util.IntRange;
+import com.whirled.contrib.simplegame.util.NumRange;
+import com.whirled.contrib.simplegame.util.Rand;
+
+import vampire.feeding.*;
 
 public class Variant
 {
@@ -25,7 +29,6 @@ public class Variant
             throw new Error("Unrecognized variant type " + variant);
         }
 
-        settings.variant = variant;
         return settings;
     }
 
@@ -38,6 +41,8 @@ public class Variant
         settings.heartbeatTime = 4;
         settings.cursorSpeed = 70;
         settings.boardCreatesWhiteCells = true;
+        settings.boardWhiteCellCreationTime = new NumRange(7, 9, Rand.STREAM_GAME);
+        settings.boardWhiteCellCreationCount = new IntRange(1, 3, Rand.STREAM_GAME);
         settings.playerCreatesWhiteCells = false;
         settings.playerWhiteCellCreationTime = 0;
         settings.playerCarriesWhiteCells = true;
@@ -62,6 +67,8 @@ public class Variant
         settings.heartbeatTime = 4;
         settings.cursorSpeed = 70;
         settings.boardCreatesWhiteCells = false;
+        settings.boardWhiteCellCreationTime = new NumRange(7, 9, Rand.STREAM_GAME);
+        settings.boardWhiteCellCreationCount = new IntRange(1, 3, Rand.STREAM_GAME);
         settings.playerCreatesWhiteCells = true;
         settings.playerWhiteCellCreationTime = 2;
         settings.playerCarriesWhiteCells = false;

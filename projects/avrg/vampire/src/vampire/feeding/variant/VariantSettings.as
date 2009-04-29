@@ -1,16 +1,19 @@
 package vampire.feeding.variant {
 
+import com.whirled.contrib.simplegame.util.IntRange;
+import com.whirled.contrib.simplegame.util.NumRange;
+
 // Settings that can be modified by game variants
 public class VariantSettings
 {
-    public var variant :int;
-
     public var gameTime :Number;
     public var heartbeatTime :Number;
 
     public var cursorSpeed :Number;
 
     public var boardCreatesWhiteCells :Boolean;
+    public var boardWhiteCellCreationTime :NumRange;
+    public var boardWhiteCellCreationCount :IntRange;
     public var playerCreatesWhiteCells :Boolean;
     public var playerWhiteCellCreationTime :Number;
     public var playerCarriesWhiteCells :Boolean;
@@ -22,6 +25,8 @@ public class VariantSettings
     public var whiteCellExplodeTime :Number;
     public var normalCellSpeed :Number;
     public var whiteCellSpeed :Number;
+
+    public var customDescription :String;
 }
 
 }
