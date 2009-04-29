@@ -13,8 +13,10 @@ public class ClientCtx
     public static var gameCtrl :AVRGameControl;
     public static var mainLoop :MainLoop;
     public static var rsrcs :ResourceManager;
+    public static var appMode :AppMode;
     public static var questData :PlayerQuestData;
     public static var questProps :PlayerQuestProps;
+    public static var notificationMgr :NotificationMgr;
 
     public static function instantiateBitmap (name :String) :Bitmap
     {

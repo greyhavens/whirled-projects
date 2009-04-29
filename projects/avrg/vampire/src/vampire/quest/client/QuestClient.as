@@ -3,6 +3,7 @@ package vampire.quest.client {
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimpleGame;
 
 import vampire.feeding.FeedingClient;
@@ -17,7 +18,7 @@ import vampire.quest.client.npctalk.*;
 public class QuestClient
 {
     public static function init (gameCtrl :AVRGameControl, simpleGame :SimpleGame,
-        questData :PlayerQuestData, questProps :PlayerQuestProps) :void
+        appMode :AppMode, questData :PlayerQuestData, questProps :PlayerQuestProps) :void
     {
         if (_inited) {
             throw new Error("QuestClient already inited");
@@ -30,9 +31,11 @@ public class QuestClient
 
         ClientCtx.gameCtrl = gameCtrl;
         ClientCtx.mainLoop = simpleGame.ctx.mainLoop;
+        ClientCtx.appMode = appMode;
         ClientCtx.rsrcs = simpleGame.ctx.rsrcs;
         ClientCtx.questData = questData;
         ClientCtx.questProps = questProps;
+        ClientCtx.notificationMgr = new NotificationMgr();
 
         ClientCtx.rsrcs.registerResourceType("npcTalk", NpcTalkResource);
 
@@ -106,7 +109,7 @@ public class QuestClient
     {
         if (_debugPanel == null && show) {
             _debugPanel = new DebugPanel();
-            ClientCtx.mainLoop.topMode.addSceneObject(_debugPanel);
+            ClientCtx.appMode.addSceneObject(_debugPanel);
         }
 
         if (_debugPanel != null) {
@@ -118,7 +121,7 @@ public class QuestClient
     {
         if (_questPanel == null && show) {
             _questPanel = new QuestPanel();
-            ClientCtx.mainLoop.topMode.addSceneObject(_questPanel);
+            ClientCtx.appMode.addSceneObject(_questPanel);
         }
 
         if (_questPanel != null) {
@@ -161,6 +164,7 @@ public class QuestClient
         ClientCtx.questProps.addEventListener(QuestPropEvent.PROP_CHANGED, checkQuestCompletion);
         ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_ADDED, onQuestAdded);
         ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_COMPLETED, onQuestCompleted);
+        ClientCtx.questData.addEventListener(ActivityEvent.ACTIVITY_ADDED, onActivityAdded);
 
         checkQuestCompletion();
     }
@@ -180,18 +184,17 @@ public class QuestClient
 
     protected static function onQuestAdded (e :PlayerQuestEvent) :void
     {
-        var note :QuestAddedNotification = new QuestAddedNotification(e.quest);
-        note.x = (ClientCtx.mainLoop.topMode.modeSprite.width - note.width) * 0.5;
-        note.y = 15;
-        ClientCtx.mainLoop.topMode.addSceneObject(note);
+        ClientCtx.notificationMgr.addNotification(new QuestAddedNotification(e.quest));
     }
 
     protected static function onQuestCompleted (e :PlayerQuestEvent) :void
     {
-        var note :QuestCompletedNotification = new QuestCompletedNotification(e.quest);
-        note.x = (ClientCtx.mainLoop.topMode.modeSprite.width - note.width) * 0.5;
-        note.y = 15;
-        ClientCtx.mainLoop.topMode.addSceneObject(note);
+        ClientCtx.notificationMgr.addNotification(new QuestCompletedNotification(e.quest));
+    }
+
+    protected static function onActivityAdded (e :ActivityEvent) :void
+    {
+        ClientCtx.notificationMgr.addNotification(new ActivityAddedNotification(e.activity));
     }
 
     protected static function beginSpActivity (activity :ActivityDesc) :void
@@ -211,7 +214,7 @@ public class QuestClient
                 ClientCtx.questData,
                 ClientCtx.questProps,
                 activity.params as BloodBloomActivityParams));
-            ClientCtx.mainLoop.topMode.modeSprite.addChild(feedingGame);
+            ClientCtx.appMode.modeSprite.addChild(feedingGame);
             break;
 
         case ActivityDesc.TYPE_CORRUPTION:
@@ -226,7 +229,7 @@ public class QuestClient
                 ClientCtx.questData,
                 ClientCtx.questProps,
                 activity.params as BloodBloomActivityParams));
-            ClientCtx.mainLoop.topMode.modeSprite.addChild(feedingGame);
+            ClientCtx.appMode.modeSprite.addChild(feedingGame);
             break;
 
         case ActivityDesc.TYPE_NPC_TALK:

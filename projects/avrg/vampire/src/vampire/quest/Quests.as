@@ -18,7 +18,7 @@ public class Quests
         /* Lilith Quests */
         var pandorasBox :QuestDesc = new QuestDesc();
         pandorasBox.name = "pandora_quest";
-        pandorasBox.displayName = "Pandora's Box";
+        pandorasBox.displayName = "Open the Box";
         pandorasBox.description = "Drain 10 partiers at the Pandora's Box nightclub";
         makeCollectionRequirement(pandorasBox, "pandora_feedings", 10);
         addQuest(pandorasBox);

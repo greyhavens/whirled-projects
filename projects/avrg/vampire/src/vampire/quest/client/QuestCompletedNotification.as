@@ -18,11 +18,6 @@ public class QuestCompletedNotification extends SceneObject
         var text :String = '"' + quest.displayName + '" completed!';
         var tf :TextField = TextBits.createText(text, 3, 0, 0x00ff00);
         _sprite.addChild(tf);
-
-        addTask(new SerialTask(
-            new TimedTask(2),
-            new AlphaTask(0, 1),
-            new SelfDestructTask()));
     }
 
     override public function get displayObject () :DisplayObject

@@ -7,16 +7,15 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.text.TextField;
 
-import vampire.quest.QuestDesc;
+import vampire.quest.*;
 
-public class QuestAddedNotification extends SceneObject
+public class ActivityAddedNotification extends SceneObject
 {
-    public function QuestAddedNotification (quest :QuestDesc)
+    public function ActivityAddedNotification (activity :ActivityDesc)
     {
         _sprite = new Sprite();
-
-        var text :String = "New quest: " + quest.displayName;
-        var tf :TextField = TextBits.createText(text, 3, 0, 0x0000ff);
+        var text :String = activity.loc.displayName + ": " + activity.displayName + " unlocked!";
+        var tf :TextField = TextBits.createText(text, 3, 0, 0xff00ff);
         _sprite.addChild(tf);
     }
 

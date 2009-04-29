@@ -24,10 +24,11 @@ public class QuestTestClient extends Sprite
         _events.registerListener(this, Event.REMOVED_FROM_STAGE, onQuit);
 
         // Init simplegame
+        var appMode :AppMode = new AppMode();
         var config :Config = new Config();
         config.hostSprite = this;
         _sg = new SimpleGame(config);
-        _sg.ctx.mainLoop.pushMode(new AppMode());
+        _sg.ctx.mainLoop.pushMode(appMode);
         _sg.run();
 
         // Init props
@@ -36,7 +37,7 @@ public class QuestTestClient extends Sprite
         var questProps :PlayerQuestProps = new PlayerQuestProps(_gameCtrl.player.props);
 
         FeedingClient.init(this, _gameCtrl);
-        QuestClient.init(_gameCtrl, _sg, questData, questProps);
+        QuestClient.init(_gameCtrl, _sg, appMode, questData, questProps);
 
         var waitLoop :ManagedTimer = _timerMgr.runForever(50,
             function (...ignored) :void {
