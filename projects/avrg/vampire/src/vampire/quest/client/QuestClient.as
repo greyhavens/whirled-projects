@@ -8,6 +8,7 @@ import com.whirled.contrib.simplegame.SimpleGame;
 import com.whirled.net.PropertySubControl;
 
 import flash.display.Sprite;
+import flash.geom.Rectangle;
 
 import vampire.feeding.FeedingClient;
 import vampire.feeding.FeedingClientSettings;
@@ -132,6 +133,11 @@ public class QuestClient
     {
         if (_questPanel == null && show) {
             _questPanel = new QuestPanel();
+
+            var bounds :Rectangle = ClientCtx.getPaintableArea(false);
+            _questPanel.x = bounds.x + ((bounds.width - _questPanel.width) * 0.5);
+            _questPanel.y = bounds.y + 50;
+
             ClientCtx.appMode.addSceneObject(_questPanel, ClientCtx.panelLayer);
         }
 

@@ -3,6 +3,8 @@ package vampire.quest.client {
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
+import flash.geom.Rectangle;
+
 public class NotificationMgr
 {
     public function addNotification (notification :SceneObject) :void
@@ -16,6 +18,10 @@ public class NotificationMgr
 
     protected function playNotificationNow (notification :SceneObject) :void
     {
+        var bounds :Rectangle = ClientCtx.getPaintableArea(false);
+        notification.x = bounds.x + ((bounds.width - notification.width) * 0.5);
+        notification.y = bounds.y + ((bounds.height - notification.height) * 0.5);
+
         notification.addTask(new SerialTask(
             new TimedTask(2),
             new AlphaTask(0, 1),
