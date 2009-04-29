@@ -94,6 +94,12 @@ public class LineagesClient extends SimObject
         if(e.name == Codes.ROOM_PROP_PLAYER_LINEAGE) {
             var bytes :ByteArray = e.newValue as ByteArray;
             loadLineageFromBytes(e.key, bytes);
+
+            //Upload all new lineages to the furniture
+            if (ClientContext.gameMode.furnNotifier != null) {
+                ClientContext.gameMode.furnNotifier.uploadLineageToFurnIfPresent(
+                    _lineages.get(e.key));
+            }
         }
     }
 
