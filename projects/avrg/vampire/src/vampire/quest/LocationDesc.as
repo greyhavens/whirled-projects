@@ -6,6 +6,11 @@ import vampire.Util;
 
 public class LocationDesc
 {
+    public static function getId (name :String) :int
+    {
+        return Util.getStringHash(name);
+    }
+
     // Unique name
     public var name :String;
 
@@ -29,11 +34,6 @@ public class LocationDesc
     public function toString () :String
     {
         return StringUtil.simpleToString(this, [ "name", "id", "displayName" ]);
-    }
-
-    public static function getId (name :String) :int
-    {
-        return Util.getStringHash(name);
     }
 }
 

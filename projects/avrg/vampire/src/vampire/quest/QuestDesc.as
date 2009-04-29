@@ -8,6 +8,11 @@ import vampire.quest.client.PlayerQuestProps;
 
 public class QuestDesc
 {
+    public static function getId (name :String) :int
+    {
+        return Util.getStringHash(name);
+    }
+
     // Unique name
     public var name :String;
 
@@ -39,11 +44,6 @@ public class QuestDesc
         return Util.getStringHash(name);
     }
 
-    public function toString () :String
-    {
-        return StringUtil.simpleToString(this, [ "name", "id", "displayName" ]);
-    }
-
     public function isRelevantProp (propName :String) :Boolean
     {
         return ArrayUtil.contains(this.relevantProps, propName);
@@ -59,9 +59,9 @@ public class QuestDesc
         return this.getProgressTextFn(props);
     }
 
-    public static function getId (name :String) :int
+    public function toString () :String
     {
-        return Util.getStringHash(name);
+        return StringUtil.simpleToString(this, [ "name", "id", "displayName" ]);
     }
 }
 

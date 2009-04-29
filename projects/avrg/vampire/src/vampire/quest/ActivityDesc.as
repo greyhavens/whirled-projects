@@ -10,6 +10,11 @@ public class ActivityDesc
     public static const TYPE_FEEDING :int = 0;
     public static const TYPE_NPC_TALK :int = 1;
 
+    public static function getId (name :String) :int
+    {
+        return Util.getStringHash(name);
+    }
+
     // Unique Name
     public var name :String;
 
@@ -50,11 +55,6 @@ public class ActivityDesc
     public function toString () :String
     {
         return StringUtil.simpleToString(this, [ "name", "id", "displayName" ]);
-    }
-
-    public static function getId (name :String) :int
-    {
-        return Util.getStringHash(name);
     }
 }
 
