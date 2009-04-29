@@ -1,4 +1,6 @@
 package vampire.feeding.variant {
+    import vampire.feeding.Constants;
+
 
 public class Variant
 {
@@ -31,7 +33,8 @@ public class Variant
     {
         var settings :VariantSettings = new VariantSettings();
 
-        settings.gameTime = 60 * 2;
+        settings.gameTime =
+            (Constants.DEBUG_SHORT_FEEDING_GAME ? Constants.DEBUG_SHORT_FEEDING_LENGTH : 60 * 2);
         settings.heartbeatTime = 4;
         settings.cursorSpeed = 70;
         settings.boardCreatesWhiteCells = true;
@@ -54,7 +57,8 @@ public class Variant
     {
         var settings :VariantSettings = new VariantSettings();
 
-        settings.gameTime = 60 * 2;
+        settings.gameTime =
+            (Constants.DEBUG_SHORT_FEEDING_GAME ? Constants.DEBUG_SHORT_FEEDING_LENGTH : 60 * 2);
         settings.heartbeatTime = 4;
         settings.cursorSpeed = 70;
         settings.boardCreatesWhiteCells = false;
