@@ -22,7 +22,7 @@ public class LocationPanel extends SceneObject
     {
         _loc = loc;
 
-        _panelMovie = ClientCtx.instantiateMovieClip("quest", "location_panel", false, true);
+        _panelMovie = ClientCtx.instantiateMovieClip("quest", "location_panel");
         var contents :MovieClip = _panelMovie["draggable"];
         var tfName :TextField = contents["location_title"];
         tfName.text = loc.displayName;
@@ -109,11 +109,6 @@ public class LocationPanel extends SceneObject
             var tfCost :TextField = buttonMovie["action_cost"];
             tfCost.visible = (tfCost.text.length > 0);
         }
-    }
-
-    override protected function destroyed () :void
-    {
-        SwfResource.releaseMovieClip(_panelMovie);
     }
 
     protected function makeActivityButton (activity :ActivityDesc) :SimpleButton

@@ -125,10 +125,29 @@ public class PlayerQuestData extends EventDispatcher
         _props.setIn(PROP_AVAIL_ACTIVITIES, desc.id, true);
     }
 
+    public function debugLockActivity (desc :ActivityDesc) :void
+    {
+        _props.setIn(PROP_AVAIL_ACTIVITIES, desc.id, null);
+    }
+
     public function isActivityUnlocked (desc :ActivityDesc) :Boolean
     {
         var dict :Dictionary = _props.get(PROP_AVAIL_ACTIVITIES) as Dictionary;
         return (dict != null && dict[desc.id] !== undefined);
+    }
+
+    public function get unlockedActivityIds () :Array
+    {
+        var activities :Dictionary = _props.get(PROP_AVAIL_ACTIVITIES) as Dictionary;
+        return (activities != null ? Util.keys(activities) : []);
+    }
+
+    public function get unlockedActivities () :Array
+    {
+        return this.unlockedActivityIds.map(
+            function (activityId :int, ...ignored) :ActivityDesc {
+                return Activities.getActivity(activityId);
+            });
     }
 
     protected function onPropChanged (e :PropertyChangedEvent) :void

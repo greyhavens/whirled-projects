@@ -41,7 +41,7 @@ public class DebugPanel extends GenericDraggableWindow
 
         createNewLayoutRow(15);
 
-        // buttons
+        // props
         createButton("Set Prop", function (...ignored) :void {
             ClientCtx.questProps.setProp(getEnteredName(), getEnteredVal());
         });
@@ -61,9 +61,18 @@ public class DebugPanel extends GenericDraggableWindow
             }
         });
 
+        createNewLayoutRow();
+
+        // other utils
         createButton("Clear Quests", function (...ignored) :void {
             for each (var questId :int in ClientCtx.questData.activeAndCompleteQuestIds) {
                 ClientCtx.questData.debugClearQuest(questId);
+            }
+        });
+
+        createButton("Clear Activities", function (...ignored) :void {
+            for each (var activity :ActivityDesc in ClientCtx.questData.unlockedActivities) {
+                ClientCtx.questData.debugLockActivity(activity);
             }
         });
 
