@@ -25,31 +25,29 @@ Oh! Aren't you delicious. All right, little one, you like to stick your neck out
 		<Say speaker="Lilith" text="Marvelous, kitten! I'm throwing a party tonight at Pandora's Box. You'll be on the list." response="(More)"/>
 		<Say speaker="Lilith" text="Marvelous, kitten! I'm throwing a party tonight at Pandora's Box. You'll be on the list.
 Well... you'll be on the menu.">
-			<Response id="pandora" text="Pandora's Box?"/>
-			<Response id="yes" text="Sounds like fun."/>
-			<Response id="no" text='"On the menu?" No thanks.'/>
+			<AddResponse id="pandora" text="Pandora's Box?"/>
+			<AddResponse id="yes" text="Sounds like fun."/>
+			<AddResponse id="no" text='"On the menu?" No thanks.'/>
 		</Say>
-		<HandleResponse>
-			<Response id="pandora">
-				<Say speaker="Lilith" text="The nightclub around the corner. The music is loud, the drinks are strong..." response="(More)"/>
-				<Say speaker="Lilith" text="The nightclub around the corner. The music is loud, the drinks are strong...
+		<HandleResponse id="pandora">
+			<Say speaker="Lilith" text="The nightclub around the corner. The music is loud, the drinks are strong..." response="(More)"/>
+			<Say speaker="Lilith" text="The nightclub around the corner. The music is loud, the drinks are strong...
 and the little lambs that flock there are easily seduced." response="(More)"/>
-				<Say speaker="Lilith" text="Cull that flock, kitten. Come back when you've drunk your fill." response="Sounds like fun."/>
-				<CallRoutine name="GivePandorasBox"/>
-			</Response>
-			<Response id="yes">
-				<Say speaker="Lilith" text="Mmm. Good feastling. Now, off with you! Come back when you've drunk your fill." response="(More)"/>
-				<CallRoutine name="GivePandorasBox"/>
-			</Response>
-			<Response id="no">
-				<Say speaker="Lilith" text="Child. Whether safely under my wing or alone on the street, make no mistake..." response="(More)"/>
-				<Say speaker="Lilith" text="Child. Whether safely under my wing or alone on the street, make no mistake...
+			<Say speaker="Lilith" text="Cull that flock, kitten. Come back when you've drunk your fill." response="Sounds like fun."/>
+			<CallRoutine name="GivePandorasBox"/>
+		</HandleResponse>
+		<HandleResponse id="yes">
+			<Say speaker="Lilith" text="Mmm. Good feastling. Now, off with you! Come back when you've drunk your fill." response="(More)"/>
+			<CallRoutine name="GivePandorasBox"/>
+		</HandleResponse>
+		<HandleResponse id="no">
+			<Say speaker="Lilith" text="Child. Whether safely under my wing or alone on the street, make no mistake..." response="(More)"/>
+			<Say speaker="Lilith" text="Child. Whether safely under my wing or alone on the street, make no mistake...
 You are ALWAYS food." response="(More)"/>
-				<Say speaker="Lilith" text="Now, kitten:" response="(More)"/>
-				<Say speaker="Lilith" text="Now, kitten:
+			<Say speaker="Lilith" text="Now, kitten:" response="(More)"/>
+			<Say speaker="Lilith" text="Now, kitten:
 You WILL visit the Pandora's Box nightclub, you WILL feed on the silly little lambs there, and you WON'T argue with me!" response="(More)"/>
-				<CallRoutine name="GivePandorasBox"/>
-			</Response>
+			<CallRoutine name="GivePandorasBox"/>
 		</HandleResponse>
 	</Routine>
 	
@@ -65,7 +63,14 @@ You WILL visit the Pandora's Box nightclub, you WILL feed on the silly little la
 	</Routine>
 	
 	<Routine name="IntroTheHunger">
-		<Say speaker="Lilith" text="Too bad the quest's not implemented!" response="(More)"/>
+		<Say speaker="Lilith" text="Come in, kitten!" response="(More)"/>
+		<Say speaker="Lilith" text="Come in, kitten!
+You are a rare beauty indeed. And resilient yet, despite the porcelain pallor in your depletion." response="(More)"/>
+		<Say speaker="Lilith" text="Yes, I WILL be keeping you." response="(More)"/>
+		<Say speaker="Lilith" text="Go. FEED. Restore that rosy bloom, so you may once again be plucked.">
+			<AddResponse id="yes" text="Ha! It is well you know your place, child, but let us not be so uncouth as to state it outright."/>
+			<AddResponse id="no" text="I don't need to be 'kept.'"/>
+		</Say>
 		<Exit/>
 	</Routine>
 </Program>
