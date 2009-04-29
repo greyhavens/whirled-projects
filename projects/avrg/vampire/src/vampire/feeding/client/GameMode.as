@@ -1,7 +1,6 @@
 package vampire.feeding.client {
 
 import com.threerings.flash.Vector2;
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControlEvent;
@@ -157,7 +156,13 @@ public class GameMode extends AppMode
         GameCtx.score.y = Constants.GAME_CTR.y;
         addSceneObject(GameCtx.score, GameCtx.uiLayer);
 
-        if (!ClientCtx.isPrey && ClientCtx.preyBloodType >= 0) {
+        var showStrainTallyView :Boolean = (!ClientCtx.isPrey && ClientCtx.preyBloodType >= 0);
+
+        GameCtx.sentMultiplierIndicator = new SentMultiplierIndicator(
+            showStrainTallyView ? BONUS_INDICATOR_STRAIN_LOC : BONUS_INDICATOR_NOSTRAIN_LOC);
+        addSceneObject(GameCtx.sentMultiplierIndicator, GameCtx.effectLayer);
+
+        if (showStrainTallyView) {
             GameCtx.specialStrainTallyView = new SpecialStrainTallyView(
                 ClientCtx.preyBloodType,
                 ClientCtx.playerData.getStrainCount(ClientCtx.preyBloodType));
@@ -169,12 +174,6 @@ public class GameMode extends AppMode
             GameCtx.specialCellSpawner = new SpecialCellSpawner();
             addObject(GameCtx.specialCellSpawner);
         }
-
-        GameCtx.sentMultiplierIndicator = new SentMultiplierIndicator(
-            GameCtx.specialStrainTallyView != null ?
-            BONUS_INDICATOR_STRAIN_LOC :
-            BONUS_INDICATOR_NOSTRAIN_LOC);
-        addSceneObject(GameCtx.sentMultiplierIndicator, GameCtx.effectLayer);
 
         GameCtx.cursor = GameObjects.createPlayerCursor();
 
