@@ -23,8 +23,15 @@ public class QuestTestClient extends Sprite
         //_events.registerListener(this, Event.UNLOAD, onQuit);
         _events.registerListener(this, Event.REMOVED_FROM_STAGE, onQuit);
 
-        // Init simplegame
         var appMode :AppMode = new AppMode();
+        var panelLayer :Sprite = new Sprite();
+        var minigameLayer :Sprite = new Sprite();
+        var notificationLayer :Sprite = new Sprite();
+        appMode.modeSprite.addChild(panelLayer);
+        appMode.modeSprite.addChild(minigameLayer);
+        appMode.modeSprite.addChild(notificationLayer);
+
+        // Init simplegame
         var config :Config = new Config();
         config.hostSprite = this;
         _sg = new SimpleGame(config);
@@ -35,7 +42,7 @@ public class QuestTestClient extends Sprite
         _gameCtrl = new AVRGameControl(this);
 
         FeedingClient.init(this, _gameCtrl);
-        QuestClient.init(_gameCtrl, _sg, appMode);
+        QuestClient.init(_gameCtrl, _sg, appMode, panelLayer, minigameLayer, notificationLayer);
 
         var waitLoop :ManagedTimer = _timerMgr.runForever(50,
             function (...ignored) :void {

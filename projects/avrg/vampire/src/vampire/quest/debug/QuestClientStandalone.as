@@ -23,8 +23,15 @@ public class QuestClientStandalone extends Sprite
 
     public function QuestClientStandalone ()
     {
-        // Init simplegame
         var appMode :AppMode = new AppMode();
+        var panelLayer :Sprite = new Sprite();
+        var minigameLayer :Sprite = new Sprite();
+        var notificationLayer :Sprite = new Sprite();
+        appMode.modeSprite.addChild(panelLayer);
+        appMode.modeSprite.addChild(minigameLayer);
+        appMode.modeSprite.addChild(notificationLayer);
+
+        // Init simplegame
         var config :Config = new Config();
         config.hostSprite = this;
         _sg = new SimpleGame(config);
@@ -36,7 +43,8 @@ public class QuestClientStandalone extends Sprite
         var gameCtrl :DisconnectedControl = new DisconnectedControl(this);
 
         FeedingClient.init(this, gameCtrl);
-        QuestClient.init(gameCtrl, _sg, appMode, localProps);
+        QuestClient.init(gameCtrl, _sg, appMode, panelLayer, minigameLayer, notificationLayer,
+            localProps);
 
         var waitLoop :ManagedTimer = _timerMgr.runForever(50,
             function (...ignored) :void {

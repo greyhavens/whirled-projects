@@ -25,7 +25,7 @@ public class NotificationMgr
                 playNextNotification();
             })));
 
-        ClientCtx.appMode.addSceneObject(notification);
+        ClientCtx.appMode.addSceneObject(notification, ClientCtx.notificationLayer);
         _notificationPlaying = true;
     }
 

@@ -7,6 +7,8 @@ import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimpleGame;
 import com.whirled.net.PropertySubControl;
 
+import flash.display.Sprite;
+
 import vampire.feeding.FeedingClient;
 import vampire.feeding.FeedingClientSettings;
 import vampire.feeding.PlayerFeedingData;
@@ -18,7 +20,8 @@ import vampire.quest.client.npctalk.*;
 public class QuestClient
 {
     public static function init (gameCtrl :AVRGameControl, simpleGame :SimpleGame,
-        appMode :AppMode, playerProps :PropertySubControl = null) :void
+        appMode :AppMode, panelLayer :Sprite, minigameLayer :Sprite, notificationLayer :Sprite,
+        playerProps :PropertySubControl = null) :void
     {
         if (_inited) {
             throw new Error("QuestClient already inited");
@@ -40,6 +43,10 @@ public class QuestClient
         ClientCtx.questData = new PlayerQuestData(playerProps);
         ClientCtx.questProps = new PlayerQuestProps(playerProps);
         ClientCtx.notificationMgr = new NotificationMgr();
+
+        ClientCtx.panelLayer = panelLayer;
+        ClientCtx.minigameLayer = minigameLayer;
+        ClientCtx.notificationLayer = notificationLayer;
 
         ClientCtx.rsrcs.registerResourceType("npcTalk", NpcTalkResource);
 
@@ -113,7 +120,7 @@ public class QuestClient
     {
         if (_debugPanel == null && show) {
             _debugPanel = new DebugPanel();
-            ClientCtx.appMode.addSceneObject(_debugPanel);
+            ClientCtx.appMode.addSceneObject(_debugPanel, ClientCtx.panelLayer);
         }
 
         if (_debugPanel != null) {
@@ -125,7 +132,7 @@ public class QuestClient
     {
         if (_questPanel == null && show) {
             _questPanel = new QuestPanel();
-            ClientCtx.appMode.addSceneObject(_questPanel);
+            ClientCtx.appMode.addSceneObject(_questPanel, ClientCtx.panelLayer);
         }
 
         if (_questPanel != null) {
@@ -218,7 +225,7 @@ public class QuestClient
                 ClientCtx.questData,
                 ClientCtx.questProps);
             feedingGame = FeedingClient.create(feedingSettings);
-            ClientCtx.appMode.modeSprite.addChild(feedingGame);
+            ClientCtx.minigameLayer.addChild(feedingGame);
             break;
 
         case ActivityDesc.TYPE_NPC_TALK:

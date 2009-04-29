@@ -7,6 +7,7 @@ import com.whirled.contrib.simplegame.resource.*;
 import flash.display.Bitmap;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
+import flash.display.Sprite;
 
 public class ClientCtx
 {
@@ -17,6 +18,10 @@ public class ClientCtx
     public static var questData :PlayerQuestData;
     public static var questProps :PlayerQuestProps;
     public static var notificationMgr :NotificationMgr;
+
+    public static var panelLayer :Sprite;
+    public static var minigameLayer :Sprite;
+    public static var notificationLayer :Sprite;
 
     public static function instantiateBitmap (name :String) :Bitmap
     {
