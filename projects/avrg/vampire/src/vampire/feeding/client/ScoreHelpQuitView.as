@@ -12,6 +12,7 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.text.TextField;
 
+import vampire.Util;
 import vampire.feeding.*;
 
 public class ScoreHelpQuitView extends SceneObject
@@ -48,7 +49,7 @@ public class ScoreHelpQuitView extends SceneObject
 
     public function addBlood (x :Number, y :Number, count :int, initialDelay :Number) :void
     {
-        _bloodCount += count;
+        _bloodCount = Util.obfuscateInt(bloodCount + count);
 
         var loc :Point = this.displayObject.globalToLocal(new Point(x, y));
 
@@ -91,7 +92,7 @@ public class ScoreHelpQuitView extends SceneObject
 
     public function get bloodCount () :int
     {
-        return _bloodCount;
+        return Util.deobfuscateInt(_bloodCount);
     }
 
     override public function get displayObject () :DisplayObject
@@ -114,7 +115,7 @@ public class ScoreHelpQuitView extends SceneObject
 
     protected var _movie :MovieClip;
     protected var _tf :TextField;
-    protected var _bloodCount :int;
+    protected var _bloodCount :String;
     protected var _lastDisplayedBloodCount :int = -1;
     protected var _displayedBloodCount :int;
 
