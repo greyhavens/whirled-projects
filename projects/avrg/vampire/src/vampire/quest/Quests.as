@@ -42,6 +42,11 @@ public class Quests
         return getQuest(QuestDesc.getId(name));
     }
 
+    public static function getAllQuests () :Array
+    {
+        return _quests.values();
+    }
+
     protected static function addQuest (desc :QuestDesc) :void
     {
         checkInited();

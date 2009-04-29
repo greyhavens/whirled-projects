@@ -28,8 +28,6 @@ public class HasQuestExpr
 
         case EXISTS:
             return status != PlayerQuestData.STATUS_NOT_ADDED;
-
-
         }
     }
 

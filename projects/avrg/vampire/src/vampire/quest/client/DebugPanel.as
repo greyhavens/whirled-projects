@@ -63,18 +63,95 @@ public class DebugPanel extends GenericDraggableWindow
 
         createNewLayoutRow();
 
-        // other utils
+        // Quests
+        createButton("Add Quest", function (...ignored) :void {
+            var name :String = getEnteredName();
+            var quest :QuestDesc = Quests.getQuestByName(name);
+            if (quest == null) {
+                setStatusText("No quest named " + name + " exists.");
+            } else {
+                ClientCtx.questData.addQuest(quest.id);
+            }
+        });
+
+        createButton("Complete Quest", function (...ignored) :void {
+            var name :String = getEnteredName();
+            var quest :QuestDesc = Quests.getQuestByName(name);
+            if (quest == null) {
+                setStatusText("No quest named " + name + " exists.");
+            } else {
+                ClientCtx.questData.completeQuest(quest.id);
+            }
+        });
+
+        createButton("List Quests", function (...ignored) :void {
+            var text :String = "Quests [";
+            var needsSeparator :Boolean;
+            for each (var quest :QuestDesc in Quests.getAllQuests()) {
+                if (needsSeparator) {
+                    text += ", ";
+                }
+                text += quest.name;
+                needsSeparator = true;
+            }
+
+            text += "]";
+
+            setStatusText(text);
+        });
+
         createButton("Clear Quests", function (...ignored) :void {
             for each (var questId :int in ClientCtx.questData.activeAndCompleteQuestIds) {
                 ClientCtx.questData.debugClearQuest(questId);
             }
         });
 
-        createButton("Clear Activities", function (...ignored) :void {
+        createNewLayoutRow();
+
+        // Activities
+        createButton("Unlock Activity", function (...ignored) :void {
+            var name :String = getEnteredName();
+            var activity :ActivityDesc = Activities.getActivityByName(name);
+            if (activity == null) {
+                setStatusText("No activity named " + name + " exists.");
+            } else {
+                ClientCtx.questData.unlockActivity(activity);
+            }
+        });
+
+        createButton("Lock Activity", function (...ignored) :void {
+            var name :String = getEnteredName();
+            var activity :ActivityDesc = Activities.getActivityByName(name);
+            if (activity == null) {
+                setStatusText("No activity named " + name + " exists.");
+            } else {
+                ClientCtx.questData.debugLockActivity(activity);
+            }
+        });
+
+        createButton("List Activities", function (...ignored) :void {
+            var text :String = "Activities [";
+            var needsSeparator :Boolean;
+            for each (var activity :ActivityDesc in Activities.getAllActivities()) {
+                if (needsSeparator) {
+                    text += ", ";
+                }
+                text += activity.name;
+                needsSeparator = true;
+            }
+
+            text += "]";
+
+            setStatusText(text);
+        });
+
+        createButton("Lock All Activities", function (...ignored) :void {
             for each (var activity :ActivityDesc in ClientCtx.questData.unlockedActivities) {
                 ClientCtx.questData.debugLockActivity(activity);
             }
         });
+
+        createNewLayoutRow();
 
         createButton("+Juice", function (...ignored) :void {
             ClientCtx.questData.questJuice += 20;
@@ -82,13 +159,6 @@ public class DebugPanel extends GenericDraggableWindow
 
         createButton("-Juice", function (...ignored) :void {
             ClientCtx.questData.questJuice = Math.max(ClientCtx.questData.questJuice - 20, 0);
-        });
-
-        createButton("Reset Debug Quest", function (...ignored) :void {
-            ClientCtx.questData.questJuice = 100;
-            ClientCtx.questData.addQuest(Quests.getQuestByName("TestQuest").id);
-            ClientCtx.questData.unlockActivity(Activities.getActivityByName("whack_small"));
-            ClientCtx.questData.curLocation = Locations.getLocationByName("HomeBase");
         });
 
         createNewLayoutRow(15);

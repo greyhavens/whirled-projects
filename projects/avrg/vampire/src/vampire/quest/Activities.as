@@ -50,6 +50,11 @@ public class Activities
         return getActivity(ActivityDesc.getId(name));
     }
 
+    public static function getAllActivities () :Array
+    {
+        return _activities.values();
+    }
+
     protected static function addActivity (desc :ActivityDesc) :void
     {
         checkInited();
