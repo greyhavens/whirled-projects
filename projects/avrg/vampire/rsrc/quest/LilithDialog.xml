@@ -45,7 +45,9 @@ and the little lambs that flock there are easily seduced." response="(More)"/>
 				<Say speaker="Lilith" text="Child. Whether safely under my wing or alone on the street, make no mistake..." response="(More)"/>
 				<Say speaker="Lilith" text="Child. Whether safely under my wing or alone on the street, make no mistake...
 You are ALWAYS food." response="(More)"/>
-				<Say speaker="Lilith" text="You WILL visit the Pandora's Box nightclub, you WILL feed on the silly little lambs there, and you WON'T argue with me!" response="(More)"/>
+				<Say speaker="Lilith" text="Now, kitten:" response="(More)"/>
+				<Say speaker="Lilith" text="Now, kitten:
+You WILL visit the Pandora's Box nightclub, you WILL feed on the silly little lambs there, and you WON'T argue with me!" response="(More)"/>
 				<CallRoutine name="GivePandorasBox"/>
 			</Response>
 		</HandleResponse>
