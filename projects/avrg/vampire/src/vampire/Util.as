@@ -89,5 +89,17 @@ public class Util
         }
         return sb.toString();
     }
+
+    public static function obfuscateInt (value :int) :String
+    {
+        return Math.round(Math.random()*1000) + ";" + value;
+    }
+    public static function deobfuscateInt (value :String) :int
+    {
+        if (value == null) {
+            return 0;
+        }
+        return int(value.split(";")[1]);
+    }
 }
 }
