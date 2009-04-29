@@ -50,27 +50,6 @@ public class Activities
         return getActivity(ActivityDesc.getId(name));
     }
 
-    protected static function createPandoraActivity (loc :LocationDesc) :ActivityDesc
-    {
-        var variantSettings :VariantSettings = Variant.normal();
-        var params :BloodBloomActivityParams = new BloodBloomActivityParams(
-            1, 1,
-            "Pandora's Box Partier",
-            -1,
-            100,
-            variantSettings,
-            "pandora_feedings", 1);
-
-        return new ActivityDesc(
-            loc,
-            ActivityDesc.TYPE_FEEDING,
-            "pandora_activity",
-            "Pandora's Box",
-            0,  // no juice
-            true, // locked
-            params);
-    }
-
     protected static function addActivity (desc :ActivityDesc) :void
     {
         checkInited();
@@ -100,6 +79,32 @@ public class Activities
         }
 
         return true;
+    }
+
+    /** Activities */
+
+    protected static function createPandoraActivity (loc :LocationDesc) :ActivityDesc
+    {
+        var variantSettings :VariantSettings = Variant.normal();
+        variantSettings.gameTime = 45;
+        variantSettings.heartbeatTime = 1;
+        variantSettings.cursorSpeed = 100;
+        var params :BloodBloomActivityParams = new BloodBloomActivityParams(
+            1, 1,
+            "Pandora's Box Partier",
+            -1,
+            100,
+            variantSettings,
+            "pandora_feedings", 1);
+
+        return new ActivityDesc(
+            loc,
+            ActivityDesc.TYPE_FEEDING,
+            "pandora_activity",
+            "Pandora's Box",
+            0,  // no juice
+            true, // locked
+            params);
     }
 
     protected static var _inited :Boolean;
