@@ -13,22 +13,17 @@ public class Constants
     public static const DEBUG_DISABLE_ROOM_OVERLAY :Boolean = false;
     public static const DEBUG_STANDARD_UPDATE_INTERVAL :Boolean = false;
 
-    public static const GAME_TIME :Number = 60 * 2;
-
     public static const MIN_GAMES_BEFORE_LEADERBOARD_SHOWN :int = 10;
 
     public static const PLAYER_PREDATOR :int = 0;
     public static const PLAYER_PREY :int = 1;
 
-    public static const CURSOR_SPEED :Number = 70;
     public static const CURSOR_RADIUS :Number = 9;
 
     public static const HEART_RADIUS :Number = 55;
     public static const HEART_RADIUS2 :Number = HEART_RADIUS * HEART_RADIUS;
 
     public static const CREATE_BONUS_BURST_SIZE :int = 3;
-
-    public static const BEAT_TIME :Number = 4;
 
     public static const ARTERY_TOP :int = 0;
     public static const ARTERY_BOTTOM :int = 1;

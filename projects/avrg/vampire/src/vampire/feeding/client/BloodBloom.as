@@ -131,7 +131,7 @@ public class BloodBloom extends FeedingClient
     {
         if (e.name == Props.MODE_NAME) {
             updateMode();
-        } else if (e.name == Props.VARIANT) {
+        } else if (e.name == Props.VARIANT_ID) {
             updateVariant();
         }
     }
@@ -165,7 +165,7 @@ public class BloodBloom extends FeedingClient
 
     protected function updateVariant () :void
     {
-        var variant :int = ClientCtx.props.get(Props.VARIANT) as int;
+        var variant :int = ClientCtx.props.get(Props.VARIANT_ID) as int;
 
         if (ClientCtx.variantSettings != null) {
             log.error("Variant changed!", "oldVariant", ClientCtx.variantSettings.variant,

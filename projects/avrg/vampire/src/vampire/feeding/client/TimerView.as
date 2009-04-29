@@ -37,9 +37,9 @@ public class TimerView extends SceneObject
 
     override protected function update (dt :Number) :void
     {
-        var time :Number = Constants.GAME_TIME - GameCtx.timeLeft;
+        var time :Number = ClientCtx.variantSettings.gameTime - GameCtx.timeLeft;
         var rotation :Number =
-            ROTATE_MIN + ((time / Constants.GAME_TIME) * (ROTATE_MAX - ROTATE_MIN));
+            ROTATE_MIN + ((time / ClientCtx.variantSettings.gameTime) * (ROTATE_MAX - ROTATE_MIN));
         _pointer.rotation = rotation;
     }
 

@@ -35,8 +35,8 @@ public class Props
     /** progress :int */
     public static const BLOOD_BOND_PROGRESS :String = "BloodBondProgress";
 
-    /** variant :int */
-    public static const VARIANT :String = "GameVariant";
+    /** variantId :int */
+    public static const VARIANT_ID :String = "GameVariantId";
 }
 
 }

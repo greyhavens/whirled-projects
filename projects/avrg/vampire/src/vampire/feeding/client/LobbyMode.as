@@ -202,8 +202,8 @@ public class LobbyMode extends AppMode
         roundTimer.visible = show;
 
         if (show && remainingTime > 0 && !_showedRoundTimer) {
-            var elapsedTime :Number = Constants.GAME_TIME - remainingTime;
-            var curFrame :int = (roundTimer.totalFrames * (elapsedTime / Constants.GAME_TIME)) + 1;
+            var elapsedTime :Number = ClientCtx.variantSettings.gameTime - remainingTime;
+            var curFrame :int = (roundTimer.totalFrames * (elapsedTime / ClientCtx.variantSettings.gameTime)) + 1;
             curFrame = Math.min(curFrame, roundTimer.totalFrames);
 
             roundTimer.gotoAndStop(curFrame);

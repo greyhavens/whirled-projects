@@ -96,14 +96,14 @@ public class ServerCtx
         props.set(Props.MODE_NAME, val, true);
     }
 
-    public function get variant () :int
+    public function get variantId () :int
     {
-        return props.get(Props.VARIANT) as int;
+        return props.get(Props.VARIANT_ID) as int;
     }
 
-    public function set variant (val :int) :void
+    public function set variantId (val :int) :void
     {
-        props.set(Props.VARIANT, val, true);
+        props.set(Props.VARIANT_ID, val, true);
     }
 
     public function getPredatorIds () :Array

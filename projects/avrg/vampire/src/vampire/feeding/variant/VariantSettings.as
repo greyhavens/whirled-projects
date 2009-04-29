@@ -5,6 +5,11 @@ public class VariantSettings
 {
     public var variant :int;
 
+    public var gameTime :Number;
+    public var heartbeatTime :Number;
+
+    public var cursorSpeed :Number;
+
     public var boardCreatesWhiteCells :Boolean;
     public var playerCreatesWhiteCells :Boolean;
     public var playerWhiteCellCreationTime :Number;

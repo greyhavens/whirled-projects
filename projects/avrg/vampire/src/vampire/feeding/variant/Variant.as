@@ -31,6 +31,9 @@ public class Variant
     {
         var settings :VariantSettings = new VariantSettings();
 
+        settings.gameTime = 60 * 2;
+        settings.heartbeatTime = 4;
+        settings.cursorSpeed = 70;
         settings.boardCreatesWhiteCells = true;
         settings.playerCreatesWhiteCells = false;
         settings.playerWhiteCellCreationTime = 0;
@@ -51,6 +54,9 @@ public class Variant
     {
         var settings :VariantSettings = new VariantSettings();
 
+        settings.gameTime = 60 * 2;
+        settings.heartbeatTime = 4;
+        settings.cursorSpeed = 70;
         settings.boardCreatesWhiteCells = false;
         settings.playerCreatesWhiteCells = true;
         settings.playerWhiteCellCreationTime = 2;

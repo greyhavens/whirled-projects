@@ -29,7 +29,7 @@ public class ServerGameMode extends ServerMode
         _ctx.props.set(Props.GAME_PLAYERS, FeedingUtil.arrayToDict(_playersInGame), true);
 
         _state = STATE_PLAYING;
-        _timerMgr.createTimer(Constants.GAME_TIME * 1000, 1, onTimeOver).start();
+        _timerMgr.createTimer(_ctx.settings.gameTime * 1000, 1, onTimeOver).start();
         _startTime = flash.utils.getTimer();
 
         super.run();
@@ -86,7 +86,7 @@ public class ServerGameMode extends ServerMode
         // time is remaining in the game. Respond with an approximate time.
         if (msg is RoundTimeLeftMsg) {
             var dt :Number = (flash.utils.getTimer() - _startTime) / 1000;
-            var timeRemaining :Number = Math.max(Constants.GAME_TIME - dt, 0);
+            var timeRemaining :Number = Math.max(_ctx.settings.gameTime - dt, 0);
             _ctx.sendMessage(RoundTimeLeftMsg.create(timeRemaining), senderId);
             return true;
         }

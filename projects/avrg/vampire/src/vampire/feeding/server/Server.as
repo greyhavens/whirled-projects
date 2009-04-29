@@ -63,8 +63,8 @@ public class Server extends FeedingServer
         _ctx.preyBloodType = preyBloodType;
         _ctx.aiPreyName = aiPreyName;
         _ctx.feedingHost = feedingHost;
-        _ctx.variant = gameVariant;
-        _ctx.settings = Variant.getSettings(_ctx.variant);
+        _ctx.variantId = gameVariant;
+        _ctx.settings = Variant.getSettings(_ctx.variantId);
 
         _ctx.props.set(Props.ALL_PLAYERS, FeedingUtil.arrayToDict(_ctx.playerIds), true);
         _ctx.props.set(Props.LOBBY_LEADER, predatorId, true);

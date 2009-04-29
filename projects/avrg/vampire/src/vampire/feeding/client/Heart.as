@@ -14,7 +14,7 @@ public class Heart extends SceneObject
 {
     public function Heart ()
     {
-        _totalBeatTime = Constants.BEAT_TIME;
+        _totalBeatTime = ClientCtx.variantSettings.heartbeatTime;
         _lastBeat = FIRST_BEAT_DELAY - _totalBeatTime;
 
         if (ClientCtx.isCorruption) {

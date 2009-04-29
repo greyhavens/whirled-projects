@@ -48,7 +48,7 @@ public class GameCtx
         effectLayer = null;
         uiLayer = null;
 
-        timeLeft = Constants.GAME_TIME;
+        timeLeft = ClientCtx.variantSettings.gameTime;
         gameOver = false;
         gotCorruption = false;
     }

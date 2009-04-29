@@ -113,7 +113,7 @@ public class PlayerCursor extends CollidableObj
             }
 
             // update location
-            var moveDist :Number = Constants.CURSOR_SPEED * dt;
+            var moveDist :Number = ClientCtx.variantSettings.cursorSpeed * dt;
             curLoc.x += (_moveDirection.x * moveDist);
             curLoc.y += (_moveDirection.y * moveDist);
             curLoc = GameCtx.clampLoc(curLoc);
