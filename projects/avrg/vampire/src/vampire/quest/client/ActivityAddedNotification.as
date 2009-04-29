@@ -31,7 +31,6 @@ public class ActivityAddedNotification extends SceneObject
         return _movie;
     }
 
-    protected var _sprite :Sprite;
     protected var _movie :MovieClip;
 }
 
