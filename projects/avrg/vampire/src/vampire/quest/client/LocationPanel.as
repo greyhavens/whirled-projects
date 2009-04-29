@@ -56,16 +56,25 @@ public class LocationPanel extends SceneObject
 
     protected function createActivityButton (activity :ActivityDesc, enabled :Boolean) :MovieClip
     {
-        var buttonMovie :MovieClip = ClientCtx.instantiateMovieClip("quest", "location", false,
-            true);
+        var siteMovie :MovieClip = ClientCtx.instantiateMovieClip("quest", "location");
 
-        var tfName :TextField = buttonMovie["site_name"];
-        tfName.text = activity.displayName;
-        var tfCost :TextField = buttonMovie["action_cost"];
-        tfCost.visible = (enabled && activity.juiceCost > 0);
-        tfCost.text = (activity.juiceCost > 0 ? String(activity.juiceCost) : "");
+        var buttonName :String;
+        switch (activity.type) {
+        case ActivityDesc.TYPE_NPC_TALK:
+            buttonName = "site_lilith";
+            break;
 
-        var button :SimpleButton = buttonMovie["site_button"];
+        case ActivityDesc.TYPE_CORRUPTION:
+        case ActivityDesc.TYPE_FEEDING:
+        default:
+            buttonName = "hunting_ground_logo";
+            break;
+        }
+
+        var button :SimpleButton = ClientCtx.instantiateButton("quest", buttonName);
+        var buttonAttach :MovieClip = siteMovie["site_button"];
+        buttonAttach.addChild(button);
+
         registerListener(button, MouseEvent.CLICK,
             function (...ignored) :void {
                 QuestClient.beginActivity(activity);
@@ -73,13 +82,19 @@ public class LocationPanel extends SceneObject
 
         if (enabled) {
             button.mouseEnabled = true;
-            buttonMovie.filters = [];
+            siteMovie.filters = [];
         } else {
             button.mouseEnabled = false;
-            buttonMovie.filters = [ new ColorMatrix().makeGrayscale().createFilter() ];
+            siteMovie.filters = [ new ColorMatrix().makeGrayscale().createFilter() ];
         }
 
-        return buttonMovie;
+        var tfName :TextField = siteMovie["site_name"];
+        tfName.text = activity.displayName;
+        var tfCost :TextField = siteMovie["action_cost"];
+        tfCost.visible = (enabled && activity.juiceCost > 0);
+        tfCost.text = (activity.juiceCost > 0 ? String(activity.juiceCost) : "");
+
+        return siteMovie;
     }
 
     protected function onActivityAdded (e :ActivityEvent) :void
@@ -98,11 +113,6 @@ public class LocationPanel extends SceneObject
 
     override protected function destroyed () :void
     {
-        for each (var buttonMovie :MovieClip in _activityButtons.values()) {
-            buttonMovie.parent.removeChild(buttonMovie);
-            SwfResource.releaseMovieClip(buttonMovie);
-        }
-
         SwfResource.releaseMovieClip(_panelMovie);
     }
 

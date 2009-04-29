@@ -21,7 +21,7 @@ public class Activities
             homeBase,
             ActivityDesc.TYPE_NPC_TALK,
             "talk_lilith",
-            "Talk to Lilith",
+            "Lilith's Penthouse",
             0,  // no juice
             false, // always unlocked
             new NpcTalkActivityParams("LilithDialog")));
