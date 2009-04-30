@@ -146,7 +146,7 @@ public class ProgramParser
             // add an implicit AddResponse statement
             childStatements = new BlockStatement();
             childStatements.addStatement(
-                new AddResponseStatement("", XmlReader.getStringAttr(xml, "response")));
+                new AddResponseStatement("", XmlReader.getStringAttr(xml, "response"), 0));
         }
 
         // If SayStatement has any children, they execute immediately after the Say, and we
@@ -164,7 +164,8 @@ public class ProgramParser
     {
         return new AddResponseStatement(
             XmlReader.getStringAttr(xml, "id", ""),
-            XmlReader.getStringAttr(xml, "text"));
+            XmlReader.getStringAttr(xml, "text"),
+            XmlReader.getUintAttr(xml, "juiceCost", 0));
     }
 
     protected static function parseHandleResponseStatement (xml :XML) :Statement
