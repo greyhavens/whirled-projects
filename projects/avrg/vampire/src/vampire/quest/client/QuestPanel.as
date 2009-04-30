@@ -71,69 +71,38 @@ public class QuestPanel extends DraggableObject
 
     public function showLocationPanel (loc :LocationDesc) :void
     {
-        var delay :Number = 0;
+        var locPanel :SceneObject;
         var curPanel :SceneObject = this.dockedPanel;
-        if (!(curPanel is LocationPanel) || LocationPanel(curPanel).loc != loc) {
-            if (curPanel != null) {
-                delay = hideDockedPanel(true);
-            }
+        if (curPanel is LocationPanel && LocationPanel(curPanel).loc == loc) {
+            locPanel = curPanel;
 
-            var newPanel :LocationPanel = new LocationPanel(loc);
-            newPanel.visible = false;
-            newPanel.x = (_panelMovie.width - newPanel.width) * 0.5;
-            AppMode(this.db).addSceneObject(newPanel, _dockedPanelLayer);
-            _dockedPanelRef = newPanel.ref;
-
+        } else {
+            locPanel = new LocationPanel(loc);
+            locPanel.visible = false;
+            locPanel.x = (_panelMovie.width - locPanel.width) * 0.5;
+            ClientCtx.appMode.addSceneObject(locPanel, _dockedPanelLayer);
             _lastLoc = loc;
         }
 
-        showDockedPanel(delay);
+        dockPanel(locPanel);
     }
 
     public function showNpcTalkPanel (program :Program) :void
     {
-        var delay :Number = 0;
-        if (_dockedPanelRef != null) {
-            delay = hideDockedPanel(true);
-        }
-
         var newPanel :NpcTalkPanel = new NpcTalkPanel(program);
         newPanel.visible = false;
         newPanel.x = (_panelMovie.width - newPanel.width) * 0.5;
-        AppMode(this.db).addSceneObject(newPanel, _dockedPanelLayer);
-        _dockedPanelRef = newPanel.ref;
+        ClientCtx.appMode.addSceneObject(newPanel, _dockedPanelLayer);
 
-        showDockedPanel(delay);
+        dockPanel(newPanel);
     }
 
-    public function hideDockedPanel (destroy :Boolean) :Number
+    public function hideDockedPanel (destroy :Boolean) :void
     {
-        var totalTime :Number = 0;
         var curPanel :SceneObject = this.dockedPanel;
         if (curPanel != null) {
-            if (curPanel.visible) {
-                curPanel.y = _panelMovie.height;
-
-                var task :SerialTask = new SerialTask();
-                task.addTask(LocationTask.CreateEaseOut(
-                    curPanel.x,
-                    _panelMovie.height - curPanel.height,
-                    PANEL_SLIDE_TIME));
-                task.addTask(destroy ? new SelfDestructTask() : new VisibleTask(false));
-
-                totalTime = PANEL_SLIDE_TIME;
-
-                curPanel.addNamedTask("ShowHide", task, true);
-
-            } else {
-                curPanel.visible = false;
-                if (destroy) {
-                    curPanel.destroySelf();
-                }
-            }
+            hidePanel(curPanel, 0, true, destroy);
         }
-
-        return totalTime;
     }
 
     public function get lastDisplayedLocation () :LocationDesc
@@ -141,39 +110,96 @@ public class QuestPanel extends DraggableObject
         return _lastLoc;
     }
 
+    protected function dockPanel (panel :SceneObject) :void
+    {
+        var curPanel :SceneObject = this.dockedPanel;
+        if (curPanel == panel) {
+            if (!curPanel.visible) {
+                showPanel(curPanel, 0);
+            }
+            return;
+        }
+
+        var totalTime :Number = showPanel(panel, 0);
+        if (curPanel != null) {
+            hidePanel(curPanel, totalTime, false, true);
+        }
+
+        this.dockedPanel = panel;
+    }
+
+    protected function set dockedPanel (panel :SceneObject) :void
+    {
+        _dockedPanelRef = panel.ref;
+    }
+
     protected function get dockedPanel () :SceneObject
     {
         return (_dockedPanelRef.isLive ? _dockedPanelRef.object as SceneObject : null);
     }
 
-    protected function showDockedPanel (delay :Number) :void
+    protected function showPanel (panel :SceneObject, delay :Number) :Number
     {
-        var curPanel :SceneObject = this.dockedPanel;
-        if (curPanel == null) {
-            return;
-        }
+        var totalTime :Number = 0;
 
-        if (!curPanel.visible) {
+        if (!panel.visible) {
             var task :SerialTask = new SerialTask();
             if (delay > 0) {
                 task.addTask(new TimedTask(delay));
+                totalTime += delay;
             }
 
             task.addTask(new VisibleTask(true));
-            task.addTask(new LocationTask(curPanel.x, _panelMovie.height - curPanel.height));
+            task.addTask(new LocationTask(panel.x, _panelMovie.height - panel.height));
             task.addTask(new FunctionTask(function () :void {
                 // Add a scroll rect so that the top of the docked panel doesn't appear behind
                 // the location panel while it slides down into place
                 _dockedPanelLayer.scrollRect = new Rectangle(
                     0, 0,
                     _panelMovie.width,
-                    _panelMovie.height + curPanel.height);
+                    _panelMovie.height + panel.height);
             }));
 
-            task.addTask(LocationTask.CreateEaseOut(curPanel.x, _panelMovie.height,
+            task.addTask(LocationTask.CreateEaseOut(panel.x, _panelMovie.height,
                 PANEL_SLIDE_TIME));
-            curPanel.addNamedTask("ShowHide", task, true);
+            panel.addNamedTask("ShowHide", task, true);
+
+            totalTime += PANEL_SLIDE_TIME;
         }
+
+        return totalTime;
+    }
+
+    protected function hidePanel (panel :SceneObject, delay :Number, animate :Boolean,
+        destroy :Boolean) :Number
+    {
+        var totalTime :Number = 0;
+        if (panel.visible) {
+            panel.y = _panelMovie.height;
+
+            var task :SerialTask = new SerialTask();
+            if (delay > 0) {
+                task.addTask(new TimedTask(delay));
+                totalTime += delay;
+            }
+
+            if (animate) {
+                task.addTask(LocationTask.CreateEaseOut(
+                    panel.x,
+                    _panelMovie.height - panel.height,
+                    PANEL_SLIDE_TIME));
+                totalTime += PANEL_SLIDE_TIME;
+            }
+
+            task.addTask(destroy ? new SelfDestructTask() : new VisibleTask(false));
+
+            panel.addNamedTask("ShowHide", task, true);
+
+        } else if (destroy) {
+            panel.destroySelf();
+        }
+
+        return totalTime;
     }
 
     override protected function addedToDB () :void
