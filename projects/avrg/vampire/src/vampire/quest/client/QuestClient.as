@@ -231,6 +231,7 @@ public class QuestClient
                 ClientCtx.questData,
                 ClientCtx.questProps);
             feedingGame = FeedingClient.create(feedingSettings);
+            showQuestPanel(false);
             ClientCtx.minigameLayer.addChild(feedingGame);
             break;
 
