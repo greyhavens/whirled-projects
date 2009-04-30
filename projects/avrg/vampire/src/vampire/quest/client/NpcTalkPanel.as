@@ -138,9 +138,6 @@ public class NpcTalkPanel extends SceneObject
                 if (idx < _curResponses.length) {
                     var response :Response = _curResponses[idx];
                     if (canSelectResponse(response)) {
-                        if (response.juiceCost > 0) {
-                            ClientCtx.questData.questJuice -= response.juiceCost;
-                        }
                         ProgramCtx.lastResponseId = response.id;
                     }
                 }

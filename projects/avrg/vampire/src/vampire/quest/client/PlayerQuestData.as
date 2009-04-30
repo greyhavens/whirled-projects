@@ -39,6 +39,17 @@ public class PlayerQuestData extends EventDispatcher
         _events.freeAllHandlers();
     }
 
+    public function offsetQuestJuice (offset :int) :void
+    {
+        var curJuice :int = this.questJuice;
+        if (offset < 0 && curJuice + offset < 0) {
+            log.warning("Can't reduce quest juice below 0");
+        }
+
+        curJuice = Math.max(curJuice + offset, 0);
+        this.questJuice = curJuice;
+    }
+
     public function get questJuice () :int
     {
         return _props.get(PROP_QUEST_JUICE) as int;

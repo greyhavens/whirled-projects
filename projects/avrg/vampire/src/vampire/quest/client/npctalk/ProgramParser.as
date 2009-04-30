@@ -55,6 +55,9 @@ public class ProgramParser
         case "ClearProp":
             return parseClearPropStatement(xml);
 
+        case "TakeJuice":
+            return parseTakeJuiceStatement(xml);
+
         // Generic
         case "Block":
             return parseBlockStatement(xml);
@@ -241,6 +244,11 @@ public class ProgramParser
     protected static function parseClearPropStatement (xml :XML) :ClearQuestPropStatement
     {
         return new ClearQuestPropStatement(XmlReader.getStringAttr(xml, "name"));
+    }
+
+    protected static function parseTakeJuiceStatement (xml :XML) :OffsetJuiceStatement
+    {
+        return new OffsetJuiceStatement(-(XmlReader.getUintAttr(xml, "amount")));
     }
 
     protected static function parseExpr (xml :XML) :Expr
