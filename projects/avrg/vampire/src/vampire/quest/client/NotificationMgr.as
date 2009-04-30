@@ -25,14 +25,14 @@ public class NotificationMgr
         }
 
         // show the bg
-        _bg.removeAllTasks();
+        /*_bg.removeAllTasks();
         _bg.alpha = 1;
-        _bg.visible = true;
+        _bg.visible = true;*/
 
         // show the notification over the bg
         var bounds :Rectangle = ClientCtx.getPaintableArea(false);
-        notification.x = bounds.x + ((bounds.width - notification.width) * 0.5);
-        notification.y = bounds.y + ((bounds.height - notification.height) * 0.5);
+        notification.x = bounds.x + (bounds.width * 0.5);
+        notification.y = bounds.y + (bounds.height * 0.5);
 
         notification.addTask(new SerialTask(
             new TimedTask(2),
@@ -50,11 +50,11 @@ public class NotificationMgr
 
     protected function maybeFadeBg () :void
     {
-        if (_pendingNotifications.length == 0) {
+        /*if (_pendingNotifications.length == 0) {
             _bg.addTask(new SerialTask(
                 new AlphaTask(0, 1),
                 new VisibleTask(false)));
-        }
+        }*/
     }
 
     protected function playNextNotification () :void

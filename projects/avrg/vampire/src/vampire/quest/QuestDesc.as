@@ -16,6 +16,9 @@ public class QuestDesc
     // Unique name
     public var name :String;
 
+    // The NPC that grants the quest
+    public var npc :int;
+
     // A list of quest props that this quest cares about
     public var relevantProps :Array = [];
 
@@ -38,6 +41,16 @@ public class QuestDesc
     // A function that returns flavor text describing the progress that has been made on the quest
     // function getProgressText (questProps :PlayerQuestProps) :String
     public var getProgressTextFn :Function;
+
+    public function get npcName () :String
+    {
+        return Npc.getName(npc);
+    }
+
+    public function get npcPortraitName () :String
+    {
+        return Npc.getPortraitName(npc);
+    }
 
     public function get id () :int
     {

@@ -51,11 +51,12 @@ public class GenericDraggableWindow extends DraggableObject
         layoutElement(btn);
         btn.addEventListener(MouseEvent.CLICK,
             function () :void {
-                try {
+                /*try {
                     callback();
                 } catch (e :Error) {
                     setStatusText("Error!", e);
-                }
+                }*/
+                callback();
             });
         return btn;
     }

@@ -17,6 +17,7 @@ public class Quests
 
         /* Lilith Quests */
         var pandorasBox :QuestDesc = new QuestDesc();
+        pandorasBox.npc = Npc.LILITH;
         pandorasBox.name = "pandora_quest";
         pandorasBox.displayName = "Open the Box";
         pandorasBox.description = "Drain 5 partiers at the Pandora's Box nightclub";
@@ -24,6 +25,7 @@ public class Quests
         addQuest(pandorasBox);
 
         var theHunger :QuestDesc = new QuestDesc();
+        pandorasBox.npc = Npc.LILITH;
         theHunger.name = "hunger_quest";
         theHunger.displayName = "The Hunger";
         theHunger.description = "(placeholder)";

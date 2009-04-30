@@ -4,13 +4,11 @@ import com.threerings.flash.SimpleTextButton;
 import com.threerings.util.HashMap;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
-import flash.geom.Point;
 import flash.text.TextField;
 
 import vampire.quest.*;
@@ -37,13 +35,9 @@ public class LocationPanel extends SceneObject
             var activity :ActivityDesc = loc.activities[ii];
             var isAvailable :Boolean =
                 !(activity.requiresUnlock) || ClientCtx.questData.isActivityUnlocked(activity);
-            var button :MovieClip = createActivityButton(activity, isAvailable);
-            var pt :Point = (ii < BUTTON_LOCS.length ? BUTTON_LOCS[ii] : new Point(0, 0));
-            button.x = pt.x;
-            button.y = pt.y;
-            _panelMovie.addChild(button);
-
-            _activityButtons.put(activity.id, button);
+            var buttonMovie :MovieClip = contents[activity.iconName];
+            initActivityButton(buttonMovie, activity, isAvailable);
+            _activityButtons.put(activity.id, buttonMovie);
         }
 
         registerListener(ClientCtx.questData, ActivityEvent.ACTIVITY_ADDED, onActivityAdded);
@@ -54,26 +48,10 @@ public class LocationPanel extends SceneObject
         return _loc;
     }
 
-    protected function createActivityButton (activity :ActivityDesc, enabled :Boolean) :MovieClip
+    protected function initActivityButton (buttonMovie :MovieClip, activity :ActivityDesc,
+        enabled :Boolean) :void
     {
-        var siteMovie :MovieClip = ClientCtx.instantiateMovieClip("quest", "location");
-
-        var buttonName :String;
-        switch (activity.type) {
-        case ActivityDesc.TYPE_NPC_TALK:
-            buttonName = "site_lilith";
-            break;
-
-        case ActivityDesc.TYPE_FEEDING:
-        default:
-            buttonName = "site_pandora";
-            break;
-        }
-
-        var button :SimpleButton = ClientCtx.instantiateButton("quest", buttonName);
-        var buttonAttach :MovieClip = siteMovie["site_button"];
-        buttonAttach.addChild(button);
-
+        var button :SimpleButton = buttonMovie["site_button"];
         registerListener(button, MouseEvent.CLICK,
             function (...ignored) :void {
                 QuestClient.beginActivity(activity);
@@ -81,19 +59,15 @@ public class LocationPanel extends SceneObject
 
         if (enabled) {
             button.mouseEnabled = true;
-            siteMovie.filters = [];
+            buttonMovie.filters = [];
         } else {
             button.mouseEnabled = false;
-            siteMovie.filters = [ new ColorMatrix().makeGrayscale().createFilter() ];
+            buttonMovie.filters = [ new ColorMatrix().makeGrayscale().createFilter() ];
         }
 
-        var tfName :TextField = siteMovie["site_name"];
-        tfName.text = activity.displayName;
-        var tfCost :TextField = siteMovie["action_cost"];
+        var tfCost :TextField = buttonMovie["action_cost"];
         tfCost.visible = (enabled && activity.juiceCost > 0);
         tfCost.text = (activity.juiceCost > 0 ? String(activity.juiceCost) : "");
-
-        return siteMovie;
     }
 
     protected function onActivityAdded (e :ActivityEvent) :void
@@ -129,10 +103,5 @@ public class LocationPanel extends SceneObject
 
     protected var _panelMovie :MovieClip;
     protected var _activityButtons :HashMap = new HashMap(); // Map<activityId:int, buttonMovie>
-
-    protected static const BUTTON_LOCS :Array = [
-        new Point(106, 158), new Point(393, 88), new Point(290, 213), new Point(175, 93),
-        new Point(374, 182), new Point(267, 100), new Point(205, 201),
-    ];
 }
 }

@@ -15,11 +15,11 @@ public class ActivityAddedNotification extends SceneObject
 {
     public function ActivityAddedNotification (activity :ActivityDesc)
     {
-        _movie = ClientCtx.instantiateMovieClip("quest", "popup_unlock_site");
+        _movie = ClientCtx.instantiateMovieClip("quest", "popup_sitequest");
 
         var contents :MovieClip = _movie["contents"];
-        var tfLocation :TextField = contents["location_name"];
-        var tfActivity :TextField = contents["site_name"];
+        var tfLocation :TextField = contents["context_name"];
+        var tfActivity :TextField = contents["item_name"];
 
         tfLocation.text = activity.loc.displayName;
         tfActivity.text = activity.displayName;

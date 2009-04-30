@@ -15,13 +15,18 @@ public class ActivityDesc
         return Util.getStringHash(name);
     }
 
-    // Unique Name
-    public var name :String;
-
     // the location that contains the activity
     public var loc :LocationDesc;
 
     public var type :int;
+
+    // Unique Name
+    public var name :String;
+
+    // Name of icon in the location panel
+    public var iconName :String;
+
+    public var displayName :String;
 
     // the amount of quest juice it takes to do this activity
     public var juiceCost :int;
@@ -29,16 +34,15 @@ public class ActivityDesc
     // Does this activity need to be unlocked, or is it available to anyone?
     public var requiresUnlock :Boolean;
 
-    public var displayName :String;
-
     public var params :ActivityParams;
 
-    public function ActivityDesc (loc :LocationDesc, type :int, name :String, displayName :String,
-        juiceCost :int, requiresUnlock :Boolean, params :ActivityParams)
+    public function ActivityDesc (loc :LocationDesc, type :int, name :String, iconName :String,
+        displayName :String, juiceCost :int, requiresUnlock :Boolean, params :ActivityParams)
     {
         this.loc = loc;
         this.type = type;
         this.name = name;
+        this.iconName = iconName;
         this.displayName = displayName;
         this.juiceCost = juiceCost;
         this.requiresUnlock = requiresUnlock;

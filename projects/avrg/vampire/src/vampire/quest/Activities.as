@@ -22,6 +22,7 @@ public class Activities
             homeBase,
             ActivityDesc.TYPE_NPC_TALK,
             "talk_lilith",
+            "site_lilith",
             "Lilith's Penthouse",
             0,  // no juice
             false, // always unlocked
@@ -111,6 +112,7 @@ public class Activities
             loc,
             ActivityDesc.TYPE_FEEDING,
             "pandora_activity",
+            "site_pandora",
             "Pandora's Box",
             0,  // no juice
             true, // locked

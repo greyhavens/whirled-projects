@@ -23,6 +23,8 @@ public class NpcTalkPanel extends SceneObject
         _npcPanel = ClientCtx.instantiateMovieClip("quest", "NPC_panel", false, true);
 
         var content :MovieClip = _npcPanel["draggable"];
+        var portraitPlaceholder :MovieClip = content["portrait_placeholder"];
+        portraitPlaceholder.addChild(ClientCtx.instantiateMovieClip("quest", "portrait_lilith"));
 
         _tfSpeech = content["NPC_chat"];
         _tfSpeech.text = "";

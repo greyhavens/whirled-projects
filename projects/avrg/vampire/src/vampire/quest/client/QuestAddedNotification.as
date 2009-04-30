@@ -4,28 +4,34 @@ import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
-import flash.display.Sprite;
+import flash.display.MovieClip;
 import flash.text.TextField;
 
-import vampire.quest.QuestDesc;
+import vampire.quest.*;
 
 public class QuestAddedNotification extends SceneObject
 {
     public function QuestAddedNotification (quest :QuestDesc)
     {
-        _sprite = new Sprite();
+        _movie = ClientCtx.instantiateMovieClip("quest", "popup_sitequest");
 
-        var text :String = "New quest: " + quest.displayName;
-        var tf :TextField = TextBits.createText(text, 3, 0, 0x0000ff);
-        _sprite.addChild(tf);
+        var contents :MovieClip = _movie["contents"];
+        var tfGranter :TextField = contents["context_name"];
+        var tfQuestName :TextField = contents["item_name"];
+
+        tfGranter.text = quest.npcName;
+        tfQuestName.text = quest.displayName;
+
+        var iconPlaceholder :MovieClip = contents["quest_icon_placeholder"];
+        iconPlaceholder.addChild(ClientCtx.instantiateMovieClip("quest", quest.npcPortraitName));
     }
 
     override public function get displayObject () :DisplayObject
     {
-        return _sprite;
+        return _movie;
     }
 
-    protected var _sprite :Sprite;
+    protected var _movie :MovieClip;
 }
 
 }
