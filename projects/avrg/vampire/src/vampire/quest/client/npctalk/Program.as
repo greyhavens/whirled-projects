@@ -1,6 +1,7 @@
 package vampire.quest.client.npctalk {
 
 import com.threerings.util.HashMap;
+import com.threerings.util.Log;
 
 import vampire.quest.client.NpcTalkPanel;
 
@@ -83,6 +84,11 @@ public class Program
             throw new Error("Only one routine can be scheduled at a time; how did this happen?");
         }
 
+        if (getRoutine(name) == null) {
+            log.warning("No routine named " + name + " exists!");
+            return;
+        }
+
         _scheduledRoutineName = name;
     }
 
@@ -147,6 +153,8 @@ public class Program
     protected var _routineState :Array;
     protected var _scheduledRoutineName :String;
     protected var _isRunning :Boolean;
+
+    protected static const log :Log = Log.getLog(Program);
 }
 
 }
