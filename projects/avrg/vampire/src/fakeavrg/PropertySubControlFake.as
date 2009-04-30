@@ -118,6 +118,11 @@ public class PropertySubControlFake extends EventDispatcher//extendsTargetedSubC
         return _targetId;
     }
 
+    public function doBatch (fn :Function, ...args) :void
+    {
+        fn.apply(null, args);
+    }
+
 
     protected var _dict :HashMap = new HashMap;
 //    private var _eventDispatcher :EventDispatcher;
