@@ -20,7 +20,7 @@ public class NpcTalkPanel extends SceneObject
     {
         _program = program;
 
-        _npcPanel = ClientCtx.instantiateMovieClip("quest", "NPC_panel", false, true);
+        _npcPanel = ClientCtx.instantiateMovieClip("quest", "NPC_panel");
 
         var content :MovieClip = _npcPanel["draggable"];
         var portraitPlaceholder :MovieClip = content["portrait_placeholder"];
@@ -52,8 +52,6 @@ public class NpcTalkPanel extends SceneObject
 
     override protected function destroyed () :void
     {
-        SwfResource.releaseMovieClip(_npcPanel);
-
         if (_program != null) {
             _program.exit();
             _program = null;
