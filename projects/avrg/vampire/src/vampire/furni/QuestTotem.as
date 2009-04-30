@@ -4,6 +4,7 @@ import com.threerings.util.Log;
 import com.whirled.FurniControl;
 
 import flash.display.MovieClip;
+import flash.display.SimpleButton;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.system.ApplicationDomain;
@@ -37,11 +38,24 @@ public class QuestTotem
             _notInGamePanel = instantiateMovieClip("not_in_game");
             if (_notInGamePanel != null) {
                 _media.addChild(_notInGamePanel);
-                _notInGamePanel.addEventListener(MouseEvent.CLICK,
-                    function (e :Event) :void {
-                        e.stopImmediatePropagation();
-                        showNotInGamePanel(false);
-                    });
+
+                var btnClose :SimpleButton = _notInGamePanel["button_close"];
+                if (btnClose != null) {
+                    btnClose.addEventListener(MouseEvent.CLICK,
+                        function (e :Event) :void {
+                            e.stopImmediatePropagation();
+                            showNotInGamePanel(false);
+                        });
+                }
+
+                var btnPlay :SimpleButton = _notInGamePanel["button_play"];
+                if (btnPlay != null) {
+                    btnPlay.addEventListener(MouseEvent.CLICK,
+                        function (e :Event) :void {
+                            e.stopImmediatePropagation();
+                            _ctrl.showPage(PLAY_PAGE);
+                        });
+                }
             }
 
         } else if (!show && _notInGamePanel != null) {
@@ -88,6 +102,8 @@ public class QuestTotem
     protected var _notInGamePanel :MovieClip;
 
     protected static var log :Log = Log.getLog(QuestTotem);
+
+    protected static const PLAY_PAGE :String = "world-g11220";
 }
 
 }
