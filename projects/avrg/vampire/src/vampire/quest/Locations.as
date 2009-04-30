@@ -16,7 +16,7 @@ public class Locations
         _inited = true;
 
         // create the locations
-        addLocation(new LocationDesc("HomeBase", "Home Base"));
+        addLocation(new LocationDesc("lilith_area", "Aranea Park"));
     }
 
     public static function getLocationList () :Array

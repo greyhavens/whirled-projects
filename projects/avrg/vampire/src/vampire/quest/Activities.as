@@ -16,10 +16,10 @@ public class Activities
 
         _inited = true;
 
-        // Home Base activities
-        var homeBase :LocationDesc = Locations.getLocationByName("HomeBase");
+        // Lilith activities
+        var lilithArea :LocationDesc = Locations.getLocationByName("lilith_area");
         addActivity(new ActivityDesc(
-            homeBase,
+            lilithArea,
             ActivityDesc.TYPE_NPC_TALK,
             "talk_lilith",
             "site_lilith",
@@ -28,16 +28,7 @@ public class Activities
             false, // always unlocked
             new NpcTalkActivityParams("LilithDialog")));
 
-        addActivity(createPandoraActivity(homeBase));
-
-        /*addActivity(new ActivityDesc(
-            homeBase,
-            ActivityDesc.TYPE_FEEDING,
-            "temp_corruption",
-            "Playtest Corruption",
-            0,
-            false,
-            new BloodBloomActivityParams(1, 1, "Corrupted Human", 100)));*/
+        addActivity(createPandoraActivity(lilithArea));
     }
 
     public static function getActivity (id :int) :ActivityDesc
