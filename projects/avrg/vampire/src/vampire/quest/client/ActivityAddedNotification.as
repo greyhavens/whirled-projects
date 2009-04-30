@@ -30,6 +30,11 @@ public class ActivityAddedNotification extends SceneObject
         tfLocation.text = _activity.loc.displayName;
         tfActivity.text = _activity.displayName;
 
+        var burst :MovieClip = contents["complete_burst"];
+        var checkmark :MovieClip = contents["complete_check"];
+        burst.parent.removeChild(burst);
+        checkmark.parent.removeChild(checkmark);
+
         _sprite.addChild(movie);
     }
 

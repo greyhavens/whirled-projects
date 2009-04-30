@@ -201,12 +201,14 @@ public class QuestClient
 
     protected static function onQuestAdded (e :PlayerQuestEvent) :void
     {
-        ClientCtx.notificationMgr.addNotification(new QuestAddedNotification(e.quest));
+        ClientCtx.notificationMgr.addNotification(
+            new QuestNotification(e.quest, PlayerQuestData.STATUS_ACTIVE));
     }
 
     protected static function onQuestCompleted (e :PlayerQuestEvent) :void
     {
-        ClientCtx.notificationMgr.addNotification(new QuestCompletedNotification(e.quest));
+        ClientCtx.notificationMgr.addNotification(
+            new QuestNotification(e.quest, PlayerQuestData.STATUS_COMPLETE));
     }
 
     protected static function onActivityAdded (e :ActivityEvent) :void

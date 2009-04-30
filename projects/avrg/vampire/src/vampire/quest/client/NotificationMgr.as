@@ -35,7 +35,7 @@ public class NotificationMgr
         notification.y = bounds.y + (bounds.height * 0.5);
 
         notification.addTask(new SerialTask(
-            new TimedTask(2),
+            new TimedTask(2.5),
             new FunctionTask(maybeFadeBg),
             new AlphaTask(0, 1),
             new SelfDestructTask(),

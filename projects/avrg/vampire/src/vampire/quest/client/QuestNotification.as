@@ -11,11 +11,13 @@ import flash.text.TextField;
 import vampire.feeding.client.SpriteUtil;
 import vampire.quest.*;
 
-public class QuestAddedNotification extends SceneObject
+public class QuestNotification extends SceneObject
 {
-    public function QuestAddedNotification (quest :QuestDesc)
+    public function QuestNotification (quest :QuestDesc, questStatus :int)
     {
         _quest = quest;
+        _status = questStatus;
+
         _sprite = SpriteUtil.createSprite();
     }
 
@@ -33,6 +35,13 @@ public class QuestAddedNotification extends SceneObject
         var iconPlaceholder :MovieClip = contents["quest_icon_placeholder"];
         iconPlaceholder.addChild(ClientCtx.instantiateMovieClip("quest", _quest.npcPortraitName));
 
+        var burst :MovieClip = contents["complete_burst"];
+        var checkmark :MovieClip = contents["complete_check"];
+        if (_status != PlayerQuestData.STATUS_COMPLETE) {
+            burst.parent.removeChild(burst);
+            checkmark.parent.removeChild(checkmark);
+        }
+
         _sprite.addChild(movie);
     }
 
@@ -43,6 +52,7 @@ public class QuestAddedNotification extends SceneObject
 
     protected var _sprite :Sprite;
     protected var _quest :QuestDesc;
+    protected var _status :int;
 }
 
 }
