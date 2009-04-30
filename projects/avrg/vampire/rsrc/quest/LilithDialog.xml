@@ -60,6 +60,7 @@ You are ALWAYS food." response="(More)"/>
 	<Routine name="GivePandoraQuest">
 		<GiveActivity name="pandora_activity"/>
 		<GiveQuest name="pandora_quest"/>
+		<TakeJuice amount="10"/>
 		<Say speaker="Lilith" text="Mmm. Good kitten. Now, off with you! Come back when you've drunk your fill." response="(Leave)"/>
 		<Exit/>
 	</Routine>
@@ -93,6 +94,10 @@ And there are no other times. Now go." response="(More)"/>
 			<Say speaker="Lilith" text="Now go. And do not bother me until you have shared blood with another of our kind." response="(More)"/>
 			<CallRoutine name="GiveHungerQuest"/>
 		</HandleResponse>
+	</Routine>
+	
+	<Routine name="RejectHungerQuest">
+		
 	</Routine>
 	
 	<Routine name="GiveHungerQuest">
