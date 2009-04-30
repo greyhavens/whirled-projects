@@ -39,6 +39,12 @@ public class DebugPanel extends GenericDraggableWindow
                 true);
         });
 
+        createButton("Clear All Data", function (...ignored) :void {
+            clearProps();
+            clearQuests();
+            clearActivities();
+        });
+
         createNewLayoutRow(15);
 
         // props
@@ -55,11 +61,7 @@ public class DebugPanel extends GenericDraggableWindow
             setStatusText("Props", "names", ClientCtx.questProps.getPropNames());
         });
 
-        createButton("Clear Props", function (...ignored) :void {
-            for each (var statName :String in ClientCtx.questProps.getPropNames()) {
-                ClientCtx.questProps.clearProp(statName);
-            }
-        });
+        createButton("Clear Props", clearProps);
 
         createNewLayoutRow();
 
@@ -100,11 +102,7 @@ public class DebugPanel extends GenericDraggableWindow
             setStatusText(text);
         });
 
-        createButton("Clear Quests", function (...ignored) :void {
-            for each (var questId :int in ClientCtx.questData.activeAndCompleteQuestIds) {
-                ClientCtx.questData.debugClearQuest(questId);
-            }
-        });
+        createButton("Clear Quests", clearQuests);
 
         createNewLayoutRow();
 
@@ -145,11 +143,7 @@ public class DebugPanel extends GenericDraggableWindow
             setStatusText(text);
         });
 
-        createButton("Lock All Activities", function (...ignored) :void {
-            for each (var activity :ActivityDesc in ClientCtx.questData.unlockedActivities) {
-                ClientCtx.questData.debugLockActivity(activity);
-            }
-        });
+        createButton("Lock All Activities", clearActivities);
 
         createNewLayoutRow();
 
@@ -166,6 +160,27 @@ public class DebugPanel extends GenericDraggableWindow
         createNewLayoutRow();
         for each (var loc :LocationDesc in Locations.getLocationList()) {
             addLocation(loc);
+        }
+    }
+
+    protected function clearProps (...ignored) :void
+    {
+        for each (var statName :String in ClientCtx.questProps.getPropNames()) {
+            ClientCtx.questProps.clearProp(statName);
+        }
+    }
+
+    protected function clearQuests (...ignored) :void
+    {
+        for each (var questId :int in ClientCtx.questData.activeAndCompleteQuestIds) {
+            ClientCtx.questData.debugClearQuest(questId);
+        }
+    }
+
+    protected function clearActivities (...ignored) :void
+    {
+        for each (var activity :ActivityDesc in ClientCtx.questData.unlockedActivities) {
+            ClientCtx.questData.debugLockActivity(activity);
         }
     }
 

@@ -3,6 +3,7 @@ package vampire.quest.client {
 import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.SimpleTextButton;
 import com.threerings.util.Log;
+import com.threerings.util.StringUtil;
 import com.whirled.contrib.simplegame.objects.DraggableObject;
 
 import flash.display.DisplayObject;
@@ -84,7 +85,7 @@ public class GenericDraggableWindow extends DraggableObject
     {
         var text :String = formatStatus(args);
         TextBits.initTextField(_status, text, 1.5, 0, 0, "left");
-        if (text.length > 0) {
+        if (StringUtil.trim(text).length > 0) {
             log.info("New status: " + text);
         }
         _needsSizeUpdate = true;
