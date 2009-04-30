@@ -81,11 +81,11 @@ public class Heart extends SceneObject
             _lastBeat = _liveTime + ((_liveTime - _lastBeat) % _totalBeatTime);
         }
 
-        /*if (GameCtx.timeLeft <= 10 && !_countdown.visible) {
+        if (GameCtx.timeLeft <= 10 && !_countdown.visible) {
             _countdown.visible = true;
             // tick the countdown one frame per second
             addTask(new ShowFramesTask(_countdown, 0, -1, GameCtx.timeLeft));
-        }*/
+        }
 
         if (ClientCtx.isCorruption) {
             if (GameCtx.score.bloodCount >= ClientCtx.requiredBlood) {
