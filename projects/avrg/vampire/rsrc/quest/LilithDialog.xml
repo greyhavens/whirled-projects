@@ -26,39 +26,46 @@ Oh! Aren't you delicious. All right, little one, you like to stick your neck out
 		<Say speaker="Lilith" text="Marvelous, kitten! I'm throwing a party tonight at Pandora's Box. You'll be on the list.
 Well... you'll be on the menu.">
 			<AddResponse id="pandora" text="Pandora's Box?"/>
-			<AddResponse id="yes" text="Sounds like fun."/>
 			<AddResponse id="no" text='"On the menu?" No thanks.'/>
 		</Say>
 		<HandleResponse id="pandora">
 			<Say speaker="Lilith" text="The nightclub around the corner. The music is loud, the drinks are strong..." response="(More)"/>
 			<Say speaker="Lilith" text="The nightclub around the corner. The music is loud, the drinks are strong...
 and the little lambs that flock there are easily seduced." response="(More)"/>
-			<Say speaker="Lilith" text="Cull that flock, kitten. Come back when you've drunk your fill." response="Sounds like fun."/>
-			<CallRoutine name="GivePandoraQuest"/>
-		</HandleResponse>
-		<HandleResponse id="yes">
-			<Say speaker="Lilith" text="Mmm. Good feastling. Now, off with you! Come back when you've drunk your fill." response="(More)"/>
-			<CallRoutine name="GivePandoraQuest"/>
+			<Say speaker="Lilith" text="Cull that flock, kitten. Come back when you've drunk your fill.">
+				<AddResponse id="yes" text="Sounds like fun." juiceCost="10"/>
+				<AddResponse id="no" text="I don't think so."/>
+			</Say>
+			<HandleResponse id="yes"><CallRoutine name="GivePandoraQuest"/></HandleResponse>
+			<HandleResponse id="no"><CallRoutine name="RejectPandoraQuest"/></HandleResponse>
 		</HandleResponse>
 		<HandleResponse id="no">
 			<Say speaker="Lilith" text="Child. Whether safely under my wing or alone on the street, make no mistake..." response="(More)"/>
 			<Say speaker="Lilith" text="Child. Whether safely under my wing or alone on the street, make no mistake...
 You are ALWAYS food." response="(More)"/>
-			<Say speaker="Lilith" text="Now, kitten:" response="(More)"/>
-			<Say speaker="Lilith" text="Now, kitten:
-You WILL visit the Pandora's Box nightclub, you WILL feed on the silly little lambs there, and you WON'T argue with me!" response="(More)"/>
-			<CallRoutine name="GivePandoraQuest"/>
+			<Say speaker="Lilith" text="Now, kitten: will you feed on the silly little lambs at Pandora's Box?">
+				<AddResponse id="yes" text="Yes. I want to feed." juiceCost="10"/>
+				<AddResponse id="no" text="Some other time. I'm out of here."/>
+			</Say>
+			<HandleResponse id="yes"><CallRoutine name="GivePandoraQuest"/></HandleResponse>
+			<HandleResponse id="no"><CallRoutine name="RejectPandoraQuest"/></HandleResponse>
 		</HandleResponse>
+	</Routine>
+	
+	<Routine name="RejectPandoraQuest">
+		<Say speaker="Lilith" text="Very well, kitten. Go play. Don't come back until you're ready to stop being a child." response="(Leave)"/>
+		<Exit/>
 	</Routine>
 	
 	<Routine name="GivePandoraQuest">
 		<GiveActivity name="pandora_activity"/>
 		<GiveQuest name="pandora_quest"/>
+		<Say speaker="Lilith" text="Mmm. Good kitten. Now, off with you! Come back when you've drunk your fill." response="(Leave)"/>
 		<Exit/>
 	</Routine>
 	
 	<Routine name="HasPandoraQuest">
-		<Say speaker="Lilith" text="Off with you, kitten. Come speak to me after you've sampled the cuisine at Pandora's Box." response="(More)"/>
+		<Say speaker="Lilith" text="Off with you, kitten. Come speak to me after you've sampled the cuisine at Pandora's Box." response="(Leave)"/>
 		<Exit/>
 	</Routine>
 	
