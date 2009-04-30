@@ -72,7 +72,7 @@ public class Controller
     private function initializeLetterSet () :void
     {
         if (_gameCtrl.game.amInControl()) {
-            _gameCtrl.services.getDictionaryLetterSet(
+            _gameCtrl.services.getDictionaryLetters(
                 Properties.LOCALE, null, Properties.LETTER_COUNT, _model.sendNewLetterSet);
         }
     }
