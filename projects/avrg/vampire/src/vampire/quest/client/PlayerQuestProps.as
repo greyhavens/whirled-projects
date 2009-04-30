@@ -1,5 +1,6 @@
 package vampire.quest.client {
 
+import com.threerings.util.Log;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.ImmediatePropControl;
 import com.whirled.contrib.namespc.*;
@@ -15,6 +16,16 @@ import vampire.quest.*;
 
 public class PlayerQuestProps extends EventDispatcher
 {
+    public static function makePermanent (propName :String) :String
+    {
+        return (isPermanent(propName) ? propName : PERMANENT + propName);
+    }
+
+    public static function isPermanent (propName :String) :Boolean
+    {
+        return (PERMANENT == propName.substr(0, PERMANENT.length));
+    }
+
     public function PlayerQuestProps (propCtrl :PropertySubControl)
     {
         _propCtrl = new ImmediatePropControl(new NamespacePropControl(NAMESPACE, propCtrl));
@@ -26,9 +37,42 @@ public class PlayerQuestProps extends EventDispatcher
         _events.freeAllHandlers();
     }
 
+    public function clearUntrackedProps () :void
+    {
+        _propCtrl.doBatch(function () :void {
+            for each (var propName :String in getPropNames()) {
+                if (!isTrackedProp(propName)) {
+                    log.info("Clearing untracked prop", "propName", propName);
+                    clearProp(propName);
+                }
+            }
+        });
+    }
+
+    public function isTrackedProp (name :String) :Boolean
+    {
+        // properties are only tracked if they begin with "!", or
+        // if there's an active quest that cares about it
+        if (isPermanent(name)) {
+            return true;
+        } else {
+            for each (var activeQuest :QuestDesc in ClientCtx.questData.activeQuests) {
+                if (activeQuest.isRelevantProp(name)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public function setProp (name :String, val :Object) :void
     {
-        _propCtrl.set(encodeName(name), val);
+        if (val == null || isTrackedProp(name)) {
+            _propCtrl.set(encodeName(name), val);
+        } else {
+            log.info("Not updating un-tracked prop", "propName", name, "val", val);
+        }
     }
 
     public function clearProp (name :String) :void
@@ -84,7 +128,11 @@ public class PlayerQuestProps extends EventDispatcher
     protected var _propCtrl :PropertySubControl;
     protected var _events :EventHandlerManager = new EventHandlerManager();
 
+    protected static var log :Log = Log.getLog(PlayerQuestProps);
+
     protected static const NAMESPACE :String = "pqs";
+
+    protected static const PERMANENT :String = "!";
 }
 
 }
