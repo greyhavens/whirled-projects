@@ -33,7 +33,7 @@ public class ClientUtil
         }
 
         var serialTask :SerialTask = new SerialTask();
-        serialTask.addTask(AlphaTask.CreateEaseIn(0, ANIMATION_TIME));
+//        serialTask.addTask(AlphaTask.CreateEaseIn(0, ANIMATION_TIME));
         serialTask.addTask(new FunctionTask(function() :void {
             detach(sceneButton.displayObject);
         }));
@@ -48,7 +48,7 @@ public class ClientUtil
     public static function fadeInSceneObject (sceneButton :SceneObject,
         parent :DisplayObjectContainer = null) :void
     {
-        sceneButton.alpha = 0;
+//        sceneButton.alpha = 0;
         if (parent != null) {
             parent.addChild(sceneButton.displayObject);
         }

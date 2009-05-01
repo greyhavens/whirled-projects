@@ -9,6 +9,7 @@ import com.whirled.net.ElementChangedEvent;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
+import vampire.client.events.LineageUpdatedEvent;
 import vampire.data.Codes;
 import vampire.data.Lineage;
 import vampire.data.VConstants;
@@ -16,6 +17,7 @@ import vampire.data.VConstants;
 /**
  * Manages and presents room props and data.
  */
+[Event(name="Lineage Updated", type="vampire.client.events.LineageUpdatedEvent")]
 public class LineagesClient extends SimObject
 {
     public function LineagesClient()
@@ -96,10 +98,11 @@ public class LineagesClient extends SimObject
             loadLineageFromBytes(e.key, bytes);
 
             //Upload all new lineages to the furniture
-            if (ClientContext.gameMode.furnNotifier != null) {
-                ClientContext.gameMode.furnNotifier.uploadLineageToFurnIfPresent(
-                    _lineages.get(e.key));
-            }
+//            if (ClientContext.gameMode.furnNotifier != null) {
+//                ClientContext.gameMode.furnNotifier.uploadLineageToFurnIfPresent(
+//                    _lineages.get(e.key));
+//            }
+            dispatchEvent(new LineageUpdatedEvent(_lineages.get(e.key)));
         }
     }
 

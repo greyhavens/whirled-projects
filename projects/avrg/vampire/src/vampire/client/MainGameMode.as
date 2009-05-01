@@ -51,17 +51,11 @@ public class MainGameMode extends AppMode
         ClientContext.ctrl.agent.sendMessage(GameStartedMsg.NAME,
             new GameStartedMsg(ClientContext.ourPlayerId).toBytes());
 
-        //Init the avatar logic controller and avatar event listener
-        _clientAvatar = new ClientAvatar(ClientContext.ctrl);
-        addObject(_clientAvatar);
+
 
         //Welcome the player with a link to the group
         ClientContext.ctrl.local.feedback("Welcome to Vampire Whirled!  " +
         "Join the group and read the latest updates: http://www.whirled.com/#groups-d_11220");
-
-
-        var test :MovieClip = ClientContext.instantiateMovieClip("grael", "popup_lineage", true);
-        trace("test=" + test);
 
     }
 
@@ -88,8 +82,6 @@ public class MainGameMode extends AppMode
         ClientContext.model = new PlayerModel();
         addObject(ClientContext.model);
 
-        _lineages = new LineagesClient();
-        addObject(_lineages);
 
         //If there is a share token, send the invitee to the server
         var inviterId :int = ClientContext.ctrl.local.getInviterMemberId();
@@ -127,6 +119,10 @@ public class MainGameMode extends AppMode
         registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM,
             handleOurPlayerEnteredRoom);
 
+        //Add the object that listens for lineage updates in the room props.
+        _lineages = new LineagesClient();
+        addObject(_lineages);
+
         //Create the overlay for individual avatars
         _avatarOverlay = new VampireAvatarHUDOverlay(ClientContext.ctrl);
         addSceneObject(_avatarOverlay, layerLowPriority);
@@ -138,10 +134,14 @@ public class MainGameMode extends AppMode
         addObject(new LoadBalancerClient(ClientContext.ctrl, _hud));
 
         //Add a notifier for the lineage furniture.
-//        addObject(new LineageFurnitureNotifier(ClientContext.ctrl));
+        addObject(new LineageFurnitureNotifier(ClientContext.ctrl, _lineages));
 
         //Make sure we start the game standing, not dancing or feeding etc.
         ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
+
+        //Init the avatar logic controller and avatar event listener
+        _clientAvatar = new ClientAvatar(ClientContext.ctrl);
+        addObject(_clientAvatar);
 
         //Add the tutorial.  It starts deactivated.
         ClientContext.tutorial = new Tutorial();
@@ -157,8 +157,8 @@ public class MainGameMode extends AppMode
         }
 
         //Init the quests
-        QuestClient.init(ClientContext.ctrl, ClientContext.game, this, layerLowPriority,
-            _spriteLayerMinigame, layerHighPriority);
+//        QuestClient.init(ClientContext.ctrl, ClientContext.game, this, layerLowPriority,
+//            _spriteLayerMinigame, layerHighPriority);
 
     }
 
@@ -424,10 +424,10 @@ public class MainGameMode extends AppMode
         return _avatarOverlay;
     }
 
-    override public function shutdown () :void
+    override protected function shutdown () :void
     {
         super.shutdown();
-        QuestClient.shutdown();
+//        QuestClient.shutdown();
     }
 
 
