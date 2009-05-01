@@ -209,10 +209,6 @@ public class QuestClient
     {
         ClientCtx.notificationMgr.addNotification(
             new QuestNotification(e.quest, PlayerQuestData.STATUS_COMPLETE));
-
-        // every time a quest is completed, clear untracked properties to keep
-        // our property space clean!
-        ClientCtx.questProps.clearUntrackedProps();
     }
 
     protected static function onActivityAdded (e :ActivityEvent) :void
