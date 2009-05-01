@@ -18,11 +18,11 @@ public class NotificationMgr
 
     protected function playNotificationNow (notification :SceneObject) :void
     {
-        if (_bg == null) {
+        /*if (_bg == null) {
             _bg = new NotificationBg();
             ClientCtx.appMode.addSceneObject(_bg, ClientCtx.notificationLayer);
             _bg.visible = false;
-        }
+        }*/
 
         // show the bg
         /*_bg.removeAllTasks();
@@ -67,7 +67,7 @@ public class NotificationMgr
     protected var _pendingNotifications :Array = [];
     protected var _notificationPlaying :Boolean;
 
-    protected var _bg :NotificationBg;
+    //protected var _bg :NotificationBg;
 }
 
 }
