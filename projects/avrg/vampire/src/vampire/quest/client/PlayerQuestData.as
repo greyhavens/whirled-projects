@@ -72,15 +72,17 @@ public class PlayerQuestData extends EventDispatcher
 
     public function addQuest (quest :QuestDesc) :void
     {
-        _props.setIn(PROP_QUESTS, quest.id, STATUS_ACTIVE);
+        _props.doBatch(function () :void {
+            _props.setIn(PROP_QUESTS, quest.id, STATUS_ACTIVE);
 
-        if (quest.usePropValDifferences) {
-            // record the initial value of the properties this quest cares about
-            for each (var propName :String in quest.relevantProps) {
-                var curValue :Object = ClientCtx.questProps.getProp(propName);
-                ClientCtx.questProps.setProp(quest.getPropInitName(propName), curValue);
+            if (quest.usePropValDifferences) {
+                // record the initial value of the properties this quest cares about
+                for each (var propName :String in quest.relevantProps) {
+                    var curValue :Object = ClientCtx.questProps.getProp(propName);
+                    ClientCtx.questProps.setProp(quest.getPropInitName(propName), curValue);
+                }
             }
-        }
+        });
     }
 
     public function completeQuest (quest :QuestDesc) :void
@@ -104,7 +106,6 @@ public class PlayerQuestData extends EventDispatcher
 
     public function getQuestStatusFromId (questId :int) :int
     {
-
         var dict :Dictionary = _props.get(PROP_QUESTS) as Dictionary;
         // if the questId isn't in the dictionary, dict[questId] will be undefined, and
         // int(undefined) == 0 == STATUS_NOT_ADDED, so returning dict[questId] is safe here
