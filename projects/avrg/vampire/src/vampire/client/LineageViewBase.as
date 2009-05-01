@@ -39,7 +39,8 @@ public class LineageViewBase extends SceneObjectParent
     public function LineageViewBase (dropCreation :Function,
                                      lineageIconCreation :Function,
                                      lineage :Lineage = null,
-                                     centerPlayerId :int = 0)
+                                     centerPlayerId :int = 0,
+                                     showAbstractLilith :Boolean = true)
     {
         _dropCreation = dropCreation;
         _lineageIconCreation = lineageIconCreation;
@@ -52,24 +53,58 @@ public class LineageViewBase extends SceneObjectParent
 
         _selectedPlayerIdCenter = centerPlayerId;
 
-        _lilith = new Sprite();
-        _lilith.graphics.lineStyle(BLOOD_LINEAGE_LINK_THICKNESS, BLOOD_LINEAGE_LINK_COLOR, 1);
-        _lilith.graphics.moveTo(0, 0);
-        _lilith.graphics.lineTo(0, 120);
-        var drop :MovieClip = dropCreation() as MovieClip;
-        drop.scaleX = drop.scaleY = 3.0;
-        _lilith.addChild(drop);
-        _lilith.addChild(DropSceneObject.getTextFieldCenteredOn("Lilith", 40, 0));
-        _lilith.y = -100;
-        if (_lineage != null && _lineage.isConnectedToLilith
-            && !_lineage.isPlayer(VConstants.UBER_VAMP_ID)) {
-            _displaySprite.addChild(_lilith);
+        _showLilith = showAbstractLilith;
+        if (showAbstractLilith) {
+            _lilith = new Sprite();
+            _lilith.graphics.lineStyle(BLOOD_LINEAGE_LINK_THICKNESS, BLOOD_LINEAGE_LINK_COLOR, 1);
+            _lilith.graphics.moveTo(0, 0);
+            _lilith.graphics.lineTo(0, 120);
+            var drop :MovieClip = dropCreation() as MovieClip;
+            drop.scaleX = drop.scaleY = 3.0;
+            _lilith.addChild(drop);
+            _lilith.addChild(DropSceneObject.getTextFieldCenteredOn("Lilith", 40, 0));
+            _lilith.y = -100;
+            if (_lineage != null && _lineage.isConnectedToLilith
+                && !_lineage.isPlayer(VConstants.UBER_VAMP_ID)) {
+                _displaySprite.addChild(_lilith);
+            }
         }
 
 
         if (_lineage != null) {
             updateLineage(_selectedPlayerIdCenter);
         }
+//        WTF();
+
+    }
+
+//    public function WTF () :void
+//    {
+//        _player2Drop.forEach(function (playerId :int, drop :DropSceneObject) :void
+//        {
+//            trace(playerId + ", visible=" + drop.visible + ", alpha=" + drop.alpha);
+////            drop.alpha = 1;
+//        });
+//    }
+
+//    override protected function addedToDB () :void
+//    {
+//        trace("before addedToDB");
+//        WTF();
+//        super.addedToDB();
+//        trace("after addedToDB");
+//        WTF();
+//    }
+//
+    override protected function update (dt :Number) :void
+    {
+//        trace("update, pre super");
+//        trace("tasks=" + hasTasks());
+////        WTF();
+//        trace("dt=" + dt);
+        super.update(dt);
+//        trace("update, post super");
+//        WTF();
     }
 
     override public function get objectName () :String
@@ -104,6 +139,7 @@ public class LineageViewBase extends SceneObjectParent
             if (ui.isLiveObject) {
                 ui.destroySelf();
             }
+            ClientUtil.detach(ui.displayObject);
         }
 
         //If we change the player to center, revert to page 0;
@@ -115,8 +151,8 @@ public class LineageViewBase extends SceneObjectParent
 
         _selectedPlayerIdCenter = playerIdToCenter;
 
-        var playerX :int = 0;//150;
-        var playerY :int = 0;//150;
+        var playerX :int = 0;
+        var playerY :int = 0;;
 
         _hierarchyTree.graphics.clear();
 
@@ -132,12 +168,8 @@ public class LineageViewBase extends SceneObjectParent
         drawProgeny(_hierarchyTree, playerIdToCenter, playerX, playerY, false, 0);
 
         //Move the invisible drops away
+        log.debug("centerLinageOnPlayer", "_visiblePlayers", _visiblePlayers.toArray());
         _player2Drop.forEach(function (playerId :int, so :DropSceneObject) :void {
-
-//            if (so.isLiveObject) {
-//                so.destroySelf();
-//            }
-
             if (!_visiblePlayers.contains(playerId)) {
                 so.disableMouseListeners();
                 so.removeAllTasks();
@@ -405,9 +437,9 @@ public class LineageViewBase extends SceneObjectParent
             drop = new DropSceneObject(_dropCreation, playerId, playerName, updateLineage);
 
             addSimObject(drop);
+            _displaySprite.addChild(drop.displayObject);
             drop.alpha = 0;
             _player2Drop.put(playerId, drop);
-//            trace("Creating drop for " + playerId);
         }
         drop = _player2Drop.get(playerId) as DropSceneObject;
 
@@ -532,14 +564,14 @@ public class LineageViewBase extends SceneObjectParent
     public function set lineage (lin :Lineage) :void
     {
         _lineage = lin;
-        if (_lineage != null && _lineage.isConnectedToLilith
+        if (_showLilith && _lineage != null && _lineage.isConnectedToLilith
             && !_lineage.isPlayer(VConstants.UBER_VAMP_ID)) {
             _displaySprite.addChild(_lilith);
         }
         else {
             ClientUtil.detach(_lilith);
         }
-        centerLinageOnPlayer(_selectedPlayerIdCenter);
+//        centerLinageOnPlayer(_selectedPlayerIdCenter);
     }
 
     public function get lineage () :Lineage
@@ -548,6 +580,7 @@ public class LineageViewBase extends SceneObjectParent
     }
 
     protected var _lilith :Sprite;
+    protected var _showLilith :Boolean;
 
     protected var _hierarchyTree :Sprite;
     protected var _lineage :Lineage;
@@ -644,6 +677,11 @@ class DropSceneObject extends SceneObject
 
     }
 
+//    override protected function addedToDB():void
+//    {
+//        super.addedToDB();
+//        trace("Drop, after added to db, alpha=" + alpha);
+//    }
     public function showHBar () :void
     {
         _displaySprite.addChildAt(_hBar, 0);
