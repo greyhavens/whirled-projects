@@ -19,8 +19,8 @@ public class Quests
         var pandorasBox :QuestDesc = new QuestDesc();
         pandorasBox.npc = Npc.LILITH;
         pandorasBox.name = "pandora_quest";
-        pandorasBox.displayName = "Open the Box";
-        pandorasBox.description = "Drain 5 partiers at the Pandora's Box nightclub";
+        pandorasBox.displayName = "Appetizer";
+        pandorasBox.description = "Allow 5 vampires to feed on you at Pandora's Box";
         pandorasBox.usePropValDifferences = true;
         makeCollectionRequirement(pandorasBox, QuestProps.PANDORA_FEEDINGS, 5);
         addQuest(pandorasBox);

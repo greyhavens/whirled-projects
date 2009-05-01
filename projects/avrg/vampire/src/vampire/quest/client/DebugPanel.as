@@ -174,6 +174,9 @@ public class DebugPanel extends GenericDraggableWindow
     {
         for each (var questId :int in ClientCtx.questData.activeAndCompleteQuestIds) {
             ClientCtx.questData.debugClearQuest(Quests.getQuest(questId));
+            if (QuestClient.questPanel != null) {
+                QuestClient.questPanel.debugForceDisplayUpdate();
+            }
         }
     }
 

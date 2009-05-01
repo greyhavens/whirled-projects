@@ -146,6 +146,11 @@ public class QuestClient
         }
     }
 
+    public static function get questPanel () :QuestPanel
+    {
+        return _questPanel;
+    }
+
     public static function showNpcTalkDialog (programName :String) :void
     {
         var rsrc :NpcTalkResource = ClientCtx.rsrcs.getResource(programName) as NpcTalkResource;

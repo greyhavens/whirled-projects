@@ -105,6 +105,12 @@ public class QuestPanel extends DraggableObject
         }
     }
 
+    public function debugForceDisplayUpdate () :void
+    {
+        updateQuestJuice();
+        updateQuests();
+    }
+
     public function get lastDisplayedLocation () :LocationDesc
     {
         return _lastLoc;
