@@ -61,22 +61,6 @@ public class PlayerModel extends SimObject
         }
     }
 
-//    protected function handlePlayerPropChanged (e :PropertyChangedEvent) :void
-//    {
-//        switch (e.name) {
-//            case Codes.PLAYER_PROP_LINEAGE:
-//            _lineage = new Lineage();
-//            _lineage.fromBytes(e.newValue as ByteArray);
-//            dispatchEvent(new LineageUpdatedEvent(_lineage));
-//            break;
-//
-//            default:
-//            break;
-//        }
-//    }
-
-
-
     protected function handleElementChanged (e :ElementChangedEvent) :void
     {
         //Why do I have to do this?  Is there a race condidtion, where the game is shutdown
@@ -243,14 +227,6 @@ public class PlayerModel extends SimObject
             ClientContext.ctrl.room.props.get(Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE) as Array;
 
         return feedingPlayers == null ? [] : feedingPlayers;
-    }
-
-    public function get primaryPreds () :Array
-    {
-        var preds :Array =
-            ClientContext.ctrl.room.props.get(Codes.ROOM_PROP_PRIMARY_PREDS) as Array;
-
-        return preds == null ? [] : preds;
     }
 
     public function setAvatarState (state :String) :void

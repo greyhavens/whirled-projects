@@ -631,10 +631,11 @@ public class Tutorial extends AppMode
         }
     }
 
-    public function feedGameStarted () :void
+    public function feedGameStarted (isPrimPred :Boolean) :void
     {
+        _isPrimaryPredator = isPrimPred;
         if (_currentChapter == CHAPTER_LOOKING_FOR_TARGET) {
-            if (ArrayUtil.contains(ClientContext.model.primaryPreds, ClientContext.ourPlayerId)) {
+            if (_isPrimaryPredator) {
                 setPage(PAGE_LOBBY_PRIMARY_PRED);
             }
             else {
@@ -760,6 +761,8 @@ public class Tutorial extends AppMode
         target.x = leftLocal.x;
         target.y = leftLocal.y;
     }
+
+    protected var _isPrimaryPredator :Boolean = false;
 
     protected var _active :Boolean;
     protected var _pagesSeen :HashSet = new HashSet();

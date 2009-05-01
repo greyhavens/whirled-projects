@@ -169,7 +169,6 @@ public class Room extends SimObject
         }
 
         try {
-//            roomDB.update(dt);
             //Update PlayerData objects. This means setting them into room props and player props.
             _players.forEach(function(playerId :int, p :PlayerData) :void{ p.update(dt)});
 
@@ -190,17 +189,6 @@ public class Room extends SimObject
             if(!ArrayUtil.equals(playerIdsFeedingNow, playerIdsFeedingPrevious)) {
                 log.debug("Room " + roomId + ", Setting busy players=" + playerIdsFeedingNow);
                 _ctrl.props.set(Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE, playerIdsFeedingNow);
-            }
-
-            //Update the primary predIds, for the tutorial
-            var primaryPreds :Array = bloodBloomGameManager.primaryPreds;
-            primaryPreds.sort();
-            var primaryPredsPrevious :Array =
-                _ctrl.props.get(Codes.ROOM_PROP_PRIMARY_PREDS) as Array;
-
-            if(!ArrayUtil.equals(primaryPreds, primaryPredsPrevious)) {
-                log.debug("Room " + roomId + ", Setting primary preds=" + primaryPreds);
-                _ctrl.props.set(Codes.ROOM_PROP_PRIMARY_PREDS, primaryPreds);
             }
 
 

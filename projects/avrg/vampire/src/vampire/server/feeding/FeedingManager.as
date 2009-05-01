@@ -141,15 +141,6 @@ public class FeedingManager extends SimObject
          return playerids;
     }
 
-    public function get primaryPreds() :Array
-    {
-         var playerids :Array = new Array();
-         for each (var record :FeedingRecord in _games) {
-             playerids.push(record.gameServer.primaryPredatorId);
-         }
-         return playerids;
-    }
-
     override public function toString() :String
     {
         return ClassUtil.tinyClassName(this)

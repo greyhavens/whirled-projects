@@ -2,12 +2,10 @@ package vampire.server.feeding
 {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.EventCollecter;
 import com.whirled.contrib.simplegame.ObjectMessage;
 
-import vampire.Util;
 import vampire.data.Logic;
 import vampire.data.VConstants;
 import vampire.feeding.Constants;
@@ -115,8 +113,9 @@ public class FeedingRecord extends EventCollecter
 
         var player :PlayerData = ServerContext.server.getPlayer(playerId);
         //Tell the client lobby to start
+        var isPrimPred :Boolean = !prey && _predatorIndex.length == 0;
         var msg :StartFeedingClientMsg = new StartFeedingClientMsg(playerId,
-                        _gameServer.gameId);
+                        _gameServer.gameId, isPrimPred);
         log.debug("Sending start game message to client " + playerId + ", ", "gameId",
             _gameServer.gameId);
         player.sctrl.sendMessage(StartFeedingClientMsg.NAME, msg.toBytes());

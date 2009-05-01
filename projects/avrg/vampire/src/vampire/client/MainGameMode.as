@@ -159,8 +159,8 @@ public class MainGameMode extends AppMode
         }
 
         //Init the quests
-        QuestClient.init(ClientContext.ctrl, ClientContext.game, this, layerLowPriority,
-            _spriteLayerMinigame, layerHighPriority);
+//        QuestClient.init(ClientContext.ctrl, ClientContext.game, this, layerLowPriority,
+//            _spriteLayerMinigame, layerHighPriority);
 
     }
 
@@ -232,7 +232,7 @@ public class MainGameMode extends AppMode
             _spriteLayerMinigame.addChildAt(_feedingGameClient, 0)
 
             //Notify the tutorial
-            ClientContext.tutorial.feedGameStarted();
+            ClientContext.tutorial.feedGameStarted(msg.isPrimaryPredator);
         }
     }
 

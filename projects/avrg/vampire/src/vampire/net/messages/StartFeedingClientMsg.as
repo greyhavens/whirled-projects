@@ -6,16 +6,19 @@ import flash.utils.ByteArray;
 
 public class StartFeedingClientMsg extends BaseGameMsg
 {
-    public function StartFeedingClientMsg (playerId:int = 0, gameId :int = 0)
+    public function StartFeedingClientMsg (playerId:int = 0, gameId :int = 0,
+        isPrimPred :Boolean = false)
     {
         super(playerId);
         _gameId = gameId;
+        _isPrimPred = isPrimPred;
     }
 
     override public function toBytes (bytes :ByteArray = null) :ByteArray
     {
         var bytes :ByteArray = super.toBytes(bytes);
         bytes.writeInt(_gameId);
+        bytes.writeBoolean(_isPrimPred);
         return bytes;
     }
 
@@ -23,11 +26,17 @@ public class StartFeedingClientMsg extends BaseGameMsg
     {
         super.fromBytes(bytes);
         _gameId = bytes.readInt();
+        _isPrimPred = bytes.readBoolean();
     }
 
     public function get gameId () :int
     {
        return _gameId;
+    }
+
+    public function get isPrimaryPredator () :Boolean
+    {
+       return _isPrimPred;
     }
 
     override public function get name () :String
@@ -42,6 +51,7 @@ public class StartFeedingClientMsg extends BaseGameMsg
     }
 
     protected var _gameId :int;
+    protected var _isPrimPred :Boolean;
 
     public static const NAME :String = "Message: Start Feeding Client";
 
