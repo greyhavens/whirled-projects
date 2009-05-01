@@ -79,11 +79,6 @@ public class QuestClient
         ClientCtx.questProps.offsetIntProp(QuestProps.NORMAL_FEEDINGS, 1);
     }
 
-    public static function checkQuestJuiceRefresh () :void
-    {
-        // TODO
-    }
-
     public static function goToLocation (loc :LocationDesc) :void
     {
         if (ClientCtx.questData.curLocation != loc) {
@@ -194,6 +189,7 @@ public class QuestClient
         ClientCtx.questData.addEventListener(ActivityEvent.ACTIVITY_ADDED, onActivityAdded);
 
         checkQuestCompletion();
+        checkQuestJuiceRefresh();
     }
 
     protected static function onResourceLoadErr (err :String) :void
@@ -207,6 +203,12 @@ public class QuestClient
                 ClientCtx.questData.completeQuest(quest);
             }
         }
+    }
+
+    protected static function checkQuestJuiceRefresh () :void
+    {
+        // TODO
+        ClientCtx.questData.questJuice = Math.max(ClientCtx.questData.questJuice, 30);
     }
 
     protected static function onQuestAdded (e :PlayerQuestEvent) :void

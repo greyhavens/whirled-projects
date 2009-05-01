@@ -26,7 +26,7 @@ public class VariantSettings
     public var normalCellSpeed :Number;
     public var whiteCellSpeed :Number;
 
-    public var customDescription :String;
+    public var customInstructionsName :String;
 }
 
 }

@@ -29,9 +29,9 @@ public class Quests
         theHunger.npc = Npc.LILITH;
         theHunger.name = "hunger_quest";
         theHunger.displayName = "The Hunger";
-        theHunger.description = "Feed on 10 of your fellow vampires";
+        theHunger.description = "Feed on 3 of your fellow vampires";
         theHunger.usePropValDifferences = true;
-        makeCollectionRequirement(theHunger, QuestProps.NORMAL_FEEDINGS, 10);
+        makeCollectionRequirement(theHunger, QuestProps.NORMAL_FEEDINGS, 3);
         addQuest(theHunger);
 
         var rebekah :QuestDesc = new QuestDesc();

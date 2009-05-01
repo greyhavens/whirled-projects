@@ -2,9 +2,6 @@ package vampire.quest {
 
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.util.IntRange;
-import com.whirled.contrib.simplegame.util.NumRange;
-import com.whirled.contrib.simplegame.util.Rand;
 
 import vampire.feeding.variant.*;
 import vampire.quest.activity.*;
@@ -98,10 +95,7 @@ public class Activities
         variantSettings.gameTime = 45;
         variantSettings.heartbeatTime = 1;
         variantSettings.cursorSpeed = 100;
-        variantSettings.customDescription =
-            "You've dragged a dazed, excited partier into a " +
-            "dark corner of the club. Drain them, quickly! " +
-            "(Drain 100 blood in 45 seconds.)";
+        variantSettings.customInstructionsName = "instructions_appetizer";
 
         var params :BloodBloomActivityParams = new BloodBloomActivityParams(
             1, 1,
@@ -124,9 +118,10 @@ public class Activities
 
     protected static function createRebekahActivity (loc :LocationDesc) :ActivityDesc
     {
-        var variantSettings :VariantSettings = Variant.normal();
+        /*var variantSettings :VariantSettings = Variant.normal();
         variantSettings.boardWhiteCellCreationTime = new NumRange(2, 2, Rand.STREAM_GAME);
-        variantSettings.boardWhiteCellCreationCount = new IntRange(1, 2, Rand.STREAM_GAME);
+        variantSettings.boardWhiteCellCreationCount = new IntRange(1, 2, Rand.STREAM_GAME);*/
+        var variantSettings :VariantSettings = Variant.corruption();
 
         var params :BloodBloomActivityParams = new BloodBloomActivityParams(
             1, 1,

@@ -60,40 +60,42 @@ public class LobbyMode extends AppMode
             parent.addChildAt(corruptionBg, idx);
         }
 
-        // Leaderboard is not used yet
+        // Make the lobby draggable
+        addObject(new RoomDragger(ClientCtx.gameCtrl, contents, _panelMovie));
+        ClientCtx.centerInRoom(_panelMovie);
+
+        // Leaderboard
         var leaderboardMovie :MovieClip = contents["leaderboard"];
-        leaderboardMovie.visible = false;
+        leaderboardMovie.visible = (!ClientCtx.clientSettings.spOnly &&
+            ClientCtx.playerData.timesPlayed >= Constants.MIN_GAMES_BEFORE_LEADERBOARD_SHOWN);
         if (!ClientCtx.clientSettings.spOnly) {
             var leaderboard :SceneObject = new LeaderBoardClient(leaderboardMovie);
             addObject(leaderboard);
         }
 
-        // Make the lobby draggable
-        addObject(new RoomDragger(ClientCtx.gameCtrl, contents, _panelMovie));
-        ClientCtx.centerInRoom(_panelMovie);
-
         // Instructions
-        var instructionsBasic :MovieClip = contents["instructions_basic"];
-        var instructionsMultiplayer :MovieClip = contents["instructions_multiplayer"];
-        var instructionsStrain :MovieClip = contents["instructions_strains"];
-        var instructionsCorruption :MovieClip = contents["instructions_corruption"];
-        instructionsBasic.visible = false;
-        instructionsMultiplayer.visible = false;
-        instructionsStrain.visible = false;
-        instructionsCorruption.visible = false;
+        if (!leaderboardMovie.visible) {
+            var instructionsName :String;
+            if (ClientCtx.variantSettings.customInstructionsName != null) {
+                instructionsName = ClientCtx.variantSettings.customInstructionsName;
+            } else if (ClientCtx.isCorruption) {
+                instructionsName = "instructions_corruption";
+            } else if (this.isPreGameLobby && ClientCtx.playerData.timesPlayed == 0) {
+                instructionsName = "instructions_basic";
+            } else if ((this.isPreGameLobby || Rand.nextBoolean(Rand.STREAM_COSMETIC)) &&
+                       ClientCtx.playerCanCollectPreyStrain) {
+                instructionsName = "instructions_strains";
+            } else {
+                instructionsName = "instructions_multiplayer";
+            }
 
-        if (ClientCtx.isCorruption) {
-            instructionsCorruption.visible = true;
-        } else if (!ClientCtx.clientSettings.spOnly &&
-            ClientCtx.playerData.timesPlayed >= Constants.MIN_GAMES_BEFORE_LEADERBOARD_SHOWN) {
-            leaderboard.visible = true;
-        } else if (this.isPreGameLobby && ClientCtx.playerData.timesPlayed == 0) {
-            instructionsBasic.visible = true;
-        } else if ((this.isPreGameLobby || Rand.nextBoolean(Rand.STREAM_COSMETIC)) &&
-                   ClientCtx.playerCanCollectPreyStrain) {
-            instructionsStrain.visible = true;
-        } else {
-            instructionsMultiplayer.visible = true;
+            var instructionsMovie :MovieClip = contents[instructionsName];
+            if (instructionsMovie != null) {
+                instructionsMovie.visible = true;
+                instructionsMovie.alpha = 1;
+            } else {
+                log.warning("No instructions panel named " + instructionsName);
+            }
         }
 
         // Quit button
@@ -273,10 +275,6 @@ public class LobbyMode extends AppMode
                     statusText += "\n" + diffString + " more will forge a Blood Bond.";
                 }
             }
-        }
-
-        if (ClientCtx.variantSettings.customDescription != null) {
-            statusText = ClientCtx.variantSettings.customDescription;
         }
 
         if (statusText != null) {
