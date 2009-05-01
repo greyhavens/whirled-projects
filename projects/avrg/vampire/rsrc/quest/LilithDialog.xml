@@ -45,7 +45,7 @@ Well... you'll be on the menu.">
 			<Say speaker="Lilith" text="The nightclub around the corner. The music is loud, the drinks are strong..." response="(More)"/>
 			<Say speaker="Lilith" text="The nightclub around the corner. The music is loud, the drinks are strong...
 and you'll make an excellent party favor for some very hungry friends that will be there tonight." response="(More)"/>
-			<Say speaker="Lilith" text="Go bare that beautiful neck, kitten! You may come back to see me when my friends have drunk their fill.">
+			<Say speaker="Lilith" text="Go bare that beautiful neck, kitten! Come back to see me when my friends have drunk their fill.">
 				<AddResponse id="yes" text="Sounds like fun." juiceCost="10"/>
 				<AddResponse id="no" text="I don't think so."/>
 			</Say>

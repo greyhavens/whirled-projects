@@ -20,18 +20,18 @@ public class Quests
         pandorasBox.npc = Npc.LILITH;
         pandorasBox.name = "pandora_quest";
         pandorasBox.displayName = "Appetizer";
-        pandorasBox.description = "Allow 5 vampires to feed on you at Pandora's Box";
+        pandorasBox.description = "Allow 2 vampires to feed on you at Pandora's Box";
         pandorasBox.usePropValDifferences = true;
-        makeCollectionRequirement(pandorasBox, QuestProps.PANDORA_FEEDINGS, 5);
+        makeCollectionRequirement(pandorasBox, QuestProps.PANDORA_FEEDINGS, 2);
         addQuest(pandorasBox);
 
         var theHunger :QuestDesc = new QuestDesc();
         theHunger.npc = Npc.LILITH;
         theHunger.name = "hunger_quest";
         theHunger.displayName = "The Hunger";
-        theHunger.description = "Feed on 3 of your fellow vampires";
+        theHunger.description = "Feed on 2 of your fellow vampires";
         theHunger.usePropValDifferences = true;
-        makeCollectionRequirement(theHunger, QuestProps.NORMAL_FEEDINGS, 3);
+        makeCollectionRequirement(theHunger, QuestProps.NORMAL_FEEDINGS, 2);
         addQuest(theHunger);
 
         var rebekah :QuestDesc = new QuestDesc();

@@ -99,9 +99,9 @@ public class Activities
 
         var params :BloodBloomActivityParams = new BloodBloomActivityParams(
             1, 1,
-            "Pandora's Box Partier",
+            "Partying Vampire",
             -1,
-            100,
+            125,
             variantSettings,
             QuestProps.PANDORA_FEEDINGS, 1);
 
@@ -127,7 +127,7 @@ public class Activities
             1, 1,
             "Rebekah",
             -1,
-            175,
+            250,
             variantSettings,
             QuestProps.REBEKAH_FEEDINGS, 1);
 
