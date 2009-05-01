@@ -256,16 +256,11 @@ public class HUD extends DraggableObject
         var hudFeed :SimpleButton = SimpleButton(findSafely("button_feed"));
         Command.bind(hudFeed, MouseEvent.CLICK, VampireController.FEED);
 
-//        var hudQuests :SimpleButton = SimpleButton(findSafely("button_quests"));
-//        registerListener(hudQuests, MouseEvent.CLICK, function (...ignored) :void {
-//            QuestClient.showQuestPanel(true);
-//            QuestClient.showDebugPanel(true);
-//        });
-
-
-
-
-
+        var hudQuests :SimpleButton = SimpleButton(findSafely("button_quests"));
+        registerListener(hudQuests, MouseEvent.CLICK, function (...ignored) :void {
+            QuestClient.showQuestPanel(true);
+            QuestClient.showDebugPanel(true);
+        });
     }
 
     protected function createXPText() :void

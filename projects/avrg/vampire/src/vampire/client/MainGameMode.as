@@ -30,6 +30,7 @@ import vampire.net.messages.GameStartedMsg;
 import vampire.net.messages.RoomNameMsg;
 import vampire.net.messages.ShareTokenMsg;
 import vampire.net.messages.StartFeedingClientMsg;
+import vampire.quest.client.QuestClient;
 
 public class MainGameMode extends AppMode
 {
@@ -158,8 +159,8 @@ public class MainGameMode extends AppMode
         }
 
         //Init the quests
-//        QuestClient.init(ClientContext.ctrl, ClientContext.game, this, layerLowPriority,
-//            _spriteLayerMinigame, layerHighPriority);
+        QuestClient.init(ClientContext.ctrl, ClientContext.game, this, layerLowPriority,
+            _spriteLayerMinigame, layerHighPriority);
 
     }
 
