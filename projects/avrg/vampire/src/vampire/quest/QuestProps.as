@@ -17,8 +17,9 @@ public class QuestProps
         return (PERMANENT == propName.substr(0, PERMANENT.length));
     }
 
-    public static const PANDORA_FEEDINGS :String = "pandora_feedings";
     public static const NORMAL_FEEDINGS :String = "feedings";
+    public static const PANDORA_FEEDINGS :String = "pandora_feedings";
+    public static const REBEKAH_FEEDINGS :String = "rebekah_feedings";
 
     protected static const PERMANENT :String = "#";
 }

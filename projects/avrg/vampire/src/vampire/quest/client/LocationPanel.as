@@ -64,10 +64,6 @@ public class LocationPanel extends SceneObject
             button.mouseEnabled = false;
             buttonMovie.filters = [ new ColorMatrix().makeGrayscale().createFilter() ];
         }
-
-        var tfCost :TextField = buttonMovie["action_cost"];
-        tfCost.visible = (enabled && activity.juiceCost > 0);
-        tfCost.text = (activity.juiceCost > 0 ? String(activity.juiceCost) : "");
     }
 
     protected function onActivityAdded (e :ActivityEvent) :void
@@ -78,9 +74,6 @@ public class LocationPanel extends SceneObject
 
             var button :SimpleButton = buttonMovie["site_button"];
             button.mouseEnabled = true;
-
-            var tfCost :TextField = buttonMovie["action_cost"];
-            tfCost.visible = (tfCost.text.length > 0);
         }
     }
 

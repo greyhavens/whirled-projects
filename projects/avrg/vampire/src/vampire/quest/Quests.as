@@ -26,13 +26,22 @@ public class Quests
         addQuest(pandorasBox);
 
         var theHunger :QuestDesc = new QuestDesc();
-        pandorasBox.npc = Npc.LILITH;
+        theHunger.npc = Npc.LILITH;
         theHunger.name = "hunger_quest";
         theHunger.displayName = "The Hunger";
         theHunger.description = "Feed on 10 of your fellow vampires";
         theHunger.usePropValDifferences = true;
         makeCollectionRequirement(theHunger, QuestProps.NORMAL_FEEDINGS, 10);
         addQuest(theHunger);
+
+        var rebekah :QuestDesc = new QuestDesc();
+        rebekah.npc = Npc.LILITH;
+        rebekah.name = "rebekah_quest";
+        rebekah.displayName = "Conflict";
+        rebekah.description = "(Placeholder) Feed on Rebekah";
+        rebekah.usePropValDifferences = true;
+        makeCollectionRequirement(rebekah, QuestProps.REBEKAH_FEEDINGS, 1);
+        addQuest(rebekah);
     }
 
     public static function getQuest (questId :int) :QuestDesc

@@ -18,6 +18,15 @@
 			<ElseIf><HasQuest name="hunger_quest"/>
 				<CallRoutine name="HasHungerQuest"/>
 			</ElseIf>
+			<ElseIf><Not><SeenQuest name="rebekah_quest"/></Not>
+				<CallRoutine name="IntroRebekahQuest"/>
+			</ElseIf>
+			<ElseIf><HasQuest name="rebekah_quest"/>
+				<CallRoutine name="HasRebekahQuest"/>
+			</ElseIf>
+			<Else>
+				<CallRoutine name="NoMoreQuests"/>
+			</Else>
 		</Conditional>
 	</Routine>
 	
@@ -81,7 +90,7 @@ You were a hit at the 'Box. I hear you let EVERYONE have a little bite!" respons
 		<Say speaker="Lilith" text="Best to show some restraint, though, don't you think? You know what they say -" response="(More)"/>
 		<Say speaker="Lilith" text="Best to show some restraint, though, don't you think? You know what they say -
 Why buy the cow when you can get the blood for free?" response=". . ."/>
-		<Say speaker="Lilith" text="Oh, don't look so sullen, kitten. We both know you are a beauty. And resilient..."response="(More)"/>
+		<Say speaker="Lilith" text="Oh, don't look so sullen, kitten. We both know you are a beauty. And resilient..." response="(More)"/>
 		<Say speaker="Lilith" text="Oh, don't look so sullen, kitten. We both know you are a beauty. And resilient...
 if a bit pale and drained after last night's excesses." response="(More)"/>
 		<Say speaker="Lilith" text="Yes, I WILL be keeping you!" response="(More)"/>
@@ -130,6 +139,37 @@ You may not realize it yet, but you need me to guide you through this cruel worl
 	<Routine name="HasHungerQuest">
 		<Say speaker="Lilith" text="Still looking a bit piqued, kitten! I need you strong and healthy if you're to be of any use." response="(More)"/>
 		<Say speaker="Lilith" text="Come back when you've fed a bit more." response="(Leave)"/>
+		<Exit/>
+	</Routine>
+	
+	<Routine name="IntroRebekahQuest">
+		<Say speaker="Lilith" text="(Placeholder) take Rebekah quest?">
+			<AddResponse id="yes" text="Yes" juiceCost="10"/>
+			<AddResponse id="no" text="No"/>
+		</Say>
+		<HandleResponse id="yes"><CallRoutine name="GiveRebekahQuest"/></HandleResponse>
+		<HandleResponse id="no"><CallRoutine name="RejectRebekahQuest"/></HandleResponse>
+	</Routine>
+	
+	<Routine name="RejectRebekahQuest">
+		<Say speaker="Lilith" text="(Placeholder) Go away then." response="(Leave)"/>
+		<Exit/>
+	</Routine>
+	
+	<Routine name="GiveRebekahQuest">
+		<GiveActivity name="rebekah_activity"/>
+		<GiveQuest name="rebekah_quest"/>
+		<TakeJuice amount="10"/>
+		<Exit/>
+	</Routine>
+	
+	<Routine name="HasRebekahQuest">
+		<Say speaker="Lilith" text="(Placeholder) go finish the Rebekah quest" response="(Leave)"/>
+		<Exit/>
+	</Routine>
+	
+	<Routine name="NoMoreQuests">
+		<Say speaker="Lilith" text="(Placeholder) (There's no answer at Lilith's door. Come back later.)" response="(Leave)"/>
 		<Exit/>
 	</Routine>
 </Program>
