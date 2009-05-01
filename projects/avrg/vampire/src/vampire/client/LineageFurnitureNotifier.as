@@ -4,7 +4,8 @@ import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRGameRoomEvent;
-import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.EventHandlerManager;
+import com.whirled.contrib.simplegame.objects.IShutdown;
 
 import flash.utils.clearInterval;
 
@@ -12,20 +13,27 @@ import vampire.client.events.LineageUpdatedEvent;
 import vampire.data.Lineage;
 import vampire.furni.FurniConstants;
 
-public class LineageFurnitureNotifier extends SimObject
+public class LineageFurnitureNotifier
+    implements IShutdown
 {
     public function LineageFurnitureNotifier(ctrl :AVRGameControl, lineages :LineagesClient)
     {
         super();
         _ctrl = ctrl;
         _lineages = lineages;
-        registerListener(ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM,
+        _events.registerListener(ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM,
             handleOurPlayerEnteredRoom);
-        registerListener(lineages, LineageUpdatedEvent.LINEAGE_UPDATED,
+        _events.registerListener(lineages, LineageUpdatedEvent.LINEAGE_UPDATED,
             handleLineageUpdated);
         uploadLineagesToFurnIfPresent();
 
-        registerListener(_ctrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignal);
+        _events.registerListener(_ctrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignal);
+    }
+
+    public function shutdown () :void
+    {
+        _events.freeAllHandlers();
+        clearInterval(_timerId);
     }
 
     protected function handleSignal (e :AVRGameRoomEvent) :void
@@ -40,11 +48,11 @@ public class LineageFurnitureNotifier extends SimObject
         uploadLineageToFurnIfPresent(e.lineage);
     }
 
-    override protected function destroyed () :void
-    {
-        super.destroyed();
-        clearInterval(_timerId);
-    }
+//    override protected function destroyed () :void
+//    {
+//        super.destroyed();
+//        clearInterval(_timerId);
+//    }
 
     protected function handleOurPlayerEnteredRoom (e :AVRGamePlayerEvent) :void
     {
@@ -66,22 +74,23 @@ public class LineageFurnitureNotifier extends SimObject
         }
         for each (var id :String in _ctrl.room.getEntityIds(EntityControl.TYPE_FURNI)) {
             var lineageUploadFunc :Function = _ctrl.room.getEntityProperty(
-                FurniConstants.ENTITY_PROPERTY_UPLOAD_LINEAGE, id) as Function;
+                FurniConstants.ENTITY_PROP_UPLOAD_LINEAGE, id) as Function;
             if (lineageUploadFunc != null) {
                 lineageUploadFunc(lin.toArray());
             }
         }
     }
 
-    override public function get objectName () :String
-    {
-        return NAME;
-    }
-    public static const NAME :String = "LineageFurnNotifier";
+//    override public function get objectName () :String
+//    {
+//        return NAME;
+//    }
+//    public static const NAME :String = "LineageFurnNotifier";
 
     protected var _ctrl :AVRGameControl;
     protected var _lineages :LineagesClient;
     protected var _timerId :uint;
+    protected var _events :EventHandlerManager = new EventHandlerManager();
 
 }
 }

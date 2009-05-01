@@ -10,10 +10,10 @@ import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.net.Message;
+import com.whirled.contrib.simplegame.objects.IShutdown;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
-import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
@@ -30,7 +30,6 @@ import vampire.net.messages.GameStartedMsg;
 import vampire.net.messages.RoomNameMsg;
 import vampire.net.messages.ShareTokenMsg;
 import vampire.net.messages.StartFeedingClientMsg;
-import vampire.quest.client.QuestClient;
 
 public class MainGameMode extends AppMode
 {
@@ -121,7 +120,7 @@ public class MainGameMode extends AppMode
 
         //Add the object that listens for lineage updates in the room props.
         _lineages = new LineagesClient();
-        addObject(_lineages);
+        addToShutDownList(_lineages);
 
         //Create the overlay for individual avatars
         _avatarOverlay = new VampireAvatarHUDOverlay(ClientContext.ctrl);
@@ -134,7 +133,9 @@ public class MainGameMode extends AppMode
         addObject(new LoadBalancerClient(ClientContext.ctrl, _hud));
 
         //Add a notifier for the lineage furniture.
-        addObject(new LineageFurnitureNotifier(ClientContext.ctrl, _lineages));
+        _lineageFurnNotifier = new LineageFurnitureNotifier(ClientContext.ctrl, _lineages);
+        addToShutDownList(_lineageFurnNotifier);
+//        addObject(new LineageFurnitureNotifier(ClientContext.ctrl, _lineages));
 
         //Make sure we start the game standing, not dancing or feeding etc.
         ClientContext.model.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
@@ -401,7 +402,8 @@ public class MainGameMode extends AppMode
 
     public function get furnNotifier () :LineageFurnitureNotifier
     {
-        return getObjectNamed(LineageFurnitureNotifier.NAME) as LineageFurnitureNotifier;
+        return _lineageFurnNotifier;
+//        return getObjectNamed(LineageFurnitureNotifier.NAME) as LineageFurnitureNotifier;
     }
 
     public function get layerLowPriority () :Sprite
@@ -426,8 +428,18 @@ public class MainGameMode extends AppMode
 
     override protected function shutdown () :void
     {
+        for each (var o :IShutdown in _objectsToShutDown) {
+            if (o != null) {
+                o.shutdown();
+            }
+        }
         super.shutdown();
 //        QuestClient.shutdown();
+    }
+
+    protected function addToShutDownList (o :IShutdown) :void
+    {
+        _objectsToShutDown.push(o);
     }
 
 
@@ -438,6 +450,9 @@ public class MainGameMode extends AppMode
     protected var _clientAvatar :ClientAvatar;
     protected var _feedingGameClient :FeedingClient;
     protected var _avatarOverlay :VampireAvatarHUDOverlay;
+    protected var _lineageFurnNotifier :LineageFurnitureNotifier;
+
+    protected var _objectsToShutDown :Array = [];
 
     //Layer the sprites for allowing popup messages over and under the feeding game
     protected var _spriteLayerHighPriority :Sprite = new Sprite();
