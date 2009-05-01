@@ -246,6 +246,8 @@ public class GameMode extends AppMode
         if (ClientCtx.clientSettings.spOnly) {
             ClientCtx.mainLoop.changeMode(new LobbyMode(LobbyMode.LOBBY, results));
         }
+
+        ClientCtx.clientSettings.roundCompleteCallback();
     }
 
     protected function onCreateMultiplier (msg :CreateMultiplierMsg) :void

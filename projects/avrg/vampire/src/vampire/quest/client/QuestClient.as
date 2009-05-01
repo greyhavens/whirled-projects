@@ -236,6 +236,9 @@ public class QuestClient
             var feedingSettings :FeedingClientSettings = FeedingClientSettings.spSettings(
                 new PlayerFeedingData(),
                 function () :void {
+                    // roundComplete
+                },
+                function () :void {
                     feedingGame.shutdown();
                     feedingGame.parent.removeChild(feedingGame);
                 },

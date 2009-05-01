@@ -226,7 +226,7 @@ public class MainGameMode extends AppMode
         } else {
 
             var settings :FeedingClientSettings = FeedingClientSettings.mpSettings(
-                msg.gameId, ClientContext.model.playerFeedingData, onGameComplete);
+                msg.gameId, ClientContext.model.playerFeedingData, onRoundComplete, onGameComplete);
             _feedingGameClient = FeedingClient.create(settings);
 
             _spriteLayerMinigame.addChildAt(_feedingGameClient, 0)
@@ -315,10 +315,10 @@ public class MainGameMode extends AppMode
         ClientContext.ctrl.player.setAvatarState(VConstants.AVATAR_STATE_DEFAULT);
     }
 
-
-
-
-
+    protected function onRoundComplete () :void
+    {
+        QuestClient.playerCompletedFeeding();
+    }
 
     protected function onGameComplete () :void
     {

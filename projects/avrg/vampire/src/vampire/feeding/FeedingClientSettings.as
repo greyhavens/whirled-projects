@@ -9,6 +9,7 @@ public class FeedingClientSettings
     public var spOnly :Boolean;
 
     public var playerData :PlayerFeedingData;
+    public var roundCompleteCallback :Function;
     public var gameCompleteCallback :Function;
     public var playerQuestData :PlayerQuestData;
     public var playerQuestProps :PlayerQuestProps;
@@ -20,13 +21,15 @@ public class FeedingClientSettings
     public var mpGameId :int;
 
     public static function spSettings (
-        playerData :PlayerFeedingData, gameCompleteCallback :Function,
+        playerData :PlayerFeedingData, roundCompleteCallback :Function,
+        gameCompleteCallback :Function,
         activityParams :BloodBloomActivityParams, playerQuestData :PlayerQuestData = null,
         playerQuestProps :PlayerQuestProps = null) :FeedingClientSettings
     {
         var settings :FeedingClientSettings = new FeedingClientSettings();
         settings.spOnly = true;
         settings.playerData = playerData.clone();
+        settings.roundCompleteCallback = roundCompleteCallback;
         settings.gameCompleteCallback = gameCompleteCallback;
         settings.spActivityParams = activityParams;
         settings.playerQuestData = playerQuestData;
@@ -35,13 +38,15 @@ public class FeedingClientSettings
     }
 
     public static function mpSettings (gameId :int, playerData :PlayerFeedingData,
-        gameCompleteCallback :Function, playerQuestData :PlayerQuestData = null,
+        roundCompleteCallback :Function, gameCompleteCallback :Function,
+        playerQuestData :PlayerQuestData = null,
         playerQuestProps :PlayerQuestProps = null) :FeedingClientSettings
     {
         var settings :FeedingClientSettings = new FeedingClientSettings();
         settings.spOnly = false;
         settings.mpGameId = gameId;
         settings.playerData = playerData.clone();
+        settings.roundCompleteCallback = roundCompleteCallback;
         settings.gameCompleteCallback = gameCompleteCallback;
         settings.playerQuestData = playerQuestData;
         settings.playerQuestProps = playerQuestProps;

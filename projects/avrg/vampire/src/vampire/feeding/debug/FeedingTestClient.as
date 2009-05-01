@@ -60,7 +60,7 @@ public class FeedingTestClient extends Sprite
                 var pfd :PlayerFeedingData = new PlayerFeedingData();
                 pfd.playerStrain = Logic.getPlayerBloodStrain(_gameCtrl.player.getPlayerId());
                 _curGame = FeedingClient.create(
-                    FeedingClientSettings.mpSettings(gameId, pfd, onGameComplete));
+                    FeedingClientSettings.mpSettings(gameId, pfd, onRoundComplete, onGameComplete));
 
                 addChild(_curGame);
                 freezeAvatars(true);
@@ -73,6 +73,11 @@ public class FeedingTestClient extends Sprite
                 _handshakeTimer = null;
             }
         }
+    }
+
+    protected function onRoundComplete () :void
+    {
+        log.info("onRoundComplete");
     }
 
     protected function onGameComplete () :void
