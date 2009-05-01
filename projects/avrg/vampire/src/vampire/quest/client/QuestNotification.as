@@ -29,7 +29,7 @@ public class QuestNotification extends SceneObject
         var tfGranter :TextField = contents["context_name"];
         var tfQuestName :TextField = contents["item_name"];
 
-        tfGranter.text = _quest.npcName;
+        tfGranter.text = _quest.npcName + "'s Quest";
         tfQuestName.text = _quest.displayName;
 
         var iconPlaceholder :MovieClip = contents["quest_icon_placeholder"];
