@@ -5,7 +5,7 @@ import com.threerings.flash.Vector2;
 public class VConstants
 {
     public static var LOCAL_DEBUG_MODE :Boolean = false;
-    public static const MODE_DEV :Boolean = true;
+    public static const MODE_DEV :Boolean = false;
 
     public static const PLAYERS_IN_ROOM_TRIGGERING_BALANCING :int = 8;
     public static const ROOMS_SHOWN_IN_LOAD_BALANCER :int = 5;
@@ -25,7 +25,7 @@ public class VConstants
     /**
     * Generations below Lilith shown in the Lineage furn
     */
-    public static const GENERATIONS_BELOW_LILITH_FURN_LINEAGE :int = 3;
+    public static const GENERATIONS_BELOW_LILITH_FURN_LINEAGE :int = 10;
 
     /**
     * The max characters in names displayed in the lineage.  Since we cannot display long
