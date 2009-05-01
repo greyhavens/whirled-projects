@@ -159,8 +159,8 @@ public class MainGameMode extends AppMode
         }
 
         //Init the quests
-//        QuestClient.init(ClientContext.ctrl, ClientContext.game, this, layerLowPriority,
-//            _spriteLayerMinigame, layerHighPriority);
+        QuestClient.init(ClientContext.ctrl, ClientContext.game, this, layerLowPriority,
+            _spriteLayerMinigame, layerHighPriority);
 
     }
 
