@@ -97,7 +97,7 @@ public class MainGameMode extends AppMode
 
         //Init the feeding game, if we're not testing.
         if (!VConstants.LOCAL_DEBUG_MODE) {
-            FeedingClient.init(modeSprite, ClientContext.ctrl);
+            FeedingClient.init(_spriteLayerMinigame, ClientContext.ctrl);
         }
 
         registerListener(ClientContext.ctrl.player, MessageReceivedEvent.MESSAGE_RECEIVED,
