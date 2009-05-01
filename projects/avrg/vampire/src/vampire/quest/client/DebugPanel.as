@@ -45,6 +45,10 @@ public class DebugPanel extends GenericDraggableWindow
             clearActivities();
         });
 
+        createButton("Close", function (...ignored) :void {
+            QuestClient.showDebugPanel(false);
+        });
+
         createNewLayoutRow(15);
 
         // props

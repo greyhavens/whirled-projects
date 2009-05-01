@@ -17,9 +17,10 @@ import vampire.data.VConstants;
 import vampire.net.messages.DebugMsg;
 import vampire.net.messages.SendGlobalMsg;
 import vampire.net.messages.StatsMsg;
+import vampire.quest.client.QuestClient;
+import vampire.server.LogicServer;
 import vampire.server.PlayerData;
 import vampire.server.ServerContext;
-import vampire.server.LogicServer;
 
 public class AdminPanel extends DraggableObject
 {
@@ -186,11 +187,15 @@ public class AdminPanel extends DraggableObject
         });
         _menuSprite.addChild(getLineageButton);
 
+        var questDebugButton :SimpleTextButton = new SimpleTextButton("Quest Debug");
+        questDebugButton.x = getLineageButton.x;
+        questDebugButton.y = getLineageButton.y + 40;
+        registerListener(questDebugButton, MouseEvent.CLICK, function (...ignored) :void {
+            QuestClient.showDebugPanel(true);
+        });
+        _menuSprite.addChild(questDebugButton);
 
         _displaySprite.addChild(_menuSprite);
-
-
-
     }
 
     protected function getStats(... ignored) :void
