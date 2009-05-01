@@ -72,7 +72,7 @@ public class DebugPanel extends GenericDraggableWindow
             if (quest == null) {
                 setStatusText("No quest named " + name + " exists.");
             } else {
-                ClientCtx.questData.addQuest(quest.id);
+                ClientCtx.questData.addQuest(quest);
             }
         });
 
@@ -82,7 +82,7 @@ public class DebugPanel extends GenericDraggableWindow
             if (quest == null) {
                 setStatusText("No quest named " + name + " exists.");
             } else {
-                ClientCtx.questData.completeQuest(quest.id);
+                ClientCtx.questData.completeQuest(quest);
             }
         });
 
@@ -173,7 +173,7 @@ public class DebugPanel extends GenericDraggableWindow
     protected function clearQuests (...ignored) :void
     {
         for each (var questId :int in ClientCtx.questData.activeAndCompleteQuestIds) {
-            ClientCtx.questData.debugClearQuest(questId);
+            ClientCtx.questData.debugClearQuest(Quests.getQuest(questId));
         }
     }
 

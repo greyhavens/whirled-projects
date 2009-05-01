@@ -194,7 +194,7 @@ public class QuestClient
     {
         for each (var quest :QuestDesc in ClientCtx.questData.activeQuests) {
             if (quest.isComplete(ClientCtx.questProps)) {
-                ClientCtx.questData.completeQuest(quest.id);
+                ClientCtx.questData.completeQuest(quest);
             }
         }
     }

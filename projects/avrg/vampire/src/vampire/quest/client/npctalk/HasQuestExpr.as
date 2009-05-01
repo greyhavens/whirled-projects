@@ -18,7 +18,7 @@ public class HasQuestExpr
 
     public function eval () :*
     {
-        var status :int = ClientCtx.questData.getQuestStatus(_quest.id);
+        var status :int = ClientCtx.questData.getQuestStatus(_quest);
         switch (_exprType) {
         case IS_ACTIVE:
             return status == PlayerQuestData.STATUS_ACTIVE;

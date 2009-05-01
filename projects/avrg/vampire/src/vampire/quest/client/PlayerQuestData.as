@@ -70,27 +70,33 @@ public class PlayerQuestData extends EventDispatcher
         _props.set(PROP_LAST_JUICE_REFRESH, val);
     }
 
-    public function addQuest (questId :int) :void
+    public function addQuest (quest :QuestDesc) :void
     {
-        _props.setIn(PROP_QUESTS, questId, STATUS_ACTIVE);
+        _props.setIn(PROP_QUESTS, quest.id, STATUS_ACTIVE);
     }
 
-    public function completeQuest (questId :int) :void
+    public function completeQuest (quest :QuestDesc) :void
     {
-        _props.setIn(PROP_QUESTS, questId, STATUS_COMPLETE);
+        _props.setIn(PROP_QUESTS, quest.id, STATUS_COMPLETE);
         // every time a quest is completed, clear untracked properties to keep
         // our property space clean!
         ClientCtx.questProps.clearUntrackedProps();
     }
 
-    public function debugClearQuest (questId :int) :void
+    public function debugClearQuest (quest :QuestDesc) :void
     {
         // we only do this for debug purposes, never in the normal course of a game
-        _props.setIn(PROP_QUESTS, questId, null);
+        _props.setIn(PROP_QUESTS, quest.id, null);
     }
 
-    public function getQuestStatus (questId :int) :int
+    public function getQuestStatus (quest :QuestDesc) :int
     {
+        return getQuestStatusFromId(quest.id);
+    }
+
+    public function getQuestStatusFromId (questId :int) :int
+    {
+
         var dict :Dictionary = _props.get(PROP_QUESTS) as Dictionary;
         // if the questId isn't in the dictionary, dict[questId] will be undefined, and
         // int(undefined) == 0 == STATUS_NOT_ADDED, so returning dict[questId] is safe here
@@ -107,7 +113,7 @@ public class PlayerQuestData extends EventDispatcher
     {
         return this.activeAndCompleteQuestIds.filter(
             function (questId :int, ...ignored) :Boolean {
-                return (getQuestStatus(questId) == STATUS_ACTIVE);
+                return (getQuestStatusFromId(questId) == STATUS_ACTIVE);
         });
     }
 

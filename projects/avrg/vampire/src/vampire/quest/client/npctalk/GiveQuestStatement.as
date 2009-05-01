@@ -19,7 +19,7 @@ public class GiveQuestStatement
 
     public function update (dt :Number, state :Object) :Number
     {
-        ClientCtx.questData.addQuest(_quest.id);
+        ClientCtx.questData.addQuest(_quest);
         return Status.CompletedInstantly;
     }
 
