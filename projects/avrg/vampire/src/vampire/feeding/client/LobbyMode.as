@@ -277,6 +277,12 @@ public class LobbyMode extends AppMode
             }
         }
 
+        if (ClientCtx.clientSettings.spOnly &&
+            ClientCtx.clientSettings.spActivityParams.minScore > 0) {
+            statusText = "You must score at least " +
+                ClientCtx.clientSettings.spActivityParams.minScore + " points to be successful";
+        }
+
         if (statusText != null) {
             _tfStatus.text = statusText;
             _tfStatus.visible = true;
