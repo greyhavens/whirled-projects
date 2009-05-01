@@ -16,21 +16,6 @@ import vampire.quest.*;
 
 public class PlayerQuestProps extends EventDispatcher
 {
-    public static function makePermanent (propName :String) :String
-    {
-        return (isPermanent(propName) ? propName : PERMANENT + propName);
-    }
-
-    public static function makeTransient (propName :String) :String
-    {
-        return (isPermanent(propName) ? propName.substr(PERMANENT.length) : propName);
-    }
-
-    public static function isPermanent (propName :String) :Boolean
-    {
-        return (PERMANENT == propName.substr(0, PERMANENT.length));
-    }
-
     public function PlayerQuestProps (propCtrl :PropertySubControl)
     {
         _propCtrl = new ImmediatePropControl(new NamespacePropControl(NAMESPACE, propCtrl));
@@ -58,7 +43,7 @@ public class PlayerQuestProps extends EventDispatcher
     {
         // properties are only tracked if they begin with "#", or
         // if there's an active quest that cares about it
-        if (isPermanent(name)) {
+        if (QuestProps.isPermanent(name)) {
             return true;
         } else {
             for each (var activeQuest :QuestDesc in ClientCtx.questData.activeQuests) {
@@ -136,8 +121,6 @@ public class PlayerQuestProps extends EventDispatcher
     protected static var log :Log = Log.getLog(PlayerQuestProps);
 
     protected static const NAMESPACE :String = "pqs";
-
-    protected static const PERMANENT :String = "#";
 }
 
 }

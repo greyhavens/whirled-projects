@@ -97,7 +97,7 @@ public class Activities
             -1,
             100,
             variantSettings,
-            "pandora_feedings", 1);
+            QuestProps.PANDORA_FEEDINGS, 1);
 
         return new ActivityDesc(
             loc,

@@ -22,15 +22,16 @@ public class Quests
         pandorasBox.displayName = "Open the Box";
         pandorasBox.description = "Drain 5 partiers at the Pandora's Box nightclub";
         pandorasBox.usePropValDifferences = true;
-        makeCollectionRequirement(pandorasBox, "pandora_feedings", 5);
+        makeCollectionRequirement(pandorasBox, QuestProps.PANDORA_FEEDINGS, 5);
         addQuest(pandorasBox);
 
         var theHunger :QuestDesc = new QuestDesc();
         pandorasBox.npc = Npc.LILITH;
         theHunger.name = "hunger_quest";
         theHunger.displayName = "The Hunger";
-        theHunger.description = "(placeholder)";
-        makeCollectionRequirement(theHunger, "hunger_feedings", 10);
+        theHunger.description = "Feed on 10 of your fellow vampires";
+        theHunger.usePropValDifferences = true;
+        makeCollectionRequirement(theHunger, QuestProps.NORMAL_FEEDINGS, 10);
         addQuest(theHunger);
     }
 

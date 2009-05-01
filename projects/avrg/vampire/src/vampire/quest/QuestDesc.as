@@ -63,7 +63,7 @@ public class QuestDesc
 
     public function getPropInitName (propName :String) :String
     {
-        return String(this.id) + "_init_" + PlayerQuestProps.makeTransient(propName)
+        return String(this.id) + "_init_" + QuestProps.makeTransient(propName)
     }
 
     public function isRelevantProp (propName :String) :Boolean
