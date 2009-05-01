@@ -1,6 +1,5 @@
 package vampire.quest {
 
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.StringUtil;
 
 import vampire.Util;
@@ -21,6 +20,11 @@ public class QuestDesc
 
     // A list of quest props that this quest cares about
     public var relevantProps :Array = [];
+
+    // If true, the values of the quest's relevant properties are stored when the quest
+    // is added, and the difference between the props' initial values and their current
+    // values are used in calculating quest progress
+    public var usePropValDifferences :Boolean;
 
     // Requirements for quest availability
     public var requiredQuests :Array = []; // list of ids
@@ -57,9 +61,21 @@ public class QuestDesc
         return Util.getStringHash(name);
     }
 
+    public function getPropInitName (propName :String) :String
+    {
+        return String(this.id) + "_init_" + PlayerQuestProps.makeTransient(propName)
+    }
+
     public function isRelevantProp (propName :String) :Boolean
     {
-        return ArrayUtil.contains(this.relevantProps, propName);
+        for each (var relevantPropName :String in this.relevantProps) {
+            if ((propName == relevantPropName) ||
+                (this.usePropValDifferences && propName == getPropInitName(relevantPropName))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function isComplete (props :PlayerQuestProps) :Boolean

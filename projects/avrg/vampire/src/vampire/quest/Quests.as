@@ -21,6 +21,7 @@ public class Quests
         pandorasBox.name = "pandora_quest";
         pandorasBox.displayName = "Open the Box";
         pandorasBox.description = "Drain 5 partiers at the Pandora's Box nightclub";
+        pandorasBox.usePropValDifferences = true;
         makeCollectionRequirement(pandorasBox, "pandora_feedings", 5);
         addQuest(pandorasBox);
 
@@ -57,18 +58,29 @@ public class Quests
         _quests.put(desc.id, desc);
     }
 
-    protected static function makeCollectionRequirement (desc :QuestDesc, statName :String,
+    protected static function makeCollectionRequirement (desc :QuestDesc, propName :String,
         num :int) :void
     {
-        desc.relevantProps.push(statName);
+        desc.relevantProps.push(propName);
+
+        function getCurValue (props :PlayerQuestProps) :int {
+            var initialValue :int;
+            if (desc.usePropValDifferences) {
+                initialValue = props.getIntProp(desc.getPropInitName(propName));
+            }
+
+            return props.getIntProp(propName) - initialValue;
+        }
+
         desc.isCompletedFn = function (props :PlayerQuestProps) :Boolean {
-            return props.getIntProp(statName) >= num;
+            return (getCurValue(props) >= num);
         };
+
         desc.getProgressTextFn = function (props :PlayerQuestProps) :String {
-            var cur :int = props.getIntProp(statName);
+            var cur :int = getCurValue(props);
             var remaining :int = Math.max(num - cur, 0);
             return "(" + remaining + " remaining)";
-        }
+        };
     }
 
     protected static function checkInited () :void

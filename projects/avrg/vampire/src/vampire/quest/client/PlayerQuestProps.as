@@ -21,6 +21,11 @@ public class PlayerQuestProps extends EventDispatcher
         return (isPermanent(propName) ? propName : PERMANENT + propName);
     }
 
+    public static function makeTransient (propName :String) :String
+    {
+        return (isPermanent(propName) ? propName.substr(PERMANENT.length) : propName);
+    }
+
     public static function isPermanent (propName :String) :Boolean
     {
         return (PERMANENT == propName.substr(0, PERMANENT.length));
@@ -51,7 +56,7 @@ public class PlayerQuestProps extends EventDispatcher
 
     public function isTrackedProp (name :String) :Boolean
     {
-        // properties are only tracked if they begin with "!", or
+        // properties are only tracked if they begin with "#", or
         // if there's an active quest that cares about it
         if (isPermanent(name)) {
             return true;
@@ -132,7 +137,7 @@ public class PlayerQuestProps extends EventDispatcher
 
     protected static const NAMESPACE :String = "pqs";
 
-    protected static const PERMANENT :String = "!";
+    protected static const PERMANENT :String = "#";
 }
 
 }

@@ -73,6 +73,14 @@ public class PlayerQuestData extends EventDispatcher
     public function addQuest (quest :QuestDesc) :void
     {
         _props.setIn(PROP_QUESTS, quest.id, STATUS_ACTIVE);
+
+        if (quest.usePropValDifferences) {
+            // record the initial value of the properties this quest cares about
+            for each (var propName :String in quest.relevantProps) {
+                var curValue :Object = ClientCtx.questProps.getProp(propName);
+                ClientCtx.questProps.setProp(quest.getPropInitName(propName), curValue);
+            }
+        }
     }
 
     public function completeQuest (quest :QuestDesc) :void
