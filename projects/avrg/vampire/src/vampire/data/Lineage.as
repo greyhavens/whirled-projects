@@ -466,6 +466,26 @@ public class Lineage extends SimObject
         }
     }
 
+    public function toArray () :Array
+    {
+        var a :Array = [];
+        for each (var playerId :int in playerIds) {
+            a.push([playerId, getSireId(playerId), getPlayerName(playerId)]);
+        }
+        return a;
+    }
+
+    public function fromArray (a :Array) :void
+    {
+        for each (var arr :Array in a) {
+            var playerId :int = arr[0] as int;
+            var sireId :int = arr[1] as int;
+            var name :String = arr[2] as String;
+            setPlayerSire(playerId, sireId);
+            setPlayerName(playerId, name);
+        }
+    }
+
     /**
     * Returns Lineage up to and including sire and grandchildren.
     */
