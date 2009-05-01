@@ -1,12 +1,10 @@
-package fakeavrg
+package com.whirled.contrib.avrg.debug.fakeavrg
 {
     import com.threerings.util.ArrayUtil;
     import com.whirled.AbstractControl;
     import com.whirled.avrg.AVRGameAvatar;
     import com.whirled.avrg.RoomSubControlClient;
     import com.whirled.net.PropertyGetSubControl;
-
-    import framework.FakeAVRGContext;
 
     public class RoomSubControlClientFake extends RoomSubControlClient
     {

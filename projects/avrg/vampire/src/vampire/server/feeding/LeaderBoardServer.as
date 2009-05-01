@@ -12,8 +12,6 @@ import com.whirled.contrib.simplegame.tasks.TimedTask;
 import com.whirled.net.NetConstants;
 import com.whirled.net.PropertySubControl;
 
-import fakeavrg.PropertySubControlFake;
-
 import vampire.data.VConstants;
 import vampire.server.ServerContext;
 
@@ -275,38 +273,38 @@ public class LeaderBoardServer extends SimObject
         return maxScore;
     }
 
-    public static function debug () :void
-    {
-
-        var agentprops :PropertySubControl = new PropertySubControlFake();
-        var globalprops :PropertySubControl = new PropertySubControlFake();
-        var now :Number = new Date().time;
-
-        agentprops.set(AGENT_PROP_SCORES_DAILY,[
-                                                    [10, "tenners", now - 30],
-                                                    [100, "hundreders", now - DAY_SECONDS],
-                                                    [1000, "thousanders", now - DAY_SECONDS + 100],
-                                                    ]);
-        agentprops.set(AGENT_PROP_SCORES_MONTHLY, [
-                                                        [101, "tennersM", now - 30],
-                                                        [1001, "hundredersM", now - MONTH_SECONDS],
-                                                        [10001, "thousandersM", now - MONTH_SECONDS  + 100],
-                                                      ]);
-
-        var board :LeaderBoardServer = new LeaderBoardServer(agentprops, globalprops);
-        board.localDebug = true;
-        trace("Start " + board);
-
-        trace("New scores");
-        var scores :HashMap = new HashMap();
-        scores.put(1, 200);
-        scores.put(2, 230);
-        scores.put(3, 430);
-        board.receiveMessage(new ObjectMessage(MESSAGE_LEADER_BOARD_MESSAGE_SCORES, scores));
-        trace("after scores " + board);
-
-        trace("fresh board from props: " + new LeaderBoardServer(agentprops, globalprops));
-    }
+//    public static function debug () :void
+//    {
+//
+//        var agentprops :PropertySubControl = new PropertySubControlFake();
+//        var globalprops :PropertySubControl = new PropertySubControlFake();
+//        var now :Number = new Date().time;
+//
+//        agentprops.set(AGENT_PROP_SCORES_DAILY,[
+//                                                    [10, "tenners", now - 30],
+//                                                    [100, "hundreders", now - DAY_SECONDS],
+//                                                    [1000, "thousanders", now - DAY_SECONDS + 100],
+//                                                    ]);
+//        agentprops.set(AGENT_PROP_SCORES_MONTHLY, [
+//                                                        [101, "tennersM", now - 30],
+//                                                        [1001, "hundredersM", now - MONTH_SECONDS],
+//                                                        [10001, "thousandersM", now - MONTH_SECONDS  + 100],
+//                                                      ]);
+//
+//        var board :LeaderBoardServer = new LeaderBoardServer(agentprops, globalprops);
+//        board.localDebug = true;
+//        trace("Start " + board);
+//
+//        trace("New scores");
+//        var scores :HashMap = new HashMap();
+//        scores.put(1, 200);
+//        scores.put(2, 230);
+//        scores.put(3, 430);
+//        board.receiveMessage(new ObjectMessage(MESSAGE_LEADER_BOARD_MESSAGE_SCORES, scores));
+//        trace("after scores " + board);
+//
+//        trace("fresh board from props: " + new LeaderBoardServer(agentprops, globalprops));
+//    }
 
     override public function toString () :String
     {

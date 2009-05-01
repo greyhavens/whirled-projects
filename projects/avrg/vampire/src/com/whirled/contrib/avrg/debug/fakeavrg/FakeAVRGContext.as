@@ -1,4 +1,4 @@
-package framework
+package com.whirled.contrib.avrg.debug.fakeavrg
 {
     import com.whirled.contrib.simplegame.net.BasicMessageManager;
     import com.whirled.contrib.simplegame.net.MessageManager;

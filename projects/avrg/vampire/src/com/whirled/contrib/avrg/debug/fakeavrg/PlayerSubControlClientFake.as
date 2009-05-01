@@ -1,10 +1,8 @@
-package fakeavrg
+package com.whirled.contrib.avrg.debug.fakeavrg
 {
     import com.whirled.AbstractControl;
     import com.whirled.avrg.PlayerSubControlClient;
     import com.whirled.net.PropertySubControl;
-
-    import framework.FakeAVRGContext;
 
     public class PlayerSubControlClientFake extends PlayerSubControlClient
     {

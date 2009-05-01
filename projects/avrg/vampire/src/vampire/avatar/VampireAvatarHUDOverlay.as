@@ -1,20 +1,15 @@
 package vampire.avatar
 {
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.Command;
 import com.threerings.util.HashSet;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.avrg.AvatarHUD;
 import com.whirled.contrib.avrg.TargetingOverlayAvatars;
 
-import flash.display.Sprite;
 import flash.events.MouseEvent;
 
-import framework.FakeAVRGContext;
-
 import vampire.client.ClientContext;
-import vampire.client.VampireController;
 import vampire.data.VConstants;
 
 
@@ -116,15 +111,15 @@ public class VampireAvatarHUDOverlay extends TargetingOverlayAvatars
     protected function getValidPlayerIdTargets() :HashSet
     {
         //Debugging mode
-        if(VConstants.LOCAL_DEBUG_MODE) {
-            var a :HashSet = new HashSet();
-            FakeAVRGContext.playerIds.forEach(function(playerId :int, ...ignored) :void {
-                a.add(playerId);
-
-            });
-            a.remove(ClientContext.ourPlayerId);
-            return a;
-        }
+//        if(VConstants.LOCAL_DEBUG_MODE) {
+//            var a :HashSet = new HashSet();
+//            FakeAVRGContext.playerIds.forEach(function(playerId :int, ...ignored) :void {
+//                a.add(playerId);
+//
+//            });
+//            a.remove(ClientContext.ourPlayerId);
+//            return a;
+//        }
         var validIds :HashSet = new HashSet();
 
         var playersAlreadyFeeding :Array = ClientContext.model.playersFeeding;

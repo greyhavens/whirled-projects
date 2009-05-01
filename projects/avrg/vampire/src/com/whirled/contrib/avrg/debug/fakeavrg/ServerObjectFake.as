@@ -1,4 +1,4 @@
-package fakeavrg
+package com.whirled.contrib.avrg.debug.fakeavrg
 {
 import com.whirled.ServerObject;
 

@@ -1,4 +1,4 @@
-package framework
+package com.whirled.contrib.avrg.debug.fakeavrg
 {
     public class PlayerContext
     {

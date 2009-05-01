@@ -1,12 +1,10 @@
-package fakeavrg
+package com.whirled.contrib.avrg.debug.fakeavrg
 {
     import com.whirled.AbstractControl;
     import com.whirled.avrg.LocalSubControl;
 
     import flash.geom.Point;
     import flash.geom.Rectangle;
-
-    import framework.FakeAVRGContext;
 
     public class LocalSubControlFake extends LocalSubControl
     {
