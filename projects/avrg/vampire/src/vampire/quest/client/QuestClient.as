@@ -74,6 +74,11 @@ public class QuestClient
         handshakeQuestTotems(false);
     }
 
+    public static function playerCompletedFeeding () :void
+    {
+        ClientCtx.questProps.offsetIntProp(QuestProps.NORMAL_FEEDINGS, 1);
+    }
+
     public static function checkQuestJuiceRefresh () :void
     {
         // TODO
