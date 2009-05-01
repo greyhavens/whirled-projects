@@ -26,10 +26,8 @@ public class GameServer extends ObjectDB
 {
     public function GameServer ()
     {
-        trace("Vampire Server initializing...");
         log.info("Vampire Server initializing...");
         if(ServerContext.ctrl != null) {
-            log.error("AVRServerGameControl should of been initialized already");
             ServerContext.server = this;
 
             _ctrl = ServerContext.ctrl;
