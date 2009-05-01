@@ -27,7 +27,7 @@ public class ActivityAddedNotification extends SceneObject
         var tfLocation :TextField = contents["context_name"];
         var tfActivity :TextField = contents["item_name"];
 
-        tfLocation.text = _activity.loc.displayName;
+        tfLocation.text = "New Location";
         tfActivity.text = _activity.displayName;
 
         var burst :MovieClip = contents["complete_burst"];
