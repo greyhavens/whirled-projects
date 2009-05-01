@@ -129,6 +129,7 @@ public class FeedingRecord extends EventCollecter
             }
             //Tell the pred to move into position
             LogicFeeding.movePredatorIntoPosition(player, this);
+            _room.addPlayerToFeedingUnavailableList(playerId);
         }
 
         if (prey) {
@@ -194,6 +195,7 @@ public class FeedingRecord extends EventCollecter
             _gameFinishedCallback();
             _gameFinishedCallback = null;
         }
+        _room.removePlayerToFeedingUnavailableList(playerId);
     }
 
     public function joinLobby(playerId :int) :void
@@ -259,6 +261,7 @@ public class FeedingRecord extends EventCollecter
 
             for each(var gamePlayerId :int in _gameServer.playerIds) {
                 _gameServer.playerLeft(gamePlayerId);
+                _room.removePlayerToFeedingUnavailableList(gamePlayerId);
             }
         }
         if (_gameServer != null) {

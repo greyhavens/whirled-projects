@@ -17,8 +17,6 @@ import com.whirled.contrib.simplegame.tasks.RepeatingTask;
 import com.whirled.contrib.simplegame.tasks.SerialTask;
 import com.whirled.contrib.simplegame.tasks.TimedTask;
 
-import flash.utils.ByteArray;
-
 import vampire.data.Codes;
 import vampire.net.messages.RoomNameMsg;
 import vampire.server.feeding.FeedingManager;
@@ -154,6 +152,7 @@ public class Room extends SimObject
         log.debug("room.playerLeft, removing from feeding games " + player.name);
 
         _bloodBloomGameManager.playerQuitsGameOrRoom(player.playerId);
+        removePlayerToFeedingUnavailableList(player.playerId);
         //Delete the lineage for this player
         _ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, player.playerId, null);
     }
@@ -180,16 +179,16 @@ public class Room extends SimObject
             }
 
             //Update the playerIds of players playing the feeding game
-            var playerIdsFeedingNow :Array = bloodBloomGameManager.unavailablePlayers;
-            //Sort for comparion
-            playerIdsFeedingNow.sort();
-            var playerIdsFeedingPrevious :Array =
-                _ctrl.props.get(Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE) as Array;
-
-            if(!ArrayUtil.equals(playerIdsFeedingNow, playerIdsFeedingPrevious)) {
-                log.debug("Room " + roomId + ", Setting busy players=" + playerIdsFeedingNow);
-                _ctrl.props.set(Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE, playerIdsFeedingNow);
-            }
+//            var playerIdsFeedingNow :Array = bloodBloomGameManager.unavailablePlayers;
+//            //Sort for comparion
+//            playerIdsFeedingNow.sort();
+//            var playerIdsFeedingPrevious :Array =
+//                _ctrl.props.get(Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE) as Array;
+//
+//            if(!ArrayUtil.equals(playerIdsFeedingNow, playerIdsFeedingPrevious)) {
+//                log.debug("Room " + roomId + ", Setting busy players=" + playerIdsFeedingNow);
+//                _ctrl.props.set(Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE, playerIdsFeedingNow);
+//            }
 
 
         }
@@ -311,11 +310,29 @@ public class Room extends SimObject
         }
     }
 
-    public function setPlayerLineage (playerId :int, lineageBytes :ByteArray) :void
+    public function addPlayerToFeedingUnavailableList (playerId :int) :void
     {
-
+        var arr :Array = _ctrl.props.get(Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE) as Array;
+        if (arr == null) {
+            arr = new Array();
+        }
+        if (!ArrayUtil.contains(arr, playerId)) {
+            arr.push(playerId);
+            _ctrl.props.set(Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE, arr, true);
+        }
     }
 
+    public function removePlayerToFeedingUnavailableList (playerId :int) :void
+    {
+        var arr :Array = _ctrl.props.get(Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE) as Array;
+        if (arr == null) {
+            arr = new Array();
+        }
+        if (ArrayUtil.contains(arr, playerId)) {
+            ArrayUtil.removeAll(arr, playerId);
+            _ctrl.props.set(Codes.ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE, arr, true);
+        }
+    }
 
     /**
     * Holds BloodBloomGameRecord objects.  They have countdown timers so need to be updated.
