@@ -227,6 +227,13 @@ public class BloodBloom extends FeedingClient
             } else {
                 log.warning("Missing mus_main_theme level pack");
             }
+
+            url = levelPacks.getMediaURL("mus_corruption_theme");
+            if (url != null) {
+                rm.queueResourceLoad("sound", "mus_corruption_theme", { url: url, type: "music", completeImmediately: true});
+            } else {
+                log.warning("Missing mus_corruption_theme level pack");
+            }
         }
 
         rm.loadQueuedResources(

@@ -211,7 +211,9 @@ public class GameMode extends AppMode
     {
         super.enter();
         if (_musicChannel == null) {
-            _musicChannel = ClientCtx.audio.playSoundNamed("mus_main_theme", null, -1);
+            var musicName :String =
+                (ClientCtx.isCorruption ? "mus_corruption_theme" : "mus_main_theme");
+            _musicChannel = ClientCtx.audio.playSoundNamed(musicName, null, -1);
         }
     }
 
