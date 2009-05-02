@@ -137,7 +137,7 @@ You may not realize it yet, but you need me to guide you through this cruel worl
 	</Routine>
 	
 	<Routine name="HasHungerQuest">
-		<Say speaker="Lilith" text="Still looking a bit piqued, kitten! I need you strong and healthy if you're to be of any use." response="(More)"/>
+		<Say speaker="Lilith" text="Still looking a bit peaked, kitten! I need you strong and healthy if you're to be of any use." response="(More)"/>
 		<Say speaker="Lilith" text="Come back when you've fed a bit more." response="(Leave)"/>
 		<Exit/>
 	</Routine>
