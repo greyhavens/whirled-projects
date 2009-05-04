@@ -4,14 +4,15 @@ import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.StringBuilder;
 import com.whirled.avrg.AVRServerGameControl;
+import com.whirled.contrib.simplegame.objects.BasicGameObject;
 import com.whirled.net.NetConstants;
 import com.whirled.net.PropertySubControl;
 
+import flash.net.registerClassAlias;
 import flash.utils.clearInterval;
 import flash.utils.setInterval;
 
 import vampire.data.VConstants;
-import vampire.net.messages.DebugMsg;
 import vampire.server.GameServer;
 import vampire.server.ServerContext;
 
@@ -20,7 +21,7 @@ import vampire.server.ServerContext;
  * Permanently stores props on the server only, and copies non-permanent high scores into the
  * global game-wide props.
  */
-public class LeaderBoardServer
+public class LeaderBoardServer extends BasicGameObject
 {
     /**
     * The props are currently the distribute-to-all clients props.
@@ -31,7 +32,7 @@ public class LeaderBoardServer
             _ctrl = game.control;
             _propsServer = _ctrl.props;
             _propsGlobal = _ctrl.game.props;
-            game.addEventListener(FeedingHighScoreEvent.HIGH_SCORE, handleHighScoreEvent);
+            _events.registerListener(game, FeedingHighScoreEvent.HIGH_SCORE, handleHighScoreEvent);
 
             setup();
         }
@@ -297,7 +298,7 @@ public class LeaderBoardServer
 //
 //    }
 
-    public function toString () :String
+    override public function toString () :String
     {
         var ii :int;
         var scoreArray :Array;
