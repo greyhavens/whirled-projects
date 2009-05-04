@@ -33,14 +33,13 @@ public class LineageServer extends Lineage
         _events.registerListener(vserver, PlayerMovedEvent.PLAYER_LEFT_ROOM,
             handlePlayerLeftRoom);
 
-        addIntervalId(setInterval(update, UPDATE_TIME_MS));
+//        addIntervalId(setInterval(update, UPDATE_TIME_MS));
     }
 
     public function handlePlayerEnteredRoom (e :PlayerMovedEvent) :void
     {
         if (e.room != null && e.player != null) {
-            e.room.ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, e.player.playerId,
-                e.player.lineage, true);
+            updateLineageIntoRoomProps(e.player);
         }
     }
     public function handlePlayerLeftRoom (e :PlayerMovedEvent) :void
@@ -58,6 +57,7 @@ public class LineageServer extends Lineage
     public function resendPlayerLineage (playerId :int) :void
     {
         _playerIdsResendLineage.add(playerId);
+        flushPlayerLineages();
     }
 
     /**
@@ -114,6 +114,7 @@ public class LineageServer extends Lineage
             _playerIdsResendLineage.add(child);
         }
         recursivelyLoadSires(player.playerId);
+        flushPlayerLineages();
     }
 
 
@@ -163,9 +164,13 @@ public class LineageServer extends Lineage
     * We send new Lineages to players with new data in their linages.
     *
     */
-    protected function update(dt:Number = 0) :void
+//    protected function update(dt:Number = 0) :void
+//    {
+////        super.update(dt);
+//    }
+
+    protected function flushPlayerLineages () :void
     {
-//        super.update(dt);
         _vserver.control.doBatch( function () :void {
             _playerIdsResendLineage.forEach(function (playerId :int) :void {
                 if (_vserver.isPlayer(playerId)) {
@@ -178,6 +183,14 @@ public class LineageServer extends Lineage
             });
         });
         _playerIdsResendLineage.clear();
+    }
+
+    protected function updateLineageIntoRoomProps (player :PlayerData) :void
+    {
+        if (player != null && player.room != null) {
+            player.room.ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, player.playerId,
+                player.lineage, true);
+        }
     }
 
     override public function toString():String
@@ -214,6 +227,7 @@ public class LineageServer extends Lineage
         for each (var child :int in getAllDescendents(playerId, null, 2)) {
             _playerIdsResendLineage.add(child);
         }
+        flushPlayerLineages();
     }
 
     protected function loadOfflinePlayer (playerId :int) :void
@@ -297,6 +311,7 @@ public class LineageServer extends Lineage
         for each (var child :int in getAllDescendents(playerId, null, 2)) {
             _playerIdsResendLineage.add(child);
         }
+        flushPlayerLineages();
     }
 
     /**

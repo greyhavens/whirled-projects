@@ -109,17 +109,11 @@ public class PlayerData extends EventHandlerManager
     public function get lineage () :ByteArray
     {
         return _lineage;
-//        return _propsUndater.get(Codes.PLAYER_PROP_LINEAGE) as ByteArray;
     }
 
     public function set lineage (b :ByteArray) :void
     {
         _lineage = b;
-//        _propsUndater.put(Codes.PLAYER_PROP_LINEAGE, b);
-//        _updateLineage = true;
-        if (room != null) {
-            room.ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, playerId, lineage, true);
-        }
     }
 
     public function addFeedback (msg :String, priority :int = 1) :void
