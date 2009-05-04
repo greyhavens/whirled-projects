@@ -3,16 +3,15 @@ package vampire.server.feeding
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.StringBuilder;
-import com.whirled.contrib.simplegame.ObjectMessage;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.tasks.FunctionTask;
-import com.whirled.contrib.simplegame.tasks.RepeatingTask;
-import com.whirled.contrib.simplegame.tasks.SerialTask;
-import com.whirled.contrib.simplegame.tasks.TimedTask;
+import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.net.NetConstants;
 import com.whirled.net.PropertySubControl;
 
+import flash.utils.clearInterval;
+import flash.utils.setInterval;
+
 import vampire.data.VConstants;
+import vampire.server.GameServer;
 import vampire.server.ServerContext;
 
 /**
@@ -20,16 +19,18 @@ import vampire.server.ServerContext;
  * Permanently stores props on the server only, and copies non-permanent high scores into the
  * global game-wide props.
  */
-public class LeaderBoardServer extends SimObject
+public class LeaderBoardServer
 {
     /**
     * The props are currently the distribute-to-all clients props.
     */
-    public function LeaderBoardServer (propsServer :PropertySubControl,
-        propsGlobal :PropertySubControl)
+    public function LeaderBoardServer (game :GameServer)
     {
-        _propsServer = propsServer;
-        _propsGlobal = propsGlobal;
+        _ctrl = game.control;
+        _propsServer = _ctrl.props;
+        _propsGlobal = _ctrl.game.props;
+        game.addEventListener(FeedingHighScoreEvent.HIGH_SCORE, handleHighScoreEvent);
+        setup();
     }
 
     public function resetScores () :void
@@ -44,50 +45,27 @@ public class LeaderBoardServer extends SimObject
         _propsGlobal.set(VConstants.GLOBAL_PROP_SCORES_MONTHLY, [], true);
     }
 
-    override protected function addedToDB () :void
+    protected function setup () :void
     {
-        super.addedToDB();
         //Remove the stale scores every hour.
-        addTask(new RepeatingTask(
-                    new SerialTask(new TimedTask(3600),
-                                   new FunctionTask(checkForStaleScores))));
-        //Update the global scores after a bit.
-        //There is a bug where the server props are not available immediately.
-        addTask(new SerialTask(
-                new TimedTask(4),
-                new FunctionTask(function () :void {
+//        setInterval(checkForStaleScores, SCORE_CHECK_INTERVAL);
 
-//                    _propsServer.set(AGENT_PROP_SCORES_DAILY, [], true);
-//                    _propsServer.set(AGENT_PROP_SCORES_MONTHLY, [], true);
-//
-//                    updateScoresIntoProps([], VConstants.GLOBAL_PROP_SCORES_DAILY, _propsGlobal);
-//                    updateScoresIntoProps([], VConstants.GLOBAL_PROP_SCORES_MONTHLY, _propsGlobal);
+        var id :uint = setInterval(function () :void {
+            updateScoresIntoProps(_propsServer.get(AGENT_PROP_SCORES_DAILY) as Array,
+                VConstants.GLOBAL_PROP_SCORES_DAILY, _propsGlobal);
+            updateScoresIntoProps(_propsServer.get(AGENT_PROP_SCORES_MONTHLY) as Array,
+                VConstants.GLOBAL_PROP_SCORES_MONTHLY, _propsGlobal);
+            clearInterval(id);
+        }, 1000*4);
 
-                    updateScoresIntoProps(_propsServer.get(AGENT_PROP_SCORES_DAILY) as Array,
-                        VConstants.GLOBAL_PROP_SCORES_DAILY, _propsGlobal);
-                    updateScoresIntoProps(_propsServer.get(AGENT_PROP_SCORES_MONTHLY) as Array,
-                        VConstants.GLOBAL_PROP_SCORES_MONTHLY, _propsGlobal);
-                })));
-
+        checkForStaleScores();
     }
 
     protected static function updateScoresIntoProps (scores :Array, propName :String,
         props :PropertySubControl) :void
     {
         if (props != null) {
-
-            //Chop of the score time
-            var scoresLessTime :Array = [];
-            for each (var score :Array in scores) {
-                scoresLessTime.push(score.slice(0, 2));
-            }
-
-            //Remove wacky scores
-//            scoresLessTime = scoresLessTime.filter(function (scoreData :Array, ...ignored) :Boolean {
-//                return scoreData[0] < VConstants.MAX_THEORETICAL_FEEDING_SCORE;
-//            });
-
-            props.set(propName, scoresLessTime, true);
+            props.set(propName, scores.slice(), true);
         }
     }
 
@@ -98,7 +76,11 @@ public class LeaderBoardServer extends SimObject
         var index :int = 0;
         while (index < scores.length) {
             //Check if the score is too old
-            if (now - scores[index][2] >= scoreLifetime) {
+            var scoreTime :Number = scores[index][2] as Number;
+            //Temp hack, we didn't save score times.  So if the score time is missing,
+            //set it at 5 days.  That will preserver the monthly scores.
+            scoreTime = isNaN(scoreTime) ? now - (7 * DAY_SECONDS) : scoreTime;
+            if (now - scoreTime >= scoreLifetime) {
                 scores.splice(index, 1);
             }
             else {
@@ -122,69 +104,63 @@ public class LeaderBoardServer extends SimObject
         _localHighScoreMnth = 0;
     }
 
-    override public function get objectName () :String
+    protected function handleHighScoreEvent (e :FeedingHighScoreEvent) :void
     {
-        return NAME;
+        newHighScores(e.averageScore, e.scores);
     }
 
-    override protected function receiveMessage (msg :ObjectMessage) :void
+    protected function newHighScores (averageScore :Number, playerScores :HashMap) :void
     {
-        var scoresDayTemp :Array = scoresAndNamesDay != null ? scoresAndNamesDay : [];
-        var scoresMonthTemp :Array = scoresAndNamesMonth != null ? scoresAndNamesMonth : [];
-
-        if (msg != null && msg.name == MESSAGE_LEADER_BOARD_MESSAGE_SCORES) {
-            var averageScore :Number = msg.data[0] as Number;
-            var playerScores :HashMap = msg.data[1] as HashMap;
-            if (playerScores != null) {
-                //Sort the player ids by score
-                var playerIds :Array = playerScores.keys();
-                playerIds.sort(function(playerId1 :int, playerId2 :int) :int {
-                    var score1 :Number = playerScores.get(playerId1);
-                    var score2 :Number = playerScores.get(playerId2);
-                    if (score1 > score2) {
-                        return -1;
-                    }
-                    else if (score1 == score2) {
-                        return 0;
-                    }
-                    else {
-                        return 1;
-                    }
-                });
-                //Create the name string from the players names ordered by individual scores
-                //
-                var lengthAllNames :int = 0;
-                for each (var playerId : int in playerIds) {
-                    var name :String = getPlayerName(playerId);
-                    lengthAllNames += name.length;
+        checkForStaleScores();
+        if (playerScores != null) {
+            //Sort the player ids by score
+            var playerIds :Array = playerScores.keys();
+            playerIds.sort(function(playerId1 :int, playerId2 :int) :int {
+                var score1 :Number = playerScores.get(playerId1);
+                var score2 :Number = playerScores.get(playerId2);
+                if (score1 > score2) {
+                    return -1;
                 }
-                var textFieldSize :int = 32;
-
-                var charsAvailable :int = textFieldSize - (playerIds.length - 1) * 2;
-
-                var nameString :String = "";
-                if (charsAvailable >= lengthAllNames) {
-                    playerIds.forEach(function (playerId :int, ...ignored) :void {
-                        nameString += getPlayerName(playerId) + ", ";
-                    })
+                else if (score1 == score2) {
+                    return 0;
                 }
                 else {
-
-                    var charsPerName :int = (textFieldSize - (playerIds.length - 1) * 2)
-                                            / playerIds.length;
-                    charsPerName = Math.max(charsPerName, VConstants.MAX_CHARS_IN_LINEAGE_NAME);
-                    playerIds.forEach(function (playerId :int, ...ignored) :void {
-                        nameString += getPlayerName(playerId).substr(0, charsPerName) + ", ";
-                    })
+                    return 1;
                 }
-                //Chop the last comma
-                nameString = nameString.substr(0, nameString.length - 2);
-                updateScores(averageScore, nameString);
+            });
+            //Create the name string from the players names ordered by individual scores
+            //
+            var lengthAllNames :int = 0;
+            for each (var playerId : int in playerIds) {
+                var name :String = getPlayerName(playerId);
+                lengthAllNames += name.length;
+            }
+            var textFieldSize :int = 32;
 
+            var charsAvailable :int = textFieldSize - (playerIds.length - 1) * 2;
+
+            var nameString :String = "";
+            if (charsAvailable >= lengthAllNames) {
+                playerIds.forEach(function (playerId :int, ...ignored) :void {
+                    nameString += getPlayerName(playerId) + ", ";
+                })
             }
             else {
-                log.error("receiveMessage", "msg.name", msg.name, "playerScores", playerScores);
+
+                var charsPerName :int = (textFieldSize - (playerIds.length - 1) * 2)
+                                        / playerIds.length;
+                charsPerName = Math.max(charsPerName, VConstants.MAX_CHARS_IN_LINEAGE_NAME);
+                playerIds.forEach(function (playerId :int, ...ignored) :void {
+                    nameString += getPlayerName(playerId).substr(0, charsPerName) + ", ";
+                })
             }
+            //Chop the last comma
+            nameString = nameString.substr(0, nameString.length - 2);
+            updateScores(averageScore, nameString);
+
+        }
+        else {
+            log.error("newHighScores", "averageScore", averageScore, "playerScores", playerScores);
         }
     }
 
@@ -199,7 +175,7 @@ public class LeaderBoardServer extends SimObject
 
     protected function updateScores (score :Number, names :String) :void
     {
-        var time :Number = new Date().time;
+        var time :Number = new Date().time - DAY_SECONDS;
 
         var tempScores :Array;
 
@@ -306,7 +282,7 @@ public class LeaderBoardServer extends SimObject
 //        trace("fresh board from props: " + new LeaderBoardServer(agentprops, globalprops));
 //    }
 
-    override public function toString () :String
+    public function toString () :String
     {
         var ii :int;
         var scoreArray :Array;
@@ -340,13 +316,14 @@ public class LeaderBoardServer extends SimObject
     /**Distribute the scores to all clients*/
     protected var _propsGlobal :PropertySubControl;
 
+    protected var _ctrl :AVRServerGameControl;
+
     protected var _localHighScoreDay :Number = 0;
     protected var _localHighScoreMnth :Number = 0;
 
     protected var localDebug :Boolean = false;
 
-    public static const MESSAGE_LEADER_BOARD_MESSAGE_SCORES :String = "Message: new scores";
-
+    protected static const SCORE_CHECK_INTERVAL :int = 1000*60*10;
 
     protected static const AGENT_PROP_SCORES_DAILY :String =
         NetConstants.makePersistent(VConstants.GLOBAL_PROP_SCORES_DAILY);

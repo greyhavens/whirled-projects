@@ -125,10 +125,11 @@ public class LogicFeeding extends SimObject
 
         //Send the LeaderBoard the scores
         log.debug("Sending message to LeaderBoardServer");
-        ServerContext.server.sendMessageToNamedObject(
-            new ObjectMessage(LeaderBoardServer.MESSAGE_LEADER_BOARD_MESSAGE_SCORES,
-                [averageScore, results.scores]),
-            LeaderBoardServer.NAME);
+        ServerContext.server.dispatchEvent(new FeedingHighScoreEvent(averageScore, results.scores));
+//        ServerContext.server.sendMessageToNamedObject(
+//            new ObjectMessage(LeaderBoardServer.MESSAGE_LEADER_BOARD_MESSAGE_SCORES,
+//                [averageScore, results.scores]),
+//            LeaderBoardServer.NAME);
 
         var predIds :Array = [];
         results.scores.forEach(function (playerId :int, score :Number) :void {

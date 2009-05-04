@@ -18,7 +18,7 @@ import vampire.net.messages.AvatarChosenMsg;
 import vampire.net.messages.BloodBondRequestMsg;
 import vampire.net.messages.DebugMsg;
 import vampire.net.messages.GameStartedMsg;
-import vampire.net.messages.RoomNameMsg;
+//import vampire.net.messages.RoomNameMsg;
 import vampire.net.messages.SendGlobalMsg;
 import vampire.net.messages.ShareTokenMsg;
 import vampire.net.messages.StatsMsg;
@@ -118,15 +118,15 @@ public class LogicServer extends SimObject
                     var globalMessage :String = SendGlobalMsg(msg).message;
                     ServerContext.server.addGlobalFeedback(globalMessage);
                 }
-                else if (msg is RoomNameMsg) {
-                    var roomMsg :RoomNameMsg = RoomNameMsg(msg);
-                    if (roomMsg.roomId != 0 &&
-                        ServerContext.server.getRoom(roomMsg.roomId) != null) {
-
-                        var roomNoName :Room = ServerContext.server.getRoom(roomMsg.roomId);
-                        roomNoName.handleRoomNameMsg(roomMsg);
-                    }
-                }
+//                else if (msg is RoomNameMsg) {
+//                    var roomMsg :RoomNameMsg = RoomNameMsg(msg);
+//                    if (roomMsg.roomId != 0 &&
+//                        ServerContext.server.getRoom(roomMsg.roomId) != null) {
+//
+//                        var roomNoName :Room = ServerContext.server.getRoom(roomMsg.roomId);
+//                        roomNoName.handleRoomNameMsg(roomMsg);
+//                    }
+//                }
                 else if (msg is DebugMsg) {
                     var debugMsg :DebugMsg = DebugMsg(msg);
                     handleDebug(player, debugMsg);
