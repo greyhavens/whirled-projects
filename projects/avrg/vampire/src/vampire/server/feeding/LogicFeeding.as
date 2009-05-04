@@ -195,11 +195,11 @@ public class LogicFeeding extends SimObject
             return;
         }
         //Update the highest possible score.  We use this to scale the coin payout
-        ServerContext.topBloodBloomScore = Math.max(ServerContext.topBloodBloomScore, averageScore);
+        FeedingContext.topBloodBloomScore = Math.max(FeedingContext.topBloodBloomScore, averageScore);
         var xpGained :Number = averageScore * VConstants.XP_GAINED_FROM_FEEDING_PER_BLOOD_UNIT;
         var xpFormatted :String = Util.formatNumberForFeedback(xpGained);
         //The score between [0,1]
-        var feedingScoreScaled :Number = averageScore / ServerContext.topBloodBloomScore;
+        var feedingScoreScaled :Number = averageScore / FeedingContext.topBloodBloomScore;
 
         function awardXP(playerId :int, xp :Number, xpFormatted :String) :void {
             if (xp == 0) {
