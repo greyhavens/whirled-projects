@@ -13,7 +13,7 @@ public class QuestTestServer extends ServerObject
     public function QuestTestServer ()
     {
         _gameCtrl = new AVRServerGameControl(this);
-        Server.init(_gameCtrl);
+        QuestServer.init(_gameCtrl);
     }
 
     protected var _gameCtrl :AVRServerGameControl;

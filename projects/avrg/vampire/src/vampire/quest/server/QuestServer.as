@@ -7,7 +7,7 @@ import com.whirled.net.MessageReceivedEvent;
 
 import vampire.quest.*;
 
-public class Server
+public class QuestServer
 {
     public static function init (gameCtrl :AVRServerGameControl) :void
     {
@@ -32,7 +32,7 @@ public class Server
 
     protected static var _gameCtrl :AVRServerGameControl;
 
-    protected static var log :Log = Log.getLog(Server);
+    protected static var log :Log = Log.getLog(QuestServer);
 }
 
 }

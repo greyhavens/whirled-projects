@@ -17,8 +17,8 @@ import flash.utils.getTimer;
 import flash.utils.setInterval;
 
 import vampire.data.Codes;
-import vampire.data.VConstants;
 import vampire.feeding.FeedingServer;
+import vampire.quest.server.QuestServer;
 import vampire.server.feeding.FeedingContext;
 import vampire.server.feeding.LeaderBoardServer;
 import vampire.server.feeding.LogicFeeding;
@@ -45,6 +45,9 @@ public class GameServer extends ServerDB
 
             //Tim's bloodbond game server
             FeedingServer.init(_ctrl);
+
+            // The Quest server
+            QuestServer.init(_ctrl);
 
             //Add the room population updater
             addObject(new LoadBalancerServer(this));
