@@ -24,13 +24,14 @@ public class Logic
 
     public static function maxXPGivenXPAndInvites(xp :Number, invites :int) :Number
     {
+//        xp = Math.min(xp,
         var maxLevelInvites :int = maxLevelFromInvites(invites);
         var maxLevelXP :int = levelFromXp(xp);
 
         if (maxLevelInvites < maxLevelXP) {
             return xpNeededForLevel(maxLevelInvites + 1) - 1;
         }
-        return xp;
+        return Math.min(xp, xpNeededForLevel(maxLevelXP + 1) - 1);
     }
     public static function levelGivenCurrentXpAndInvites(xp :Number, invites :int = 0) :int
     {
