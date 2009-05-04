@@ -59,6 +59,10 @@ public class GameServer extends ObjectDB
 
             //Add this time to the list of server reboots
             recordBootTime();
+
+            //Add the Feedback notifier
+            _feedback = new Feedback();
+            addObject(_feedback);
         }
         else {
             log.error(ClassUtil.tinyClassName(GameServer) + ": no AVRServerGameControl!!");
@@ -153,11 +157,11 @@ public class GameServer extends ObjectDB
         removeStaleRooms();
 
         //Add the global messages to each room
-        _rooms.forEach(function(roomId :int, room :Room) :void {
-            for each(var globalMessage :String in _globalFeedback) {
-                room.addFeedback(globalMessage, 1, 0);
-            }
-        });
+//        _rooms.forEach(function(roomId :int, room :Room) :void {
+//            for each(var globalMessage :String in _globalFeedback) {
+//                room.addFeedback(globalMessage, 1, 0);
+//            }
+//        });
 
         //Then empty the global message queue
         _globalFeedback.splice(0);
@@ -187,8 +191,8 @@ public class GameServer extends ObjectDB
             }
             //Batch up the resultant network traffic from the message.
             _ctrl.doBatch(function () :void {
-                if (ServerContext.msg.isMessageType(evt.name)) {
-                    var msg :Message = ServerContext.msg.deserializeMessage(evt.name, evt.value);
+                var msg :Message = ServerContext.msg.deserializeMessage(evt.name, evt.value);
+                if (msg != null) {
                     LogicServer.handleMessage(player, msg);
                     LogicFeeding.handleMessage(player, msg);
                 }
@@ -267,7 +271,7 @@ public class GameServer extends ObjectDB
 
     public function addGlobalFeedback (msg :String) :void
     {
-        _globalFeedback.push(msg);
+        feedback.addGlobalFeedback(msg);
     }
 
     public function isPlayer (playerId :int) :Boolean
@@ -285,6 +289,10 @@ public class GameServer extends ObjectDB
         return _players;
     }
 
+    public function get feedback () :Feedback
+    {
+        return _feedback;
+    }
 
     protected var _startTime :int;
     protected var _lastTickTime :int;
@@ -292,6 +300,8 @@ public class GameServer extends ObjectDB
     protected var _ctrl :AVRServerGameControl;
     protected var _rooms :HashMap = new HashMap();
     protected var _players :HashMap = new HashMap();
+
+    protected var _feedback :Feedback;
 
     protected var _globalFeedback :Array = new Array();
 
