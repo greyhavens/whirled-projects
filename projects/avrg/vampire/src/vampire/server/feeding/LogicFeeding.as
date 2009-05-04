@@ -73,10 +73,8 @@ public class LogicFeeding extends SimObject
         log.debug("handleDebug", "player", player, "debugMsg", debugMsg);
         switch (debugMsg.type) {
             case DebugMsg.DEBUG_RESET_HIGH_SCORES:
-            var leaderboard :LeaderBoardServer = ServerContext.server.getObjectNamed(
-                LeaderBoardServer.NAME) as LeaderBoardServer;
-            if (leaderboard != null) {
-                leaderboard.resetScores();
+            if (FeedingContext.leaderBoardServer != null) {
+                FeedingContext.leaderBoardServer.resetScores();
             }
             break;
 

@@ -19,6 +19,7 @@ import flash.utils.setInterval;
 
 import vampire.data.Codes;
 import vampire.feeding.FeedingServer;
+import vampire.server.feeding.FeedingContext;
 import vampire.server.feeding.LeaderBoardServer;
 import vampire.server.feeding.LogicFeeding;
 
@@ -46,7 +47,7 @@ public class GameServer extends ObjectDB
             addObject(new LoadBalancerServer(this));
 
             //Add the feeding leaderboard server
-            addObject(new LeaderBoardServer(_ctrl.props, _ctrl.game.props));
+            FeedingContext.leaderBoardServer = new LeaderBoardServer(this);
 
             //Start the ticker
             _startTime = getTimer();
@@ -186,9 +187,11 @@ public class GameServer extends ObjectDB
             }
             //Batch up the resultant network traffic from the message.
             _ctrl.doBatch(function () :void {
-                var msg :Message = ServerContext.msg.deserializeMessage(evt.name, evt.value);
-                LogicServer.handleMessage(player, msg);
-                LogicFeeding.handleMessage(player, msg);
+                if (ServerContext.msg.isMessageType(evt.name)) {
+                    var msg :Message = ServerContext.msg.deserializeMessage(evt.name, evt.value);
+                    LogicServer.handleMessage(player, msg);
+                    LogicFeeding.handleMessage(player, msg);
+                }
             });
         }
         catch(err :Error) {

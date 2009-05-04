@@ -11,6 +11,7 @@ import flash.utils.clearInterval;
 import flash.utils.setInterval;
 
 import vampire.data.VConstants;
+import vampire.net.messages.DebugMsg;
 import vampire.server.GameServer;
 import vampire.server.ServerContext;
 
@@ -26,11 +27,14 @@ public class LeaderBoardServer
     */
     public function LeaderBoardServer (game :GameServer)
     {
-        _ctrl = game.control;
-        _propsServer = _ctrl.props;
-        _propsGlobal = _ctrl.game.props;
-        game.addEventListener(FeedingHighScoreEvent.HIGH_SCORE, handleHighScoreEvent);
-        setup();
+        if (game != null) {
+            _ctrl = game.control;
+            _propsServer = _ctrl.props;
+            _propsGlobal = _ctrl.game.props;
+            game.addEventListener(FeedingHighScoreEvent.HIGH_SCORE, handleHighScoreEvent);
+
+            setup();
+        }
     }
 
     public function resetScores () :void
@@ -79,7 +83,7 @@ public class LeaderBoardServer
             var scoreTime :Number = scores[index][2] as Number;
             //Temp hack, we didn't save score times.  So if the score time is missing,
             //set it at 5 days.  That will preserver the monthly scores.
-            scoreTime = isNaN(scoreTime) ? now - (7 * DAY_SECONDS) : scoreTime;
+            scoreTime = isNaN(scoreTime) ? now - (7 * DAY_MS) : scoreTime;
             if (now - scoreTime >= scoreLifetime) {
                 scores.splice(index, 1);
             }
@@ -94,8 +98,8 @@ public class LeaderBoardServer
         var time :Number = new Date().time;
         var tempScoresDay :Array = scoresAndNamesDay != null ? scoresAndNamesDay : [];
         var tempScoresMonth :Array = scoresAndNamesMonth != null ? scoresAndNamesMonth : [];
-        removeStaleScores(tempScoresDay, DAY_SECONDS, time);
-        removeStaleScores(tempScoresMonth, MONTH_SECONDS, time);
+        removeStaleScores(tempScoresDay, DAY_MS, time);
+        removeStaleScores(tempScoresMonth, MONTH_MS, time);
 
         updateScoresIntoProps(tempScoresDay, AGENT_PROP_SCORES_DAILY, _propsServer);
         updateScoresIntoProps(tempScoresMonth, AGENT_PROP_SCORES_MONTHLY, _propsServer);
@@ -166,7 +170,7 @@ public class LeaderBoardServer
 
     protected function getPlayerName (playerId :int) :String
     {
-        if (ServerContext.server.isPlayer(playerId)) {
+        if (!localDebug && ServerContext.server.isPlayer(playerId)) {
             var name :String = ServerContext.server.getPlayer(playerId).name;
             return name;
         }
@@ -190,7 +194,7 @@ public class LeaderBoardServer
 
 
             _localHighScoreDay =
-                updateScoreTable(tempScores, score, names, time, DAY_SECONDS, VConstants.NUMBER_HIGH_SCORES_DAILY);
+                updateScoreTable(tempScores, score, names, time, DAY_MS, VConstants.NUMBER_HIGH_SCORES_DAILY);
                 updateScoresIntoProps(tempScores, VConstants.GLOBAL_PROP_SCORES_DAILY, _propsGlobal);
                 updateScoresIntoProps(tempScores, AGENT_PROP_SCORES_DAILY, _propsServer);
         }
@@ -204,7 +208,7 @@ public class LeaderBoardServer
             });
 
             _localHighScoreMnth =
-                updateScoreTable(tempScores, score, names, time, MONTH_SECONDS, VConstants.NUMBER_HIGH_SCORES_MONTHLY);
+                updateScoreTable(tempScores, score, names, time, MONTH_MS, VConstants.NUMBER_HIGH_SCORES_MONTHLY);
                 updateScoresIntoProps(tempScores, VConstants.GLOBAL_PROP_SCORES_MONTHLY, _propsGlobal);
                 updateScoresIntoProps(tempScores, AGENT_PROP_SCORES_MONTHLY, _propsServer);
         }
@@ -254,21 +258,25 @@ public class LeaderBoardServer
 //
 //        var agentprops :PropertySubControl = new PropertySubControlFake();
 //        var globalprops :PropertySubControl = new PropertySubControlFake();
+//        var board :LeaderBoardServer = new LeaderBoardServer(null);
+//        board.localDebug = true;
+//        board._propsGlobal = globalprops;
+//        board._propsServer = agentprops;
+//        board.setup();
+//
+//
 //        var now :Number = new Date().time;
 //
 //        agentprops.set(AGENT_PROP_SCORES_DAILY,[
 //                                                    [10, "tenners", now - 30],
-//                                                    [100, "hundreders", now - DAY_SECONDS],
-//                                                    [1000, "thousanders", now - DAY_SECONDS + 100],
+//                                                    [100, "hundreders", now - DAY_MS],
+//                                                    [1000, "thousanders", now - DAY_MS + 100],
 //                                                    ]);
 //        agentprops.set(AGENT_PROP_SCORES_MONTHLY, [
 //                                                        [101, "tennersM", now - 30],
-//                                                        [1001, "hundredersM", now - MONTH_SECONDS],
-//                                                        [10001, "thousandersM", now - MONTH_SECONDS  + 100],
+//                                                        [1001, "hundredersM", now - MONTH_MS],
+//                                                        [10001, "thousandersM", now - MONTH_MS  + 100],
 //                                                      ]);
-//
-//        var board :LeaderBoardServer = new LeaderBoardServer(agentprops, globalprops);
-//        board.localDebug = true;
 //        trace("Start " + board);
 //
 //        trace("New scores");
@@ -276,10 +284,17 @@ public class LeaderBoardServer
 //        scores.put(1, 200);
 //        scores.put(2, 230);
 //        scores.put(3, 430);
-//        board.receiveMessage(new ObjectMessage(MESSAGE_LEADER_BOARD_MESSAGE_SCORES, scores));
+//        board.newHighScores(300, scores);
 //        trace("after scores " + board);
 //
-//        trace("fresh board from props: " + new LeaderBoardServer(agentprops, globalprops));
+//        trace("New scores");
+//        scores = new HashMap();
+//        scores.put(1, 200);
+//        scores.put(2, 230);
+//        scores.put(3, 430);
+//        board.newHighScores(400, scores);
+//        trace("after scores " + board);
+//
 //    }
 
     public function toString () :String
@@ -332,8 +347,8 @@ public class LeaderBoardServer
         NetConstants.makePersistent(VConstants.GLOBAL_PROP_SCORES_MONTHLY);
 
 
-    protected static const DAY_SECONDS :Number = 86400;
-    protected static const MONTH_SECONDS :Number = 18144000;
+    protected static const DAY_MS :Number = 24*60*60*1000;
+    protected static const MONTH_MS :Number = 30*DAY_MS;
     public static const NAME :String = "LeaderBoardServer";
     protected static const log :Log = Log.getLog(LeaderBoardServer);
 }
