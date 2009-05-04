@@ -3,11 +3,12 @@ package vampire.server
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
+import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
-import com.whirled.contrib.simplegame.ObjectMessage;
 
 import flash.utils.ByteArray;
 import flash.utils.clearInterval;
+import flash.utils.setInterval;
 
 import vampire.data.Codes;
 import vampire.data.Lineage;
@@ -22,6 +23,36 @@ public class LineageServer extends Lineage
         //Test this off.
 //        addIntervalId(setInterval(checkPlayersNames, 1000*10));
         loadOfflinePlayer(VConstants.UBER_VAMP_ID);
+
+        _events.registerListener(vserver, AVRGameControlEvent.PLAYER_JOINED_GAME,
+            handlePlayerJoined);
+
+        _events.registerListener(vserver, PlayerMovedEvent.PLAYER_ENTERED_ROOM,
+            handlePlayerEnteredRoom);
+
+        _events.registerListener(vserver, PlayerMovedEvent.PLAYER_LEFT_ROOM,
+            handlePlayerLeftRoom);
+
+        addIntervalId(setInterval(update, UPDATE_TIME_MS));
+    }
+
+    public function handlePlayerEnteredRoom (e :PlayerMovedEvent) :void
+    {
+        if (e.room != null && e.player != null) {
+            e.room.ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, e.player.playerId,
+                e.player.lineage, true);
+        }
+    }
+    public function handlePlayerLeftRoom (e :PlayerMovedEvent) :void
+    {
+        if (e.room != null && e.room.ctrl.isConnected() && e.player != null) {
+            e.room.ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, e.player.playerId, null, true);
+        }
+    }
+
+    protected function handlePlayerJoined (e :AVRGameControlEvent) :void
+    {
+        playerJoined(_vserver.getPlayer(e.value as int));
     }
 
     public function resendPlayerLineage (playerId :int) :void
@@ -116,15 +147,15 @@ public class LineageServer extends Lineage
 
 
 
-    /**
-    * The server tells us when a new PlayerData object is created.
-    */
-    override protected function receiveMessage (msg :ObjectMessage) :void
-    {
-        if (msg.name == MESSAGE_PLAYER_JOINED_GAME) {
-            playerJoined(msg.data as PlayerData);
-        }
-    }
+//    /**
+//    * The server tells us when a new PlayerData object is created.
+//    */
+//    override protected function receiveMessage (msg :ObjectMessage) :void
+//    {
+//        if (msg.name == MESSAGE_PLAYER_JOINED_GAME) {
+//            playerJoined(msg.data as PlayerData);
+//        }
+//    }
 
 
     /**
@@ -132,18 +163,19 @@ public class LineageServer extends Lineage
     * We send new Lineages to players with new data in their linages.
     *
     */
-    override protected function update(dt:Number) :void
+    protected function update(dt:Number = 0) :void
     {
-        super.update(dt);
-
-        _playerIdsResendLineage.forEach(function (playerId :int) :void {
-            if (_vserver.isPlayer(playerId)) {
-                var lineage :Lineage = getSubLineage(playerId, 1, 2);
-                log.debug("Setting into " + _vserver.getPlayer(playerId).name+ "'s lineage", "playerId", playerId,
-                    "lineage", lineage);
-                var bytes :ByteArray = lineage.toBytes();
-                _vserver.getPlayer(playerId).lineage = bytes;
-            }
+//        super.update(dt);
+        _vserver.control.doBatch( function () :void {
+            _playerIdsResendLineage.forEach(function (playerId :int) :void {
+                if (_vserver.isPlayer(playerId)) {
+                    var lineage :Lineage = getSubLineage(playerId, 1, 2);
+                    log.debug("Setting into " + _vserver.getPlayer(playerId).name+ "'s lineage", "playerId", playerId,
+                        "lineage", lineage);
+                    var bytes :ByteArray = lineage.toBytes();
+                    _vserver.getPlayer(playerId).lineage = bytes;
+                }
+            });
         });
         _playerIdsResendLineage.clear();
     }
@@ -328,9 +360,9 @@ public class LineageServer extends Lineage
         }
     }
 
-    override protected function destroyed () :void
+    override public function shutdown () :void
     {
-        super.destroyed();
+        super.shutdown();
         for each (var id :uint in _intervalIds) {
             clearInterval(id);
         }
@@ -341,10 +373,14 @@ public class LineageServer extends Lineage
         _intervalIds.push(id);
     }
 
-    override public function get objectName () :String
-    {
-        return NAME;
-    }
+//    override public function get objectName () :String
+//    {
+//        return NAME;
+//    }
+
+
+
+
 
     protected var _vserver :GameServer;
     protected var _playerIdsResendLineage :HashSet = new HashSet();
@@ -353,6 +389,8 @@ public class LineageServer extends Lineage
 
     public static const MESSAGE_PLAYER_JOINED_GAME :String = "Message: Player Joined";
     public static const NAME :String = "LineageServer";
+
+    protected static const UPDATE_TIME_MS :int = 1000;
 
     protected static const log :Log = Log.getLog(LineageServer);
 }

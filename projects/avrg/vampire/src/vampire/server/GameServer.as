@@ -9,9 +9,9 @@ import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.PlayerSubControlServer;
-import com.whirled.contrib.simplegame.ObjectDB;
 import com.whirled.contrib.simplegame.ObjectMessage;
 import com.whirled.contrib.simplegame.net.Message;
+import com.whirled.contrib.simplegame.objects.ServerDB;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.getTimer;
@@ -23,7 +23,10 @@ import vampire.server.feeding.FeedingContext;
 import vampire.server.feeding.LeaderBoardServer;
 import vampire.server.feeding.LogicFeeding;
 
-public class GameServer extends ObjectDB
+[Event(name="playerMoved", type="vampire.server.PlayerMovedEvent")]
+[Event(name="playerJoinedGame", type="com.whirled.avrg.AVRGameControlEvent")]
+[Event(name="playerJoinedGame", type="com.whirled.avrg.AVRGameControlEvent")]
+public class GameServer extends ServerDB
 {
     public function GameServer ()
     {
@@ -38,7 +41,7 @@ public class GameServer extends ObjectDB
             registerListener(_ctrl.game, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
 
             //Add the lineage server
-            addObject(new LineageServer(this));
+            addBasicGameObject(new LineageServer(this));
 
             //Tim's bloodbond game server
             FeedingServer.init(_ctrl);
@@ -48,21 +51,22 @@ public class GameServer extends ObjectDB
 
             //Add the feeding leaderboard server
             FeedingContext.leaderBoardServer = new LeaderBoardServer(this);
+            addBasicGameObject(FeedingContext.leaderBoardServer);
+
+            //Add stats monitoring
+            addObject(new AnalyserServer());
+
+            //Add the Feedback notifier
+            _feedback = new Feedback();
+            addObject(_feedback);
+
+            //Add this time to the list of server reboots
+            recordBootTime();
 
             //Start the ticker
             _startTime = getTimer();
             _lastTickTime = _startTime;
             setInterval(tick, SERVER_TICK_UPDATE_MILLISECONDS);
-
-            //Add stats monitoring
-            addObject(new AnalyserServer());
-
-            //Add this time to the list of server reboots
-            recordBootTime();
-
-            //Add the Feedback notifier
-            _feedback = new Feedback();
-            addObject(_feedback);
         }
         else {
             log.error(ClassUtil.tinyClassName(GameServer) + ": no AVRServerGameControl!!");
@@ -226,10 +230,12 @@ public class GameServer extends ObjectDB
                 var player :PlayerData = new PlayerData(pctrl);
                 _players.put(playerId, player);
 
+                dispatchEvent(new AVRGameControlEvent(AVRGameControlEvent.PLAYER_JOINED_GAME,
+                    null, player.playerId));
                 //Tell the lineage that there is a new player.
-                sendMessageToNamedObject(
-                    new ObjectMessage(LineageServer.MESSAGE_PLAYER_JOINED_GAME, player),
-                    LineageServer.NAME);
+//                sendMessageToNamedObject(
+//                    new ObjectMessage(LineageServer.MESSAGE_PLAYER_JOINED_GAME, player),
+//                    LineageServer.NAME);
             });
 
 

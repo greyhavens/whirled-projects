@@ -102,7 +102,8 @@ public class PlayerData extends EventHandlerManager
 
     public function get feedingData () :ByteArray
     {
-        return _propsUndater.get(Codes.PLAYER_PROP_FEEDING_DATA) as ByteArray;
+        return _ctrl.props.get(Codes.PLAYER_PROP_FEEDING_DATA) as ByteArray;
+//        return _propsUndater.get(Codes.PLAYER_PROP_FEEDING_DATA) as ByteArray;
     }
 
     public function get lineage () :ByteArray
@@ -115,7 +116,10 @@ public class PlayerData extends EventHandlerManager
     {
         _lineage = b;
 //        _propsUndater.put(Codes.PLAYER_PROP_LINEAGE, b);
-        _updateLineage = true;
+//        _updateLineage = true;
+        if (room != null) {
+            room.ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, playerId, lineage, true);
+        }
     }
 
     public function addFeedback (msg :String, priority :int = 1) :void
@@ -244,7 +248,11 @@ public class PlayerData extends EventHandlerManager
         ServerContext.server.control.doBatch(function () :void {
             try {
                 if (_room != null) {
+                    ServerContext.server.dispatchEvent(
+                        new PlayerMovedEvent(PlayerMovedEvent.PLAYER_ENTERED_ROOM, thisPlayer,
+                            _room));
                     _room.playerEntered(thisPlayer);
+//                    _room.ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, playerId, lineage, true);
 //                    ServerContext.server.lineage.resendPlayerLineage(thisPlayer.playerId);
 //                    thisPlayer.state = VConstants.PLAYER_STATE_DEFAULT;
 //                    ServerLogic.updateAvatarState(thisPlayer);
@@ -269,7 +277,7 @@ public class PlayerData extends EventHandlerManager
             if (_room != null) {
 
                 _room.playerLeft(thisPlayer);
-
+                _room.ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, playerId, null, true);
                 if (_room.roomId == evt.value) {
                     _room = null;
                 } else {
