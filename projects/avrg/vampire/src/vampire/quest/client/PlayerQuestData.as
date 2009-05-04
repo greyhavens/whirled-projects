@@ -65,7 +65,7 @@ public class PlayerQuestData extends EventDispatcher
         return _props.get(PROP_LAST_JUICE_REFRESH) as Number;
     }
 
-    public function set lastJuiceRefesh (val :Number) :void
+    public function set lastJuiceRefresh (val :Number) :void
     {
         _props.set(PROP_LAST_JUICE_REFRESH, val);
     }

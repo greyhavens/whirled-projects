@@ -5,6 +5,7 @@ import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimpleGame;
+import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertySubControl;
 
 import flash.display.Sprite;
@@ -143,7 +144,19 @@ public class QuestClient
 
         if (_questPanel != null) {
             _questPanel.visible = show;
+            Sprite(_questPanel.displayObject).mouseEnabled = show;
+            Sprite(_questPanel.displayObject).mouseChildren = show;
         }
+
+        /*
+        if (_questPanel != null) {
+            if (show && _questPanel.displayObject.parent == null) {
+                ClientCtx.panelLayer.addChild(_questPanel.displayObject);
+            } else if (!show && _questPanel.displayObject.parent != null) {
+                _questPanel.displayObject.parent.removeChild(_questPanel.displayObject);
+            }
+        }
+        */
     }
 
     public static function get questPanel () :QuestPanel
@@ -179,6 +192,12 @@ public class QuestClient
                 function (...ignored) :void {
                     handshakeQuestTotems(true);
                 });
+            ClientCtx.gameCtrl.player.addEventListener(AVRGamePlayerEvent.LEFT_ROOM,
+                function (...ignored) :void {
+                    handshakeQuestTotems(false);
+                });
+            ClientCtx.gameCtrl.player.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
+                onPlayerMsgReceived);
 
             handshakeQuestTotems(true);
         }
@@ -189,7 +208,14 @@ public class QuestClient
         ClientCtx.questData.addEventListener(ActivityEvent.ACTIVITY_ADDED, onActivityAdded);
 
         checkQuestCompletion();
-        checkQuestJuiceRefresh();
+        ClientCtx.gameCtrl.agent.sendMessage(QuestMessages.TIMESTAMP);
+    }
+
+    protected static function onPlayerMsgReceived (e :MessageReceivedEvent) :void
+    {
+        if (e.name == QuestMessages.TIMESTAMP && e.isFromServer()) {
+            gotTimestamp(e.value as Number);
+        }
     }
 
     protected static function onResourceLoadErr (err :String) :void
@@ -202,6 +228,28 @@ public class QuestClient
             if (quest.isComplete(ClientCtx.questProps)) {
                 ClientCtx.questData.completeQuest(quest);
             }
+        }
+    }
+
+    protected static function gotTimestamp (newTimestamp :Number) :void
+    {
+        var timeSinceRefresh :Number = newTimestamp - ClientCtx.questData.lastJuiceRefresh;
+        if (timeSinceRefresh >= Constants.JUICE_REFRESH_MS) {
+            var amount :int = Math.min(Constants.JUICE_REFRESH_AMOUNT,
+                Constants.JUICE_REFRESH_MAX - ClientCtx.questData.questJuice);
+            if (amount < 0) {
+                log.info("Not refreshing quest juice; player already at max",
+                    "max", Constants.JUICE_REFRESH_MAX, "timeSinceRefresh", timeSinceRefresh);
+            } else {
+                log.info("Refreshing quest juice!", "amount", amount, "timeSinceRefresh",
+                    timeSinceRefresh);
+                ClientCtx.questData.questJuice += amount;
+            }
+            ClientCtx.questData.lastJuiceRefresh = newTimestamp;
+
+        } else {
+            log.info("Not refreshing quest juice; not enough time has passed",
+                "timeSinceRefresh", timeSinceRefresh);
         }
     }
 

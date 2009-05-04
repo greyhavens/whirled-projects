@@ -17,6 +17,7 @@ import vampire.quest.client.*;
 [SWF(width="1000", height="700", frameRate="30")]
 public class QuestClientStandalone extends Sprite
 {
+    QuestTestServer;
     QuestTestClient;
     QuestTotem;
     VampireBody;
