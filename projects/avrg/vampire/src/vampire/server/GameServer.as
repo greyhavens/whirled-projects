@@ -193,19 +193,14 @@ public class GameServer extends ServerDB
                 log.warning("playerids=" + _players.keys());
                 return;
             }
-            if (evt.name == VConstants.MESSAGE_TIMESTAMP) {
-                player.sctrl.sendMessage(VConstants.MESSAGE_TIMESTAMP, new Date().time);
-            }
-            else {
-                //Batch up the resultant network traffic from the message.
-                _ctrl.doBatch(function () :void {
-                    var msg :Message = ServerContext.msg.deserializeMessage(evt.name, evt.value);
-                    if (msg != null) {
-                        LogicServer.handleMessage(player, msg);
-                        LogicFeeding.handleMessage(player, msg);
-                    }
-                 });
-            }
+            //Batch up the resultant network traffic from the message.
+            _ctrl.doBatch(function () :void {
+                var msg :Message = ServerContext.msg.deserializeMessage(evt.name, evt.value);
+                if (msg != null) {
+                    LogicServer.handleMessage(player, msg);
+                    LogicFeeding.handleMessage(player, msg);
+                }
+             });
 
         }
         catch(err :Error) {

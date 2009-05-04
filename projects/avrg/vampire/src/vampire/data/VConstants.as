@@ -119,9 +119,6 @@ public class VConstants
     public static const NUMBER_HIGH_SCORES_DAILY :int = 5;
     public static const NUMBER_HIGH_SCORES_MONTHLY :int = 3;
 
-    //Simple messages
-    public static const MESSAGE_TIMESTAMP :String = "TimeStamp";
-
     protected static const p4 :Number = Math.cos(Math.PI/4);
     public static const PREDATOR_LOCATIONS_RELATIVE_TO_PREY :Array = [
         [  0, 0,  0.01], //Behind
