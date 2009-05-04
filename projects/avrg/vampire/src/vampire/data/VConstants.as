@@ -5,10 +5,14 @@ import com.threerings.flash.Vector2;
 public class VConstants
 {
     public static var LOCAL_DEBUG_MODE :Boolean = false;
-    public static const MODE_DEV :Boolean = false;
+    public static const MODE_DEV :Boolean = true;
 
     public static const PLAYERS_IN_ROOM_TRIGGERING_BALANCING :int = 8;
     public static const ROOMS_SHOWN_IN_LOAD_BALANCER :int = 5;
+
+    public static const FEEDBACK_PRIORITY_HIGH :int = 3;
+    public static const FEEDBACK_PRIORITY_MED :int = 2;
+    public static const FEEDBACK_PRIORITY_LOW :int = 1;
 
     public static const MIN_XP_TO_HIDE_HELP :Number = 500;
 
@@ -25,7 +29,7 @@ public class VConstants
     /**
     * Generations below Lilith shown in the Lineage furn
     */
-    public static const GENERATIONS_BELOW_LILITH_FURN_LINEAGE :int = 10;
+    public static const GENERATIONS_BELOW_LILITH_FURN_LINEAGE :int = 1;
 
     /**
     * The max characters in names displayed in the lineage.  Since we cannot display long
@@ -114,6 +118,9 @@ public class VConstants
     public static const GLOBAL_PROP_SCORES_MONTHLY :String = "HighScoresFeedingMonthy";
     public static const NUMBER_HIGH_SCORES_DAILY :int = 5;
     public static const NUMBER_HIGH_SCORES_MONTHLY :int = 3;
+
+    //Simple messages
+    public static const MESSAGE_TIMESTAMP :String = "TimeStamp";
 
     protected static const p4 :Number = Math.cos(Math.PI/4);
     public static const PREDATOR_LOCATIONS_RELATIVE_TO_PREY :Array = [
