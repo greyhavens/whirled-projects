@@ -9,7 +9,6 @@ import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.PlayerSubControlServer;
-import com.whirled.contrib.simplegame.ObjectMessage;
 import com.whirled.contrib.simplegame.net.Message;
 import com.whirled.contrib.simplegame.objects.ServerDB;
 import com.whirled.net.MessageReceivedEvent;
@@ -18,6 +17,7 @@ import flash.utils.getTimer;
 import flash.utils.setInterval;
 
 import vampire.data.Codes;
+import vampire.data.VConstants;
 import vampire.feeding.FeedingServer;
 import vampire.server.feeding.FeedingContext;
 import vampire.server.feeding.LeaderBoardServer;
@@ -193,14 +193,20 @@ public class GameServer extends ServerDB
                 log.warning("playerids=" + _players.keys());
                 return;
             }
-            //Batch up the resultant network traffic from the message.
-            _ctrl.doBatch(function () :void {
-                var msg :Message = ServerContext.msg.deserializeMessage(evt.name, evt.value);
-                if (msg != null) {
-                    LogicServer.handleMessage(player, msg);
-                    LogicFeeding.handleMessage(player, msg);
-                }
-            });
+            if (evt.name == VConstants.MESSAGE_TIMESTAMP) {
+                player.sctrl.sendMessage(VConstants.MESSAGE_TIMESTAMP, new Date().time);
+            }
+            else {
+                //Batch up the resultant network traffic from the message.
+                _ctrl.doBatch(function () :void {
+                    var msg :Message = ServerContext.msg.deserializeMessage(evt.name, evt.value);
+                    if (msg != null) {
+                        LogicServer.handleMessage(player, msg);
+                        LogicFeeding.handleMessage(player, msg);
+                    }
+                 });
+            }
+
         }
         catch(err :Error) {
             log.error(err + "\n" + err.getStackTrace());
