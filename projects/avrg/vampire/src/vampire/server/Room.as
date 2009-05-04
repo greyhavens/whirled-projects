@@ -128,7 +128,6 @@ public class Room extends SimObject
         }
 
         maybeLoadControl();
-//        _ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, player.playerId, player.lineage);
     }
 
     public function playerLeft (player :PlayerData) :void
@@ -144,11 +143,13 @@ public class Room extends SimObject
             return;
         }
         log.debug("room.playerLeft, removing from feeding games " + player.name);
-
+        var selfRef :Room = this;
         _bloodBloomGameManager.playerQuitsGameOrRoom(player.playerId);
         removePlayerToFeedingUnavailableList(player.playerId);
-        //Delete the lineage for this player
-//        _ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, player.playerId, null);
+
+        //Notify listeners
+        ServerContext.server.dispatchEvent(new PlayerMovedEvent(PlayerMovedEvent.PLAYER_LEFT_ROOM,
+            player, selfRef));
     }
 
     /**

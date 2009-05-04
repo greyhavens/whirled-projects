@@ -246,10 +246,6 @@ public class PlayerData extends EventHandlerManager
                         new PlayerMovedEvent(PlayerMovedEvent.PLAYER_ENTERED_ROOM, thisPlayer,
                             _room));
                     _room.playerEntered(thisPlayer);
-//                    _room.ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, playerId, lineage, true);
-//                    ServerContext.server.lineage.resendPlayerLineage(thisPlayer.playerId);
-//                    thisPlayer.state = VConstants.PLAYER_STATE_DEFAULT;
-//                    ServerLogic.updateAvatarState(thisPlayer);
                 }
                 else {
                     log.error("WTF, enteredRoom called, but room == null???");
@@ -271,7 +267,6 @@ public class PlayerData extends EventHandlerManager
             if (_room != null) {
 
                 _room.playerLeft(thisPlayer);
-                _room.ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, playerId, null, true);
                 if (_room.roomId == evt.value) {
                     _room = null;
                 } else {
@@ -287,51 +282,6 @@ public class PlayerData extends EventHandlerManager
     public function get room () :Room
     {
         return _room;
-    }
-
-    public function updateRoom() :void
-    {
-        try {
-
-            if (_ctrl == null || !_ctrl.isConnected()) {
-                log.error("updateRoom() but ", "_ctrl", _ctrl);
-                return;
-            }
-
-            if (_room == null || _room.ctrl == null || !_room.ctrl.isConnected()) {
-                log.error("updateRoom() but ", "room", room);
-                return;
-            }
-
-            //Copy the feedback to the room
-//            if (_feedback.length > 0) {
-//                log.debug(_ctrl.getPlayerName() + " updateRoom, adding feedback=" + _feedback);
-//                for each (var msgData :Array in _feedback) {
-//                    room.addFeedback(msgData[0] as String, msgData[1] as int, playerId);
-//                }
-//                _feedback.splice(0);
-//            }
-
-//            var roomDict :Dictionary =
-//                _room.ctrl.props.get(Codes.ROOM_PROP_PLAYER_LINEAGE) as Dictionary;
-//            if (roomDict == null) {
-//                roomDict = new Dictionary();
-//                _room.ctrl.props.set(Codes.ROOM_PROP_PLAYER_LINEAGE, roomDict, true);
-//            }
-//
-//            if (PlayerPropertiesUpdater.isByteArraysDifferent(roomDict[playerId], lineage)) {
-//                _room.ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, playerId, lineage, true);
-//            }
-
-            if (_updateLineage) {
-                _room.ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, playerId, lineage, true);
-                _updateLineage = false;
-            }
-
-        }
-        catch(err :Error) {
-            log.error(err.getStackTrace());
-        }
     }
 
     public function set targetId (id :int) :void
@@ -415,18 +365,10 @@ public class PlayerData extends EventHandlerManager
         _propsUndater.put(Codes.PLAYER_PROP_SIRE, newsire);
     }
 
-//    public function get state () :String
-//    {
-//        return _state;
-//    }
 
     public function get name () :String
     {
-        return _propsUndater.get(Codes.PLAYER_PROP_NAME) as String;
-//        if (_ctrl != null && _ctrl.isConnected()) {
-//            return _ctrl.getPlayerName();
-//        }
-//        return "";
+        return _ctrl.getPlayerName();
     }
 
     public function set name (newName :String) :void
@@ -537,63 +479,13 @@ public class PlayerData extends EventHandlerManager
         }
 
         _propsUndater.update(dt);
-        updateRoom();
-
-
-
-//        if (avatar != null && avatar.state != _avatarState) {
-//            _ctrl.setAvatarState(_avatarState);
-//        }
     }
-
-//    /**
-//    * We never delete the progeny array, only add to it.
-//    * This is because the Lineage is changing from only the sire stored with the player, to
-//    * both sires and progeny.  However, players must log on at least once for the changes to
-//    * occur.
-//    */
-//    public function updateProgeny(progeny :Array) :void
-//    {
-////        for each (var newProgenyId :int in progeny) {
-////            if (!ArrayUtil.contains(_progenyIds, newProgenyId)) {
-////                _progenyIds.push(newProgenyId);
-////            }
-////        }
-////        _progenyIds = _progenyIds.sort();
-////        Trophies.checkMinionTrophies(this);
-//    }
-
-//    public function isVictim() :Boolean
-//    {
-//        if (state != VConstants.AVATAR_STATE_BARED) {
-//            return false;
-//        }
-//
-//        var predator :PlayerData = ServerContext.server.getPlayer(targetId);
-//        if (predator == null) {
-//            return false;
-//        }
-//
-//        if (predator.state == VConstants.AVATAR_STATE_FEEDING && predator.targetId == playerId) {
-//            return true;
-//        }
-//        return false;
-//    }
 
     public function addXPBonusNotification (bonus :Number) :void
     {
         _xpFeedback += bonus;
     }
 
-//    public function get avatarState() :String
-//    {
-//        return _avatarState;
-//    }
-//
-//    public function set avatarState(newAvatarState :String) :void
-//    {
-//        _avatarState = newAvatarState;
-//    }
 
 
 
@@ -603,8 +495,6 @@ public class PlayerData extends EventHandlerManager
     protected var _playerId :int;
 
     //Non-persistant variables
-//    protected var _state :String;
-//    protected var _avatarState :String;
     protected var _targetId :int;
     protected var _targetLocation :Array;
     protected var _feedback :Array = [];
