@@ -175,7 +175,7 @@ public class LeaderBoardServer
 
     protected function updateScores (score :Number, names :String) :void
     {
-        var time :Number = new Date().time - DAY_SECONDS;
+        var time :Number = new Date().time;
 
         var tempScores :Array;
 
