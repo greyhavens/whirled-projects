@@ -5,7 +5,7 @@ import com.threerings.util.Equalable;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.StringBuilder;
-import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.objects.BasicGameObject;
 
 import flash.utils.ByteArray;
 import flash.utils.IDataInput;
@@ -28,7 +28,7 @@ import flash.utils.IExternalizable;
  */
 
 
-public class Lineage extends SimObject
+public class Lineage extends BasicGameObject
     implements IExternalizable, Equalable
 {
 
@@ -551,10 +551,10 @@ public class Lineage extends SimObject
 
         return true;
     }
-    override public function get objectName () :String
-    {
-        return NAME;
-    }
+//    override public function get objectName () :String
+//    {
+//        return NAME;
+//    }
 
 
 
