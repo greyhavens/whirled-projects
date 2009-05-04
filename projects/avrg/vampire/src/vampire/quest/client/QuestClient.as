@@ -233,6 +233,10 @@ public class QuestClient
 
     protected static function gotTimestamp (newTimestamp :Number) :void
     {
+        if (!Constants.DEBUG_ENABLE_QUESTS) {
+            return;
+        }
+
         var timeSinceRefresh :Number = newTimestamp - ClientCtx.questData.lastJuiceRefresh;
         if (timeSinceRefresh >= Constants.JUICE_REFRESH_MS) {
             var amount :int = Math.min(Constants.JUICE_REFRESH_AMOUNT,

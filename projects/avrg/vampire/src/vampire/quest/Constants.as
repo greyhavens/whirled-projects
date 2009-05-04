@@ -2,6 +2,8 @@ package vampire.quest {
 
 public class Constants
 {
+    public static const DEBUG_ENABLE_QUESTS :Boolean = false;
+
     // 24 hours between each quest juice refresh
     public static const JUICE_REFRESH_MS :Number = 24 * 60 * 60 * 1000;
 
