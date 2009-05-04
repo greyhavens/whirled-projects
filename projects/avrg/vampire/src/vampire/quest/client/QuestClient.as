@@ -123,11 +123,14 @@ public class QuestClient
         if (_debugPanel == null && show) {
             _debugPanel = new DebugPanel();
             ClientCtx.appMode.addSceneObject(_debugPanel, ClientCtx.panelLayer);
+        } else if (_debugPanel != null && !show) {
+            _debugPanel.destroySelf();
+            _debugPanel = null;
         }
 
-        if (_debugPanel != null) {
+        /*if (_debugPanel != null) {
             _debugPanel.visible = show;
-        }
+        }*/
     }
 
     public static function showQuestPanel (show :Boolean) :void
@@ -140,23 +143,20 @@ public class QuestClient
             _questPanel.y = bounds.y + 50;
 
             ClientCtx.appMode.addSceneObject(_questPanel, ClientCtx.panelLayer);
+        } else if (_questPanel != null && !show) {
+            _questPanel.destroySelf();
+            _questPanel = null;
         }
 
-        if (_questPanel != null) {
+        // Simply hiding the panel is preventing mouse events from getting through
+        // to the room underneath, presumably because AVRGameControl uses
+        // DisplayObject.hitTestPoint to determine whether a click is destined for the game,
+        // and hitTestPoint doesn't seem to take visiblity or mouseEnabled'ness into account.
+        /*if (_questPanel != null) {
             _questPanel.visible = show;
             Sprite(_questPanel.displayObject).mouseEnabled = show;
             Sprite(_questPanel.displayObject).mouseChildren = show;
-        }
-
-        /*
-        if (_questPanel != null) {
-            if (show && _questPanel.displayObject.parent == null) {
-                ClientCtx.panelLayer.addChild(_questPanel.displayObject);
-            } else if (!show && _questPanel.displayObject.parent != null) {
-                _questPanel.displayObject.parent.removeChild(_questPanel.displayObject);
-            }
-        }
-        */
+        }*/
     }
 
     public static function get questPanel () :QuestPanel
