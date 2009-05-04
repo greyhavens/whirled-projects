@@ -120,7 +120,8 @@ public class PlayerData extends EventHandlerManager
 
     public function addFeedback (msg :String, priority :int = 1) :void
     {
-        _feedback.push([msg, priority]);
+        ServerContext.server.feedback.addFeedback(msg, playerId, priority);
+//        _feedback.push([msg, priority]);
     }
 
     public function get ctrl () :PlayerSubControlBase
@@ -301,13 +302,13 @@ public class PlayerData extends EventHandlerManager
             }
 
             //Copy the feedback to the room
-            if (_feedback.length > 0) {
-                log.debug(_ctrl.getPlayerName() + " updateRoom, adding feedback=" + _feedback);
-                for each (var msgData :Array in _feedback) {
-                    room.addFeedback(msgData[0] as String, msgData[1] as int, playerId);
-                }
-                _feedback.splice(0);
-            }
+//            if (_feedback.length > 0) {
+//                log.debug(_ctrl.getPlayerName() + " updateRoom, adding feedback=" + _feedback);
+//                for each (var msgData :Array in _feedback) {
+//                    room.addFeedback(msgData[0] as String, msgData[1] as int, playerId);
+//                }
+//                _feedback.splice(0);
+//            }
 
 //            var roomDict :Dictionary =
 //                _room.ctrl.props.get(Codes.ROOM_PROP_PLAYER_LINEAGE) as Dictionary;
