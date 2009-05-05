@@ -254,11 +254,16 @@ public class QuestClient
                 log.info("Not refreshing quest juice; player already at max",
                     "max", Constants.JUICE_REFRESH_MAX, "timeSinceRefresh", timeSinceRefresh);
             } else {
-                log.info("Refreshing quest juice!", "amount", amount, "timeSinceRefresh",
-                    timeSinceRefresh);
-                ClientCtx.questData.questJuice += amount;
+                log.info("Refreshing quest juice!", "amount", amount,
+                    "timeSinceRefresh", timeSinceRefresh);
             }
-            ClientCtx.questData.lastJuiceRefresh = newTimestamp;
+
+            ClientCtx.gameCtrl.doBatch(function () :void {
+                if (amount > 0) {
+                    ClientCtx.questData.questJuice += amount;
+                }
+                ClientCtx.questData.lastJuiceRefresh = newTimestamp;
+            });
 
         } else {
             log.info("Not refreshing quest juice; not enough time has passed",
