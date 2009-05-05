@@ -368,7 +368,7 @@ public class PlayerData extends EventHandlerManager
 
     public function get name () :String
     {
-        return _ctrl.getPlayerName();
+        return (_ctrl != null ? _ctrl.getPlayerName() : "(player has been shutdown)");
     }
 
     public function set name (newName :String) :void

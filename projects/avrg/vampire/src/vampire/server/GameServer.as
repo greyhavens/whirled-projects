@@ -268,11 +268,11 @@ public class GameServer extends ServerDB
                 return;
             }
 
+            log.info("Player quit the game", "player", player);
+
             _ctrl.doBatch(function () :void {
                 player.shutdown();
             });
-
-            log.info("Player quit the game", "player", player);
         }
         catch(err :Error) {
             log.error(err + "\n" + err.getStackTrace());
