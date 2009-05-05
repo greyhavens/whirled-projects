@@ -4,12 +4,16 @@ import com.whirled.contrib.EventHandlerManager;
 
 import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;
+import flash.utils.clearInterval;
 
 public class BasicGameObject extends EventDispatcher
 {
-    public function shutdown () :void
+    public function shutdown (...ignored) :void
     {
         _events.freeAllHandlers();
+        for each (var id :uint in _intervalIds) {
+            clearInterval(id);
+        }
     }
 
     public function registerListener (dispatcher :IEventDispatcher, event :String,
@@ -20,6 +24,13 @@ public class BasicGameObject extends EventDispatcher
             useWeakReference);
     }
 
+    protected function addIntervalId (id :uint) :void
+    {
+        _intervalIds.push(id);
+    }
+
+
+    protected var _intervalIds :Array = [];
     protected var _events :EventHandlerManager = new EventHandlerManager();
 }
 }
