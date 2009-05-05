@@ -1,6 +1,5 @@
 package vampire.quest.client {
 
-import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.objects.DraggableObject;
 import com.whirled.contrib.simplegame.objects.SceneObject;
@@ -17,6 +16,7 @@ import flash.text.TextField;
 
 import vampire.client.SimpleListController;
 import vampire.quest.*;
+import vampire.quest.activity.NpcTalkActivityParams;
 import vampire.quest.client.npctalk.Program;
 
 public class QuestPanel extends DraggableObject
@@ -87,9 +87,9 @@ public class QuestPanel extends DraggableObject
         dockPanel(locPanel);
     }
 
-    public function showNpcTalkPanel (program :Program) :void
+    public function showNpcTalkPanel (program :Program, params :NpcTalkActivityParams) :void
     {
-        var newPanel :NpcTalkPanel = new NpcTalkPanel(program);
+        var newPanel :NpcTalkPanel = new NpcTalkPanel(program, params);
         newPanel.visible = false;
         newPanel.x = (_panelMovie.width - newPanel.width) * 0.5;
         ClientCtx.appMode.addSceneObject(newPanel, _dockedPanelLayer);

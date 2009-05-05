@@ -16,6 +16,15 @@ public class Quests
         _inited = true;
 
         /* Lilith Quests */
+        var intro :QuestDesc = new QuestDesc();
+        intro.npc = Npc.LILITH;
+        intro.name = "intro_quest";
+        intro.displayName =  "Aranea Park";
+        intro.description = "Travel to Aranea Park and speak to Lilith";
+        intro.usePropValDifferences = true;
+        makeCollectionRequirement(intro, QuestProps.LILITH_VISITS, 1);
+        addQuest(intro);
+
         var pandorasBox :QuestDesc = new QuestDesc();
         pandorasBox.npc = Npc.LILITH;
         pandorasBox.name = "pandora_quest";

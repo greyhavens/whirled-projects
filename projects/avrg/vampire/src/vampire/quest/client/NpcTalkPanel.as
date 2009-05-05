@@ -1,7 +1,6 @@
 package vampire.quest.client {
 
 import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
@@ -12,13 +11,15 @@ import flash.geom.Point;
 import flash.text.TextField;
 
 import vampire.client.ClientUtil;
+import vampire.quest.activity.NpcTalkActivityParams;
 import vampire.quest.client.npctalk.*;
 
 public class NpcTalkPanel extends SceneObject
 {
-    public function NpcTalkPanel (program :Program)
+    public function NpcTalkPanel (program :Program, activityParams :NpcTalkActivityParams = null)
     {
         _program = program;
+        _activityParams = activityParams;
 
         _npcPanel = ClientCtx.instantiateMovieClip("quest", "NPC_panel");
 
@@ -48,6 +49,11 @@ public class NpcTalkPanel extends SceneObject
     {
         super.addedToDB();
         _program.run(this);
+
+        if (_activityParams != null && _activityParams.awardedPropName != null) {
+            ClientCtx.questProps.offsetIntProp(_activityParams.awardedPropName,
+                _activityParams.awardedPropIncrement);
+        }
     }
 
     override protected function destroyed () :void
@@ -145,6 +151,7 @@ public class NpcTalkPanel extends SceneObject
     }
 
     protected var _program :Program;
+    protected var _activityParams :NpcTalkActivityParams;
 
     protected var _npcPanel :MovieClip;
     protected var _tfSpeech :TextField;

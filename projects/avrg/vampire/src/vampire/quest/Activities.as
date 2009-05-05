@@ -86,7 +86,7 @@ public class Activities
             "Lilith's Penthouse",
             0,  // no juice
             false, // always unlocked
-            new NpcTalkActivityParams("LilithDialog"));
+            new NpcTalkActivityParams("LilithDialog", QuestProps.LILITH_VISITS, 1));
     }
 
     protected static function createPandoraActivity (loc :LocationDesc) :ActivityDesc

@@ -104,6 +104,11 @@ public class PlayerQuestData extends EventDispatcher
         return getQuestStatusFromId(quest.id);
     }
 
+    public function hasSeenQuest (quest :QuestDesc) :Boolean
+    {
+        return (getQuestStatus(quest) != STATUS_NOT_ADDED);
+    }
+
     public function getQuestStatusFromId (questId :int) :int
     {
         var dict :Dictionary = _props.get(PROP_QUESTS) as Dictionary;

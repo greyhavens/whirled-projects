@@ -164,16 +164,18 @@ public class QuestClient
         return _questPanel;
     }
 
-    public static function showNpcTalkDialog (programName :String) :void
+    public static function showNpcTalkDialog (params :NpcTalkActivityParams) :void
     {
-        var rsrc :NpcTalkResource = ClientCtx.rsrcs.getResource(programName) as NpcTalkResource;
+        var rsrc :NpcTalkResource =
+            ClientCtx.rsrcs.getResource(params.dialogName) as NpcTalkResource;
         if (rsrc == null) {
-            log.warning("Can't show NpcTalkPanel; no resource named '" + programName + "' exists.");
+            log.warning("Can't show NpcTalkPanel; no resource named '"
+                + params.dialogName + "' exists.");
             return;
         }
 
         showQuestPanel(true);
-        _questPanel.showNpcTalkPanel(rsrc.program);
+        _questPanel.showNpcTalkPanel(rsrc.program, params);
     }
 
     public static function get isReady () :Boolean
@@ -199,6 +201,8 @@ public class QuestClient
             ClientCtx.gameCtrl.player.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
                 onPlayerMsgReceived);
 
+            ClientCtx.gameCtrl.agent.sendMessage(QuestMessages.TIMESTAMP);
+
             handshakeQuestTotems(true);
         }
 
@@ -207,8 +211,13 @@ public class QuestClient
         ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_COMPLETED, onQuestCompleted);
         ClientCtx.questData.addEventListener(ActivityEvent.ACTIVITY_ADDED, onActivityAdded);
 
+        // Give the player the first quest
+        var introQuest :QuestDesc = Quests.getQuestByName("intro_quest");
+        if (!ClientCtx.questData.hasSeenQuest(introQuest)) {
+            ClientCtx.questData.addQuest(introQuest);
+        }
+
         checkQuestCompletion();
-        ClientCtx.gameCtrl.agent.sendMessage(QuestMessages.TIMESTAMP);
     }
 
     protected static function onPlayerMsgReceived (e :MessageReceivedEvent) :void
@@ -304,7 +313,8 @@ public class QuestClient
             break;
 
         case ActivityDesc.TYPE_NPC_TALK:
-            showNpcTalkDialog(NpcTalkActivityParams(activity.params).dialogName);
+            var talkParams :NpcTalkActivityParams = NpcTalkActivityParams(activity.params);
+            showNpcTalkDialog(talkParams);
             break;
 
         default:
