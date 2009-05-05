@@ -39,6 +39,9 @@ public class Heart extends SceneObject
         _arteries = ArrayUtil.create(2);
         _arteries[Constants.ARTERY_TOP] = _circulatory["artery_top"];
         _arteries[Constants.ARTERY_BOTTOM] = _circulatory["artery_bottom"];
+        for each (var arteryMovie :MovieClip in _arteries) {
+            arteryMovie.gotoAndStop(1);
+        }
 
         _sparkles = _circulatory["sparkles"];
 
