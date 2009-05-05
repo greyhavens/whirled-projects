@@ -8,6 +8,8 @@ import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
+import flash.events.Event;
+import flash.utils.getTimer;
 
 import vampire.avatar.VampireBody;
 import vampire.data.VConstants;
@@ -15,6 +17,8 @@ import vampire.feeding.*;
 import vampire.feeding.client.*;
 import vampire.feeding.server.*;
 import vampire.feeding.variant.Variant;
+import vampire.feeding.variant.VariantSettings;
+import vampire.quest.activity.BloodBloomActivityParams;
 
 [SWF(width="1000", height="500", frameRate="30")]
 public class BloodBloomStandalone extends Sprite
@@ -51,16 +55,17 @@ public class BloodBloomStandalone extends Sprite
 
     protected function startGame () :void
     {
-        var game :FeedingClient = FeedingClient.create(FeedingClientSettings.spSettings(
-            "Standalone Prey",
-            Rand.nextIntRange(0, VConstants.UNIQUE_BLOOD_STRAINS, Rand.STREAM_COSMETIC),
-            VARIANT,
+        var settings :FeedingClientSettings = FeedingClientSettings.spSettings(
             new PlayerFeedingData(),
             function () :void {
-                game.shutdown();
-                game.parent.removeChild(game);
+                // onRoundComplete
             },
-            null));
+            function () :void {
+                game.shutdown();
+            },
+            new BloodBloomActivityParams(1, 1, "AI Prey", 0, 0, Variant.getSettings(VARIANT)));
+
+        var game :FeedingClient = FeedingClient.create(settings);
     }
 
     protected var _timerMgr :TimerManager = new TimerManager();
@@ -70,7 +75,7 @@ public class BloodBloomStandalone extends Sprite
     [Embed(source="../../../../rsrc/feeding/music.mp3")]
     protected static const MUS_MAIN_THEME :Class;
 
-    protected static const VARIANT :int = Variant.CORRUPTION;
+    protected static const VARIANT :int = Variant.NORMAL;
 }
 
 }
