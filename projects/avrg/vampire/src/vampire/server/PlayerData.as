@@ -43,7 +43,7 @@ public class PlayerData extends EventHandlerManager
         log.info("Logging in", "playerId", playerId, "_ctrl.props.get(Codes.PLAYER_PROP_NAME)", _ctrl.props.get(Codes.PLAYER_PROP_NAME));
 
         //Setup the data container.  This will only update values that are changed.
-        _propsUndater = new PropertiesUpdater(_ctrl.props, Codes.PLAYER_PROPS_UPDATED);
+        _propsUpdater = new PropertiesUpdater(_ctrl.props, Codes.PLAYER_PROPS_UPDATED);
 
 
         registerListener(_ctrl, AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
@@ -186,7 +186,7 @@ public class PlayerData extends EventHandlerManager
 
     public function set xp (newxp :Number) :void
     {
-        _propsUndater.put(Codes.PLAYER_PROP_XP, Logic.maxXPGivenXPAndInvites(newxp, invites));
+        _propsUpdater.put(Codes.PLAYER_PROP_XP, Logic.maxXPGivenXPAndInvites(newxp, invites));
     }
 
 //    public function set state (action :String) :void
@@ -291,8 +291,8 @@ public class PlayerData extends EventHandlerManager
 
     public function set invites (inv :int) :void
     {
-        _propsUndater.put(Codes.PLAYER_PROP_INVITES, inv);
-        _propsUndater.put(Codes.PLAYER_PROP_XP, Logic.maxXPGivenXPAndInvites(xp, invites));
+        _propsUpdater.put(Codes.PLAYER_PROP_INVITES, inv);
+        _propsUpdater.put(Codes.PLAYER_PROP_XP, Logic.maxXPGivenXPAndInvites(xp, invites));
     }
 
     public function set targetLocation (location :Array) :void
@@ -302,7 +302,7 @@ public class PlayerData extends EventHandlerManager
 
     public function set feedingData(bytes :ByteArray) :void
     {
-        _propsUndater.put(Codes.PLAYER_PROP_FEEDING_DATA, bytes);
+        _propsUpdater.put(Codes.PLAYER_PROP_FEEDING_DATA, bytes);
     }
 
     public function addToInviteTally (addition :int = 1) :void
@@ -312,8 +312,8 @@ public class PlayerData extends EventHandlerManager
 
     public function removeBloodBond () :void
     {
-        _propsUndater.put(Codes.PLAYER_PROP_BLOODBOND, 0);
-        _propsUndater.put(Codes.PLAYER_PROP_BLOODBOND_NAME, "");
+        _propsUpdater.put(Codes.PLAYER_PROP_BLOODBOND, 0);
+        _propsUpdater.put(Codes.PLAYER_PROP_BLOODBOND_NAME, "");
     }
 
     public function set bloodBond (newbloodbond :int) :void
@@ -325,7 +325,7 @@ public class PlayerData extends EventHandlerManager
         }
 
         var oldBloodBond :int = bloodbond;
-        _propsUndater.put(Codes.PLAYER_PROP_BLOODBOND, newbloodbond);
+        _propsUpdater.put(Codes.PLAYER_PROP_BLOODBOND, newbloodbond);
 
         if (oldBloodBond != 0) {//Remove the blood bond from the other player.
             if (ServerContext.server.isPlayer(oldBloodBond)) {
@@ -362,7 +362,7 @@ public class PlayerData extends EventHandlerManager
 
     public function set sire (newsire :int) :void
     {
-        _propsUndater.put(Codes.PLAYER_PROP_SIRE, newsire);
+        _propsUpdater.put(Codes.PLAYER_PROP_SIRE, newsire);
     }
 
 
@@ -373,7 +373,7 @@ public class PlayerData extends EventHandlerManager
 
     public function set name (newName :String) :void
     {
-        _propsUndater.put(Codes.PLAYER_PROP_NAME, newName);
+        _propsUpdater.put(Codes.PLAYER_PROP_NAME, newName);
     }
 
     public function get level () :int
@@ -383,32 +383,32 @@ public class PlayerData extends EventHandlerManager
 
     public function get xp () :Number
     {
-        return _propsUndater.get(Codes.PLAYER_PROP_XP) as Number;
+        return _propsUpdater.get(Codes.PLAYER_PROP_XP) as Number;
     }
 
     public function get bloodbond () :int
     {
-        return _propsUndater.get(Codes.PLAYER_PROP_BLOODBOND) as int;
+        return _propsUpdater.get(Codes.PLAYER_PROP_BLOODBOND) as int;
     }
 
     public function get bloodbondName () :String
     {
-        return _propsUndater.get(Codes.PLAYER_PROP_BLOODBOND_NAME) as String;
+        return _propsUpdater.get(Codes.PLAYER_PROP_BLOODBOND_NAME) as String;
     }
 
     public function set bloodbondName (name :String) :void
     {
-        _propsUndater.put(Codes.PLAYER_PROP_BLOODBOND_NAME, name);
+        _propsUpdater.put(Codes.PLAYER_PROP_BLOODBOND_NAME, name);
     }
 
     public function get sire () :int
     {
-        return _propsUndater.get(Codes.PLAYER_PROP_SIRE) as int;
+        return _propsUpdater.get(Codes.PLAYER_PROP_SIRE) as int;
     }
 
     public function get invites () :int
     {
-        return _propsUndater.get(Codes.PLAYER_PROP_INVITES) as int;
+        return _propsUpdater.get(Codes.PLAYER_PROP_INVITES) as int;
     }
 
     public function get targetId() :int
@@ -422,7 +422,7 @@ public class PlayerData extends EventHandlerManager
 
     public function get progenyIds() :Array
     {
-        var progeny :Array = _propsUndater.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array;
+        var progeny :Array = _propsUpdater.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array;
         if (progeny == null) {
             return [];
         }
@@ -431,7 +431,7 @@ public class PlayerData extends EventHandlerManager
 
     public function set progenyIds(p :Array) :void
     {
-        _propsUndater.put(Codes.PLAYER_PROP_PROGENY_IDS, p);
+        _propsUpdater.put(Codes.PLAYER_PROP_PROGENY_IDS, p);
     }
 
     public function addProgeny (progenyId :int) :void
@@ -470,7 +470,7 @@ public class PlayerData extends EventHandlerManager
             }
         }
 
-        if (_propsUndater.isNeedingUpdate(Codes.PLAYER_PROP_INVITES)) {
+        if (_propsUpdater.isNeedingUpdate(Codes.PLAYER_PROP_INVITES)) {
             Trophies.checkInviteTrophies(this);
         }
 
@@ -478,7 +478,7 @@ public class PlayerData extends EventHandlerManager
             Trophies.checkMinionTrophies(this);
         }
 
-        _propsUndater.update(dt);
+        _propsUpdater.update(dt);
     }
 
     public function addXPBonusNotification (bonus :Number) :void
@@ -505,7 +505,7 @@ public class PlayerData extends EventHandlerManager
     protected var _updateLineage :Boolean = true;
 
     //Stores props copied to the client
-    protected var _propsUndater :PropertiesUpdater;
+    protected var _propsUpdater :PropertiesUpdater;
 
     protected static const log :Log = Log.getLog(PlayerData);
 
