@@ -1,4 +1,4 @@
-package
+package com.whirled.contrib.simplegame.objects
 {
 import com.whirled.contrib.simplegame.ObjectDB;
 import com.whirled.contrib.simplegame.SimObject;
