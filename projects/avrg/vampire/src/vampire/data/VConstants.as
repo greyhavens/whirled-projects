@@ -98,7 +98,7 @@ public class VConstants
     public static const PLAYER_STATE_FEEDING_PREY :String = "FeedingPrey";
 
 
-    public static const NOTIFICATION_TIME_XP :Number = 60 ;//* 10;
+
 
     /**
     * If the vampire 'feeds' on non-players, this is the player Id to use.
