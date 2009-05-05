@@ -87,10 +87,12 @@ public class PlayerQuestData extends EventDispatcher
 
     public function completeQuest (quest :QuestDesc) :void
     {
-        _props.setIn(PROP_QUESTS, quest.id, STATUS_COMPLETE);
-        // every time a quest is completed, clear untracked properties to keep
-        // our property space clean!
-        ClientCtx.questProps.clearUntrackedProps();
+        _props.doBatch(function () :void {
+            _props.setIn(PROP_QUESTS, quest.id, STATUS_COMPLETE);
+            // every time a quest is completed, clear untracked properties to keep
+            // our property space clean!
+            ClientCtx.questProps.clearUntrackedProps();
+        });
     }
 
     public function debugClearQuest (quest :QuestDesc) :void
