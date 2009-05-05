@@ -26,9 +26,10 @@ public class LocationPanel extends SceneObject
         tfName.text = loc.displayName;
 
         var btnClose :SimpleButton = _panelMovie["close"];
+        var self :LocationPanel = this;
         registerListener(btnClose, MouseEvent.CLICK,
             function (...ignored) :void {
-                QuestClient.hideDockedPanel(false);
+                ClientCtx.dockSprite.hideDockedPanel(self, false);
             });
 
         for (var ii :int = 0; ii < loc.activities.length; ++ii) {

@@ -73,8 +73,8 @@ public class NpcTalkPanel extends SceneObject
         if (_program != null) {
             _program.update(dt);
             if (!_program.isRunning) {
-                QuestClient.hideDockedPanel(true);
-                QuestClient.showLastDisplayedLocationPanel();
+                ClientCtx.dockSprite.hideDockedPanel(this, true);
+                ClientCtx.dockSprite.showLastLocationPanel();
                 _program = null;
                 return;
             }
@@ -161,7 +161,7 @@ public class NpcTalkPanel extends SceneObject
     protected var _needResponseUpdate :Boolean;
 
     protected static const BUTTON_LOCS :Array = [
-        new Point(205, 163), new Point(205, 206), new Point(205, 249)
+        new Point(342, 246), new Point(342, 289), new Point(342, 332)
     ];
 }
 

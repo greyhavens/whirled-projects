@@ -9,7 +9,6 @@ import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertySubControl;
 
 import flash.display.Sprite;
-import flash.geom.Rectangle;
 
 import vampire.feeding.FeedingClient;
 import vampire.feeding.FeedingClientSettings;
@@ -22,7 +21,7 @@ import vampire.quest.client.npctalk.*;
 public class QuestClient
 {
     public static function init (gameCtrl :AVRGameControl, simpleGame :SimpleGame,
-        appMode :AppMode, panelLayer :Sprite, minigameLayer :Sprite, notificationLayer :Sprite,
+        appMode :AppMode, hudSprite :Sprite, minigameLayer :Sprite, notificationLayer :Sprite,
         playerProps :PropertySubControl = null) :void
     {
         if (_inited) {
@@ -46,9 +45,12 @@ public class QuestClient
         ClientCtx.questProps = new PlayerQuestProps(playerProps);
         ClientCtx.notificationMgr = new NotificationMgr();
 
-        ClientCtx.panelLayer = panelLayer;
+        ClientCtx.hudSprite = hudSprite;
         ClientCtx.minigameLayer = minigameLayer;
         ClientCtx.notificationLayer = notificationLayer;
+
+        ClientCtx.dockSprite = new DockSprite(700, 55);
+        ClientCtx.hudSprite.addChild(ClientCtx.dockSprite);
 
         ClientCtx.rsrcs.registerResourceType("npcTalk", NpcTalkResource);
 
@@ -75,6 +77,11 @@ public class QuestClient
         handshakeQuestTotems(false);
     }
 
+    public static function showQuestPanel () :void
+    {
+        ClientCtx.dockSprite.showQuestPanel();
+    }
+
     public static function playerCompletedFeeding () :void
     {
         ClientCtx.questProps.offsetIntProp(QuestProps.NORMAL_FEEDINGS, 1);
@@ -86,7 +93,7 @@ public class QuestClient
             ClientCtx.questData.curLocation = loc;
         }
 
-        showLocationPanel(loc);
+        ClientCtx.dockSprite.showLocationPanel(loc);
     }
 
     public static function beginActivity (activity :ActivityDesc) :void
@@ -98,84 +105,15 @@ public class QuestClient
         }
     }
 
-    public static function showLocationPanel (loc :LocationDesc) :void
-    {
-        showQuestPanel(true);
-        _questPanel.showLocationPanel(loc);
-    }
-
-    public static function showLastDisplayedLocationPanel () :void
-    {
-        if (_questPanel != null && _questPanel.lastDisplayedLocation != null) {
-            showLocationPanel(_questPanel.lastDisplayedLocation);
-        }
-    }
-
-    public static function hideDockedPanel (destroy :Boolean) :void
-    {
-        if (_questPanel != null) {
-            _questPanel.hideDockedPanel(destroy);
-        }
-    }
-
     public static function showDebugPanel (show :Boolean) :void
     {
         if (_debugPanel == null && show) {
             _debugPanel = new DebugPanel();
-            ClientCtx.appMode.addSceneObject(_debugPanel, ClientCtx.panelLayer);
+            ClientCtx.appMode.addSceneObject(_debugPanel, ClientCtx.hudSprite);
         } else if (_debugPanel != null && !show) {
             _debugPanel.destroySelf();
             _debugPanel = null;
         }
-
-        /*if (_debugPanel != null) {
-            _debugPanel.visible = show;
-        }*/
-    }
-
-    public static function showQuestPanel (show :Boolean) :void
-    {
-        if (_questPanel == null && show) {
-            _questPanel = new QuestPanel();
-
-            var bounds :Rectangle = ClientCtx.getPaintableArea(false);
-            _questPanel.x = bounds.x + ((bounds.width - _questPanel.width) * 0.5);
-            _questPanel.y = bounds.y + 50;
-
-            ClientCtx.appMode.addSceneObject(_questPanel, ClientCtx.panelLayer);
-        } else if (_questPanel != null && !show) {
-            _questPanel.destroySelf();
-            _questPanel = null;
-        }
-
-        // Simply hiding the panel is preventing mouse events from getting through
-        // to the room underneath, presumably because AVRGameControl uses
-        // DisplayObject.hitTestPoint to determine whether a click is destined for the game,
-        // and hitTestPoint doesn't seem to take visiblity or mouseEnabled'ness into account.
-        /*if (_questPanel != null) {
-            _questPanel.visible = show;
-            Sprite(_questPanel.displayObject).mouseEnabled = show;
-            Sprite(_questPanel.displayObject).mouseChildren = show;
-        }*/
-    }
-
-    public static function get questPanel () :QuestPanel
-    {
-        return _questPanel;
-    }
-
-    public static function showNpcTalkDialog (params :NpcTalkActivityParams) :void
-    {
-        var rsrc :NpcTalkResource =
-            ClientCtx.rsrcs.getResource(params.dialogName) as NpcTalkResource;
-        if (rsrc == null) {
-            log.warning("Can't show NpcTalkPanel; no resource named '"
-                + params.dialogName + "' exists.");
-            return;
-        }
-
-        showQuestPanel(true);
-        _questPanel.showNpcTalkPanel(rsrc.program, params);
     }
 
     public static function get isReady () :Boolean
@@ -205,6 +143,9 @@ public class QuestClient
 
             handshakeQuestTotems(true);
         }
+
+        _statusPanel = new StatusPanel();
+        ClientCtx.appMode.addSceneObject(_statusPanel, ClientCtx.hudSprite);
 
         ClientCtx.questProps.addEventListener(QuestPropEvent.PROP_CHANGED, checkQuestCompletion);
         ClientCtx.questData.addEventListener(PlayerQuestEvent.QUEST_ADDED, onQuestAdded);
@@ -317,7 +258,7 @@ public class QuestClient
 
         case ActivityDesc.TYPE_NPC_TALK:
             var talkParams :NpcTalkActivityParams = NpcTalkActivityParams(activity.params);
-            showNpcTalkDialog(talkParams);
+            ClientCtx.dockSprite.showNpcTalkDialog(talkParams);
             break;
 
         default:
@@ -350,7 +291,7 @@ public class QuestClient
     }
 
     protected static var _debugPanel :DebugPanel;
-    protected static var _questPanel :QuestPanel;
+    protected static var _statusPanel :StatusPanel;
 
     protected static var _inited :Boolean;
     protected static var _resourcesLoaded :Boolean;

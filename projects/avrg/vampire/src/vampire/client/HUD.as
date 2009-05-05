@@ -258,7 +258,7 @@ public class HUD extends DraggableObject
 
 //        var hudQuests :SimpleButton = SimpleButton(findSafely("button_quests"));
 //        registerListener(hudQuests, MouseEvent.CLICK, function (...ignored) :void {
-//            QuestClient.showQuestPanel(true);
+//            QuestClient.showQuestPanel();
 //        });
     }
 

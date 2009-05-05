@@ -25,7 +25,7 @@ public class DebugPanel extends GenericDraggableWindow
         createNewLayoutRow(15);
 
         createButton("Quests", function (...ignored) :void {
-            QuestClient.showQuestPanel(true);
+            ClientCtx.dockSprite.showQuestPanel();
         });
 
         createButton("Reload NPC Dialogs", function (...ignored) :void {
@@ -178,9 +178,9 @@ public class DebugPanel extends GenericDraggableWindow
     {
         for each (var questId :int in ClientCtx.questData.activeAndCompleteQuestIds) {
             ClientCtx.questData.debugClearQuest(Quests.getQuest(questId));
-            if (QuestClient.questPanel != null) {
+            /*if (QuestClient.questPanel != null) {
                 QuestClient.questPanel.debugForceDisplayUpdate();
-            }
+            }*/
         }
     }
 

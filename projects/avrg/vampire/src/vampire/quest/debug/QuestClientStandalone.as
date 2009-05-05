@@ -59,7 +59,7 @@ public class QuestClientStandalone extends Sprite
     protected function start () :void
     {
         QuestClient.showDebugPanel(true);
-        QuestClient.showQuestPanel(true);
+        ClientCtx.dockSprite.showQuestPanel();
     }
 
     protected var _sg :SimpleGame;

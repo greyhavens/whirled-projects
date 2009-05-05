@@ -20,7 +20,8 @@ public class ClientCtx
     public static var questProps :PlayerQuestProps;
     public static var notificationMgr :NotificationMgr;
 
-    public static var panelLayer :Sprite;
+    public static var dockSprite :DockSprite;
+    public static var hudSprite :Sprite;
     public static var minigameLayer :Sprite;
     public static var notificationLayer :Sprite;
 
