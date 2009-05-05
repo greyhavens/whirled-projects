@@ -229,8 +229,6 @@ public class MainGameMode extends AppMode
                 msg.gameId, ClientContext.model.playerFeedingData, onRoundComplete, onGameComplete);
             _feedingGameClient = FeedingClient.create(settings);
 
-            _spriteLayerMinigame.addChildAt(_feedingGameClient, 0)
-
             //Notify the tutorial
             ClientContext.tutorial.feedGameStarted(msg.isPrimaryPredator);
         }
@@ -347,10 +345,6 @@ public class MainGameMode extends AppMode
     {
         if (_feedingGameClient != null) {
             _feedingGameClient.shutdown();
-
-            if (_feedingGameClient.parent != null) {
-                _feedingGameClient.parent.removeChild(_feedingGameClient);
-            }
             _feedingGameClient = null;
         }
     }

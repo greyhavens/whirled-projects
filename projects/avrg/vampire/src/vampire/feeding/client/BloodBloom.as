@@ -67,16 +67,6 @@ public class BloodBloom extends FeedingClient
             FeedingUtil.initMessageManager(ClientCtx.msgMgr);
         }
 
-        _events.registerListener(this, Event.ADDED_TO_STAGE,
-            function (...ignored) :void {
-                _addedToStage = true;
-                maybeFinishInit();
-            });
-        _events.registerListener(this, Event.UNLOAD,
-            function (...ignored) :void {
-                shutdown();
-            });
-
         // If the resources aren't loaded, wait for them to load
         if (!_resourcesLoaded) {
             var timer :ManagedTimer = _timerMgr.runForever(50, checkResourcesLoaded);
@@ -86,6 +76,8 @@ public class BloodBloom extends FeedingClient
                     maybeFinishInit();
                 }
             }
+        } else {
+            maybeFinishInit();
         }
 
         ClientCtx.mainLoop.run();
@@ -185,7 +177,7 @@ public class BloodBloom extends FeedingClient
 
     protected function maybeFinishInit () :void
     {
-        if (!_addedToStage || !_resourcesLoaded) {
+        if (/*!_addedToStage ||*/ !_resourcesLoaded) {
             return;
         }
 
@@ -245,7 +237,7 @@ public class BloodBloom extends FeedingClient
             });
     }
 
-    protected var _addedToStage :Boolean;
+    //protected var _addedToStage :Boolean;
     protected var _hasShutdown :Boolean;
     protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _timerMgr :TimerManager = new TimerManager();

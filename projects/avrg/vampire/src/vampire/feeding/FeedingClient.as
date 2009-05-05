@@ -7,7 +7,7 @@ import flash.display.Sprite;
 
 import vampire.feeding.client.BloodBloom;
 
-public class FeedingClient extends Sprite
+public class FeedingClient
 {
     /**
      * Performs one-time initialization of the client. Should be called shortly after the

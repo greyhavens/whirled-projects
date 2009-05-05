@@ -61,9 +61,6 @@ public class FeedingTestClient extends Sprite
                 pfd.playerStrain = Logic.getPlayerBloodStrain(_gameCtrl.player.getPlayerId());
                 _curGame = FeedingClient.create(
                     FeedingClientSettings.mpSettings(gameId, pfd, onRoundComplete, onGameComplete));
-
-                addChild(_curGame);
-                freezeAvatars(true);
             }
 
         } else if (e.name == "Server_Hello") {
@@ -82,28 +79,11 @@ public class FeedingTestClient extends Sprite
 
     protected function onGameComplete () :void
     {
-        removeChild(_curGame);
         _curGame.shutdown();
         _curGame = null;
 
         // In the test client, we just disconnect from the game when it ends.
         _gameCtrl.player.deactivateGame();
-
-        //freezeAvatars(false);
-    }
-
-    protected function freezeAvatars (freeze :Boolean) :void
-    {
-        for each (var entityId :String in _gameCtrl.room.getEntityIds("avatar")) {
-            var freezeObj :Object = _gameCtrl.room.getEntityProperty("freeze", entityId);
-            if (freezeObj is Function) {
-                try {
-                    (freezeObj as Function).call(null, freeze);
-                } catch (e :Error) {
-                    log.info("freeze() error", "freeze", freeze, "entityId", entityId, e);
-                }
-            }
-        }
     }
 
     protected var _gameCtrl :AVRGameControl;

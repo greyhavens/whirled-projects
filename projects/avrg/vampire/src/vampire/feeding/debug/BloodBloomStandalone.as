@@ -61,8 +61,6 @@ public class BloodBloomStandalone extends Sprite
                 game.parent.removeChild(game);
             },
             null));
-
-        addChild(game);
     }
 
     protected var _timerMgr :TimerManager = new TimerManager();

@@ -303,13 +303,11 @@ public class QuestClient
                 },
                 function () :void {
                     feedingGame.shutdown();
-                    feedingGame.parent.removeChild(feedingGame);
                 },
                 bbParams,
                 ClientCtx.questData,
                 ClientCtx.questProps);
             feedingGame = FeedingClient.create(feedingSettings);
-            ClientCtx.minigameLayer.addChild(feedingGame);
             break;
 
         case ActivityDesc.TYPE_NPC_TALK:
