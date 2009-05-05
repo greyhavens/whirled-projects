@@ -158,13 +158,6 @@ public class DebugPanel extends GenericDraggableWindow
         createButton("-Juice", function (...ignored) :void {
             ClientCtx.questData.questJuice = Math.max(ClientCtx.questData.questJuice - 20, 0);
         });
-
-        createNewLayoutRow(15);
-        layoutElement(TextBits.createText("Locations", 1.2));
-        createNewLayoutRow();
-        for each (var loc :LocationDesc in Locations.getLocationList()) {
-            addLocation(loc);
-        }
     }
 
     protected function clearProps (...ignored) :void
@@ -188,17 +181,6 @@ public class DebugPanel extends GenericDraggableWindow
     {
         for each (var activity :ActivityDesc in ClientCtx.questData.unlockedActivities) {
             ClientCtx.questData.debugLockActivity(activity);
-        }
-    }
-
-    protected function addLocation (loc :LocationDesc) :void
-    {
-        if (!ArrayUtil.contains(_locs, loc)) {
-            createButton(loc.displayName, function (...ignored) :void {
-                QuestClient.goToLocation(loc);
-            });
-
-            _locs.push(loc);
         }
     }
 

@@ -74,7 +74,6 @@ public class QuestClient
 
     public static function shutdown () :void
     {
-        handshakeQuestTotems(false);
     }
 
     public static function showQuestPanel () :void
@@ -85,15 +84,6 @@ public class QuestClient
     public static function playerCompletedFeeding () :void
     {
         ClientCtx.questProps.offsetIntProp(QuestProps.NORMAL_FEEDINGS, 1);
-    }
-
-    public static function goToLocation (loc :LocationDesc) :void
-    {
-        if (ClientCtx.questData.curLocation != loc) {
-            ClientCtx.questData.curLocation = loc;
-        }
-
-        ClientCtx.dockSprite.showLocationPanel(loc);
     }
 
     public static function beginActivity (activity :ActivityDesc) :void
@@ -128,20 +118,10 @@ public class QuestClient
         }
 
         if (ClientCtx.gameCtrl.isConnected()) {
-            ClientCtx.gameCtrl.player.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM,
-                function (...ignored) :void {
-                    handshakeQuestTotems(true);
-                });
-            ClientCtx.gameCtrl.player.addEventListener(AVRGamePlayerEvent.LEFT_ROOM,
-                function (...ignored) :void {
-                    handshakeQuestTotems(false);
-                });
             ClientCtx.gameCtrl.player.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
                 onPlayerMsgReceived);
 
             ClientCtx.gameCtrl.agent.sendMessage(QuestMessages.TIMESTAMP);
-
-            handshakeQuestTotems(true);
         }
 
         _statusPanel = new StatusPanel();
@@ -264,29 +244,6 @@ public class QuestClient
         default:
             log.warning("Unrecognized activity type", "activity", activity);
             break;
-        }
-    }
-
-    protected static function handshakeQuestTotems (connect :Boolean) :void
-    {
-        for each (var furniId :String in ClientCtx.gameCtrl.room.getEntityIds("furni")) {
-            var setTotemClickCallback :Function = ClientCtx.gameCtrl.room.getEntityProperty(
-                FurniConstants.ENTITY_PROP_SET_CLICK_CALLBACK, furniId) as Function;
-            if (setTotemClickCallback != null) {
-                log.info("Found Quest Totem", "entityId", furniId);
-                setTotemClickCallback(connect ? questTotemClicked : null);
-            }
-        }
-    }
-
-    protected static function questTotemClicked (totemType :String, totemEntityId :String) :void
-    {
-        log.info("questTotemClicked", "totemType", totemType, "entityId", totemEntityId);
-        var loc :LocationDesc = Locations.getLocationByName(totemType);
-        if (loc == null) {
-            log.warning("No location for Quest Totem", "totemType", totemType);
-        } else {
-            goToLocation(loc);
         }
     }
 
