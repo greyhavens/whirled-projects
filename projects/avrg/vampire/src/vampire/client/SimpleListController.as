@@ -1,7 +1,7 @@
 package vampire.client {
 
 import com.threerings.util.HashMap;
-import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.EventHandlerManager;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -9,7 +9,7 @@ import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 
-public class SimpleListController extends SimObject
+public class SimpleListController
 {
     public function SimpleListController (listParent :MovieClip,
                                           rowNameBase :String,
@@ -34,7 +34,7 @@ public class SimpleListController extends SimObject
         }
 
         if (_upButton != null) {
-            registerListener(_upButton, MouseEvent.CLICK,
+            _events.registerListener(_upButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     if (_firstVisibleDataIdx > 0) {
                         _firstVisibleDataIdx--;
@@ -44,7 +44,7 @@ public class SimpleListController extends SimObject
         }
 
         if (_downButton != null) {
-            registerListener(_downButton, MouseEvent.CLICK,
+            _events.registerListener(_downButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     if (_firstVisibleDataIdx + _rows.length < _data.length) {
                         _firstVisibleDataIdx++;
@@ -52,6 +52,12 @@ public class SimpleListController extends SimObject
                     }
                 });
         }
+    }
+
+    public function shutdown () :void
+    {
+        _events.freeAllHandlers();
+        _events = null;
     }
 
     /**
@@ -114,6 +120,8 @@ public class SimpleListController extends SimObject
     {
         tf.text = data.toString();
     }
+
+    protected var _events :EventHandlerManager = new EventHandlerManager();
 
     protected var _listParent :MovieClip;
     protected var _columnNames :Array;

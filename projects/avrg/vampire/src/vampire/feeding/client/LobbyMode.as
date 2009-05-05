@@ -144,7 +144,6 @@ public class LobbyMode extends AppMode
             [ "player_name", "player_score" ],
             _panelMovie["arrow_up"],
             _panelMovie["arrow_down"]);
-        addObject(_playerList);
         updatePlayerList();
 
         updateBloodBondIndicator();
@@ -162,6 +161,12 @@ public class LobbyMode extends AppMode
             // grayscale-ize the panel
             _panelMovie.filters = [ new ColorMatrix().makeGrayscale().createFilter() ];
         }
+    }
+
+    override protected function shutdown () :void
+    {
+        _playerList.shutdown();
+        super.shutdown();
     }
 
 //    protected function showScores () :void
