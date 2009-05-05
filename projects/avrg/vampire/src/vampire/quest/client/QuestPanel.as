@@ -217,6 +217,11 @@ public class QuestPanel extends DraggableObject
     override protected function removedFromDB () :void
     {
         _questList.destroySelf();
+        if (_dockedPanelRef.isLive) {
+            _dockedPanelRef.object.destroySelf();
+        }
+
+        super.removedFromDB();
     }
 
     protected function updateQuests () :void
