@@ -10,23 +10,23 @@ import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.simplegame.net.Message;
-import com.whirled.contrib.simplegame.objects.ServerDB;
+import com.whirled.contrib.simplegame.objects.BasicGameObject;
 import com.whirled.net.MessageReceivedEvent;
 
-import flash.utils.getTimer;
-import flash.utils.setInterval;
+import flash.events.Event;
 
 import vampire.data.Codes;
 import vampire.feeding.FeedingServer;
 import vampire.quest.server.QuestServer;
 import vampire.server.feeding.FeedingContext;
+import vampire.server.feeding.FeedingManager;
 import vampire.server.feeding.LeaderBoardServer;
 import vampire.server.feeding.LogicFeeding;
 
-[Event(name="playerMoved", type="vampire.server.PlayerMovedEvent")]
+[Event(name="playerMoved", type="vampire.server.GameEvent")]
 [Event(name="playerJoinedGame", type="com.whirled.avrg.AVRGameControlEvent")]
 [Event(name="playerJoinedGame", type="com.whirled.avrg.AVRGameControlEvent")]
-public class GameServer extends ServerDB
+public class GameServer extends BasicGameObject
 {
     public function GameServer ()
     {
@@ -41,7 +41,7 @@ public class GameServer extends ServerDB
             registerListener(_ctrl.game, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
 
             //Add the lineage server
-            addBasicGameObject(new LineageServer(this));
+            ServerContext.lineage = new LineageServer(this);
 
             //Tim's bloodbond game server
             FeedingServer.init(_ctrl);
@@ -50,32 +50,40 @@ public class GameServer extends ServerDB
             QuestServer.init(_ctrl);
 
             //Add the room population updater
-            addObject(new LoadBalancerServer(this));
+            new LoadBalancerServer(this);
 
             //Add the feeding leaderboard server
             FeedingContext.leaderBoardServer = new LeaderBoardServer(this);
-            addBasicGameObject(FeedingContext.leaderBoardServer);
 
             //Add stats monitoring
-            addObject(new AnalyserServer());
+//            addObject(new AnalyserServer());
 
             //Add the Feedback notifier
-            _feedback = new Feedback();
-            addObject(_feedback);
+            ServerContext.feedback = new Feedback();
+
+            ServerContext.feedingManager = new FeedingManager(this);
 
             //Add this time to the list of server reboots
             recordBootTime();
 
-            //Start the ticker
-            _startTime = getTimer();
-            _lastTickTime = _startTime;
-            setInterval(tick, SERVER_TICK_UPDATE_MILLISECONDS);
+            registerListener(_ctrl, Event.UNLOAD, shutdown);
         }
         else {
             log.error(ClassUtil.tinyClassName(GameServer) + ": no AVRServerGameControl!!");
             log.error("Are we running locally???");
         }
 
+    }
+
+    override public function shutdown (...ignored) :void
+    {
+        _players.forEach(function (playerId :int, player :PlayerData) :void {
+            player.shutdown();
+        });
+        _rooms.forEach(function (roomId :int, room :Room) :void {
+            room.shutdown();
+        });
+        super.shutdown();
     }
 
     protected function recordBootTime () :void
@@ -88,14 +96,9 @@ public class GameServer extends ServerDB
         _ctrl.props.set(Codes.AGENT_PROP_SERVER_REBOOTS, reboottimes, true);
     }
 
-    public function get control () :AVRServerGameControl
+    public function get ctrl () :AVRServerGameControl
     {
         return _ctrl;
-    }
-
-    public function get lineage () :LineageServer
-    {
-        return getObjectNamed(LineageServer.NAME) as LineageServer;
     }
 
     /**
@@ -112,15 +115,23 @@ public class GameServer extends ServerDB
 
 
             try {
-                room = new Room(roomId);
+                room = new Room(roomId, removeRoomCallback);
                 _rooms.put(roomId, room);
-                addObject(room);
             }
             catch(err :Error) {
                 log.error("Attempted to get a room with no players.  Throws error.  Use isRoom()");
             }
         }
         return room;
+    }
+
+    protected function removeRoomCallback (room :Room) :void
+    {
+         if (room != null) {
+             room.shutdown();
+             _rooms.remove(room.roomId);
+             dispatchEvent(new GameEvent(GameEvent.ROOM_SHUTDOWN, null, room));
+         }
     }
 
     public function isRoom (roomId :int) :Boolean
@@ -132,56 +143,6 @@ public class GameServer extends ServerDB
     {
         return _players.get(playerId) as PlayerData;
     }
-
-    /**
-    * Rooms with no players, or that are not connected are marked for removal with the
-    * isStale flag.
-    */
-    protected function removeStaleRooms () :void
-    {
-        for each(var roomId :int in _rooms.keys()) {
-            var room :Room = _rooms.get(roomId) as Room;
-            if(room == null || room.isStale) {
-                log.debug("Removed room from VServer " + roomId);
-                _rooms.remove(roomId);
-            }
-        }
-    }
-
-    /**
-    * The update method.  All contained simobjects, such as rooms, the lineage server, etc
-    * are updated on this pass.  It controls the global, game-wide update, thus controlling
-    * network updates.
-    */
-    protected function tick () :void
-    {
-        var time :int = getTimer();
-        var dT :int = time - _lastTickTime;
-        _lastTickTime = time;
-        var dt :Number = dT / 1000.0;//Seconds
-
-        //We don't want to update stale rooms
-        removeStaleRooms();
-
-        //Add the global messages to each room
-//        _rooms.forEach(function(roomId :int, room :Room) :void {
-//            for each(var globalMessage :String in _globalFeedback) {
-//                room.addFeedback(globalMessage, 1, 0);
-//            }
-//        });
-
-        //Then empty the global message queue
-        _globalFeedback.splice(0);
-
-        //Batch up the updates, so all the network traffic is sent as one lump
-        //The rooms are update in this loop as they are simobjects.
-        _ctrl.doBatch(function () :void {
-            update(dt);
-        });
-
-    }
-
-
 
     /**
     * Pass messages to the ServerLogic object.
@@ -204,7 +165,6 @@ public class GameServer extends ServerDB
                     LogicFeeding.handleMessage(player, msg);
                 }
              });
-
         }
         catch(err :Error) {
             log.error(err + "\n" + err.getStackTrace());
@@ -233,13 +193,9 @@ public class GameServer extends ServerDB
             _ctrl.doBatch(function () :void {
                 var player :PlayerData = new PlayerData(pctrl);
                 _players.put(playerId, player);
-
+                //Notify other listeners that the PlayerData is loaded.
                 dispatchEvent(new AVRGameControlEvent(AVRGameControlEvent.PLAYER_JOINED_GAME,
                     null, player.playerId));
-                //Tell the lineage that there is a new player.
-//                sendMessageToNamedObject(
-//                    new ObjectMessage(LineageServer.MESSAGE_PLAYER_JOINED_GAME, player),
-//                    LineageServer.NAME);
             });
 
 
@@ -250,8 +206,6 @@ public class GameServer extends ServerDB
             log.error(err + "\n" + err.getStackTrace());
         }
     }
-
-
 
     /**
     * When players leave, clean up
@@ -279,11 +233,6 @@ public class GameServer extends ServerDB
         }
     }
 
-    public function addGlobalFeedback (msg :String) :void
-    {
-        feedback.addGlobalFeedback(msg);
-    }
-
     public function isPlayer (playerId :int) :Boolean
     {
         return _players.containsKey(playerId);
@@ -299,23 +248,9 @@ public class GameServer extends ServerDB
         return _players;
     }
 
-    public function get feedback () :Feedback
-    {
-        return _feedback;
-    }
-
-    protected var _startTime :int;
-    protected var _lastTickTime :int;
-
     protected var _ctrl :AVRServerGameControl;
     protected var _rooms :HashMap = new HashMap();
     protected var _players :HashMap = new HashMap();
-
-    protected var _feedback :Feedback;
-
-    protected var _globalFeedback :Array = new Array();
-
-    public static const SERVER_TICK_UPDATE_MILLISECONDS :int = 500;
 
     public static var log :Log = Log.getLog(GameServer);
 }

@@ -8,7 +8,7 @@ import com.whirled.contrib.simplegame.objects.BasicGameObject;
 import com.whirled.net.NetConstants;
 import com.whirled.net.PropertySubControl;
 
-import flash.net.registerClassAlias;
+import flash.events.Event;
 import flash.utils.clearInterval;
 import flash.utils.setInterval;
 
@@ -29,14 +29,17 @@ public class LeaderBoardServer extends BasicGameObject
     public function LeaderBoardServer (game :GameServer)
     {
         if (game != null) {
-            _ctrl = game.control;
+            _ctrl = game.ctrl;
             _propsServer = _ctrl.props;
             _propsGlobal = _ctrl.game.props;
             _events.registerListener(game, FeedingHighScoreEvent.HIGH_SCORE, handleHighScoreEvent);
 
             setup();
+            registerListener(game.ctrl, Event.UNLOAD, shutdown);
         }
     }
+
+
 
     public function resetScores () :void
     {

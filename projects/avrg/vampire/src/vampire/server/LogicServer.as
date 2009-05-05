@@ -116,7 +116,7 @@ public class LogicServer extends SimObject
                 }
                 else if (msg is SendGlobalMsg) {
                     var globalMessage :String = SendGlobalMsg(msg).message;
-                    ServerContext.server.addGlobalFeedback(globalMessage);
+                    ServerContext.feedback.addGlobalFeedback(globalMessage);
                 }
 //                else if (msg is RoomNameMsg) {
 //                    var roomMsg :RoomNameMsg = RoomNameMsg(msg);
@@ -169,9 +169,9 @@ public class LogicServer extends SimObject
             break;
 
             case DebugMsg.DEBUG_GET_TOP_LINEAGE:
-            var ln :Lineage = ServerContext.server.lineage.getSubLineage(VConstants.UBER_VAMP_ID,
+            var ln :Lineage = ServerContext.lineage.getSubLineage(VConstants.UBER_VAMP_ID,
                 1, VConstants.GENERATIONS_BELOW_LILITH_FURN_LINEAGE);
-            log.debug(DebugMsg.DEBUG_GET_TOP_LINEAGE, "lineage total", ServerContext.server.lineage);
+            log.debug(DebugMsg.DEBUG_GET_TOP_LINEAGE, "lineage total", ServerContext.lineage);
 
 //            var s :String = "";
 //            s += "Names";
@@ -246,7 +246,7 @@ public class LogicServer extends SimObject
         log.debug("Getting xpGainedWhileAsleep=" + xpGainedWhileAsleep);
         if (!isNaN(xpGainedWhileAsleep) && xpGainedWhileAsleep > 0) {
             addXP(player.playerId, xpGainedWhileAsleep);
-            var descendentsCount :int = ServerContext.server.lineage.getProgenyCount(player.playerId);
+            var descendentsCount :int = ServerContext.lineage.getProgenyCount(player.playerId);
             player.addFeedback(Codes.POPUP_PREFIX + "You gained " +
                 Util.formatNumberForFeedback(xpGainedWhileAsleep) +
                 " experience from your " +
@@ -308,9 +308,9 @@ public class LogicServer extends SimObject
         log.info(player.playerId + " makeSire(" + targetPlayerId + ")");
 
 
-        ServerContext.server.lineage.setPlayerSire(player.playerId, targetPlayerId);
+        ServerContext.lineage.setPlayerSire(player.playerId, targetPlayerId);
         player.sire = targetPlayerId;
-        log.info(player.playerId + " then setting sire(" + ServerContext.server.lineage.getSireId(player.playerId) + ")");
+        log.info(player.playerId + " then setting sire(" + ServerContext.lineage.getSireId(player.playerId) + ")");
     }
 
     /**

@@ -24,13 +24,13 @@ public class AnalyserServer extends SimObjectServer
         super.addedToDB();
         _timeStarted = new Date().time;
 
-        registerListener(ServerContext.server.control.game, AVRGameControlEvent.PLAYER_JOINED_GAME,
+        registerListener(ServerContext.server.ctrl.game, AVRGameControlEvent.PLAYER_JOINED_GAME,
             handlePlayerJoinedGame);
 
-        registerListener(ServerContext.server.control.game, AVRGameControlEvent.PLAYER_QUIT_GAME,
+        registerListener(ServerContext.server.ctrl.game, AVRGameControlEvent.PLAYER_QUIT_GAME,
             handlePlayerQuitGame);
 
-        registerListener(ServerContext.server.control.game, MessageReceivedEvent.MESSAGE_RECEIVED,
+        registerListener(ServerContext.server.ctrl.game, MessageReceivedEvent.MESSAGE_RECEIVED,
             handleMessage);
 
         //Dump stats to logs every 10 minutes.
@@ -259,16 +259,16 @@ public class AnalyserServer extends SimObjectServer
                     break;
 
                     case PROGENY:
-                    s += cleanData(ServerContext.server.lineage.getProgenyCount(playerId));
+                    s += cleanData(ServerContext.lineage.getProgenyCount(playerId));
                     break;
 
                     case GRANDPROGENY:
-                    s += cleanData(ServerContext.server.lineage.getAllDescendentsCount(playerId,2) -
-                        ServerContext.server.lineage.getProgenyCount(playerId));
+                    s += cleanData(ServerContext.lineage.getAllDescendentsCount(playerId,2) -
+                        ServerContext.lineage.getProgenyCount(playerId));
                     break;
 
                     case SIRE:
-                    s += cleanData(ServerContext.server.lineage.getSireId(playerId));
+                    s += cleanData(ServerContext.lineage.getSireId(playerId));
                     break;
 
                     case LEVEL:

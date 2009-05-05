@@ -3,7 +3,7 @@ package vampire.server
 import com.threerings.util.HashMap;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
-import com.whirled.avrg.PlayerSubControlServer;
+import com.whirled.contrib.simplegame.objects.BasicGameObject;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.ByteArray;
@@ -19,12 +19,12 @@ import vampire.net.messages.LoadBalancingMsg;
  * player can click and be transported to.
  *
  */
-public class LoadBalancerServer extends SimObjectServer
+public class LoadBalancerServer extends BasicGameObject
 {
     public function LoadBalancerServer (server :GameServer)
     {
         _server = server;
-        registerListener(_server.control.game, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
+        registerListener(_server.ctrl.game, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
         addIntervalId(setInterval(refreshLowPopulationRoomData, ROOM_POPULATION_REFRESH_RATE));
     }
 
@@ -32,19 +32,17 @@ public class LoadBalancerServer extends SimObjectServer
     {
         if (evt.name == LoadBalancingMsg.NAME) {
             log.debug("Received load balance request from " + evt.senderId);
-            _playersRequestedRoomInfo.add(evt.senderId);
+//            _playersRequestedRoomInfo.add(evt.senderId);
+            sendPlayerRoomsMessage(evt.senderId as int);
         }
 
     }
 
-    override protected function update (dt:Number) :void
+    protected function sendPlayerRoomsMessage (playerId :int) :void
     {
-        if (_playersRequestedRoomInfo.size() > 0) {
-            log.debug("update", "_sortedRoomIds", _sortedRoomIds);
-
-            var roomIds :Array = _sortedRoomIds.slice(0,
+        var roomIds :Array = _sortedRoomIds.slice(0,
                 VConstants.ROOMS_SHOWN_IN_LOAD_BALANCER + 1);
-            log.debug("update", "roomIds", roomIds);
+            log.debug("sendPlayerRoomsMessage", "roomIds", roomIds);
             var roomNames :Array = roomIds.map(function (roomId :int, ...ignored) :String {
                 if (_server.isRoom(roomId)) {
                     return _server.getRoom(roomId).name;
@@ -53,32 +51,67 @@ public class LoadBalancerServer extends SimObjectServer
                     return "";
                 }
             });
-            log.debug("update", "roomNames", roomNames);
+            log.debug("sendPlayerRoomsMessage", "roomNames", roomNames);
 
             var roomInfoMessage :LoadBalancingMsg =
                 new LoadBalancingMsg(0, roomIds, roomNames);
             var bytes :ByteArray = roomInfoMessage.toBytes();
 
-            _playersRequestedRoomInfo.forEach(function (playerId :int) :void {
-                //Only handle the message if the originating player exists.
-                try {
-                    if (_server.isPlayer(playerId)) {
-                        var player :PlayerData = _server.getPlayer(playerId);
-                        log.debug("Sending " + player.name + " " + roomInfoMessage);
-                        PlayerSubControlServer(player.ctrl).sendMessage(LoadBalancingMsg.NAME, bytes);
-                    }
+            //Only handle the message if the originating player exists.
+            try {
+                if (_server.isPlayer(playerId)) {
+                    var player :PlayerData = _server.getPlayer(playerId);
+                    log.debug("Sending " + player.name + " " + roomInfoMessage);
+                    player.sctrl.sendMessage(LoadBalancingMsg.NAME, bytes);
                 }
-                catch(err :Error) {
-                    log.error(err + "\n" + err.getStackTrace());
-                }
-            });
-            _playersRequestedRoomInfo.clear();
-        }
+            }
+            catch(err :Error) {
+                log.error(err + "\n" + err.getStackTrace());
+            }
     }
 
-    override protected function destroyed () :void
+//    override protected function update (dt:Number) :void
+//    {
+//        if (_playersRequestedRoomInfo.size() > 0) {
+//            log.debug("update", "_sortedRoomIds", _sortedRoomIds);
+//
+//            var roomIds :Array = _sortedRoomIds.slice(0,
+//                VConstants.ROOMS_SHOWN_IN_LOAD_BALANCER + 1);
+//            log.debug("update", "roomIds", roomIds);
+//            var roomNames :Array = roomIds.map(function (roomId :int, ...ignored) :String {
+//                if (_server.isRoom(roomId)) {
+//                    return _server.getRoom(roomId).name;
+//                }
+//                else {
+//                    return "";
+//                }
+//            });
+//            log.debug("update", "roomNames", roomNames);
+//
+//            var roomInfoMessage :LoadBalancingMsg =
+//                new LoadBalancingMsg(0, roomIds, roomNames);
+//            var bytes :ByteArray = roomInfoMessage.toBytes();
+//
+//            _playersRequestedRoomInfo.forEach(function (playerId :int) :void {
+//                //Only handle the message if the originating player exists.
+//                try {
+//                    if (_server.isPlayer(playerId)) {
+//                        var player :PlayerData = _server.getPlayer(playerId);
+//                        log.debug("Sending " + player.name + " " + roomInfoMessage);
+//                        PlayerSubControlServer(player.ctrl).sendMessage(LoadBalancingMsg.NAME, bytes);
+//                    }
+//                }
+//                catch(err :Error) {
+//                    log.error(err + "\n" + err.getStackTrace());
+//                }
+//            });
+//            _playersRequestedRoomInfo.clear();
+//        }
+//    }
+
+    override public function shutdown (...ignored) :void
     {
-        super.destroyed();
+        super.shutdown();
         _server = null;
     }
 
@@ -87,7 +120,7 @@ public class LoadBalancerServer extends SimObjectServer
         var roomId2Players :HashMap = new HashMap();
         //Create the roomId to population map
         _server.rooms.forEach(function (roomId :int, room :Room) :void {
-            if (!room.isStale && room.name != null) {
+            if (room.ctrl != null && room.name != null) {
                 roomId2Players.put(roomId, room.ctrl.getPlayerIds().length);
             }
         });
@@ -96,11 +129,6 @@ public class LoadBalancerServer extends SimObjectServer
         _sortedRoomIds = roomIdsSorted;
     }
 
-    /**
-     * An array of the form [[roomid1, roomid2, ..], [room1Population, room2Population, ...]]
-     * Used by the client to find low population rooms
-     */
-    protected var _lowPopulationRooms :Array = [];
 
     protected static function sortRoomsToSendPlayers (roomId2PlayerCount :HashMap) :Array
     {
@@ -200,12 +228,17 @@ public class LoadBalancerServer extends SimObjectServer
     protected var _server :GameServer;
     protected var _sortedRoomIds :Array = [];
 
-    protected var _playersRequestedRoomInfo :HashSet = new HashSet();
+//    protected var _playersRequestedRoomInfo :HashSet = new HashSet();
+    /**
+     * An array of the form [[roomid1, roomid2, ..], [room1Population, room2Population, ...]]
+     * Used by the client to find low population rooms
+     */
+    protected var _lowPopulationRooms :Array = [];
 
     /**
     * Resort the rooms every 5 seconds.
     */
-    protected static const ROOM_POPULATION_REFRESH_RATE :int = 5000;
+    protected static const ROOM_POPULATION_REFRESH_RATE :int = 10000;
     protected static const log :Log = Log.getLog(LoadBalancerServer);
 
 }

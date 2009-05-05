@@ -2,13 +2,12 @@ package vampire.server
 {
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.SimObject;
 
 import vampire.data.Codes;
 
-public class Feedback extends SimObject
+public class Feedback
 {
-    override protected function update (dt :Number) :void
+    protected function flush () :void
     {
         if (_room2feedback.size() > 0) {
             _room2feedback.forEach(function (roomId :int, msgs :Array) :void {
@@ -58,8 +57,10 @@ public class Feedback extends SimObject
         }
         var arr :Array = _room2feedback.get(roomId) as Array;
         arr.push([playerId, msg, priority]);
+        flush();
     }
 
+//    protected static const FEEDBACK_INTERVAL_MS :int = 1000*2;
     protected var _room2feedback :HashMap = new HashMap();
     protected static const log :Log = Log.getLog(Feedback);
 }

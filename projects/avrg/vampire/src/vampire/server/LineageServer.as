@@ -27,22 +27,22 @@ public class LineageServer extends Lineage
         _events.registerListener(vserver, AVRGameControlEvent.PLAYER_JOINED_GAME,
             handlePlayerJoined);
 
-        _events.registerListener(vserver, PlayerMovedEvent.PLAYER_ENTERED_ROOM,
+        _events.registerListener(vserver, GameEvent.PLAYER_ENTERED_ROOM,
             handlePlayerEnteredRoom);
 
-        _events.registerListener(vserver, PlayerMovedEvent.PLAYER_LEFT_ROOM,
+        _events.registerListener(vserver, GameEvent.PLAYER_LEFT_ROOM,
             handlePlayerLeftRoom);
 
 //        addIntervalId(setInterval(update, UPDATE_TIME_MS));
     }
 
-    public function handlePlayerEnteredRoom (e :PlayerMovedEvent) :void
+    public function handlePlayerEnteredRoom (e :GameEvent) :void
     {
         if (e.room != null && e.player != null) {
             updateLineageIntoRoomProps(e.player);
         }
     }
-    public function handlePlayerLeftRoom (e :PlayerMovedEvent) :void
+    public function handlePlayerLeftRoom (e :GameEvent) :void
     {
         if (e.room != null && e.room.ctrl.isConnected() && e.player != null) {
             e.room.ctrl.props.setIn(Codes.ROOM_PROP_PLAYER_LINEAGE, e.player.playerId, null, true);
@@ -171,7 +171,7 @@ public class LineageServer extends Lineage
 
     protected function flushPlayerLineages () :void
     {
-        _vserver.control.doBatch( function () :void {
+        _vserver.ctrl.doBatch( function () :void {
             _playerIdsResendLineage.forEach(function (playerId :int) :void {
                 if (_vserver.isPlayer(playerId)) {
                     var lineage :Lineage = getSubLineage(playerId, 1, 2);
@@ -375,7 +375,7 @@ public class LineageServer extends Lineage
         }
     }
 
-    override public function shutdown () :void
+    override public function shutdown (...ignored) :void
     {
         super.shutdown();
         for each (var id :uint in _intervalIds) {
@@ -383,10 +383,10 @@ public class LineageServer extends Lineage
         }
     }
 
-    protected function addIntervalId (id :uint) :void
-    {
-        _intervalIds.push(id);
-    }
+//    protected function addIntervalId (id :uint) :void
+//    {
+//        _intervalIds.push(id);
+//    }
 
 //    override public function get objectName () :String
 //    {
@@ -400,7 +400,7 @@ public class LineageServer extends Lineage
     protected var _vserver :GameServer;
     protected var _playerIdsResendLineage :HashSet = new HashSet();
 
-    protected var _intervalIds :Array = [];
+//    protected var _intervalIds :Array = [];
 
     public static const MESSAGE_PLAYER_JOINED_GAME :String = "Message: Player Joined";
     public static const NAME :String = "LineageServer";

@@ -7,12 +7,17 @@ import com.whirled.contrib.simplegame.net.MessageManager;
 
 import vampire.Util;
 import vampire.data.VConstants;
+import vampire.server.feeding.FeedingManager;
 
 public class ServerContext
 {
     public static var msg :MessageManager;
     public static var ctrl :AVRServerGameControl;
     public static var server :GameServer;
+
+    public static var lineage :LineageServer;
+    public static var feedback :Feedback;
+    public static var feedingManager :FeedingManager;
 
     public static function init (gameCtrl :AVRServerGameControl) :void
     {
@@ -26,6 +31,9 @@ public class ServerContext
         else {
             Log.setLevel("", Log.ERROR);
         }
+
+
+
     }
 }
 }

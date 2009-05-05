@@ -4,7 +4,6 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.EventCollecter;
-import com.whirled.contrib.simplegame.ObjectMessage;
 
 import vampire.data.Logic;
 import vampire.data.VConstants;
@@ -15,7 +14,6 @@ import vampire.feeding.FeedingServer;
 import vampire.feeding.variant.Variant;
 import vampire.net.messages.MovePredAfterFeedingMsg;
 import vampire.net.messages.StartFeedingClientMsg;
-import vampire.server.AnalyserServer;
 import vampire.server.PlayerData;
 import vampire.server.Room;
 import vampire.server.ServerContext;
@@ -81,7 +79,7 @@ public class FeedingRecord extends EventCollecter
     {
         log.debug("startGame()");
 
-        var gamePreyId :int = _room.isPlayer(preyId) ? preyId : Constants.NULL_PLAYER;
+        var gamePreyId :int = _room.isPlayerInRoom(preyId) ? preyId : Constants.NULL_PLAYER;
         var preyBloodType :int = Logic.getPlayerBloodStrain(preyId);
 
         _gameServer = FeedingServer.create(_room.roomId,
@@ -129,7 +127,7 @@ public class FeedingRecord extends EventCollecter
             }
             //Tell the pred to move into position
             LogicFeeding.movePredatorIntoPosition(player, this);
-            _room.addPlayerToFeedingUnavailableList(playerId);
+            ServerContext.feedingManager.addPlayerToFeedingUnavailableList(playerId);
         }
 
         if (prey) {
@@ -149,16 +147,16 @@ public class FeedingRecord extends EventCollecter
         //Only move the predator if the room and player are valid
 
         log.debug("movePrimaryPred", "_primaryPredMoved", _primaryPredMoved, "_room", _room,
-            "_room.isPlayer(primaryPredatorId)", _room.isPlayer(primaryPredatorId));//,
+            "_room.isPlayer(primaryPredatorId)", _room.isPlayerInRoom(primaryPredatorId));//,
 //            "_primaryPredInitialLocation", _primaryPredInitialLocation);
 
-        if (!_primaryPredMoved && _room != null && _room.isPlayer(primaryPredatorId)) {
+        if (!_primaryPredMoved && _room != null && _room.isPlayerInRoom(primaryPredatorId)) {
             // && _primaryPredInitialLocation != null
 
             var primaryPred :PlayerData = _room.getPlayer(primaryPredatorId);
 
             //If the prey is a non-player, or if a player and they haven't moved, move the pred
-            var isPreyPlayer :Boolean = _room.isPlayer(_preyId);
+            var isPreyPlayer :Boolean = _room.isPlayerInRoom(_preyId);
             var isPreyInSameLocation :Boolean = true;
             if (isPreyPlayer) {
                 var preyPlayer :PlayerData = _room.getPlayer(_preyId);
@@ -183,7 +181,7 @@ public class FeedingRecord extends EventCollecter
     public function onPlayerLeft (playerId :int) :void
     {
         log.debug("onPlayerLeft", "playerId", playerId, "_predatorIndex", _predatorIndex);
-        if (_room.isPlayer(playerId)) {
+        if (_room.isPlayerInRoom(playerId)) {
             log.debug("playerLeftCallback", "name", _room.getPlayer(playerId).name);
         }
 
@@ -195,7 +193,7 @@ public class FeedingRecord extends EventCollecter
             _gameFinishedCallback();
             _gameFinishedCallback = null;
         }
-        _room.removePlayerToFeedingUnavailableList(playerId);
+        ServerContext.feedingManager.removePlayerToFeedingUnavailableList(playerId);
     }
 
     public function joinLobby(playerId :int) :void
@@ -217,18 +215,18 @@ public class FeedingRecord extends EventCollecter
     public function onGameStarted () :void
     {
         //Notify the analyser
-        if (_room != null) {
-            _room.db.sendMessageToNamedObject(new ObjectMessage(AnalyserServer.MSG_RECEIVED_FEED,
-                                                                _gameServer.playerIds.slice()),
-                                              AnalyserServer.NAME);
-        }
+//        if (_room != null) {
+//            _room.db.sendMessageToNamedObject(new ObjectMessage(AnalyserServer.MSG_RECEIVED_FEED,
+//                                                                _gameServer.playerIds.slice()),
+//                                              AnalyserServer.NAME);
+//        }
     }
 
     public function onRoundComplete (results :FeedingRoundResults) :void
     {
         try {
             var selfref :FeedingRecord = this;
-            ServerContext.server.control.doBatch(function() :void {
+            ServerContext.server.ctrl.doBatch(function() :void {
                 LogicFeeding.bloodBloomRoundOver(selfref, results);
             });
         }
@@ -261,7 +259,7 @@ public class FeedingRecord extends EventCollecter
 
             for each(var gamePlayerId :int in _gameServer.playerIds) {
                 _gameServer.playerLeft(gamePlayerId);
-                _room.removePlayerToFeedingUnavailableList(gamePlayerId);
+                ServerContext.feedingManager.removePlayerToFeedingUnavailableList(gamePlayerId);
             }
         }
         if (_gameServer != null) {
@@ -283,6 +281,7 @@ public class FeedingRecord extends EventCollecter
             + "\n\tprimaryPred=" + _gameServer.primaryPredatorId
             + "\n\tpredIds=" + _gameServer.predatorIds
             + "\n\tplayerIds=" + _gameServer.playerIds
+            + "\n\troom=" + _room
     }
 
     public function getPredIndex (predId :int) :int

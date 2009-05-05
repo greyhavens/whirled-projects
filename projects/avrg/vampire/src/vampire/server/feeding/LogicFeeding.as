@@ -6,9 +6,8 @@ package vampire.server.feeding
     import com.whirled.avrg.AVRGameAvatar;
     import com.whirled.avrg.OfflinePlayerPropertyControl;
     import com.whirled.avrg.PlayerSubControlServer;
-    import com.whirled.contrib.simplegame.ObjectMessage;
-    import com.whirled.contrib.simplegame.SimObject;
     import com.whirled.contrib.simplegame.net.Message;
+    import com.whirled.contrib.simplegame.objects.BasicGameObject;
 
     import flash.utils.ByteArray;
 
@@ -22,14 +21,13 @@ package vampire.server.feeding
     import vampire.net.messages.FeedRequestMsg;
     import vampire.net.messages.FeedingDataMsg;
     import vampire.net.messages.MovePredIntoPositionMsg;
-    import vampire.server.AnalyserServer;
     import vampire.server.GameServer;
     import vampire.server.LogicServer;
     import vampire.server.PlayerData;
     import vampire.server.Room;
     import vampire.server.ServerContext;
 
-public class LogicFeeding extends SimObject
+public class LogicFeeding extends BasicGameObject
 {
 
     public static function handleMessage (player :PlayerData, msg :Message) :void
@@ -116,6 +114,10 @@ public class LogicFeeding extends SimObject
         var totalScore :Number = results.totalScore;
 
         var room :Room = gameRecord.room;
+        if (room == null) {
+            log.error("bloodBloomRoundOver", "gameRecord.room", room);
+            return;
+        }
 
         var preyIsPlayer :Boolean = srv.isPlayer(gameRecord.gameServer.preyId);
         var preyPlayer :PlayerData = preyIsPlayer ? srv.getPlayer(gameRecord.gameServer.preyId) : null;
@@ -146,13 +148,13 @@ public class LogicFeeding extends SimObject
             if (preyIsPlayer && preyPlayer != null) {
                 //Check if we don't have a sire.  The prey vampire becomes it.
                 log.debug("server.lineage.isMemberOfLineage("+pred.playerId+")=" +
-                    ServerContext.server.lineage.isMemberOfLineage(pred.playerId));
+                    ServerContext.lineage.isMemberOfLineage(pred.playerId));
 
                 log.debug("server.lineage.isMemberOfLineage("+preyId+")=" +
-                    ServerContext.server.lineage.isMemberOfLineage(preyId));
+                    ServerContext.lineage.isMemberOfLineage(preyId));
 
-                if (!ServerContext.server.lineage.isMemberOfLineage(pred.playerId)) {
-                    if (ServerContext.server.lineage.isMemberOfLineage(preyId)) {
+                if (!ServerContext.lineage.isMemberOfLineage(pred.playerId)) {
+                    if (ServerContext.lineage.isMemberOfLineage(preyId)) {
                         LogicServer.makeSire(pred,  preyPlayer.playerId);
                         log.info("Showing sire feedback popup.");
                         pred.addFeedback(Codes.POPUP_PREFIX + preyPlayer.name +
@@ -212,10 +214,10 @@ public class LogicFeeding extends SimObject
                 p.addFeedback("You gained " + xpFormatted + " experience from feeding!");
 
                 //Notify the analyser
-                ServerContext.server.sendMessageToNamedObject(
-                    new ObjectMessage(AnalyserServer.MSG_RECEIVED_FEEDING_PAYOUT,
-                        [playerId, xp, results.scores.get(playerId)]),
-                    AnalyserServer.NAME);
+//                ServerContext.server.sendMessageToNamedObject(
+//                    new ObjectMessage(AnalyserServer.MSG_RECEIVED_FEEDING_PAYOUT,
+//                        [playerId, xp, results.scores.get(playerId)]),
+//                    AnalyserServer.NAME);
 
                 //Add some bonus xp to your blood bond, if they are online
                 awardBloodBondedXpEarned(p, xp);
@@ -253,15 +255,15 @@ public class LogicFeeding extends SimObject
 
         //Check if we are part of the Lineage (with Ubervamp as the grandsire).  Only then
         //are we allowed to collect minion xp.
-        if (!ServerContext.server.lineage.isMemberOfLineage(player.playerId)) {
+        if (!ServerContext.lineage.isMemberOfLineage(player.playerId)) {
             return;
         }
 
         function awardXP(sireId :int, awardXP :Number) :void {
 
-            ServerContext.server.sendMessageToNamedObject(
-                new ObjectMessage(AnalyserServer.MSG_RECEIVED_PROGENY_PAYOUT, [sireId, awardXP]),
-                AnalyserServer.NAME);
+//            ServerContext.server.sendMessageToNamedObject(
+//                new ObjectMessage(AnalyserServer.MSG_RECEIVED_PROGENY_PAYOUT, [sireId, awardXP]),
+//                AnalyserServer.NAME);
 
             if (ServerContext.server.isPlayer(sireId)) {
                 var sire :PlayerData = ServerContext.server.getPlayer(sireId);
@@ -288,9 +290,9 @@ public class LogicFeeding extends SimObject
         //Award to sires two levels up
         var numberOfGrandGenerationsToAward :int = 2;
 
-        var currentSireId :int = ServerContext.server.lineage.getSireId(player.playerId);
+        var currentSireId :int = ServerContext.lineage.getSireId(player.playerId);
         var generations :int = 1;
-        var immediateSire :int = ServerContext.server.lineage.getSireId(player.playerId);
+        var immediateSire :int = ServerContext.lineage.getSireId(player.playerId);
 
         while (currentSireId != 0 && generations <= 2) {
 
@@ -300,7 +302,7 @@ public class LogicFeeding extends SimObject
             else {
                 awardXP(currentSireId, xp * VConstants.XP_GAIN_FRACTION_SHARED_WITH_GRANDSIRES);
             }
-            currentSireId = ServerContext.server.lineage.getSireId(currentSireId);
+            currentSireId = ServerContext.lineage.getSireId(currentSireId);
             generations++;
         }
     }
@@ -398,7 +400,8 @@ public class LogicFeeding extends SimObject
             log.error("handleFeedRequestMessage", "player", player, "e", e);
             return;
         }
-
+        var roomFeedingManager :RoomFeedingManager =
+            ServerContext.feedingManager.getRoomFeedingManager(player.room.roomId);
         //Set info useful for later
         player.targetId = e.targetPlayer;
 //        player.targetLocation = [e.targetX, e.targetY, e.targetZ];
@@ -406,12 +409,12 @@ public class LogicFeeding extends SimObject
         //If a game lobby already exists, add ourselves to that game, and move into position.
         //Otherwise, first ask the prey.
         //Prey is already in a game, or the prey is a non-player, add ourselves.
-        if (player.room.bloodBloomGameManager.isPreyInGame(e.targetPlayer)
+        if (roomFeedingManager.isPreyInGame(e.targetPlayer)
             || !isPlayer(e.targetPlayer)) {
 
             log.info("Prey is already in a game (or it's a non-player)");
             log.debug("handleFeedRequestMessage, requestFeed", "preylocation", [e.targetX, e.targetY, e.targetZ, e.targetAngle]);
-            var game :FeedingRecord = player.room.bloodBloomGameManager.requestFeed(
+            var game :FeedingRecord = roomFeedingManager.requestFeed(
                 e.predId,
                 e.targetPlayer,
                 e.targetName,
@@ -467,9 +470,10 @@ public class LogicFeeding extends SimObject
         var requestingPlayer :PlayerData = getPlayer(e.predatorId);
 
         if (e.isAllowedToFeed) {
-
+            var roomFeedingManager :RoomFeedingManager =
+                ServerContext.feedingManager.getRoomFeedingManager(prey.room.roomId);
             //Join the game
-            var game :FeedingRecord = prey.room.bloodBloomGameManager.requestFeed(
+            var game :FeedingRecord = roomFeedingManager.requestFeed(
                     e.predatorId,
                     prey.playerId,
                     e.preyName,

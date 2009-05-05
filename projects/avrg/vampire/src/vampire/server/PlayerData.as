@@ -42,26 +42,19 @@ public class PlayerData extends EventHandlerManager
 
         log.info("Logging in", "playerId", playerId, "_ctrl.props.get(Codes.PLAYER_PROP_NAME)", _ctrl.props.get(Codes.PLAYER_PROP_NAME));
 
-        //Setup the data container.  This will only update values that are changed.
-        _propsUpdater = new PropertiesUpdater(_ctrl.props, Codes.PLAYER_PROPS_UPDATED);
-
-
         registerListener(_ctrl, AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
         registerListener(_ctrl, AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
-        registerListener(_ctrl, AVRGamePlayerEvent.TASK_COMPLETED, handleTaskCompleted);
+//        registerListener(_ctrl, AVRGamePlayerEvent.TASK_COMPLETED, handleTaskCompleted);
 
-        //Start in the default state
-//        _state = VConstants.AVATAR_STATE_DEFAULT;
 
         if (isNaN(xp)) {
             xp = 0;
         }
 
         //Make sure we are not over the limit, due to changing level requirements.
-        xp = Logic.maxXPGivenXPAndInvites(xp, invites);
-
-        //Make sure we have our current name
-        name = _ctrl.getPlayerName();
+        if (xp > Logic.maxXPGivenXPAndInvites(xp, invites)) {
+            xp = Logic.maxXPGivenXPAndInvites(xp, invites);
+        }
 
         //Better empty than null
         if (progenyIds == null) {
@@ -86,24 +79,23 @@ public class PlayerData extends EventHandlerManager
         Trophies.checkInviteTrophies(this);
     }
 
-    protected function handleTaskCompleted (e :AVRGamePlayerEvent) :void
-    {
-        log.debug("handleTaskCompleted", "e", e);
-        switch (e.name) {
-            case Codes.TASK_FEEDING:
-            var coins :int = e.value as int;
-            //Notify the analyser
-            ServerContext.server.sendMessageToNamedObject(
-                new ObjectMessage(AnalyserServer.MSG_RECEIVED_FEEDING_COINS_PAYOUT, [playerId, coins]),
-                AnalyserServer.NAME);
-            break;
-        }
-    }
+//    protected function handleTaskCompleted (e :AVRGamePlayerEvent) :void
+//    {
+//        log.debug("handleTaskCompleted", "e", e);
+//        switch (e.name) {
+//            case Codes.TASK_FEEDING:
+//            var coins :int = e.value as int;
+//            //Notify the analyser
+//            ServerContext.server.sendMessageToNamedObject(
+//                new ObjectMessage(AnalyserServer.MSG_RECEIVED_FEEDING_COINS_PAYOUT, [playerId, coins]),
+//                AnalyserServer.NAME);
+//            break;
+//        }
+//    }
 
     public function get feedingData () :ByteArray
     {
         return _ctrl.props.get(Codes.PLAYER_PROP_FEEDING_DATA) as ByteArray;
-//        return _propsUndater.get(Codes.PLAYER_PROP_FEEDING_DATA) as ByteArray;
     }
 
     public function get lineage () :ByteArray
@@ -118,8 +110,7 @@ public class PlayerData extends EventHandlerManager
 
     public function addFeedback (msg :String, priority :int = 1) :void
     {
-        ServerContext.server.feedback.addFeedback(msg, playerId, priority);
-//        _feedback.push([msg, priority]);
+        ServerContext.feedback.addFeedback(msg, playerId, priority);
     }
 
     public function get ctrl () :PlayerSubControlBase
@@ -186,13 +177,8 @@ public class PlayerData extends EventHandlerManager
 
     public function set xp (newxp :Number) :void
     {
-        _propsUpdater.put(Codes.PLAYER_PROP_XP, Logic.maxXPGivenXPAndInvites(newxp, invites));
+        _ctrl.props.set(Codes.PLAYER_PROP_XP, Logic.maxXPGivenXPAndInvites(newxp, invites), true);
     }
-
-//    public function set state (action :String) :void
-//    {
-//        _state = action;
-//    }
 
     protected function get targetPlayer () :PlayerData
     {
@@ -200,11 +186,6 @@ public class PlayerData extends EventHandlerManager
             return ServerContext.server.getPlayer(targetId);
         }
         return null;
-    }
-
-    protected function get isTargetPlayer () :Boolean
-    {
-        return ServerContext.server.isPlayer(targetId);
     }
 
     public function get avatar () :AVRGameAvatar
@@ -216,34 +197,17 @@ public class PlayerData extends EventHandlerManager
         return room.ctrl.getAvatarInfo(playerId);
     }
 
-    protected function get targetOfTargetPlayer() :int
-    {
-        if (!isTargetPlayer) {
-            return 0;
-        }
-        return targetPlayer.targetId;
-    }
-
-    protected function get isTargetTargetingMe() :Boolean
-    {
-        if (!isTargetPlayer) {
-            return false;
-        }
-        return targetPlayer.targetId == playerId;
-    }
-
-
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
     {
         log.info(" Player entered room", "player", toString());
 
         var thisPlayer :PlayerData = this;
         _room = ServerContext.server.getRoom(int(evt.value));
-        ServerContext.server.control.doBatch(function () :void {
+        ServerContext.server.ctrl.doBatch(function () :void {
             try {
                 if (_room != null) {
                     ServerContext.server.dispatchEvent(
-                        new PlayerMovedEvent(PlayerMovedEvent.PLAYER_ENTERED_ROOM, thisPlayer,
+                        new GameEvent(GameEvent.PLAYER_ENTERED_ROOM, thisPlayer,
                             _room));
                     _room.playerEntered(thisPlayer);
                 }
@@ -263,7 +227,7 @@ public class PlayerData extends EventHandlerManager
     {
         log.debug(name + " leftRoom");
         var thisPlayer :PlayerData = this;
-        ServerContext.server.control.doBatch(function () :void {
+        ServerContext.server.ctrl.doBatch(function () :void {
             if (_room != null) {
 
                 _room.playerLeft(thisPlayer);
@@ -291,8 +255,9 @@ public class PlayerData extends EventHandlerManager
 
     public function set invites (inv :int) :void
     {
-        _propsUpdater.put(Codes.PLAYER_PROP_INVITES, inv);
-        _propsUpdater.put(Codes.PLAYER_PROP_XP, Logic.maxXPGivenXPAndInvites(xp, invites));
+        _ctrl.props.set(Codes.PLAYER_PROP_INVITES, inv, true);
+        xp = xp;
+        Trophies.checkInviteTrophies(this);
     }
 
     public function set targetLocation (location :Array) :void
@@ -302,7 +267,7 @@ public class PlayerData extends EventHandlerManager
 
     public function set feedingData(bytes :ByteArray) :void
     {
-        _propsUpdater.put(Codes.PLAYER_PROP_FEEDING_DATA, bytes);
+        _ctrl.props.set(Codes.PLAYER_PROP_FEEDING_DATA, bytes, true);
     }
 
     public function addToInviteTally (addition :int = 1) :void
@@ -312,8 +277,8 @@ public class PlayerData extends EventHandlerManager
 
     public function removeBloodBond () :void
     {
-        _propsUpdater.put(Codes.PLAYER_PROP_BLOODBOND, 0);
-        _propsUpdater.put(Codes.PLAYER_PROP_BLOODBOND_NAME, "");
+        _ctrl.props.set(Codes.PLAYER_PROP_BLOODBOND, 0, true);
+        _ctrl.props.set(Codes.PLAYER_PROP_BLOODBOND_NAME, "", true);
     }
 
     public function set bloodBond (newbloodbond :int) :void
@@ -325,7 +290,7 @@ public class PlayerData extends EventHandlerManager
         }
 
         var oldBloodBond :int = bloodbond;
-        _propsUpdater.put(Codes.PLAYER_PROP_BLOODBOND, newbloodbond);
+        _ctrl.props.set(Codes.PLAYER_PROP_BLOODBOND, newbloodbond, true);
 
         if (oldBloodBond != 0) {//Remove the blood bond from the other player.
             if (ServerContext.server.isPlayer(oldBloodBond)) {
@@ -359,21 +324,15 @@ public class PlayerData extends EventHandlerManager
         }
     }
 
-
     public function set sire (newsire :int) :void
     {
-        _propsUpdater.put(Codes.PLAYER_PROP_SIRE, newsire);
+        _ctrl.props.set(Codes.PLAYER_PROP_SIRE, newsire, true);
     }
 
 
     public function get name () :String
     {
-        return (_ctrl != null ? _ctrl.getPlayerName() : "(player has been shutdown)");
-    }
-
-    public function set name (newName :String) :void
-    {
-        _propsUpdater.put(Codes.PLAYER_PROP_NAME, newName);
+        return _ctrl.getPlayerName();
     }
 
     public function get level () :int
@@ -383,32 +342,32 @@ public class PlayerData extends EventHandlerManager
 
     public function get xp () :Number
     {
-        return _propsUpdater.get(Codes.PLAYER_PROP_XP) as Number;
+        return _ctrl.props.get(Codes.PLAYER_PROP_XP) as Number;
     }
 
     public function get bloodbond () :int
     {
-        return _propsUpdater.get(Codes.PLAYER_PROP_BLOODBOND) as int;
+        return _ctrl.props.get(Codes.PLAYER_PROP_BLOODBOND) as int;
     }
 
     public function get bloodbondName () :String
     {
-        return _propsUpdater.get(Codes.PLAYER_PROP_BLOODBOND_NAME) as String;
+        return _ctrl.props.get(Codes.PLAYER_PROP_BLOODBOND_NAME) as String;
     }
 
     public function set bloodbondName (name :String) :void
     {
-        _propsUpdater.put(Codes.PLAYER_PROP_BLOODBOND_NAME, name);
+        _ctrl.props.set(Codes.PLAYER_PROP_BLOODBOND_NAME, name, true);
     }
 
     public function get sire () :int
     {
-        return _propsUpdater.get(Codes.PLAYER_PROP_SIRE) as int;
+        return _ctrl.props.get(Codes.PLAYER_PROP_SIRE) as int;
     }
 
     public function get invites () :int
     {
-        return _propsUpdater.get(Codes.PLAYER_PROP_INVITES) as int;
+        return _ctrl.props.get(Codes.PLAYER_PROP_INVITES) as int;
     }
 
     public function get targetId() :int
@@ -422,7 +381,7 @@ public class PlayerData extends EventHandlerManager
 
     public function get progenyIds() :Array
     {
-        var progeny :Array = _propsUpdater.get(Codes.PLAYER_PROP_PROGENY_IDS) as Array;
+        var progeny :Array = _ctrl.props.get(Codes.PLAYER_PROP_INVITES) as Array;
         if (progeny == null) {
             return [];
         }
@@ -431,7 +390,8 @@ public class PlayerData extends EventHandlerManager
 
     public function set progenyIds(p :Array) :void
     {
-        _propsUpdater.put(Codes.PLAYER_PROP_PROGENY_IDS, p);
+        _ctrl.props.set(Codes.PLAYER_PROP_PROGENY_IDS, p, true);
+        Trophies.checkMinionTrophies(this);
     }
 
     public function addProgeny (progenyId :int) :void
@@ -456,34 +416,19 @@ public class PlayerData extends EventHandlerManager
         return [avatar.x, avatar.y, avatar.z, avatar.orientation];
     }
 
-    //This update comes from the server and only occurs a few times per second.
-    public function update (dt :Number) :void
+    public function addXPBonusNotification (bonus :Number) :void
     {
-        //Bundle up the xp notifications
-        _xpFeedbackTime += dt;
-        if (_xpFeedbackTime >= VConstants.NOTIFICATION_TIME_XP) {
-            _xpFeedbackTime = 0;
+        _xpFeedback += bonus;
+        var now :Number = new Date().time;
+        if (now - _previousXPFeedbackNotificationTime >= MINIMUM_XP_NOTIFICATION_INTERVAL_MS) {
+            _previousXPFeedbackNotificationTime = now;
             if (_xpFeedback >= 1) {
                 addFeedback("You gained " + Util.formatNumberForFeedback(_xpFeedback) +
                         " experience from your descendents!");
                 _xpFeedback = 0;
             }
+
         }
-
-        if (_propsUpdater.isNeedingUpdate(Codes.PLAYER_PROP_INVITES)) {
-            Trophies.checkInviteTrophies(this);
-        }
-
-        if (_updateLineage) {
-            Trophies.checkMinionTrophies(this);
-        }
-
-        _propsUpdater.update(dt);
-    }
-
-    public function addXPBonusNotification (bonus :Number) :void
-    {
-        _xpFeedback += bonus;
     }
 
 
@@ -498,14 +443,11 @@ public class PlayerData extends EventHandlerManager
     protected var _targetId :int;
     protected var _targetLocation :Array;
     protected var _feedback :Array = [];
-    protected var _xpFeedbackTime :Number = 0;
+    protected var _previousXPFeedbackNotificationTime :Number = 0;
     protected var _xpFeedback :Number = 0;
     protected var _lineage :ByteArray;
 
-    protected var _updateLineage :Boolean = true;
-
-    //Stores props copied to the client
-    protected var _propsUpdater :PropertiesUpdater;
+    public static const MINIMUM_XP_NOTIFICATION_INTERVAL_MS :Number = 5*60*1000;
 
     protected static const log :Log = Log.getLog(PlayerData);
 

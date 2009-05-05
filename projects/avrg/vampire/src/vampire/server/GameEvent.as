@@ -2,9 +2,9 @@ package vampire.server
 {
 import flash.events.Event;
 
-public class PlayerMovedEvent extends Event
+public class GameEvent extends Event
 {
-    public function PlayerMovedEvent(type:String, player :PlayerData, room :Room)
+    public function GameEvent(type:String, player :PlayerData, room :Room)
     {
         super(type, false, false);
         _player = player;
@@ -26,5 +26,6 @@ public class PlayerMovedEvent extends Event
 
     public static const PLAYER_ENTERED_ROOM :String = "PlayerEnteredRoom";
     public static const PLAYER_LEFT_ROOM :String = "PlayerLeftRoom";
+    public static const ROOM_SHUTDOWN :String = "RoomShutdown";
 }
 }
