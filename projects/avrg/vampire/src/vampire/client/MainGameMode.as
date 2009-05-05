@@ -10,7 +10,7 @@ import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.net.Message;
-import com.whirled.contrib.simplegame.objects.IShutdown;
+import com.whirled.contrib.simplegame.objects.BasicGameObject;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
@@ -27,7 +27,6 @@ import vampire.net.messages.FeedRequestCancelMsg;
 import vampire.net.messages.FeedRequestMsg;
 import vampire.net.messages.FeedingDataMsg;
 import vampire.net.messages.GameStartedMsg;
-import vampire.net.messages.RoomNameMsg;
 import vampire.net.messages.ShareTokenMsg;
 import vampire.net.messages.StartFeedingClientMsg;
 import vampire.quest.client.QuestClient;
@@ -270,13 +269,13 @@ public class MainGameMode extends AppMode
                     ClientContext.animateEnlargeFromMouseClick(popup);
                 }
             }
-            else if (message is RoomNameMsg) {
-                var roomMsg :RoomNameMsg = new RoomNameMsg(ClientContext.ourPlayerId,
-                                                           ClientContext.ctrl.room.getRoomId(),
-                                                           ClientContext.ctrl.room.getRoomName());
-                log.debug("Sending to agent=" + roomMsg);
-                ClientContext.ctrl.agent.sendMessage(RoomNameMsg.NAME, roomMsg.toBytes());
-            }
+//            else if (message is RoomNameMsg) {
+//                var roomMsg :RoomNameMsg = new RoomNameMsg(ClientContext.ourPlayerId,
+//                                                           ClientContext.ctrl.room.getRoomId(),
+//                                                           ClientContext.ctrl.room.getRoomName());
+//                log.debug("Sending to agent=" + roomMsg);
+//                ClientContext.ctrl.agent.sendMessage(RoomNameMsg.NAME, roomMsg.toBytes());
+//            }
 
             else if (message is FeedRequestCancelMsg) {
                 var feedcancel :FeedRequestCancelMsg = FeedRequestCancelMsg(message);
@@ -423,7 +422,7 @@ public class MainGameMode extends AppMode
 
     override protected function shutdown () :void
     {
-        for each (var o :IShutdown in _objectsToShutDown) {
+        for each (var o :BasicGameObject in _objectsToShutDown) {
             if (o != null) {
                 o.shutdown();
             }
@@ -432,7 +431,7 @@ public class MainGameMode extends AppMode
 //        QuestClient.shutdown();
     }
 
-    protected function addToShutDownList (o :IShutdown) :void
+    protected function addToShutDownList (o :BasicGameObject) :void
     {
         _objectsToShutDown.push(o);
     }

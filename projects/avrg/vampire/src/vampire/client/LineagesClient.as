@@ -4,10 +4,9 @@ import com.threerings.util.HashMap;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.EventHandlerManager;
-import com.whirled.contrib.simplegame.objects.IShutdown;
+import com.whirled.contrib.simplegame.objects.BasicGameObject;
 import com.whirled.net.ElementChangedEvent;
 
-import flash.events.EventDispatcher;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
@@ -20,22 +19,21 @@ import vampire.data.VConstants;
  * Manages and presents room props and data.
  */
 [Event(name="Lineage Updated", type="vampire.client.events.LineageUpdatedEvent")]
-public class LineagesClient extends EventDispatcher
-    implements IShutdown
+public class LineagesClient extends BasicGameObject
 {
     public function LineagesClient()
     {
-        _events.registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED,
+        registerListener(ClientContext.ctrl.room.props, ElementChangedEvent.ELEMENT_CHANGED,
             handleElementChanged);
         handleOurPlayerEnteredRoom(null);
         //Listen for the player leaving the room, shut down the client then
-        _events.registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM,
+        registerListener(ClientContext.ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM,
             handleOurPlayerEnteredRoom);
 
-        _events.registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_LEFT,
+        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_LEFT,
             handlePlayerLeftRoom);
 
-        _events.registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_ENTERED,
+        registerListener(ClientContext.ctrl.room, AVRGameRoomEvent.PLAYER_ENTERED,
             handlePlayerEnteredRoom);
 
 
@@ -63,11 +61,6 @@ public class LineagesClient extends EventDispatcher
 
             _lineages.put(ClientContext.ourPlayerId, lineage);
         }
-    }
-
-    public function shutdown () :void
-    {
-        _events.freeAllHandlers();
     }
 
     protected function handlePlayerLeftRoom (e :AVRGameRoomEvent) :void
@@ -135,16 +128,7 @@ public class LineagesClient extends EventDispatcher
         return _lineages.containsKey(playerId);
     }
 
-
-//
-//    override public function get objectName () :String
-//    {
-//        return NAME;
-//    }
-
     protected var _lineages :HashMap = new HashMap();
-    protected var _events :EventHandlerManager = new EventHandlerManager();
 
-//    public static const NAME :String = "RoomModel";
 }
 }

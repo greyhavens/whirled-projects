@@ -32,12 +32,12 @@ public class AdminPanel extends DraggableObject
         y = 100;
     }
 
-    override protected function update (dt:Number) :void
-    {
-        if (VConstants.LOCAL_DEBUG_MODE && _playerData != null) {
-            _playerData.update(dt);
-        }
-    }
+//    override protected function update (dt:Number) :void
+//    {
+//        if (VConstants.LOCAL_DEBUG_MODE && _playerData != null) {
+//            _playerData.update(dt);
+//        }
+//    }
 
     override public function get objectName () :String
     {
@@ -223,7 +223,7 @@ public class AdminPanel extends DraggableObject
     {
         ClientContext.ctrl.agent.sendMessage(DebugMsg.NAME, new DebugMsg(DebugMsg.DEBUG_GAIN_XP).toBytes());
         if(VConstants.LOCAL_DEBUG_MODE) {
-            LogicServer.addXP(_playerData.playerId, 500);
+            LogicServer.addXP(_playerData.playerId, 5000);
         }
     }
 

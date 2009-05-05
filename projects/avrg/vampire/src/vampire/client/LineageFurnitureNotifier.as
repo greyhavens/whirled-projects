@@ -5,7 +5,7 @@ import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.EventHandlerManager;
-import com.whirled.contrib.simplegame.objects.IShutdown;
+import com.whirled.contrib.simplegame.objects.BasicGameObject;
 
 import flash.utils.clearInterval;
 
@@ -13,27 +13,20 @@ import vampire.client.events.LineageUpdatedEvent;
 import vampire.data.Lineage;
 import vampire.furni.FurniConstants;
 
-public class LineageFurnitureNotifier
-    implements IShutdown
+public class LineageFurnitureNotifier extends BasicGameObject
 {
     public function LineageFurnitureNotifier(ctrl :AVRGameControl, lineages :LineagesClient)
     {
         super();
         _ctrl = ctrl;
         _lineages = lineages;
-        _events.registerListener(ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM,
+        registerListener(ctrl.player, AVRGamePlayerEvent.ENTERED_ROOM,
             handleOurPlayerEnteredRoom);
-        _events.registerListener(lineages, LineageUpdatedEvent.LINEAGE_UPDATED,
+        registerListener(lineages, LineageUpdatedEvent.LINEAGE_UPDATED,
             handleLineageUpdated);
         uploadLineagesToFurnIfPresent();
 
-        _events.registerListener(_ctrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignal);
-    }
-
-    public function shutdown () :void
-    {
-        _events.freeAllHandlers();
-        clearInterval(_timerId);
+        registerListener(_ctrl.room, AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignal);
     }
 
     protected function handleSignal (e :AVRGameRoomEvent) :void
@@ -47,12 +40,6 @@ public class LineageFurnitureNotifier
     {
         uploadLineageToFurnIfPresent(e.lineage);
     }
-
-//    override protected function destroyed () :void
-//    {
-//        super.destroyed();
-//        clearInterval(_timerId);
-//    }
 
     protected function handleOurPlayerEnteredRoom (e :AVRGamePlayerEvent) :void
     {
@@ -81,16 +68,8 @@ public class LineageFurnitureNotifier
         }
     }
 
-//    override public function get objectName () :String
-//    {
-//        return NAME;
-//    }
-//    public static const NAME :String = "LineageFurnNotifier";
-
     protected var _ctrl :AVRGameControl;
     protected var _lineages :LineagesClient;
-    protected var _timerId :uint;
-    protected var _events :EventHandlerManager = new EventHandlerManager();
 
 }
 }
