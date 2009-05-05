@@ -58,12 +58,21 @@ public class QuestPanel extends DraggableObject
 
         // Player list
         _questList = new SimpleListController(
-            [],
             _draggable,
             "quest_",
-            [ "quest_name", "quest_description", "quest_progress" ],
+            [ "quest_name", "quest_description", "quest_progress_text", "quest_progress_bar" ],
             _panelMovie["button_up"],
             _panelMovie["button_down"]);
+
+        // A custom handler for the quest progress bar
+        _questList.addCustomColumnHandler("quest_progress_bar",
+            function (progressBar :MovieClip, data :Object) :void {
+                var numFrames :int = progressBar.totalFrames;
+                var frame :int = (Number(data) * Number(numFrames)) + 1;
+                frame = Math.max(frame, 1);
+                frame = Math.min(frame, numFrames);
+                progressBar.gotoAndStop(frame);
+            });
 
         updateQuests();
         updateQuestJuice();
@@ -231,7 +240,8 @@ public class QuestPanel extends DraggableObject
             var entry :Object = {};
             entry["quest_name"] = quest.displayName;
             entry["quest_description"] = quest.description;
-            entry["quest_progress"] = quest.getProgressText(ClientCtx.questProps);
+            entry["quest_progress_text"] = quest.getProgressText(ClientCtx.questProps);
+            entry["quest_progress_bar"] = quest.getProgress(ClientCtx.questProps);
 
             listData.push(entry);
         }

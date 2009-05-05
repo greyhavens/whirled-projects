@@ -139,7 +139,6 @@ public class LobbyMode extends AppMode
 
         // Player list
         _playerList = new SimpleListController(
-            [],
             contents,
             "player",
             [ "player_name", "player_score" ],

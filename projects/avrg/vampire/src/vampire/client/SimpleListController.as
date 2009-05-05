@@ -1,7 +1,9 @@
 package vampire.client {
 
+import com.threerings.util.HashMap;
 import com.whirled.contrib.simplegame.SimObject;
 
+import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
@@ -9,14 +11,12 @@ import flash.text.TextField;
 
 public class SimpleListController extends SimObject
 {
-    public function SimpleListController (data :Array,
-                                          listParent :MovieClip,
+    public function SimpleListController (listParent :MovieClip,
                                           rowNameBase :String,
                                           columnNames :Array,
                                           upButton :SimpleButton = null,
                                           downButton :SimpleButton = null)
     {
-        _data = data;
         _listParent = listParent;
         _columnNames = columnNames;
         _upButton = upButton;
@@ -52,8 +52,15 @@ public class SimpleListController extends SimObject
                     }
                 });
         }
+    }
 
-        updateView();
+    /**
+     * Add custom column handlers for updating columns that aren't TextFields.
+     * @param columnHandler function (disp :DisplayObject, data :Object) :void
+     */
+    public function addCustomColumnHandler (columnName :String, handler :Function) :void
+    {
+        _customColumnHandlers.put(columnName, handler);
     }
 
     public function set data (newData :Array) :void
@@ -67,19 +74,27 @@ public class SimpleListController extends SimObject
         for (var ii :int = 0; ii < _rows.length; ++ii) {
             var row :MovieClip = _rows[ii];
             var dataIndex :int = _firstVisibleDataIdx + ii;
-            if (dataIndex >= _data.length) {
+            if (_data == null || dataIndex >= _data.length) {
                 row.visible = false;
 
             } else {
                 row.visible = true;
                 var data :Object = _data[dataIndex];
                 for each (var columnName :String in _columnNames) {
-                    var column :TextField = row[columnName];
-                    if (data.hasOwnProperty(columnName)) {
-                        column.text = data[columnName];
-                        column.visible = true;
+                    var disp :DisplayObject = row[columnName];
+                    if (disp != null && data.hasOwnProperty(columnName)) {
+                        var columnData :Object = data[columnName];
+                        // Does this column have a custom handler? If not, default
+                        // to our textColumnHandler
+                        var handler :Function = _customColumnHandlers.get(columnName);
+                        if (handler == null) {
+                            handler = textColumnHandler;
+                        }
+                        handler(disp, columnData);
+                        disp.visible = true;
+
                     } else {
-                        column.visible = false;
+                        disp.visible = false;
                     }
                 }
             }
@@ -95,9 +110,16 @@ public class SimpleListController extends SimObject
         }
     }
 
+    protected static function textColumnHandler (tf :TextField, data :Object) :void
+    {
+        tf.text = data.toString();
+    }
+
     protected var _listParent :MovieClip;
     protected var _columnNames :Array;
     protected var _rows :Array = [];
+
+    protected var _customColumnHandlers :HashMap = new HashMap();
 
     protected var _upButton :SimpleButton;
     protected var _downButton :SimpleButton;

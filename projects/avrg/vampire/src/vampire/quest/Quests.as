@@ -95,6 +95,10 @@ public class Quests
             return (getCurValue(props) >= num);
         };
 
+        desc.getProgressFn = function (props :PlayerQuestProps) :Number {
+            return Math.min(Number(getCurValue(props)) / Number(num), 1);
+        };
+
         desc.getProgressTextFn = function (props :PlayerQuestProps) :String {
             var cur :int = getCurValue(props);
             var remaining :int = Math.max(num - cur, 0);

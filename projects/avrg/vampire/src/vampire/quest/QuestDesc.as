@@ -42,6 +42,10 @@ public class QuestDesc
     public var displayName :String = "";
     public var description :String = "";
 
+    // A function returning the percentage completion made on this quest
+    // function getProgressFn (questProps :PlayerQuestProps) :Number
+    public var getProgressFn :Function;
+
     // A function that returns flavor text describing the progress that has been made on the quest
     // function getProgressText (questProps :PlayerQuestProps) :String
     public var getProgressTextFn :Function;
@@ -83,9 +87,14 @@ public class QuestDesc
         return this.isCompletedFn(props);
     }
 
+    public function getProgress (props :PlayerQuestProps) :Number
+    {
+        return (getProgressFn != null ? getProgressFn(props) : 0);
+    }
+
     public function getProgressText (props :PlayerQuestProps) :String
     {
-        return this.getProgressTextFn(props);
+        return (getProgressTextFn != null ? getProgressTextFn(props) : "");
     }
 
     public function toString () :String
