@@ -46,7 +46,7 @@ Well... you'll be on the menu.">
 			<Say speaker="Lilith" text="The nightclub around the corner. The music is loud, the drinks are strong...
 and you'll make an excellent party favor for some very hungry friends that will be there tonight." response="(More)"/>
 			<Say speaker="Lilith" text="Go bare that beautiful neck, kitten! Come back to see me when my friends have drunk their fill.">
-				<AddResponse id="yes" text="Sounds like fun." juiceCost="10"/>
+				<AddResponse id="yes" text="Sounds like fun." juiceCost="1"/>
 				<AddResponse id="no" text="I don't think so."/>
 			</Say>
 			<HandleResponse id="yes"><CallRoutine name="GivePandoraQuest"/></HandleResponse>
@@ -57,7 +57,7 @@ and you'll make an excellent party favor for some very hungry friends that will 
 			<Say speaker="Lilith" text="Child. Whether safely under my wing or alone on the street, make no mistake...
 You are ALWAYS food." response="(More)"/>
 			<Say speaker="Lilith" text="Now, kitten: will you be my little party favor?">
-				<AddResponse id="yes" text="Yes. Drain me." juiceCost="10"/>
+				<AddResponse id="yes" text="Yes. Drain me." juiceCost="1"/>
 				<AddResponse id="no" text="Forget it. I'm out of here."/>
 			</Say>
 			<HandleResponse id="yes"><CallRoutine name="GivePandoraQuest"/></HandleResponse>
@@ -73,7 +73,7 @@ You are ALWAYS food." response="(More)"/>
 	<Routine name="GivePandoraQuest">
 		<GiveActivity name="pandora_activity"/>
 		<GiveQuest name="pandora_quest"/>
-		<TakeJuice amount="10"/>
+		<TakeJuice amount="1"/>
 		<Say speaker="Lilith" text="Mmm. Good kitten. Now, off with you!" response="(Leave)"/>
 		<Exit/>
 	</Routine>
@@ -99,7 +99,7 @@ Now go. FEED. Restore that rosy bloom, so that you may once again be plucked.">
 			<AddResponse id="yes" text="Thank you, Master."/>
 			<AddResponse id="no" text="I don't need to be 'kept.'"/>
 		</Say>
-		<HandleResponse id="yes" juiceCost="10">
+		<HandleResponse id="yes" juiceCost="1">
 			<Say speaker="Lilith" text="Ha! It is well you know your place, child, but let us not be so uncouth as to state it outright." response="Forgive me... Lilith."/>
 			<Say speaker="Lilith" text="Better. Subtlety is a balm in times of rest..." response="(More)"/>
 			<Say speaker="Lilith" text="Better. Subtlety is a balm in times of rest...
@@ -114,7 +114,7 @@ Now go." response="(More)"/>
 			<Say speaker="Lilith" text="The dark hides far worse than us, newborn." response="(More)"/>
 			<Say speaker="Lilith" text="The dark hides far worse than us, newborn.
 Presume too much about your own needs, and you will surely find yourself slaking those of someone else." response="(More)">
-				<AddResponse id="yes" text="Ok. I'll go feed." juiceCost="10"/>
+				<AddResponse id="yes" text="Ok. I'll go feed." juiceCost="1"/>
 				<AddResponse id="no" text="I'll take my chances by myself."/>
 			</Say>
 			<HandleResponse id="yes"><CallRoutine name="GiveHungerQuest"/></HandleResponse>
@@ -132,7 +132,7 @@ You may not realize it yet, but you need me to guide you through this cruel worl
 	
 	<Routine name="GiveHungerQuest">
 		<GiveQuest name="hunger_quest"/>
-		<TakeJuice amount="10"/>
+		<TakeJuice amount="1"/>
 		<Exit/>
 	</Routine>
 	
@@ -144,7 +144,7 @@ You may not realize it yet, but you need me to guide you through this cruel worl
 	
 	<Routine name="IntroRebekahQuest">
 		<Say speaker="Lilith" text="(Placeholder) take Rebekah quest?">
-			<AddResponse id="yes" text="Yes" juiceCost="10"/>
+			<AddResponse id="yes" text="Yes" juiceCost="1"/>
 			<AddResponse id="no" text="No"/>
 		</Say>
 		<HandleResponse id="yes"><CallRoutine name="GiveRebekahQuest"/></HandleResponse>
@@ -159,7 +159,7 @@ You may not realize it yet, but you need me to guide you through this cruel worl
 	<Routine name="GiveRebekahQuest">
 		<GiveActivity name="rebekah_activity"/>
 		<GiveQuest name="rebekah_quest"/>
-		<TakeJuice amount="10"/>
+		<TakeJuice amount="1"/>
 		<Exit/>
 	</Routine>
 	

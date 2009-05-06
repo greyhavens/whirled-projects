@@ -152,11 +152,11 @@ public class DebugPanel extends GenericDraggableWindow
         createNewLayoutRow();
 
         createButton("+Juice", function (...ignored) :void {
-            ClientCtx.questData.questJuice += 20;
+            ClientCtx.questData.questJuice += 1;
         });
 
         createButton("-Juice", function (...ignored) :void {
-            ClientCtx.questData.questJuice = Math.max(ClientCtx.questData.questJuice - 20, 0);
+            ClientCtx.questData.questJuice = Math.max(ClientCtx.questData.questJuice - 1, 0);
         });
     }
 
