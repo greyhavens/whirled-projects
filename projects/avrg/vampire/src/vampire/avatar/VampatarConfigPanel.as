@@ -232,7 +232,6 @@ import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.BitmapData;
-import com.whirled.contrib.platformer.piece.Rect;
 import flash.geom.Rectangle;
 import flash.geom.Matrix;
 import flash.display.Bitmap;
