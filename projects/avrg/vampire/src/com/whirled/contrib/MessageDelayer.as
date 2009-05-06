@@ -8,10 +8,11 @@ import flash.utils.setInterval;
 
 public class MessageDelayer
 {
-    public function MessageDelayer(type :String = null)
+    public function MessageDelayer(lag :int = 100, type :String = null)
     {
+        _lag_ms = lag;
         _serverSubControl = new MessageSubControlDelayed(0, sendFromServerMessage);
-        setInterval(sendMessages, DELAY_MS);
+        setInterval(sendMessages, _lag_ms);
     }
 
     protected function sendFromClientMessage (playerId :int, name:String, value:Object=null) :void
@@ -59,8 +60,14 @@ public class MessageDelayer
 
     protected var _serverSubControl :MessageSubControlDelayed;
 
+    /**
+    * Messages to the client are dispatched from this
+    */
     protected var _clientDispatcher :EventDispatcher = new EventDispatcher();
+    /**
+    * Messages to the server are dispatched from this
+    */
     protected var _serverDispatcher :EventDispatcher = new EventDispatcher();
-    public static const DELAY_MS :int = 100;
+    protected var _lag_ms :int;
 }
 }
