@@ -8,7 +8,7 @@ import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.text.TextField;
 
-import vampire.feeding.client.SpriteUtil;
+import vampire.client.SpriteUtil;
 import vampire.quest.*;
 
 public class QuestNotification extends SceneObject

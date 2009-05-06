@@ -10,6 +10,7 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.text.TextField;
 
+import vampire.client.SpriteUtil;
 import vampire.feeding.*;
 import vampire.server.Trophies;
 

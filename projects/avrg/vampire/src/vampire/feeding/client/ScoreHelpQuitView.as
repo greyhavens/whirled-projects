@@ -13,6 +13,7 @@ import flash.geom.Point;
 import flash.text.TextField;
 
 import vampire.Util;
+import vampire.client.SpriteUtil;
 import vampire.feeding.*;
 
 public class ScoreHelpQuitView extends SceneObject
@@ -128,10 +129,10 @@ import com.whirled.contrib.simplegame.objects.SceneObject;
 import flash.display.MovieClip;
 import flash.display.DisplayObject;
 
+import vampire.client.SpriteUtil;
 import vampire.feeding.client.*;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 import flash.display.Sprite;
-import vampire.feeding.client.SpriteUtil;
 
 class FlyingCell extends SceneObject
 {

@@ -1,4 +1,4 @@
-package vampire.feeding.client {
+package vampire.client {
 
 import flash.display.Sprite;
 

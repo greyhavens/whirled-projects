@@ -7,6 +7,7 @@ import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 
+import vampire.client.SpriteUtil;
 import vampire.feeding.*;
 
 public class CellBurst extends CollidableObj

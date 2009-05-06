@@ -12,6 +12,7 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
+import vampire.client.SpriteUtil;
 import vampire.feeding.*;
 import vampire.server.Trophies;
 

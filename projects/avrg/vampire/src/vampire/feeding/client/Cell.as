@@ -11,6 +11,7 @@ import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.text.TextField;
 
+import vampire.client.SpriteUtil;
 import vampire.feeding.*;
 
 public class Cell extends CollidableObj
