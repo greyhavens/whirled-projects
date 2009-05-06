@@ -102,6 +102,11 @@ public class LocalPropertySubControl extends EventDispatcher
         return 0;
     }
 
+    public function doBatch (fn :Function, ...args) :void
+    {
+        fn.apply(null, args);
+    }
+
     protected var _props :HashMap = new HashMap();
 }
 
