@@ -71,20 +71,19 @@ public class PlayerView extends SceneObject
         }
 
         // CAST
-        var eventText :EventText;
         var baddie :Baddie = Baddie.getSelectedBaddie();
         if (baddie != null) {
             var damage :Number = skill.damageOutput.next();
             if (damage > 0) {
-                baddie.curHealth -= damage;
-                GameCtx.mode.showSkillCastAnimation(skill, -damage, GameCtx.playerView, baddie);
+                baddie.offsetHealth(-damage);
+                GameCtx.mode.showSkillCastAnimation(skill, -damage, this, baddie);
             }
         }
 
         var health :Number = skill.healOutput.next();
         if (health > 0) {
             ClientCtx.player.offsetHealth(health);
-            GameCtx.mode.showSkillCastAnimation(skill, health, GameCtx.playerView, GameCtx.playerView);
+            GameCtx.mode.showSkillCastAnimation(skill, health, this, this);
         }
 
         // COOLDOWN

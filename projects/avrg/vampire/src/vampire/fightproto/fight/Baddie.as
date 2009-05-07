@@ -71,6 +71,8 @@ public class Baddie extends SceneObject
             function (...ignored) :void {
                 select();
             });
+
+        beginCastNextSkill();
     }
 
     public function select () :void
@@ -80,6 +82,13 @@ public class Baddie extends SceneObject
                 baddie._selectionArrow.visible = (baddie == this);
             }
         }
+    }
+
+    public function offsetHealth (offset :Number) :void
+    {
+        _curHealth = _curHealth + offset;
+        _curHealth = Math.max(_curHealth, 0);
+        _curHealth = Math.min(_curHealth, _desc.health);
     }
 
     public function get isSelected () :Boolean
@@ -108,11 +117,34 @@ public class Baddie extends SceneObject
         return _curHealth;
     }
 
-    public function set curHealth (val :int) :void
+    protected function beginCastNextSkill () :void
     {
-        val = Math.max(val, 0);
-        val = Math.min(val, _desc.health);
-        _curHealth = val;
+        var castTime :Number = _desc.skillCastTime.next();
+        if (castTime > 0) {
+            var nextSkill :BaddieSkill = _desc.chooseNextSkill();
+            if (nextSkill != null) {
+                addTask(After(castTime, new FunctionTask(
+                    function () :void {
+                        castSkill(nextSkill);
+                        beginCastNextSkill();
+                    })));
+            }
+        }
+    }
+
+    protected function castSkill (skill :BaddieSkill) :void
+    {
+        var damage :Number = skill.damageOutput.next();
+        if (damage > 0) {
+            ClientCtx.player.offsetHealth(-damage);
+            GameCtx.mode.showSkillCastAnimation(skill, -damage, this, GameCtx.playerView);
+        }
+
+        var health :Number = skill.healOutput.next();
+        if (health > 0) {
+            offsetHealth(health);
+            GameCtx.mode.showSkillCastAnimation(skill, health, this, this);
+        }
     }
 
     override protected function update (dt :Number) :void

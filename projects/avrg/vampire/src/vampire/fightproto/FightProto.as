@@ -77,7 +77,7 @@ public class FightProto extends Sprite
         rm.queueResourceLoad("image", "background", { embeddedClass: IMG_BACKGROUND });
         rm.queueResourceLoad("image", "selection_arrow", { embeddedClass: IMG_SELECTION_ARROW });
         rm.queueResourceLoad("image", "heal", { embeddedClass: IMG_HEAL });
-        rm.queueResourceLoad("image", "ckaw", { embeddedClass: IMG_CLAW });
+        rm.queueResourceLoad("image", "claw", { embeddedClass: IMG_CLAW });
         rm.loadQueuedResources(
             function () :void {
                 ClientCtx.mainLoop.pushMode(new FightMode());

@@ -1,6 +1,7 @@
 package vampire.fightproto {
 
 import com.whirled.contrib.simplegame.util.IntRange;
+import com.whirled.contrib.simplegame.util.NumRange;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Bitmap;
@@ -16,36 +17,55 @@ public class BaddieDesc
         "werewolf",
         0.3,
         10,
-        new IntRange(5, 8, Rand.STREAM_GAME));
-
-    public static const WEREWOLF :BaddieDesc = new BaddieDesc(
-        "Werewolf",
-        "werewolf",
-        0.6,
-        20,
-        new IntRange(8, 11, Rand.STREAM_GAME));
-
-    public static const MAMA_WEREWOLF :BaddieDesc = new BaddieDesc(
-        "Mama Werewolf",
-        "werewolf",
-        1,
-        40,
-        new IntRange(16, 20, Rand.STREAM_GAME));
+        new NumRange(3, 6, Rand.STREAM_GAME),
+        [   new BaddieSkill(
+                "Claw",
+                "claw",
+                new IntRange(0, 8, Rand.STREAM_GAME),
+                Skill.NO_OUTPUT,
+                1)
+        ]);
 
     public var displayName :String;
     public var imageName :String;
     public var imageScale :Number;
-    public var health :int;
-    public var attackPower :IntRange;
+    public var health :Number;
+    public var skillCastTime :NumRange;
+    public var skills :Array = [];
 
     public function BaddieDesc (displayName :String, imageName :String, imageScale :Number,
-        health :int, attackPower :IntRange)
+        health :Number, skillCastTime :NumRange, skills :Array)
     {
         this.displayName = displayName;
         this.imageName = imageName;
         this.imageScale = imageScale;
         this.health = health;
-        this.attackPower = attackPower;
+        this.skillCastTime = skillCastTime;
+        this.skills = skills;
+
+        _totalSkillChance = 0;
+        for each (var skill :BaddieSkill in this.skills) {
+            _totalSkillChance += skill.castChance;
+        }
+    }
+
+    public function chooseNextSkill () :BaddieSkill
+    {
+        if (skills.length == 0 || _totalSkillChance <= 0) {
+            return null;
+        }
+
+        var rand :Number = Rand.nextNumberRange(0, _totalSkillChance, Rand.STREAM_GAME);
+        var maxValue :Number = 0;
+        for each (var skill :BaddieSkill in this.skills) {
+            maxValue += skill.castChance;
+            if (rand < maxValue) {
+                return skill;
+            }
+        }
+
+        // How did we get here?
+        return skills[skills.length - 1];
     }
 
     public function createSprite () :Sprite
@@ -68,6 +88,8 @@ public class BaddieDesc
 
         return sprite;
     }
+
+    protected var _totalSkillChance :Number;
 }
 
 }

@@ -1,5 +1,6 @@
 package vampire.fightproto {
 
+import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.util.IntRange;
 import com.whirled.contrib.simplegame.util.Rand;
 
@@ -37,9 +38,15 @@ public class Skill
         var sprite :Sprite = SpriteUtil.createSprite(false, true);
 
         var bitmap :Bitmap = ClientCtx.instantiateBitmap(imageName);
-        bitmap.scaleX = size.x / bitmap.width;
-        bitmap.scaleY = size.y / bitmap.height;
-        sprite.addChild(bitmap);
+        if (bitmap != null) {
+            bitmap.scaleX = size.x / bitmap.width;
+            bitmap.scaleY = size.y / bitmap.height;
+            sprite.addChild(bitmap);
+
+        } else {
+            log.warning("Couldn't create bitmap for skill",
+                "skillName", name, "imageName", imageName);
+        }
 
         if (withText) {
             var tf :TextField = TextBits.createText(name, 1.1, 0, 0xffffff);
@@ -62,6 +69,8 @@ public class Skill
     }
 
     protected static const BITMAP_SIZE :Point = new Point(50, 50);
+
+    protected static var log :Log = Log.getLog(Skill);
 }
 
 }
