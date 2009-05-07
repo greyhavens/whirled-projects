@@ -11,12 +11,26 @@ import vampire.client.SpriteUtil;
 
 public class BaddieDesc
 {
-    public static const WEREWOLF :BaddieDesc = new BaddieDesc(
-        "Werewolf",
+    public static const BABY_WEREWOLF :BaddieDesc = new BaddieDesc(
+        "Baby Werewolf",
         "werewolf",
         0.3,
         10,
         new IntRange(5, 8, Rand.STREAM_GAME));
+
+    public static const WEREWOLF :BaddieDesc = new BaddieDesc(
+        "Werewolf",
+        "werewolf",
+        0.6,
+        20,
+        new IntRange(8, 11, Rand.STREAM_GAME));
+
+    public static const MAMA_WEREWOLF :BaddieDesc = new BaddieDesc(
+        "Mama Werewolf",
+        "werewolf",
+        1,
+        40,
+        new IntRange(16, 20, Rand.STREAM_GAME));
 
     public var displayName :String;
     public var imageName :String;
@@ -42,9 +56,13 @@ public class BaddieDesc
         bitmap.scaleX = bitmap.scaleY = imageScale;
 
         var tf :TextField = TextBits.createText(displayName, 1.2, 0, 0xffffff);
-        tf.x = (bitmap.width - tf.width) * 0.5;
+
+        var width :int = Math.max(tf.width, bitmap.width);
+
+        tf.x = (width - tf.width) * 0.5;
         sprite.addChild(tf);
 
+        bitmap.x = (width - bitmap.width) * 0.5;
         bitmap.y = tf.height;
         sprite.addChild(bitmap);
 

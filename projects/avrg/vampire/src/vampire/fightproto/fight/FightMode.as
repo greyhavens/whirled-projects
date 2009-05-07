@@ -1,6 +1,7 @@
 package vampire.fightproto.fight {
 
 import com.threerings.flash.DisplayUtil;
+import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.AppMode;
 
 import flash.display.DisplayObject;
@@ -11,9 +12,17 @@ import vampire.fightproto.*;
 
 public class FightMode extends AppMode
 {
+    public function skillSelected (skill :Skill) :void
+    {
+        log.info("Skill selected: " + skill.displayName);
+    }
+
     override protected function setup () :void
     {
         super.setup();
+
+        GameCtx.init();
+        GameCtx.mode = this;
 
         _bgLayer = new Sprite();
         _characterLayer = new Sprite();
@@ -38,7 +47,7 @@ public class FightMode extends AppMode
         addSceneObject(player, _characterLayer);
 
         // baddies
-        addBaddie(BaddieDesc.WEREWOLF);
+        addBaddie(BaddieDesc.BABY_WEREWOLF);
 
         DisplayUtil.sortDisplayChildren(_characterLayer,
             function (a :DisplayObject, b :DisplayObject) :int {
@@ -66,6 +75,8 @@ public class FightMode extends AppMode
     protected static const BADDIE_LOCS :Array = [
         new Point(566, 405)
     ];
+
+    protected static var log :Log = Log.getLog(FightMode);
 }
 
 }

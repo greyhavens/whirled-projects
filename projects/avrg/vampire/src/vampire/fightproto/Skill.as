@@ -10,11 +10,11 @@ import flash.text.TextField;
 
 import vampire.client.SpriteUtil;
 
-public class Ability
+public class Skill
 {
     public static const NO_OUTPUT :IntRange = new IntRange(0, 0, Rand.STREAM_GAME);
 
-    public static const BITE_1 :Ability = new Ability(
+    public static const BITE_1 :Skill = new Skill(
         "Bite 1",
         "bite",
         1,
@@ -22,7 +22,7 @@ public class Ability
         new IntRange(1, 3, Rand.STREAM_GAME),
         NO_OUTPUT);
 
-    public static const BITE_2 :Ability = new Ability(
+    public static const BITE_2 :Skill = new Skill(
         "Bite 2",
         "bite",
         2,
@@ -37,7 +37,7 @@ public class Ability
     public var damageOutput :IntRange;
     public var healOutput :IntRange;
 
-    public function Ability (displayName :String, imageName :String, level :int, energyCost :int,
+    public function Skill (displayName :String, imageName :String, level :int, energyCost :int,
         damageOutput :IntRange, healOutput :IntRange)
     {
         this.displayName = displayName;

@@ -63,7 +63,7 @@ public class FightProto extends Sprite
         player.maxHealth = 100;
         player.health = 100;
         player.xp = 0;
-        player.abilities.push(Ability.BITE_1);
+        player.skills.push(Skill.BITE_1);
         ClientCtx.player = player;
 
         // Load resources

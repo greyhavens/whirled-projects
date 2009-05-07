@@ -6,7 +6,7 @@ public class Player
     public var health :int;
     public var xp :int;
     public var energy :int;
-    public var abilities :Array = [];
+    public var skills :Array = [];
 }
 
 }
