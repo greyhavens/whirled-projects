@@ -49,7 +49,7 @@ public class Skill
         }
 
         if (withText) {
-            var tf :TextField = TextBits.createText(name, 1.1, 0, 0xffffff);
+            var tf :TextField = TextBits.createText(name, 1.1, 0, 0x00ff00);
             tf.x = 2;
             tf.y = 2;
             sprite.addChild(tf);

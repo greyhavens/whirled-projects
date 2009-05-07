@@ -1,5 +1,7 @@
 package vampire.fightproto {
 
+import com.threerings.util.ArrayUtil;
+
 public class Player
 {
     public var maxHealth :Number;
@@ -22,6 +24,11 @@ public class Player
         energy += offset;
         energy = Math.max(energy, 0);
         energy = Math.min(energy, maxEnergy);
+    }
+
+    public function hasSkill (skill :PlayerSkill) :Boolean
+    {
+        return ArrayUtil.contains(this.skills, skill);
     }
 }
 

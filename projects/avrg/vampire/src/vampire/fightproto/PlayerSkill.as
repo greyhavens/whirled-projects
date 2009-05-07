@@ -12,25 +12,25 @@ public class PlayerSkill extends Skill
         NO_OUTPUT,
         1,
         2,
-        20);
+        10);
 
     public static const BITE_2 :Skill = new PlayerSkill(
         "Bite 2",
         "bite",
-        new IntRange(2, 5, Rand.STREAM_GAME),
+        new IntRange(3, 9, Rand.STREAM_GAME),
         NO_OUTPUT,
         2,
         2,
-        80);
+        35);
 
     public static const HEAL_1 :Skill = new PlayerSkill(
         "Heal 1",
         "heal",
         NO_OUTPUT,
-        new IntRange(2, 4, Rand.STREAM_GAME),
+        new IntRange(40, 50, Rand.STREAM_GAME),
         1,
         3,
-        40);
+        60);
 
     public var level :int;
     public var cooldown :Number;
