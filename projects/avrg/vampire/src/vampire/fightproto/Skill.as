@@ -19,6 +19,7 @@ public class Skill
         "bite",
         1,
         2,
+        20,
         new IntRange(1, 3, Rand.STREAM_GAME),
         NO_OUTPUT);
 
@@ -27,6 +28,7 @@ public class Skill
         "bite",
         2,
         2,
+        80,
         new IntRange(2, 5, Rand.STREAM_GAME),
         NO_OUTPUT);
 
@@ -35,6 +37,7 @@ public class Skill
         "heal",
         1,
         3,
+        40,
         NO_OUTPUT,
         new IntRange(2, 4, Rand.STREAM_GAME));
 
@@ -42,16 +45,18 @@ public class Skill
     public var imageName :String;
     public var level :int;
     public var cooldown :Number;
+    public var energyCost :int;
     public var damageOutput :IntRange;
     public var healOutput :IntRange;
 
     public function Skill (name :String, imageName :String, level :int, cooldown :Number,
-        damageOutput :IntRange, healOutput :IntRange)
+        energyCost :int, damageOutput :IntRange, healOutput :IntRange)
     {
         this.name = name;
         this.imageName = imageName;
         this.level = level;
         this.cooldown = cooldown;
+        this.energyCost = energyCost;
         this.damageOutput = damageOutput;
         this.healOutput = healOutput;
     }

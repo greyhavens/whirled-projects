@@ -16,14 +16,14 @@ public class FightMode extends AppMode
     public function skillSelected (skill :Skill) :void
     {
         log.info("Skill selected: " + skill.name);
-        if (skill.cooldown > 0) {
-            if (isSkillInCooldown(skill)) {
-                log.info("Not casting skill (in cooldown): " + skill.name);
-                return;
+        if (skill.cooldown > 0 && isSkillInCooldown(skill)) {
+            log.info("Not casting skill (in cooldown): " + skill.name);
+            return;
+        }
 
-            } else {
-                addObject(new SimpleTimer(skill.cooldown, null, false, skill.name + "_cooldown"));
-            }
+        if (ClientCtx.player.energy < skill.energyCost) {
+            log.info("Not casting skill (not enough energy): " + skill.name);
+            return;
         }
 
         // CAST
@@ -35,7 +35,7 @@ public class FightMode extends AppMode
 
             eventText = new EventText(
                 "- " + damage,
-                EventText.GOOD,
+                EventText.BAD,
                 baddie.x, baddie.y - baddie.height);
             addSceneObject(eventText, GameCtx.uiLayer);
         }
@@ -50,6 +50,14 @@ public class FightMode extends AppMode
                 GameCtx.playerView.x, GameCtx.playerView.y - GameCtx.playerView.height);
             addSceneObject(eventText, GameCtx.uiLayer);
         }
+
+        // COOLDOWN
+        if (skill.cooldown > 0) {
+            addObject(new SimpleTimer(skill.cooldown, null, false, skill.name + "_cooldown"));
+        }
+
+        // ENERGY COST
+        ClientCtx.player.offsetEnergy(-skill.energyCost);
     }
 
     public function getSkillCooldownTimeLeft (skill :Skill) :Number

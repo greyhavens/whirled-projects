@@ -14,9 +14,11 @@ public class SkillBelt extends SceneObject
     {
         _sprite = new Sprite();
 
+        var x :Number = 0;
         for each (var skill :Skill in ClientCtx.player.skills) {
             var button :SkillButton = createSkillButton(skill);
-            button.x = _sprite.width;
+            button.x = x;
+            x += button.width;
             _sprite.addChild(button);
 
             var cooldownAnim :SkillCooldownAnim = new SkillCooldownAnim(skill);
@@ -94,7 +96,7 @@ class SkillCooldownAnim extends SceneObject
         g.drawRect(0, 0, BUTTON_SIZE.x, BUTTON_SIZE.y);
         g.endFill();
 
-        _tf = new TextField();
+        _tf = TextBits.createText("");
         _sprite.addChild(_tf);
     }
 
@@ -108,12 +110,13 @@ class SkillCooldownAnim extends SceneObject
         super.update(dt);
 
         var cooldownTimeLeft :Number = GameCtx.mode.getSkillCooldownTimeLeft(_skill);
-        if (cooldownTimeLeft <= 0) {
+        var hasEnergy :Boolean = ClientCtx.player.energy >= _skill.energyCost;
+        if (!hasEnergy || cooldownTimeLeft <= 0) {
             this.visible = false;
 
         } else {
             this.visible = true;
-            var text :String = cooldownTimeLeft.toFixed(1);
+            var text :String = (cooldownTimeLeft > 0 ? cooldownTimeLeft.toFixed(1) : "");
             if (text != _lastText) {
                 TextBits.initTextField(_tf, text, 1.2, 0, 0xff0000);
                 _tf.x = (_sprite.width - _tf.width) * 0.5;

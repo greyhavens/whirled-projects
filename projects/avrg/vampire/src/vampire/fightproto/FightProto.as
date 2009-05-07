@@ -59,9 +59,11 @@ public class FightProto extends Sprite
 
         // create the player
         var player :Player = new Player();
-        player.energy = 10;
         player.maxHealth = 100;
         player.health = 100;
+        player.maxEnergy = 100;
+        player.energy = 100;
+        player.energyReplenishRate = 5;
         player.xp = 0;
         player.skills.push(Skill.BITE_1);
         player.skills.push(Skill.HEAL_1);
