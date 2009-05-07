@@ -111,7 +111,7 @@ class SkillCooldownAnim extends SceneObject
 
         var cooldownTimeLeft :Number = GameCtx.mode.getSkillCooldownTimeLeft(_skill);
         var hasEnergy :Boolean = ClientCtx.player.energy >= _skill.energyCost;
-        if (!hasEnergy || cooldownTimeLeft <= 0) {
+        if (hasEnergy && cooldownTimeLeft <= 0) {
             this.visible = false;
 
         } else {

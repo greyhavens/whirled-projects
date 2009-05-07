@@ -61,7 +61,7 @@ public class Skill
         this.healOutput = healOutput;
     }
 
-    public function createSprite (size :Point = null) :Sprite
+    public function createSprite (size :Point = null, withText :Boolean = true) :Sprite
     {
         if (size == null) {
             size = BITMAP_SIZE;
@@ -74,10 +74,12 @@ public class Skill
         bitmap.scaleY = size.y / bitmap.height;
         sprite.addChild(bitmap);
 
-        var tf :TextField = TextBits.createText(name, 1.1, 0, 0xffffff);
-        tf.x = 2;
-        tf.y = 2;
-        sprite.addChild(tf);
+        if (withText) {
+            var tf :TextField = TextBits.createText(name, 1.1, 0, 0xffffff);
+            tf.x = 2;
+            tf.y = 2;
+            sprite.addChild(tf);
+        }
 
         return sprite;
     }

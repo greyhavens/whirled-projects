@@ -3,12 +3,15 @@ package vampire.fightproto.fight {
 import com.threerings.flash.DisplayUtil;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.objects.SimpleTimer;
+import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
+import flash.text.TextField;
 
+import vampire.client.SpriteUtil;
 import vampire.fightproto.*;
 
 public class FightMode extends AppMode
@@ -29,26 +32,18 @@ public class FightMode extends AppMode
         // CAST
         var eventText :EventText;
         var baddie :Baddie = Baddie.getSelectedBaddie();
-        var damage :Number = skill.damageOutput.next();
-        if (damage > 0) {
-            baddie.curHealth -= damage;
-
-            eventText = new EventText(
-                "- " + damage,
-                EventText.BAD,
-                baddie.x, baddie.y - baddie.height);
-            addSceneObject(eventText, GameCtx.uiLayer);
+        if (baddie != null) {
+            var damage :Number = skill.damageOutput.next();
+            if (damage > 0) {
+                baddie.curHealth -= damage;
+                showSkillCastAnimation(skill, -damage, GameCtx.playerView, baddie);
+            }
         }
 
         var health :Number = skill.healOutput.next();
         if (health > 0) {
             ClientCtx.player.offsetHealth(health);
-
-            eventText = new EventText(
-                "+ " + health,
-                EventText.GOOD,
-                GameCtx.playerView.x, GameCtx.playerView.y - GameCtx.playerView.height);
-            addSceneObject(eventText, GameCtx.uiLayer);
+            showSkillCastAnimation(skill, health, GameCtx.playerView, GameCtx.playerView);
         }
 
         // COOLDOWN
@@ -111,6 +106,47 @@ public class FightMode extends AppMode
             function (a :DisplayObject, b :DisplayObject) :int {
                 return (a.y - b.y);
             });
+    }
+
+    protected function showSkillCastAnimation (skill :Skill, val :int, caster :SceneObject,
+        target :SceneObject) :void
+    {
+        var sprite :Sprite = SpriteUtil.createSprite();
+
+        var skillSprite :Sprite = skill.createSprite(new Point(30, 30), false);
+        skillSprite.x = -skillSprite.width * 0.5;
+        skillSprite.y = -skillSprite.height * 0.5;
+        sprite.addChild(skillSprite);
+
+        var tf :TextField =  TextBits.createText(
+            (val > 0 ? "+ " + val : String(val)), 1.5, 0, (val > 0 ? 0x00ff00 : 0xff0000));
+        tf.x = -tf.width * 0.5;
+        tf.y = skillSprite.y - tf.height;
+        sprite.addChild(tf);
+
+        var srcX :Number;
+        var srcY :Number;
+        var dstX :Number;
+        var dstY :Number;
+        if (caster != target) {
+            srcX = caster.x;
+            srcY = caster.y - (caster.height * 0.5);
+            dstX = target.x;
+            dstY = target.y - (target.height * 0.5);
+        } else {
+            srcX = caster.x;
+            srcY = caster.y - caster.height;
+            dstX = caster.x;
+            dstY = caster.y - caster.height - 20;
+        }
+
+        var animObj :SimpleSceneObject = new SimpleSceneObject(sprite);
+        animObj.x = srcX;
+        animObj.y = srcY;
+        animObj.addTask(new SerialTask(
+            LocationTask.CreateSmooth(dstX, dstY, 1),
+            new SelfDestructTask()));
+        addSceneObject(animObj, GameCtx.uiLayer);
     }
 
     protected function addBaddie (desc :BaddieDesc) :void
