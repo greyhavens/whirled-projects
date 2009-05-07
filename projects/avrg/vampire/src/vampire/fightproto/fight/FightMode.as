@@ -49,6 +49,10 @@ public class FightMode extends AppMode
         // baddies
         addBaddie(BaddieDesc.BABY_WEREWOLF);
 
+        if (_baddies.length > 0) {
+            Baddie(_baddies[0]).select();
+        }
+
         DisplayUtil.sortDisplayChildren(_characterLayer,
             function (a :DisplayObject, b :DisplayObject) :int {
                 return (a.y - b.y);
@@ -63,6 +67,8 @@ public class FightMode extends AppMode
         baddie.x = loc.x;
         baddie.y = loc.y;
         addSceneObject(baddie, _characterLayer);
+
+        _baddies.push(baddie);
     }
 
     protected var _baddies :Array = [];

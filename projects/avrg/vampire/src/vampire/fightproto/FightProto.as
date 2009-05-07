@@ -72,6 +72,7 @@ public class FightProto extends Sprite
         rm.queueResourceLoad("image", "player", { embeddedClass: IMG_PLAYER });
         rm.queueResourceLoad("image", "werewolf", { embeddedClass: IMG_WEREWOLF });
         rm.queueResourceLoad("image", "background", { embeddedClass: IMG_BACKGROUND });
+        rm.queueResourceLoad("image", "selection_arrow", { embeddedClass: IMG_SELECTION_ARROW });
         rm.loadQueuedResources(
             function () :void {
                 ClientCtx.mainLoop.pushMode(new FightMode());
@@ -107,6 +108,8 @@ public class FightProto extends Sprite
     protected static const IMG_WEREWOLF :Class;
     [Embed(source="../../../rsrc/fightproto/background.png", mimeType="application/octet-stream")]
     protected static const IMG_BACKGROUND :Class;
+    [Embed(source="../../../rsrc/fightproto/selection_arrow.png", mimeType="application/octet-stream")]
+    protected static const IMG_SELECTION_ARROW :Class;
 }
 
 }
