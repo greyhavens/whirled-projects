@@ -12,8 +12,6 @@ import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import vampire.fightproto.fight.FightMode;
-
 [SWF(width="700", height="500", frameRate="30")]
 public class FightProto extends Sprite
 {
@@ -80,7 +78,7 @@ public class FightProto extends Sprite
         rm.queueResourceLoad("image", "claw", { embeddedClass: IMG_CLAW });
         rm.loadQueuedResources(
             function () :void {
-                ClientCtx.mainLoop.pushMode(new FightMode());
+                ClientCtx.mainLoop.pushMode(new InterstitialMode());
             },
             function (err :String) :void {
                 trace("Resource load error: " + err);

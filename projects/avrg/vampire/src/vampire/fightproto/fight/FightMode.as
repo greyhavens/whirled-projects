@@ -16,6 +16,11 @@ import vampire.fightproto.*;
 
 public class FightMode extends AppMode
 {
+    public function FightMode (scenario :Scenario)
+    {
+        _scenario = scenario;
+    }
+
     override protected function setup () :void
     {
         super.setup();
@@ -46,7 +51,9 @@ public class FightMode extends AppMode
         addSceneObject(GameCtx.playerView, GameCtx.characterLayer);
 
         // baddies
-        addBaddie(BaddieDesc.BABY_WEREWOLF);
+        for each (var baddieDesc :BaddieDesc in _scenario.baddies) {
+            addBaddie(baddieDesc);
+        }
 
         if (_baddies.length > 0) {
             Baddie(_baddies[0]).select();
@@ -112,10 +119,11 @@ public class FightMode extends AppMode
     }
 
     protected var _baddies :Array = [];
+    protected var _scenario :Scenario;
 
     protected static const PLAYER_LOC :Point = new Point(184, 453);
     protected static const BADDIE_LOCS :Array = [
-        new Point(566, 405)
+        new Point(566, 405), new Point(494, 305), new Point(636, 309)
     ];
 
     protected static var log :Log = Log.getLog(FightMode);
