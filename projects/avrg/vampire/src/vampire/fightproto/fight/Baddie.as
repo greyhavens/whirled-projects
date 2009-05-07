@@ -25,6 +25,11 @@ public class Baddie extends SceneObject
         return null;
     }
 
+    public static function areBaddiesAlive () :Boolean
+    {
+        return (GameCtx.mode.getObjectsInGroup("Baddie").length > 0);
+    }
+
     public function Baddie (desc :BaddieDesc)
     {
         _desc = desc;
@@ -105,6 +110,8 @@ public class Baddie extends SceneObject
 
     public function set curHealth (val :int) :void
     {
+        val = Math.max(val, 0);
+        val = Math.min(val, _desc.health);
         _curHealth = val;
     }
 
@@ -116,12 +123,26 @@ public class Baddie extends SceneObject
         if (_healthMeter.needsDisplayUpdate) {
             _healthMeter.updateDisplay();
         }
+
+        if (_curHealth <= 0) {
+            die();
+        }
     }
 
     override protected function removedFromDB () :void
     {
         _selectionArrow.destroySelf();
         super.removedFromDB();
+    }
+
+    protected function die () :void
+    {
+        destroySelf();
+
+        var deadBaddie :DeadBaddie = new DeadBaddie(_desc);
+        deadBaddie.x = this.x;
+        deadBaddie.y = this.y;
+        GameCtx.mode.addSceneObject(deadBaddie, GameCtx.characterLayer);
     }
 
     protected var _desc :BaddieDesc;
@@ -133,4 +154,36 @@ public class Baddie extends SceneObject
     protected var _selectionArrow :SceneObject;
 }
 
+}
+
+import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.tasks.*;
+
+import flash.display.Sprite;
+import flash.display.DisplayObject;
+
+import vampire.fightproto.*;
+
+class DeadBaddie extends SceneObject
+{
+    public function DeadBaddie (desc :BaddieDesc)
+    {
+        _sprite = new Sprite();
+
+        var baddieSprite :Sprite = desc.createSprite();
+        baddieSprite.x = -baddieSprite.width * 0.5;
+        baddieSprite.y = -baddieSprite.height;
+        _sprite.addChild(baddieSprite);
+
+        addTask(new SerialTask(
+            new AlphaTask(0, 1.5),
+            new SelfDestructTask()));
+    }
+
+    override public function get displayObject () :DisplayObject
+    {
+        return _sprite;
+    }
+
+    protected var _sprite :Sprite;
 }

@@ -27,6 +27,11 @@ public class FightMode extends AppMode
         }
 
         // CAST
+        var baddie :Baddie = Baddie.getSelectedBaddie();
+        var damage :Number = skill.damageOutput.next();
+        if (damage >= 0) {
+            baddie.curHealth -= damage;
+        }
     }
 
     public function getSkillCooldownTimeLeft (skill :Skill) :Number
@@ -47,27 +52,27 @@ public class FightMode extends AppMode
         GameCtx.init();
         GameCtx.mode = this;
 
-        _bgLayer = new Sprite();
-        _characterLayer = new Sprite();
-        _uiLayer = new Sprite();
-        _modeSprite.addChild(_bgLayer);
-        _modeSprite.addChild(_characterLayer);
-        _modeSprite.addChild(_uiLayer);
+        GameCtx.bgLayer = new Sprite();
+        GameCtx.characterLayer = new Sprite();
+        GameCtx.uiLayer = new Sprite();
+        _modeSprite.addChild(GameCtx.bgLayer);
+        _modeSprite.addChild(GameCtx.characterLayer);
+        _modeSprite.addChild(GameCtx.uiLayer);
 
         // background
-        _bgLayer.addChild(ClientCtx.instantiateBitmap("background"));
+        GameCtx.bgLayer.addChild(ClientCtx.instantiateBitmap("background"));
 
         // skill belt
         var skillBelt :SkillBelt = new SkillBelt();
         skillBelt.x = (Constants.SCREEN_SIZE.x - skillBelt.width) * 0.5;
         skillBelt.y = (Constants.SCREEN_SIZE.y - skillBelt.height - 5);
-        addSceneObject(skillBelt, _uiLayer);
+        addSceneObject(skillBelt, GameCtx.uiLayer);
 
         // player
         var player :PlayerView = new PlayerView();
         player.x = PLAYER_LOC.x;
         player.y = PLAYER_LOC.y;
-        addSceneObject(player, _characterLayer);
+        addSceneObject(player, GameCtx.characterLayer);
 
         // baddies
         addBaddie(BaddieDesc.BABY_WEREWOLF);
@@ -76,7 +81,7 @@ public class FightMode extends AppMode
             Baddie(_baddies[0]).select();
         }
 
-        DisplayUtil.sortDisplayChildren(_characterLayer,
+        DisplayUtil.sortDisplayChildren(GameCtx.characterLayer,
             function (a :DisplayObject, b :DisplayObject) :int {
                 return (a.y - b.y);
             });
@@ -89,16 +94,12 @@ public class FightMode extends AppMode
             (_baddies.length < BADDIE_LOCS.length ? BADDIE_LOCS[_baddies.length] : new Point());
         baddie.x = loc.x;
         baddie.y = loc.y;
-        addSceneObject(baddie, _characterLayer);
+        addSceneObject(baddie, GameCtx.characterLayer);
 
         _baddies.push(baddie);
     }
 
     protected var _baddies :Array = [];
-
-    protected var _bgLayer :Sprite;
-    protected var _characterLayer :Sprite;
-    protected var _uiLayer :Sprite;
 
     protected static const PLAYER_LOC :Point = new Point(184, 453);
     protected static const BADDIE_LOCS :Array = [
