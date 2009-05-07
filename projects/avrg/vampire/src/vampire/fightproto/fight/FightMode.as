@@ -27,10 +27,28 @@ public class FightMode extends AppMode
         }
 
         // CAST
+        var eventText :EventText;
         var baddie :Baddie = Baddie.getSelectedBaddie();
         var damage :Number = skill.damageOutput.next();
-        if (damage >= 0) {
+        if (damage > 0) {
             baddie.curHealth -= damage;
+
+            eventText = new EventText(
+                "- " + damage,
+                EventText.GOOD,
+                baddie.x, baddie.y - baddie.height);
+            addSceneObject(eventText, GameCtx.uiLayer);
+        }
+
+        var health :Number = skill.healOutput.next();
+        if (health > 0) {
+            ClientCtx.player.offsetHealth(health);
+
+            eventText = new EventText(
+                "+ " + health,
+                EventText.GOOD,
+                GameCtx.playerView.x, GameCtx.playerView.y - GameCtx.playerView.height);
+            addSceneObject(eventText, GameCtx.uiLayer);
         }
     }
 
@@ -69,10 +87,10 @@ public class FightMode extends AppMode
         addSceneObject(skillBelt, GameCtx.uiLayer);
 
         // player
-        var player :PlayerView = new PlayerView();
-        player.x = PLAYER_LOC.x;
-        player.y = PLAYER_LOC.y;
-        addSceneObject(player, GameCtx.characterLayer);
+        GameCtx.playerView = new PlayerView();
+        GameCtx.playerView.x = PLAYER_LOC.x;
+        GameCtx.playerView.y = PLAYER_LOC.y;
+        addSceneObject(GameCtx.playerView, GameCtx.characterLayer);
 
         // baddies
         addBaddie(BaddieDesc.BABY_WEREWOLF);

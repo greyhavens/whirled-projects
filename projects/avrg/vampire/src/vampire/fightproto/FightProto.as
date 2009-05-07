@@ -64,6 +64,7 @@ public class FightProto extends Sprite
         player.health = 100;
         player.xp = 0;
         player.skills.push(Skill.BITE_1);
+        player.skills.push(Skill.HEAL_1);
         ClientCtx.player = player;
 
         // Load resources
@@ -73,6 +74,7 @@ public class FightProto extends Sprite
         rm.queueResourceLoad("image", "werewolf", { embeddedClass: IMG_WEREWOLF });
         rm.queueResourceLoad("image", "background", { embeddedClass: IMG_BACKGROUND });
         rm.queueResourceLoad("image", "selection_arrow", { embeddedClass: IMG_SELECTION_ARROW });
+        rm.queueResourceLoad("image", "heal", { embeddedClass: IMG_HEAL });
         rm.loadQueuedResources(
             function () :void {
                 ClientCtx.mainLoop.pushMode(new FightMode());
@@ -110,6 +112,8 @@ public class FightProto extends Sprite
     protected static const IMG_BACKGROUND :Class;
     [Embed(source="../../../rsrc/fightproto/selection_arrow.png", mimeType="application/octet-stream")]
     protected static const IMG_SELECTION_ARROW :Class;
+    [Embed(source="../../../rsrc/fightproto/heal.png", mimeType="application/octet-stream")]
+    protected static const IMG_HEAL :Class;
 }
 
 }

@@ -12,7 +12,7 @@ import vampire.client.SpriteUtil;
 
 public class Skill
 {
-    public static const NO_OUTPUT :IntRange = new IntRange(0, 0, Rand.STREAM_GAME);
+    public static const NO_OUTPUT :IntRange = new IntRange(0, 1, Rand.STREAM_GAME);
 
     public static const BITE_1 :Skill = new Skill(
         "Bite 1",
@@ -29,6 +29,14 @@ public class Skill
         2,
         new IntRange(2, 5, Rand.STREAM_GAME),
         NO_OUTPUT);
+
+    public static const HEAL_1 :Skill = new Skill(
+        "Heal 1",
+        "heal",
+        1,
+        3,
+        NO_OUTPUT,
+        new IntRange(2, 4, Rand.STREAM_GAME));
 
     public var name :String;
     public var imageName :String;
