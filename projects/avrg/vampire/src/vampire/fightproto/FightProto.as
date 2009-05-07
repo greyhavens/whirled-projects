@@ -65,8 +65,8 @@ public class FightProto extends Sprite
         player.energy = 100;
         player.energyReplenishRate = 5;
         player.xp = 0;
-        player.skills.push(Skill.BITE_1);
-        player.skills.push(Skill.HEAL_1);
+        player.skills.push(PlayerSkill.BITE_1);
+        player.skills.push(PlayerSkill.HEAL_1);
         ClientCtx.player = player;
 
         // Load resources
@@ -77,6 +77,7 @@ public class FightProto extends Sprite
         rm.queueResourceLoad("image", "background", { embeddedClass: IMG_BACKGROUND });
         rm.queueResourceLoad("image", "selection_arrow", { embeddedClass: IMG_SELECTION_ARROW });
         rm.queueResourceLoad("image", "heal", { embeddedClass: IMG_HEAL });
+        rm.queueResourceLoad("image", "ckaw", { embeddedClass: IMG_CLAW });
         rm.loadQueuedResources(
             function () :void {
                 ClientCtx.mainLoop.pushMode(new FightMode());
@@ -116,6 +117,8 @@ public class FightProto extends Sprite
     protected static const IMG_SELECTION_ARROW :Class;
     [Embed(source="../../../rsrc/fightproto/heal.png", mimeType="application/octet-stream")]
     protected static const IMG_HEAL :Class;
+    [Embed(source="../../../rsrc/fightproto/claw.png", mimeType="application/octet-stream")]
+    protected static const IMG_CLAW :Class;
 }
 
 }

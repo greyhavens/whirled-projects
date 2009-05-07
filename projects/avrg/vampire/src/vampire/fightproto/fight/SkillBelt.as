@@ -15,7 +15,7 @@ public class SkillBelt extends SceneObject
         _sprite = new Sprite();
 
         var x :Number = 0;
-        for each (var skill :Skill in ClientCtx.player.skills) {
+        for each (var skill :PlayerSkill in ClientCtx.player.skills) {
             var button :SkillButton = createSkillButton(skill);
             button.x = x;
             x += button.width;
@@ -33,12 +33,12 @@ public class SkillBelt extends SceneObject
         return _sprite;
     }
 
-    protected function createSkillButton (skill :Skill) :SkillButton
+    protected function createSkillButton (skill :PlayerSkill) :SkillButton
     {
         var button :SkillButton = new SkillButton(skill);
         registerListener(button, MouseEvent.CLICK,
             function (...ignored) :void {
-                GameCtx.mode.skillSelected(skill);
+                GameCtx.playerView.playerSkillSelected(skill);
             });
 
         return button;
@@ -67,7 +67,7 @@ import flash.geom.Point;
 
 class SkillButton extends SimpleButton
 {
-    public function SkillButton (skill :Skill)
+    public function SkillButton (skill :PlayerSkill)
     {
         var upSprite :Sprite = skill.createSprite(BUTTON_SIZE);
         var overSprite :Sprite = skill.createSprite(BUTTON_SIZE);
@@ -86,7 +86,7 @@ class SkillButton extends SimpleButton
 
 class SkillCooldownAnim extends SceneObject
 {
-    public function SkillCooldownAnim (skill :Skill)
+    public function SkillCooldownAnim (skill :PlayerSkill)
     {
         _skill = skill;
 
@@ -109,7 +109,7 @@ class SkillCooldownAnim extends SceneObject
     {
         super.update(dt);
 
-        var cooldownTimeLeft :Number = GameCtx.mode.getSkillCooldownTimeLeft(_skill);
+        var cooldownTimeLeft :Number = GameCtx.playerView.getSkillCooldownTimeLeft(_skill);
         var hasEnergy :Boolean = ClientCtx.player.energy >= _skill.energyCost;
         if (hasEnergy && cooldownTimeLeft <= 0) {
             this.visible = false;
@@ -126,7 +126,7 @@ class SkillCooldownAnim extends SceneObject
         }
     }
 
-    protected var _skill :Skill;
+    protected var _skill :PlayerSkill;
     protected var _sprite :Sprite;
     protected var _tf :TextField;
 

@@ -1,6 +1,8 @@
 package vampire.fightproto.fight {
 
+import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.objects.SimpleTimer;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -55,6 +57,58 @@ public class PlayerView extends SceneObject
         return _sprite;
     }
 
+    public function playerSkillSelected (skill :PlayerSkill) :void
+    {
+        log.info("Skill selected: " + skill.name);
+        if (skill.cooldown > 0 && isSkillInCooldown(skill)) {
+            log.info("Not casting skill (in cooldown): " + skill.name);
+            return;
+        }
+
+        if (ClientCtx.player.energy < skill.energyCost) {
+            log.info("Not casting skill (not enough energy): " + skill.name);
+            return;
+        }
+
+        // CAST
+        var eventText :EventText;
+        var baddie :Baddie = Baddie.getSelectedBaddie();
+        if (baddie != null) {
+            var damage :Number = skill.damageOutput.next();
+            if (damage > 0) {
+                baddie.curHealth -= damage;
+                GameCtx.mode.showSkillCastAnimation(skill, -damage, GameCtx.playerView, baddie);
+            }
+        }
+
+        var health :Number = skill.healOutput.next();
+        if (health > 0) {
+            ClientCtx.player.offsetHealth(health);
+            GameCtx.mode.showSkillCastAnimation(skill, health, GameCtx.playerView, GameCtx.playerView);
+        }
+
+        // COOLDOWN
+        if (skill.cooldown > 0) {
+            GameCtx.mode.addObject(
+                new SimpleTimer(skill.cooldown, null, false, skill.name + "_cooldown"));
+        }
+
+        // ENERGY COST
+        ClientCtx.player.offsetEnergy(-skill.energyCost);
+    }
+
+    public function getSkillCooldownTimeLeft (skill :PlayerSkill) :Number
+    {
+        var timer :SimpleTimer =
+            GameCtx.mode.getObjectNamed(skill.name + "_cooldown") as SimpleTimer;
+        return (timer != null ? timer.timeLeft : 0);
+    }
+
+    public function isSkillInCooldown (skill :PlayerSkill) :Boolean
+    {
+        return (getSkillCooldownTimeLeft(skill) > 0);
+    }
+
     override protected function update (dt :Number) :void
     {
         super.update(dt);
@@ -75,6 +129,8 @@ public class PlayerView extends SceneObject
     protected var _sprite :Sprite;
     protected var _healthMeter :RectMeterView;
     protected var _energyMeter :RectMeterView;
+
+    protected static var log :Log = Log.getLog(PlayerView);
 }
 
 }

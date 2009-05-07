@@ -16,56 +16,6 @@ import vampire.fightproto.*;
 
 public class FightMode extends AppMode
 {
-    public function skillSelected (skill :Skill) :void
-    {
-        log.info("Skill selected: " + skill.name);
-        if (skill.cooldown > 0 && isSkillInCooldown(skill)) {
-            log.info("Not casting skill (in cooldown): " + skill.name);
-            return;
-        }
-
-        if (ClientCtx.player.energy < skill.energyCost) {
-            log.info("Not casting skill (not enough energy): " + skill.name);
-            return;
-        }
-
-        // CAST
-        var eventText :EventText;
-        var baddie :Baddie = Baddie.getSelectedBaddie();
-        if (baddie != null) {
-            var damage :Number = skill.damageOutput.next();
-            if (damage > 0) {
-                baddie.curHealth -= damage;
-                showSkillCastAnimation(skill, -damage, GameCtx.playerView, baddie);
-            }
-        }
-
-        var health :Number = skill.healOutput.next();
-        if (health > 0) {
-            ClientCtx.player.offsetHealth(health);
-            showSkillCastAnimation(skill, health, GameCtx.playerView, GameCtx.playerView);
-        }
-
-        // COOLDOWN
-        if (skill.cooldown > 0) {
-            addObject(new SimpleTimer(skill.cooldown, null, false, skill.name + "_cooldown"));
-        }
-
-        // ENERGY COST
-        ClientCtx.player.offsetEnergy(-skill.energyCost);
-    }
-
-    public function getSkillCooldownTimeLeft (skill :Skill) :Number
-    {
-        var timer :SimpleTimer = getObjectNamed(skill.name + "_cooldown") as SimpleTimer;
-        return (timer != null ? timer.timeLeft : 0);
-    }
-
-    public function isSkillInCooldown (skill :Skill) :Boolean
-    {
-        return (getSkillCooldownTimeLeft(skill) > 0);
-    }
-
     override protected function setup () :void
     {
         super.setup();
@@ -108,7 +58,7 @@ public class FightMode extends AppMode
             });
     }
 
-    protected function showSkillCastAnimation (skill :Skill, val :int, caster :SceneObject,
+    public function showSkillCastAnimation (skill :Skill, val :int, caster :SceneObject,
         target :SceneObject) :void
     {
         var sprite :Sprite = SpriteUtil.createSprite();
