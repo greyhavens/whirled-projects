@@ -18,7 +18,7 @@ public class Skill
         "Bite 1",
         "bite",
         1,
-        1,
+        2,
         new IntRange(1, 3, Rand.STREAM_GAME),
         NO_OUTPUT);
 
@@ -30,34 +30,38 @@ public class Skill
         new IntRange(2, 5, Rand.STREAM_GAME),
         NO_OUTPUT);
 
-    public var displayName :String;
+    public var name :String;
     public var imageName :String;
     public var level :int;
-    public var energyCost :int;
+    public var cooldown :Number;
     public var damageOutput :IntRange;
     public var healOutput :IntRange;
 
-    public function Skill (displayName :String, imageName :String, level :int, energyCost :int,
+    public function Skill (name :String, imageName :String, level :int, cooldown :Number,
         damageOutput :IntRange, healOutput :IntRange)
     {
-        this.displayName = displayName;
+        this.name = name;
         this.imageName = imageName;
         this.level = level;
-        this.energyCost = energyCost;
+        this.cooldown = cooldown;
         this.damageOutput = damageOutput;
         this.healOutput = healOutput;
     }
 
-    public function createSprite () :Sprite
+    public function createSprite (size :Point = null) :Sprite
     {
+        if (size == null) {
+            size = BITMAP_SIZE;
+        }
+
         var sprite :Sprite = SpriteUtil.createSprite(false, true);
 
         var bitmap :Bitmap = ClientCtx.instantiateBitmap(imageName);
-        bitmap.scaleX = BITMAP_SIZE.x / bitmap.width;
-        bitmap.scaleY = BITMAP_SIZE.y / bitmap.height;
+        bitmap.scaleX = size.x / bitmap.width;
+        bitmap.scaleY = size.y / bitmap.height;
         sprite.addChild(bitmap);
 
-        var tf :TextField = TextBits.createText(displayName, 1.1, 0, 0xffffff);
+        var tf :TextField = TextBits.createText(name, 1.1, 0, 0xffffff);
         tf.x = 2;
         tf.y = 2;
         sprite.addChild(tf);

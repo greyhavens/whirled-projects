@@ -3,6 +3,7 @@ package vampire.fightproto.fight {
 import com.threerings.flash.DisplayUtil;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.objects.SimpleTimer;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -14,7 +15,29 @@ public class FightMode extends AppMode
 {
     public function skillSelected (skill :Skill) :void
     {
-        log.info("Skill selected: " + skill.displayName);
+        log.info("Skill selected: " + skill.name);
+        if (skill.cooldown > 0) {
+            if (isSkillInCooldown(skill)) {
+                log.info("Not casting skill (in cooldown): " + skill.name);
+                return;
+
+            } else {
+                addObject(new SimpleTimer(skill.cooldown, null, false, skill.name + "_cooldown"));
+            }
+        }
+
+        // CAST
+    }
+
+    public function getSkillCooldownTimeLeft (skill :Skill) :Number
+    {
+        var timer :SimpleTimer = getObjectNamed(skill.name + "_cooldown") as SimpleTimer;
+        return (timer != null ? timer.timeLeft : 0);
+    }
+
+    public function isSkillInCooldown (skill :Skill) :Boolean
+    {
+        return (getSkillCooldownTimeLeft(skill) > 0);
     }
 
     override protected function setup () :void
