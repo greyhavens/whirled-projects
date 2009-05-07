@@ -77,10 +77,8 @@ public class Baddie extends SceneObject
 
     public function select () :void
     {
-        if (!this.isSelected) {
-            for each (var baddie :Baddie in this.db.getObjectsInGroup("Baddie")) {
-                baddie._selectionArrow.visible = (baddie == this);
-            }
+        for each (var baddie :Baddie in this.db.getObjectsInGroup("Baddie")) {
+            baddie._selectionArrow.visible = (baddie == this);
         }
     }
 

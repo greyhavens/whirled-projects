@@ -21,6 +21,47 @@ public class FightMode extends AppMode
         _scenario = scenario;
     }
 
+    public function showSkillCastAnimation (skill :Skill, val :int, caster :SceneObject,
+        target :SceneObject) :void
+    {
+        var sprite :Sprite = SpriteUtil.createSprite();
+
+        var skillSprite :Sprite = skill.createSprite(new Point(30, 30), false);
+        skillSprite.x = -skillSprite.width * 0.5;
+        skillSprite.y = -skillSprite.height * 0.5;
+        sprite.addChild(skillSprite);
+
+        var tf :TextField =  TextBits.createText(
+            (val > 0 ? "+ " + val : String(val)), 1.5, 0, (val > 0 ? 0x00ff00 : 0xff0000));
+        tf.x = -tf.width * 0.5;
+        tf.y = skillSprite.y - tf.height;
+        sprite.addChild(tf);
+
+        var srcX :Number;
+        var srcY :Number;
+        var dstX :Number;
+        var dstY :Number;
+        if (caster != target) {
+            srcX = caster.x;
+            srcY = caster.y - (caster.height * 0.5);
+            dstX = target.x;
+            dstY = target.y - (target.height * 0.5);
+        } else {
+            srcX = caster.x;
+            srcY = caster.y - caster.height;
+            dstX = caster.x;
+            dstY = caster.y - caster.height - 20;
+        }
+
+        var animObj :SimpleSceneObject = new SimpleSceneObject(sprite);
+        animObj.x = srcX;
+        animObj.y = srcY;
+        animObj.addTask(new SerialTask(
+            LocationTask.CreateSmooth(dstX, dstY, 1),
+            new SelfDestructTask()));
+        addSceneObject(animObj, GameCtx.uiLayer);
+    }
+
     override protected function setup () :void
     {
         super.setup();
@@ -65,45 +106,15 @@ public class FightMode extends AppMode
             });
     }
 
-    public function showSkillCastAnimation (skill :Skill, val :int, caster :SceneObject,
-        target :SceneObject) :void
+    override public function update (dt :Number) :void
     {
-        var sprite :Sprite = SpriteUtil.createSprite();
+        super.update(dt);
 
-        var skillSprite :Sprite = skill.createSprite(new Point(30, 30), false);
-        skillSprite.x = -skillSprite.width * 0.5;
-        skillSprite.y = -skillSprite.height * 0.5;
-        sprite.addChild(skillSprite);
-
-        var tf :TextField =  TextBits.createText(
-            (val > 0 ? "+ " + val : String(val)), 1.5, 0, (val > 0 ? 0x00ff00 : 0xff0000));
-        tf.x = -tf.width * 0.5;
-        tf.y = skillSprite.y - tf.height;
-        sprite.addChild(tf);
-
-        var srcX :Number;
-        var srcY :Number;
-        var dstX :Number;
-        var dstY :Number;
-        if (caster != target) {
-            srcX = caster.x;
-            srcY = caster.y - (caster.height * 0.5);
-            dstX = target.x;
-            dstY = target.y - (target.height * 0.5);
-        } else {
-            srcX = caster.x;
-            srcY = caster.y - caster.height;
-            dstX = caster.x;
-            dstY = caster.y - caster.height - 20;
+        if (ClientCtx.player.health <= 0) {
+            ClientCtx.mainLoop.changeMode(new InterstitialMode(_scenario, false));
+        } else if (!Baddie.areBaddiesAlive()) {
+            ClientCtx.mainLoop.changeMode(new InterstitialMode(_scenario, true));
         }
-
-        var animObj :SimpleSceneObject = new SimpleSceneObject(sprite);
-        animObj.x = srcX;
-        animObj.y = srcY;
-        animObj.addTask(new SerialTask(
-            LocationTask.CreateSmooth(dstX, dstY, 1),
-            new SelfDestructTask()));
-        addSceneObject(animObj, GameCtx.uiLayer);
     }
 
     protected function addBaddie (desc :BaddieDesc) :void
