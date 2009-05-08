@@ -12,7 +12,7 @@ public class Scenarios
             0,
             10,
             [ "babykiller", "trouble" ],
-            [],
+            [ PlayerSkill.HEAL_1 ],
             [ BaddieDesc.BABY_WEREWOLF ]));
 
         addScenario(new Scenario(
@@ -30,7 +30,7 @@ public class Scenarios
             2,
             100,
             [ "showdown" ],
-            [ ],
+            [ PlayerSkill.HEAL_2 ],
             [ BaddieDesc.MAMA_WEREWOLF, BaddieDesc.BABY_WEREWOLF, BaddieDesc.BABY_WEREWOLF ]));
 
         addScenario(new Scenario(

@@ -32,6 +32,15 @@ public class PlayerSkill extends Skill
         3,
         60);
 
+    public static const HEAL_2 :Skill = new PlayerSkill(
+        "Heal 2",
+        "heal",
+        NO_OUTPUT,
+        new IntRange(80, 90, Rand.STREAM_GAME),
+        2,
+        5,
+        70);
+
     public var level :int;
     public var cooldown :Number;
     public var energyCost :int;

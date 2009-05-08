@@ -65,7 +65,6 @@ public class FightProto extends Sprite
         player.energy = 100;
         player.xp = 0;
         player.skills.push(PlayerSkill.BITE_1);
-        player.skills.push(PlayerSkill.HEAL_1);
         player.scenarios.push(Scenarios.getScenario("intro"));
         ClientCtx.player = player;
 

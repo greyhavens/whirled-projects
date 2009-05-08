@@ -141,20 +141,10 @@ public class InterstitialMode extends AppMode
 
         var buttonSprite :Sprite = new Sprite();
         for each (var scenario :Scenario in ClientCtx.player.scenarios) {
-            if (scenario.minPlayerLevel <= ClientCtx.player.level.level) {
-                var button :SimpleButton = createScenarioButton(scenario);
-                button.x = -button.width * 0.5;
-                button.y = buttonSprite.height;
-                buttonSprite.addChild(button);
-
-            } else {
-                var unavailText :String =  scenario.displayName +
-                    " (Reach level " + String(scenario.minPlayerLevel + 1) + "!)"
-                var tfUnavailable :TextField = TextBits.createText(unavailText, 1.5, 0, 0xffffff);
-                tfUnavailable.x = -tfUnavailable.width * 0.5;
-                tfUnavailable.y = buttonSprite.height;
-                buttonSprite.addChild(tfUnavailable);
-            }
+            var button :SimpleButton = createScenarioButton(scenario);
+            button.x = -button.width * 0.5;
+            button.y = buttonSprite.height;
+            buttonSprite.addChild(button);
         }
 
         buttonSprite.x = Constants.SCREEN_SIZE.x * 0.5;
@@ -164,14 +154,26 @@ public class InterstitialMode extends AppMode
 
     protected function createScenarioButton (scenario :Scenario) :SimpleButton
     {
-        var buttonText :String = scenario.displayName + " (+" + scenario.xpAward + " xp)"
-        var button :SimpleTextButton = new SimpleTextButton(buttonText);
+        var minLevel :int = scenario.minPlayerLevel;
+        var enabled :Boolean = (ClientCtx.player.level.level >= minLevel);
+        var buttonText :String = scenario.displayName;
+        buttonText += (enabled ? " (+" + scenario.xpAward + " xp)" :
+            " (Reach level " + String(minLevel + 1) + "!)");
+
+        var button :SimpleTextButton = new SimpleTextButton(
+            buttonText, true,
+            (enabled ? 0x003366 : 0x333333),
+            (enabled ? 0x6699CC : 0x666666));
+
+        button.enabled = enabled;
         button.scaleX = button.scaleY = 1.5;
 
-        registerListener(button, MouseEvent.CLICK,
-            function (...ignored) :void {
-                ClientCtx.mainLoop.changeMode(new FightMode(scenario));
-            });
+        if (enabled) {
+            registerListener(button, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    ClientCtx.mainLoop.changeMode(new FightMode(scenario));
+                });
+        }
 
         return button;
     }
