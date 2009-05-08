@@ -21,9 +21,44 @@ public class BaddieDesc
         [   new BaddieSkill(
                 "Claw",
                 "claw",
-                new IntRange(0, 8, Rand.STREAM_GAME),
+                new IntRange(1, 8, Rand.STREAM_GAME),
                 Skill.NO_OUTPUT,
                 1)
+        ]);
+
+    public static const MAMA_WEREWOLF :BaddieDesc = new BaddieDesc(
+        "Mama Werewolf",
+        "werewolf",
+        0.5,
+        20,
+        new NumRange(5, 5, Rand.STREAM_GAME),
+        [ new BaddieSkill(
+            "Claw",
+            "claw",
+            new IntRange(5, 15, Rand.STREAM_GAME),
+            Skill.NO_OUTPUT,
+            1)
+        ]);
+
+    public static const DADDY_WEREWOLF :BaddieDesc = new BaddieDesc(
+        "Daddy Werewolf",
+        "werewolf",
+        0.8,
+        50,
+        new NumRange(5, 8, Rand.STREAM_GAME),
+        [   new BaddieSkill(
+                "Claw",
+                "claw",
+                new IntRange(20, 25, Rand.STREAM_GAME),
+                Skill.NO_OUTPUT,
+                1),
+
+            new BaddieSkill(
+                "Heal",
+                "heal",
+                Skill.NO_OUTPUT,
+                new IntRange(20, 25, Rand.STREAM_GAME),
+                0.3),
         ]);
 
     public var displayName :String;
@@ -75,7 +110,7 @@ public class BaddieDesc
         var bitmap :Bitmap = ClientCtx.instantiateBitmap(imageName);
         bitmap.scaleX = bitmap.scaleY = imageScale;
 
-        var tf :TextField = TextBits.createText(displayName, 1.2, 0, 0xffffff);
+        var tf :TextField = TextBits.createText(displayName, 1.2, 0, 0xff0000);
 
         var width :int = Math.max(tf.width, bitmap.width);
 

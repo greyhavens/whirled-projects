@@ -4,13 +4,27 @@ import com.threerings.util.ArrayUtil;
 
 public class Player
 {
-    public var maxHealth :Number;
+    public var level :PlayerLevel;
     public var health :Number;
     public var xp :int;
-    public var maxEnergy :Number;
     public var energy :Number;
-    public var energyReplenishRate :Number;
     public var skills :Array = [];
+    public var scenarios :Array = [];
+
+    public function get maxHealth () :Number
+    {
+        return this.level.maxHealth;
+    }
+
+    public function get maxEnergy () :Number
+    {
+        return this.level.maxEnergy;
+    }
+
+    public function get energyReplenishRate () :Number
+    {
+        return this.level.energyReplenishRate;
+    }
 
     public function offsetHealth (offset :Number) :void
     {
@@ -29,6 +43,11 @@ public class Player
     public function hasSkill (skill :PlayerSkill) :Boolean
     {
         return ArrayUtil.contains(this.skills, skill);
+    }
+
+    public function hasScenario (scenario :Scenario) :Boolean
+    {
+        return ArrayUtil.contains(this.scenarios, scenario);
     }
 }
 

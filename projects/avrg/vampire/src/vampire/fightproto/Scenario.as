@@ -2,29 +2,22 @@ package vampire.fightproto {
 
 public class Scenario
 {
-    public static const ALL :Array = [
-        new Scenario(
-            "Intro",
-            10,
-            [],
-            [ BaddieDesc.BABY_WEREWOLF ]),
-
-        new Scenario(
-            "Easy",
-            50,
-            [ PlayerSkill.BITE_2 ],
-            [ BaddieDesc.BABY_WEREWOLF, BaddieDesc.BABY_WEREWOLF, BaddieDesc.BABY_WEREWOLF ]),
-    ];
-
+    public var name :String;
     public var displayName :String;
+    public var minPlayerLevel :int;
     public var xpAward :int;
+    public var scenarioAwards :Array;
     public var skillAwards :Array;
     public var baddies :Array;
 
-    public function Scenario (displayName :String, xpAward :int, skillAwards :Array, baddies :Array)
+    public function Scenario (name :String, displayName :String, minPlayerLevel :int, xpAward :int,
+        scenarioAwards :Array, skillAwards :Array, baddies :Array)
     {
+        this.name = name;
         this.displayName = displayName;
+        this.minPlayerLevel = minPlayerLevel;
         this.xpAward = xpAward;
+        this.scenarioAwards = scenarioAwards;
         this.skillAwards = skillAwards;
         this.baddies = baddies;
     }

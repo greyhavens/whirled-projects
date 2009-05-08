@@ -117,21 +117,27 @@ public class Baddie extends SceneObject
 
     protected function beginCastNextSkill () :void
     {
+        if (_desc.skills.length == 0) {
+            return;
+        }
+
         var castTime :Number = _desc.skillCastTime.next();
         if (castTime > 0) {
-            var nextSkill :BaddieSkill = _desc.chooseNextSkill();
-            if (nextSkill != null) {
-                addTask(After(castTime, new FunctionTask(
-                    function () :void {
-                        castSkill(nextSkill);
-                        beginCastNextSkill();
-                    })));
-            }
+            addTask(After(castTime, new FunctionTask(
+                function () :void {
+                    castNextSkill();
+                    beginCastNextSkill();
+                })));
         }
     }
 
-    protected function castSkill (skill :BaddieSkill) :void
+    protected function castNextSkill () :void
     {
+        var skill :BaddieSkill = _desc.chooseNextSkill();
+        if (skill == null) {
+            return;
+        }
+
         var damage :Number = skill.damageOutput.next();
         if (damage > 0) {
             ClientCtx.player.offsetHealth(-damage);

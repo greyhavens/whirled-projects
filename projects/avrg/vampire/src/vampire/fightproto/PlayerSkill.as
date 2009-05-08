@@ -17,11 +17,11 @@ public class PlayerSkill extends Skill
     public static const BITE_2 :Skill = new PlayerSkill(
         "Bite 2",
         "bite",
-        new IntRange(3, 9, Rand.STREAM_GAME),
+        new IntRange(7, 9, Rand.STREAM_GAME),
         NO_OUTPUT,
         2,
         2,
-        35);
+        40);
 
     public static const HEAL_1 :Skill = new PlayerSkill(
         "Heal 1",

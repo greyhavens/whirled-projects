@@ -55,16 +55,18 @@ public class FightProto extends Sprite
             handleSizeChanged();
         }
 
+        // Init game stuff
+        Scenarios.init();
+
         // create the player
         var player :Player = new Player();
-        player.maxHealth = 100;
+        player.level = PlayerLevel.LEVELS[0];
         player.health = 100;
-        player.maxEnergy = 100;
         player.energy = 100;
-        player.energyReplenishRate = 5;
         player.xp = 0;
         player.skills.push(PlayerSkill.BITE_1);
         player.skills.push(PlayerSkill.HEAL_1);
+        player.scenarios.push(Scenarios.getScenario("intro"));
         ClientCtx.player = player;
 
         // Load resources

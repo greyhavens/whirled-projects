@@ -84,13 +84,24 @@ public class InterstitialMode extends AppMode
         _modeSprite.addChild(tfChoose);
 
         var buttonSprite :Sprite = new Sprite();
-        for each (var scenario :Scenario in Scenario.ALL) {
-            var button :SimpleButton = createScenarioButton(scenario);
-            button.x = buttonSprite.width;
-            buttonSprite.addChild(button);
+        for each (var scenario :Scenario in ClientCtx.player.scenarios) {
+            if (scenario.minPlayerLevel <= ClientCtx.player.level.level) {
+                var button :SimpleButton = createScenarioButton(scenario);
+                button.x = -button.width * 0.5;
+                button.y = buttonSprite.height;
+                buttonSprite.addChild(button);
+
+            } else {
+                var unavailText :String =  scenario.displayName +
+                    " (Reach level " + String(scenario.minPlayerLevel + 1) + "!)"
+                var tfUnavailable :TextField = TextBits.createText(unavailText, 1.5, 0, 0xffffff);
+                tfUnavailable.x = -tfUnavailable.width * 0.5;
+                tfUnavailable.y = buttonSprite.height;
+                buttonSprite.addChild(tfUnavailable);
+            }
         }
 
-        buttonSprite.x = (Constants.SCREEN_SIZE.x - buttonSprite.width) * 0.5;
+        buttonSprite.x = Constants.SCREEN_SIZE.x * 0.5;
         buttonSprite.y = tfChoose.y + tfChoose.height + 3;
         _modeSprite.addChild(buttonSprite);
     }
