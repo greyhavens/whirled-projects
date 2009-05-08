@@ -13,7 +13,8 @@ public class Scenarios
             10,
             [ "babykiller", "trouble" ],
             [ PlayerSkill.HEAL_1 ],
-            [ BaddieDesc.BABY_WEREWOLF ]));
+            [ BaddieDesc.BABY_WEREWOLF ],
+            1));
 
         addScenario(new Scenario(
             "babykiller",
@@ -22,7 +23,8 @@ public class Scenarios
             50,
             [],
             [ PlayerSkill.BITE_2 ],
-            [ BaddieDesc.BABY_WEREWOLF, BaddieDesc.BABY_WEREWOLF, BaddieDesc.BABY_WEREWOLF ]));
+            [ BaddieDesc.BABY_WEREWOLF, BaddieDesc.BABY_WEREWOLF, BaddieDesc.BABY_WEREWOLF ],
+            0));
 
         addScenario(new Scenario(
             "trouble",
@@ -31,16 +33,28 @@ public class Scenarios
             100,
             [ "showdown" ],
             [ PlayerSkill.HEAL_2 ],
-            [ BaddieDesc.MAMA_WEREWOLF, BaddieDesc.BABY_WEREWOLF, BaddieDesc.BABY_WEREWOLF ]));
+            [ BaddieDesc.MAMA_WEREWOLF, BaddieDesc.BABY_WEREWOLF, BaddieDesc.BABY_WEREWOLF ],
+            0));
 
         addScenario(new Scenario(
             "showdown",
             "Showdown",
             3,
             500,
+            [ "group" ],
+            [ ],
+            [ BaddieDesc.MAMA_WEREWOLF, BaddieDesc.DADDY_WEREWOLF ],
+            0));
+
+        addScenario(new Scenario(
+            "group",
+            "Boss Beatdown (Group)",
+            3,
+            1000,
             [],
             [ ],
-            [ BaddieDesc.MAMA_WEREWOLF, BaddieDesc.DADDY_WEREWOLF ]));
+            [ BaddieDesc.DADDY_WEREWOLF, BaddieDesc.KING_WEREWOLF ],
+            1));
     }
 
     public static function getScenario (name :String) :Scenario

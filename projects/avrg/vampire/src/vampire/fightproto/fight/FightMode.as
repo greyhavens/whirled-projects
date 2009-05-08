@@ -1,6 +1,7 @@
 package vampire.fightproto.fight {
 
 import com.threerings.flash.DisplayUtil;
+import com.threerings.flash.SimpleTextButton;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.*;
@@ -8,6 +9,7 @@ import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.text.TextField;
 
@@ -79,17 +81,35 @@ public class FightMode extends AppMode
         // background
         GameCtx.bgLayer.addChild(ClientCtx.instantiateBitmap("background"));
 
-        // skill belt
-        var skillBelt :SkillBelt = new SkillBelt();
-        skillBelt.x = (Constants.SCREEN_SIZE.x - skillBelt.width) * 0.5;
-        skillBelt.y = (Constants.SCREEN_SIZE.y - skillBelt.height - 5);
-        addSceneObject(skillBelt, GameCtx.uiLayer);
+        // cheat button
+        var winBtn :SimpleTextButton = new SimpleTextButton("Win!");
+        registerListener(winBtn, MouseEvent.CLICK,
+            function (...ignored) :void {
+                gameOver(true);
+            });
+        winBtn.x = Constants.SCREEN_SIZE.x - winBtn.width;
+        GameCtx.uiLayer.addChild(winBtn);
 
         // player
         GameCtx.playerView = new PlayerView();
         GameCtx.playerView.x = PLAYER_LOC.x;
         GameCtx.playerView.y = PLAYER_LOC.y;
         addSceneObject(GameCtx.playerView, GameCtx.characterLayer);
+
+        // buddies
+        for (var ii :int = 0; ii < _scenario.numBuddies; ++ii) {
+            var buddy :Buddy = new Buddy(BUDDY_NAMES[ii], PlayerSkill.BUDDY_ASSIST);
+            var loc :Point = BUDDY_LOCS[ii];
+            buddy.x = loc.x;
+            buddy.y = loc.y;
+            addSceneObject(buddy, GameCtx.characterLayer);
+        }
+
+        // skill belt
+        var skillBelt :SkillBelt = new SkillBelt();
+        skillBelt.x = (Constants.SCREEN_SIZE.x - skillBelt.width) * 0.5;
+        skillBelt.y = (Constants.SCREEN_SIZE.y - skillBelt.height - 5);
+        addSceneObject(skillBelt, GameCtx.uiLayer);
 
         // baddies
         for each (var baddieDesc :BaddieDesc in _scenario.baddies) {
@@ -111,10 +131,15 @@ public class FightMode extends AppMode
         super.update(dt);
 
         if (ClientCtx.player.health <= 0) {
-            ClientCtx.mainLoop.changeMode(new InterstitialMode(_scenario, false));
+            gameOver(false);
         } else if (!Baddie.areBaddiesAlive()) {
-            ClientCtx.mainLoop.changeMode(new InterstitialMode(_scenario, true));
+            gameOver(true);
         }
+    }
+
+    protected function gameOver (success :Boolean) :void
+    {
+         ClientCtx.mainLoop.changeMode(new InterstitialMode(_scenario, success));
     }
 
     protected function addBaddie (desc :BaddieDesc) :void
@@ -135,6 +160,12 @@ public class FightMode extends AppMode
     protected static const PLAYER_LOC :Point = new Point(184, 453);
     protected static const BADDIE_LOCS :Array = [
         new Point(566, 405), new Point(494, 305), new Point(636, 309)
+    ];
+    protected static const BUDDY_LOCS :Array = [
+        new Point(90, 323), new Point(184, 253)
+    ];
+    protected static const BUDDY_NAMES :Array = [
+        "Nemodemos",
     ];
 
     protected static var log :Log = Log.getLog(FightMode);

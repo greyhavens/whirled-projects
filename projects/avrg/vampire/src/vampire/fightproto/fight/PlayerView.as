@@ -45,7 +45,7 @@ public class PlayerView extends SceneObject
         return _sprite;
     }
 
-    public function playerSkillSelected (skill :PlayerSkill) :void
+    public function playerSkillSelected (skill :PlayerSkill, caster :SceneObject) :void
     {
         log.info("Skill selected: " + skill.name);
         if (skill.cooldown > 0 && isSkillInCooldown(skill)) {
@@ -64,14 +64,14 @@ public class PlayerView extends SceneObject
             var damage :Number = skill.damageOutput.next();
             if (damage > 0) {
                 baddie.offsetHealth(-damage);
-                GameCtx.mode.showSkillCastAnimation(skill, -damage, this, baddie);
+                GameCtx.mode.showSkillCastAnimation(skill, -damage, caster, baddie);
             }
         }
 
         var health :Number = skill.healOutput.next();
         if (health > 0) {
             ClientCtx.player.offsetHealth(health);
-            GameCtx.mode.showSkillCastAnimation(skill, health, this, this);
+            GameCtx.mode.showSkillCastAnimation(skill, health, caster, this);
         }
 
         // COOLDOWN

@@ -9,9 +9,10 @@ public class Scenario
     public var scenarioAwards :Array;
     public var skillAwards :Array;
     public var baddies :Array;
+    public var numBuddies :int;
 
     public function Scenario (name :String, displayName :String, minPlayerLevel :int, xpAward :int,
-        scenarioAwards :Array, skillAwards :Array, baddies :Array)
+        scenarioAwards :Array, skillAwards :Array, baddies :Array, numBuddies :int)
     {
         this.name = name;
         this.displayName = displayName;
@@ -20,6 +21,7 @@ public class Scenario
         this.scenarioAwards = scenarioAwards;
         this.skillAwards = skillAwards;
         this.baddies = baddies;
+        this.numBuddies = numBuddies;
     }
 }
 

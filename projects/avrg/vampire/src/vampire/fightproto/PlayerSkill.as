@@ -5,7 +5,7 @@ import com.whirled.contrib.simplegame.util.Rand;
 
 public class PlayerSkill extends Skill
 {
-    public static const BITE_1 :Skill = new PlayerSkill(
+    public static const BITE_1 :PlayerSkill = new PlayerSkill(
         "Bite 1",
         "bite",
         new IntRange(1, 3, Rand.STREAM_GAME),
@@ -14,7 +14,7 @@ public class PlayerSkill extends Skill
         2,
         10);
 
-    public static const BITE_2 :Skill = new PlayerSkill(
+    public static const BITE_2 :PlayerSkill = new PlayerSkill(
         "Bite 2",
         "bite",
         new IntRange(7, 9, Rand.STREAM_GAME),
@@ -23,7 +23,7 @@ public class PlayerSkill extends Skill
         2,
         40);
 
-    public static const HEAL_1 :Skill = new PlayerSkill(
+    public static const HEAL_1 :PlayerSkill = new PlayerSkill(
         "Heal 1",
         "heal",
         NO_OUTPUT,
@@ -32,7 +32,7 @@ public class PlayerSkill extends Skill
         3,
         60);
 
-    public static const HEAL_2 :Skill = new PlayerSkill(
+    public static const HEAL_2 :PlayerSkill = new PlayerSkill(
         "Heal 2",
         "heal",
         NO_OUTPUT,
@@ -40,6 +40,15 @@ public class PlayerSkill extends Skill
         2,
         5,
         70);
+
+    public static const BUDDY_ASSIST :PlayerSkill = new PlayerSkill(
+        "Assist",
+        "buddy-assist",
+        new IntRange(30, 35, Rand.STREAM_GAME),
+        new IntRange(20, 25, Rand.STREAM_GAME),
+        0,
+        20,
+        0);
 
     public var level :int;
     public var cooldown :Number;

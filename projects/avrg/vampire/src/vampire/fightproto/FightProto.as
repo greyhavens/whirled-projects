@@ -77,6 +77,8 @@ public class FightProto extends Sprite
         rm.queueResourceLoad("image", "selection_arrow", { embeddedClass: IMG_SELECTION_ARROW });
         rm.queueResourceLoad("image", "heal", { embeddedClass: IMG_HEAL });
         rm.queueResourceLoad("image", "claw", { embeddedClass: IMG_CLAW });
+        rm.queueResourceLoad("image", "buddy", { embeddedClass: IMG_BUDDY });
+        rm.queueResourceLoad("image", "buddy-assist", { embeddedClass: IMG_BUDDY_ASSIST });
         rm.loadQueuedResources(
             function () :void {
                 ClientCtx.mainLoop.pushMode(new InterstitialMode());
@@ -118,6 +120,10 @@ public class FightProto extends Sprite
     protected static const IMG_HEAL :Class;
     [Embed(source="../../../rsrc/fightproto/claw.png", mimeType="application/octet-stream")]
     protected static const IMG_CLAW :Class;
+    [Embed(source="../../../rsrc/fightproto/buddy.png", mimeType="application/octet-stream")]
+    protected static const IMG_BUDDY :Class;
+    [Embed(source="../../../rsrc/fightproto/buddy-assist.png", mimeType="application/octet-stream")]
+    protected static const IMG_BUDDY_ASSIST :Class;
 }
 
 }

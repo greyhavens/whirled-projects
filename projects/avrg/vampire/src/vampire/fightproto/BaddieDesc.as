@@ -61,6 +61,27 @@ public class BaddieDesc
                 0.3),
         ]);
 
+    public static const KING_WEREWOLF :BaddieDesc = new BaddieDesc(
+        "King Werewolf",
+        "werewolf",
+        1.2,
+        100,
+        new NumRange(5, 8, Rand.STREAM_GAME),
+        [   new BaddieSkill(
+                "Claw",
+                "claw",
+                new IntRange(30, 35, Rand.STREAM_GAME),
+                Skill.NO_OUTPUT,
+                1),
+
+            new BaddieSkill(
+                "Heal",
+                "heal",
+                Skill.NO_OUTPUT,
+                new IntRange(20, 25, Rand.STREAM_GAME),
+                0.3),
+        ]);
+
     public var displayName :String;
     public var imageName :String;
     public var imageScale :Number;
