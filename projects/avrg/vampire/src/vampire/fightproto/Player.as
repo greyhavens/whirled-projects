@@ -19,10 +19,16 @@ public class Player
         }
     }
 
-    public function get canLevelUp () :Boolean
+    public function get nextLevelXpRequirement () :int
     {
         var nextLevel :PlayerLevel = this.nextLevel;
-        return (nextLevel != null ? xp >= nextLevel.xpRequirement : false);
+        return (nextLevel != null ? nextLevel.xpRequirement : -1);
+    }
+
+    public function get canLevelUp () :Boolean
+    {
+        var xpReq :int = this.nextLevelXpRequirement;
+        return (xpReq >= 0 ? xp >= xpReq : false);
     }
 
     public function get maxHealth () :Number

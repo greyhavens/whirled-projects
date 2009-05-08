@@ -5,7 +5,7 @@ public class PlayerLevel
     public static const LEVELS :Array = [
         new PlayerLevel(0, 0, 100, 100, 5),
         new PlayerLevel(1, 5, 120, 100, 10),
-        new PlayerLevel(2, 60, 120, 150, 10),
+        new PlayerLevel(2, 65, 120, 150, 10),
         new PlayerLevel(3, 150, 150, 150, 10)
     ];
 

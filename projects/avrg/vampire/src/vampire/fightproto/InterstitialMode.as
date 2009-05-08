@@ -100,6 +100,40 @@ public class InterstitialMode extends AppMode
                 Math.max(ClientCtx.player.health, ClientCtx.player.maxHealth / 2);
         }
 
+        // XP meter
+        var xpLabel :String = "(Level " + String(ClientCtx.player.level.level + 1) + ") XP: ";
+        var xpMeter :StatMeter = new StatMeter(StatMeter.LARGE, 0xffff00, xpLabel);
+        var xpReq :int = ClientCtx.player.nextLevelXpRequirement;
+        var xp :int = ClientCtx.player.xp;
+        xpMeter.minValue = ClientCtx.player.level.xpRequirement;
+        xpMeter.maxValue =  (xpReq >= 0 ? xpReq : xp);
+        xpMeter.value = ClientCtx.player.xp;
+        xpMeter.updateDisplay();
+        xpMeter.x = 5;
+        xpMeter.y = 5;
+        _modeSprite.addChild(xpMeter);
+
+        // Health meter
+        var healthMeter :StatMeter = new StatMeter(StatMeter.LARGE, 0xff0000, "Health: ");
+        healthMeter.minValue = 0;
+        healthMeter.maxValue = ClientCtx.player.maxHealth;
+        healthMeter.value = ClientCtx.player.health;
+        healthMeter.updateDisplay();
+        healthMeter.x = 5;
+        healthMeter.y = xpMeter.y + xpMeter.height + 1;
+        _modeSprite.addChild(healthMeter);
+
+        // Energy meter
+        var energyMeter :StatMeter = new StatMeter(StatMeter.LARGE, 0x0000ff, "Energy: ");
+        energyMeter.minValue = 0;
+        energyMeter.maxValue = ClientCtx.player.maxEnergy;
+        energyMeter.value = ClientCtx.player.energy;
+        energyMeter.updateDisplay();
+        energyMeter.x = 5;
+        energyMeter.y = healthMeter.y + healthMeter.height + 1;
+        _modeSprite.addChild(energyMeter);
+
+        // Next scenarios
         var tfChoose :TextField = TextBits.createText("Choose your next battle!", 2, 0, 0xffffff);
         tfChoose.x = (Constants.SCREEN_SIZE.x - tfChoose.width) * 0.5;
         tfChoose.y = (Constants.SCREEN_SIZE.y - tfChoose.height) * 0.5;

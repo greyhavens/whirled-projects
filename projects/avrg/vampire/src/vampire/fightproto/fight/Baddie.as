@@ -42,17 +42,11 @@ public class Baddie extends SceneObject
         baddieSprite.y = -baddieSprite.height;
         _sprite.addChild(baddieSprite);
 
-        _healthMeter = new RectMeterView();
+        _healthMeter = new StatMeter(StatMeter.SMALL, 0xff0000);
         _healthMeter.minValue = 0;
         _healthMeter.maxValue = _desc.health;
         _healthMeter.value = _curHealth;
-        _healthMeter.foregroundColor = 0xff0000;
-        _healthMeter.backgroundColor = 0xffffff;
-        _healthMeter.outlineColor = 0;
-        _healthMeter.meterWidth = 100;
-        _healthMeter.meterHeight = 10;
         _healthMeter.updateDisplay();
-
         _healthMeter.x = -_healthMeter.width * 0.5;
         _healthMeter.y = baddieSprite.y - _healthMeter.height - 3;
         _sprite.addChild(_healthMeter);
@@ -186,7 +180,7 @@ public class Baddie extends SceneObject
     protected var _isSelected :Boolean;
 
     protected var _sprite :Sprite;
-    protected var _healthMeter :RectMeterView;
+    protected var _healthMeter :StatMeter;
     protected var _selectionArrow :SceneObject;
 }
 
