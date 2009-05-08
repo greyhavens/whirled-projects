@@ -14,7 +14,7 @@ public class Scenarios
             [ "babykiller", "trouble" ],
             [ PlayerSkill.HEAL_1 ],
             [ BaddieDesc.BABY_WEREWOLF ],
-            1));
+            0));
 
         addScenario(new Scenario(
             "babykiller",
