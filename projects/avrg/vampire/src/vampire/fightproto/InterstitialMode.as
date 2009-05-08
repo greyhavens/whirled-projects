@@ -34,9 +34,32 @@ public class InterstitialMode extends AppMode
             tfScenario.y = 20;
             _modeSprite.addChild(tfScenario);
 
-            var successText :String = (_lastScenarioSuccess ?
-                "Beautiful biting! You've earned " + _lastScenario.xpAward + " experience." :
-                "Ouch :(");
+            // xp award
+            var successText :String;
+            var levelUp :Boolean;
+            if (_lastScenarioSuccess) {
+                ClientCtx.player.xp += _lastScenario.xpAward;
+                levelUp = ClientCtx.player.canLevelUp;
+                if (levelUp) {
+                    ClientCtx.player.levelUp();
+                }
+
+                successText = "Beautiful biting! You've earned " + _lastScenario.xpAward + " xp" +
+                    (levelUp ? ". Level up!" : "!");
+
+            } else {
+                successText = "Ouch :(";
+            }
+
+            // scenario awards
+            if (_lastScenarioSuccess) {
+                for each (var newScenarioName :String in _lastScenario.scenarioAwards) {
+                    var newScenario :Scenario = Scenarios.getScenario(newScenarioName);
+                    if (!ClientCtx.player.hasScenario(newScenario)) {
+                        ClientCtx.player.scenarios.push(newScenario);
+                    }
+                }
+            }
 
             var successColor :uint = (_lastScenarioSuccess ? 0xffffff : 0xff0000);
             var tfSuccess :TextField = TextBits.createText(successText, 2.5, 0, successColor);
@@ -44,9 +67,8 @@ public class InterstitialMode extends AppMode
             tfSuccess.y = tfScenario.y + tfScenario.height + 2;
             _modeSprite.addChild(tfSuccess);
 
-            // Give awards
+            // New skill rewards
             if (_lastScenarioSuccess) {
-                ClientCtx.player.xp += _lastScenario.xpAward;
                 var newSkillsSprite :Sprite;
                 for each (var awardedSkill :PlayerSkill in _lastScenario.skillAwards) {
                     if (!ClientCtx.player.hasSkill(awardedSkill)) {

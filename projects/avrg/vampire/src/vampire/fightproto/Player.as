@@ -11,6 +11,20 @@ public class Player
     public var skills :Array = [];
     public var scenarios :Array = [];
 
+    public function levelUp () :void
+    {
+        var nextLevel :PlayerLevel = this.nextLevel;
+        if (nextLevel != null) {
+            this.level = nextLevel;
+        }
+    }
+
+    public function get canLevelUp () :Boolean
+    {
+        var nextLevel :PlayerLevel = this.nextLevel;
+        return (nextLevel != null ? xp >= nextLevel.xpRequirement : false);
+    }
+
     public function get maxHealth () :Number
     {
         return this.level.maxHealth;
@@ -48,6 +62,16 @@ public class Player
     public function hasScenario (scenario :Scenario) :Boolean
     {
         return ArrayUtil.contains(this.scenarios, scenario);
+    }
+
+    protected function get nextLevel () :PlayerLevel
+    {
+        var nextLevelIdx :int = level.level + 1;
+        if (nextLevelIdx >= PlayerLevel.LEVELS.length) {
+            return null;
+        }
+
+        return PlayerLevel.LEVELS[nextLevelIdx];
     }
 }
 
