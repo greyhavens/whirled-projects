@@ -20,6 +20,13 @@ public class VampatarConfig
     public var browsNumber :int = 1;
     public var mouthNumber :int = 1;
 
+    // Version 2
+    public var pantsNumber :int = 1;
+    public var hairColor2 :uint = 0x220000;
+    public var topColor2 :uint = 0x222222;
+    public var pantsColor2 :uint = 0x203030;
+    public var shoesColor2 :uint = 0x000008;
+
     public function clone () :VampatarConfig
     {
         var theClone :VampatarConfig = new VampatarConfig();
@@ -51,6 +58,12 @@ public class VampatarConfig
         ba.writeByte(browsNumber);
         ba.writeByte(mouthNumber);
 
+        ba.writeByte(pantsNumber);
+        ba.writeUnsignedInt(hairColor2);
+        ba.writeUnsignedInt(topColor2);
+        ba.writeUnsignedInt(pantsColor2);
+        ba.writeUnsignedInt(shoesColor2);
+
         return ba;
     }
 
@@ -76,9 +89,17 @@ public class VampatarConfig
             browsNumber = ba.readByte();
             mouthNumber = ba.readByte();
         }
+
+        if (version >= 2) {
+            pantsNumber = ba.readByte();
+            hairColor2 = ba.readUnsignedInt();
+            topColor2 = ba.readUnsignedInt();
+            pantsColor2 = ba.readUnsignedInt();
+            shoesColor2 = ba.readUnsignedInt();
+        }
     }
 
-    protected static const VERSION :int = 1;
+    protected static const VERSION :int = 2;
 }
 
 }

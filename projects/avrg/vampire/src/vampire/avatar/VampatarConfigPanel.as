@@ -67,6 +67,10 @@ public class VampatarConfigPanel extends Sprite
         createColorPicker(MyColorPicker.TYPE_GENERAL, panel["top_color"], "topColor");
         createColorPicker(MyColorPicker.TYPE_GENERAL, panel["shoes_color"], "shoesColor");
         createColorPicker(MyColorPicker.TYPE_GENERAL, panel["hair_color"], "hairColor");
+        createColorPicker(MyColorPicker.TYPE_GENERAL, panel["pants_color2"], "pantsColor2");
+        createColorPicker(MyColorPicker.TYPE_GENERAL, panel["top_color2"], "topColor2");
+        createColorPicker(MyColorPicker.TYPE_GENERAL, panel["shoes_color2"], "shoesColor2");
+        createColorPicker(MyColorPicker.TYPE_GENERAL, panel["hair_color2"], "hairColor2");
 
         if (isFaceUnlocked) {
             createColorPicker(MyColorPicker.TYPE_HUE, facePanel["eyes_color"], "eyesColor");
@@ -106,8 +110,13 @@ public class VampatarConfigPanel extends Sprite
     }
 
     protected function createDropdown (button :SimpleButton, items :Array, configName :String)
-        :Dropdown
+        :void
     {
+        if (button == null) {
+            log.info("Not creating dropdown for " + configName);
+            return;
+        }
+
         var dropdown :Dropdown = new Dropdown(button, numberItems(items),
             function (value :int) :void {
                 if (_config[configName] != value) {
@@ -129,13 +138,15 @@ public class VampatarConfigPanel extends Sprite
             });
 
         _dropdowns.push(dropdown);
-
-        return dropdown;
     }
 
-    protected function createColorPicker (type :int, button :MovieClip, configName :String)
-        :MyColorPicker
+    protected function createColorPicker (type :int, button :MovieClip, configName :String) :void
     {
+        if (button == null) {
+            log.info("Not creating color picker for " + configName);
+            return;
+        }
+
         var cp :MyColorPicker = new MyColorPicker(type, button,
             function (color :uint) :void {
                 if (_config[configName] != color) {
@@ -157,8 +168,6 @@ public class VampatarConfigPanel extends Sprite
             });
 
         _colorPickers.push(cp);
-
-        return cp;
     }
 
     protected function showPicker (picker :DisplayObject) :void

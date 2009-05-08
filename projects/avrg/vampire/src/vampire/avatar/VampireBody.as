@@ -125,6 +125,8 @@ public class VampireBody extends VampireBodyBase
     {
         //log.info("Selecting frames for " + movies.length + " movies");
 
+        var shoeType :int = _configParams.shoeTypes[_curConfig.shoesNumber];
+
         for each (var movie :MovieClip in movies) {
             // Shirt
             selectFrame(movie, [ "torso", "shirt" ], _curConfig.topNumber);
@@ -161,6 +163,15 @@ public class VampireBody extends VampireBodyBase
             selectFrame(movie, [ "calfL", "shoes" ], _curConfig.shoesNumber);
             selectFrame(movie, [ "calfR", "shoes" ], _curConfig.shoesNumber);
 
+            // Pants
+            // Pants have two different versions - over and under - that we
+            // show depending on the type of shoes that the avatar is wearing.
+            // Avatars wearing Boots use the under-pants; avatars wearing Normal shoes
+            // use the over-pants
+            //selectPantsForShoes(movie, [ "example", "example" ], _curConfig.pantsNumber, shoeType);
+            //selectPantsForBoots(movie, [ "example", "example" ], _curConfig.pantsNumber, shoeType);
+
+            // Face
             if (!ArrayUtil.contains(_nonFaceConfigurableMovies, movie)) {
                 // Eyes
                 selectFrame(movie, [ "head", "eyes" ], _curConfig.eyesNumber);
@@ -182,6 +193,11 @@ public class VampireBody extends VampireBodyBase
         var pantsFilter :ColorMatrixFilter = createColorFilter(_curConfig.pantsColor);
         var shoesFilter :ColorMatrixFilter = createColorFilter(_curConfig.shoesColor);
         var eyesFilter :ColorMatrixFilter = createHueFilter(ColorUtil.getHue(_curConfig.eyesColor));
+
+        var hairFilter2 :ColorMatrixFilter = createColorFilter(_curConfig.hairColor2);
+        var shirtFilter2 :ColorMatrixFilter = createColorFilter(_curConfig.topColor2);
+        var pantsFilter2 :ColorMatrixFilter = createColorFilter(_curConfig.pantsColor2);
+        var shoesFilter2 :ColorMatrixFilter = createColorFilter(_curConfig.shoesColor2);
 
         for each (var movie :MovieClip in movies) {
             // Skin color
@@ -211,6 +227,9 @@ public class VampireBody extends VampireBodyBase
             applyFilter(movie, [ "hairR", "hairR", ], hairFilter);
             applyFilter(movie, [ "hair", "hair", ], hairFilter);
 
+            // Hair color 2
+            //applyFilter(movie, [ "example", "example" ], hairFilter2);
+
             // Shirt color
             applyFilter(movie, [ "neck", "shirt", ], shirtFilter);
             applyFilter(movie, [ "bicepL", "shirt", ], shirtFilter);
@@ -223,6 +242,9 @@ public class VampireBody extends VampireBodyBase
             applyFilter(movie, [ "torso", "shirt", ], shirtFilter);
             applyFilter(movie, [ "hips", "shirt", ], shirtFilter);
 
+            // Shirt color 2
+            //applyFilter(movie, [ "example", "example" ], shirtFilter2);
+
             // Pants color
             applyFilter(movie, [ "hips", "pants", ], pantsFilter);
             applyFilter(movie, [ "thighL", "pants", ], pantsFilter);
@@ -232,11 +254,17 @@ public class VampireBody extends VampireBodyBase
             applyFilter(movie, [ "footL", "pants", ], pantsFilter);
             applyFilter(movie, [ "footR", "pants", ], pantsFilter);
 
+            // Pants color 2
+            //applyFilter(movie, [ "example", "example" ], pantsFilter2);
+
             // Shoes color
             applyFilter(movie, [ "calfL", "shoes", ], shoesFilter);
             applyFilter(movie, [ "calfR", "shoes", ], shoesFilter);
             applyFilter(movie, [ "footL", "shoes", ], shoesFilter);
             applyFilter(movie, [ "footR", "shoes", ], shoesFilter);
+
+            // Shoes color 2
+            //applyFilter(movie, [ "example", "example" ], shoesFilter2);
 
             // Eyes color
             applyFilter(movie, [ "head", "eyes", ], eyesFilter);
@@ -284,12 +312,29 @@ public class VampireBody extends VampireBodyBase
     }
 
     protected static function selectFrame (movie :MovieClip, childPath :Array,
-                                           frameNumber :int) :void
+                                           frameNumber :int, visible :Boolean = true) :void
     {
         var child :MovieClip = findChild(movie, childPath);
         if (child != null) {
-            child.gotoAndStop(frameNumber);
+            if (visible) {
+                child.visible = true;
+                child.gotoAndStop(frameNumber);
+            } else {
+                child.visible = false;
+            }
         }
+    }
+
+    protected static function selectPantsForShoes (movie :MovieClip, childPath :Array,
+                                                 frameNumber :int, shoesType :int) :void
+    {
+        selectFrame(movie, childPath, frameNumber, shoesType == ConfigParams.SHOE_NORMAL);
+    }
+
+    protected static function selectPantsForBoot (movie :MovieClip, childPath :Array,
+                                                 frameNumber :int, shoesType :int) :void
+    {
+        selectFrame(movie, childPath, frameNumber, shoesType == ConfigParams.SHOE_BOOT);
     }
 
     protected static function applyFilter (movie :MovieClip, childPath :Array,
