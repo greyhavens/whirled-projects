@@ -125,7 +125,10 @@ public class VampireBody extends VampireBodyBase
     {
         //log.info("Selecting frames for " + movies.length + " movies");
 
-        var shoeType :int = _configParams.shoeTypes[_curConfig.shoesNumber];
+        var shoeType :int = ConfigParams.SHOE_NORMAL;
+        if (_curConfig.shoesNumber < _configParams.shoeTypes.length) {
+            shoeType = _configParams.shoeTypes[_curConfig.shoesNumber];
+        }
 
         for each (var movie :MovieClip in movies) {
             // Shirt
