@@ -126,8 +126,8 @@ public class VampireBody extends VampireBodyBase
         //log.info("Selecting frames for " + movies.length + " movies");
 
         var shoeType :int = ConfigParams.SHOE;
-        if (_curConfig.shoesNumber < _configParams.shoeTypes.length) {
-            shoeType = _configParams.shoeTypes[_curConfig.shoesNumber];
+        if ((_curConfig.shoesNumber - 1) < _configParams.shoeTypes.length) {
+            shoeType = _configParams.shoeTypes[(_curConfig.shoesNumber - 1)];
         }
 
         for each (var movie :MovieClip in movies) {
@@ -171,12 +171,12 @@ public class VampireBody extends VampireBodyBase
             // show depending on the type of shoes that the avatar is wearing.
             // Avatars wearing Boots use the under-pants; avatars wearing Normal shoes
             // use the over-pants
-			selectFrame(movie, [ "hips", "pants" ], _curConfig.pantsNumber);
-			selectFrame(movie, [ "thighR", "pants" ], _curConfig.pantsNumber);
-			selectFrame(movie, [ "thighL", "pants" ], _curConfig.pantsNumber);
+            selectFrame(movie, [ "hips", "pants" ], _curConfig.pantsNumber);
+            selectFrame(movie, [ "thighR", "pants" ], _curConfig.pantsNumber);
+            selectFrame(movie, [ "thighL", "pants" ], _curConfig.pantsNumber);
             selectPantsForShoes(movie, [ "calfL", "pants" ], _curConfig.pantsNumber, shoeType);
             selectPantsForBoots(movie, [ "calfL", "pants_under" ], _curConfig.pantsNumber, shoeType);
-			selectPantsForShoes(movie, [ "calfR", "pants" ], _curConfig.pantsNumber, shoeType);
+            selectPantsForShoes(movie, [ "calfR", "pants" ], _curConfig.pantsNumber, shoeType);
             selectPantsForBoots(movie, [ "calfR", "pants_under" ], _curConfig.pantsNumber, shoeType);
 
             // Face
@@ -259,7 +259,7 @@ public class VampireBody extends VampireBodyBase
             applyFilter(movie, [ "thighR", "pants", ], pantsFilter);
             applyFilter(movie, [ "calfL", "pants", ], pantsFilter);
             applyFilter(movie, [ "calfR", "pants", ], pantsFilter);
-			applyFilter(movie, [ "calfL", "pants_under", ], pantsFilter);
+            applyFilter(movie, [ "calfL", "pants_under", ], pantsFilter);
             applyFilter(movie, [ "calfR", "pants_under", ], pantsFilter);
             applyFilter(movie, [ "footL", "pants", ], pantsFilter);
             applyFilter(movie, [ "footR", "pants", ], pantsFilter);
