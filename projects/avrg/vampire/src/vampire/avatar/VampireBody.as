@@ -125,7 +125,7 @@ public class VampireBody extends VampireBodyBase
     {
         //log.info("Selecting frames for " + movies.length + " movies");
 
-        var shoeType :int = ConfigParams.SHOE_NORMAL;
+        var shoeType :int = ConfigParams.SHOE;
         if (_curConfig.shoesNumber < _configParams.shoeTypes.length) {
             shoeType = _configParams.shoeTypes[_curConfig.shoesNumber];
         }
@@ -171,8 +171,8 @@ public class VampireBody extends VampireBodyBase
             // show depending on the type of shoes that the avatar is wearing.
             // Avatars wearing Boots use the under-pants; avatars wearing Normal shoes
             // use the over-pants
-            //selectPantsForShoes(movie, [ "example", "example" ], _curConfig.pantsNumber, shoeType);
-            //selectPantsForBoots(movie, [ "example", "example" ], _curConfig.pantsNumber, shoeType);
+            selectPantsForShoes(movie, [ "calfL", "pants" ], _curConfig.pantsNumber, shoeType);
+            selectPantsForBoots(movie, [ "calfL", "pants_under" ], _curConfig.pantsNumber, shoeType);
 
             // Face
             if (!ArrayUtil.contains(_nonFaceConfigurableMovies, movie)) {
@@ -331,13 +331,13 @@ public class VampireBody extends VampireBodyBase
     protected static function selectPantsForShoes (movie :MovieClip, childPath :Array,
                                                  frameNumber :int, shoesType :int) :void
     {
-        selectFrame(movie, childPath, frameNumber, shoesType == ConfigParams.SHOE_NORMAL);
+        selectFrame(movie, childPath, frameNumber, shoesType == ConfigParams.SHOE);
     }
 
-    protected static function selectPantsForBoot (movie :MovieClip, childPath :Array,
+    protected static function selectPantsForBoots (movie :MovieClip, childPath :Array,
                                                  frameNumber :int, shoesType :int) :void
     {
-        selectFrame(movie, childPath, frameNumber, shoesType == ConfigParams.SHOE_BOOT);
+        selectFrame(movie, childPath, frameNumber, shoesType == ConfigParams.BOOT);
     }
 
     protected static function applyFilter (movie :MovieClip, childPath :Array,

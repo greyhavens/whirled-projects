@@ -52,6 +52,7 @@ public class VampatarConfigPanel extends Sprite
         createDropdown(panel["hair_option"], params.hairNames, "hairNumber");
         createDropdown(panel["top_option"], params.topNames, "topNumber");
         createDropdown(panel["shoes_option"], params.shoeNames, "shoesNumber");
+        createDropdown(panel["pants_option"], params.pantsNames, "pantsNumber");
 
         if (isFaceUnlocked) {
             createDropdown(facePanel["eyes_option"], params.eyeNames, "eyesNumber");

@@ -2,8 +2,8 @@ package vampire.avatar {
 
 public class ConfigParams
 {
-    public static const SHOE_NORMAL :int = 0;
-    public static const SHOE_BOOT :int = 1;
+    public static const SHOE :int = 0;
+    public static const BOOT :int = 1;
 
     public var hairNames :Array;
     public var topNames :Array;
