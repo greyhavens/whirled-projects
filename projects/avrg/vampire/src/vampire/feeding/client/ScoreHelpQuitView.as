@@ -50,7 +50,8 @@ public class ScoreHelpQuitView extends SceneObject
 
     public function addBlood (x :Number, y :Number, count :int, initialDelay :Number) :void
     {
-        _bloodCount = Util.obfuscateInt(bloodCount + count);
+        ClientCtx.cheatDetector.set(BLOOD_COUNT_KEY, bloodCount + count);
+//        _bloodCount = Util.obfuscateInt(bloodCount + count);
 
         var loc :Point = this.displayObject.globalToLocal(new Point(x, y));
 
@@ -93,7 +94,8 @@ public class ScoreHelpQuitView extends SceneObject
 
     public function get bloodCount () :int
     {
-        return Util.deobfuscateInt(_bloodCount);
+        return ClientCtx.cheatDetector.get(BLOOD_COUNT_KEY);
+//        return Util.deobfuscateInt(_bloodCount);
     }
 
     override public function get displayObject () :DisplayObject
@@ -116,7 +118,7 @@ public class ScoreHelpQuitView extends SceneObject
 
     protected var _movie :MovieClip;
     protected var _tf :TextField;
-    protected var _bloodCount :String;
+    protected static const BLOOD_COUNT_KEY :String = "bloodCount";
     protected var _lastDisplayedBloodCount :int = -1;
     protected var _displayedBloodCount :int;
 

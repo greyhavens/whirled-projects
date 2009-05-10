@@ -1,6 +1,7 @@
 package vampire.feeding.client {
 
 import com.threerings.flash.Vector2;
+import com.whirled.contrib.CheatDetector;
 import com.whirled.contrib.simplegame.components.LocationComponent;
 
 import flash.display.Sprite;
@@ -31,6 +32,8 @@ public class GameCtx
     public static var timeLeft :Number;
     public static var gameOver :Boolean;
     public static var gotCorruption :Boolean;
+
+
 
     public static function init () :void
     {

@@ -6,6 +6,7 @@ public class Codes
 {
 
     public static const AGENT_PROP_SERVER_REBOOTS :String = "reboots";
+    public static const AGENT_PROP_CHEATER_IDS :String = "cheaterIds";
 
     public static const ROOM_PROP_PLAYERS_FEEDING_UNAVAILABLE :String = "noFeedingPlayers";
     public static const ROOM_PROP_FEEDBACK :String = "feedback";

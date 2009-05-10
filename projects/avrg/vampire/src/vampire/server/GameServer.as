@@ -9,6 +9,7 @@ import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.PlayerSubControlServer;
+import com.whirled.contrib.CheatDetector;
 import com.whirled.contrib.simplegame.net.Message;
 import com.whirled.contrib.simplegame.objects.BasicGameObject;
 import com.whirled.net.MessageReceivedEvent;
@@ -67,6 +68,9 @@ public class GameServer extends BasicGameObject
             recordBootTime();
 
             registerListener(_ctrl, Event.UNLOAD, shutdown);
+
+            //Experimental cheat detection
+            new CheatHandler(_ctrl);
         }
         else {
             log.error(ClassUtil.tinyClassName(GameServer) + ": no AVRServerGameControl!!");
@@ -164,7 +168,13 @@ public class GameServer extends BasicGameObject
                     LogicServer.handleMessage(player, msg);
                     LogicFeeding.handleMessage(player, msg);
                 }
+//                else {
+//                     if (evt.name == CheatDetector.PLAYER_CHEATED) {
+//                         log.error(CheatDetector.PLAYER_CHEATED, evt.value);
+//                     }
+//                }
              });
+
         }
         catch(err :Error) {
             log.error(err + "\n" + err.getStackTrace());

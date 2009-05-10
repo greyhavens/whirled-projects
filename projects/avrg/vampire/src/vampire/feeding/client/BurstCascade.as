@@ -141,7 +141,8 @@ public class BurstCascade extends SceneObject
             GameCtx.score.addBlood(loc.x, loc.y, this.totalValue, 0);
         }
 
-        if (!GameCtx.gameOver && _totalBursts >= Constants.CREATE_BONUS_BURST_SIZE &&
+        if (!GameCtx.gameOver && _totalBursts >= ClientCtx.cheatDetector.get(Constants.CREATE_BONUS_BURST_SIZE_KEY) &&
+//        if (!GameCtx.gameOver && _totalBursts >= Constants.CREATE_BONUS_BURST_SIZE &&
             this.createMultiplier) {
             // Send a multiplier to the other players
             var multiplierSize :int = Math.min(this.multiplier + 1, Constants.MAX_MULTIPLIER);

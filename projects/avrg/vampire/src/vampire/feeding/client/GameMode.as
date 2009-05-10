@@ -348,6 +348,9 @@ public class GameMode extends AppMode
 
             _performedEndGameLogic = true;
         }
+
+        //Cheat check
+        ClientCtx.cheatDetector.update(dt);
     }
 
     protected function get canEndGameNow () :Boolean

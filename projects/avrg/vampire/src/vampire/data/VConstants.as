@@ -5,7 +5,7 @@ import com.threerings.flash.Vector2;
 public class VConstants
 {
     public static var LOCAL_DEBUG_MODE :Boolean = false;
-    public static const MODE_DEV :Boolean = true;
+    public static const MODE_DEV :Boolean = false;
 
     public static const PLAYERS_IN_ROOM_TRIGGERING_BALANCING :int = 8;
     public static const ROOMS_SHOWN_IN_LOAD_BALANCER :int = 5;

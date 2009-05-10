@@ -24,6 +24,7 @@ public class Constants
     public static const HEART_RADIUS2 :Number = HEART_RADIUS * HEART_RADIUS;
 
     public static const CREATE_BONUS_BURST_SIZE :int = 3;
+    public static const CREATE_BONUS_BURST_SIZE_KEY :String = "CreateBonusBurstSize";
 
     public static const ARTERY_TOP :int = 0;
     public static const ARTERY_BOTTOM :int = 1;
@@ -81,6 +82,8 @@ public class Constants
 
     public static const MODE_LOBBY :String = "m_Lobby";
     public static const MODE_PLAYING :String = "m_Playing";
+
+    public static const CHEAT_CODE :String = "blood";
 }
 
 }

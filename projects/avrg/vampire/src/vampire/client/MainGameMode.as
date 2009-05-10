@@ -158,8 +158,8 @@ public class MainGameMode extends AppMode
         }
 
         //Init the quests
-        QuestClient.init(ClientContext.ctrl, ClientContext.game, this, Sprite(_hud.displayObject),
-            _spriteLayerMinigame, layerHighPriority);
+//        QuestClient.init(ClientContext.ctrl, ClientContext.game, this, Sprite(_hud.displayObject),
+//            _spriteLayerMinigame, layerHighPriority);
 
     }
 
@@ -314,7 +314,7 @@ public class MainGameMode extends AppMode
 
     protected function onRoundComplete () :void
     {
-        QuestClient.playerCompletedFeeding();
+//        QuestClient.playerCompletedFeeding();
     }
 
     protected function onGameComplete () :void

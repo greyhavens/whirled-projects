@@ -5,6 +5,7 @@ import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.threerings.util.Util;
 import com.whirled.avrg.AVRGameControl;
+import com.whirled.contrib.CheatDetector;
 import com.whirled.contrib.namespc.*;
 import com.whirled.contrib.simplegame.MainLoop;
 import com.whirled.contrib.simplegame.audio.*;
@@ -38,6 +39,8 @@ public class ClientCtx
     public static var props :NamespacePropGetControl;
     public static var msgMgr :ClientMsgMgr;
 
+    public static var cheatDetector :CheatDetector;
+
     public static function get isCorruption () :Boolean
     {
         return variantSettings.scoreCorruption;
@@ -56,6 +59,18 @@ public class ClientCtx
         variantSettings = null;
         props = null;
         msgMgr = null;
+
+        //Testing.  Check for cheats.
+        cheatDetector = new CheatDetector(sendCheatMsg);
+        cheatDetector.set(Constants.CREATE_BONUS_BURST_SIZE_KEY, Constants.CREATE_BONUS_BURST_SIZE);
+
+    }
+
+    public static function sendCheatMsg (key :String) :void
+    {
+//        trace("CHEAT ", [gameCtrl.player.getPlayerId(), key]);
+        gameCtrl.agent.sendMessage(CheatDetector.PLAYER_CHEATED, [gameCtrl.player.getPlayerId(),
+            gameCtrl.player.getPlayerName(), key]);
     }
 
     public static function centerInRoom (disp :DisplayObject) :void

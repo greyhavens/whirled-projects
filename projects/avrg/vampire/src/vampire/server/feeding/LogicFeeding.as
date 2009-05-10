@@ -109,6 +109,11 @@ public class LogicFeeding extends BasicGameObject
             return;
         }
 
+        if (ServerContext.isAnyCheater(gameRecord.gameServer.playerIds)) {
+            log.error("bloodBloomRoundOver", "1+ cheater, score ignored", gameRecord.gameServer.playerIds);
+            return;
+        }
+
         //Reference these once since they require computing
         var averageScore :Number = results.averageScore;
         var totalScore :Number = results.totalScore;
