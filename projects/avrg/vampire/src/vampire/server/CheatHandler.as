@@ -15,7 +15,7 @@ public class CheatHandler extends EventCollecter
     {
         _ctrl = ctrl;
         _events.registerListener(ctrl.game, MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
-        _events.freeAllOn(ctrl);
+        _events.registerUnload(ctrl);
     }
 
     protected function handleMessageReceived (e :MessageReceivedEvent) :void
