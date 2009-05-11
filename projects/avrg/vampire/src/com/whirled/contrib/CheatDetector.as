@@ -14,7 +14,6 @@ import flash.utils.Dictionary;
  * hacking is almost certain occuring, and the callback is invoked.
  */
 public class CheatDetector
-    implements Updatable
 {
     public function CheatDetector(cheatDetectedCallback :Function)
     {
@@ -128,4 +127,7 @@ class MultiInt
     public var value1 :int;
     public var value2 :int;
     public var value3 :int;
+
+    protected static const value2XOR :int = 98765;
+    protected static const value3XOR :int = 987650;
 }
