@@ -4,24 +4,41 @@ import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.GameModeStack;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimpleGame;
-import com.whirled.contrib.simplegame.resource.ResourceManager;
 
 import flash.display.Sprite;
 
-public class CombatGameCtx
+public class GameInstance
 {
     public var playerId :int;
     public var units :Array = [];
 
+    public var friendlyUnits :Array = [];
+    public var enemyUnits :Array = [];
+
     public var mode :AppMode;
     public var game :SimpleGame;
-    public var rsrcs :ResourceManager;
     public var modeStack :GameModeStack;
+    public var client :CombatClient;
 
     public var panel :CombatPanel;
     public var controller :CombatController;
 
+    public var targetReticle :Sprite;
+
+    public var locationHandler :LocationHandler;
+
+//    public var actionChooser :ActionChooser;
+    public var selectedFriendlyUnit :UnitRecord;
+    public var selectedEnemyUnit :UnitRecord;
+
     protected var _friendlyTeams :Array = [];
+
+//    public function removeUnit (unit :UnitRecord) :void
+//    {
+//        ArrayUtil.removeAll(friendlyUnits, unit);
+//        ArrayUtil.removeAll(enemyUnits, unit);
+//        unit.destroySelf();
+//    }
 
     public function init (ourPlayerId :int) :void
     {
@@ -46,6 +63,7 @@ public class CombatGameCtx
         }
         return true;
     }
+
 
 
 

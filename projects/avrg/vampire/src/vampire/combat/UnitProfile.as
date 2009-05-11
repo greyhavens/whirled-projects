@@ -12,13 +12,13 @@ import flash.utils.ByteArray;
 public class UnitProfile
 {
     public function UnitProfile(id :int = 0,
-                                type :String = "",
+                                type :int = 0,
                                 strength :Number = 0,
                                 speed :Number = 0,
                                 stamina :Number = 0,
                                 mind :Number = 0,
                                 maxHealth :Number = 0,
-                                defaultWeapons :Array = null)
+                                defaultWeapons :int = 0)
 
     {
         _unitId = id;
@@ -28,19 +28,19 @@ public class UnitProfile
         _stamina = stamina;
         _mind = mind;
         _maxHealth = maxHealth;
-        _weaponsDefault = defaultWeapons == null ? [] : defaultWeapons;
+        _weaponsDefault = defaultWeapons;// == null ? [] : defaultWeapons;
     }
 
     public function fromBytes (bytes :ByteArray) :void
     {
         _unitId = bytes.readInt();
-        _unitType = bytes.readUTF();
+        _unitType = bytes.readInt();
         _strength = bytes.readFloat();
         _speed = bytes.readFloat();
         _stamina = bytes.readFloat();
         _mind = bytes.readFloat();
         _maxHealth = bytes.readFloat();
-        _weaponsDefault = bytes.readObject() as Array;
+        _weaponsDefault = bytes.readInt();//bytes.readObject() as Array;
     }
 
     public function toBytes (bytes :ByteArray = null) :ByteArray
@@ -49,13 +49,13 @@ public class UnitProfile
             bytes = new ByteArray();
         }
         bytes.writeInt(_unitId);
-        bytes.writeUTF(_unitType);
+        bytes.writeInt(_unitType);
         bytes.writeFloat(_strength);
         bytes.writeFloat(_speed);
         bytes.writeFloat(_stamina);
         bytes.writeFloat(_mind);
         bytes.writeFloat(_maxHealth);
-        bytes.writeObject(_weaponsDefault);
+        bytes.writeInt(_weaponsDefault);
         return bytes;
     }
 
@@ -104,11 +104,11 @@ public class UnitProfile
         _maxHealth = value;
     }
 
-    public function get type () :String
+    public function get type () :int
     {
         return _unitType;
     }
-    public function set type (value :String) :void
+    public function set type (value :int) :void
     {
         _unitType = value;
     }
@@ -122,14 +122,16 @@ public class UnitProfile
         _unitId = value;
     }
 
-    public function get weaponDefault () :Array
+    public function get weaponDefault () :int
     {
-        return _weaponsDefault.slice();
+        return _weaponsDefault;//.slice();
     }
-    public function set weaponDefault (value :Array) :void
+    public function set weaponDefault (value :int) :void
     {
-        _weaponsDefault = value.slice();
+        _weaponsDefault = value;//.slice();
     }
+
+
 
     public function toString () :String
     {
@@ -145,14 +147,14 @@ public class UnitProfile
 
 
     protected var _unitId :int;
-    protected var _unitType :String;
+    protected var _unitType :int;
     protected var _strength :Number;
     protected var _speed :Number;
     protected var _stamina :Number;
     protected var _maxHealth :Number;
     protected var _mind :Number;
 
-    protected var _weaponsDefault :Array;
+    protected var _weaponsDefault :int;
 
 //    protected var _specialAbilities :
 //    protected var _items :Items;

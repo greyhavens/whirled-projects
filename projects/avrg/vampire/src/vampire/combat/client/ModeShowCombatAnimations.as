@@ -4,14 +4,16 @@ import com.whirled.contrib.GameMode;
 
 public class ModeShowCombatAnimations extends ModeBase
 {
-    public function ModeShowCombatAnimations(ctx :CombatGameCtx)
+    public function ModeShowCombatAnimations(ctx :GameInstance)
     {
         super(ctx);
     }
 
-//    public function pushed():void
-//    {
-//    }
+    override public function pushed():void
+    {
+        super.pushed();
+        _ctx.locationHandler.moveUnits();
+    }
 //
 //    public function popped():void
 //    {

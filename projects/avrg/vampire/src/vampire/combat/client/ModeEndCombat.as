@@ -3,7 +3,7 @@ package vampire.combat.client
 
 public class ModeEndCombat extends ModeBase
 {
-    public function ModeEndCombat(ctx :CombatGameCtx)
+    public function ModeEndCombat(ctx :GameInstance)
     {
         super(ctx);
     }

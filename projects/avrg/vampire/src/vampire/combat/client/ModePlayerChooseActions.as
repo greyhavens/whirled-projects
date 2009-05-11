@@ -3,18 +3,23 @@ package vampire.combat.client
 
 public class ModePlayerChooseActions extends ModeBase
 {
-    public function ModePlayerChooseActions(ctx :CombatGameCtx)
+    public function ModePlayerChooseActions(ctx :GameInstance)
     {
         super(ctx);
     }
 
-//    public function pushed():void
-//    {
-//    }
+    override public function pushed():void
+    {
+        super.pushed();
+        _ctx.panel.attachActionChooser();
+        _ctx.controller.handleUnitClicked(_ctx.friendlyUnits[0]);
+    }
 //
-//    public function popped():void
-//    {
-//    }
+    override public function popped():void
+    {
+        super.popped();
+        _ctx.panel.detachActionChooser();
+    }
 //
 //    public function pushedOnto(mode:GameMode):void
 //    {

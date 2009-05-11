@@ -18,13 +18,20 @@ public class ModeCycle
 
     public function modeChangedCallback (oldMode :GameMode, newMode :GameMode) :void
     {
+//        log.debug("modeChangedCallback", "oldMode", oldMode, "newMode", newMode, "active", active);
+        if (!active) {
+            return;
+        }
+
         if (newMode == null) {
             var index :int = ArrayUtil.indexOf(_modeSequence, oldMode);
             if (index >= 0 && index < _modeSequence.length) {
                 if (index != _modeSequence.length - 1) {
+                    log.debug("modeChangedCallback", "oldMode", oldMode, "newMode", newMode, "pushing", _modeSequence[index + 1]);
                     _stack.push(_modeSequence[index + 1]);
                 }
                 else {
+                    log.debug("modeChangedCallback", "oldMode", oldMode, "newMode", newMode, "pushing", _modeSequence[0]);
                     _stack.push(_modeSequence[0]);
                 }
             }
@@ -42,6 +49,8 @@ public class ModeCycle
         return mode;
     }
 
+
+    public var active :Boolean = true;
     protected var _stack :GameModeStack;
     protected var _modeSequence :Array = [];
     protected static const log :Log = Log.getLog(ModeCycle);
