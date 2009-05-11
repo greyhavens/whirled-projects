@@ -118,7 +118,7 @@ public class FeedingRecord extends EventCollecter
             _gameServer.gameId);
         player.sctrl.sendMessage(StartFeedingClientMsg.NAME, msg.toBytes());
         var prey :Boolean = _preyId == playerId;
-        log.error("sendPlayerStartGameMsg", "playerId", playerId, "prey", prey, "_predatorIndex", _predatorIndex);
+        log.debug("sendPlayerStartGameMsg", "playerId", playerId, "prey", prey, "_predatorIndex", _predatorIndex);
 
         //Add the predator to the list of predators.  Used for positioning
         if (!prey) {
