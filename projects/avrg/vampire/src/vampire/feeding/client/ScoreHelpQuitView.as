@@ -35,6 +35,7 @@ public class ScoreHelpQuitView extends SceneObject
             function (...ignored) :void {
                 InfoView.show(GameCtx.helpLayer);
             });
+        ClientCtx.cheatDetector.set(BLOOD_COUNT_KEY, 0);
     }
 
     public function get isPlayingScoreAnim () :Boolean
