@@ -1,0 +1,75 @@
+2009-04-21 13:15:37,807 ERROR: vampire.server.ServerLogic TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::ServerLogic$/stateChange()
+	at vampire.server::ServerLogic$/handleFeedConfirmMessage()
+	at vampire.server::ServerLogic$/handleMessage()
+	at MethodInfo-48()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/handleMessage()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 13:15:38,413 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=555728, name=Lucario_girl, roomId=null, xp=12999, level=4, bloodbond=610483, sire=1101, progeny=274654,610483]]
+2009-04-21 13:15:38,413 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Lucario_girl]
+2009-04-21 13:15:38,414 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=1101]
+adding 324.5xp
+ before xp=10842.9
+ after xp=11167.4
+adding 324.5xp
+ before xp=113
+ after xp=437.5
+adding 32.45xp
+ before xp=11167.4
+ after xp=11199.85
+2009-04-21 13:15:43,120 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=597005, name=Bella, roomId=null, xp=3887, level=3, bloodbond=0, sire=603011, progeny=]]
+2009-04-21 13:15:43,121 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Bella]
+2009-04-21 13:15:43,121 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=603011]
+adding 262xp
+ before xp=4604
+ after xp=4866
+2009-04-21 13:16:45,212 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=619911, name=Guest 619,911, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 13:16:45,212 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 619,911]
+adding 157xp
+ before xp=9618
+ after xp=9775
+adding 236xp
+ before xp=14876.900000000001
+ after xp=15112.900000000001
+adding 117xp
+ before xp=4866
+ after xp=4983
+adding 134xp
+ before xp=1757
+ after xp=1891
+adding 134xp
+ before xp=11043.01666666667
+ after xp=11177.01666666667
+adding 181xp
+ before xp=12999
+ after xp=12999
+adding 181xp
+ before xp=437.5
+ after xp=618.5
+adding 18.1xp
+ before xp=11199.85
+ after xp=11217.95
+2009-04-21 13:18:39,250 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=164032, name=Evil Kirby?, roomId=null, xp=12999, level=4, bloodbond=0, sire=346553, progeny=521890]]
+2009-04-21 13:18:39,250 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Evil Kirby?]
+2009-04-21 13:18:39,251 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=346553]
+2009-04-21 13:19:13,685 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=3383, name=Version2.0, roomId=null, xp=144394.3233333333, level=12, bloodbond=968, sire=12791, progeny=16826,195261,2843,420786]]
+2009-04-21 13:19:13,685 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Version2.0]
+2009-04-21 13:19:13,685 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=12791]
+

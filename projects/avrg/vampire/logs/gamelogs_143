@@ -1,0 +1,951 @@
+ after xp=109185.84500000004
+adding 175xp
+ before xp=172
+ after xp=347
+2009-04-21 08:26:11,225 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=161813, name=emoperson, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 08:26:11,226 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=emoperson]
+2009-04-21 08:27:01,315 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=482345, name=briana, roomId=null, xp=83, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 08:27:01,315 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=briana]
+adding 110xp
+ before xp=111
+ after xp=221
+2009-04-21 08:28:11,334 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=125015, name=yuwan, roomId=null, xp=3967.1, level=3, bloodbond=123854, sire=113453, progeny=]]
+2009-04-21 08:28:11,334 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=yuwan]
+2009-04-21 08:28:11,335 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=113453]
+adding 25.700000000000003xp
+ before xp=3967.1
+ after xp=3992.7999999999997
+adding 284.5xp
+ before xp=47957.515
+ after xp=48242.015
+adding 284.5xp
+ before xp=0
+ after xp=284.5
+adding 28.450000000000003xp
+ before xp=48242.015
+ after xp=48270.465
+adding 241.5xp
+ before xp=109185.84500000004
+ after xp=109427.34500000004
+adding 241.5xp
+ before xp=83
+ after xp=324.5
+adding 24.150000000000002xp
+ before xp=109427.34500000004
+ after xp=109451.49500000004
+2009-04-21 08:30:02,554 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=14825, name=fables, roomId=null, xp=10203, level=4, bloodbond=0, sire=171151, progeny=228840]]
+2009-04-21 08:30:02,554 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=fables]
+2009-04-21 08:30:02,554 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=171151]
+2009-04-21 08:30:22,245 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=602458, name=buu, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 08:30:22,245 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=buu]
+2009-04-21 08:30:46,707 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=73017, name=supershadow2000, roomId=null, xp=1962.475, level=2, bloodbond=149804, sire=39180, progeny=334189]]
+2009-04-21 08:30:46,708 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=supershadow2000]
+2009-04-21 08:30:46,708 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=39180]
+adding 389xp
+ before xp=63334.68283333334
+ after xp=63723.68283333334
+adding 389xp
+ before xp=11500.266666666666
+ after xp=11889.266666666666
+2009-04-21 08:31:23,879 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 08:31:59,810 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=73017, name=supershadow2000, roomId=null, xp=1962.475, level=2, bloodbond=149804, sire=39180, progeny=334189]]
+2009-04-21 08:31:59,810 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=supershadow2000]
+2009-04-21 08:31:59,811 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=39180]
+adding 270.5xp
+ before xp=284.5
+ after xp=555
+adding 27.05xp
+ before xp=48270.465
+ after xp=48297.515
+adding 270.5xp
+ before xp=48297.515
+ after xp=48568.015
+2009-04-21 08:32:11,435 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=77, name=Towe Sjögren, roomId=null, xp=104214.98, level=11, bloodbond=0, sire=12770, progeny=288392,449190]]
+2009-04-21 08:32:11,435 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Towe Sjögren]
+2009-04-21 08:32:11,436 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=12770]
+adding 142xp
+ before xp=10203
+ after xp=10345
+adding 142xp
+ before xp=0
+ after xp=142
+adding 14.200000000000001xp
+ before xp=10345
+ after xp=10359.2
+2009-04-21 08:34:21,853 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=71724, name=beajoux, roomId=null, xp=48568.015, level=8, bloodbond=472144, sire=94103, progeny=140155,472144,542863]]
+2009-04-21 08:34:21,854 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=beajoux]
+2009-04-21 08:34:21,854 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=94103]
+2009-04-21 08:34:36,145 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=602458, name=buu, roomId=null, xp=142, level=1, bloodbond=0, sire=14825, progeny=]]
+2009-04-21 08:34:36,145 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=buu]
+2009-04-21 08:34:36,145 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=14825]
+2009-04-21 08:34:37,201 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=161813, name=emoperson, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 08:34:37,201 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=emoperson]
+2009-04-21 08:34:47,049 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=63924, name=anaconda195, roomId=null, xp=523, level=1, bloodbond=0, sire=233517, progeny=]]
+2009-04-21 08:34:47,049 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=anaconda195]
+2009-04-21 08:34:47,050 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=233517]
+adding 182xp
+ before xp=10359.2
+ after xp=10541.2
+adding 137xp
+ before xp=1962.475
+ after xp=2099.475
+adding 232xp
+ before xp=104214.98
+ after xp=104446.98
+adding 232xp
+ before xp=48568.015
+ after xp=48800.015
+2009-04-21 08:37:30,598 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+adding 103xp
+ before xp=221
+ after xp=324
+2009-04-21 08:38:31,111 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=159134, name=blackdemon, roomId=null, xp=2293.1000000000004, level=2, bloodbond=0, sire=299053, progeny=295246]]
+2009-04-21 08:38:31,111 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=blackdemon]
+2009-04-21 08:38:31,112 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=299053]
+2009-04-21 08:38:36,565 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=447249, name=doobydoobydoo, roomId=null, xp=118342.575, level=11, bloodbond=10642, sire=199427, progeny=201281,313795]]
+2009-04-21 08:38:36,566 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=doobydoobydoo]
+2009-04-21 08:38:36,566 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=199427]
+adding 4342.372833333333xp
+ before xp=2293.1000000000004
+ after xp=6635.472833333333
+2009-04-21 08:39:21,420 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=125015, name=yuwan, roomId=null, xp=3992.7999999999997, level=3, bloodbond=123854, sire=113453, progeny=]]
+2009-04-21 08:39:21,420 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=yuwan]
+2009-04-21 08:39:21,420 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=113453]
+2009-04-21 08:39:54,052 ERROR: vampire.server.ServerLogic actionChange(ArrivedToFeed) but no game. We should have already registered.
+2009-04-21 08:39:54,053 ERROR: vampire.server.ServerLogic _room._bloodBloomGameManager=FeedingManager
+ _games.length=7
+ _playerId2Game.size()=3
+ _playerId2Game.keys()=604640,14825,71724
+ games listed:
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=161813 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=159134 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=604640 _primaryPredatorId=604640 _started=true _finished=false
+  FeedingRecord _preyId=14825 _predators=604640 _primaryPredatorId=604640 _started=true _finished=false
+  FeedingRecord _preyId=71724 _predators= _primaryPredatorId=0 _started=true _finished=false
+2009-04-21 08:39:54,165 ERROR: vampire.server.ServerLogic actionChange(ArrivedToFeed) but no game. We should have already registered.
+2009-04-21 08:39:54,165 ERROR: vampire.server.ServerLogic _room._bloodBloomGameManager=FeedingManager
+ _games.length=7
+ _playerId2Game.size()=3
+ _playerId2Game.keys()=604640,14825,71724
+ games listed:
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=161813 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=159134 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=604640 _primaryPredatorId=604640 _started=true _finished=false
+  FeedingRecord _preyId=14825 _predators=604640 _primaryPredatorId=604640 _started=true _finished=false
+  FeedingRecord _preyId=71724 _predators= _primaryPredatorId=0 _started=true _finished=false
+2009-04-21 08:39:56,592 ERROR: vampire.server.ServerLogic actionChange(ArrivedToFeed) but no game. We should have already registered.
+2009-04-21 08:39:56,592 ERROR: vampire.server.ServerLogic _room._bloodBloomGameManager=FeedingManager
+ _games.length=7
+ _playerId2Game.size()=3
+ _playerId2Game.keys()=604640,14825,71724
+ games listed:
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=161813 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=159134 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=604640 _primaryPredatorId=604640 _started=true _finished=false
+  FeedingRecord _preyId=14825 _predators=604640 _primaryPredatorId=604640 _started=true _finished=false
+  FeedingRecord _preyId=71724 _predators= _primaryPredatorId=0 _started=true _finished=false
+adding 155.5xp
+ before xp=10541.2
+ after xp=10696.7
+adding 155.5xp
+ before xp=555
+ after xp=710.5
+adding 15.55xp
+ before xp=48800.015
+ after xp=48815.565
+2009-04-21 08:40:55,538 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 08:40:58,560 ERROR: vampire.server.ServerLogic actionChange(ArrivedToFeed) but no game. We should have already registered.
+2009-04-21 08:40:58,561 ERROR: vampire.server.ServerLogic _room._bloodBloomGameManager=FeedingManager
+ _games.length=10
+ _playerId2Game.size()=2
+ _playerId2Game.keys()=73017,71724
+ games listed:
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=161813 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=159134 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=604640 _primaryPredatorId=604640 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=71724 _predators= _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators=73017 _primaryPredatorId=73017 _started=true _finished=false
+  FeedingRecord _preyId=636375 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=636375 _predators= _primaryPredatorId=0 _started=true _finished=true
+2009-04-21 08:40:58,920 ERROR: vampire.server.ServerLogic actionChange(ArrivedToFeed) but no game. We should have already registered.
+2009-04-21 08:40:58,921 ERROR: vampire.server.ServerLogic _room._bloodBloomGameManager=FeedingManager
+ _games.length=10
+ _playerId2Game.size()=2
+ _playerId2Game.keys()=73017,71724
+ games listed:
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=161813 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=159134 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=604640 _primaryPredatorId=604640 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=71724 _predators= _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators=73017 _primaryPredatorId=73017 _started=true _finished=false
+  FeedingRecord _preyId=636375 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=636375 _predators= _primaryPredatorId=0 _started=true _finished=true
+2009-04-21 08:41:01,149 ERROR: vampire.server.ServerLogic actionChange(ArrivedToFeed) but no game. We should have already registered.
+2009-04-21 08:41:01,150 ERROR: vampire.server.ServerLogic _room._bloodBloomGameManager=FeedingManager
+ _games.length=10
+ _playerId2Game.size()=2
+ _playerId2Game.keys()=73017,71724
+ games listed:
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=161813 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=159134 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=604640 _primaryPredatorId=604640 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=71724 _predators= _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators=73017 _primaryPredatorId=73017 _started=true _finished=false
+  FeedingRecord _preyId=636375 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=636375 _predators= _primaryPredatorId=0 _started=true _finished=true
+2009-04-21 08:41:13,394 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 08:41:21,474 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=48126, name=Ayame, roomId=null, xp=29802.456666666665, level=6, bloodbond=0, sire=145896, progeny=208104,579799,606202]]
+2009-04-21 08:41:21,474 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Ayame]
+2009-04-21 08:41:21,475 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=145896]
+adding 274xp
+ before xp=48815.565
+ after xp=49089.565
+adding 124xp
+ before xp=3992.7999999999997
+ after xp=4116.799999999999
+adding 103xp
+ before xp=10696.7
+ after xp=10799.7
+adding 103xp
+ before xp=2099.475
+ after xp=2202.475
+adding 436xp
+ before xp=29802.456666666665
+ after xp=30238.456666666665
+adding 436xp
+ before xp=104446.98
+ after xp=104882.98
+adding 196xp
+ before xp=6635.472833333333
+ after xp=6831.472833333333
+adding 194.5xp
+ before xp=49089.565
+ after xp=49284.065
+adding 194.5xp
+ before xp=118342.575
+ after xp=118537.075
+2009-04-21 08:45:05,273 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 08:45:05,299 ERROR: vampire.server.ServerLogic actionChange(ArrivedToFeed) but no game. We should have already registered.
+2009-04-21 08:45:05,300 ERROR: vampire.server.ServerLogic _room._bloodBloomGameManager=FeedingManager
+ _games.length=16
+ _playerId2Game.size()=2
+ _playerId2Game.keys()=14825,73017
+ games listed:
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=161813 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=159134 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=604640 _primaryPredatorId=604640 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=636375 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=636375 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=636375 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=73017 _predators=14825 _primaryPredatorId=14825 _started=true _finished=false
+  FeedingRecord _preyId=163362 _predators= _primaryPredatorId=0 _started=true _finished=true
+2009-04-21 08:45:08,406 ERROR: vampire.server.ServerLogic actionChange(ArrivedToFeed) but no game. We should have already registered.
+2009-04-21 08:45:08,407 ERROR: vampire.server.ServerLogic _room._bloodBloomGameManager=FeedingManager
+ _games.length=16
+ _playerId2Game.size()=2
+ _playerId2Game.keys()=14825,73017
+ games listed:
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=161813 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=159134 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=604640 _primaryPredatorId=604640 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=636375 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=636375 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=636375 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=73017 _predators=14825 _primaryPredatorId=14825 _started=true _finished=false
+  FeedingRecord _preyId=163362 _predators= _primaryPredatorId=0 _started=true _finished=true
+adding 129.5xp
+ before xp=2202.475
+ after xp=2331.975
+adding 129.5xp
+ before xp=10799.7
+ after xp=10929.2
+adding 151xp
+ before xp=6831.472833333333
+ after xp=6982.472833333333
+2009-04-21 08:47:32,330 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=612457, name=kikewolf, roomId=null, xp=911, level=1, bloodbond=0, sire=534632, progeny=]]
+2009-04-21 08:47:32,331 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=kikewolf]
+2009-04-21 08:47:32,331 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=534632]
+2009-04-21 08:47:59,488 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+adding 194.5xp
+ before xp=104882.98
+ after xp=105077.48
+adding 194.5xp
+ before xp=10929.2
+ after xp=11123.7
+2009-04-21 08:49:07,119 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=230751, name=bad man (fin), roomId=null, xp=1516, level=2, bloodbond=0, sire=127942, progeny=567682]]
+2009-04-21 08:49:07,119 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=bad man (fin)]
+2009-04-21 08:49:07,120 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=127942]
+adding 214xp
+ before xp=6982.472833333333
+ after xp=7196.472833333333
+2009-04-21 08:50:18,626 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=641640, name=jacki, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 08:50:18,627 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=jacki]
+2009-04-21 08:50:54,442 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=426648, name=njp777, roomId=null, xp=173, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 08:50:54,442 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=njp777]
+adding 119xp
+ before xp=911
+ after xp=1030
+adding 394xp
+ before xp=105077.48
+ after xp=105471.48
+adding 196.5xp
+ before xp=30238.456666666665
+ after xp=30434.956666666665
+adding 196.5xp
+ before xp=1030
+ after xp=1226.5
+2009-04-21 08:54:45,072 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=171151, name=Anorel, roomId=null, xp=116065.82999999994, level=11, bloodbond=0, sire=21067, progeny=141768,14825,261108,294694,52484,550541,613540,618781,619610,97243]]
+2009-04-21 08:54:45,073 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Anorel]
+2009-04-21 08:54:45,073 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=21067]
+adding 125.51xp
+ before xp=116065.82999999994
+ after xp=116191.33999999994
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+adding 156xp
+ before xp=11123.7
+ after xp=11279.7
+adding 15.600000000000001xp
+ before xp=116191.33999999994
+ after xp=116206.93999999994
+2009-04-21 08:56:14,566 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=462471, name=LiBoiRo!, roomId=null, xp=15165.900000000003, level=5, bloodbond=0, sire=625243, progeny=553883,631525,631685,635069]]
+2009-04-21 08:56:14,566 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=LiBoiRo!]
+2009-04-21 08:56:14,566 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=625243]
+2009-04-21 08:56:29,962 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=72515, name=.?Kitteh.Stacey.?, roomId=null, xp=268, level=1, bloodbond=0, sire=169408, progeny=]]
+2009-04-21 08:56:29,962 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=.?Kitteh.Stacey.?]
+2009-04-21 08:56:29,963 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=169408]
+2009-04-21 08:56:50,813 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=641714, name=Mars, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 08:56:50,813 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Mars]
+adding 430.5xp
+ before xp=105471.48
+ after xp=105901.98
+adding 430.5xp
+ before xp=116206.93999999994
+ after xp=116637.43999999994
+2009-04-21 08:58:14,319 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=72515, name=.?Kitteh.Stacey.?, roomId=null, xp=268, level=1, bloodbond=0, sire=169408, progeny=]]
+2009-04-21 08:58:14,319 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=.?Kitteh.Stacey.?]
+2009-04-21 08:58:14,320 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=169408]
+adding 152xp
+ before xp=11279.7
+ after xp=11431.7
+adding 15.200000000000001xp
+ before xp=116637.43999999994
+ after xp=116652.63999999994
+adding 324xp
+ before xp=118537.075
+ after xp=118861.075
+adding 181xp
+ before xp=11431.7
+ after xp=11612.7
+adding 18.1xp
+ before xp=116652.63999999994
+ after xp=116670.73999999995
+2009-04-21 09:02:21,178 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=71724, name=beajoux, roomId=null, xp=49284.065, level=8, bloodbond=472144, sire=94103, progeny=140155,472144,542863]]
+2009-04-21 09:02:21,178 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=beajoux]
+2009-04-21 09:02:21,179 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=94103]
+adding 1030.5xp
+ before xp=116670.73999999995
+ after xp=117701.23999999995
+adding 1030.5xp
+ before xp=118861.075
+ after xp=119891.575
+adding 259.5xp
+ before xp=15165.900000000003
+ after xp=15425.400000000003
+adding 259.5xp
+ before xp=11612.7
+ after xp=11872.2
+adding 25.950000000000003xp
+ before xp=117701.23999999995
+ after xp=117727.18999999994
+2009-04-21 09:03:42,082 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=95479, name=ghosty!, roomId=null, xp=4158.5, level=3, bloodbond=0, sire=586681, progeny=]]
+2009-04-21 09:03:42,082 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=ghosty!]
+2009-04-21 09:03:42,082 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=586681]
+2009-04-21 09:04:40,572 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=430891, name=Meanie, roomId=null, xp=100415.02999999997, level=11, bloodbond=0, sire=111249, progeny=113418,330095,43232,452609,459913,537729,92105]]
+2009-04-21 09:04:40,572 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Meanie]
+2009-04-21 09:04:40,572 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=111249]
+2009-04-21 09:04:59,377 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=77, name=Towe Sjögren, roomId=null, xp=105901.98, level=11, bloodbond=0, sire=12770, progeny=288392,449190]]
+2009-04-21 09:04:59,377 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Towe Sjögren]
+2009-04-21 09:04:59,377 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=12770]
+adding 292.5xp
+ before xp=15425.400000000003
+ after xp=15717.900000000003
+adding 292.5xp
+ before xp=11872.2
+ after xp=12164.7
+adding 29.25xp
+ before xp=117727.18999999994
+ after xp=117756.43999999994
+2009-04-21 09:06:26,633 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 09:06:36,288 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+adding 597.5xp
+ before xp=117756.43999999994
+ after xp=118353.93999999994
+adding 597.5xp
+ before xp=119891.575
+ after xp=120489.075
+2009-04-21 09:06:53,229 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=430891, name=Meanie, roomId=null, xp=100415.02999999997, level=11, bloodbond=0, sire=111249, progeny=113418,330095,43232,452609,459913,537729,92105]]
+2009-04-21 09:06:53,230 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Meanie]
+2009-04-21 09:06:53,230 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=111249]
+2009-04-21 09:06:58,618 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 09:07:07,183 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=71724, name=beajoux, roomId=null, xp=49284.065, level=8, bloodbond=472144, sire=94103, progeny=140155,472144,542863]]
+2009-04-21 09:07:07,183 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=beajoux]
+2009-04-21 09:07:07,183 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=94103]
+2009-04-21 09:07:41,698 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=77, name=Towe Sjögren, roomId=null, xp=105901.98, level=11, bloodbond=0, sire=12770, progeny=288392,449190]]
+2009-04-21 09:07:41,698 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Towe Sjögren]
+2009-04-21 09:07:41,699 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=12770]
+2009-04-21 09:08:08,990 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=567997, name=???, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:08:08,991 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=???]
+2009-04-21 09:08:48,459 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=567997, name=???, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:08:48,460 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=???]
+adding 385xp
+ before xp=118353.93999999994
+ after xp=118738.93999999994
+adding 385xp
+ before xp=120489.075
+ after xp=120874.075
+2009-04-21 09:09:16,631 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=636077, name=draggy86 :D, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:09:16,631 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=draggy86 :D]
+adding 516.5xp
+ before xp=100415.02999999997
+ after xp=100931.52999999997
+adding 516.5xp
+ before xp=49284.065
+ after xp=49800.565
+2009-04-21 09:09:38,714 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=567997, name=???, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:09:38,714 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=???]
+adding 122xp
+ before xp=12164.7
+ after xp=12286.7
+adding 12.200000000000001xp
+ before xp=118738.93999999994
+ after xp=118751.13999999994
+2009-04-21 09:09:46,143 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=77, name=Towe Sjögren, roomId=null, xp=105901.98, level=11, bloodbond=0, sire=12770, progeny=288392,449190]]
+2009-04-21 09:09:46,143 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Towe Sjögren]
+2009-04-21 09:09:46,143 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=12770]
+2009-04-21 09:10:00,459 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=5842, name=Stevie, roomId=null, xp=111755.3323333333, level=11, bloodbond=40275, sire=344937, progeny=20106,28294,286390,3504,53963,73072,7314,79021]]
+2009-04-21 09:10:00,459 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Stevie]
+2009-04-21 09:10:00,459 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=344937]
+adding 172.66xp
+ before xp=111755.3323333333
+ after xp=111927.9923333333
+2009-04-21 09:10:31,748 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=517066, name=Guest 517,066, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:10:31,748 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 517,066]
+2009-04-21 09:11:03,686 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=627341, name=M&M, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:11:03,686 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=M&M]
+2009-04-21 09:11:31,359 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=462408, name=Foung, roomId=null, xp=30325.925, level=6, bloodbond=638933, sire=191950, progeny=]]
+2009-04-21 09:11:31,359 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Foung]
+2009-04-21 09:11:31,359 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=191950]
+2009-04-21 09:11:39,115 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=641783, name=Guest 641,783, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:11:39,115 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 641,783]
+2009-04-21 09:11:59,846 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=186763, name=?????????????, roomId=null, xp=16260.34, level=5, bloodbond=0, sire=44987, progeny=]]
+2009-04-21 09:11:59,846 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=?????????????]
+2009-04-21 09:11:59,847 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=44987]
+2009-04-21 09:12:03,534 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=641783, name=Guest 641,783, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:12:03,534 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 641,783]
+2009-04-21 09:12:18,919 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=641783, name=Guest 641,783, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:12:18,920 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 641,783]
+adding 156.5xp
+ before xp=120874.075
+ after xp=121030.575
+adding 156.5xp
+ before xp=0
+ after xp=156.5
+adding 15.65xp
+ before xp=121030.575
+ after xp=121046.22499999999
+2009-04-21 09:12:47,891 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=641783, name=Guest 641,783, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:12:47,891 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 641,783]
+adding 347.5xp
+ before xp=111927.9923333333
+ after xp=112275.4923333333
+adding 347.5xp
+ before xp=49800.565
+ after xp=50148.065
+2009-04-21 09:13:50,934 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=54776, name=Lady D., roomId=null, xp=121061.26499999996, level=12, bloodbond=1062, sire=89757, progeny=184395,246356,314573,324530,370255,47379,584050,599012,611546,617855,622074,95813]]
+2009-04-21 09:13:50,934 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Lady D.]
+2009-04-21 09:13:50,934 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=89757]
+adding 146.45000000000002xp
+ before xp=121061.26499999996
+ after xp=121207.71499999995
+2009-04-21 09:13:56,414 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=186763, name=?????????????, roomId=null, xp=16260.34, level=5, bloodbond=0, sire=44987, progeny=]]
+2009-04-21 09:13:56,414 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=?????????????]
+2009-04-21 09:13:56,415 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=44987]
+2009-04-21 09:13:56,845 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=552896, name=Triff, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:13:56,845 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Triff]
+2009-04-21 09:14:04,352 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=52012, name=[Houkou], roomId=null, xp=19522.57, level=5, bloodbond=0, sire=209656, progeny=118789]]
+2009-04-21 09:14:04,353 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=[Houkou]]
+2009-04-21 09:14:04,353 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=209656]
+adding 184.5xp
+ before xp=105901.98
+ after xp=106086.48
+adding 184.5xp
+ before xp=121046.22499999999
+ after xp=121230.72499999999
+adding 319xp
+ before xp=12286.7
+ after xp=12605.7
+adding 31.900000000000002xp
+ before xp=118751.13999999994
+ after xp=118783.03999999994
+adding 319xp
+ before xp=30325.925
+ after xp=30644.925
+2009-04-21 09:15:45,006 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=18100, name=killcam100?, roomId=null, xp=3722, level=3, bloodbond=0, sire=75820, progeny=]]
+2009-04-21 09:15:45,006 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=killcam100?]
+2009-04-21 09:15:45,007 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=75820]
+adding 12.9xp
+ before xp=3722
+ after xp=3734.9
+2009-04-21 09:15:56,260 ERROR: vampire.server.ServerLogic handleFeedConfirmMessage [requestingPlayer=null]
+2009-04-21 09:15:57,457 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=52012, name=[Houkou], roomId=null, xp=19522.57, level=5, bloodbond=0, sire=209656, progeny=118789]]
+2009-04-21 09:15:57,458 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=[Houkou]]
+2009-04-21 09:15:57,458 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=209656]
+2009-04-21 09:16:29,498 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=171151, name=Anorel, roomId=null, xp=118783.03999999994, level=11, bloodbond=0, sire=21067, progeny=141768,14825,261108,294694,52484,550541,613540,618781,619610,97243]]
+2009-04-21 09:16:29,499 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Anorel]
+2009-04-21 09:16:29,499 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=21067]
+2009-04-21 09:16:47,266 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=441599, name=scatman, roomId=null, xp=1225, level=2, bloodbond=0, sire=403501, progeny=]]
+2009-04-21 09:16:47,266 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=scatman]
+2009-04-21 09:16:47,266 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=403501]
+adding 283xp
+ before xp=106086.48
+ after xp=106369.48
+adding 302.5xp
+ before xp=50148.065
+ after xp=50450.565
+adding 302.5xp
+ before xp=118783.03999999994
+ after xp=119085.53999999994
+2009-04-21 09:20:02,023 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=82321, name=?Yellowpop?, roomId=null, xp=68122.95333333332, level=9, bloodbond=138183, sire=57717, progeny=497122]]
+2009-04-21 09:20:02,023 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=?Yellowpop?]
+2009-04-21 09:20:02,023 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=57717]
+adding 175.96xp
+ before xp=68122.95333333332
+ after xp=68298.91333333333
+2009-04-21 09:21:36,518 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=1265, name=Aur, roomId=null, xp=183667.20333333322, level=13, bloodbond=713, sire=12, progeny=202501,258951,366037,554385,557086]]
+2009-04-21 09:21:36,518 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Aur]
+2009-04-21 09:21:36,518 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=12]
+2009-04-21 09:21:52,686 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=82321, name=?Yellowpop?, roomId=null, xp=68298.91333333333, level=9, bloodbond=138183, sire=57717, progeny=497122]]
+2009-04-21 09:21:52,687 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=?Yellowpop?]
+2009-04-21 09:21:52,687 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=57717]
+2009-04-21 09:22:23,358 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=1265, name=Aur, roomId=null, xp=183667.20333333322, level=13, bloodbond=713, sire=12, progeny=202501,258951,366037,554385,557086]]
+2009-04-21 09:22:23,358 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Aur]
+2009-04-21 09:22:23,359 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=12]
+adding 113.70000000000002xp
+ before xp=183667.20333333322
+ after xp=183780.90333333323
+2009-04-21 09:22:34,690 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=472070, name=joni, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:22:34,691 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=joni]
+adding 126xp
+ before xp=16260.34
+ after xp=16386.34
+adding 126xp
+ before xp=12605.7
+ after xp=12731.7
+adding 12.600000000000001xp
+ before xp=119085.53999999994
+ after xp=119098.13999999994
+2009-04-21 09:23:17,551 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=169345, name=T-ICE, roomId=null, xp=1464, level=2, bloodbond=0, sire=113794, progeny=]]
+2009-04-21 09:23:17,552 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=T-ICE]
+2009-04-21 09:23:17,552 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=113794]
+adding 268xp
+ before xp=119098.13999999994
+ after xp=119366.13999999994
+2009-04-21 09:24:02,913 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=533, name=Maow, roomId=null, xp=12999, level=4, bloodbond=559, sire=20260, progeny=113453,264109,298902,597825]]
+2009-04-21 09:24:02,913 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Maow]
+2009-04-21 09:24:02,914 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=20260]
+adding 56.345000000000006xp
+ before xp=12999
+ after xp=12999
+2009-04-21 09:24:42,815 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=641825, name=Guest 641,825, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:24:42,815 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 641,825]
+adding 378xp
+ before xp=16386.34
+ after xp=16764.34
+adding 378xp
+ before xp=12731.7
+ after xp=12999
+adding 37.800000000000004xp
+ before xp=119366.13999999994
+ after xp=119403.93999999994
+adding 526.5xp
+ before xp=121207.71499999995
+ after xp=121734.21499999995
+adding 526.5xp
+ before xp=50450.565
+ after xp=50977.065
+2009-04-21 09:25:19,406 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=447249, name=doobydoobydoo, roomId=null, xp=121230.72499999999, level=12, bloodbond=10642, sire=199427, progeny=201281,313795]]
+2009-04-21 09:25:19,407 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=doobydoobydoo]
+2009-04-21 09:25:19,407 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=199427]
+adding 275.5xp
+ before xp=68298.91333333333
+ after xp=68574.41333333333
+adding 275.5xp
+ before xp=0
+ after xp=275.5
+adding 27.55xp
+ before xp=68574.41333333333
+ after xp=68601.96333333333
+2009-04-21 09:25:39,684 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=611546, name=MakoChan, roomId=null, xp=1379.5, level=2, bloodbond=0, sire=54776, progeny=]]
+2009-04-21 09:25:39,684 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=MakoChan]
+2009-04-21 09:25:39,684 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=54776]
+2009-04-21 09:27:02,888 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=144488, name=picalilly, roomId=null, xp=12999, level=4, bloodbond=0, sire=261567, progeny=]]
+2009-04-21 09:27:02,888 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=picalilly]
+2009-04-21 09:27:02,888 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=261567]
+adding 226.5xp
+ before xp=16764.34
+ after xp=16990.84
+adding 226.5xp
+ before xp=12999
+ after xp=12999
+2009-04-21 09:28:15,821 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=641838, name=Guest 641,838, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:28:15,821 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 641,838]
+adding 206.5xp
+ before xp=1379.5
+ after xp=1586
+adding 20.650000000000002xp
+ before xp=121734.21499999995
+ after xp=121754.86499999995
+adding 206.5xp
+ before xp=50977.065
+ after xp=51183.565
+2009-04-21 09:29:01,639 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=132984, name=pheonia, roomId=null, xp=28672.949999999997, level=6, bloodbond=0, sire=12628, progeny=]]
+2009-04-21 09:29:01,639 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=pheonia]
+2009-04-21 09:29:01,640 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=12628]
+adding 181xp
+ before xp=0
+ after xp=181
+adding 181xp
+ before xp=68601.96333333333
+ after xp=68782.96333333333
+adding 236xp
+ before xp=16990.84
+ after xp=17226.84
+adding 236xp
+ before xp=12999
+ after xp=12999
+2009-04-21 09:29:41,016 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=472270, name=pyrus, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:29:41,016 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=pyrus]
+2009-04-21 09:30:16,917 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=171151, name=Anorel, roomId=null, xp=119403.93999999994, level=12, bloodbond=0, sire=21067, progeny=141768,14825,261108,294694,52484,550541,613540,618781,619610,97243]]
+2009-04-21 09:30:16,917 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Anorel]
+2009-04-21 09:30:16,917 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=21067]
+adding 232xp
+ before xp=1586
+ after xp=1818
+adding 23.200000000000003xp
+ before xp=121754.86499999995
+ after xp=121778.06499999994
+adding 232xp
+ before xp=51183.565
+ after xp=51415.565
+adding 46.25xp
+ before xp=119403.93999999994
+ after xp=119450.18999999994
+2009-04-21 09:31:17,735 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=622998, name=michelle11e, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:31:17,736 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=michelle11e]
+adding 536.5xp
+ before xp=28672.949999999997
+ after xp=29209.449999999997
+adding 536.5xp
+ before xp=12999
+ after xp=12999
+2009-04-21 09:31:53,822 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=559, name=Cadavereye, roomId=null, xp=7147.8, level=4, bloodbond=533, sire=522658, progeny=628049]]
+2009-04-21 09:31:53,822 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Cadavereye]
+2009-04-21 09:31:53,822 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=522658]
+2009-04-21 09:31:59,465 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=641853, name=Guest 641,853, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:31:59,466 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 641,853]
+adding 172xp
+ before xp=121778.06499999994
+ after xp=121950.06499999994
+adding 172xp
+ before xp=12999
+ after xp=12999
+adding 17.2xp
+ before xp=119450.18999999994
+ after xp=119467.38999999994
+adding 162.5xp
+ before xp=0
+ after xp=162.5
+adding 162.5xp
+ before xp=51415.565
+ after xp=51578.065
+adding 158.5xp
+ before xp=1464
+ after xp=1622.5
+adding 158.5xp
+ before xp=68782.96333333333
+ after xp=68941.46333333333
+adding 224xp
+ before xp=183780.90333333323
+ after xp=184004.90333333323
+adding 224xp
+ before xp=1818
+ after xp=2042
+adding 22.400000000000002xp
+ before xp=121950.06499999994
+ after xp=121972.46499999994
+2009-04-21 09:35:41,277 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=3383, name=Version2.0, roomId=null, xp=143711.89833333332, level=12, bloodbond=968, sire=12791, progeny=16826,195261,2843,420786]]
+2009-04-21 09:35:41,277 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Version2.0]
+2009-04-21 09:35:41,278 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=12791]
+adding 269xp
+ before xp=121972.46499999994
+ after xp=122241.46499999994
+adding 269xp
+ before xp=12999
+ after xp=12999
+adding 26.900000000000002xp
+ before xp=119467.38999999994
+ after xp=119494.28999999994
+adding 176xp
+ before xp=68941.46333333333
+ after xp=69117.46333333333
+adding 176xp
+ before xp=1622.5
+ after xp=1798.5
+2009-04-21 09:37:11,894 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=1265, name=Aur, roomId=null, xp=184004.90333333323, level=13, bloodbond=713, sire=12, progeny=202501,258951,366037,554385,557086]]
+2009-04-21 09:37:11,894 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Aur]
+2009-04-21 09:37:11,895 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=12]
+2009-04-21 09:37:50,079 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=637033, name=dodgers, roomId=null, xp=502.5, level=1, bloodbond=0, sire=10642, progeny=]]
+2009-04-21 09:37:50,079 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=dodgers]
+2009-04-21 09:37:50,079 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=10642]
+2009-04-21 09:39:12,183 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=82321, name=?Yellowpop?, roomId=null, xp=69117.46333333333, level=9, bloodbond=138183, sire=57717, progeny=497122]]
+2009-04-21 09:39:12,183 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=?Yellowpop?]
+2009-04-21 09:39:12,183 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=57717]
+2009-04-21 09:40:12,993 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=161813, name=emoperson, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:40:12,993 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=emoperson]
+2009-04-21 09:40:25,309 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+adding 148xp
+ before xp=2042
+ after xp=2190
+adding 392xp
+ before xp=119494.28999999994
+ after xp=119886.28999999994
+adding 392xp
+ before xp=69117.46333333333
+ after xp=69509.46333333333
+2009-04-21 09:42:00,451 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=336785, name=Sam, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:42:00,451 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Sam]
+2009-04-21 09:42:05,087 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=389478, name=ash:), roomId=null, xp=576.5, level=1, bloodbond=0, sire=36282, progeny=]]
+2009-04-21 09:42:05,088 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=ash:)]
+2009-04-21 09:42:05,088 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=36282]
+adding 284xp
+ before xp=121230.72499999999
+ after xp=121514.72499999999
+2009-04-21 09:42:33,329 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=336785, name=Sam, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:42:33,330 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Sam]
+adding 88.5xp
+ before xp=502.5
+ after xp=591
+adding 88.5xp
+ before xp=0
+ after xp=88.5
+adding 8.85xp
+ before xp=591
+ after xp=599.85
+2009-04-21 09:43:10,924 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=1802, name=Mand'alor  Vhett, roomId=null, xp=78983.82, level=10, bloodbond=995, sire=103144, progeny=211712,597901,75020]]
+2009-04-21 09:43:10,925 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Mand'alor  Vhett]
+2009-04-21 09:43:10,925 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=103144]
+adding 159xp
+ before xp=2190
+ after xp=2349
+2009-04-21 09:43:28,528 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=641911, name=Guest 641,911, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:43:28,528 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 641,911]
+adding 406.5xp
+ before xp=69509.46333333333
+ after xp=69915.96333333333
+adding 406.5xp
+ before xp=119886.28999999994
+ after xp=120292.78999999994
+2009-04-21 09:44:35,457 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=641911, name=Guest 641,911, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:44:35,457 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 641,911]
+2009-04-21 09:45:22,696 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=641818, name=freddy, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:45:22,696 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=freddy]
+adding 109xp
+ before xp=88.5
+ after xp=197.5
+adding 10.9xp
+ before xp=599.85
+ after xp=610.75
+adding 109xp
+ before xp=610.75
+ after xp=719.75
+2009-04-21 09:45:48,507 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=475086, name=Guest 475,086, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:45:48,507 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 475,086]
+2009-04-21 09:47:23,875 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=637636, name=Tikkimus, roomId=null, xp=3343.5, level=3, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:47:23,875 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Tikkimus]
+2009-04-21 09:47:35,362 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=132921, name=the prince of darkness, roomId=null, xp=17785.499999999996, level=5, bloodbond=0, sire=211601, progeny=]]
+2009-04-21 09:47:35,363 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=the prince of darkness]
+2009-04-21 09:47:35,363 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=211601]
+adding 142.02xp
+ before xp=17785.499999999996
+ after xp=17927.519999999997
+2009-04-21 09:47:58,480 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=641930, name=Guest 641,930, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:47:58,481 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 641,930]
+2009-04-21 09:48:19,747 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=641930, name=Guest 641,930, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:48:19,747 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 641,930]
+adding 134.5xp
+ before xp=0
+ after xp=134.5
+adding 134.5xp
+ before xp=197.5
+ after xp=332
+adding 13.450000000000001xp
+ before xp=719.75
+ after xp=733.2
+adding 249.5xp
+ before xp=78983.82
+ after xp=79233.32
+adding 249.5xp
+ before xp=733.2
+ after xp=982.7
+2009-04-21 09:50:17,347 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=12770, name=Agent Vortex, roomId=null, xp=102378.45666666665, level=11, bloodbond=0, sire=383387, progeny=110178,179386,187565,241176,36,375444,388185,394281,44987,578,68619,77]]
+2009-04-21 09:50:17,347 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Agent Vortex]
+2009-04-21 09:50:17,347 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=383387]
+adding 635.31xp
+ before xp=102378.45666666665
+ after xp=103013.76666666665
+2009-04-21 09:50:19,670 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=216770, name=lau, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:50:19,671 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=lau]
+2009-04-21 09:50:45,793 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=34980, name=szilvia, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:50:45,793 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=szilvia]
+2009-04-21 09:51:03,911 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=34980, name=szilvia, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:51:03,911 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=szilvia]
+adding 311.5xp
+ before xp=120292.78999999994
+ after xp=120604.28999999994
+adding 311.5xp
+ before xp=121514.72499999999
+ after xp=121826.22499999999
+adding 108.5xp
+ before xp=332
+ after xp=440.5
+adding 10.850000000000001xp
+ before xp=982.7
+ after xp=993.5500000000001
+adding 108.5xp
+ before xp=134.5
+ after xp=243
+adding 10.850000000000001xp
+ before xp=440.5
+ after xp=451.35
+adding 1.085xp
+ before xp=993.5500000000001
+ after xp=994.6350000000001
+2009-04-21 09:51:17,251 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=475692, name=cassi, roomId=null, xp=9123.016666666666, level=4, bloodbond=0, sire=477213, progeny=4297,628560]]
+2009-04-21 09:51:17,252 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=cassi]
+2009-04-21 09:51:17,252 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=477213]
+adding 123.2xp
+ before xp=9123.016666666666
+ after xp=9246.216666666667
+2009-04-21 09:51:28,049 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=562164, name=young reezy, roomId=null, xp=3059.5, level=3, bloodbond=0, sire=298902, progeny=]]
+2009-04-21 09:51:28,049 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=young reezy]
+2009-04-21 09:51:28,050 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=298902]
+2009-04-21 09:51:33,472 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=34980, name=szilvia, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:51:33,472 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=szilvia]
+2009-04-21 09:51:43,555 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=187326, name=Amy, roomId=null, xp=17250.9, level=5, bloodbond=0, sire=194202, progeny=]]
+2009-04-21 09:51:43,556 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Amy]
+2009-04-21 09:51:43,556 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=194202]
+adding 376.5xp
+ before xp=69915.96333333333
+ after xp=70292.46333333333
+adding 376.5xp
+ before xp=79233.32
+ after xp=79609.82
+2009-04-21 09:51:49,095 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=615216, name=JOE, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 09:51:49,095 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=JOE]
+adding 86xp
+ before xp=994.6350000000001
+ after xp=1080.6350000000002
+2009-04-21 09:52:08,477 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=82321, name=?Yellowpop?, roomId=null, xp=70292.46333333333, level=9, bloodbond=138183, sire=57717, progeny=497122]]
+2009-04-21 09:52:08,478 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=?Yellowpop?]
+2009-04-21 09:52:08,478 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=57717]
+adding 136xp
+ before xp=1798.5
+ after xp=1934.5
+adding 136xp
+ before xp=12999
+ after xp=12999
+

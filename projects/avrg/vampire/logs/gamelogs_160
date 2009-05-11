@@ -1,0 +1,1283 @@
+2009-04-22 17:33:22,491 ERROR: vampire.server.ServerLogic handleFeedRequestMessage [player=Player [playerId=633467, name=MummyfiedToes, roomId=null, xp=2079.3999999999996, level=2, bloodbond=0, sire=931, progeny=31108,638799], e=FeedRequestMsg: player=633467, targetPlayerId=485223]
+2009-04-22 17:33:30,659 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:33:58,868 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240427117828
+#GAMEDATA#TimeStarted=1240446326564
+#GAMEDATA#Now=1240446927101
+#GAMEDATA#TimeLoggedIn_195591=549
+#GAMEDATA#TimeLoggedIn_104200=260
+#GAMEDATA#TimeLoggedIn_12=416
+#GAMEDATA#TimeLoggedIn_125837=253
+#GAMEDATA#TimeLoggedIn_10642=532
+#GAMEDATA#TimeLoggedIn_147988=549
+#GAMEDATA#TimeLoggedIn_609813=549
+#GAMEDATA#TimeLoggedIn_93339=155
+#GAMEDATA#TimeLoggedIn_480404=253
+#GAMEDATA#TimeLoggedIn_128013=79
+#GAMEDATA#TimeLoggedIn_651295=17
+#GAMEDATA#TimeLoggedIn_65442=549
+#GAMEDATA#TimeLoggedIn_20260=327
+#GAMEDATA#TimeLoggedIn_62757=224
+#GAMEDATA#TimeLoggedIn_118951=90
+#GAMEDATA#TimeLoggedIn_692140=80
+#GAMEDATA#TimeLoggedIn_691633=253
+#GAMEDATA#TimeLoggedIn_692018=549
+#GAMEDATA#TimeLoggedIn_11315=339
+#GAMEDATA#TimeLoggedIn_138676=172
+#GAMEDATA#TimeLoggedIn_23989=549
+#GAMEDATA#TimeLoggedIn_210998=242
+#GAMEDATA#TimeLoggedIn_390071=549
+#GAMEDATA#TimeLoggedIn_194104=217
+#GAMEDATA#TimeLoggedIn_132921=314
+#GAMEDATA#TimeLoggedIn_234299=549
+#GAMEDATA#TimeLoggedIn_81597=549
+#GAMEDATA#TimeLoggedIn_217283=265
+#GAMEDATA#TimeLoggedIn_639027=260
+#GAMEDATA#TimeLoggedIn_634567=32
+#GAMEDATA#TimeLoggedIn_161355=28
+#GAMEDATA#TimeLoggedIn_555728=549
+#GAMEDATA#TimeLoggedIn_402642=549
+#GAMEDATA#TimeLoggedIn_309718=549
+#GAMEDATA#TimeLoggedIn_297680=36
+#GAMEDATA#TimeLoggedIn_158555=11
+#GAMEDATA#TimeLoggedIn_637788=115
+#GAMEDATA#TimeLoggedIn_92509=549
+#GAMEDATA#TimeLoggedIn_359518=549
+#GAMEDATA#TimeLoggedIn_697443=17
+#GAMEDATA#TimeLoggedIn_182501=70
+#GAMEDATA#TimeLoggedIn_502119=549
+#GAMEDATA#TimeLoggedIn_168426=549
+#GAMEDATA#TimeLoggedIn_15469=549
+#GAMEDATA#TimeLoggedIn_271218=173
+#GAMEDATA#TimeLoggedIn_135027=48
+#GAMEDATA#TimeLoggedIn_120440=549
+#GAMEDATA#TimeLoggedIn_633467=449
+#GAMEDATA#TimeLoggedIn_142588=549
+#GAMEDATA#TimeLoggedIn_186493=532
+#GAMEDATA#TimeLoggedIn_544895=242
+#GAMEDATA#FeedingPlayers_639027=2
+#GAMEDATA#FeedingPlayers_186493=2,1
+#GAMEDATA#FeedingPlayers_195591=2
+#GAMEDATA#FeedingPlayers_104200=1
+#GAMEDATA#FeedingPlayers_12=2
+#GAMEDATA#FeedingPlayers_125837=1
+#GAMEDATA#FeedingPlayers_555728=2,2
+#GAMEDATA#FeedingPlayers_10642=2
+#GAMEDATA#FeedingPlayers_480404=2
+#GAMEDATA#FeedingPlayers_609813=2,2,1
+#GAMEDATA#FeedingPlayers_93339=2
+#GAMEDATA#FeedingPlayers_92509=2
+#GAMEDATA#FeedingPlayers_359518=2,1,1
+#GAMEDATA#FeedingPlayers_65442=2,2
+#GAMEDATA#FeedingPlayers_20260=2
+#GAMEDATA#FeedingPlayers_62757=2
+#GAMEDATA#FeedingPlayers_502119=2
+#GAMEDATA#FeedingPlayers_168426=2
+#GAMEDATA#FeedingPlayers_15469=2,2,2
+#GAMEDATA#FeedingPlayers_271218=2
+#GAMEDATA#FeedingPlayers_11315=2
+#GAMEDATA#FeedingPlayers_138676=2
+#GAMEDATA#FeedingPlayers_120440=2,2
+#GAMEDATA#FeedingPlayers_132921=2
+#GAMEDATA#FeedingPlayers_234299=1
+#GAMEDATA#FeedingPlayers_142588=2,2
+#GAMEDATA#FeedingPlayers_81597=2,2
+#GAMEDATA#FeedingPlayers_544895=1
+#GAMEDATA#DescendentsPayout_409656=8.8
+#GAMEDATA#DescendentsPayout_76673=34.95
+#GAMEDATA#DescendentsPayout_89757=5.2
+#GAMEDATA#DescendentsPayout_81597=17.475
+#GAMEDATA#DescendentsPayout_359624=41.175
+#GAMEDATA#DescendentsPayout_54776=10.4
+#GAMEDATA#DescendentsPayout_351626=5.175000000000001
+#GAMEDATA#DescendentsPayout_339468=117.15
+#GAMEDATA#DescendentsPayout_1101=51.25
+#GAMEDATA#DescendentsPayout_642639=45.35000000000001
+#GAMEDATA#DescendentsPayout_555728=15.5
+#GAMEDATA#DescendentsPayout_211601=35.2
+#GAMEDATA#DescendentsPayout_341266=17.475
+#GAMEDATA#DescendentsPayout_164243=37.25
+#GAMEDATA#DescendentsPayout_12=233.10000000000002
+#GAMEDATA#DescendentsPayout_609813=19.35
+#GAMEDATA#DescendentsPayout_195736=7
+#GAMEDATA#DescendentsPayout_128794=18.625
+#GAMEDATA#DescendentsPayout_8842=58.575
+#GAMEDATA#DescendentsPayout_5212=34.95
+#GAMEDATA#DescendentsPayout_336524=14
+#GAMEDATA#DescendentsPayout_119842=36.925000000000004
+#GAMEDATA#DescendentsPayout_180571=9.725000000000001
+#GAMEDATA#DescendentsPayout_337316=58.575
+#GAMEDATA#DescendentsPayout_116005=24.425
+#GAMEDATA#DescendentsPayout_307477=12.55
+#GAMEDATA#DescendentsPayout_103144=58.525000000000006
+#GAMEDATA#DescendentsPayout_12770=22.675000000000004
+#GAMEDATA#DescendentsPayout_995=35.9
+#GAMEDATA#DescendentsPayout_383387=155.3
+#GAMEDATA#DescendentsPayout_239981=21.75
+#GAMEDATA#DescendentsPayout_351598=82.35
+#GAMEDATA#DescendentsPayout_22707=117.15
+#GAMEDATA#DescendentsPayout_336500=6.275
+#GAMEDATA#DescendentsPayout_1892=71.8
+#GAMEDATA#DescendentsPayout_210998=53.150000000000006
+#GAMEDATA#DescendentsPayout_7078=17.6
+#GAMEDATA#DescendentsPayout_194104=19.450000000000003
+#GAMEDATA#DescendentsPayout_44987=45.35000000000001
+#GAMEDATA#DescendentsPayout_430717=22.675000000000004
+#GAMEDATA#DescendentsPayout_384703=4.4
+#GAMEDATA#FeedingXPEarned_186493=1171.5
+#GAMEDATA#FeedingXPEarned_195591=88
+#GAMEDATA#FeedingXPEarned_104200=104
+#GAMEDATA#FeedingXPEarned_12=387.5
+#GAMEDATA#FeedingXPEarned_125837=140
+#GAMEDATA#FeedingXPEarned_555728=435
+#GAMEDATA#FeedingXPEarned_10642=823.5
+#GAMEDATA#FeedingXPEarned_147988=125.5
+#GAMEDATA#FeedingXPEarned_609813=488.5
+#GAMEDATA#FeedingXPEarned_637788=155
+#GAMEDATA#FeedingXPEarned_92509=349.5
+#GAMEDATA#FeedingXPEarned_359518=193.5
+#GAMEDATA#FeedingXPEarned_65442=349.5
+#GAMEDATA#FeedingXPEarned_20260=1165.5
+#GAMEDATA#FeedingXPEarned_480404=88
+#GAMEDATA#FeedingXPEarned_118951=253.5
+#GAMEDATA#FeedingXPEarned_168426=372.5
+#GAMEDATA#FeedingXPEarned_15469=718
+#GAMEDATA#FeedingXPEarned_502119=1171.5
+#GAMEDATA#FeedingXPEarned_691633=108
+#GAMEDATA#FeedingXPEarned_11315=1165.5
+#GAMEDATA#FeedingXPEarned_138676=194.5
+#GAMEDATA#FeedingXPEarned_210998=103.5
+#GAMEDATA#FeedingXPEarned_120440=453.5
+#GAMEDATA#FeedingXPEarned_132921=352
+#GAMEDATA#FeedingXPEarned_234299=183
+#GAMEDATA#FeedingXPEarned_142588=531.5
+#GAMEDATA#FeedingXPEarned_81597=453.5
+#GAMEDATA#FeedingXPEarned_544895=159
+#GAMEDATA#FeedingPlayers=2,2,2,2,2,1,2,1,2,2,1,1,2,1,2,2,2,1,2,1,2,1,2,2
+#GAMEDATA#<<<<EndStats
+2009-04-22 17:35:47,849 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:35:55,555 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=250648], trace=Error: Room not in game [roomId=250648]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getMobIds()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:-1373684224]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/getSpawnedMobs_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:526]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCodeFriend()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.avrg::RoomSubControlServer/gotHostProps()
+	at com.whirled.avrg::RoomSubControlServer/gotHostPropsFriend()
+	at com.whirled.avrg::AVRServerGameControl/getRoom()
+	at vampire.server::Room/maybeLoadControl()
+	at vampire.server::Room()
+	at vampire.server::GameServer/getRoom()
+	at vampire.server::ServerLogic$/handleMessage()
+	at MethodInfo-49()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/handleMessage()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()].
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=250648], trace=Error: Room not in game [roomId=250648]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoomProps()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:182]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_getGameData_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:563]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCodeFriend()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+2009-04-22 17:39:12,736 ERROR: vampire.server.Room Tick error
+TypeError: Error #1010: A term is undefined and has no properties.
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=250648], trace=Error: Room not in game [roomId=250648]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoom()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:170]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_getPlayerIds_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:428]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCodeFriend()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.avrg::RoomSubControlBase/getPlayerIds()
+	at MethodInfo-398()
+	at com.threerings.util::HashMap/forEach0()
+	at com.threerings.util::HashMap/forEach()
+	at vampire.server::LoadBalancerServer/refreshLowPopulationRoomData()
+	at com.whirled.contrib.simplegame.tasks::FunctionTask/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at MethodInfo-398()
+	at com.threerings.util::HashMap/forEach0()
+	at com.threerings.util::HashMap/forEach()
+	at vampire.server::LoadBalancerServer/refreshLowPopulationRoomData()
+	at com.whirled.contrib.simplegame.tasks::FunctionTask/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=250648], trace=Error: Room not in game [roomId=250648]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoomProps()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:182]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_getGameData_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:563]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCodeFriend()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+2009-04-22 17:39:13,282 ERROR: vampire.server.Room Tick error
+TypeError: Error #1010: A term is undefined and has no properties.
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=250648], trace=Error: Room not in game [roomId=250648]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoom()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:170]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_getPlayerIds_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:428]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCodeFriend()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.avrg::RoomSubControlBase/getPlayerIds()
+	at MethodInfo-398()
+	at com.threerings.util::HashMap/forEach0()
+	at com.threerings.util::HashMap/forEach()
+	at vampire.server::LoadBalancerServer/refreshLowPopulationRoomData()
+	at com.whirled.contrib.simplegame.tasks::FunctionTask/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at MethodInfo-398()
+	at com.threerings.util::HashMap/forEach0()
+	at com.threerings.util::HashMap/forEach()
+	at vampire.server::LoadBalancerServer/refreshLowPopulationRoomData()
+	at com.whirled.contrib.simplegame.tasks::FunctionTask/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=250648], trace=Error: Room not in game [roomId=250648]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoomProps()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:182]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_getGameData_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:563]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCodeFriend()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+2009-04-22 17:39:13,852 ERROR: vampire.server.Room Tick error
+TypeError: Error #1010: A term is undefined and has no properties.
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=250648], trace=Error: Room not in game [roomId=250648]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoom()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:170]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_getPlayerIds_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:428]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCodeFriend()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.avrg::RoomSubControlBase/getPlayerIds()
+	at MethodInfo-398()
+	at com.threerings.util::HashMap/forEach0()
+	at com.threerings.util::HashMap/forEach()
+	at vampire.server::LoadBalancerServer/refreshLowPopulationRoomData()
+	at com.whirled.contrib.simplegame.tasks::FunctionTask/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at MethodInfo-398()
+	at com.threerings.util::HashMap/forEach0()
+	at com.threerings.util::HashMap/forEach()
+	at vampire.server::LoadBalancerServer/refreshLowPopulationRoomData()
+	at com.whirled.contrib.simplegame.tasks::FunctionTask/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=250648], trace=Error: Room not in game [roomId=250648]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoomProps()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:182]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_getGameData_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:563]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCodeFriend()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+2009-04-22 17:39:14,391 ERROR: vampire.server.Room Tick error
+TypeError: Error #1010: A term is undefined and has no properties.
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=250648], trace=Error: Room not in game [roomId=250648]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoom()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:170]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_getPlayerIds_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:428]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCodeFriend()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.avrg::RoomSubControlBase/getPlayerIds()
+	at MethodInfo-398()
+	at com.threerings.util::HashMap/forEach0()
+	at com.threerings.util::HashMap/forEach()
+	at vampire.server::LoadBalancerServer/refreshLowPopulationRoomData()
+	at com.whirled.contrib.simplegame.tasks::FunctionTask/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at MethodInfo-398()
+	at com.threerings.util::HashMap/forEach0()
+	at com.threerings.util::HashMap/forEach()
+	at vampire.server::LoadBalancerServer/refreshLowPopulationRoomData()
+	at com.whirled.contrib.simplegame.tasks::FunctionTask/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=250648], trace=Error: Room not in game [roomId=250648]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoomProps()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:182]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_getGameData_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:563]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCodeFriend()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+2009-04-22 17:39:14,933 ERROR: vampire.server.Room Tick error
+TypeError: Error #1010: A term is undefined and has no properties.
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=250648], trace=Error: Room not in game [roomId=250648]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoom()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:170]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_getPlayerIds_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:428]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCodeFriend()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.avrg::RoomSubControlBase/getPlayerIds()
+	at MethodInfo-398()
+	at com.threerings.util::HashMap/forEach0()
+	at com.threerings.util::HashMap/forEach()
+	at vampire.server::LoadBalancerServer/refreshLowPopulationRoomData()
+	at com.whirled.contrib.simplegame.tasks::FunctionTask/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at MethodInfo-398()
+	at com.threerings.util::HashMap/forEach0()
+	at com.threerings.util::HashMap/forEach()
+	at vampire.server::LoadBalancerServer/refreshLowPopulationRoomData()
+	at com.whirled.contrib.simplegame.tasks::FunctionTask/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at MethodInfo-977()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/applyFunction()
+	at com.whirled.contrib.simplegame.tasks::TaskContainer/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=250648], trace=Error: Room not in game [roomId=250648]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoomProps()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:182]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_getGameData_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:563]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCodeFriend()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+2009-04-22 17:39:15,477 ERROR: vampire.server.Room Tick error
+TypeError: Error #1010: A term is undefined and has no properties.
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-47()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-750/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+2009-04-22 17:39:49,871 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:41:26,348 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:41:28,554 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:42:52,286 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:43:10,061 ERROR: vampire.server.GameServer Attempted to get a room with no players.  Throws error.  Use isRoom()
+2009-04-22 17:44:03,579 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:44:32,837 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:45:09,073 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240427117828
+#GAMEDATA#TimeStarted=1240446927103
+#GAMEDATA#Now=1240447527322
+#GAMEDATA#TimeLoggedIn_195591=546
+#GAMEDATA#TimeLoggedIn_104200=69
+#GAMEDATA#TimeLoggedIn_12=373
+#GAMEDATA#TimeLoggedIn_125837=546
+#GAMEDATA#TimeLoggedIn_147988=546
+#GAMEDATA#TimeLoggedIn_609813=546
+#GAMEDATA#TimeLoggedIn_93339=546
+#GAMEDATA#TimeLoggedIn_480404=546
+#GAMEDATA#TimeLoggedIn_70557=281
+#GAMEDATA#TimeLoggedIn_128013=29
+#GAMEDATA#TimeLoggedIn_65442=546
+#GAMEDATA#TimeLoggedIn_20260=546
+#GAMEDATA#TimeLoggedIn_62757=546
+#GAMEDATA#TimeLoggedIn_132646=428
+#GAMEDATA#TimeLoggedIn_694311=112
+#GAMEDATA#TimeLoggedIn_691604=4
+#GAMEDATA#TimeLoggedIn_692018=46
+#GAMEDATA#TimeLoggedIn_639027=465
+#GAMEDATA#TimeLoggedIn_23989=546
+#GAMEDATA#TimeLoggedIn_195638=16
+#GAMEDATA#TimeLoggedIn_390071=546
+#GAMEDATA#TimeLoggedIn_194104=540
+#GAMEDATA#TimeLoggedIn_132921=387
+#GAMEDATA#TimeLoggedIn_234299=546
+#GAMEDATA#TimeLoggedIn_697532=310
+#GAMEDATA#TimeLoggedIn_81597=546
+#GAMEDATA#TimeLoggedIn_563131=107
+#GAMEDATA#TimeLoggedIn_11315=546
+#GAMEDATA#TimeLoggedIn_634567=7
+#GAMEDATA#TimeLoggedIn_697800=162
+#GAMEDATA#TimeLoggedIn_440521=6
+#GAMEDATA#TimeLoggedIn_84427=125
+#GAMEDATA#TimeLoggedIn_77=440
+#GAMEDATA#TimeLoggedIn_555728=546
+#GAMEDATA#TimeLoggedIn_402642=287
+#GAMEDATA#TimeLoggedIn_309718=264
+#GAMEDATA#TimeLoggedIn_158555=130
+#GAMEDATA#TimeLoggedIn_631516=15
+#GAMEDATA#TimeLoggedIn_92509=546
+#GAMEDATA#TimeLoggedIn_359518=546
+#GAMEDATA#TimeLoggedIn_995=244
+#GAMEDATA#TimeLoggedIn_182501=450
+#GAMEDATA#TimeLoggedIn_502119=546
+#GAMEDATA#TimeLoggedIn_168426=343
+#GAMEDATA#TimeLoggedIn_212587=192
+#GAMEDATA#TimeLoggedIn_15469=546
+#GAMEDATA#TimeLoggedIn_120440=38
+#GAMEDATA#TimeLoggedIn_202618=19
+#GAMEDATA#TimeLoggedIn_102139=377
+#GAMEDATA#TimeLoggedIn_142588=229
+#GAMEDATA#TimeLoggedIn_186493=266
+#GAMEDATA#FeedingPlayers_102139=2
+#GAMEDATA#FeedingPlayers_186493=2
+#GAMEDATA#FeedingPlayers_84427=2
+#GAMEDATA#FeedingPlayers_77=2
+#GAMEDATA#FeedingPlayers_555728=2,2,1
+#GAMEDATA#FeedingPlayers_480404=2
+#GAMEDATA#FeedingPlayers_609813=2,2,1
+#GAMEDATA#FeedingPlayers_158555=2
+#GAMEDATA#FeedingPlayers_70557=2
+#GAMEDATA#FeedingPlayers_359518=1,2,1
+#GAMEDATA#FeedingPlayers_65442=2,1
+#GAMEDATA#FeedingPlayers_995=2
+#GAMEDATA#FeedingPlayers_20260=2
+#GAMEDATA#FeedingPlayers_182501=1,2
+#GAMEDATA#FeedingPlayers_502119=2
+#GAMEDATA#FeedingPlayers_125837=2,2
+#GAMEDATA#FeedingPlayers_168426=2
+#GAMEDATA#FeedingPlayers_212587=1
+#GAMEDATA#FeedingPlayers_93339=2
+#GAMEDATA#FeedingPlayers_15469=1
+#GAMEDATA#FeedingPlayers_694311=1
+#GAMEDATA#FeedingPlayers_11315=2
+#GAMEDATA#FeedingPlayers_62757=2,2
+#GAMEDATA#FeedingPlayers_234299=2,2
+#GAMEDATA#FeedingPlayers_697532=2,2
+#GAMEDATA#FeedingPlayers_81597=2,2
+#GAMEDATA#DescendentsPayout_54776=62.22500000000001
+#GAMEDATA#DescendentsPayout_76673=106.00000000000001
+#GAMEDATA#DescendentsPayout_430717=35.75
+#GAMEDATA#DescendentsPayout_8842=5.325
+#GAMEDATA#DescendentsPayout_336524=21.700000000000003
+#GAMEDATA#DescendentsPayout_1101=154.35
+#GAMEDATA#DescendentsPayout_164243=17.55
+#GAMEDATA#DescendentsPayout_12=600.3000000000001
+#GAMEDATA#DescendentsPayout_609813=82.85
+#GAMEDATA#DescendentsPayout_195736=10.850000000000001
+#GAMEDATA#DescendentsPayout_128794=8.775
+#GAMEDATA#DescendentsPayout_93339=25.950000000000003
+#GAMEDATA#DescendentsPayout_339468=44.7
+#GAMEDATA#DescendentsPayout_65442=54.125
+#GAMEDATA#DescendentsPayout_383387=316.02500000000003
+#GAMEDATA#DescendentsPayout_337316=22.35
+#GAMEDATA#DescendentsPayout_116005=18.225
+#GAMEDATA#DescendentsPayout_502119=10.65
+#GAMEDATA#DescendentsPayout_103144=77.875
+#GAMEDATA#DescendentsPayout_12770=80.95
+#GAMEDATA#DescendentsPayout_995=18.25
+#GAMEDATA#DescendentsPayout_1892=36.5
+#GAMEDATA#DescendentsPayout_62757=14.25
+#GAMEDATA#DescendentsPayout_89757=24.625
+#GAMEDATA#DescendentsPayout_256746=17.875
+#GAMEDATA#DescendentsPayout_22707=15.975000000000001
+#GAMEDATA#DescendentsPayout_239981=77.175
+#GAMEDATA#DescendentsPayout_409656=13.15
+#GAMEDATA#DescendentsPayout_44987=135.10000000000002
+#GAMEDATA#DescendentsPayout_81597=114.65
+#GAMEDATA#DescendentsPayout_384703=6.575
+#GAMEDATA#FeedingXPEarned_65442=825
+#GAMEDATA#FeedingXPEarned_93339=492.5
+#GAMEDATA#FeedingXPEarned_20260=2873.5
+#GAMEDATA#FeedingXPEarned_62757=470
+#GAMEDATA#FeedingXPEarned_212587=148
+#GAMEDATA#FeedingXPEarned_502119=106.5
+#GAMEDATA#FeedingXPEarned_125837=217
+#GAMEDATA#FeedingXPEarned_168426=175.5
+#GAMEDATA#FeedingXPEarned_995=256
+#GAMEDATA#FeedingXPEarned_234299=734
+#GAMEDATA#FeedingXPEarned_182501=357.5
+#GAMEDATA#FeedingXPEarned_186493=447
+#GAMEDATA#FeedingXPEarned_555728=1543.5
+#GAMEDATA#FeedingXPEarned_639027=259.5
+#GAMEDATA#FeedingXPEarned_480404=131.5
+#GAMEDATA#FeedingXPEarned_609813=364.5
+#GAMEDATA#FeedingXPEarned_70557=106.5
+#GAMEDATA#FeedingXPEarned_15469=365
+#GAMEDATA#FeedingXPEarned_11315=2873.5
+#GAMEDATA#FeedingXPEarned_697532=142.5
+#GAMEDATA#FeedingXPEarned_81597=984
+#GAMEDATA#FeedingXPEarned_359518=828.5
+#GAMEDATA#FeedingXPEarned_77=317.5
+#GAMEDATA#FeedingPlayers=1,1,2,2,2,2,2,2,2,2,1,2,1,1,2,2,2,2,1,2,2,1,1,1
+#GAMEDATA#<<<<EndStats
+2009-04-22 17:45:35,209 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:47:51,059 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:48:10,408 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:50:34,038 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:50:39,763 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:50:50,104 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:51:14,673 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:53:27,481 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:53:45,995 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:55:02,279 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:55:15,321 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:55:20,471 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240427117828
+#GAMEDATA#TimeStarted=1240447527324
+#GAMEDATA#Now=1240448127543
+#GAMEDATA#TimeLoggedIn_349487=6
+#GAMEDATA#TimeLoggedIn_460737=233
+#GAMEDATA#TimeLoggedIn_102139=546
+#GAMEDATA#TimeLoggedIn_98117=15
+#GAMEDATA#TimeLoggedIn_195591=22
+#GAMEDATA#TimeLoggedIn_104200=16
+#GAMEDATA#TimeLoggedIn_644289=39
+#GAMEDATA#TimeLoggedIn_674442=358
+#GAMEDATA#TimeLoggedIn_84427=340
+#GAMEDATA#TimeLoggedIn_87565=20
+#GAMEDATA#TimeLoggedIn_77=293
+#GAMEDATA#TimeLoggedIn_258951=428
+#GAMEDATA#TimeLoggedIn_555728=546
+#GAMEDATA#TimeLoggedIn_161355=252
+#GAMEDATA#TimeLoggedIn_147988=484
+#GAMEDATA#TimeLoggedIn_125837=485
+#GAMEDATA#TimeLoggedIn_310038=470
+#GAMEDATA#TimeLoggedIn_89496=248
+#GAMEDATA#TimeLoggedIn_685914=105
+#GAMEDATA#TimeLoggedIn_158555=475
+#GAMEDATA#TimeLoggedIn_480404=288
+#GAMEDATA#TimeLoggedIn_70557=546
+#GAMEDATA#TimeLoggedIn_359518=395
+#GAMEDATA#TimeLoggedIn_162015=7
+#GAMEDATA#TimeLoggedIn_65442=238
+#GAMEDATA#TimeLoggedIn_995=387
+#GAMEDATA#TimeLoggedIn_20260=204
+#GAMEDATA#TimeLoggedIn_92509=19
+#GAMEDATA#TimeLoggedIn_132646=546
+#GAMEDATA#TimeLoggedIn_502119=546
+#GAMEDATA#TimeLoggedIn_128013=459
+#GAMEDATA#TimeLoggedIn_69545=417
+#GAMEDATA#TimeLoggedIn_522658=341
+#GAMEDATA#TimeLoggedIn_212587=104
+#GAMEDATA#TimeLoggedIn_93339=546
+#GAMEDATA#TimeLoggedIn_62757=546
+#GAMEDATA#TimeLoggedIn_694311=62
+#GAMEDATA#TimeLoggedIn_609813=546
+#GAMEDATA#TimeLoggedIn_227147=14
+#GAMEDATA#TimeLoggedIn_11315=183
+#GAMEDATA#TimeLoggedIn_691188=41
+#GAMEDATA#TimeLoggedIn_23989=200
+#GAMEDATA#TimeLoggedIn_697910=49
+#GAMEDATA#TimeLoggedIn_390071=546
+#GAMEDATA#TimeLoggedIn_194104=546
+#GAMEDATA#TimeLoggedIn_482345=11
+#GAMEDATA#TimeLoggedIn_234299=546
+#GAMEDATA#TimeLoggedIn_81597=546
+#GAMEDATA#TimeLoggedIn_15469=218
+#GAMEDATA#TimeLoggedIn_247716=227
+#GAMEDATA#FeedingPlayers_102139=2
+#GAMEDATA#FeedingPlayers_522658=2
+#GAMEDATA#FeedingPlayers_995=2
+#GAMEDATA#FeedingPlayers_247716=1
+#GAMEDATA#FeedingPlayers_62757=2,2,2,1
+#GAMEDATA#FeedingPlayers_132646=1,1
+#GAMEDATA#FeedingPlayers_69545=2
+#GAMEDATA#FeedingPlayers_674442=2,2,1
+#GAMEDATA#FeedingPlayers_161355=2
+#GAMEDATA#FeedingPlayers_93339=1
+#GAMEDATA#FeedingPlayers_125837=2,2
+#GAMEDATA#FeedingPlayers_81597=2,2
+#GAMEDATA#FeedingPlayers_147988=2
+#GAMEDATA#FeedingPlayers_609813=2
+#GAMEDATA#FeedingPlayers_310038=1,1,1
+#GAMEDATA#FeedingPlayers_89496=2
+#GAMEDATA#FeedingPlayers_234299=2,1
+#GAMEDATA#FeedingPlayers_70557=1,2
+#GAMEDATA#FeedingPlayers_77=2
+#GAMEDATA#DescendentsPayout_62757=16.8
+#GAMEDATA#DescendentsPayout_76673=21.8
+#GAMEDATA#DescendentsPayout_44987=37.45
+#GAMEDATA#DescendentsPayout_202501=34
+#GAMEDATA#DescendentsPayout_522658=16.150000000000002
+#GAMEDATA#DescendentsPayout_407435=29.400000000000002
+#GAMEDATA#DescendentsPayout_12=175.6
+#GAMEDATA#DescendentsPayout_1101=37.800000000000004
+#GAMEDATA#DescendentsPayout_206096=14.700000000000001
+#GAMEDATA#DescendentsPayout_190545=22.700000000000003
+#GAMEDATA#DescendentsPayout_10642=24.225
+#GAMEDATA#DescendentsPayout_47379=4.275
+#GAMEDATA#DescendentsPayout_336524=114.65
+#GAMEDATA#DescendentsPayout_106069=8.55
+#GAMEDATA#DescendentsPayout_195736=57.325
+#GAMEDATA#DescendentsPayout_383387=118.325
+#GAMEDATA#DescendentsPayout_397835=8.55
+#GAMEDATA#DescendentsPayout_89757=31.1
+#GAMEDATA#DescendentsPayout_65442=52
+#GAMEDATA#DescendentsPayout_995=7.550000000000001
+#GAMEDATA#DescendentsPayout_1892=15.100000000000001
+#GAMEDATA#DescendentsPayout_116005=13.375
+#GAMEDATA#DescendentsPayout_502119=31.400000000000006
+#GAMEDATA#DescendentsPayout_103144=26.75
+#GAMEDATA#DescendentsPayout_236834=4.275
+#GAMEDATA#DescendentsPayout_239981=18.900000000000002
+#GAMEDATA#DescendentsPayout_351598=8.075000000000001
+#GAMEDATA#DescendentsPayout_1265=17
+#GAMEDATA#DescendentsPayout_12770=69.275
+#GAMEDATA#DescendentsPayout_403501=12.100000000000001
+#GAMEDATA#DescendentsPayout_90533=45.400000000000006
+#GAMEDATA#DescendentsPayout_54776=62.2
+#GAMEDATA#DescendentsPayout_437689=24.200000000000003
+#GAMEDATA#DescendentsPayout_22707=15.700000000000003
+#GAMEDATA#DescendentsPayout_81597=42
+#GAMEDATA#FeedingXPEarned_522658=161.5
+#GAMEDATA#FeedingXPEarned_102139=85.5
+#GAMEDATA#FeedingXPEarned_20260=765
+#GAMEDATA#FeedingXPEarned_62757=436
+#GAMEDATA#FeedingXPEarned_132646=340
+#GAMEDATA#FeedingXPEarned_310038=454
+#GAMEDATA#FeedingXPEarned_77=610.5
+#GAMEDATA#FeedingXPEarned_69545=161.5
+#GAMEDATA#FeedingXPEarned_674442=301
+#GAMEDATA#FeedingXPEarned_212587=168
+#GAMEDATA#FeedingXPEarned_234299=420
+#GAMEDATA#FeedingXPEarned_15469=151
+#GAMEDATA#FeedingXPEarned_81597=164.5
+#GAMEDATA#FeedingXPEarned_555728=378
+#GAMEDATA#FeedingXPEarned_161355=164.5
+#GAMEDATA#FeedingXPEarned_11315=765
+#GAMEDATA#FeedingXPEarned_995=226
+#GAMEDATA#FeedingXPEarned_609813=267.5
+#GAMEDATA#FeedingXPEarned_93339=457.5
+#GAMEDATA#FeedingXPEarned_89496=242
+#GAMEDATA#FeedingXPEarned_158555=294
+#GAMEDATA#FeedingXPEarned_84427=85.5
+#GAMEDATA#FeedingXPEarned_70557=314
+#GAMEDATA#FeedingXPEarned_125837=1146.5
+#GAMEDATA#FeedingPlayers=1,2,2,2,1,1,2,1,1,1,2,1,2,2,2,2,1,1,2,1,1
+#GAMEDATA#<<<<EndStats
+2009-04-22 17:56:01,038 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:56:11,161 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:56:46,717 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:57:03,029 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:59:01,733 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:59:45,067 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:59:50,259 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 17:59:57,694 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:00:28,037 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:00:56,031 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:01:58,791 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:02:21,930 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:02:22,808 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:03:30,951 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:03:30,991 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:03:31,110 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:05:13,666 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240427117828
+#GAMEDATA#TimeStarted=1240448127545
+#GAMEDATA#Now=1240448727743
+#GAMEDATA#TimeLoggedIn_135299=245
+#GAMEDATA#TimeLoggedIn_676100=33
+#GAMEDATA#TimeLoggedIn_258951=411
+#GAMEDATA#TimeLoggedIn_161544=79
+#GAMEDATA#TimeLoggedIn_674442=547
+#GAMEDATA#TimeLoggedIn_125837=196
+#GAMEDATA#TimeLoggedIn_205330=66
+#GAMEDATA#TimeLoggedIn_128013=150
+#GAMEDATA#TimeLoggedIn_310038=397
+#GAMEDATA#TimeLoggedIn_89496=487
+#GAMEDATA#TimeLoggedIn_341266=481
+#GAMEDATA#TimeLoggedIn_93339=48
+#GAMEDATA#TimeLoggedIn_119452=17
+#GAMEDATA#TimeLoggedIn_609813=344
+#GAMEDATA#TimeLoggedIn_597005=74
+#GAMEDATA#TimeLoggedIn_600735=200
+#GAMEDATA#TimeLoggedIn_65442=220
+#GAMEDATA#TimeLoggedIn_4242=66
+#GAMEDATA#TimeLoggedIn_70557=3
+#GAMEDATA#TimeLoggedIn_132646=106
+#GAMEDATA#TimeLoggedIn_698911=31
+#GAMEDATA#TimeLoggedIn_87565=542
+#GAMEDATA#TimeLoggedIn_69545=207
+#GAMEDATA#TimeLoggedIn_62757=423
+#GAMEDATA#TimeLoggedIn_349487=244
+#GAMEDATA#TimeLoggedIn_482345=547
+#GAMEDATA#TimeLoggedIn_203405=546
+#GAMEDATA#TimeLoggedIn_697910=76
+#GAMEDATA#TimeLoggedIn_390071=547
+#GAMEDATA#TimeLoggedIn_194104=547
+#GAMEDATA#TimeLoggedIn_234299=256
+#GAMEDATA#TimeLoggedIn_81597=542
+#GAMEDATA#TimeLoggedIn_162239=357
+#GAMEDATA#TimeLoggedIn_113088=33
+#GAMEDATA#TimeLoggedIn_644289=128
+#GAMEDATA#TimeLoggedIn_404675=91
+#GAMEDATA#TimeLoggedIn_98117=2
+#GAMEDATA#TimeLoggedIn_594377=271
+#GAMEDATA#TimeLoggedIn_227147=547
+#GAMEDATA#TimeLoggedIn_77=488
+#GAMEDATA#TimeLoggedIn_555728=425
+#GAMEDATA#TimeLoggedIn_365394=124
+#GAMEDATA#TimeLoggedIn_161355=245
+#GAMEDATA#TimeLoggedIn_82256=177
+#GAMEDATA#TimeLoggedIn_131546=5
+#GAMEDATA#TimeLoggedIn_92509=129
+#GAMEDATA#TimeLoggedIn_162015=15
+#GAMEDATA#TimeLoggedIn_264673=507
+#GAMEDATA#TimeLoggedIn_502119=547
+#GAMEDATA#TimeLoggedIn_102139=220
+#GAMEDATA#TimeLoggedIn_430717=140
+#GAMEDATA#TimeLoggedIn_60542=165
+#GAMEDATA#FeedingPlayers_264673=2,2,2
+#GAMEDATA#FeedingPlayers_65442=2
+#GAMEDATA#FeedingPlayers_135299=1,1
+#GAMEDATA#FeedingPlayers_62757=1
+#GAMEDATA#FeedingPlayers_60542=2,2
+#GAMEDATA#FeedingPlayers_258951=2,2
+#GAMEDATA#FeedingPlayers_87565=2
+#GAMEDATA#FeedingPlayers_482345=2,1
+#GAMEDATA#FeedingPlayers_674442=2,1
+#GAMEDATA#FeedingPlayers_227147=2,2,2
+#GAMEDATA#FeedingPlayers_203405=2,2
+#GAMEDATA#FeedingPlayers_92509=2
+#GAMEDATA#FeedingPlayers_349487=1
+#GAMEDATA#FeedingPlayers_162239=1
+#GAMEDATA#FeedingPlayers_69545=2
+#GAMEDATA#FeedingPlayers_365394=2
+#GAMEDATA#FeedingPlayers_161355=2
+#GAMEDATA#FeedingPlayers_125837=1
+#GAMEDATA#FeedingPlayers_310038=1,1,1
+#GAMEDATA#FeedingPlayers_82256=2
+#GAMEDATA#FeedingPlayers_93339=2
+#GAMEDATA#FeedingPlayers_81597=2,2
+#GAMEDATA#FeedingPlayers_77=1
+#GAMEDATA#FeedingPlayers_600735=1
+#GAMEDATA#DescendentsPayout_76673=31.400000000000002
+#GAMEDATA#DescendentsPayout_202501=52.6
+#GAMEDATA#DescendentsPayout_12770=62.800000000000004
+#GAMEDATA#DescendentsPayout_195722=26.85
+#GAMEDATA#DescendentsPayout_336524=22.900000000000002
+#GAMEDATA#DescendentsPayout_79181=7.7
+#GAMEDATA#DescendentsPayout_81597=11.025
+#GAMEDATA#DescendentsPayout_190545=44.849999999999994
+#GAMEDATA#DescendentsPayout_10642=9.4
+#GAMEDATA#DescendentsPayout_12=15.900000000000002
+#GAMEDATA#DescendentsPayout_106069=23.3
+#GAMEDATA#DescendentsPayout_180951=18.675000000000004
+#GAMEDATA#DescendentsPayout_195736=11.450000000000001
+#GAMEDATA#DescendentsPayout_208602=13.425
+#GAMEDATA#DescendentsPayout_383387=19.700000000000003
+#GAMEDATA#DescendentsPayout_63964=15.4
+#GAMEDATA#DescendentsPayout_89757=10.65
+#GAMEDATA#DescendentsPayout_210210=9.45
+#GAMEDATA#DescendentsPayout_236834=11.65
+#GAMEDATA#DescendentsPayout_62757=77.6
+#GAMEDATA#DescendentsPayout_344937=22.05
+#GAMEDATA#DescendentsPayout_522658=18.8
+#GAMEDATA#DescendentsPayout_4139=15.8
+#GAMEDATA#DescendentsPayout_90533=89.69999999999999
+#GAMEDATA#DescendentsPayout_1265=58.10000000000001
+#GAMEDATA#DescendentsPayout_192883=18.9
+#GAMEDATA#DescendentsPayout_251062=11.025
+#GAMEDATA#DescendentsPayout_54776=21.3
+#GAMEDATA#DescendentsPayout_506297=31.6
+#GAMEDATA#DescendentsPayout_44987=46.8
+#GAMEDATA#DescendentsPayout_65442=57.5
+#GAMEDATA#DescendentsPayout_238782=37.35000000000001
+#GAMEDATA#FeedingXPEarned_65442=220.5
+#GAMEDATA#FeedingXPEarned_135299=103
+#GAMEDATA#FeedingXPEarned_62757=187
+#GAMEDATA#FeedingXPEarned_132646=526
+#GAMEDATA#FeedingXPEarned_258951=318
+#GAMEDATA#FeedingXPEarned_77=394
+#GAMEDATA#FeedingXPEarned_69545=188
+#GAMEDATA#FeedingXPEarned_674442=776
+#GAMEDATA#FeedingXPEarned_227147=373.5
+#GAMEDATA#FeedingXPEarned_203405=268.5
+#GAMEDATA#FeedingXPEarned_349487=71
+#GAMEDATA#FeedingXPEarned_162239=189
+#GAMEDATA#FeedingXPEarned_161355=213
+#GAMEDATA#FeedingXPEarned_87565=316
+#GAMEDATA#FeedingXPEarned_310038=897
+#GAMEDATA#FeedingXPEarned_82256=220.5
+#GAMEDATA#FeedingXPEarned_60542=154
+#GAMEDATA#FeedingXPEarned_102139=233
+#GAMEDATA#FeedingXPEarned_81597=468
+#GAMEDATA#FeedingXPEarned_125837=229
+#GAMEDATA#FeedingXPEarned_600735=72
+#GAMEDATA#FeedingPlayers=2,2,1,2,2,1,1,2,1,1,1,1,1,2,1,2,1,1,1,2,2,2,2,1,2
+#GAMEDATA#<<<<EndStats
+2009-04-22 18:05:56,302 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:07:18,457 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:07:54,991 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:08:19,197 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:08:31,252 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:08:41,351 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:09:43,578 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:10:15,482 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:12:04,767 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:12:06,807 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:12:17,153 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 18:14:16,065 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+

@@ -1,0 +1,653 @@
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240378435076
+#GAMEDATA#TimeStarted=1240392241845
+#GAMEDATA#Now=1240392842198
+#GAMEDATA#TimeLoggedIn_266759=388
+#GAMEDATA#TimeLoggedIn_648456=184
+#GAMEDATA#TimeLoggedIn_648811=33
+#GAMEDATA#TimeLoggedIn_170670=588
+#GAMEDATA#TimeLoggedIn_8527=588
+#GAMEDATA#TimeLoggedIn_16040=588
+#GAMEDATA#TimeLoggedIn_1265=88
+#GAMEDATA#TimeLoggedIn_230164=588
+#GAMEDATA#TimeLoggedIn_57145=67
+#GAMEDATA#TimeLoggedIn_510740=588
+#GAMEDATA#TimeLoggedIn_162782=491
+#GAMEDATA#TimeLoggedIn_261567=588
+#GAMEDATA#FeedingPlayers_261567=2,2,2
+#GAMEDATA#FeedingPlayers_1265=2
+#GAMEDATA#FeedingPlayers_266759=1
+#GAMEDATA#FeedingPlayers_510740=2
+#GAMEDATA#FeedingPlayers_230164=2
+#GAMEDATA#FeedingPlayers_8527=2,2
+#GAMEDATA#DescendentsPayout_3=55.300000000000004
+#GAMEDATA#DescendentsPayout_20260=59.925
+#GAMEDATA#DescendentsPayout_3653=14.55
+#GAMEDATA#DescendentsPayout_190687=53.400000000000006
+#GAMEDATA#DescendentsPayout_534632=106.80000000000001
+#GAMEDATA#DescendentsPayout_12=32.275000000000006
+#GAMEDATA#DescendentsPayout_237231=119.85
+#GAMEDATA#DescendentsPayout_250837=106.80000000000001
+#GAMEDATA#DescendentsPayout_503=64.55000000000001
+#GAMEDATA#DescendentsPayout_383387=27.650000000000002
+#GAMEDATA#DescendentsPayout_445660=53.400000000000006
+#GAMEDATA#DescendentsPayout_117119=29.1
+#GAMEDATA#FeedingXPEarned_261567=1198.5
+#GAMEDATA#FeedingXPEarned_510740=1068
+#GAMEDATA#FeedingXPEarned_266759=291
+#GAMEDATA#FeedingXPEarned_16040=553
+#GAMEDATA#FeedingXPEarned_230164=1068
+#GAMEDATA#FeedingXPEarned_8527=645.5
+#GAMEDATA#FeedingPlayers=2,2,1,2,2
+#GAMEDATA#<<<<EndStats
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240378435076
+#GAMEDATA#TimeStarted=1240392842198
+#GAMEDATA#Now=1240393442605
+#GAMEDATA#TimeLoggedIn_1265=257
+#GAMEDATA#TimeLoggedIn_466914=331
+#GAMEDATA#TimeLoggedIn_230164=589
+#GAMEDATA#TimeLoggedIn_196462=285
+#GAMEDATA#TimeLoggedIn_261567=589
+#GAMEDATA#TimeLoggedIn_16040=589
+#GAMEDATA#TimeLoggedIn_426457=75
+#GAMEDATA#TimeLoggedIn_510740=589
+#GAMEDATA#TimeLoggedIn_170670=589
+#GAMEDATA#TimeLoggedIn_8527=401
+#GAMEDATA#FeedingPlayers_16040=2
+#GAMEDATA#FeedingPlayers_230164=2
+#GAMEDATA#FeedingPlayers_196462=2
+#GAMEDATA#FeedingPlayers_261567=2
+#GAMEDATA#DescendentsPayout_392944=26.700000000000003
+#GAMEDATA#DescendentsPayout_3=34.800000000000004
+#GAMEDATA#DescendentsPayout_20260=58.05000000000001
+#GAMEDATA#DescendentsPayout_250837=26.700000000000003
+#GAMEDATA#DescendentsPayout_190687=13.350000000000001
+#GAMEDATA#DescendentsPayout_206649=13.350000000000001
+#GAMEDATA#DescendentsPayout_383387=58.05000000000001
+#GAMEDATA#DescendentsPayout_12=81.30000000000001
+#GAMEDATA#DescendentsPayout_237231=116.10000000000002
+#GAMEDATA#FeedingXPEarned_16040=348
+#GAMEDATA#FeedingXPEarned_1265=813
+#GAMEDATA#FeedingXPEarned_230164=267
+#GAMEDATA#FeedingXPEarned_196462=267
+#GAMEDATA#FeedingXPEarned_261567=1161
+#GAMEDATA#FeedingPlayers=2,2
+#GAMEDATA#<<<<EndStats
+2009-04-22 02:44:46,357 ERROR: vampire.server.ServerLogic TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::ServerLogic$/stateChange()
+	at vampire.server::ServerLogic$/handleFeedConfirmMessage()
+	at vampire.server::ServerLogic$/handleMessage()
+	at MethodInfo-49()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/handleMessage()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-22 02:44:48,114 ERROR: vampire.server.FeedingRecord sendPlayerStartGameMsg, no player [playerId=177188]
+2009-04-22 02:44:48,115 ERROR: vampire.server.ServerLogic TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::ServerLogic$/stateChange()
+	at vampire.server::ServerLogic$/handleFeedConfirmMessage()
+	at vampire.server::ServerLogic$/handleMessage()
+	at MethodInfo-49()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/handleMessage()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-22 02:44:50,156 ERROR: vampire.server.FeedingRecord sendPlayerStartGameMsg, no player [playerId=44]
+2009-04-22 02:44:50,157 ERROR: vampire.server.ServerLogic TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::ServerLogic$/stateChange()
+	at vampire.server::ServerLogic$/handleFeedConfirmMessage()
+	at vampire.server::ServerLogic$/handleMessage()
+	at MethodInfo-49()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/handleMessage()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-22 02:44:50,943 ERROR: vampire.server.FeedingRecord sendPlayerStartGameMsg, no player [playerId=204464]
+2009-04-22 02:44:50,944 ERROR: vampire.server.ServerLogic TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::ServerLogic$/stateChange()
+	at vampire.server::ServerLogic$/handleFeedConfirmMessage()
+	at vampire.server::ServerLogic$/handleMessage()
+	at MethodInfo-49()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/handleMessage()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-22 02:44:51,675 ERROR: vampire.server.FeedingRecord sendPlayerStartGameMsg, no player [playerId=649402]
+2009-04-22 02:44:51,676 ERROR: vampire.server.ServerLogic TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::ServerLogic$/stateChange()
+	at vampire.server::ServerLogic$/handleFeedConfirmMessage()
+	at vampire.server::ServerLogic$/handleMessage()
+	at MethodInfo-49()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/handleMessage()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-22 02:44:52,699 ERROR: vampire.server.FeedingRecord sendPlayerStartGameMsg, no player [playerId=538359]
+2009-04-22 02:44:52,700 ERROR: vampire.server.ServerLogic TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::ServerLogic$/stateChange()
+	at vampire.server::ServerLogic$/handleFeedConfirmMessage()
+	at vampire.server::ServerLogic$/handleMessage()
+	at MethodInfo-49()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/handleMessage()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240378435076
+#GAMEDATA#TimeStarted=1240393442606
+#GAMEDATA#Now=1240394042865
+#GAMEDATA#TimeLoggedIn_1265=460
+#GAMEDATA#TimeLoggedIn_466914=144
+#GAMEDATA#TimeLoggedIn_230164=589
+#GAMEDATA#TimeLoggedIn_196462=589
+#GAMEDATA#TimeLoggedIn_455318=509
+#GAMEDATA#TimeLoggedIn_16040=589
+#GAMEDATA#TimeLoggedIn_510740=589
+#GAMEDATA#TimeLoggedIn_430717=210
+#GAMEDATA#TimeLoggedIn_170670=583
+#GAMEDATA#TimeLoggedIn_261567=589
+#GAMEDATA#FeedingPlayers_510740=2
+#GAMEDATA#FeedingPlayers_170670=2
+#GAMEDATA#DescendentsPayout_534632=49.650000000000006
+#GAMEDATA#DescendentsPayout_72176=49.650000000000006
+#GAMEDATA#DescendentsPayout_445660=24.825000000000003
+#GAMEDATA#DescendentsPayout_106069=24.825000000000003
+#GAMEDATA#FeedingXPEarned_510740=496.5
+#GAMEDATA#FeedingXPEarned_170670=496.5
+#GAMEDATA#FeedingPlayers=2
+#GAMEDATA#<<<<EndStats
+2009-04-22 02:59:00,558 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 03:01:41,290 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240378435076
+#GAMEDATA#TimeStarted=1240394042865
+#GAMEDATA#Now=1240394642963
+#GAMEDATA#TimeLoggedIn_650481=42
+#GAMEDATA#TimeLoggedIn_230164=474
+#GAMEDATA#TimeLoggedIn_455318=589
+#GAMEDATA#TimeLoggedIn_16040=589
+#GAMEDATA#TimeLoggedIn_414142=16
+#GAMEDATA#TimeLoggedIn_510740=589
+#GAMEDATA#TimeLoggedIn_196462=521
+#GAMEDATA#TimeLoggedIn_261567=589
+#GAMEDATA#FeedingPlayers_230164=2,2
+#GAMEDATA#FeedingPlayers_510740=2,2
+#GAMEDATA#FeedingPlayers_455318=1,1
+#GAMEDATA#DescendentsPayout_522593=54.7
+#GAMEDATA#DescendentsPayout_130099=27.35
+#GAMEDATA#DescendentsPayout_250837=74
+#GAMEDATA#DescendentsPayout_534632=232.9
+#GAMEDATA#DescendentsPayout_445660=116.45
+#GAMEDATA#DescendentsPayout_190687=37
+#GAMEDATA#FeedingXPEarned_230164=740
+#GAMEDATA#FeedingXPEarned_510740=2329
+#GAMEDATA#FeedingXPEarned_455318=547
+#GAMEDATA#FeedingPlayers=2,1,1,2
+#GAMEDATA#<<<<EndStats
+2009-04-22 03:04:03,620 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 03:04:19,444 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 03:04:47,658 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 03:13:35,899 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240378435076
+#GAMEDATA#TimeStarted=1240394642963
+#GAMEDATA#Now=1240395242992
+#GAMEDATA#TimeLoggedIn_230164=588
+#GAMEDATA#TimeLoggedIn_455318=206
+#GAMEDATA#TimeLoggedIn_16040=382
+#GAMEDATA#TimeLoggedIn_162782=211
+#GAMEDATA#TimeLoggedIn_510740=588
+#GAMEDATA#TimeLoggedIn_196462=358
+#GAMEDATA#TimeLoggedIn_261567=588
+#GAMEDATA#FeedingPlayers_455318=1,1
+#GAMEDATA#FeedingPlayers_162782=1
+#GAMEDATA#DescendentsPayout_522593=23.6
+#GAMEDATA#DescendentsPayout_130099=11.8
+#GAMEDATA#DescendentsPayout_250837=296.85
+#GAMEDATA#DescendentsPayout_534632=296.85
+#GAMEDATA#DescendentsPayout_445660=148.425
+#GAMEDATA#DescendentsPayout_190687=148.425
+#GAMEDATA#FeedingXPEarned_510740=2968.5
+#GAMEDATA#FeedingXPEarned_230164=2968.5
+#GAMEDATA#FeedingXPEarned_455318=236
+#GAMEDATA#FeedingPlayers=1,1,1
+#GAMEDATA#<<<<EndStats
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240378435076
+#GAMEDATA#TimeStarted=1240395242992
+#GAMEDATA#Now=1240395843509
+#GAMEDATA#TimeLoggedIn_172848=228
+#GAMEDATA#TimeLoggedIn_210162=173
+#GAMEDATA#TimeLoggedIn_230164=583
+#GAMEDATA#TimeLoggedIn_196462=583
+#GAMEDATA#TimeLoggedIn_89496=281
+#GAMEDATA#TimeLoggedIn_510740=583
+#GAMEDATA#TimeLoggedIn_640941=528
+#GAMEDATA#TimeLoggedIn_162782=392
+#GAMEDATA#TimeLoggedIn_261567=583
+#GAMEDATA#FeedingPlayers_89496=2
+#GAMEDATA#FeedingPlayers_640941=2
+#GAMEDATA#FeedingPlayers_162782=2
+#GAMEDATA#FeedingPlayers_261567=2
+#GAMEDATA#DescendentsPayout_453809=27.375
+#GAMEDATA#DescendentsPayout_20260=12.175
+#GAMEDATA#DescendentsPayout_497309=13.775
+#GAMEDATA#DescendentsPayout_281414=27.55
+#GAMEDATA#DescendentsPayout_36377=54.75
+#GAMEDATA#DescendentsPayout_437689=24.35
+#GAMEDATA#DescendentsPayout_403501=12.175
+#GAMEDATA#DescendentsPayout_237231=24.35
+#GAMEDATA#FeedingXPEarned_89496=243.5
+#GAMEDATA#FeedingXPEarned_640941=275.5
+#GAMEDATA#FeedingXPEarned_162782=547.5
+#GAMEDATA#FeedingXPEarned_261567=243.5
+#GAMEDATA#FeedingPlayers=2,2
+#GAMEDATA#<<<<EndStats
+2009-04-22 03:27:56,036 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240378435076
+#GAMEDATA#TimeStarted=1240395843510
+#GAMEDATA#Now=1240396443753
+#GAMEDATA#TimeLoggedIn_172848=581
+#GAMEDATA#TimeLoggedIn_1265=295
+#GAMEDATA#TimeLoggedIn_210162=581
+#GAMEDATA#TimeLoggedIn_230164=581
+#GAMEDATA#TimeLoggedIn_162782=296
+#GAMEDATA#TimeLoggedIn_80194=53
+#GAMEDATA#TimeLoggedIn_510740=581
+#GAMEDATA#TimeLoggedIn_640941=581
+#GAMEDATA#TimeLoggedIn_196462=46
+#GAMEDATA#TimeLoggedIn_261567=581
+#GAMEDATA#FeedingPlayers_172848=2,2
+#GAMEDATA#FeedingPlayers_1265=2
+#GAMEDATA#FeedingPlayers_210162=1
+#GAMEDATA#FeedingPlayers_230164=2
+#GAMEDATA#FeedingPlayers_510740=2
+#GAMEDATA#FeedingPlayers_162782=2
+#GAMEDATA#FeedingPlayers_261567=2,2
+#GAMEDATA#DescendentsPayout_20260=32.525000000000006
+#GAMEDATA#DescendentsPayout_359624=25.6
+#GAMEDATA#DescendentsPayout_201132=12.8
+#GAMEDATA#DescendentsPayout_196462=22.8
+#GAMEDATA#DescendentsPayout_237231=65.05000000000001
+#GAMEDATA#DescendentsPayout_534632=92.60000000000001
+#GAMEDATA#DescendentsPayout_12=39.45
+#GAMEDATA#DescendentsPayout_250837=92.60000000000001
+#GAMEDATA#DescendentsPayout_39030=45.6
+#GAMEDATA#DescendentsPayout_383387=19.725
+#GAMEDATA#DescendentsPayout_445660=46.300000000000004
+#GAMEDATA#DescendentsPayout_190687=46.300000000000004
+#GAMEDATA#FeedingXPEarned_172848=256
+#GAMEDATA#FeedingXPEarned_1265=394.5
+#GAMEDATA#FeedingXPEarned_210162=456
+#GAMEDATA#FeedingXPEarned_230164=926
+#GAMEDATA#FeedingXPEarned_510740=926
+#GAMEDATA#FeedingXPEarned_261567=650.5
+#GAMEDATA#FeedingPlayers=1,2,2,2,2
+#GAMEDATA#<<<<EndStats
+2009-04-22 03:34:56,183 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 03:37:12,973 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 03:38:23,184 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240378435076
+#GAMEDATA#TimeStarted=1240396443753
+#GAMEDATA#Now=1240397044247
+#GAMEDATA#TimeLoggedIn_172848=582
+#GAMEDATA#TimeLoggedIn_1265=6
+#GAMEDATA#TimeLoggedIn_210162=582
+#GAMEDATA#TimeLoggedIn_230164=582
+#GAMEDATA#TimeLoggedIn_510740=582
+#GAMEDATA#TimeLoggedIn_640941=582
+#GAMEDATA#TimeLoggedIn_162782=582
+#GAMEDATA#TimeLoggedIn_261567=582
+#GAMEDATA#FeedingPlayers_172848=2
+#GAMEDATA#FeedingPlayers_210162=1,2
+#GAMEDATA#FeedingPlayers_510740=2
+#GAMEDATA#FeedingPlayers_230164=2
+#GAMEDATA#FeedingPlayers_640941=2,2
+#GAMEDATA#FeedingPlayers_162782=2
+#GAMEDATA#FeedingPlayers_261567=2,1,1
+#GAMEDATA#DescendentsPayout_20260=36.95
+#GAMEDATA#DescendentsPayout_281414=73.4
+#GAMEDATA#DescendentsPayout_534632=206.90000000000003
+#GAMEDATA#DescendentsPayout_201132=56
+#GAMEDATA#DescendentsPayout_196462=44.25000000000001
+#GAMEDATA#DescendentsPayout_237231=73.9
+#GAMEDATA#DescendentsPayout_359624=112
+#GAMEDATA#DescendentsPayout_453809=56
+#GAMEDATA#DescendentsPayout_250837=206.90000000000003
+#GAMEDATA#DescendentsPayout_39030=88.50000000000001
+#GAMEDATA#DescendentsPayout_36377=112
+#GAMEDATA#DescendentsPayout_445660=103.45000000000002
+#GAMEDATA#DescendentsPayout_497309=36.7
+#GAMEDATA#DescendentsPayout_190687=103.45000000000002
+#GAMEDATA#FeedingXPEarned_172848=1120
+#GAMEDATA#FeedingXPEarned_210162=885
+#GAMEDATA#FeedingXPEarned_230164=2069
+#GAMEDATA#FeedingXPEarned_510740=2069
+#GAMEDATA#FeedingXPEarned_640941=734
+#GAMEDATA#FeedingXPEarned_162782=1120
+#GAMEDATA#FeedingXPEarned_261567=739
+#GAMEDATA#FeedingPlayers=2,1,1,2,1,2,2
+#GAMEDATA#<<<<EndStats
+2009-04-22 03:46:08,211 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 03:53:49,870 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240378435076
+#GAMEDATA#TimeStarted=1240397044248
+#GAMEDATA#Now=1240397644689
+#GAMEDATA#TimeLoggedIn_172848=500
+#GAMEDATA#TimeLoggedIn_210162=581
+#GAMEDATA#TimeLoggedIn_230164=581
+#GAMEDATA#TimeLoggedIn_231565=560
+#GAMEDATA#TimeLoggedIn_651566=11
+#GAMEDATA#TimeLoggedIn_430717=523
+#GAMEDATA#TimeLoggedIn_510740=581
+#GAMEDATA#TimeLoggedIn_640941=317
+#GAMEDATA#TimeLoggedIn_162782=553
+#GAMEDATA#TimeLoggedIn_261567=581
+#GAMEDATA#FeedingPlayers_210162=2,1
+#GAMEDATA#FeedingPlayers_231565=1,2,2
+#GAMEDATA#FeedingPlayers_430717=2,2
+#GAMEDATA#FeedingPlayers_261567=2,2,2
+#GAMEDATA#DescendentsPayout_61984=33.650000000000006
+#GAMEDATA#DescendentsPayout_237231=54.95
+#GAMEDATA#DescendentsPayout_386780=51.75
+#GAMEDATA#DescendentsPayout_250837=46.85
+#GAMEDATA#DescendentsPayout_20260=27.475
+#GAMEDATA#DescendentsPayout_190687=23.425
+#GAMEDATA#DescendentsPayout_534632=46.85
+#GAMEDATA#DescendentsPayout_196462=11.325000000000001
+#GAMEDATA#DescendentsPayout_256746=67.30000000000001
+#GAMEDATA#DescendentsPayout_445660=23.425
+#GAMEDATA#DescendentsPayout_39030=22.650000000000002
+#GAMEDATA#DescendentsPayout_164799=103.5
+#GAMEDATA#FeedingXPEarned_430717=673
+#GAMEDATA#FeedingXPEarned_210162=226.5
+#GAMEDATA#FeedingXPEarned_510740=468.5
+#GAMEDATA#FeedingXPEarned_230164=468.5
+#GAMEDATA#FeedingXPEarned_231565=1035
+#GAMEDATA#FeedingXPEarned_261567=549.5
+#GAMEDATA#FeedingPlayers=1,2,2,2,2,1
+#GAMEDATA#<<<<EndStats
+2009-04-22 03:56:05,934 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 03:58:55,145 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 03:59:39,947 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 03:59:46,709 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 04:01:32,355 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240378435076
+#GAMEDATA#TimeStarted=1240397644689
+#GAMEDATA#Now=1240398245063
+#GAMEDATA#TimeLoggedIn_75520=222
+#GAMEDATA#TimeLoggedIn_527332=448
+#GAMEDATA#TimeLoggedIn_179326=234
+#GAMEDATA#TimeLoggedIn_336524=89
+#GAMEDATA#TimeLoggedIn_604749=61
+#GAMEDATA#TimeLoggedIn_651566=9
+#GAMEDATA#TimeLoggedIn_210162=221
+#GAMEDATA#TimeLoggedIn_510740=580
+#GAMEDATA#TimeLoggedIn_231565=580
+#GAMEDATA#TimeLoggedIn_640763=266
+#GAMEDATA#TimeLoggedIn_230164=580
+#GAMEDATA#TimeLoggedIn_430717=580
+#GAMEDATA#TimeLoggedIn_162782=580
+#GAMEDATA#TimeLoggedIn_261567=403
+#GAMEDATA#FeedingPlayers_75520=1
+#GAMEDATA#FeedingPlayers_510740=2
+#GAMEDATA#FeedingPlayers_231565=1,1,1
+#GAMEDATA#FeedingPlayers_640763=2
+#GAMEDATA#FeedingPlayers_527332=2
+#GAMEDATA#FeedingPlayers_430717=2
+#GAMEDATA#FeedingPlayers_604749=1
+#GAMEDATA#DescendentsPayout_61984=6.8500000000000005
+#GAMEDATA#DescendentsPayout_236834=6.8500000000000005
+#GAMEDATA#DescendentsPayout_20260=25
+#GAMEDATA#DescendentsPayout_534632=225.82500000000002
+#GAMEDATA#DescendentsPayout_256746=13.700000000000001
+#GAMEDATA#DescendentsPayout_445660=75.275
+#GAMEDATA#DescendentsPayout_196462=17.45
+#GAMEDATA#DescendentsPayout_237231=50
+#GAMEDATA#DescendentsPayout_93202=12.55
+#GAMEDATA#DescendentsPayout_510740=150.55
+#GAMEDATA#DescendentsPayout_106069=13.700000000000001
+#GAMEDATA#DescendentsPayout_39030=34.9
+#GAMEDATA#DescendentsPayout_386780=61.75
+#GAMEDATA#DescendentsPayout_231158=25.1
+#GAMEDATA#DescendentsPayout_164799=123.5
+#GAMEDATA#FeedingXPEarned_75520=251
+#GAMEDATA#FeedingXPEarned_210162=349
+#GAMEDATA#FeedingXPEarned_510740=1505.5
+#GAMEDATA#FeedingXPEarned_430717=137
+#GAMEDATA#FeedingXPEarned_640763=137
+#GAMEDATA#FeedingXPEarned_527332=1505.5
+#GAMEDATA#FeedingXPEarned_231565=1235
+#GAMEDATA#FeedingXPEarned_261567=500
+#GAMEDATA#FeedingPlayers=2,1,2,1,1,1,1
+#GAMEDATA#<<<<EndStats
+2009-04-22 04:06:02,204 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 04:06:59,151 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 04:09:02,091 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 04:09:39,073 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240378435076
+#GAMEDATA#TimeStarted=1240398245064
+#GAMEDATA#Now=1240398845342
+#GAMEDATA#TimeLoggedIn_527332=581
+#GAMEDATA#TimeLoggedIn_181253=445
+#GAMEDATA#TimeLoggedIn_162782=581
+#GAMEDATA#TimeLoggedIn_205868=543
+#GAMEDATA#TimeLoggedIn_77=17
+#GAMEDATA#TimeLoggedIn_172848=84
+#GAMEDATA#TimeLoggedIn_1265=154
+#GAMEDATA#TimeLoggedIn_510740=581
+#GAMEDATA#TimeLoggedIn_231565=581
+#GAMEDATA#TimeLoggedIn_651993=156
+#GAMEDATA#TimeLoggedIn_230164=581
+#GAMEDATA#TimeLoggedIn_430717=581
+#GAMEDATA#TimeLoggedIn_179326=581
+#GAMEDATA#TimeLoggedIn_650948=29
+#GAMEDATA#FeedingPlayers_205868=2,1
+#GAMEDATA#FeedingPlayers_231565=2,1
+#GAMEDATA#DescendentsPayout_534632=212.325
+#GAMEDATA#DescendentsPayout_386780=27.3
+#GAMEDATA#DescendentsPayout_445660=70.775
+#GAMEDATA#DescendentsPayout_510740=141.55
+#GAMEDATA#DescendentsPayout_164799=54.6
+#GAMEDATA#FeedingXPEarned_510740=1415.5
+#GAMEDATA#FeedingXPEarned_527332=1415.5
+#GAMEDATA#FeedingXPEarned_231565=546
+#GAMEDATA#FeedingPlayers=2,1,1
+#GAMEDATA#<<<<EndStats
+2009-04-22 04:17:59,861 ERROR: vampire.server.ServerLogic TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::ServerLogic$/stateChange()
+	at vampire.server::ServerLogic$/handleFeedConfirmMessage()
+	at vampire.server::ServerLogic$/handleMessage()
+	at MethodInfo-49()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/handleMessage()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-22 04:20:17,599 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 04:20:34,313 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 04:21:39,014 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 04:23:19,177 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240378435076
+#GAMEDATA#TimeStarted=1240398845343
+#GAMEDATA#Now=1240399445492
+#GAMEDATA#TimeLoggedIn_143489=148
+#GAMEDATA#TimeLoggedIn_527332=582
+#GAMEDATA#TimeLoggedIn_181253=175
+#GAMEDATA#TimeLoggedIn_179326=582
+#GAMEDATA#TimeLoggedIn_232204=81
+#GAMEDATA#TimeLoggedIn_651597=400
+#GAMEDATA#TimeLoggedIn_205868=30
+#GAMEDATA#TimeLoggedIn_231565=524
+#GAMEDATA#TimeLoggedIn_172848=582
+#GAMEDATA#TimeLoggedIn_510740=582
+#GAMEDATA#TimeLoggedIn_650948=149
+#GAMEDATA#TimeLoggedIn_113655=480
+#GAMEDATA#TimeLoggedIn_155376=332
+#GAMEDATA#TimeLoggedIn_651993=373
+#GAMEDATA#TimeLoggedIn_579547=164
+#GAMEDATA#TimeLoggedIn_230164=582
+#GAMEDATA#TimeLoggedIn_430717=368
+#GAMEDATA#TimeLoggedIn_162782=372
+#GAMEDATA#FeedingPlayers_172848=1
+#GAMEDATA#FeedingPlayers_143489=2
+#GAMEDATA#FeedingPlayers_230164=2,2
+#GAMEDATA#FeedingPlayers_527332=2
+#GAMEDATA#FeedingPlayers_113655=2,2,1
+#GAMEDATA#FeedingPlayers_579547=2
+#GAMEDATA#FeedingPlayers_510740=2,2
+#GAMEDATA#FeedingPlayers_651597=2,1
+#GAMEDATA#FeedingPlayers_231565=1
+#GAMEDATA#DescendentsPayout_995=27.55
+#GAMEDATA#DescendentsPayout_527332=35.5
+#GAMEDATA#DescendentsPayout_164799=20.1
+#GAMEDATA#DescendentsPayout_359624=71.7
+#GAMEDATA#DescendentsPayout_201132=35.85
+#GAMEDATA#DescendentsPayout_386780=10.05
+#GAMEDATA#DescendentsPayout_534632=86.2
+#GAMEDATA#DescendentsPayout_510740=53.25
+#GAMEDATA#DescendentsPayout_1892=55.1
+#GAMEDATA#DescendentsPayout_445660=34.225
+#GAMEDATA#DescendentsPayout_250837=54.65
+#GAMEDATA#DescendentsPayout_190687=27.325
+#GAMEDATA#FeedingXPEarned_172848=717
+#GAMEDATA#FeedingXPEarned_230164=546.5
+#GAMEDATA#FeedingXPEarned_527332=355
+#GAMEDATA#FeedingXPEarned_113655=551
+#GAMEDATA#FeedingXPEarned_510740=684.5
+#GAMEDATA#FeedingXPEarned_651597=355
+#GAMEDATA#FeedingXPEarned_231565=201
+#GAMEDATA#FeedingPlayers=2,2,2,1,1,2,1,2,1
+#GAMEDATA#<<<<EndStats
+2009-04-22 04:25:39,112 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 04:27:01,912 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 04:27:02,096 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 04:29:58,609 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 04:31:06,670 ERROR: vampire.server.ServerLogic handleFeedConfirmMessage [requestingPlayer=null]
+2009-04-22 04:32:53,861 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 04:33:18,627 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-22 04:33:45,659 ERROR: vampire.server.ServerLogic handleFeedConfirmMessage [requestingPlayer=null]
+

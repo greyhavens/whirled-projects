@@ -1,0 +1,2128 @@
+Vampire Server initializing...
+2009-04-22 11:53:44,363 ERROR: vampire.server.GameServer AVRServerGameControl should of been initialized already
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Heartbeat error: Error: Ilegal operation
+	at avmplus::System$/resetTimeout()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+--- buffer full ---
+

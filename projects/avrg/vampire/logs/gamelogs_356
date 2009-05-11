@@ -1,0 +1,905 @@
+
+>>>>BeginStats
+
+>>>>BeginTable
+PlayerId, StartTime, EndTime, ProgenyPayout, XPFromFeeding, FeedingGames, MeanFeedingScore, BloodBond, Progeny, GrandProgeny, Sire, Level, Invites
+1021278, , , 13.700000000000001, 0, 0, 0, 0, 2, 2, 452296, , 
+102796, 1241404929304, 1241405268319, 0, 179, 1, 228, 82254, 0, 0, 209610, 4, 0
+102929, , , 90.8, 0, 0, 0, 0, 2, 2, 71724, , 
+103033, 1241406303737, 1241406568211, 0, 1979, 8, 206.125, 767143, 8, 7, 81899, 5, 1
+1032648, , , 47.2, 0, 0, 0, 0, 4, 0, 234337, , 
+1055910, 1241404984170, , 0, 1972, 8, 152.75, 0, 0, 0, 63415, 3, 0
+106069, , , 10.05, 0, 0, 0, 0, 14, 11, 236834, , 
+1062853, 1241406455589, , 149.00000000000003, 1123, 5, 327.6, 1138895, 8, 8, 1124214, 6, 2
+1063955, 1241403206454, 1241403326609, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+10642, , , 51.300000000000004, 0, 0, 0, 0, 29, 9, 351598, , 
+1088614, 1241405910226, 1241406515542, 0, 629, 2, 258.5, 0, 0, 0, 208217, 1, 
+1090611, 1241405768082, , 0, 472, 2, 106, 0, 0, 0, 1032648, 2, 0
+1092321, , , 122.75, 0, 0, 0, 0, 23, 19, 35568, , 
+1092861, 1241405294368, 1241405298605, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+1094114, 1241403517647, 1241403551661, 0, 0, 0, 0, 0, 0, 0, 153097, 1, 
+111249, , , 134.5, 0, 0, 0, 0, 2, 9, 188370, , 
+1117799, 1241404739363, , 0, 2414, 7, 407.7142857142857, 0, 1, 0, 592692, 4, 0
+1120660, 1241403684940, , 0, 2241, 10, 278.2, 0, 2, 0, 0, 2, 2
+1122449, , , 56.15, 0, 0, 0, 0, 5, 5, 555728, , 
+1124156, 1241406186391, , 0, 0, 0, 0, 0, 0, 0, 0, 1, 0
+1124214, , , 186.79999999999998, 0, 0, 0, 0, 5, 8, 1122449, , 
+11460, , , 26.700000000000003, 0, 0, 0, 0, 1, 7, 41022, , 
+1148098, 1241403058996, 1241403432171, 11.350000000000001, 137, 1, 164, 0, 2, 1, 1021278, 4, 
+1148755, 1241403092908, 1241405326167, 0, 913, 3, 381.3333333333333, 0, 9, 1, 1092321, 4, 2
+1160652, 1241403787472, 1241404392065, 0, 449, 3, 113.33333333333333, 0, 0, 0, 1207233, 2, 
+1163187, 1241406002337, 1241406146444, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+1178152, 1241404954368, 1241406132118, 0, 1015, 4, 162.5, 0, 0, 0, 1120660, 2, 
+1178608, 1241404180159, 1241404253341, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+1180132, 1241405746314, 1241406138348, 0, 699, 3, 156.66666666666666, 0, 0, 0, 1120660, 1, 
+1202977, 1241403696530, 1241404054080, 0, 85, 1, 85, 0, 0, 0, 54776, 2, 
+1203117, 1241406134419, , 0, 162, 1, 195, 1215840, 2, 0, 152578, 4, 1
+1203874, 1241405717293, , 0, 344, 3, 123, 0, 0, 0, 929303, 1, 0
+1207233, 1241403150668, 1241406372124, 35, 1473, 10, 119.5, 0, 1, 0, 239111, 2, 
+1222108, 1241403345165, 1241403492165, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+1223024, 1241403138231, 1241406126768, 22.700000000000003, 0, 0, 0, 0, 1, 0, 1148098, 1, 1
+1223946, 1241403036373, 1241405180583, 0, 227, 2, 99.5, 0, 0, 0, 1223024, 1, 
+1225912, 1241403036384, 1241403676500, 0, 249, 2, 124.5, 0, 0, 0, 0, 1, 
+1226131, 1241405676503, 1241405688397, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+1226259, 1241403906210, 1241403967484, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+1226297, 1241405032158, 1241405112177, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+12770, , , 11.850000000000001, 0, 0, 0, 0, 23, 76, 383387, , 
+130244, , , 207.70000000000002, 0, 0, 0, 0, 3, 10, 237967, , 
+132832, 1241404582705, 1241404940766, 0, 201, 2, 100.5, 0, 1, 2, 92388, 3, 0
+133482, , , 23.400000000000002, 0, 0, 0, 0, 5, 12, 180951, , 
+139168, 1241405617818, 1241406132119, 0, 908, 3, 278.6666666666667, 0, 2, 0, 102929, 4, 
+141364, , , 27.400000000000002, 0, 0, 0, 0, 6, 3, 16514, , 
+145006, , , 90.60000000000001, 0, 0, 0, 0, 3, 4, 245338, , 
+145552, 1241404419700, 1241405324524, 0, 312, 2, 123, 0, 0, 0, 171151, 2, 
+145609, 1241403611059, 1241404162914, 0, 664, 3, 234.66666666666666, 369307, 5, 4, 92300, 4, 0
+147988, 1241404469801, 1241404494457, 0, 0, 0, 0, 170446, 7, 8, 307477, 6, 2
+150179, 1241406121560, , 0, 513, 3, 171, 0, 1, 0, 10642, 4, 0
+152578, , , 16.2, 0, 0, 0, 0, 3, 4, 208699, , 
+153097, 1241405050228, , 0, 1490, 5, 337.8, 0, 7, 0, 1062853, 3, 7
+155004, 1241405360824, 1241405376118, 0, 0, 0, 0, 0, 1, 0, 145497, 2, 
+16514, , , 13.700000000000001, 0, 0, 0, 0, 5, 8, 1062, , 
+166371, , , 445.90000000000003, 0, 0, 0, 0, 4, 7, 267622, , 
+170191, , , 216.99999999999997, 0, 0, 0, 0, 3, 8, 202873, , 
+171151, 1241403771121, , 31.200000000000003, 1982, 7, 302.7142857142857, 77, 36, 17, 21067, 13, 3
+171513, 1241404048818, , 57.2, 1884, 8, 275.75, 0, 7, 6, 170191, 11, 2
+180951, , , 11.700000000000001, 0, 0, 0, 0, 2, 7, 153510, , 
+184042, 1241405792957, , 0, 906, 4, 179.5, 0, 1, 1, 145006, 4, 0
+184671, 1241405748686, , 0, 702, 5, 115.4, 0, 0, 0, 171513, 1, 0
+185363, 1241404175892, 1241405188698, 0, 997, 4, 142.5, 0, 0, 0, 187171, 2, 0
+185390, 1241404960348, 1241406075456, 0, 282, 2, 116, 0, 0, 0, 0, 1, 
+185650, , , 33.2, 0, 0, 0, 0, 2, 1, 185697, , 
+187171, , , 99.7, 0, 0, 0, 0, 1, 0, 85021, , 
+188370, , , 67.25, 0, 0, 0, 0, 2, 3, 163484, , 
+189871, , , 17.200000000000003, 0, 0, 0, 0, 1, 3, 351626, , 
+195855, , , 8.950000000000001, 0, 0, 0, 0, 1, 2, 169869, , 
+200145, , , 361.20000000000005, 0, 0, 0, 0, 1, 4, 209656, , 
+202873, , , 94.2, 0, 0, 0, 0, 1, 3, 341164, , 
+205446, 1241403229166, 1241405144052, 0, 2408, 6, 158.66666666666666, 96675, 0, 0, 96675, 3, 
+208217, , , 62.900000000000006, 0, 0, 0, 0, 2, 0, 1092321, , 
+208699, , , 8.1, 0, 0, 0, 0, 4, 8, 36200, , 
+208867, 1241403156851, 1241405192373, 0, 1345, 6, 211.33333333333334, 0, 0, 0, 111249, 3, 0
+209610, , , 17.900000000000002, 0, 0, 0, 0, 2, 0, 195855, , 
+209656, , , 120.4, 0, 0, 0, 0, 6, 10, 167153, , 
+21067, , , 213.8, 0, 0, 0, 0, 2, 36, 302907, , 
+227147, 1241405404501, 1241405441293, 0, 0, 0, 0, 0, 6, 4, 238782, 5, 2
+234337, , , 23.6, 0, 0, 0, 0, 5, 5, 97523, , 
+237967, , , 103.85000000000001, 0, 0, 0, 0, 3, 7, 336228, , 
+239111, , , 164.80000000000004, 0, 0, 0, 0, 1, 1, 439277, , 
+245338, , , 45.300000000000004, 0, 0, 0, 0, 9, 12, 77353, , 
+249250, 1241403036376, 1241403573316, 0, 276, 2, 138, 0, 0, 0, 510740, 1, 
+267622, , , 222.95000000000002, 0, 0, 0, 0, 2, 5, 1632, , 
+269484, 1241403181759, , 0, 4459, 18, 255.27777777777783, 280766, 1, 0, 166371, 4, 0
+280766, 1241403195201, 1241406497099, 0, 3859, 17, 186.23529411764707, 269484, 0, 0, 83959, 3, 0
+283305, , , 120.7, 0, 0, 0, 0, 1, 8, 497122, , 
+298666, 1241405057911, 1241405065705, 0, 0, 0, 0, 868186, 6, 0, 259344, 7, 1
+302907, , , 99.10000000000001, 0, 0, 0, 0, 2, 3, 283855, , 
+311783, 1241406309221, , 0, 267, 1, 399, 0, 7, 2, 11460, 9, 4
+336228, , , 85.3, 0, 0, 0, 0, 9, 18, 307471, , 
+351430, , , 170.6, 0, 0, 0, 0, 11, 45, 336228, , 
+351598, , , 25.650000000000002, 0, 0, 0, 0, 1, 29, 359624, , 
+35568, , , 45.65, 0, 0, 0, 0, 1, 23, 258951, , 
+365218, , , 15.600000000000001, 0, 0, 0, 0, 3, 1, 551, , 
+39180, 1241406016069, 1241406196712, 0, 237, 1, 188, 0, 7, 15, 68619, 7, 1
+396113, , , 327.9, 0, 0, 0, 0, 2, 7, 44987, , 
+402647, 1241405875927, , 0, 588, 1, 588, 483162, 11, 3, 408501, 11, 6
+403501, , , 192.95000000000002, 0, 0, 0, 0, 5, 3, 124503, , 
+408501, , , 58.800000000000004, 0, 0, 0, 0, 6, 15, 637936, , 
+41022, , , 13.350000000000001, 0, 0, 0, 0, 1, 1, 412796, , 
+43386, 1241405556056, , 0, 2077, 6, 346.1666666666667, 106210, 4, 2, 130244, 7, 4
+439277, , , 73.65, 0, 0, 0, 0, 7, 1, 208602, , 
+44987, , , 163.95, 0, 0, 0, 0, 17, 18, 12770, , 
+452296, , , 6.8500000000000005, 0, 0, 0, 0, 8, 2, 103144, , 
+462408, 1241404513534, 1241404782581, 0, 0, 0, 0, 121604, 4, 1, 191950, 10, 2
+507149, 1241403286428, 1241403684545, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+510740, , , 27.6, 0, 0, 0, 0, 66, 2, 534632, , 
+534632, , , 13.8, 0, 0, 0, 0, 7, 79, 445660, , 
+538369, 1241404934784, 1241406329888, 0, 1706, 5, 492.8, 203784, 2, 0, 351430, 8, 1
+54776, , , 107.60000000000001, 0, 0, 0, 0, 71, 32, 89757, , 
+551, , , 7.800000000000001, 0, 0, 0, 0, 3, 3, 713, , 
+564162, 1241404009763, 1241404453274, 0, 274, 2, 137, 176275, 3, 0, 141364, 6, 2
+56633, 1241403480843, 1241403715297, 0, 156, 1, 197, 0, 0, 0, 365218, 2, 0
+575140, 1241403084677, 1241403112844, 0, 0, 0, 0, 0, 2, 0, 603011, 2, 
+58859, 1241403233471, 1241405115533, 0, 3279, 10, 442.9, 43017, 7, 4, 396113, 13, 2
+592692, , , 241.4, 0, 0, 0, 0, 8, 8, 283305, , 
+61045, , , 90.7, 0, 0, 0, 0, 6, 2, 74372, , 
+618696, 1241403818886, 1241403972121, 0, 0, 0, 0, 0, 0, 0, 336524, 2, 
+61984, 1241404579035, 1241405892154, 0, 907, 4, 280.25, 77060, 2, 5, 61045, 8, 2
+63415, , , 197.2, 0, 0, 0, 0, 6, 0, 8938, , 
+634607, 1241404466216, , 0, 991, 6, 165.16666666666666, 0, 2, 1, 54776, 4, 0
+637936, , , 29.400000000000002, 0, 0, 0, 0, 3, 6, 217283, , 
+68619, , , 23.700000000000003, 0, 0, 0, 0, 8, 10, 12770, , 
+71724, , , 45.4, 0, 0, 0, 0, 13, 4, 94103, , 
+74372, , , 45.35, 0, 0, 0, 0, 4, 10, 336024, , 
+802319, , , 98.95, 0, 0, 0, 0, 2, 5, 773108, , 
+81899, , , 197.9, 0, 0, 0, 0, 5, 8, 802319, , 
+82254, 1241406221638, , 0, 234, 1, 242, 102796, 3, 0, 133482, 5, 1
+83959, , , 385.90000000000003, 0, 0, 0, 0, 1, 0, 403501, , 
+84564, 1241403084673, 1241403246075, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+85021, , , 49.85, 0, 0, 0, 0, 2, 1, 17790, , 
+8938, , , 98.6, 0, 0, 0, 0, 14, 6, 541655, , 
+89757, , , 53.800000000000004, 0, 0, 0, 0, 3, 74, 20260, , 
+92300, , , 66.4, 0, 0, 0, 0, 1, 5, 185650, , 
+92388, , , 20.1, 0, 0, 0, 0, 1, 1, 106069, , 
+929303, , , 34.400000000000006, 0, 0, 0, 0, 3, 0, 189871, , 
+933369, 1241403114590, , 0, 331, 3, 96.66666666666667, 0, 0, 0, 0, 1, 0
+940573, 1241406287618, , 0, 0, 0, 0, 0, 0, 0, 757, 1, 0
+96675, 1241403036382, 1241405416021, 240.8, 2408, 6, 643.5, 205446, 4, 3, 200145, 4, 0
+<<<<EndTable
+
+PlayersOnlineNow=22
+PlayersOnlineEachMinute=0, 10, 12, 16, 19, 18, 22, 22, 21, 20, 20, 18, 18, 20, 21, 22, 22, 21, 21, 20, 22, 21, 21, 21, 22, 21, 23, 24, 23, 24, 24, 24, 27, 29, 30, 28, 24, 25, 23, 21, 19, 18, 17, 18, 19, 20, 24, 24, 25, 25, 27, 25, 22, 22, 23, 25, 24, 25, 23, 22
+PlayersInEachFeedingGame=1, 1, 3, 1, 1, 1, 2, 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 1, 2, 1, 1, 3, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 2, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 1, 2, 1, 3, 2, 1, 2, 1, 2, 1, 3, 2, 2, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 1, 2, 1, 1
+PlayersStarted=98
+PlayersQuit=76
+StatsStartTime=1241403035209
+StatsDumpTime=1241406635366
+<<<<EndStats
+2009-05-03 20:10:41,505 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=171513, prey=false, _predatorIndex=]
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=57237], trace=Error: Room not in game [roomId=57237]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getMobIds()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:-1388279744]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/getSpawnedMobs_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:526]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.avrg::RoomSubControlServer/gotHostProps()
+	at com.whirled.avrg::AVRServerGameControl/getRoom()
+	at vampire.server::Room/maybeLoadControl()
+	at vampire.server::Room()
+	at vampire.server::GameServer/getRoom()
+	at vampire.server::LogicServer$/handleMessage()
+	at MethodInfo-45()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/handleMessage()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:107]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()].
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=57237], trace=Error: Room not in game [roomId=57237]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoomProps()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:182]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_getGameData_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:563]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-43()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-762/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+2009-05-03 20:10:44,691 ERROR: vampire.server.Room Tick error
+TypeError: Error #1010: A term is undefined and has no properties.
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-43()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-762/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=57237], trace=Error: Room not in game [roomId=57237]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoomProps()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:182]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_getGameData_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:563]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-43()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-762/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+2009-05-03 20:10:45,213 ERROR: vampire.server.Room Tick error
+TypeError: Error #1010: A term is undefined and has no properties.
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-43()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-762/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=57237], trace=Error: Room not in game [roomId=57237]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoomProps()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:182]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_getGameData_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:563]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-43()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-762/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+2009-05-03 20:10:45,731 ERROR: vampire.server.Room Tick error
+TypeError: Error #1010: A term is undefined and has no properties.
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-43()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-762/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=57237], trace=Error: Room not in game [roomId=57237]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoomProps()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:182]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_getGameData_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:563]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-43()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-762/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+2009-05-03 20:10:46,247 ERROR: vampire.server.Room Tick error
+TypeError: Error #1010: A term is undefined and has no properties.
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-43()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-762/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=57237], trace=Error: Room not in game [roomId=57237]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoomProps()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:182]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_getGameData_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:563]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-43()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-762/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+2009-05-03 20:10:46,754 ERROR: vampire.server.Room Tick error
+TypeError: Error #1010: A term is undefined and has no properties.
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-43()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-762/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=57237], trace=Error: Room not in game [roomId=57237]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoomProps()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:182]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_getGameData_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:563]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-43()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-762/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+2009-05-03 20:10:47,277 ERROR: vampire.server.Room Tick error
+TypeError: Error #1010: A term is undefined and has no properties.
+	at com.whirled.net.impl::PropertyGetSubControlImpl/get()
+	at vampire.server::Room/update()
+	at com.whirled.contrib.simplegame::SimObject/updateInternal()
+	at com.whirled.contrib.simplegame::ObjectDB/beginUpdate()
+	at com.whirled.contrib.simplegame::ObjectDB/update()
+	at MethodInfo-43()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/tick()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at Function-42/<anonymous>()
+	at Function-762/<anonymous>()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()
+2009-05-03 20:11:17,235 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1203874, prey=true, _predatorIndex=]
+2009-05-03 20:11:17,236 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=311783, prey=false, _predatorIndex=]
+2009-05-03 20:11:41,478 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1090611, prey=true, _predatorIndex=]
+2009-05-03 20:11:41,478 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=184042, prey=false, _predatorIndex=]
+2009-05-03 20:11:49,953 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=402647, prey=false, _predatorIndex=]
+2009-05-03 20:12:29,680 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1124156, prey=false, _predatorIndex=]
+2009-05-03 20:12:30,996 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=43386, prey=false, _predatorIndex=]
+2009-05-03 20:13:37,556 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1055910, prey=true, _predatorIndex=]
+2009-05-03 20:13:37,557 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=171513, prey=false, _predatorIndex=]
+2009-05-03 20:13:42,315 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=171151, prey=true, _predatorIndex=]
+2009-05-03 20:13:42,316 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=311783, prey=false, _predatorIndex=]
+2009-05-03 20:13:51,241 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1203874, prey=false, _predatorIndex=311783]
+2009-05-03 20:13:57,787 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1203874, prey=false, _predatorIndex=311783,1203874]
+2009-05-03 20:14:03,502 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=184671, prey=true, _predatorIndex=]
+2009-05-03 20:14:03,503 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1090611, prey=false, _predatorIndex=]
+2009-05-03 20:14:07,188 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1117799, prey=false, _predatorIndex=311783,1203874]
+2009-05-03 20:14:15,136 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=184042, prey=false, _predatorIndex=1090611]
+2009-05-03 20:14:18,946 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1203874, prey=false, _predatorIndex=]
+2009-05-03 20:14:23,901 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=184042, prey=false, _predatorIndex=]
+2009-05-03 20:14:25,921 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1117799, prey=true, _predatorIndex=]
+2009-05-03 20:14:25,922 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=269484, prey=false, _predatorIndex=]
+2009-05-03 20:14:30,422 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1226259, prey=false, _predatorIndex=184042]
+2009-05-03 20:14:43,730 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1226259, prey=false, _predatorIndex=]
+2009-05-03 20:15:12,212 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=43386, prey=false, _predatorIndex=]
+2009-05-03 20:16:03,744 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=60835, prey=false, _predatorIndex=]
+2009-05-03 20:16:52,788 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1055910, prey=true, _predatorIndex=]
+2009-05-03 20:16:52,788 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=184042, prey=false, _predatorIndex=]
+2009-05-03 20:17:00,097 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=136291, prey=false, _predatorIndex=]
+2009-05-03 20:17:03,466 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=184671, prey=true, _predatorIndex=]
+2009-05-03 20:17:03,467 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1090611, prey=false, _predatorIndex=]
+2009-05-03 20:17:04,834 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1062853, prey=false, _predatorIndex=1090611]
+2009-05-03 20:17:25,929 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1117799, prey=true, _predatorIndex=]
+2009-05-03 20:17:25,929 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=311783, prey=false, _predatorIndex=]
+2009-05-03 20:17:27,900 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1092861, prey=true, _predatorIndex=]
+2009-05-03 20:17:27,901 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=171513, prey=false, _predatorIndex=]
+2009-05-03 20:19:00,451 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=269484, prey=true, _predatorIndex=]
+2009-05-03 20:19:00,452 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1120983, prey=false, _predatorIndex=]
+2009-05-03 20:19:20,779 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=184671, prey=false, _predatorIndex=171513]
+2009-05-03 20:19:28,564 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1090611, prey=false, _predatorIndex=171513,184671]
+2009-05-03 20:19:37,324 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=330095, prey=true, _predatorIndex=]
+2009-05-03 20:19:37,335 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=94204, prey=false, _predatorIndex=]
+2009-05-03 20:19:39,885 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=184042, prey=false, _predatorIndex=171513,184671,1090611]
+2009-05-03 20:19:52,242 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=452296, prey=true, _predatorIndex=]
+2009-05-03 20:19:52,243 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1203874, prey=false, _predatorIndex=]
+2009-05-03 20:19:55,283 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1226259, prey=false, _predatorIndex=]
+2009-05-03 20:20:11,006 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=136291, prey=true, _predatorIndex=]
+2009-05-03 20:20:11,006 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1062853, prey=false, _predatorIndex=]
+2009-05-03 20:20:35,035 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=60835, prey=false, _predatorIndex=]
+
+>>>>BeginStats
+
+>>>>BeginTable
+PlayerId, StartTime, EndTime, ProgenyPayout, XPFromFeeding, FeedingGames, MeanFeedingScore, BloodBond, Progeny, GrandProgeny, Sire, Level, Invites
+1021278, , , 13.700000000000001, 0, 0, 0, 0, 2, 2, 452296, , 
+102796, 1241404929304, 1241405268319, 0, 179, 1, 228, 82254, 0, 0, 209610, 4, 0
+102929, , , 90.8, 0, 0, 0, 0, 2, 2, 71724, , 
+103033, 1241406303737, 1241406568211, 0, 1979, 8, 206.125, 767143, 8, 7, 81899, 5, 1
+1032648, , , 85.2, 0, 0, 0, 0, 4, 0, 234337, , 
+1055910, 1241404984170, , 0, 2294, 10, 149.1, 0, 0, 0, 63415, 3, 0
+106069, , , 10.05, 0, 0, 0, 0, 14, 11, 236834, , 
+1062853, 1241406455589, , 149.00000000000003, 1271, 6, 302.8333333333333, 1138895, 8, 8, 1124214, 6, 2
+1063955, 1241403206454, 1241403326609, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+10642, , , 51.300000000000004, 0, 0, 0, 0, 29, 9, 351598, , 
+1088614, 1241405910226, 1241406515542, 0, 629, 2, 258.5, 0, 0, 0, 208217, 1, 
+1090611, 1241405768082, , 0, 852, 5, 107.8, 0, 0, 0, 1032648, 2, 0
+1092321, , , 122.75, 0, 0, 0, 0, 23, 19, 35568, , 
+1092861, 1241406929130, , 0, 174, 1, 166, 0, 0, 0, 0, 1, 0
+1094114, 1241403517647, 1241403551661, 0, 0, 0, 0, 0, 0, 0, 153097, 1, 
+111249, , , 134.5, 0, 0, 0, 0, 2, 9, 188370, , 
+1117799, 1241404739363, , 0, 2956, 9, 392.22222222222223, 0, 1, 0, 592692, 4, 0
+1120660, 1241403684940, 1241406654264, 0, 2241, 10, 278.2, 0, 2, 0, 0, 2, 2
+1120983, 1241407063074, , 0, 0, 0, 0, 0, 0, 0, 70997, 2, 0
+1122449, , , 63.55, 0, 0, 0, 0, 5, 5, 555728, , 
+1123495, 1241406759388, 1241406871170, 0, 0, 0, 0, 0, 0, 0, 635003, 1, 
+1124156, 1241406186391, , 0, 642, 4, 160.5, 0, 0, 0, 0, 1, 0
+1124214, , , 201.6, 0, 0, 0, 0, 5, 8, 1122449, , 
+11460, , , 108.7, 0, 0, 0, 0, 1, 7, 41022, , 
+1148098, 1241403058996, 1241403432171, 11.350000000000001, 137, 1, 164, 0, 2, 1, 1021278, 4, 
+1148755, 1241403092908, 1241405326167, 0, 913, 3, 381.3333333333333, 0, 9, 1, 1092321, 4, 2
+1160652, 1241403787472, 1241404392065, 0, 449, 3, 113.33333333333333, 0, 0, 0, 1207233, 2, 
+1163187, 1241406002337, 1241406146444, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+1178152, 1241404954368, 1241406132118, 0, 1015, 4, 162.5, 0, 0, 0, 1120660, 2, 
+1178608, 1241404180159, 1241404253341, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+1180132, 1241405746314, 1241406138348, 0, 699, 3, 156.66666666666666, 0, 0, 0, 1120660, 1, 
+1202977, 1241403696530, 1241404054080, 0, 85, 1, 85, 0, 0, 0, 54776, 2, 
+1203117, 1241406134419, , 0, 162, 1, 195, 1215840, 2, 0, 152578, 4, 1
+1203874, 1241405717293, , 0, 854, 6, 121.83333333333333, 0, 0, 0, 929303, 1, 0
+1207233, 1241403150668, 1241406372124, 35, 1473, 10, 119.5, 0, 1, 0, 239111, 2, 
+1222108, 1241403345165, 1241403492165, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+1223024, 1241403138231, 1241406126768, 22.700000000000003, 0, 0, 0, 0, 1, 0, 1148098, 1, 1
+1223946, 1241403036373, 1241405180583, 0, 227, 2, 99.5, 0, 0, 0, 1223024, 1, 
+1225912, 1241403036384, 1241403676500, 0, 249, 2, 124.5, 0, 0, 0, 0, 1, 
+1226131, 1241405676503, 1241405688397, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+1226259, 1241406737475, , 0, 154, 1, 154, 0, 0, 0, 0, 1, 0
+1226297, 1241405032158, 1241405112177, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+12770, , , 11.850000000000001, 0, 0, 0, 0, 23, 76, 383387, , 
+130244, , , 290.40000000000003, 0, 0, 0, 0, 3, 10, 237967, , 
+132832, 1241404582705, 1241404940766, 0, 201, 2, 100.5, 0, 1, 2, 92388, 3, 0
+133482, , , 23.400000000000002, 0, 0, 0, 0, 5, 12, 180951, , 
+136291, 1241407008366, , 0, 99, 1, 99, 0, 0, 0, 0, 1, 0
+139168, 1241405617818, 1241406132119, 0, 908, 3, 278.6666666666667, 0, 2, 0, 102929, 4, 
+141364, , , 27.400000000000002, 0, 0, 0, 0, 6, 3, 16514, , 
+145006, , , 134.20000000000002, 0, 0, 0, 0, 3, 4, 245338, , 
+145552, 1241404419700, 1241405324524, 0, 312, 2, 123, 0, 0, 0, 171151, 2, 
+145609, 1241403611059, 1241404162914, 0, 664, 3, 234.66666666666666, 369307, 5, 4, 92300, 4, 0
+147988, 1241404469801, 1241404494457, 0, 0, 0, 0, 170446, 7, 8, 307477, 6, 2
+150179, 1241406121560, 1241406741235, 0, 513, 3, 171, 0, 1, 0, 10642, 4, 0
+152578, , , 16.2, 0, 0, 0, 0, 3, 4, 208699, , 
+153097, 1241405050228, , 0, 1490, 5, 337.8, 0, 7, 0, 1062853, 3, 7
+155004, 1241405360824, 1241405376118, 0, 0, 0, 0, 0, 1, 0, 145497, 2, 
+16514, , , 13.700000000000001, 0, 0, 0, 0, 5, 8, 1062, , 
+166371, , , 469.90000000000003, 0, 0, 0, 0, 4, 7, 267622, , 
+170191, , , 282.6499999999999, 0, 0, 0, 0, 3, 8, 202873, , 
+171151, 1241403771121, , 31.200000000000003, 2210, 8, 278.75, 77, 36, 17, 21067, 13, 3
+171513, 1241404048818, , 83.3, 2410, 11, 251.0909090909091, 0, 7, 6, 170191, 11, 2
+180951, , , 11.700000000000001, 0, 0, 0, 0, 2, 7, 153510, , 
+184042, 1241405792957, , 0, 1342, 7, 171.14285714285714, 0, 1, 1, 145006, 4, 0
+184671, 1241405748686, , 0, 963, 7, 120.57142857142857, 0, 0, 0, 171513, 1, 0
+185363, 1241404175892, 1241405188698, 0, 997, 4, 142.5, 0, 0, 0, 187171, 2, 0
+185390, 1241404960348, 1241406075456, 0, 282, 2, 116, 0, 0, 0, 0, 1, 
+185650, , , 33.2, 0, 0, 0, 0, 2, 1, 185697, , 
+187171, , , 99.7, 0, 0, 0, 0, 1, 0, 85021, , 
+188370, , , 67.25, 0, 0, 0, 0, 2, 3, 163484, , 
+189871, , , 42.7, 0, 0, 0, 0, 1, 3, 351626, , 
+195855, , , 8.950000000000001, 0, 0, 0, 0, 1, 2, 169869, , 
+200145, , , 361.20000000000005, 0, 0, 0, 0, 1, 4, 209656, , 
+202873, , , 120.5, 0, 0, 0, 0, 1, 3, 341164, , 
+205446, 1241403229166, 1241405144052, 0, 2408, 6, 158.66666666666666, 96675, 0, 0, 96675, 3, 
+208217, , , 62.900000000000006, 0, 0, 0, 0, 2, 0, 1092321, , 
+208699, , , 8.1, 0, 0, 0, 0, 4, 8, 36200, , 
+208867, 1241403156851, 1241405192373, 0, 1345, 6, 211.33333333333334, 0, 0, 0, 111249, 3, 0
+209610, , , 17.900000000000002, 0, 0, 0, 0, 2, 0, 195855, , 
+209656, , , 120.4, 0, 0, 0, 0, 6, 10, 167153, , 
+21067, , , 236.60000000000002, 0, 0, 0, 0, 2, 36, 302907, , 
+227147, 1241405404501, 1241405441293, 0, 0, 0, 0, 0, 6, 4, 238782, 5, 2
+234337, , , 42.6, 0, 0, 0, 0, 5, 5, 97523, , 
+237967, , , 145.20000000000002, 0, 0, 0, 0, 3, 7, 336228, , 
+239111, , , 164.80000000000004, 0, 0, 0, 0, 1, 1, 439277, , 
+245338, , , 67.10000000000001, 0, 0, 0, 0, 9, 12, 77353, , 
+249250, 1241403036376, 1241403573316, 0, 276, 2, 138, 0, 0, 0, 510740, 1, 
+267622, , , 234.95000000000002, 0, 0, 0, 0, 2, 5, 1632, , 
+269484, 1241403181759, , 0, 4699, 19, 252.68421052631584, 280766, 1, 0, 166371, 4, 0
+280766, 1241403195201, 1241406497099, 0, 3859, 17, 186.23529411764707, 269484, 0, 0, 83959, 3, 0
+283305, , , 147.79999999999998, 0, 0, 0, 0, 1, 8, 497122, , 
+298666, 1241405057911, 1241405065705, 0, 0, 0, 0, 868186, 6, 0, 259344, 7, 1
+302907, , , 110.50000000000001, 0, 0, 0, 0, 2, 3, 283855, , 
+311783, 1241406309221, , 0, 1087, 4, 345.5, 0, 7, 2, 11460, 9, 4
+330095, 1241407088644, 1241407215822, 0, 0, 0, 0, 0, 0, 0, 430891, 3, 0
+336228, , , 85.3, 0, 0, 0, 0, 9, 18, 307471, , 
+351430, , , 170.6, 0, 0, 0, 0, 11, 45, 336228, , 
+351598, , , 25.650000000000002, 0, 0, 0, 0, 1, 29, 359624, , 
+35568, , , 45.65, 0, 0, 0, 0, 1, 23, 258951, , 
+365218, , , 15.600000000000001, 0, 0, 0, 0, 3, 1, 551, , 
+39180, 1241406016069, 1241406196712, 0, 237, 1, 188, 0, 7, 15, 68619, 7, 1
+396113, , , 327.9, 0, 0, 0, 0, 2, 7, 44987, , 
+402647, 1241405875927, , 0, 1063, 2, 531.5, 483162, 11, 3, 408501, 11, 6
+403501, , , 192.95000000000002, 0, 0, 0, 0, 5, 3, 124503, , 
+408501, , , 106.30000000000001, 0, 0, 0, 0, 6, 15, 637936, , 
+41022, , , 54.35, 0, 0, 0, 0, 1, 1, 412796, , 
+43386, 1241405556056, 1241407143489, 0, 2904, 9, 322.6666666666667, 106210, 4, 2, 130244, 7, 4
+439277, , , 73.65, 0, 0, 0, 0, 7, 1, 208602, , 
+44987, , , 163.95, 0, 0, 0, 0, 17, 18, 12770, , 
+452296, 1241406876925, , 6.8500000000000005, 0, 0, 0, 0, 8, 5, 103144, 5, 2
+462408, 1241404513534, 1241404782581, 0, 0, 0, 0, 121604, 4, 1, 191950, 10, 2
+507149, 1241403286428, 1241403684545, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+510740, , , 27.6, 0, 0, 0, 0, 66, 2, 534632, , 
+534632, , , 13.8, 0, 0, 0, 0, 7, 79, 445660, , 
+538369, 1241404934784, 1241406329888, 0, 1706, 5, 492.8, 203784, 2, 0, 351430, 8, 1
+54776, , , 107.60000000000001, 0, 0, 0, 0, 71, 32, 89757, , 
+551, , , 7.800000000000001, 0, 0, 0, 0, 3, 3, 713, , 
+564162, 1241404009763, 1241404453274, 0, 274, 2, 137, 176275, 3, 0, 141364, 6, 2
+56633, 1241403480843, 1241403715297, 0, 156, 1, 197, 0, 0, 0, 365218, 2, 0
+575140, 1241403084677, 1241403112844, 0, 0, 0, 0, 0, 2, 0, 603011, 2, 
+58859, 1241403233471, 1241405115533, 0, 3279, 10, 442.9, 43017, 7, 4, 396113, 13, 2
+592692, , , 295.59999999999997, 0, 0, 0, 0, 8, 8, 283305, , 
+603011, 1241406969618, , 0, 0, 0, 0, 0, 4, 4, 562788, 5, 1
+60835, 1241406953615, , 0, 77, 1, 77, 0, 0, 0, 0, 1, 0
+61045, , , 90.7, 0, 0, 0, 0, 6, 2, 74372, , 
+618696, 1241403818886, 1241403972121, 0, 0, 0, 0, 0, 0, 0, 336524, 2, 
+61984, 1241404579035, 1241405892154, 0, 907, 4, 280.25, 77060, 2, 5, 61045, 8, 2
+63415, , , 229.39999999999998, 0, 0, 0, 0, 6, 0, 8938, , 
+634607, 1241404466216, , 0, 991, 6, 165.16666666666666, 0, 2, 1, 54776, 4, 0
+637936, , , 53.150000000000006, 0, 0, 0, 0, 3, 6, 217283, , 
+68619, , , 23.700000000000003, 0, 0, 0, 0, 8, 10, 12770, , 
+71724, , , 45.4, 0, 0, 0, 0, 13, 4, 94103, , 
+74372, , , 45.35, 0, 0, 0, 0, 4, 10, 336024, , 
+802319, , , 98.95, 0, 0, 0, 0, 2, 5, 773108, , 
+81899, , , 197.9, 0, 0, 0, 0, 5, 8, 802319, , 
+82254, 1241406221638, 1241406732077, 0, 234, 1, 242, 102796, 3, 0, 133482, 5, 1
+83959, , , 385.90000000000003, 0, 0, 0, 0, 1, 0, 403501, , 
+84564, 1241403084673, 1241403246075, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+85021, , , 49.85, 0, 0, 0, 0, 2, 1, 17790, , 
+8938, , , 114.69999999999999, 0, 0, 0, 0, 14, 6, 541655, , 
+89757, , , 53.800000000000004, 0, 0, 0, 0, 3, 74, 20260, , 
+92300, , , 66.4, 0, 0, 0, 0, 1, 5, 185650, , 
+92388, , , 20.1, 0, 0, 0, 0, 1, 1, 106069, , 
+929303, , , 85.4, 0, 0, 0, 0, 3, 0, 189871, , 
+933369, 1241403114590, , 0, 331, 3, 96.66666666666667, 0, 0, 0, 0, 1, 0
+940573, 1241406287618, 1241406677345, 0, 0, 0, 0, 0, 0, 0, 757, 1, 
+94204, 1241407097889, , 0, 0, 0, 0, 0, 0, 0, 191252, 1, 0
+96675, 1241403036382, 1241405416021, 240.8, 2408, 6, 643.5, 205446, 4, 3, 200145, 4, 0
+<<<<EndTable
+
+PlayersOnlineNow=25
+PlayersOnlineEachMinute=0, 10, 12, 16, 19, 18, 22, 22, 21, 20, 20, 18, 18, 20, 21, 22, 22, 21, 21, 20, 22, 21, 21, 21, 22, 21, 23, 24, 23, 24, 24, 24, 27, 29, 30, 28, 24, 25, 23, 21, 19, 18, 17, 18, 19, 20, 24, 24, 25, 25, 27, 25, 22, 22, 23, 25, 24, 25, 23, 22, 22, 20, 19, 20, 20, 21, 23, 24, 27, 26
+PlayersInEachFeedingGame=1, 1, 3, 1, 1, 1, 2, 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 1, 2, 1, 1, 3, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 2, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 1, 2, 1, 3, 2, 1, 2, 1, 2, 1, 3, 2, 2, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 1, 2, 1, 1, 1, 2, 2, 1, 1, 1, 2, 2, 2, 1, 2, 1, 1, 1, 1, 2, 3, 1, 2, 2, 2, 2, 2, 1
+PlayersStarted=111
+PlayersQuit=86
+StatsStartTime=1241403035209
+StatsDumpTime=1241407235389
+<<<<EndStats
+2009-05-03 20:20:55,681 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1055910, prey=true, _predatorIndex=]
+2009-05-03 20:20:55,682 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1062853, prey=false, _predatorIndex=]
+2009-05-03 20:21:14,893 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1124156, prey=false, _predatorIndex=]
+2009-05-03 20:22:16,080 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=330095, prey=true, _predatorIndex=]
+2009-05-03 20:22:16,080 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1090611, prey=false, _predatorIndex=]
+2009-05-03 20:22:20,390 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=43386, prey=false, _predatorIndex=]
+2009-05-03 20:22:45,390 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=184671, prey=false, _predatorIndex=1090611]
+2009-05-03 20:22:45,500 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=184042, prey=false, _predatorIndex=1090611,184671]
+2009-05-03 20:22:47,754 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1226259, prey=false, _predatorIndex=]
+2009-05-03 20:23:44,199 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=136291, prey=true, _predatorIndex=]
+2009-05-03 20:23:44,199 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=797824, prey=false, _predatorIndex=]
+2009-05-03 20:24:49,794 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=43386, prey=false, _predatorIndex=]
+2009-05-03 20:24:56,937 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1092861, prey=false, _predatorIndex=]
+2009-05-03 20:25:10,603 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=311783, prey=true, _predatorIndex=]
+2009-05-03 20:25:10,604 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=171151, prey=false, _predatorIndex=]
+2009-05-03 20:26:18,523 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=402647, prey=false, _predatorIndex=43386]
+2009-05-03 20:26:20,499 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1226259, prey=true, _predatorIndex=]
+2009-05-03 20:26:20,499 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=645187, prey=false, _predatorIndex=]
+2009-05-03 20:26:20,527 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1090611, prey=false, _predatorIndex=645187]
+2009-05-03 20:26:49,185 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=184671, prey=false, _predatorIndex=645187,1090611]
+2009-05-03 20:27:22,558 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=797824, prey=false, _predatorIndex=]
+2009-05-03 20:27:25,466 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1124156, prey=true, _predatorIndex=]
+2009-05-03 20:27:25,466 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1117799, prey=false, _predatorIndex=]
+2009-05-03 20:27:37,701 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=184671, prey=false, _predatorIndex=]
+2009-05-03 20:27:54,648 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1055910, prey=true, _predatorIndex=]
+2009-05-03 20:27:54,649 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1092861, prey=false, _predatorIndex=]
+2009-05-03 20:28:35,623 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=452296, prey=false, _predatorIndex=645187,1090611,184671]
+2009-05-03 20:29:03,638 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1090611, prey=false, _predatorIndex=797824]
+2009-05-03 20:29:20,500 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=645187, prey=true, _predatorIndex=]
+2009-05-03 20:29:20,501 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1090611, prey=false, _predatorIndex=]
+
+>>>>BeginStats
+
+>>>>BeginTable
+PlayerId, StartTime, EndTime, ProgenyPayout, XPFromFeeding, FeedingGames, MeanFeedingScore, BloodBond, Progeny, GrandProgeny, Sire, Level, Invites
+1021278, , , 13.700000000000001, 0, 0, 0, 0, 2, 2, 452296, , 
+102796, 1241404929304, 1241405268319, 0, 179, 1, 228, 82254, 0, 0, 209610, 4, 0
+102929, , , 90.8, 0, 0, 0, 0, 2, 2, 71724, , 
+103033, 1241406303737, 1241406568211, 0, 1979, 8, 206.125, 767143, 8, 7, 81899, 5, 1
+103144, , , 57.300000000000004, 0, 0, 0, 0, 5, 15, 116005, , 
+1032648, , , 122.10000000000001, 0, 0, 0, 0, 4, 0, 234337, , 
+1055910, 1241404984170, , 13, 2719, 12, 143.16666666666666, 0, 1, 0, 63415, 3, 0
+106069, , , 10.05, 0, 0, 0, 0, 14, 11, 236834, , 
+1062853, 1241406455589, 1241407411108, 149.00000000000003, 1566, 7, 329, 1138895, 8, 8, 1124214, 6, 2
+1063955, 1241403206454, 1241403326609, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+10642, , , 51.300000000000004, 0, 0, 0, 0, 29, 9, 351598, , 
+1088614, 1241405910226, 1241406515542, 0, 629, 2, 258.5, 0, 0, 0, 208217, 1, 
+1090611, 1241405768082, , 0, 1221, 8, 107.25, 0, 0, 0, 1032648, 2, 0
+1092321, , , 122.75, 0, 0, 0, 0, 23, 19, 35568, , 
+1092861, 1241406929130, , 0, 555, 4, 134, 0, 0, 0, 1055910, 1, 0
+1094114, 1241403517647, 1241403551661, 0, 0, 0, 0, 0, 0, 0, 153097, 1, 
+111249, , , 139.4, 0, 0, 0, 0, 2, 9, 188370, , 
+1117799, 1241404739363, , 0, 3842, 12, 359.0833333333333, 0, 1, 0, 592692, 4, 0
+1120660, 1241403684940, 1241406654264, 0, 2241, 10, 278.2, 0, 2, 0, 0, 2, 2
+1120983, 1241407063074, 1241407331519, 0, 157, 1, 130, 0, 0, 0, 70997, 2, 
+1122449, , , 78.3, 0, 0, 0, 0, 5, 5, 555728, , 
+1123495, 1241406759388, 1241406871170, 0, 0, 0, 0, 0, 0, 0, 635003, 1, 
+1124156, 1241406186391, , 0, 1209, 7, 157.42857142857142, 0, 0, 0, 0, 2, 0
+1124214, , , 231.1, 0, 0, 0, 0, 5, 8, 1122449, , 
+11460, , , 186.9, 0, 0, 0, 0, 1, 7, 41022, , 
+1148098, 1241403058996, 1241403432171, 11.350000000000001, 137, 1, 164, 0, 2, 1, 1021278, 4, 
+1148755, 1241403092908, 1241405326167, 0, 913, 3, 381.3333333333333, 0, 9, 1, 1092321, 4, 2
+116005, , , 28.650000000000002, 0, 0, 0, 0, 6, 9, 130627, , 
+1160652, 1241403787472, 1241404392065, 0, 449, 3, 113.33333333333333, 0, 0, 0, 1207233, 2, 
+1163187, 1241406002337, 1241406146444, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+1178152, 1241404954368, 1241406132118, 0, 1015, 4, 162.5, 0, 0, 0, 1120660, 2, 
+1178608, 1241404180159, 1241404253341, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+1180132, 1241405746314, 1241406138348, 0, 699, 3, 156.66666666666666, 0, 0, 0, 1120660, 1, 
+1202977, 1241403696530, 1241404054080, 0, 85, 1, 85, 0, 0, 0, 54776, 2, 
+1203117, 1241406134419, , 0, 162, 1, 195, 1215840, 2, 0, 152578, 4, 1
+1203874, 1241405717293, 1241407471972, 0, 1427, 7, 123.57142857142857, 0, 0, 0, 929303, 2, 
+1207233, 1241403150668, 1241406372124, 35, 1473, 10, 119.5, 0, 1, 0, 239111, 2, 
+1222108, 1241403345165, 1241403492165, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+1223024, 1241403138231, 1241406126768, 22.700000000000003, 0, 0, 0, 0, 1, 0, 1148098, 1, 1
+1223946, 1241403036373, 1241405180583, 0, 227, 2, 99.5, 0, 0, 0, 1223024, 1, 
+1225912, 1241403036384, 1241403676500, 0, 249, 2, 124.5, 0, 0, 0, 0, 1, 
+1226131, 1241405676503, 1241405688397, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+1226259, 1241406737475, , 0, 590, 4, 149.25, 0, 0, 0, 0, 1, 0
+1226297, 1241405032158, 1241405112177, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+1226640, 1241407774578, 1241407813373, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+12770, , , 11.850000000000001, 0, 0, 0, 0, 23, 76, 383387, , 
+130244, , , 357.20000000000005, 0, 0, 0, 0, 3, 10, 237967, , 
+132832, 1241404582705, 1241404940766, 0, 201, 2, 100.5, 0, 1, 2, 92388, 3, 0
+133482, , , 23.400000000000002, 0, 0, 0, 0, 5, 12, 180951, , 
+136291, 1241407008366, 1241407570748, 0, 270, 2, 108.5, 0, 0, 0, 0, 1, 
+139168, 1241405617818, 1241406132119, 0, 908, 3, 278.6666666666667, 0, 2, 0, 102929, 4, 
+141364, , , 27.400000000000002, 0, 0, 0, 0, 6, 3, 16514, , 
+145006, , , 147.8, 0, 0, 0, 0, 3, 4, 245338, , 
+145552, 1241404419700, 1241405324524, 0, 312, 2, 123, 0, 0, 0, 171151, 2, 
+145609, 1241403611059, 1241404162914, 0, 664, 3, 234.66666666666666, 369307, 5, 4, 92300, 4, 0
+147988, 1241404469801, 1241404494457, 0, 0, 0, 0, 170446, 7, 8, 307477, 6, 2
+150179, 1241406121560, 1241406741235, 0, 513, 3, 171, 0, 1, 0, 10642, 4, 0
+152578, , , 16.2, 0, 0, 0, 0, 3, 4, 208699, , 
+153097, 1241405050228, , 0, 1490, 5, 337.8, 0, 7, 0, 1062853, 3, 7
+155004, 1241405360824, 1241405376118, 0, 0, 0, 0, 0, 1, 0, 145497, 2, 
+16514, , , 13.700000000000001, 0, 0, 0, 0, 5, 8, 1062, , 
+166371, , , 485.6, 0, 0, 0, 0, 4, 7, 267622, , 
+170191, , , 303.04999999999995, 0, 0, 0, 0, 3, 8, 202873, , 
+171151, 1241403771121, 1241407692211, 31.200000000000003, 2389, 9, 263, 77, 36, 17, 21067, 13, 3
+171513, 1241404048818, 1241407341364, 96.9, 2546, 12, 245.66666666666666, 0, 7, 6, 170191, 11, 2
+180951, , , 11.700000000000001, 0, 0, 0, 0, 2, 7, 153510, , 
+184042, 1241405792957, 1241407632926, 0, 1478, 8, 171.5, 0, 1, 1, 145006, 4, 0
+184671, 1241407786032, , 0, 1099, 8, 116.5, 0, 0, 0, 171513, 2, 0
+185363, 1241404175892, 1241405188698, 0, 997, 4, 142.5, 0, 0, 0, 187171, 2, 0
+185390, 1241404960348, 1241406075456, 0, 282, 2, 116, 0, 0, 0, 0, 1, 
+185650, , , 33.2, 0, 0, 0, 0, 2, 1, 185697, , 
+187171, , , 99.7, 0, 0, 0, 0, 1, 0, 85021, , 
+188370, , , 67.25, 0, 0, 0, 0, 2, 3, 163484, , 
+189871, , , 71.35000000000001, 0, 0, 0, 0, 1, 3, 351626, , 
+191252, , , 3.9000000000000004, 0, 0, 0, 0, 2, 0, 227147, , 
+195855, , , 8.950000000000001, 0, 0, 0, 0, 1, 2, 169869, , 
+200145, , , 361.20000000000005, 0, 0, 0, 0, 1, 4, 209656, , 
+20260, 1241407708735, , 0, 0, 0, 0, 17790, 17, 42, 12, 17, 13
+202873, , , 127.3, 0, 0, 0, 0, 1, 3, 341164, , 
+205446, 1241403229166, 1241405144052, 0, 2408, 6, 158.66666666666666, 96675, 0, 0, 96675, 3, 
+208217, , , 62.900000000000006, 0, 0, 0, 0, 2, 0, 1092321, , 
+208699, , , 8.1, 0, 0, 0, 0, 4, 8, 36200, , 
+208867, 1241403156851, 1241405192373, 0, 1345, 6, 211.33333333333334, 0, 0, 0, 111249, 3, 0
+209610, , , 17.900000000000002, 0, 0, 0, 0, 2, 0, 195855, , 
+209656, , , 120.4, 0, 0, 0, 0, 6, 10, 167153, , 
+21067, , , 254.50000000000003, 0, 0, 0, 0, 2, 36, 302907, , 
+227147, 1241405404501, 1241405441293, 1.9500000000000002, 0, 0, 0, 0, 6, 4, 238782, 5, 2
+234337, , , 61.050000000000004, 0, 0, 0, 0, 5, 5, 97523, , 
+237967, , , 178.60000000000002, 0, 0, 0, 0, 3, 7, 336228, , 
+239111, , , 164.80000000000004, 0, 0, 0, 0, 1, 1, 439277, , 
+245338, , , 73.9, 0, 0, 0, 0, 9, 12, 77353, , 
+249250, 1241403036376, 1241403573316, 0, 276, 2, 138, 0, 0, 0, 510740, 1, 
+267622, , , 242.8, 0, 0, 0, 0, 2, 5, 1632, , 
+269484, 1241403181759, 1241407452104, 0, 4856, 20, 249.25000000000006, 280766, 1, 0, 166371, 4, 0
+280766, 1241403195201, 1241406497099, 0, 3859, 17, 186.23529411764707, 269484, 0, 0, 83959, 3, 0
+283305, , , 192.1, 0, 0, 0, 0, 1, 8, 497122, , 
+298666, 1241405057911, 1241405065705, 0, 0, 0, 0, 868186, 6, 0, 259344, 7, 1
+302907, , , 119.45000000000002, 0, 0, 0, 0, 2, 3, 283855, , 
+311783, 1241406309221, , 0, 1869, 7, 345.42857142857144, 0, 7, 2, 11460, 9, 4
+330095, 1241407242725, 1241407462176, 0, 98, 1, 96, 0, 0, 0, 430891, 3, 0
+336228, , , 85.3, 0, 0, 0, 0, 9, 18, 307471, , 
+351430, , , 170.6, 0, 0, 0, 0, 11, 45, 336228, , 
+351598, , , 25.650000000000002, 0, 0, 0, 0, 1, 29, 359624, , 
+35568, , , 45.65, 0, 0, 0, 0, 1, 23, 258951, , 
+365218, , , 15.600000000000001, 0, 0, 0, 0, 3, 1, 551, , 
+39180, 1241406016069, 1241406196712, 0, 237, 1, 188, 0, 7, 15, 68619, 7, 1
+396113, , , 327.9, 0, 0, 0, 0, 2, 7, 44987, , 
+397835, , , 7.8500000000000005, 0, 0, 0, 0, 5, 26, 47379, , 
+402647, 1241407390585, , 0, 1063, 2, 531.5, 483162, 11, 3, 408501, 11, 6
+403501, , , 192.95000000000002, 0, 0, 0, 0, 5, 3, 124503, , 
+408501, , , 106.30000000000001, 0, 0, 0, 0, 6, 15, 637936, , 
+41022, , , 93.45, 0, 0, 0, 0, 1, 1, 412796, , 
+42736, 1241407345506, 1241407349207, 0, 0, 0, 0, 93562, 2, 3, 133482, 4, 1
+430891, , , 9.8, 0, 0, 0, 0, 9, 5, 111249, , 
+43386, 1241407241416, 1241407752185, 0, 3572, 11, 324.72727272727275, 106210, 4, 2, 130244, 7, 4
+439277, , , 73.65, 0, 0, 0, 0, 7, 1, 208602, , 
+44987, , , 163.95, 0, 0, 0, 0, 17, 18, 12770, , 
+452296, 1241407478708, , 6.8500000000000005, 573, 1, 1012, 0, 8, 5, 103144, 5, 2
+462408, 1241404513534, 1241404782581, 0, 0, 0, 0, 121604, 4, 1, 191950, 10, 2
+507149, 1241403286428, 1241403684545, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+510740, , , 27.6, 0, 0, 0, 0, 66, 2, 534632, , 
+534632, , , 13.8, 0, 0, 0, 0, 7, 79, 445660, , 
+538369, 1241404934784, 1241406329888, 0, 1706, 5, 492.8, 203784, 2, 0, 351430, 8, 1
+54776, , , 107.60000000000001, 0, 0, 0, 0, 71, 32, 89757, , 
+551, , , 7.800000000000001, 0, 0, 0, 0, 3, 3, 713, , 
+564162, 1241404009763, 1241404453274, 0, 274, 2, 137, 176275, 3, 0, 141364, 6, 2
+56633, 1241403480843, 1241403715297, 0, 156, 1, 197, 0, 0, 0, 365218, 2, 0
+575140, 1241403084677, 1241403112844, 0, 0, 0, 0, 0, 2, 0, 603011, 2, 
+57717, , , 18.5, 0, 0, 0, 0, 4, 10, 110178, , 
+58859, 1241403233471, 1241405115533, 0, 3279, 10, 442.9, 43017, 7, 4, 396113, 13, 2
+592692, , , 384.2, 0, 0, 0, 0, 8, 8, 283305, , 
+603011, 1241406969618, 1241407377072, 0, 0, 0, 0, 0, 4, 4, 562788, 5, 1
+60835, 1241406953615, 1241407692213, 0, 162, 2, 81, 0, 0, 0, 0, 1, 
+61045, , , 90.7, 0, 0, 0, 0, 6, 2, 74372, , 
+618696, 1241403818886, 1241403972121, 0, 0, 0, 0, 0, 0, 0, 336524, 2, 
+61984, 1241404579035, 1241405892154, 0, 907, 4, 280.25, 77060, 2, 5, 61045, 8, 2
+63415, , , 278.4, 0, 0, 0, 0, 6, 1, 8938, , 
+634607, 1241404466216, , 0, 991, 6, 165.16666666666666, 0, 2, 1, 54776, 4, 0
+637936, , , 53.150000000000006, 0, 0, 0, 0, 3, 6, 217283, , 
+645187, 1241407524705, , 0, 135, 1, 151, 0, 0, 0, 0, 1, 0
+68619, , , 23.700000000000003, 0, 0, 0, 0, 8, 10, 12770, , 
+70997, , , 15.700000000000001, 0, 0, 0, 0, 26, 29, 397835, , 
+71724, , , 45.4, 0, 0, 0, 0, 13, 4, 94103, , 
+74372, , , 45.35, 0, 0, 0, 0, 4, 10, 336024, , 
+797824, 1241407284898, , 0, 370, 2, 211, 574401, 15, 4, 82321, 7, 5
+802319, , , 98.95, 0, 0, 0, 0, 2, 5, 773108, , 
+81899, , , 197.9, 0, 0, 0, 0, 5, 8, 802319, , 
+82254, 1241406221638, 1241406732077, 0, 234, 1, 242, 102796, 3, 0, 133482, 5, 1
+82321, , , 37, 0, 0, 0, 0, 6, 35, 57717, , 
+83959, , , 385.90000000000003, 0, 0, 0, 0, 1, 0, 403501, , 
+84564, 1241403084673, 1241403246075, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+85021, , , 49.85, 0, 0, 0, 0, 2, 1, 17790, , 
+8938, , , 135.95, 0, 0, 0, 0, 14, 6, 541655, , 
+89757, , , 53.800000000000004, 0, 0, 0, 0, 3, 74, 20260, , 
+92300, , , 66.4, 0, 0, 0, 0, 1, 5, 185650, , 
+92388, , , 20.1, 0, 0, 0, 0, 1, 1, 106069, , 
+929303, , , 142.70000000000002, 0, 0, 0, 0, 3, 0, 189871, , 
+933369, 1241403114590, , 0, 331, 3, 96.66666666666667, 0, 0, 0, 0, 1, 0
+940573, 1241406287618, 1241406677345, 0, 0, 0, 0, 0, 0, 0, 757, 1, 
+94204, 1241407097889, 1241407724841, 0, 39, 1, 78, 0, 0, 0, 191252, 1, 0
+96675, 1241403036382, 1241405416021, 240.8, 2408, 6, 643.5, 205446, 4, 3, 200145, 4, 0
+<<<<EndTable
+
+PlayersOnlineNow=17
+PlayersOnlineEachMinute=0, 10, 12, 16, 19, 18, 22, 22, 21, 20, 20, 18, 18, 20, 21, 22, 22, 21, 21, 20, 22, 21, 21, 21, 22, 21, 23, 24, 23, 24, 24, 24, 27, 29, 30, 28, 24, 25, 23, 21, 19, 18, 17, 18, 19, 20, 24, 24, 25, 25, 27, 25, 22, 22, 23, 25, 24, 25, 23, 22, 22, 20, 19, 20, 20, 21, 23, 24, 27, 26, 25, 28, 26, 24, 20, 22, 21, 20, 18, 17
+PlayersInEachFeedingGame=1, 1, 3, 1, 1, 1, 2, 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 1, 2, 1, 1, 3, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 2, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 1, 2, 1, 3, 2, 1, 2, 1, 2, 1, 3, 2, 2, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 1, 2, 1, 1, 1, 2, 2, 1, 1, 1, 2, 2, 2, 1, 2, 1, 1, 1, 1, 2, 3, 1, 2, 2, 2, 2, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 3, 1, 2, 1, 2, 2
+PlayersStarted=121
+PlayersQuit=104
+StatsStartTime=1241403035209
+StatsDumpTime=1241407835430
+<<<<EndStats
+2009-05-03 20:30:41,322 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=184671, prey=false, _predatorIndex=]
+2009-05-03 20:30:54,824 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1055910, prey=false, _predatorIndex=645187,1090611,184671,452296]
+2009-05-03 20:31:53,304 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=645187, prey=true, _predatorIndex=]
+2009-05-03 20:31:53,305 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1090611, prey=false, _predatorIndex=]
+2009-05-03 20:31:56,148 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1092861, prey=false, _predatorIndex=1090611]
+2009-05-03 20:32:49,921 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=452296, prey=true, _predatorIndex=]
+2009-05-03 20:32:49,922 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1226259, prey=false, _predatorIndex=]
+2009-05-03 20:33:11,500 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=184671, prey=false, _predatorIndex=]
+2009-05-03 20:34:17,532 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=114461, prey=true, _predatorIndex=]
+2009-05-03 20:34:17,533 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=402647, prey=false, _predatorIndex=]
+2009-05-03 20:34:43,198 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=198681, prey=false, _predatorIndex=]
+2009-05-03 20:35:03,379 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1090611, prey=false, _predatorIndex=]
+2009-05-03 20:35:33,838 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1092861, prey=false, _predatorIndex=1090611]
+2009-05-03 20:35:35,431 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1124156, prey=true, _predatorIndex=]
+2009-05-03 20:35:35,431 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=184671, prey=false, _predatorIndex=]
+2009-05-03 20:37:52,353 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=198681, prey=false, _predatorIndex=1090611,1092861]
+2009-05-03 20:38:23,578 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=184671, prey=true, _predatorIndex=]
+2009-05-03 20:38:23,579 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1124156, prey=false, _predatorIndex=]
+2009-05-03 20:39:06,882 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1103506, prey=false, _predatorIndex=1090611,1092861,198681]
+2009-05-03 20:39:09,843 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=143268, prey=false, _predatorIndex=]
+2009-05-03 20:39:30,131 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=181652, prey=true, _predatorIndex=]
+2009-05-03 20:39:30,132 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=68793, prey=false, _predatorIndex=]
+2009-05-03 20:39:49,406 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1090611, prey=true, _predatorIndex=]
+2009-05-03 20:39:49,406 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1103506, prey=false, _predatorIndex=]
+2009-05-03 20:39:57,986 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1226259, prey=true, _predatorIndex=]
+2009-05-03 20:39:57,987 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=230164, prey=false, _predatorIndex=]
+

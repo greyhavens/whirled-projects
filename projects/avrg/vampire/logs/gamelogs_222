@@ -1,0 +1,136 @@
+2009-05-08 03:31:37,589 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=32314, prey=true, _predatorIndex=]
+2009-05-08 03:31:37,590 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=8527, prey=false, _predatorIndex=]
+2009-05-08 03:41:37,306 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=8527, prey=false, _predatorIndex=]
+2009-05-08 03:42:21,181 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1298302, prey=false, _predatorIndex=]
+2009-05-08 03:48:40,672 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=22308, prey=true, _predatorIndex=]
+2009-05-08 03:48:40,673 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1135140, prey=false, _predatorIndex=]
+2009-05-08 03:48:56,237 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=266759, prey=true, _predatorIndex=]
+2009-05-08 03:48:56,238 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=193558, prey=false, _predatorIndex=]
+2009-05-08 03:49:00,858 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=4139, prey=true, _predatorIndex=]
+2009-05-08 03:49:00,858 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1335959, prey=false, _predatorIndex=]
+2009-05-08 03:49:07,991 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=8527, prey=false, _predatorIndex=1335959]
+2009-05-08 03:56:47,594 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=4139, prey=true, _predatorIndex=]
+2009-05-08 03:56:47,594 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=71724, prey=false, _predatorIndex=]
+2009-05-08 03:58:58,178 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=8527, prey=false, _predatorIndex=71724]
+2009-05-08 04:01:18,311 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=547939, prey=true, _predatorIndex=]
+2009-05-08 04:01:18,312 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1039936, prey=false, _predatorIndex=]
+2009-05-08 04:01:23,657 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=994994, prey=false, _predatorIndex=1039936]
+2009-05-08 04:01:29,323 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=11600, prey=false, _predatorIndex=1039936,994994]
+2009-05-08 04:01:38,508 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=994994, prey=false, _predatorIndex=1039936,994994,11600]
+2009-05-08 04:02:11,238 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=71724, prey=true, _predatorIndex=]
+2009-05-08 04:02:11,238 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=994994, prey=false, _predatorIndex=]
+2009-05-08 04:02:42,446 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1238240, prey=false, _predatorIndex=]
+2009-05-08 04:03:07,799 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=414734, prey=false, _predatorIndex=]
+2009-05-08 04:03:40,595 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=4139, prey=false, _predatorIndex=994994]
+2009-05-08 04:03:47,545 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=8527, prey=false, _predatorIndex=994994,4139]
+2009-05-08 04:04:52,318 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=414734, prey=true, _predatorIndex=]
+2009-05-08 04:04:52,319 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=994994, prey=false, _predatorIndex=]
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=604441], trace=Error: Room not in game [roomId=604441]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoomProps()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:182]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_sendMessage_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:540]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.avrg::RoomSubControlServer/sendMessage()
+	at vampire.feeding.server::ServerCtx/sendMessage()
+	at vampire.feeding.server::ServerGameMode/onTimeOver()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+2009-05-08 04:05:28,434 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=547939, prey=true, _predatorIndex=]
+2009-05-08 04:05:28,434 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1039936, prey=false, _predatorIndex=]
+2009-05-08 04:05:34,202 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=11600, prey=false, _predatorIndex=1039936]
+2009-05-08 04:07:39,438 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=8527, prey=true, _predatorIndex=]
+2009-05-08 04:07:39,438 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=254432, prey=false, _predatorIndex=]
+2009-05-08 04:08:10,317 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=43402, prey=true, _predatorIndex=]
+2009-05-08 04:08:10,317 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=994994, prey=false, _predatorIndex=]
+2009-05-08 04:09:01,507 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1238240, prey=false, _predatorIndex=]
+2009-05-08 04:10:26,566 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=994994, prey=false, _predatorIndex=254432]
+2009-05-08 04:10:37,944 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=8527, prey=true, _predatorIndex=]
+2009-05-08 04:10:37,944 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=994994, prey=false, _predatorIndex=]
+2009-05-08 04:11:33,483 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=468188, prey=false, _predatorIndex=]
+2009-05-08 04:11:53,327 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1198724, prey=false, _predatorIndex=468188]
+2009-05-08 04:12:49,962 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1198724, prey=false, _predatorIndex=468188,1198724]
+2009-05-08 04:12:56,673 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=4139, prey=true, _predatorIndex=]
+2009-05-08 04:12:56,673 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=994994, prey=false, _predatorIndex=]
+2009-05-08 04:13:27,878 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=8527, prey=false, _predatorIndex=994994]
+2009-05-08 04:15:57,287 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=71724, prey=true, _predatorIndex=]
+2009-05-08 04:15:57,288 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=468188, prey=false, _predatorIndex=]
+2009-05-08 04:17:50,140 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1253020, prey=false, _predatorIndex=]
+2009-05-08 04:18:20,610 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=3200, prey=true, _predatorIndex=]
+2009-05-08 04:18:20,611 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=468188, prey=false, _predatorIndex=]
+2009-05-08 04:18:44,834 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=994994, prey=false, _predatorIndex=]
+2009-05-08 04:21:02,869 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=468188, prey=false, _predatorIndex=994994,8527]
+2009-05-08 04:23:45,990 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=3200, prey=true, _predatorIndex=]
+2009-05-08 04:23:45,991 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=468188, prey=false, _predatorIndex=]
+2009-05-08 04:26:05,021 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1184139, prey=false, _predatorIndex=]
+2009-05-08 04:29:20,979 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=4139, prey=true, _predatorIndex=]
+2009-05-08 04:29:20,979 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=468188, prey=false, _predatorIndex=]
+2009-05-08 04:29:31,423 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=8527, prey=false, _predatorIndex=468188]
+2009-05-08 04:31:36,069 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=468188, prey=false, _predatorIndex=]
+2009-05-08 04:39:42,823 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=546954, prey=false, _predatorIndex=]
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=1249780], trace=Error: Room not in game [roomId=1249780]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoomProps()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:182]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_sendMessage_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:540]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.avrg::RoomSubControlServer/sendMessage()
+	at vampire.feeding.server::ServerCtx/sendMessage()
+	at vampire.feeding.server::ServerGameMode/onTimeOver()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+2009-05-08 04:43:13,244 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=4139, prey=true, _predatorIndex=]
+2009-05-08 04:43:13,245 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=468188, prey=false, _predatorIndex=]
+2009-05-08 04:44:49,054 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1113643, prey=false, _predatorIndex=468188]
+2009-05-08 04:46:05,702 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=4139, prey=true, _predatorIndex=]
+2009-05-08 04:46:05,702 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=468188, prey=false, _predatorIndex=]
+2009-05-08 04:46:10,610 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=8527, prey=false, _predatorIndex=468188]
+2009-05-08 04:46:29,189 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=8527, prey=false, _predatorIndex=468188,8527]
+2009-05-08 04:46:38,448 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=8527, prey=false, _predatorIndex=468188,8527]
+2009-05-08 04:46:47,993 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=8527, prey=false, _predatorIndex=468188,8527]
+2009-05-08 04:47:47,999 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=11600, prey=false, _predatorIndex=]
+2009-05-08 04:50:04,423 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=468188, prey=false, _predatorIndex=]
+2009-05-08 04:50:09,400 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=11600, prey=false, _predatorIndex=468188]
+2009-05-08 04:50:21,765 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=11600, prey=false, _predatorIndex=]
+2009-05-08 04:52:29,927 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=468188, prey=false, _predatorIndex=]
+2009-05-08 04:52:45,051 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=11600, prey=false, _predatorIndex=468188]
+2009-05-08 04:52:49,931 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=11600, prey=false, _predatorIndex=]
+2009-05-08 04:55:03,083 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=468188, prey=false, _predatorIndex=]
+2009-05-08 04:57:35,864 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1335914, prey=true, _predatorIndex=]
+2009-05-08 04:57:35,865 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=47379, prey=false, _predatorIndex=]
+2009-05-08 04:58:08,113 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=336694, prey=true, _predatorIndex=]
+2009-05-08 04:58:08,114 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=13930, prey=false, _predatorIndex=]
+2009-05-08 04:59:55,615 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=47379, prey=false, _predatorIndex=13930]
+2009-05-08 05:00:31,886 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=4139, prey=true, _predatorIndex=]
+2009-05-08 05:00:31,886 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=8527, prey=false, _predatorIndex=]
+2009-05-08 05:01:17,834 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=336524, prey=true, _predatorIndex=]
+2009-05-08 05:01:17,834 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=13930, prey=false, _predatorIndex=]
+2009-05-08 05:04:30,024 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1335914, prey=true, _predatorIndex=]
+2009-05-08 05:04:30,025 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=336524, prey=false, _predatorIndex=]
+2009-05-08 05:04:30,186 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=13930, prey=false, _predatorIndex=336524]
+2009-05-08 05:07:28,089 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=54776, prey=true, _predatorIndex=]
+2009-05-08 05:07:28,090 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=13930, prey=false, _predatorIndex=]
+2009-05-08 05:11:40,295 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=389822, prey=true, _predatorIndex=]
+2009-05-08 05:11:40,296 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=13930, prey=false, _predatorIndex=]
+2009-05-08 05:15:40,601 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=60678, prey=true, _predatorIndex=]
+2009-05-08 05:15:40,602 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=54776, prey=false, _predatorIndex=]
+2009-05-08 05:17:32,198 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1268194, prey=false, _predatorIndex=]
+2009-05-08 05:17:48,008 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1268194, prey=false, _predatorIndex=]
+2009-05-08 05:18:35,054 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=294591, prey=true, _predatorIndex=]
+2009-05-08 05:18:35,055 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=60678, prey=false, _predatorIndex=]
+2009-05-08 05:20:08,748 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1268194, prey=false, _predatorIndex=]
+2009-05-08 05:21:26,673 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1286140, prey=false, _predatorIndex=]
+2009-05-08 05:24:47,989 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1286140, prey=false, _predatorIndex=]
+

@@ -1,0 +1,837 @@
+Vampire Server initializing...
+2009-04-27 06:25:33,288 ERROR: vampire.server.GameServer AVRServerGameControl should of been initialized already
+2009-04-27 06:26:22,738 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=175506, prey=true, _predatorIndex=]
+2009-04-27 06:26:22,739 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=300612, prey=false, _predatorIndex=]
+2009-04-27 06:26:56,424 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=899342, prey=false, _predatorIndex=]
+2009-04-27 06:27:20,854 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=80094, prey=false, _predatorIndex=899342]
+2009-04-27 06:27:59,499 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=true, _predatorIndex=]
+2009-04-27 06:27:59,500 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=54235, prey=false, _predatorIndex=]
+2009-04-27 06:29:53,548 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=3200, prey=true, _predatorIndex=]
+2009-04-27 06:29:53,548 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=899342, prey=false, _predatorIndex=]
+2009-04-27 06:32:57,886 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=3200, prey=true, _predatorIndex=]
+2009-04-27 06:32:57,887 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=899342, prey=false, _predatorIndex=]
+2009-04-27 06:34:24,630 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=false, _predatorIndex=899342]
+
+>>>>BeginStats
+
+>>>>BeginTable
+PlayerId, StartTime, EndTime, ProgenyPayout, XPFromFeeding, FeedingGames, MeanFeedingScore, BloodBond, Progeny, GrandProgeny, Sire, Level, Invites
+1229,undefined,0,6.300000000000001,0,0,0,0,4,8,713,undefined,undefined
+160138,undefined,0,24.5,0,0,0,0,6,5,150469,undefined,undefined
+175506,1240838733425,0,0,483,3,121,0,0,0,47379,3,0
+21457,undefined,0,24.15,0,0,0,0,1,1,380467,undefined,undefined
+223864,undefined,0,73.50000000000001,0,0,0,0,5,18,160138,undefined,undefined
+24474,undefined,0,12.600000000000001,0,0,0,0,7,3,1229,undefined,undefined
+300612,1240838742882,1240839243151,0,483,3,200,0,5,0,610359,4,5
+3200,1240838854191,0,49,490,2,360,71724,18,6,223864,12,2
+47379,undefined,0,48.3,0,0,0,0,3,1,54776,undefined,undefined
+54235,1240838830628,1240839192504,0,126,1,122,0,0,0,24474,1,null
+54776,undefined,0,24.15,0,0,0,0,34,3,89757,undefined,undefined
+610359,undefined,0,48.3,0,0,0,0,1,5,21457,undefined,undefined
+713,1240838766771,0,0,0,0,0,1265,9,52,12,16,6
+80094,1240838826354,0,0,0,0,0,65812,9,0,70997,5,4
+852908,1240838766677,0,0,179,2,117.5,0,0,0,0,1,0
+899342,1240838799627,0,0,589,3,119.33333333333333,0,0,0,3200,1,0
+<<<<EndTable
+
+PlayersOnlineNow=6
+PlayersOnlineEachMinute=0, 4, 7, 8, 8, 8, 8, 8, 7, 6
+PlayersInEachFeedingGame=2, 1, 2, 2, 2
+PlayersStarted=8
+PlayersQuit=2
+StatsStartTime=1240838733297
+StatsDumpTime=1240839333314
+<<<<EndStats
+2009-04-27 06:36:03,512 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=613540, prey=false, _predatorIndex=899342,852908]
+2009-04-27 06:36:17,023 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=613540, prey=false, _predatorIndex=]
+2009-04-27 06:36:52,558 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=899342, prey=false, _predatorIndex=899342,852908,613540]
+2009-04-27 06:37:26,626 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=3200, prey=true, _predatorIndex=]
+2009-04-27 06:37:26,627 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=899342, prey=false, _predatorIndex=]
+2009-04-27 06:40:41,813 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=true, _predatorIndex=]
+2009-04-27 06:40:41,813 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=899342, prey=false, _predatorIndex=]
+2009-04-27 06:40:42,077 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=899342]
+2009-04-27 06:44:01,463 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=true, _predatorIndex=]
+2009-04-27 06:44:01,464 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96912, prey=false, _predatorIndex=]
+2009-04-27 06:44:45,134 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=]
+2009-04-27 06:44:53,506 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=]
+2009-04-27 06:45:03,133 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=783830, prey=false, _predatorIndex=]
+2009-04-27 06:45:32,773 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=]
+
+>>>>BeginStats
+
+>>>>BeginTable
+PlayerId, StartTime, EndTime, ProgenyPayout, XPFromFeeding, FeedingGames, MeanFeedingScore, BloodBond, Progeny, GrandProgeny, Sire, Level, Invites
+1229,undefined,0,6.300000000000001,0,0,0,0,4,8,713,undefined,undefined
+160138,undefined,0,46.05,0,0,0,0,6,5,150469,undefined,undefined
+163298,1240839907455,1240839932404,0,0,0,0,0,0,0,0,1,null
+175506,1240838733425,1240839341249,0,483,3,121,0,0,0,47379,3,0
+21457,undefined,0,24.15,0,0,0,0,1,1,380467,undefined,undefined
+223864,undefined,0,152.25000000000006,0,0,0,0,5,19,160138,undefined,undefined
+22731,undefined,0,14.100000000000001,0,0,0,0,9,0,351430,undefined,undefined
+24474,undefined,0,12.600000000000001,0,0,0,0,7,3,1229,undefined,undefined
+300612,1240838742882,1240839243151,0,483,3,200,0,5,0,610359,4,5
+3200,1240839862827,1240839924384,120.29999999999998,921,4,321,71724,19,6,223864,12,2
+351430,undefined,0,7.050000000000001,0,0,0,0,11,9,336228,undefined,undefined
+430717,1240839451986,0,0,0,0,0,898582,28,15,256746,12,6
+47379,undefined,0,48.3,0,0,0,0,3,1,54776,undefined,undefined
+54235,1240838830628,1240839192504,0,126,1,122,0,0,0,24474,1,null
+54776,undefined,0,24.15,0,0,0,0,34,3,89757,undefined,undefined
+610359,undefined,0,48.3,0,0,0,0,1,5,21457,undefined,undefined
+613540,1240839336734,1240839468961,0,0,0,0,0,1,0,171151,2,0
+713,1240838766771,0,0,0,0,0,1265,9,52,12,16,6
+783830,1240839860341,0,0,0,0,0,0,0,0,0,1,0
+80094,1240838826354,1240839514680,0,0,0,0,65812,9,0,70997,5,4
+852908,1240838766677,0,0,553,4,131.25,0,0,0,3200,1,0
+899342,1240838799627,1240839865472,0,928,5,135.8,0,0,0,3200,1,null
+96813,1240839848355,0,0,141,1,108,0,0,0,22731,2,0
+96912,1240839797461,0,0,0,0,0,0,1,0,138741,4,0
+<<<<EndTable
+
+PlayersOnlineNow=6
+PlayersOnlineEachMinute=0, 4, 7, 8, 8, 8, 8, 8, 7, 6, 6, 6, 7, 6, 6, 5, 5, 5, 5, 7
+PlayersInEachFeedingGame=2, 1, 2, 2, 2, 1, 2, 3, 2, 1
+PlayersStarted=18
+PlayersQuit=12
+StatsStartTime=1240838733297
+StatsDumpTime=1240839933334
+<<<<EndStats
+2009-04-27 06:47:57,239 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=642023, prey=true, _predatorIndex=]
+2009-04-27 06:47:57,240 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=66513, prey=false, _predatorIndex=]
+2009-04-27 06:48:06,523 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=66513, prey=false, _predatorIndex=]
+2009-04-27 06:48:28,464 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=642023, prey=true, _predatorIndex=]
+2009-04-27 06:48:28,464 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=]
+2009-04-27 06:48:41,531 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=false, _predatorIndex=96813]
+2009-04-27 06:49:26,418 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=783830, prey=false, _predatorIndex=]
+2009-04-27 06:51:24,805 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=713, prey=true, _predatorIndex=]
+2009-04-27 06:51:24,806 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1265, prey=false, _predatorIndex=]
+2009-04-27 06:52:38,564 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=true, _predatorIndex=]
+2009-04-27 06:52:38,565 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=620394, prey=false, _predatorIndex=]
+2009-04-27 06:53:25,681 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=false, _predatorIndex=]
+2009-04-27 06:54:36,174 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=642023, prey=false, _predatorIndex=]
+2009-04-27 06:55:17,271 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=902918, prey=false, _predatorIndex=]
+
+>>>>BeginStats
+
+>>>>BeginTable
+PlayerId, StartTime, EndTime, ProgenyPayout, XPFromFeeding, FeedingGames, MeanFeedingScore, BloodBond, Progeny, GrandProgeny, Sire, Level, Invites
+1229,undefined,0,6.300000000000001,0,0,0,0,4,8,713,undefined,undefined
+1265,1240840226074,0,0,0,0,0,713,11,17,12,15,3
+138741,undefined,0,16.2,0,0,0,0,1,1,437210,undefined,undefined
+160138,undefined,0,46.05,0,0,0,0,6,5,150469,undefined,undefined
+163298,1240839935912,1240839938641,0,0,0,0,0,0,0,0,1,null
+175506,1240838733425,1240839341249,0,483,3,121,0,0,0,47379,3,0
+21457,undefined,0,24.15,0,0,0,0,1,1,380467,undefined,undefined
+223864,undefined,0,171.50000000000006,0,0,0,0,5,19,160138,undefined,undefined
+22731,undefined,0,71,0,0,0,0,9,0,351430,undefined,undefined
+24474,undefined,0,12.600000000000001,0,0,0,0,7,3,1229,undefined,undefined
+2843,undefined,0,19.200000000000003,0,0,0,0,7,1,3383,undefined,undefined
+300612,1240838742882,1240839243151,0,483,3,200,0,5,0,610359,4,5
+3200,1240839862827,1240839924384,158.79999999999998,921,4,321,71724,19,6,223864,12,2
+3383,undefined,0,9.600000000000001,0,0,0,0,4,7,12791,undefined,undefined
+351430,undefined,0,35.5,0,0,0,0,11,9,336228,undefined,undefined
+430717,1240839451986,1240840076606,0,0,0,0,898582,28,15,256746,12,6
+437210,undefined,0,8.1,0,0,0,0,1,1,395317,undefined,undefined
+47379,undefined,0,48.3,0,0,0,0,3,1,54776,undefined,undefined
+54235,1240838830628,1240839192504,0,126,1,122,0,0,0,24474,1,null
+54776,undefined,0,24.15,0,0,0,0,34,3,89757,undefined,undefined
+610359,undefined,0,48.3,0,0,0,0,1,5,21457,undefined,undefined
+613540,1240839336734,1240839468961,0,0,0,0,0,1,0,171151,2,0
+620394,1240840352797,0,0,192,1,205,0,1,0,2843,4,0
+642023,1240840000714,0,0,384,2,213.5,0,0,0,0,2,0
+66513,1240840028728,1240840124718,0,0,0,0,0,0,0,520592,3,0
+713,1240838766771,0,0,0,0,0,1265,9,52,12,16,6
+783830,1240839860341,1240840179228,0,176,2,88,0,0,0,0,1,null
+80094,1240838826354,1240839514680,0,0,0,0,65812,9,0,70997,5,4
+852908,1240838766677,0,0,938,7,122.14285714285714,0,0,0,3200,2,0
+867397,1240840085543,1240840090791,0,0,0,0,0,0,0,0,1,null
+899342,1240838799627,1240839865472,0,928,5,135.8,0,0,0,3200,1,null
+902918,1240840430706,0,0,0,0,0,0,0,0,0,1,0
+910461,1240840045029,1240840047384,0,0,0,0,0,0,0,0,1,null
+96813,1240840274945,0,0,710,4,163.75,0,0,0,22731,2,0
+96912,1240839797461,1240840243925,0,162,1,180,0,1,0,138741,4,0
+<<<<EndTable
+
+PlayersOnlineNow=7
+PlayersOnlineEachMinute=0, 4, 7, 8, 8, 8, 8, 8, 7, 6, 6, 6, 7, 6, 6, 5, 5, 5, 5, 7, 6, 6, 9, 7, 6, 6, 5, 6, 6, 7
+PlayersInEachFeedingGame=2, 1, 2, 2, 2, 1, 2, 3, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1
+PlayersStarted=28
+PlayersQuit=21
+StatsStartTime=1240838733297
+StatsDumpTime=1240840533353
+<<<<EndStats
+2009-04-27 06:55:39,062 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=]
+2009-04-27 06:57:25,476 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=false, _predatorIndex=]
+2009-04-27 06:58:02,700 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=902918, prey=true, _predatorIndex=]
+2009-04-27 06:58:02,701 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=]
+2009-04-27 07:01:11,337 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=false, _predatorIndex=]
+2009-04-27 07:02:47,269 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=176013, prey=true, _predatorIndex=]
+2009-04-27 07:02:47,270 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=620394, prey=false, _predatorIndex=]
+2009-04-27 07:04:48,120 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=398327, prey=false, _predatorIndex=]
+2009-04-27 07:05:29,602 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=false, _predatorIndex=398327]
+
+>>>>BeginStats
+
+>>>>BeginTable
+PlayerId, StartTime, EndTime, ProgenyPayout, XPFromFeeding, FeedingGames, MeanFeedingScore, BloodBond, Progeny, GrandProgeny, Sire, Level, Invites
+1229,undefined,0,6.300000000000001,0,0,0,0,4,8,713,undefined,undefined
+1265,1240840226074,1240841049640,0,0,0,0,713,11,17,12,15,3
+138741,undefined,0,16.2,0,0,0,0,1,1,437210,undefined,undefined
+160138,undefined,0,46.05,0,0,0,0,6,5,150469,undefined,undefined
+163298,1240840970115,1240840972531,0,0,0,0,0,0,0,0,1,null
+175506,1240838733425,1240839341249,0,483,3,121,0,0,0,47379,3,0
+176013,1240840891853,0,0,166,1,137,327986,3,2,95378,4,1
+21457,undefined,0,24.15,0,0,0,0,1,1,380467,undefined,undefined
+223864,undefined,0,183.00000000000006,0,0,0,0,5,19,160138,undefined,undefined
+22731,undefined,0,109.69999999999999,0,0,0,0,9,0,351430,undefined,undefined
+24474,undefined,0,12.600000000000001,0,0,0,0,7,3,1229,undefined,undefined
+2843,undefined,0,35.800000000000004,0,0,0,0,7,1,3383,undefined,undefined
+300612,1240838742882,1240839243151,0,483,3,200,0,5,0,610359,4,5
+3200,1240839862827,1240839924384,181.79999999999998,921,4,321,71724,19,6,223864,12,2
+3383,undefined,0,17.900000000000002,0,0,0,0,4,7,12791,undefined,undefined
+351430,undefined,0,54.849999999999994,0,0,0,0,11,9,336228,undefined,undefined
+353846,1240841125102,0,0,0,0,0,0,0,0,193978,2,1
+3653,undefined,0,8.3,0,0,0,0,14,2,86951,undefined,undefined
+398327,1240841080324,0,0,0,0,0,0,0,0,171750,1,0
+430717,1240839451986,1240840076606,0,0,0,0,898582,28,15,256746,12,6
+437210,undefined,0,8.1,0,0,0,0,1,1,395317,undefined,undefined
+47379,undefined,0,48.3,0,0,0,0,3,1,54776,undefined,undefined
+54235,1240838830628,1240839192504,0,126,1,122,0,0,0,24474,1,null
+54776,undefined,0,24.15,0,0,0,0,34,3,89757,undefined,undefined
+610359,undefined,0,48.3,0,0,0,0,1,5,21457,undefined,undefined
+613540,1240839336734,1240839468961,0,0,0,0,0,1,0,171151,2,0
+620394,1240840352797,0,0,358,2,199.5,0,1,0,2843,4,0
+642023,1240840000714,1240840699876,0,512,3,185,0,0,0,0,2,null
+66513,1240840028728,1240840124718,0,0,0,0,0,0,0,520592,3,0
+713,1240838766771,1240841055499,0,0,0,0,1265,9,52,12,16,6
+783830,1240839860341,1240840179228,0,176,2,88,0,0,0,0,1,null
+80094,1240838826354,1240839514680,0,0,0,0,65812,9,0,70997,5,4
+852908,1240838766677,0,0,1168,9,120.55555555555556,0,0,0,3200,2,0
+867397,1240840085543,1240840090791,0,0,0,0,0,0,0,0,1,null
+899342,1240838799627,1240839865472,0,928,5,135.8,0,0,0,3200,1,null
+902918,1240840430706,1240840948254,0,176,1,121,0,0,0,0,1,null
+910461,1240840045029,1240840047384,0,0,0,0,0,0,0,0,1,null
+95378,undefined,0,16.6,0,0,0,0,2,3,3653,undefined,undefined
+96813,1240841048020,1240841078641,0,1097,6,182.66666666666666,0,0,0,22731,2,null
+96912,1240839797461,1240840243925,0,162,1,180,0,1,0,138741,4,0
+<<<<EndTable
+
+PlayersOnlineNow=5
+PlayersOnlineEachMinute=0, 4, 7, 8, 8, 8, 8, 8, 7, 6, 6, 6, 7, 6, 6, 5, 5, 5, 5, 7, 6, 6, 9, 7, 6, 6, 5, 6, 6, 7, 7, 7, 7, 6, 6, 5, 6, 5, 5, 4
+PlayersInEachFeedingGame=2, 1, 2, 2, 2, 1, 2, 3, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1
+PlayersStarted=34
+PlayersQuit=29
+StatsStartTime=1240838733297
+StatsDumpTime=1240841133363
+<<<<EndStats
+2009-04-27 07:06:08,082 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=353846, prey=true, _predatorIndex=]
+2009-04-27 07:06:08,082 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=]
+2009-04-27 07:07:23,344 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=134185, prey=true, _predatorIndex=]
+2009-04-27 07:07:23,344 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=398327, prey=false, _predatorIndex=]
+2009-04-27 07:08:40,275 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=100626, prey=true, _predatorIndex=]
+2009-04-27 07:08:40,275 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=]
+2009-04-27 07:08:51,134 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=false, _predatorIndex=96813]
+2009-04-27 07:10:06,302 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=398327, prey=false, _predatorIndex=398327]
+2009-04-27 07:10:06,827 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=353846, prey=false, _predatorIndex=96813,852908]
+2009-04-27 07:10:24,949 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=false, _predatorIndex=96813,852908,353846]
+2009-04-27 07:11:04,583 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=398327]
+2009-04-27 07:11:32,769 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=true, _predatorIndex=]
+2009-04-27 07:11:32,770 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=353846, prey=false, _predatorIndex=]
+2009-04-27 07:13:28,795 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=false, _predatorIndex=353846]
+2009-04-27 07:14:22,105 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=true, _predatorIndex=]
+2009-04-27 07:14:22,106 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=353846, prey=false, _predatorIndex=]
+2009-04-27 07:14:37,155 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=872803, prey=true, _predatorIndex=]
+2009-04-27 07:14:37,155 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=false, _predatorIndex=]
+
+>>>>BeginStats
+
+>>>>BeginTable
+PlayerId, StartTime, EndTime, ProgenyPayout, XPFromFeeding, FeedingGames, MeanFeedingScore, BloodBond, Progeny, GrandProgeny, Sire, Level, Invites
+100626,1240841257504,0,0,285,2,131,0,0,0,0,1,0
+1229,undefined,0,6.300000000000001,0,0,0,0,4,8,713,undefined,undefined
+1265,1240840226074,1240841049640,0,0,0,0,713,11,17,12,15,3
+134185,1240841204257,0,0,87,2,51,0,0,0,351626,2,2
+138741,undefined,0,16.2,0,0,0,0,1,1,437210,undefined,undefined
+160138,undefined,0,46.05,0,0,0,0,6,5,150469,undefined,undefined
+163298,1240840970115,1240840972531,0,0,0,0,0,0,0,0,1,null
+171750,undefined,0,20.400000000000002,0,0,0,0,1,0,176013,undefined,undefined
+175506,1240838733425,1240839341249,0,483,3,121,0,0,0,47379,3,0
+176013,1240840891853,1240841171609,10.200000000000001,166,1,137,327986,3,2,95378,4,1
+183403,undefined,0,4.3500000000000005,0,0,0,0,1,7,129656,undefined,undefined
+193978,undefined,0,30.9,0,0,0,0,2,0,196206,undefined,undefined
+196206,undefined,0,15.45,0,0,0,0,4,2,157720,undefined,undefined
+21457,undefined,0,24.15,0,0,0,0,1,1,380467,undefined,undefined
+221862,1240841658458,0,0,0,0,0,0,0,0,0,1,0
+223864,undefined,0,189.60000000000005,0,0,0,0,5,19,160138,undefined,undefined
+22731,undefined,0,155.89999999999998,0,0,0,0,9,0,351430,undefined,undefined
+24474,undefined,0,12.600000000000001,0,0,0,0,7,3,1229,undefined,undefined
+2843,undefined,0,35.800000000000004,0,0,0,0,7,1,3383,undefined,undefined
+300612,1240838742882,1240839243151,0,483,3,200,0,5,0,610359,4,5
+3200,1240839862827,1240839924384,194.99999999999997,921,4,321,71724,19,6,223864,12,2
+3383,undefined,0,17.900000000000002,0,0,0,0,4,7,12791,undefined,undefined
+351430,undefined,0,77.94999999999999,0,0,0,0,11,9,336228,undefined,undefined
+351626,undefined,0,8.700000000000001,0,0,0,0,7,0,183403,undefined,undefined
+353846,1240841125102,0,0,309,2,128,0,0,0,193978,2,1
+3653,undefined,0,8.3,0,0,0,0,14,3,86951,undefined,undefined
+398327,1240841080324,1240841509137,0,204,2,109,0,0,0,171750,1,null
+430717,1240839451986,1240840076606,0,0,0,0,898582,28,15,256746,12,6
+437210,undefined,0,8.1,0,0,0,0,1,1,395317,undefined,undefined
+47379,undefined,0,48.3,0,0,0,0,3,1,54776,undefined,undefined
+525683,1240841573627,1240841652059,0,0,0,0,0,0,0,356549,2,0
+54235,1240838830628,1240839192504,0,126,1,122,0,0,0,24474,1,null
+54776,undefined,0,24.15,0,0,0,0,34,3,89757,undefined,undefined
+610359,undefined,0,48.3,0,0,0,0,1,5,21457,undefined,undefined
+613540,1240839336734,1240839468961,0,0,0,0,0,1,0,171151,2,0
+620394,1240840352797,0,0,358,2,199.5,0,1,0,2843,4,0
+642023,1240840000714,1240840699876,0,512,3,185,0,0,0,0,2,null
+66513,1240840028728,1240840124718,0,0,0,0,0,0,0,520592,3,0
+713,1240838766771,1240841055499,0,0,0,0,1265,9,52,12,16,6
+783830,1240839860341,1240840179228,0,176,2,88,0,0,0,0,1,null
+80094,1240838826354,1240839514680,0,0,0,0,65812,9,0,70997,5,4
+852908,1240838766677,0,0,1300,10,124.3,0,0,0,3200,2,0
+867397,1240840085543,1240840090791,0,0,0,0,0,0,0,0,1,null
+872803,1240841537681,0,0,0,0,0,0,0,0,0,1,0
+899342,1240838799627,1240839865472,0,928,5,135.8,0,0,0,3200,1,null
+902918,1240840430706,1240840948254,0,176,1,121,0,0,0,0,1,null
+910461,1240840045029,1240840047384,0,0,0,0,0,0,0,0,1,null
+95378,undefined,0,16.6,0,0,0,0,2,3,3653,undefined,undefined
+96813,1240841137097,0,0,1559,9,178.66666666666666,0,0,0,22731,2,0
+96912,1240839797461,1240840243925,0,162,1,180,0,1,0,138741,4,0
+<<<<EndTable
+
+PlayersOnlineNow=8
+PlayersOnlineEachMinute=0, 4, 7, 8, 8, 8, 8, 8, 7, 6, 6, 6, 7, 6, 6, 5, 5, 5, 5, 7, 6, 6, 9, 7, 6, 6, 5, 6, 6, 7, 7, 7, 7, 6, 6, 5, 6, 5, 5, 4, 5, 5, 6, 7, 7, 7, 7, 7, 8, 8
+PlayersInEachFeedingGame=2, 1, 2, 2, 2, 1, 2, 3, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2
+PlayersStarted=40
+PlayersQuit=32
+StatsStartTime=1240838733297
+StatsDumpTime=1240841733376
+<<<<EndStats
+2009-04-27 07:15:48,158 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=620394, prey=false, _predatorIndex=]
+2009-04-27 07:16:06,210 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=620394, prey=false, _predatorIndex=]
+2009-04-27 07:17:10,772 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=true, _predatorIndex=]
+2009-04-27 07:17:10,773 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=]
+2009-04-27 07:17:23,828 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=353846, prey=false, _predatorIndex=96813]
+2009-04-27 07:18:01,513 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=298666, prey=false, _predatorIndex=]
+2009-04-27 07:18:37,451 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=20731, prey=false, _predatorIndex=]
+2009-04-27 07:19:28,243 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=209273, prey=true, _predatorIndex=]
+2009-04-27 07:19:28,243 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=]
+2009-04-27 07:19:39,161 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=false, _predatorIndex=96813]
+2009-04-27 07:19:52,894 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=353846, prey=true, _predatorIndex=]
+2009-04-27 07:19:52,894 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=false, _predatorIndex=]
+2009-04-27 07:22:09,245 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=907250, prey=true, _predatorIndex=]
+2009-04-27 07:22:09,246 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=]
+2009-04-27 07:22:45,647 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=613540, prey=false, _predatorIndex=]
+2009-04-27 07:23:15,284 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=false, _predatorIndex=613540]
+2009-04-27 07:23:23,411 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=false, _predatorIndex=96813]
+2009-04-27 07:23:47,572 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=209273, prey=true, _predatorIndex=]
+2009-04-27 07:23:47,572 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=false, _predatorIndex=]
+2009-04-27 07:24:38,866 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=922157, prey=true, _predatorIndex=]
+2009-04-27 07:24:38,867 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=922472, prey=false, _predatorIndex=]
+2009-04-27 07:24:57,634 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=922472]
+2009-04-27 07:25:15,792 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=613540, prey=true, _predatorIndex=]
+2009-04-27 07:25:15,793 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=907250, prey=false, _predatorIndex=]
+
+>>>>BeginStats
+
+>>>>BeginTable
+PlayerId, StartTime, EndTime, ProgenyPayout, XPFromFeeding, FeedingGames, MeanFeedingScore, BloodBond, Progeny, GrandProgeny, Sire, Level, Invites
+100626,1240841257504,1240841811996,0,285,2,131,0,0,0,0,1,null
+1229,undefined,0,6.300000000000001,0,0,0,0,4,8,713,undefined,undefined
+1265,1240840226074,1240841049640,0,0,0,0,713,11,17,12,15,3
+134185,1240841204257,0,0,87,2,51,0,0,0,351626,2,2
+138741,undefined,0,16.2,0,0,0,0,1,1,437210,undefined,undefined
+143538,undefined,0,7,0,0,0,0,2,16,1531,undefined,undefined
+160138,undefined,0,46.05,0,0,0,0,6,5,150469,undefined,undefined
+163298,1240840970115,1240840972531,0,0,0,0,0,0,0,0,1,null
+171151,undefined,0,17.8,0,0,0,0,32,1,21067,undefined,undefined
+171750,undefined,0,20.400000000000002,0,0,0,0,1,0,176013,undefined,undefined
+175506,1240838733425,1240839341249,0,483,3,121,0,0,0,47379,3,0
+176013,1240840891853,1240841171609,10.200000000000001,166,1,137,327986,3,2,95378,4,1
+183403,undefined,0,4.3500000000000005,0,0,0,0,1,7,129656,undefined,undefined
+193978,undefined,0,56.9,0,0,0,0,2,0,196206,undefined,undefined
+196206,undefined,0,28.45,0,0,0,0,4,2,157720,undefined,undefined
+20731,1240841750217,1240842113766,0,0,0,0,32314,6,1,16040,6,3
+209273,1240841947689,0,0,234,1,288,0,0,0,0,3,0
+21067,undefined,0,8.9,0,0,0,0,2,32,302907,undefined,undefined
+21457,undefined,0,24.15,0,0,0,0,1,1,380467,undefined,undefined
+221862,1240841658458,1240841957961,0,0,0,0,0,0,0,0,1,0
+223864,undefined,0,207.25000000000009,0,0,0,0,5,19,160138,undefined,undefined
+22731,undefined,0,219.99999999999997,0,0,0,0,9,0,351430,undefined,undefined
+24474,undefined,0,12.600000000000001,0,0,0,0,7,3,1229,undefined,undefined
+259344,undefined,0,14,0,0,0,0,16,0,143538,undefined,undefined
+2843,undefined,0,35.800000000000004,0,0,0,0,7,1,3383,undefined,undefined
+298666,1240841805170,1240842299716,0,140,2,70,0,0,0,259344,3,0
+300612,1240838742882,1240839243151,0,483,3,200,0,5,0,610359,4,5
+3200,1240839862827,1240839924384,230.29999999999995,921,4,321,71724,19,6,223864,12,2
+3383,undefined,0,17.900000000000002,0,0,0,0,4,7,12791,undefined,undefined
+351430,undefined,0,109.99999999999999,0,0,0,0,11,9,336228,undefined,undefined
+351626,undefined,0,8.700000000000001,0,0,0,0,7,0,183403,undefined,undefined
+353846,1240841125102,0,0,569,4,119.5,0,0,0,193978,2,1
+3653,undefined,0,8.3,0,0,0,0,14,3,86951,undefined,undefined
+398327,1240841080324,1240841509137,0,204,2,109,0,0,0,171750,1,null
+415271,undefined,0,15.200000000000001,0,0,0,0,5,0,66689,undefined,undefined
+430717,1240839451986,1240840076606,0,0,0,0,898582,28,15,256746,12,6
+437210,undefined,0,8.1,0,0,0,0,1,1,395317,undefined,undefined
+47379,undefined,0,48.3,0,0,0,0,3,1,54776,undefined,undefined
+525683,1240841573627,1240841652059,0,0,0,0,0,0,0,356549,2,0
+54235,1240838830628,1240839192504,0,126,1,122,0,0,0,24474,1,null
+54776,undefined,0,24.15,0,0,0,0,34,3,89757,undefined,undefined
+610359,undefined,0,48.3,0,0,0,0,1,5,21457,undefined,undefined
+613540,1240842160557,0,0,178,1,178,0,1,0,171151,2,0
+620394,1240840352797,1240841962236,0,358,2,199.5,0,1,0,2843,4,null
+642023,1240840000714,1240840699876,0,512,3,185,0,0,0,0,2,null
+66513,1240840028728,1240840124718,0,0,0,0,0,0,0,520592,3,0
+66689,undefined,0,7.6000000000000005,0,0,0,0,4,5,124585,undefined,undefined
+713,1240838766771,1240841055499,0,0,0,0,1265,9,52,12,16,6
+783830,1240839860341,1240840179228,0,176,2,88,0,0,0,0,1,null
+80094,1240838826354,1240839514680,0,0,0,0,65812,9,0,70997,5,4
+852908,1240838766677,0,0,1653,13,122.61538461538461,0,0,0,3200,2,0
+867397,1240840085543,1240840090791,0,0,0,0,0,0,0,0,1,null
+872803,1240841537681,1240841889388,0,126,1,132,0,0,0,0,1,null
+899342,1240838799627,1240839865472,0,928,5,135.8,0,0,0,3200,1,null
+902918,1240840430706,1240840948254,0,176,1,121,0,0,0,0,1,null
+907250,1240842069539,0,0,152,1,144,0,0,0,415271,1,0
+910461,1240840045029,1240840047384,0,0,0,0,0,0,0,0,1,null
+922157,1240842260203,0,0,0,0,0,0,0,0,0,1,0
+922472,1240842234655,0,0,0,0,0,0,0,0,0,1,0
+95378,undefined,0,16.6,0,0,0,0,2,3,3653,undefined,undefined
+96813,1240841137097,0,0,2200,13,171.76923076923077,0,0,0,22731,3,0
+96912,1240839797461,1240840243925,0,162,1,180,0,1,0,138741,4,0
+<<<<EndTable
+
+PlayersOnlineNow=9
+PlayersOnlineEachMinute=0, 4, 7, 8, 8, 8, 8, 8, 7, 6, 6, 6, 7, 6, 6, 5, 5, 5, 5, 7, 6, 6, 9, 7, 6, 6, 5, 6, 6, 7, 7, 7, 7, 6, 6, 5, 6, 5, 5, 4, 5, 5, 6, 7, 7, 7, 7, 7, 8, 8, 8, 9, 9, 8, 7, 7, 8, 8, 8, 10
+PlayersInEachFeedingGame=2, 1, 2, 2, 2, 1, 2, 3, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 1, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2
+PlayersStarted=50
+PlayersQuit=41
+StatsStartTime=1240838733297
+StatsDumpTime=1240842333400
+<<<<EndStats
+2009-04-27 07:26:22,092 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=852908, prey=true, _predatorIndex=]
+2009-04-27 07:26:22,092 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=922472, prey=false, _predatorIndex=]
+2009-04-27 07:28:03,669 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=613540, prey=false, _predatorIndex=]
+2009-04-27 07:29:04,654 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=]
+2009-04-27 07:31:50,489 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=713, prey=false, _predatorIndex=]
+2009-04-27 07:32:15,147 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=209273, prey=true, _predatorIndex=]
+2009-04-27 07:32:15,152 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=]
+2009-04-27 07:34:38,111 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=209273, prey=true, _predatorIndex=]
+2009-04-27 07:34:38,111 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=415271, prey=false, _predatorIndex=]
+2009-04-27 07:35:16,301 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=134185, prey=true, _predatorIndex=]
+2009-04-27 07:35:16,302 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=]
+
+>>>>BeginStats
+
+>>>>BeginTable
+PlayerId, StartTime, EndTime, ProgenyPayout, XPFromFeeding, FeedingGames, MeanFeedingScore, BloodBond, Progeny, GrandProgeny, Sire, Level, Invites
+100626,1240841257504,1240841811996,0,285,2,131,0,0,0,0,1,null
+12,undefined,0,40.6,0,0,0,0,19,52,383387,undefined,undefined
+1229,undefined,0,6.300000000000001,0,0,0,0,4,8,713,undefined,undefined
+1265,1240840226074,1240841049640,0,0,0,0,713,11,17,12,15,3
+134185,1240841204257,0,0,87,2,51,0,0,0,351626,2,2
+138741,undefined,0,16.2,0,0,0,0,1,1,437210,undefined,undefined
+143538,undefined,0,7,0,0,0,0,2,16,1531,undefined,undefined
+160138,undefined,0,46.05,0,0,0,0,6,5,150469,undefined,undefined
+163298,1240840970115,1240840972531,0,0,0,0,0,0,0,0,1,null
+171151,undefined,0,49.400000000000006,0,0,0,0,32,1,21067,undefined,undefined
+171750,undefined,0,20.400000000000002,0,0,0,0,1,0,176013,undefined,undefined
+175506,1240838733425,1240839341249,0,483,3,121,0,0,0,47379,3,0
+176013,1240840891853,1240841171609,10.200000000000001,166,1,137,327986,3,2,95378,4,1
+183403,undefined,0,4.3500000000000005,0,0,0,0,1,7,129656,undefined,undefined
+193978,undefined,0,56.9,0,0,0,0,2,0,196206,undefined,undefined
+196206,undefined,0,28.45,0,0,0,0,4,2,157720,undefined,undefined
+20731,1240841750217,1240842113766,0,0,0,0,32314,6,1,16040,6,3
+209273,1240841947689,0,0,761,3,297.3333333333333,0,0,0,0,3,0
+21067,undefined,0,24.700000000000003,0,0,0,0,2,32,302907,undefined,undefined
+21457,undefined,0,24.15,0,0,0,0,1,1,380467,undefined,undefined
+221862,1240841658458,1240841957961,0,0,0,0,0,0,0,0,1,0
+22308,1240842834100,0,0,0,0,0,0,0,0,775158,1,0
+223864,undefined,0,224.4000000000001,0,0,0,0,5,19,160138,undefined,undefined
+22731,undefined,0,275.4,0,0,0,0,9,0,351430,undefined,undefined
+24474,undefined,0,12.600000000000001,0,0,0,0,7,3,1229,undefined,undefined
+259344,undefined,0,14,0,0,0,0,16,0,143538,undefined,undefined
+2843,undefined,0,35.800000000000004,0,0,0,0,7,1,3383,undefined,undefined
+298666,1240841805170,1240842299716,0,140,2,70,0,0,0,259344,3,0
+300612,1240838742882,1240839243151,0,483,3,200,0,5,0,610359,4,5
+3200,1240839862827,1240839924384,264.59999999999997,921,4,321,71724,19,6,223864,12,2
+3383,1240842723552,0,17.900000000000002,0,0,0,968,4,9,12791,14,2
+351430,undefined,0,137.7,0,0,0,0,11,9,336228,undefined,undefined
+351626,undefined,0,8.700000000000001,0,0,0,0,7,1,183403,undefined,undefined
+353846,1240841125102,1240842656758,0,569,4,119.5,0,0,0,193978,2,1
+3653,undefined,0,8.3,0,0,0,0,14,3,86951,undefined,undefined
+383387,undefined,0,20.3,0,0,0,0,3,41,0,undefined,undefined
+398327,1240841080324,1240841509137,0,204,2,109,0,0,0,171750,1,null
+415271,1240842545279,0,32.1,0,0,0,0,5,1,66689,4,0
+430717,1240839451986,1240840076606,0,0,0,0,898582,28,15,256746,12,6
+437210,undefined,0,8.1,0,0,0,0,1,1,395317,undefined,undefined
+47379,undefined,0,48.3,0,0,0,0,3,1,54776,undefined,undefined
+525683,1240841573627,1240841652059,0,0,0,0,0,0,0,356549,2,0
+54235,1240838830628,1240839192504,0,126,1,122,0,0,0,24474,1,null
+54776,undefined,0,24.15,0,0,0,0,34,3,89757,undefined,undefined
+610359,undefined,0,48.3,0,0,0,0,1,5,21457,undefined,undefined
+613540,1240842160557,0,0,494,3,164.33333333333334,0,1,0,171151,2,0
+620394,1240840352797,1240841962236,0,358,2,199.5,0,1,0,2843,4,null
+642023,1240840000714,1240840699876,0,512,3,185,0,0,0,0,2,null
+66513,1240840028728,1240840124718,0,0,0,0,0,0,0,520592,3,0
+66689,undefined,0,16.05,0,0,0,0,4,5,124585,undefined,undefined
+713,1240842546172,0,0,406,1,406,1265,9,52,12,16,6
+77,1240842531908,1240842562921,0,0,0,0,171151,10,2,12770,13,2
+783830,1240839860341,1240840179228,0,176,2,88,0,0,0,0,1,null
+80094,1240838826354,1240839514680,0,0,0,0,65812,9,0,70997,5,4
+852908,1240838766677,1240842529389,0,1996,15,130.2,0,0,0,3200,2,null
+867397,1240840085543,1240840090791,0,0,0,0,0,0,0,0,1,null
+872803,1240841537681,1240841889388,0,126,1,132,0,0,0,0,1,null
+899342,1240838799627,1240839865472,0,928,5,135.8,0,0,0,3200,1,null
+902918,1240840430706,1240840948254,0,176,1,121,0,0,0,0,1,null
+907250,1240842069539,1240842538017,0,321,2,156.5,0,0,0,415271,1,null
+910461,1240840045029,1240840047384,0,0,0,0,0,0,0,0,1,null
+922157,1240842260203,1240842535138,0,116,1,104,0,0,0,0,1,null
+922472,1240842234655,1240842537334,0,0,0,0,0,0,0,0,1,null
+95378,undefined,0,16.6,0,0,0,0,2,3,3653,undefined,undefined
+961460,1240842887965,0,0,0,0,0,0,0,0,0,1,0
+96813,1240841137097,0,0,2754,16,173.8125,0,0,0,22731,3,0
+96912,1240839797461,1240840243925,0,162,1,180,0,1,0,138741,4,0
+<<<<EndTable
+
+PlayersOnlineNow=9
+PlayersOnlineEachMinute=0, 4, 7, 8, 8, 8, 8, 8, 7, 6, 6, 6, 7, 6, 6, 5, 5, 5, 5, 7, 6, 6, 9, 7, 6, 6, 5, 6, 6, 7, 7, 7, 7, 6, 6, 5, 6, 5, 5, 4, 5, 5, 6, 7, 7, 7, 7, 7, 8, 8, 8, 9, 9, 8, 7, 7, 8, 8, 8, 10, 9, 9, 9, 9, 7, 7, 6, 7, 7, 8
+PlayersInEachFeedingGame=2, 1, 2, 2, 2, 1, 2, 3, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 1, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2
+PlayersStarted=56
+PlayersQuit=47
+StatsStartTime=1240838733297
+StatsDumpTime=1240842933429
+<<<<EndStats
+2009-04-27 07:37:48,156 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=]
+2009-04-27 07:40:16,296 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=227143, prey=true, _predatorIndex=]
+2009-04-27 07:40:16,297 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=769463, prey=false, _predatorIndex=]
+2009-04-27 07:40:59,353 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=96813, prey=false, _predatorIndex=]
+2009-04-27 07:43:47,954 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=769463, prey=false, _predatorIndex=]
+2009-04-27 07:44:26,057 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=227143, prey=true, _predatorIndex=]
+2009-04-27 07:44:26,058 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=415271, prey=false, _predatorIndex=]
+
+>>>>BeginStats
+
+>>>>BeginTable
+PlayerId, StartTime, EndTime, ProgenyPayout, XPFromFeeding, FeedingGames, MeanFeedingScore, BloodBond, Progeny, GrandProgeny, Sire, Level, Invites
+100626,1240841257504,1240841811996,0,285,2,131,0,0,0,0,1,null
+12,undefined,0,125.00000000000001,0,0,0,0,19,52,383387,undefined,undefined
+1229,undefined,0,6.300000000000001,0,0,0,0,4,8,713,undefined,undefined
+124585,undefined,0,15,0,0,0,0,2,4,143278,undefined,undefined
+1265,1240840226074,1240841049640,0,0,0,0,713,11,17,12,15,3
+134185,1240841204257,0,0,158,3,38.333333333333336,0,0,0,351626,2,2
+138741,undefined,0,16.2,0,0,0,0,1,1,437210,undefined,undefined
+143538,undefined,0,7,0,0,0,0,2,16,1531,undefined,undefined
+160138,undefined,0,46.05,0,0,0,0,6,5,150469,undefined,undefined
+163298,1240840970115,1240840972531,0,0,0,0,0,0,0,0,1,null
+171151,undefined,0,49.400000000000006,0,0,0,0,32,1,21067,undefined,undefined
+171750,undefined,0,20.400000000000002,0,0,0,0,1,0,176013,undefined,undefined
+175506,1240838733425,1240839341249,0,483,3,121,0,0,0,47379,3,0
+176013,1240840891853,1240841171609,10.200000000000001,166,1,137,327986,3,2,95378,4,1
+183403,undefined,0,7.9,0,0,0,0,1,7,129656,undefined,undefined
+193978,undefined,0,56.9,0,0,0,0,2,0,196206,undefined,undefined
+196206,undefined,0,28.45,0,0,0,0,4,2,157720,undefined,undefined
+20731,1240841750217,1240842113766,0,0,0,0,32314,6,1,16040,6,3
+209273,1240841947689,1240843237667,0,1061,4,329.75,0,0,0,0,3,null
+21067,undefined,0,24.700000000000003,0,0,0,0,2,32,302907,undefined,undefined
+21457,undefined,0,24.15,0,0,0,0,1,1,380467,undefined,undefined
+221862,1240841658458,1240841957961,0,0,0,0,0,0,0,0,1,0
+22308,1240842834100,0,0,0,0,0,0,0,0,775158,1,0
+223864,undefined,0,224.4000000000001,0,0,0,0,5,19,160138,undefined,undefined
+227143,1240843166525,0,0,66,1,132,0,0,0,0,1,0
+22731,undefined,0,317.40000000000003,0,0,0,0,9,0,351430,undefined,undefined
+24474,undefined,0,12.600000000000001,0,0,0,0,7,3,1229,undefined,undefined
+259344,undefined,0,14,0,0,0,0,16,0,143538,undefined,undefined
+2843,undefined,0,35.800000000000004,0,0,0,0,7,1,3383,undefined,undefined
+298666,1240841805170,1240842299716,0,140,2,70,0,0,0,259344,3,0
+300612,1240838742882,1240839243151,0,483,3,200,0,5,0,610359,4,5
+3200,1240839862827,1240839924384,264.59999999999997,921,4,321,71724,19,6,223864,12,2
+3383,1240842723552,0,17.900000000000002,0,0,0,968,4,9,12791,14,2
+351430,undefined,0,158.70000000000002,0,0,0,0,11,9,336228,undefined,undefined
+351626,undefined,0,15.8,0,0,0,0,7,1,183403,undefined,undefined
+353846,1240841125102,1240842656758,0,569,4,119.5,0,0,0,193978,2,1
+3653,undefined,0,8.3,0,0,0,0,14,3,86951,undefined,undefined
+383387,undefined,0,62.50000000000001,0,0,0,0,3,41,0,undefined,undefined
+398327,1240841080324,1240841509137,0,204,2,109,0,0,0,171750,1,null
+415271,1240843455185,0,32.1,300,1,173,0,5,1,66689,4,0
+430717,1240839451986,1240840076606,0,0,0,0,898582,28,15,256746,12,6
+437210,undefined,0,8.1,0,0,0,0,1,1,395317,undefined,undefined
+437689,1240843447200,1240843456242,0,0,0,0,0,1,1,403501,4,0
+47379,undefined,0,48.3,0,0,0,0,3,1,54776,undefined,undefined
+525683,1240841573627,1240841652059,0,0,0,0,0,0,0,356549,2,0
+54235,1240838830628,1240839192504,0,126,1,122,0,0,0,24474,1,null
+54776,undefined,0,24.15,0,0,0,0,34,3,89757,undefined,undefined
+610359,undefined,0,48.3,0,0,0,0,1,5,21457,undefined,undefined
+613540,1240842160557,1240843111478,0,494,3,164.33333333333334,0,1,0,171151,2,0
+620394,1240840352797,1240841962236,0,358,2,199.5,0,1,0,2843,4,null
+642023,1240840000714,1240840699876,0,512,3,185,0,0,0,0,2,null
+66513,1240840028728,1240840124718,0,0,0,0,0,0,0,520592,3,0
+66689,undefined,0,46.05,0,0,0,0,4,5,124585,undefined,undefined
+713,1240842546172,0,0,1250,4,312.5,1265,9,52,12,16,6
+769463,1240843417709,0,0,0,0,0,75498,0,0,430717,4,0
+77,1240842531908,1240842562921,0,0,0,0,171151,10,2,12770,13,2
+783830,1240839860341,1240840179228,0,176,2,88,0,0,0,0,1,null
+80094,1240838826354,1240839514680,0,0,0,0,65812,9,0,70997,5,4
+852908,1240838766677,1240842529389,0,1996,15,130.2,0,0,0,3200,2,null
+867397,1240840085543,1240840090791,0,0,0,0,0,0,0,0,1,null
+872803,1240841537681,1240841889388,0,126,1,132,0,0,0,0,1,null
+899342,1240838799627,1240839865472,0,928,5,135.8,0,0,0,3200,1,null
+902918,1240840430706,1240840948254,0,176,1,121,0,0,0,0,1,null
+907250,1240842069539,1240842538017,0,321,2,156.5,0,0,0,415271,1,null
+910461,1240840045029,1240840047384,0,0,0,0,0,0,0,0,1,null
+922157,1240842260203,1240842535138,0,116,1,104,0,0,0,0,1,null
+922472,1240842234655,1240842537334,0,0,0,0,0,0,0,0,1,null
+95378,undefined,0,16.6,0,0,0,0,2,3,3653,undefined,undefined
+961460,1240842887965,1240842954025,0,0,0,0,0,0,0,0,1,null
+96813,1240841137097,1240843395532,0,3174,19,171.52631578947367,0,0,0,22731,3,null
+96912,1240839797461,1240840243925,0,162,1,180,0,1,0,138741,4,0
+<<<<EndTable
+
+PlayersOnlineNow=7
+PlayersOnlineEachMinute=0, 4, 7, 8, 8, 8, 8, 8, 7, 6, 6, 6, 7, 6, 6, 5, 5, 5, 5, 7, 6, 6, 9, 7, 6, 6, 5, 6, 6, 7, 7, 7, 7, 6, 6, 5, 6, 5, 5, 4, 5, 5, 6, 7, 7, 7, 7, 7, 8, 8, 8, 9, 9, 8, 7, 7, 8, 8, 8, 10, 9, 9, 9, 9, 7, 7, 6, 7, 7, 8, 9, 8, 9, 7, 7, 8, 7, 7, 5, 7
+PlayersInEachFeedingGame=2, 1, 2, 2, 2, 1, 2, 3, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 1, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 1, 2, 1, 1, 2
+PlayersStarted=62
+PlayersQuit=55
+StatsStartTime=1240838733297
+StatsDumpTime=1240843533459
+<<<<EndStats
+2009-04-27 07:47:03,630 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=415271, prey=false, _predatorIndex=]
+2009-04-27 07:48:25,682 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=353846, prey=false, _predatorIndex=]
+2009-04-27 07:49:49,170 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=227143, prey=false, _predatorIndex=353846]
+2009-04-27 07:52:38,692 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=462408, prey=true, _predatorIndex=]
+2009-04-27 07:52:38,692 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=878292, prey=false, _predatorIndex=]
+2009-04-27 07:55:08,119 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=353846, prey=true, _predatorIndex=]
+2009-04-27 07:55:08,119 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=878292, prey=false, _predatorIndex=]
+2009-04-27 07:55:19,149 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=462408, prey=true, _predatorIndex=]
+2009-04-27 07:55:19,150 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=544450, prey=false, _predatorIndex=]
+
+>>>>BeginStats
+
+>>>>BeginTable
+PlayerId, StartTime, EndTime, ProgenyPayout, XPFromFeeding, FeedingGames, MeanFeedingScore, BloodBond, Progeny, GrandProgeny, Sire, Level, Invites
+100626,1240841257504,1240841811996,0,285,2,131,0,0,0,0,1,null
+12,undefined,0,147.10000000000002,0,0,0,0,19,52,383387,undefined,undefined
+1229,undefined,0,6.300000000000001,0,0,0,0,4,8,713,undefined,undefined
+124585,undefined,0,22.25,0,0,0,0,2,4,143278,undefined,undefined
+1265,1240840226074,1240841049640,0,0,0,0,713,11,17,12,15,3
+134185,1240841204257,0,0,158,3,38.333333333333336,0,0,0,351626,2,2
+138741,undefined,0,16.2,0,0,0,0,1,1,437210,undefined,undefined
+143538,undefined,0,7,0,0,0,0,2,16,1531,undefined,undefined
+160138,undefined,0,46.05,0,0,0,0,6,5,150469,undefined,undefined
+163298,1240840970115,1240840972531,0,0,0,0,0,0,0,0,1,null
+171151,undefined,0,49.400000000000006,0,0,0,0,32,1,21067,undefined,undefined
+171750,undefined,0,20.400000000000002,0,0,0,0,1,0,176013,undefined,undefined
+175506,1240838733425,1240839341249,0,483,3,121,0,0,0,47379,3,0
+176013,1240840891853,1240841171609,10.200000000000001,166,1,137,327986,3,2,95378,4,1
+183403,undefined,0,7.9,0,0,0,0,1,7,129656,undefined,undefined
+191950,undefined,0,32.550000000000004,0,0,0,0,1,2,191984,undefined,undefined
+191984,undefined,0,10.850000000000001,0,0,0,0,15,1,142178,undefined,undefined
+193978,undefined,0,93.89999999999999,0,0,0,0,2,0,196206,undefined,undefined
+196206,undefined,0,46.949999999999996,0,0,0,0,4,2,157720,undefined,undefined
+20731,1240841750217,1240842113766,0,0,0,0,32314,6,1,16040,6,3
+208692,1240843715785,0,0,0,0,0,0,1,4,541246,3,0
+209273,1240841947689,1240843237667,0,1061,4,329.75,0,0,0,0,3,null
+21067,undefined,0,24.700000000000003,0,0,0,0,2,32,302907,undefined,undefined
+21457,undefined,0,24.15,0,0,0,0,1,1,380467,undefined,undefined
+221862,1240841658458,1240841957961,0,0,0,0,0,0,0,0,1,0
+22308,1240842834100,0,0,0,0,0,0,0,0,775158,1,0
+223864,undefined,0,224.4000000000001,0,0,0,0,5,19,160138,undefined,undefined
+227143,1240843166525,0,0,408,3,140.66666666666666,0,0,0,0,1,0
+22731,undefined,0,317.40000000000003,0,0,0,0,9,0,351430,undefined,undefined
+24474,undefined,0,12.600000000000001,0,0,0,0,7,3,1229,undefined,undefined
+256746,undefined,0,6.8500000000000005,0,0,0,0,5,28,61984,undefined,undefined
+259344,undefined,0,14,0,0,0,0,16,0,143538,undefined,undefined
+2843,undefined,0,35.800000000000004,0,0,0,0,7,1,3383,undefined,undefined
+298666,1240841805170,1240842299716,0,140,2,70,0,0,0,259344,3,0
+300612,1240838742882,1240839243151,0,483,3,200,0,5,0,610359,4,5
+3200,1240839862827,1240839924384,264.59999999999997,921,4,321,71724,19,6,223864,12,2
+3383,1240842723552,0,17.900000000000002,0,0,0,968,4,9,12791,14,2
+351430,undefined,0,158.70000000000002,0,0,0,0,11,9,336228,undefined,undefined
+351626,undefined,0,15.8,0,0,0,0,7,2,183403,undefined,undefined
+353846,1240843688780,0,0,939,7,131.42857142857142,0,0,0,193978,2,1
+3653,undefined,0,8.3,0,0,0,0,14,3,86951,undefined,undefined
+383387,undefined,0,73.55000000000001,0,0,0,0,3,41,0,undefined,undefined
+398327,1240841080324,1240841509137,0,204,2,109,0,0,0,171750,1,null
+415271,1240843455185,1240843717852,32.1,445,2,166.5,0,5,1,66689,4,0
+430717,1240839451986,1240840076606,13.700000000000001,0,0,0,898582,28,15,256746,12,6
+437210,undefined,0,8.1,0,0,0,0,1,1,395317,undefined,undefined
+437689,1240843447200,1240843456242,0,0,0,0,0,1,1,403501,4,0
+462408,1240843626365,0,21.700000000000003,217,1,324,638933,2,0,191950,8,1
+47379,undefined,0,48.3,0,0,0,0,3,1,54776,undefined,undefined
+525683,1240841573627,1240841652059,0,0,0,0,0,0,0,356549,2,0
+54235,1240838830628,1240839192504,0,126,1,122,0,0,0,24474,1,null
+544450,1240843749582,0,0,0,0,0,283305,2,2,439277,4,0
+54776,undefined,0,24.15,0,0,0,0,34,3,89757,undefined,undefined
+610359,undefined,0,48.3,0,0,0,0,1,5,21457,undefined,undefined
+613540,1240842160557,1240843111478,0,494,3,164.33333333333334,0,1,0,171151,2,0
+620394,1240840352797,1240841962236,0,358,2,199.5,0,1,0,2843,4,null
+642023,1240840000714,1240840699876,0,512,3,185,0,0,0,0,2,null
+66513,1240840028728,1240840124718,0,0,0,0,0,0,0,520592,3,0
+66689,undefined,0,60.55,0,0,0,0,4,5,124585,undefined,undefined
+713,1240842546172,0,0,1471,5,294.2,1265,9,52,12,16,6
+769463,1240843417709,0,0,137,1,137,75498,0,0,430717,4,0
+77,1240842531908,1240842562921,0,0,0,0,171151,10,2,12770,13,2
+783830,1240839860341,1240840179228,0,176,2,88,0,0,0,0,1,null
+80094,1240838826354,1240839514680,0,0,0,0,65812,9,0,70997,5,4
+852908,1240838766677,1240842529389,0,1996,15,130.2,0,0,0,3200,2,null
+867397,1240840085543,1240840090791,0,0,0,0,0,0,0,0,1,null
+872803,1240841537681,1240841889388,0,126,1,132,0,0,0,0,1,null
+878292,1240843941857,0,0,217,1,109,0,0,0,462408,1,0
+899342,1240838799627,1240839865472,0,928,5,135.8,0,0,0,3200,1,null
+902918,1240840430706,1240840948254,0,176,1,121,0,0,0,0,1,null
+907250,1240842069539,1240842538017,0,321,2,156.5,0,0,0,415271,1,null
+910461,1240840045029,1240840047384,0,0,0,0,0,0,0,0,1,null
+922157,1240842260203,1240842535138,0,116,1,104,0,0,0,0,1,null
+922472,1240842234655,1240842537334,0,0,0,0,0,0,0,0,1,null
+95378,undefined,0,16.6,0,0,0,0,2,3,3653,undefined,undefined
+961460,1240842887965,1240842954025,0,0,0,0,0,0,0,0,1,null
+96813,1240841137097,1240843395532,0,3174,19,171.52631578947367,0,0,0,22731,3,null
+96912,1240839797461,1240840243925,0,162,1,180,0,1,0,138741,4,0
+<<<<EndTable
+
+PlayersOnlineNow=11
+PlayersOnlineEachMinute=0, 4, 7, 8, 8, 8, 8, 8, 7, 6, 6, 6, 7, 6, 6, 5, 5, 5, 5, 7, 6, 6, 9, 7, 6, 6, 5, 6, 6, 7, 7, 7, 7, 6, 6, 5, 6, 5, 5, 4, 5, 5, 6, 7, 7, 7, 7, 7, 8, 8, 8, 9, 9, 8, 7, 7, 8, 8, 8, 10, 9, 9, 9, 9, 7, 7, 6, 7, 7, 8, 9, 8, 9, 7, 7, 8, 7, 7, 5, 7, 7, 7, 8, 9, 10, 10, 10, 11, 11, 11
+PlayersInEachFeedingGame=2, 1, 2, 2, 2, 1, 2, 3, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 1, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 1, 2, 1, 1, 2, 1, 1, 2, 2
+PlayersStarted=68
+PlayersQuit=57
+StatsStartTime=1240838733297
+StatsDumpTime=1240844133468
+<<<<EndStats
+2009-04-27 07:57:29,627 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=878292, prey=true, _predatorIndex=]
+2009-04-27 07:57:29,628 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=353846, prey=false, _predatorIndex=]
+2009-04-27 07:59:32,515 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=462408, prey=false, _predatorIndex=]
+2009-04-27 07:59:49,378 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=878292, prey=true, _predatorIndex=]
+2009-04-27 07:59:49,379 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=353846, prey=false, _predatorIndex=]
+2009-04-27 08:00:02,089 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=878292, prey=true, _predatorIndex=]
+2009-04-27 08:00:02,090 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=353846, prey=false, _predatorIndex=]
+2009-04-27 08:00:07,468 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=3200, prey=true, _predatorIndex=]
+2009-04-27 08:00:07,469 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=20731, prey=false, _predatorIndex=]
+2009-04-27 08:01:46,920 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=613540, prey=false, _predatorIndex=]
+2009-04-27 08:02:06,867 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=544450, prey=true, _predatorIndex=]
+2009-04-27 08:02:06,867 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=22308, prey=false, _predatorIndex=]
+2009-04-27 08:02:18,184 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=713, prey=false, _predatorIndex=]
+2009-04-27 08:03:00,893 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=145090, prey=false, _predatorIndex=]
+2009-04-27 08:03:06,866 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=143489, prey=false, _predatorIndex=145090]
+2009-04-27 08:03:29,913 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=462408, prey=true, _predatorIndex=]
+2009-04-27 08:03:29,914 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=143489, prey=false, _predatorIndex=]
+2009-04-27 08:04:15,697 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=878292, prey=true, _predatorIndex=]
+2009-04-27 08:04:15,697 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=353846, prey=false, _predatorIndex=]
+2009-04-27 08:04:26,048 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=208692, prey=true, _predatorIndex=]
+2009-04-27 08:04:26,048 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=769463, prey=false, _predatorIndex=]
+2009-04-27 08:04:27,254 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=613540, prey=true, _predatorIndex=]
+2009-04-27 08:04:27,254 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=620394, prey=false, _predatorIndex=]
+
+>>>>BeginStats
+
+>>>>BeginTable
+PlayerId, StartTime, EndTime, ProgenyPayout, XPFromFeeding, FeedingGames, MeanFeedingScore, BloodBond, Progeny, GrandProgeny, Sire, Level, Invites
+100626,1240841257504,1240841811996,0,285,2,131,0,0,0,0,1,null
+12,undefined,0,179.00000000000003,0,0,0,0,19,52,383387,undefined,undefined
+1229,undefined,0,6.300000000000001,0,0,0,0,4,8,713,undefined,undefined
+124585,undefined,0,22.25,0,0,0,0,2,4,143278,undefined,undefined
+1265,1240840226074,1240841049640,0,0,0,0,713,11,17,12,15,3
+134185,1240841204257,0,0,158,3,38.333333333333336,0,0,0,351626,2,2
+138741,undefined,0,16.2,0,0,0,0,1,1,437210,undefined,undefined
+143489,1240844554443,0,0,193,1,122,0,0,0,47445,4,0
+143538,undefined,0,7,0,0,0,0,2,16,1531,undefined,undefined
+145090,1240844483960,0,0,95,1,95,0,0,0,0,1,0
+160138,undefined,0,88.6,0,0,0,0,6,5,150469,undefined,undefined
+16040,undefined,0,85.10000000000001,0,0,0,0,7,6,3,undefined,undefined
+163298,1240840970115,1240840972531,0,0,0,0,0,0,0,0,1,null
+171151,undefined,0,72,0,0,0,0,32,1,21067,undefined,undefined
+171750,undefined,0,20.400000000000002,0,0,0,0,1,0,176013,undefined,undefined
+175506,1240838733425,1240839341249,0,483,3,121,0,0,0,47379,3,0
+176013,1240840891853,1240841171609,10.200000000000001,166,1,137,327986,3,2,95378,4,1
+183403,undefined,0,7.9,0,0,0,0,1,7,129656,undefined,undefined
+191950,undefined,0,162.55000000000004,0,0,0,0,1,2,191984,undefined,undefined
+191984,undefined,0,67.7,0,0,0,0,15,1,142178,undefined,undefined
+193978,undefined,0,126.5,0,0,0,0,2,0,196206,undefined,undefined
+196206,undefined,0,63.25,0,0,0,0,4,2,157720,undefined,undefined
+20731,1240844389219,0,0,851,2,274.5,32314,6,1,16040,6,3
+208602,undefined,0,40.95,0,0,0,0,1,5,351626,undefined,undefined
+208692,1240843715785,0,0,0,0,0,0,1,4,541246,3,0
+209273,1240841947689,1240843237667,0,1061,4,329.75,0,0,0,0,3,null
+21067,undefined,0,36,0,0,0,0,2,32,302907,undefined,undefined
+21457,undefined,0,24.15,0,0,0,0,1,1,380467,undefined,undefined
+221862,1240841658458,1240841957961,0,0,0,0,0,0,0,0,1,0
+22308,1240842834100,0,0,147,1,112,0,0,0,775158,1,0
+223864,undefined,0,309.5000000000001,0,0,0,0,5,19,160138,undefined,undefined
+227143,1240843166525,1240844246576,0,408,3,140.66666666666666,0,0,0,0,1,null
+22731,undefined,0,317.40000000000003,0,0,0,0,9,0,351430,undefined,undefined
+24474,undefined,0,12.600000000000001,0,0,0,0,7,3,1229,undefined,undefined
+256746,undefined,0,6.8500000000000005,0,0,0,0,5,28,61984,undefined,undefined
+259344,undefined,0,14,0,0,0,0,16,0,143538,undefined,undefined
+2843,undefined,0,45.45,0,0,0,0,7,7,3383,undefined,undefined
+298666,1240841805170,1240842299716,0,140,2,70,0,0,0,259344,3,0
+3,undefined,0,42.550000000000004,0,0,0,0,2,7,383387,undefined,undefined
+300612,1240838742882,1240839243151,0,483,3,200,0,5,0,610359,4,5
+3200,1240844321508,0,264.59999999999997,1772,6,406.1666666666667,71724,19,6,223864,12,2
+322199,1240844635898,0,0,0,0,0,0,0,0,323132,3,0
+3383,1240842723552,1240844395421,17.900000000000002,0,0,0,968,4,9,12791,14,2
+351430,undefined,0,158.70000000000002,0,0,0,0,11,9,336228,undefined,undefined
+351626,undefined,0,15.8,0,0,0,0,7,2,183403,undefined,undefined
+353846,1240843688780,0,0,1265,10,125.4,0,0,0,193978,2,1
+355917,1240844295954,0,0,0,0,0,0,6,7,107,6,3
+3653,undefined,0,8.3,0,0,0,0,14,3,86951,undefined,undefined
+383387,undefined,0,89.50000000000001,0,0,0,0,3,41,0,undefined,undefined
+398327,1240841080324,1240841509137,0,204,2,109,0,0,0,171750,1,null
+415271,1240843455185,1240843717852,32.1,445,2,166.5,0,5,1,66689,4,0
+430717,1240839451986,1240840076606,13.700000000000001,0,0,0,898582,28,15,256746,12,6
+437210,undefined,0,8.1,0,0,0,0,1,1,395317,undefined,undefined
+437689,1240843447200,1240843456242,0,0,0,0,0,1,1,403501,4,0
+439277,undefined,0,81.9,0,0,0,0,5,2,208602,undefined,undefined
+455721,1240844666308,0,0,0,0,0,0,4,0,167134,4,0
+462408,1240843626365,0,54.3,1354,4,370.5,638933,2,0,191950,8,1
+47379,undefined,0,48.3,0,0,0,0,3,1,54776,undefined,undefined
+47445,undefined,0,19.3,0,0,0,0,6,0,2843,undefined,undefined
+525683,1240841573627,1240841652059,0,0,0,0,0,0,0,356549,2,0
+54235,1240838830628,1240839192504,0,126,1,122,0,0,0,24474,1,null
+544450,1240843749582,0,0,819,2,451.5,283305,2,2,439277,4,0
+54776,undefined,0,24.15,0,0,0,0,34,3,89757,undefined,undefined
+610359,undefined,0,48.3,0,0,0,0,1,5,21457,undefined,undefined
+613540,1240844486748,0,0,720,4,179.75,0,1,0,171151,3,0
+620394,1240844517557,0,0,358,2,199.5,0,1,0,2843,4,0
+642023,1240840000714,1240840699876,0,512,3,185,0,0,0,0,2,null
+66513,1240840028728,1240840124718,0,0,0,0,0,0,0,520592,3,0
+66689,undefined,0,60.55,0,0,0,0,4,5,124585,undefined,undefined
+713,1240842546172,0,0,1790,6,298.3333333333333,1265,9,52,12,16,6
+769463,1240843417709,0,0,137,1,137,75498,0,0,430717,4,0
+77,1240842531908,1240842562921,0,0,0,0,171151,10,2,12770,13,2
+775158,undefined,0,14.700000000000001,0,0,0,0,1,0,929303,undefined,undefined
+783830,1240839860341,1240840179228,0,176,2,88,0,0,0,0,1,null
+80094,1240838826354,1240839514680,0,0,0,0,65812,9,0,70997,5,4
+852908,1240838766677,1240842529389,0,1996,15,130.2,0,0,0,3200,2,null
+867397,1240840085543,1240840090791,0,0,0,0,0,0,0,0,1,null
+872803,1240841537681,1240841889388,0,126,1,132,0,0,0,0,1,null
+878292,1240843941857,0,0,543,4,106.25,0,0,0,462408,1,0
+899342,1240838799627,1240839865472,0,928,5,135.8,0,0,0,3200,1,null
+902918,1240840430706,1240840948254,0,176,1,121,0,0,0,0,1,null
+907250,1240842069539,1240842538017,0,321,2,156.5,0,0,0,415271,1,null
+910461,1240840045029,1240840047384,0,0,0,0,0,0,0,0,1,null
+922157,1240842260203,1240842535138,0,116,1,104,0,0,0,0,1,null
+922472,1240842234655,1240842537334,0,0,0,0,0,0,0,0,1,null
+929303,undefined,0,7.3500000000000005,0,0,0,0,2,1,189871,undefined,undefined
+95378,undefined,0,16.6,0,0,0,0,2,3,3653,undefined,undefined
+961460,1240842887965,1240842954025,0,0,0,0,0,0,0,0,1,null
+961913,1240844440856,1240844538257,0,0,0,0,0,0,0,0,1,null
+96813,1240841137097,1240843395532,0,3174,19,171.52631578947367,0,0,0,22731,3,null
+96912,1240839797461,1240840243925,0,162,1,180,0,1,0,138741,4,0
+<<<<EndTable
+
+PlayersOnlineNow=18
+PlayersOnlineEachMinute=0, 4, 7, 8, 8, 8, 8, 8, 7, 6, 6, 6, 7, 6, 6, 5, 5, 5, 5, 7, 6, 6, 9, 7, 6, 6, 5, 6, 6, 7, 7, 7, 7, 6, 6, 5, 6, 5, 5, 4, 5, 5, 6, 7, 7, 7, 7, 7, 8, 8, 8, 9, 9, 8, 7, 7, 8, 8, 8, 10, 9, 9, 9, 9, 7, 7, 6, 7, 7, 8, 9, 8, 9, 7, 7, 8, 7, 7, 5, 7, 7, 7, 8, 9, 10, 10, 10, 11, 11, 11, 11, 11, 10, 11, 12, 12, 15, 16, 16, 18
+PlayersInEachFeedingGame=2, 1, 2, 2, 2, 1, 2, 3, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 1, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 1, 2, 1, 1, 2, 1, 1, 2, 2, 2, 2, 1, 2, 2, 1, 2, 1, 1, 2, 2, 2, 2
+PlayersStarted=78
+PlayersQuit=60
+StatsStartTime=1240838733297
+StatsDumpTime=1240844733497
+<<<<EndStats
+2009-04-27 08:08:14,393 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=145090, prey=false, _predatorIndex=]
+2009-04-27 08:09:16,159 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=298666, prey=true, _predatorIndex=]
+2009-04-27 08:09:16,160 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=22308, prey=false, _predatorIndex=]
+2009-04-27 08:12:02,421 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=145090, prey=true, _predatorIndex=]
+2009-04-27 08:12:02,422 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=907250, prey=false, _predatorIndex=]
+2009-04-27 08:13:39,078 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=620394, prey=false, _predatorIndex=]
+2009-04-27 08:13:51,400 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=844557, prey=false, _predatorIndex=]
+2009-04-27 08:14:37,809 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=309885, prey=true, _predatorIndex=]
+2009-04-27 08:14:37,810 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=22308, prey=false, _predatorIndex=]
+2009-04-27 08:15:15,103 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=298666, prey=false, _predatorIndex=]
+

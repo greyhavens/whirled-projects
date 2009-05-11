@@ -1,0 +1,1341 @@
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240360148096
+#GAMEDATA#TimeStarted=1240366751250
+#GAMEDATA#Now=1240367351431
+#GAMEDATA#TimeLoggedIn_76673=560
+#GAMEDATA#TimeLoggedIn_578=560
+#GAMEDATA#TimeLoggedIn_1531=560
+#GAMEDATA#TimeLoggedIn_9093=560
+#GAMEDATA#TimeLoggedIn_140094=107
+#GAMEDATA#TimeLoggedIn_227007=299
+#GAMEDATA#TimeLoggedIn_713=560
+#GAMEDATA#TimeLoggedIn_80835=136
+#GAMEDATA#TimeLoggedIn_506636=291
+#GAMEDATA#TimeLoggedIn_1229=263
+#GAMEDATA#TimeLoggedIn_430717=290
+#GAMEDATA#TimeLoggedIn_8527=285
+#GAMEDATA#TimeLoggedIn_555728=199
+#GAMEDATA#TimeLoggedIn_1043=272
+#GAMEDATA#TimeLoggedIn_510740=560
+#GAMEDATA#TimeLoggedIn_106069=411
+#GAMEDATA#TimeLoggedIn_333654=560
+#GAMEDATA#TimeLoggedIn_626711=39
+#GAMEDATA#TimeLoggedIn_266759=134
+#GAMEDATA#TimeLoggedIn_36377=274
+#GAMEDATA#TimeLoggedIn_147988=86
+#GAMEDATA#TimeLoggedIn_70997=493
+#GAMEDATA#TimeLoggedIn_264673=560
+#GAMEDATA#TimeLoggedIn_166=560
+#GAMEDATA#TimeLoggedIn_4139=560
+#GAMEDATA#TimeLoggedIn_878=528
+#GAMEDATA#TimeLoggedIn_245808=520
+#GAMEDATA#TimeLoggedIn_1265=560
+#GAMEDATA#TimeLoggedIn_192883=423
+#GAMEDATA#TimeLoggedIn_101493=527
+#GAMEDATA#TimeLoggedIn_503=560
+#GAMEDATA#TimeLoggedIn_123961=560
+#GAMEDATA#TimeLoggedIn_75123=560
+#GAMEDATA#TimeLoggedIn_81597=352
+#GAMEDATA#TimeLoggedIn_211710=560
+#GAMEDATA#TimeLoggedIn_610111=560
+#GAMEDATA#FeedingPlayers_245808=2,2
+#GAMEDATA#FeedingPlayers_76673=2,2
+#GAMEDATA#FeedingPlayers_101493=2,2
+#GAMEDATA#FeedingPlayers_106069=2
+#GAMEDATA#FeedingPlayers_555728=2
+#GAMEDATA#FeedingPlayers_264673=2
+#GAMEDATA#FeedingPlayers_506636=2
+#GAMEDATA#FeedingPlayers_70997=1
+#GAMEDATA#FeedingPlayers_211710=2,2
+#GAMEDATA#FeedingPlayers_140094=1
+#GAMEDATA#DescendentsPayout_578=233.90000000000003
+#GAMEDATA#DescendentsPayout_3=81.08011363636365
+#GAMEDATA#DescendentsPayout_47379=19.650000000000002
+#GAMEDATA#DescendentsPayout_170405=56.050000000000004
+#GAMEDATA#DescendentsPayout_16040=162.1602272727273
+#GAMEDATA#DescendentsPayout_713=445.0732954545455
+#GAMEDATA#DescendentsPayout_12770=350.85
+#GAMEDATA#DescendentsPayout_397835=39.300000000000004
+#GAMEDATA#DescendentsPayout_12=890.1465909090907
+#GAMEDATA#DescendentsPayout_1101=22.700000000000003
+#GAMEDATA#DescendentsPayout_237967=34.05
+#GAMEDATA#DescendentsPayout_454378=5.8500000000000005
+#GAMEDATA#DescendentsPayout_236834=34.05
+#GAMEDATA#DescendentsPayout_463042=11.700000000000001
+#GAMEDATA#DescendentsPayout_106069=68.1
+#GAMEDATA#DescendentsPayout_44987=16.675
+#GAMEDATA#DescendentsPayout_52887=68.1
+#GAMEDATA#DescendentsPayout_123961=162.1602272727273
+#GAMEDATA#DescendentsPayout_383387=461.106818181818
+#GAMEDATA#DescendentsPayout_8060=28.025000000000002
+#GAMEDATA#DescendentsPayout_81597=33.35
+#GAMEDATA#DescendentsPayout_239981=11.350000000000001
+#GAMEDATA#DescendentsPayout_503=39.67272727272728
+#GAMEDATA#FeedingXPEarned_76673=333.5
+#GAMEDATA#FeedingXPEarned_578=2339
+#GAMEDATA#FeedingXPEarned_9093=1621.6022727272727
+#GAMEDATA#FeedingXPEarned_166=2339
+#GAMEDATA#FeedingXPEarned_713=1621.6022727272727
+#GAMEDATA#FeedingXPEarned_4139=1621.6022727272727
+#GAMEDATA#FeedingXPEarned_506636=117
+#GAMEDATA#FeedingXPEarned_1229=396.72727272727275
+#GAMEDATA#FeedingXPEarned_878=1621.6022727272727
+#GAMEDATA#FeedingXPEarned_8527=396.72727272727275
+#GAMEDATA#FeedingXPEarned_245808=681
+#GAMEDATA#FeedingXPEarned_1265=1621.6022727272727
+#GAMEDATA#FeedingXPEarned_1043=396.72727272727275
+#GAMEDATA#FeedingXPEarned_101493=681
+#GAMEDATA#FeedingXPEarned_503=1621.6022727272727
+#GAMEDATA#FeedingXPEarned_555728=227
+#GAMEDATA#FeedingXPEarned_123961=1621.6022727272727
+#GAMEDATA#FeedingXPEarned_1531=1621.6022727272727
+#GAMEDATA#FeedingXPEarned_70997=393
+#GAMEDATA#FeedingXPEarned_211710=560.5
+#GAMEDATA#FeedingPlayers=2,1,2,2,2,2,2,1
+#GAMEDATA#<<<<EndStats
+2009-04-21 19:29:16,650 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 19:29:42,738 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 19:30:13,215 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 19:30:52,837 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 19:36:25,371 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 19:36:30,692 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 19:36:31,118 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 19:38:20,265 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 19:38:59,374 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240360148096
+#GAMEDATA#TimeStarted=1240367351432
+#GAMEDATA#Now=1240367951500
+#GAMEDATA#TimeLoggedIn_76673=559
+#GAMEDATA#TimeLoggedIn_578=559
+#GAMEDATA#TimeLoggedIn_80835=559
+#GAMEDATA#TimeLoggedIn_9093=538
+#GAMEDATA#TimeLoggedIn_211710=559
+#GAMEDATA#TimeLoggedIn_266759=559
+#GAMEDATA#TimeLoggedIn_713=559
+#GAMEDATA#TimeLoggedIn_161355=180
+#GAMEDATA#TimeLoggedIn_506636=404
+#GAMEDATA#TimeLoggedIn_1229=544
+#GAMEDATA#TimeLoggedIn_81597=559
+#GAMEDATA#TimeLoggedIn_8527=559
+#GAMEDATA#TimeLoggedIn_555728=559
+#GAMEDATA#TimeLoggedIn_280082=72
+#GAMEDATA#TimeLoggedIn_1043=559
+#GAMEDATA#TimeLoggedIn_510740=559
+#GAMEDATA#TimeLoggedIn_106069=559
+#GAMEDATA#TimeLoggedIn_333654=559
+#GAMEDATA#TimeLoggedIn_36377=559
+#GAMEDATA#TimeLoggedIn_634394=460
+#GAMEDATA#TimeLoggedIn_227007=135
+#GAMEDATA#TimeLoggedIn_634396=75
+#GAMEDATA#TimeLoggedIn_70997=559
+#GAMEDATA#TimeLoggedIn_314573=113
+#GAMEDATA#TimeLoggedIn_645187=52
+#GAMEDATA#TimeLoggedIn_385056=183
+#GAMEDATA#TimeLoggedIn_264673=559
+#GAMEDATA#TimeLoggedIn_548570=255
+#GAMEDATA#TimeLoggedIn_218716=61
+#GAMEDATA#TimeLoggedIn_14228=403
+#GAMEDATA#TimeLoggedIn_166=559
+#GAMEDATA#TimeLoggedIn_311783=362
+#GAMEDATA#TimeLoggedIn_32169=532
+#GAMEDATA#TimeLoggedIn_4139=312
+#GAMEDATA#TimeLoggedIn_1531=559
+#GAMEDATA#TimeLoggedIn_1062=355
+#GAMEDATA#TimeLoggedIn_245808=559
+#GAMEDATA#TimeLoggedIn_1265=559
+#GAMEDATA#TimeLoggedIn_75123=559
+#GAMEDATA#TimeLoggedIn_101493=559
+#GAMEDATA#TimeLoggedIn_182501=195
+#GAMEDATA#TimeLoggedIn_503=559
+#GAMEDATA#TimeLoggedIn_123961=559
+#GAMEDATA#TimeLoggedIn_44987=10
+#GAMEDATA#TimeLoggedIn_192883=224
+#GAMEDATA#TimeLoggedIn_430717=523
+#GAMEDATA#TimeLoggedIn_140094=244
+#GAMEDATA#TimeLoggedIn_610111=559
+#GAMEDATA#FeedingPlayers_385056=2
+#GAMEDATA#FeedingPlayers_76673=2
+#GAMEDATA#FeedingPlayers_634394=2,2
+#GAMEDATA#FeedingPlayers_80835=2,2
+#GAMEDATA#FeedingPlayers_9093=3
+#GAMEDATA#FeedingPlayers_211710=2,2
+#GAMEDATA#FeedingPlayers_311783=2,2
+#GAMEDATA#FeedingPlayers_264673=2,2,2
+#GAMEDATA#FeedingPlayers_123961=3
+#GAMEDATA#FeedingPlayers_161355=2
+#GAMEDATA#FeedingPlayers_506636=2
+#GAMEDATA#FeedingPlayers_1062=2,1
+#GAMEDATA#FeedingPlayers_8527=3
+#GAMEDATA#FeedingPlayers_555728=2,1
+#GAMEDATA#FeedingPlayers_32169=1,1
+#GAMEDATA#FeedingPlayers_280082=2
+#GAMEDATA#FeedingPlayers_14228=2,2
+#GAMEDATA#FeedingPlayers_70997=2,2,2
+#GAMEDATA#FeedingPlayers_548570=2
+#GAMEDATA#FeedingPlayers_1265=2
+#GAMEDATA#FeedingPlayers_713=2
+#GAMEDATA#FeedingPlayers_81597=2,2
+#GAMEDATA#FeedingPlayers_140094=1
+#GAMEDATA#DescendentsPayout_192120=14.15
+#GAMEDATA#DescendentsPayout_578=346.65000000000003
+#GAMEDATA#DescendentsPayout_3=64.55208333333334
+#GAMEDATA#DescendentsPayout_11460=50.25
+#GAMEDATA#DescendentsPayout_536757=48.60000000000001
+#GAMEDATA#DescendentsPayout_713=407.2458333333333
+#GAMEDATA#DescendentsPayout_463042=61.05
+#GAMEDATA#DescendentsPayout_397835=74.05000000000001
+#GAMEDATA#DescendentsPayout_12=669.7208333333334
+#GAMEDATA#DescendentsPayout_1101=61.05
+#GAMEDATA#DescendentsPayout_135886=24.300000000000004
+#GAMEDATA#DescendentsPayout_237967=51.675
+#GAMEDATA#DescendentsPayout_47379=28.625
+#GAMEDATA#DescendentsPayout_10260=120
+#GAMEDATA#DescendentsPayout_106069=119.89999999999999
+#GAMEDATA#DescendentsPayout_52887=103.35
+#GAMEDATA#DescendentsPayout_174936=58.35
+#GAMEDATA#DescendentsPayout_383387=389.09791666666666
+#GAMEDATA#DescendentsPayout_70997=33.6
+#GAMEDATA#DescendentsPayout_12770=542.275
+#GAMEDATA#DescendentsPayout_170405=47.85000000000001
+#GAMEDATA#DescendentsPayout_153510=64.80000000000001
+#GAMEDATA#DescendentsPayout_16040=129.10416666666669
+#GAMEDATA#DescendentsPayout_256746=29.175
+#GAMEDATA#DescendentsPayout_239981=30.525
+#GAMEDATA#DescendentsPayout_89757=6.300000000000001
+#GAMEDATA#DescendentsPayout_309096=28.3
+#GAMEDATA#DescendentsPayout_454378=30.525
+#GAMEDATA#DescendentsPayout_236834=105.35000000000002
+#GAMEDATA#DescendentsPayout_101493=22.700000000000003
+#GAMEDATA#DescendentsPayout_503=129.10416666666669
+#GAMEDATA#DescendentsPayout_54776=12.600000000000001
+#GAMEDATA#DescendentsPayout_112953=32.400000000000006
+#GAMEDATA#DescendentsPayout_44987=105.97500000000001
+#GAMEDATA#DescendentsPayout_8060=23.925000000000004
+#GAMEDATA#DescendentsPayout_81597=122.75000000000001
+#GAMEDATA#DescendentsPayout_41022=25.125
+#GAMEDATA#FeedingXPEarned_76673=1227.5
+#GAMEDATA#FeedingXPEarned_578=3466.5
+#GAMEDATA#FeedingXPEarned_80835=583.5
+#GAMEDATA#FeedingXPEarned_9093=1291.0416666666665
+#GAMEDATA#FeedingXPEarned_140094=648
+#GAMEDATA#FeedingXPEarned_713=1495.7083333333333
+#GAMEDATA#FeedingXPEarned_161355=126
+#GAMEDATA#FeedingXPEarned_506636=610.5
+#GAMEDATA#FeedingXPEarned_1229=876.7083333333333
+#GAMEDATA#FeedingXPEarned_8527=1291.0416666666665
+#GAMEDATA#FeedingXPEarned_555728=610.5
+#GAMEDATA#FeedingXPEarned_1043=876.7083333333333
+#GAMEDATA#FeedingXPEarned_14228=486
+#GAMEDATA#FeedingXPEarned_70997=572.5
+#GAMEDATA#FeedingXPEarned_634394=336
+#GAMEDATA#FeedingXPEarned_106069=454
+#GAMEDATA#FeedingXPEarned_385056=283
+#GAMEDATA#FeedingXPEarned_166=3466.5
+#GAMEDATA#FeedingXPEarned_311783=502.5
+#GAMEDATA#FeedingXPEarned_32169=1200
+#GAMEDATA#FeedingXPEarned_4139=876.7083333333333
+#GAMEDATA#FeedingXPEarned_1062=428
+#GAMEDATA#FeedingXPEarned_245808=1199
+#GAMEDATA#FeedingXPEarned_1265=1495.7083333333333
+#GAMEDATA#FeedingXPEarned_101493=1033.5
+#GAMEDATA#FeedingXPEarned_123961=1291.0416666666665
+#GAMEDATA#FeedingXPEarned_1531=447.3333333333333
+#GAMEDATA#FeedingXPEarned_81597=446
+#GAMEDATA#FeedingXPEarned_211710=478.5
+#GAMEDATA#FeedingPlayers=2,2,2,1,1,2,2,2,2,2,2,3,2,2,1,2,1,2,1,2
+#GAMEDATA#<<<<EndStats
+2009-04-21 19:39:58,491 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 19:40:52,804 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 19:41:42,154 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 19:41:47,095 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 19:43:05,692 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 19:45:36,182 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240360148096
+#GAMEDATA#TimeStarted=1240367951501
+#GAMEDATA#Now=1240368551692
+#GAMEDATA#TimeLoggedIn_76673=540
+#GAMEDATA#TimeLoggedIn_578=558
+#GAMEDATA#TimeLoggedIn_80835=376
+#GAMEDATA#TimeLoggedIn_188851=396
+#GAMEDATA#TimeLoggedIn_81597=558
+#GAMEDATA#TimeLoggedIn_266759=67
+#GAMEDATA#TimeLoggedIn_713=558
+#GAMEDATA#TimeLoggedIn_161355=558
+#GAMEDATA#TimeLoggedIn_1531=558
+#GAMEDATA#TimeLoggedIn_634565=237
+#GAMEDATA#TimeLoggedIn_22707=64
+#GAMEDATA#TimeLoggedIn_8527=546
+#GAMEDATA#TimeLoggedIn_555728=558
+#GAMEDATA#TimeLoggedIn_156489=412
+#GAMEDATA#TimeLoggedIn_280082=248
+#GAMEDATA#TimeLoggedIn_1043=558
+#GAMEDATA#TimeLoggedIn_510740=558
+#GAMEDATA#TimeLoggedIn_106069=558
+#GAMEDATA#TimeLoggedIn_333654=558
+#GAMEDATA#TimeLoggedIn_506128=254
+#GAMEDATA#TimeLoggedIn_36377=558
+#GAMEDATA#TimeLoggedIn_548570=558
+#GAMEDATA#TimeLoggedIn_610111=558
+#GAMEDATA#TimeLoggedIn_10260=400
+#GAMEDATA#TimeLoggedIn_70997=333
+#GAMEDATA#TimeLoggedIn_645571=53
+#GAMEDATA#TimeLoggedIn_645535=36
+#GAMEDATA#TimeLoggedIn_385056=558
+#GAMEDATA#TimeLoggedIn_264673=558
+#GAMEDATA#TimeLoggedIn_634394=252
+#GAMEDATA#TimeLoggedIn_182501=38
+#GAMEDATA#TimeLoggedIn_1062=558
+#GAMEDATA#TimeLoggedIn_311783=558
+#GAMEDATA#TimeLoggedIn_32169=558
+#GAMEDATA#TimeLoggedIn_645508=349
+#GAMEDATA#TimeLoggedIn_634567=29
+#GAMEDATA#TimeLoggedIn_166=558
+#GAMEDATA#TimeLoggedIn_644719=81
+#GAMEDATA#TimeLoggedIn_245808=558
+#GAMEDATA#TimeLoggedIn_1265=558
+#GAMEDATA#TimeLoggedIn_75123=558
+#GAMEDATA#TimeLoggedIn_101493=183
+#GAMEDATA#TimeLoggedIn_503=558
+#GAMEDATA#TimeLoggedIn_123961=558
+#GAMEDATA#TimeLoggedIn_44987=558
+#GAMEDATA#TimeLoggedIn_430717=382
+#GAMEDATA#TimeLoggedIn_211710=545
+#GAMEDATA#TimeLoggedIn_227007=558
+#GAMEDATA#FeedingPlayers_76673=2
+#GAMEDATA#FeedingPlayers_1265=2
+#GAMEDATA#FeedingPlayers_80835=2
+#GAMEDATA#FeedingPlayers_188851=1,2
+#GAMEDATA#FeedingPlayers_1062=2,2,2
+#GAMEDATA#FeedingPlayers_70997=2
+#GAMEDATA#FeedingPlayers_156489=2,2,2
+#GAMEDATA#FeedingPlayers_161355=1,2,2
+#GAMEDATA#FeedingPlayers_311783=2
+#GAMEDATA#FeedingPlayers_8527=5
+#GAMEDATA#FeedingPlayers_245808=2
+#GAMEDATA#FeedingPlayers_32169=5
+#GAMEDATA#FeedingPlayers_264673=2
+#GAMEDATA#FeedingPlayers_1043=5
+#GAMEDATA#FeedingPlayers_10260=1,2
+#GAMEDATA#FeedingPlayers_106069=2
+#GAMEDATA#FeedingPlayers_555728=2
+#GAMEDATA#FeedingPlayers_123961=5
+#GAMEDATA#FeedingPlayers_713=2
+#GAMEDATA#FeedingPlayers_44987=5
+#GAMEDATA#FeedingPlayers_81597=2,2,2
+#GAMEDATA#FeedingPlayers_211710=2,1
+#GAMEDATA#DescendentsPayout_578=252.35000000000002
+#GAMEDATA#DescendentsPayout_11460=33.050000000000004
+#GAMEDATA#DescendentsPayout_28294=13.8
+#GAMEDATA#DescendentsPayout_713=384.87000000000006
+#GAMEDATA#DescendentsPayout_397835=30.325000000000003
+#GAMEDATA#DescendentsPayout_12=644.185
+#GAMEDATA#DescendentsPayout_1101=56.00000000000001
+#GAMEDATA#DescendentsPayout_5842=6.9
+#GAMEDATA#DescendentsPayout_47379=6.9
+#GAMEDATA#DescendentsPayout_10260=159.88
+#GAMEDATA#DescendentsPayout_106069=79.65
+#GAMEDATA#DescendentsPayout_174936=26.400000000000002
+#GAMEDATA#DescendentsPayout_383387=404.2050000000001
+#GAMEDATA#DescendentsPayout_70997=33.050000000000004
+#GAMEDATA#DescendentsPayout_12770=524.83
+#GAMEDATA#DescendentsPayout_170405=50.5
+#GAMEDATA#DescendentsPayout_256746=13.200000000000001
+#GAMEDATA#DescendentsPayout_239981=28.000000000000004
+#GAMEDATA#DescendentsPayout_89757=32.2
+#GAMEDATA#DescendentsPayout_236834=119.47500000000001
+#GAMEDATA#DescendentsPayout_101493=39.825
+#GAMEDATA#DescendentsPayout_503=128.68
+#GAMEDATA#DescendentsPayout_54776=64.4
+#GAMEDATA#DescendentsPayout_44987=45.550000000000004
+#GAMEDATA#DescendentsPayout_8060=25.25
+#GAMEDATA#DescendentsPayout_81597=20.6
+#GAMEDATA#DescendentsPayout_41022=16.525000000000002
+#GAMEDATA#FeedingXPEarned_76673=206
+#GAMEDATA#FeedingXPEarned_578=2523.5
+#GAMEDATA#FeedingXPEarned_80835=264
+#GAMEDATA#FeedingXPEarned_156489=754.5
+#GAMEDATA#FeedingXPEarned_1043=1286.8
+#GAMEDATA#FeedingXPEarned_166=2523.5
+#GAMEDATA#FeedingXPEarned_311783=330.5
+#GAMEDATA#FeedingXPEarned_32169=1598.8
+#GAMEDATA#FeedingXPEarned_634394=330.5
+#GAMEDATA#FeedingXPEarned_1062=645
+#GAMEDATA#FeedingXPEarned_8527=1286.8
+#GAMEDATA#FeedingXPEarned_555728=560
+#GAMEDATA#FeedingXPEarned_1265=1493.5
+#GAMEDATA#FeedingXPEarned_188851=307
+#GAMEDATA#FeedingXPEarned_161355=644
+#GAMEDATA#FeedingXPEarned_10260=363
+#GAMEDATA#FeedingXPEarned_106069=796.5
+#GAMEDATA#FeedingXPEarned_70997=138
+#GAMEDATA#FeedingXPEarned_245808=796.5
+#GAMEDATA#FeedingXPEarned_123961=1286.8
+#GAMEDATA#FeedingXPEarned_713=1493.5
+#GAMEDATA#FeedingXPEarned_44987=1286.8
+#GAMEDATA#FeedingXPEarned_264673=138
+#GAMEDATA#FeedingXPEarned_81597=352.5
+#GAMEDATA#FeedingXPEarned_211710=505
+#GAMEDATA#FeedingPlayers=2,1,2,2,5,1,2,1,2,2,1,2,2,2,2,2,2
+#GAMEDATA#<<<<EndStats
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240360148096
+#GAMEDATA#TimeStarted=1240368551693
+#GAMEDATA#Now=1240369152152
+#GAMEDATA#TimeLoggedIn_538369=164
+#GAMEDATA#TimeLoggedIn_76673=557
+#GAMEDATA#TimeLoggedIn_578=557
+#GAMEDATA#TimeLoggedIn_1531=557
+#GAMEDATA#TimeLoggedIn_188851=38
+#GAMEDATA#TimeLoggedIn_634565=557
+#GAMEDATA#TimeLoggedIn_190846=317
+#GAMEDATA#TimeLoggedIn_634567=301
+#GAMEDATA#TimeLoggedIn_645741=21
+#GAMEDATA#TimeLoggedIn_713=557
+#GAMEDATA#TimeLoggedIn_161355=557
+#GAMEDATA#TimeLoggedIn_77=185
+#GAMEDATA#TimeLoggedIn_81597=557
+#GAMEDATA#TimeLoggedIn_8527=557
+#GAMEDATA#TimeLoggedIn_555728=342
+#GAMEDATA#TimeLoggedIn_156489=319
+#GAMEDATA#TimeLoggedIn_280082=557
+#GAMEDATA#TimeLoggedIn_1043=557
+#GAMEDATA#TimeLoggedIn_510740=557
+#GAMEDATA#TimeLoggedIn_106069=557
+#GAMEDATA#TimeLoggedIn_333654=557
+#GAMEDATA#TimeLoggedIn_139133=221
+#GAMEDATA#TimeLoggedIn_36377=557
+#GAMEDATA#TimeLoggedIn_548570=557
+#GAMEDATA#TimeLoggedIn_153171=351
+#GAMEDATA#TimeLoggedIn_10260=557
+#GAMEDATA#TimeLoggedIn_70997=145
+#GAMEDATA#TimeLoggedIn_385056=97
+#GAMEDATA#TimeLoggedIn_264673=557
+#GAMEDATA#TimeLoggedIn_931=276
+#GAMEDATA#TimeLoggedIn_610111=205
+#GAMEDATA#TimeLoggedIn_1062=557
+#GAMEDATA#TimeLoggedIn_311783=557
+#GAMEDATA#TimeLoggedIn_32169=557
+#GAMEDATA#TimeLoggedIn_182501=441
+#GAMEDATA#TimeLoggedIn_166=557
+#GAMEDATA#TimeLoggedIn_245808=557
+#GAMEDATA#TimeLoggedIn_1265=557
+#GAMEDATA#TimeLoggedIn_75123=557
+#GAMEDATA#TimeLoggedIn_101493=258
+#GAMEDATA#TimeLoggedIn_503=557
+#GAMEDATA#TimeLoggedIn_123961=415
+#GAMEDATA#TimeLoggedIn_44987=557
+#GAMEDATA#TimeLoggedIn_430717=58
+#GAMEDATA#TimeLoggedIn_211710=557
+#GAMEDATA#TimeLoggedIn_227007=557
+#GAMEDATA#FeedingPlayers_264673=2
+#GAMEDATA#FeedingPlayers_1531=2
+#GAMEDATA#FeedingPlayers_153171=2
+#GAMEDATA#FeedingPlayers_182501=2,2
+#GAMEDATA#FeedingPlayers_634567=2
+#GAMEDATA#FeedingPlayers_32169=3,2
+#GAMEDATA#FeedingPlayers_161355=2
+#GAMEDATA#FeedingPlayers_77=2
+#GAMEDATA#FeedingPlayers_8527=3
+#GAMEDATA#FeedingPlayers_555728=2
+#GAMEDATA#FeedingPlayers_156489=2
+#GAMEDATA#FeedingPlayers_280082=2
+#GAMEDATA#FeedingPlayers_1043=2
+#GAMEDATA#FeedingPlayers_10260=2,3
+#GAMEDATA#FeedingPlayers_311783=3
+#GAMEDATA#FeedingPlayers_123961=3
+#GAMEDATA#FeedingPlayers_548570=2,3,2
+#GAMEDATA#FeedingPlayers_44987=2
+#GAMEDATA#FeedingPlayers_538369=2
+#GAMEDATA#FeedingPlayers_139133=2
+#GAMEDATA#FeedingPlayers_211710=2
+#GAMEDATA#DescendentsPayout_62593=77.7
+#GAMEDATA#DescendentsPayout_578=244.85000000000002
+#GAMEDATA#DescendentsPayout_11460=87.08333333333334
+#GAMEDATA#DescendentsPayout_81597=27.633333333333333
+#GAMEDATA#DescendentsPayout_713=419.26166666666677
+#GAMEDATA#DescendentsPayout_397835=17.3
+#GAMEDATA#DescendentsPayout_12=824.2433333333333
+#GAMEDATA#DescendentsPayout_1101=20.475
+#GAMEDATA#DescendentsPayout_555728=13.65
+#GAMEDATA#DescendentsPayout_156489=38.85
+#GAMEDATA#DescendentsPayout_47379=8.65
+#GAMEDATA#DescendentsPayout_10260=167.63
+#GAMEDATA#DescendentsPayout_383387=454.88
+#GAMEDATA#DescendentsPayout_89757=28.816666666666666
+#GAMEDATA#DescendentsPayout_12770=473.99666666666667
+#GAMEDATA#DescendentsPayout_122907=21.3
+#GAMEDATA#DescendentsPayout_170405=21.3
+#GAMEDATA#DescendentsPayout_256746=6.15
+#GAMEDATA#DescendentsPayout_239981=6.825
+#GAMEDATA#DescendentsPayout_251062=10.65
+#GAMEDATA#DescendentsPayout_503=142.18
+#GAMEDATA#DescendentsPayout_54776=57.63333333333333
+#GAMEDATA#DescendentsPayout_44987=68.3
+#GAMEDATA#DescendentsPayout_8060=10.65
+#GAMEDATA#DescendentsPayout_430717=12.3
+#GAMEDATA#DescendentsPayout_41022=43.54166666666667
+#GAMEDATA#FeedingXPEarned_76673=276.3333333333333
+#GAMEDATA#FeedingXPEarned_578=2448.5
+#GAMEDATA#FeedingXPEarned_1531=254.5
+#GAMEDATA#FeedingXPEarned_156489=278.5
+#GAMEDATA#FeedingXPEarned_182501=123
+#GAMEDATA#FeedingXPEarned_166=2448.5
+#GAMEDATA#FeedingXPEarned_311783=870.8333333333334
+#GAMEDATA#FeedingXPEarned_32169=1676.3
+#GAMEDATA#FeedingXPEarned_161355=576.3333333333334
+#GAMEDATA#FeedingXPEarned_1265=2402.5
+#GAMEDATA#FeedingXPEarned_1062=544.8333333333333
+#GAMEDATA#FeedingXPEarned_8527=1421.8
+#GAMEDATA#FeedingXPEarned_555728=136.5
+#GAMEDATA#FeedingXPEarned_713=2402.5
+#GAMEDATA#FeedingXPEarned_280082=213
+#GAMEDATA#FeedingXPEarned_1043=794.8
+#GAMEDATA#FeedingXPEarned_10260=1109.3333333333333
+#GAMEDATA#FeedingXPEarned_70997=173
+#GAMEDATA#FeedingXPEarned_634567=136.5
+#GAMEDATA#FeedingXPEarned_123961=1421.8
+#GAMEDATA#FeedingXPEarned_548570=777
+#GAMEDATA#FeedingXPEarned_44987=794.8
+#GAMEDATA#FeedingXPEarned_81597=544.8333333333333
+#GAMEDATA#FeedingXPEarned_211710=213
+#GAMEDATA#FeedingPlayers=2,2,2,3,2,2,3,2,2,2,2,2
+#GAMEDATA#<<<<EndStats
+2009-04-21 20:01:06,655 ERROR: vampire.server.ServerLogic TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::ServerLogic$/stateChange()
+	at vampire.server::ServerLogic$/handleFeedConfirmMessage()
+	at vampire.server::ServerLogic$/handleMessage()
+	at MethodInfo-49()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/handleMessage()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 20:01:08,960 ERROR: vampire.server.FeedingRecord sendPlayerStartGameMsg, no player [playerId=634567]
+2009-04-21 20:01:08,961 ERROR: vampire.server.ServerLogic TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::ServerLogic$/stateChange()
+	at vampire.server::ServerLogic$/handleFeedConfirmMessage()
+	at vampire.server::ServerLogic$/handleMessage()
+	at MethodInfo-49()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/handleMessage()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 20:02:01,398 ERROR: vampire.server.ServerLogic handleFeedConfirmMessage [requestingPlayer=null]
+2009-04-21 20:02:03,088 ERROR: vampire.server.ServerLogic TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::ServerLogic$/stateChange()
+	at vampire.server::ServerLogic$/handleFeedConfirmMessage()
+	at vampire.server::ServerLogic$/handleMessage()
+	at MethodInfo-49()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/doBatch()
+	at vampire.server::GameServer/handleMessage()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 20:03:39,335 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:06:33,177 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:08:46,518 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:09:03,244 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240360148096
+#GAMEDATA#TimeStarted=1240369152153
+#GAMEDATA#Now=1240369752587
+#GAMEDATA#TimeLoggedIn_538369=59
+#GAMEDATA#TimeLoggedIn_578=561
+#GAMEDATA#TimeLoggedIn_44987=561
+#GAMEDATA#TimeLoggedIn_634565=561
+#GAMEDATA#TimeLoggedIn_211710=411
+#GAMEDATA#TimeLoggedIn_713=532
+#GAMEDATA#TimeLoggedIn_645899=286
+#GAMEDATA#TimeLoggedIn_161355=279
+#GAMEDATA#TimeLoggedIn_47462=55
+#GAMEDATA#TimeLoggedIn_77=517
+#GAMEDATA#TimeLoggedIn_81597=561
+#GAMEDATA#TimeLoggedIn_8527=561
+#GAMEDATA#TimeLoggedIn_156489=402
+#GAMEDATA#TimeLoggedIn_76673=561
+#GAMEDATA#TimeLoggedIn_1043=561
+#GAMEDATA#TimeLoggedIn_510740=561
+#GAMEDATA#TimeLoggedIn_106069=561
+#GAMEDATA#TimeLoggedIn_333654=187
+#GAMEDATA#TimeLoggedIn_36377=134
+#GAMEDATA#TimeLoggedIn_548570=456
+#GAMEDATA#TimeLoggedIn_10260=422
+#GAMEDATA#TimeLoggedIn_309589=23
+#GAMEDATA#TimeLoggedIn_264673=340
+#GAMEDATA#TimeLoggedIn_280082=561
+#GAMEDATA#TimeLoggedIn_182501=134
+#GAMEDATA#TimeLoggedIn_1062=561
+#GAMEDATA#TimeLoggedIn_311783=561
+#GAMEDATA#TimeLoggedIn_309096=408
+#GAMEDATA#TimeLoggedIn_32169=561
+#GAMEDATA#TimeLoggedIn_49827=532
+#GAMEDATA#TimeLoggedIn_166=561
+#GAMEDATA#TimeLoggedIn_245808=561
+#GAMEDATA#TimeLoggedIn_1265=561
+#GAMEDATA#TimeLoggedIn_75123=162
+#GAMEDATA#TimeLoggedIn_101493=561
+#GAMEDATA#TimeLoggedIn_503=561
+#GAMEDATA#TimeLoggedIn_132984=87
+#GAMEDATA#TimeLoggedIn_1531=365
+#GAMEDATA#TimeLoggedIn_564139=24
+#GAMEDATA#TimeLoggedIn_139133=487
+#GAMEDATA#TimeLoggedIn_190846=561
+#GAMEDATA#TimeLoggedIn_227007=36
+#GAMEDATA#FeedingPlayers_47462=1
+#GAMEDATA#FeedingPlayers_311783=2
+#GAMEDATA#FeedingPlayers_309096=1,1
+#GAMEDATA#FeedingPlayers_32169=2,2
+#GAMEDATA#FeedingPlayers_645899=1
+#GAMEDATA#FeedingPlayers_77=2
+#GAMEDATA#FeedingPlayers_8527=2
+#GAMEDATA#FeedingPlayers_245808=2
+#GAMEDATA#FeedingPlayers_156489=2,2
+#GAMEDATA#FeedingPlayers_1043=2
+#GAMEDATA#FeedingPlayers_10260=2
+#GAMEDATA#FeedingPlayers_106069=2
+#GAMEDATA#FeedingPlayers_132984=2
+#GAMEDATA#FeedingPlayers_139133=2
+#GAMEDATA#FeedingPlayers_190846=2,2,2
+#GAMEDATA#DescendentsPayout_54776=63.38333333333333
+#GAMEDATA#DescendentsPayout_62593=23.35
+#GAMEDATA#DescendentsPayout_578=261.7
+#GAMEDATA#DescendentsPayout_11460=96.68333333333334
+#GAMEDATA#DescendentsPayout_351430=48.75
+#GAMEDATA#DescendentsPayout_713=231.33333333333334
+#GAMEDATA#DescendentsPayout_12=506.4916666666666
+#GAMEDATA#DescendentsPayout_77=94.4
+#GAMEDATA#DescendentsPayout_237967=47.75
+#GAMEDATA#DescendentsPayout_156489=48.975
+#GAMEDATA#DescendentsPayout_10260=157.4
+#GAMEDATA#DescendentsPayout_106069=170.95000000000002
+#GAMEDATA#DescendentsPayout_52887=95.5
+#GAMEDATA#DescendentsPayout_383387=392.15000000000003
+#GAMEDATA#DescendentsPayout_209500=12.200000000000001
+#GAMEDATA#DescendentsPayout_89757=31.691666666666666
+#GAMEDATA#DescendentsPayout_236834=256.42500000000007
+#GAMEDATA#DescendentsPayout_336228=24.375
+#GAMEDATA#DescendentsPayout_256746=24.375
+#GAMEDATA#DescendentsPayout_12770=534.15
+#GAMEDATA#DescendentsPayout_101493=85.47500000000001
+#GAMEDATA#DescendentsPayout_503=22.6
+#GAMEDATA#DescendentsPayout_192120=24.400000000000002
+#GAMEDATA#DescendentsPayout_430717=48.75
+#GAMEDATA#DescendentsPayout_41022=48.34166666666667
+#GAMEDATA#FeedingXPEarned_538369=487.5
+#GAMEDATA#FeedingXPEarned_578=2617
+#GAMEDATA#FeedingXPEarned_156489=507.5
+#GAMEDATA#FeedingXPEarned_182501=487.5
+#GAMEDATA#FeedingXPEarned_166=2617
+#GAMEDATA#FeedingXPEarned_311783=966.8333333333333
+#GAMEDATA#FeedingXPEarned_309096=244
+#GAMEDATA#FeedingXPEarned_713=1467
+#GAMEDATA#FeedingXPEarned_161355=633.8333333333333
+#GAMEDATA#FeedingXPEarned_77=944
+#GAMEDATA#FeedingXPEarned_32169=1574
+#GAMEDATA#FeedingXPEarned_245808=1709.5000000000002
+#GAMEDATA#FeedingXPEarned_1265=1467
+#GAMEDATA#FeedingXPEarned_1043=1348
+#GAMEDATA#FeedingXPEarned_10260=832.3333333333333
+#GAMEDATA#FeedingXPEarned_106069=1709.5000000000002
+#GAMEDATA#FeedingXPEarned_8527=226
+#GAMEDATA#FeedingXPEarned_548570=233.5
+#GAMEDATA#FeedingXPEarned_101493=955
+#GAMEDATA#FeedingXPEarned_645899=126
+#GAMEDATA#FeedingXPEarned_139133=944
+#GAMEDATA#FeedingXPEarned_190846=373
+#GAMEDATA#FeedingPlayers=2,2,2,2,2,1,2,2,1,2,1,1
+#GAMEDATA#<<<<EndStats
+2009-04-21 20:09:18,498 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:09:57,529 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:14:45,275 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:15:40,517 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:16:04,514 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=249], trace=Error: Room not in game [roomId=249]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoomProps()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:182]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_sendMessage_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:540]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCodeFriend()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.avrg::RoomSubControlServer/sendMessage()
+	at vampire.feeding.server::ServerCtx/sendMessage()
+	at vampire.feeding.server::ServerGameMode/onTimeOver()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+2009-04-21 20:17:02,953 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240360148096
+#GAMEDATA#TimeStarted=1240369752588
+#GAMEDATA#Now=1240370353083
+#GAMEDATA#TimeLoggedIn_76673=506
+#GAMEDATA#TimeLoggedIn_578=564
+#GAMEDATA#TimeLoggedIn_598459=38
+#GAMEDATA#TimeLoggedIn_634565=442
+#GAMEDATA#TimeLoggedIn_634567=400
+#GAMEDATA#TimeLoggedIn_646135=19
+#GAMEDATA#TimeLoggedIn_713=564
+#GAMEDATA#TimeLoggedIn_645899=7
+#GAMEDATA#TimeLoggedIn_8527=155
+#GAMEDATA#TimeLoggedIn_280082=564
+#GAMEDATA#TimeLoggedIn_1043=564
+#GAMEDATA#TimeLoggedIn_510740=564
+#GAMEDATA#TimeLoggedIn_106069=564
+#GAMEDATA#TimeLoggedIn_460737=358
+#GAMEDATA#TimeLoggedIn_49827=564
+#GAMEDATA#TimeLoggedIn_47462=564
+#GAMEDATA#TimeLoggedIn_311783=564
+#GAMEDATA#TimeLoggedIn_309096=346
+#GAMEDATA#TimeLoggedIn_32169=564
+#GAMEDATA#TimeLoggedIn_439907=4
+#GAMEDATA#TimeLoggedIn_1062=564
+#GAMEDATA#TimeLoggedIn_559=164
+#GAMEDATA#TimeLoggedIn_245808=530
+#GAMEDATA#TimeLoggedIn_1265=564
+#GAMEDATA#TimeLoggedIn_101493=246
+#GAMEDATA#TimeLoggedIn_159798=508
+#GAMEDATA#TimeLoggedIn_166=543
+#GAMEDATA#TimeLoggedIn_132984=564
+#GAMEDATA#TimeLoggedIn_123961=542
+#GAMEDATA#TimeLoggedIn_44987=564
+#GAMEDATA#TimeLoggedIn_81597=472
+#GAMEDATA#TimeLoggedIn_190846=239
+#GAMEDATA#TimeLoggedIn_503=564
+#GAMEDATA#FeedingPlayers_132984=2,1
+#GAMEDATA#FeedingPlayers_713=2,2
+#GAMEDATA#FeedingPlayers_578=2
+#GAMEDATA#FeedingPlayers_49827=2
+#GAMEDATA#FeedingPlayers_106069=2,1
+#GAMEDATA#FeedingPlayers_166=2
+#GAMEDATA#FeedingPlayers_634567=2,2
+#GAMEDATA#FeedingPlayers_309096=1,1,1
+#GAMEDATA#FeedingPlayers_32169=2,2
+#GAMEDATA#FeedingPlayers_1062=2
+#GAMEDATA#FeedingPlayers_47462=2
+#GAMEDATA#FeedingPlayers_559=2
+#GAMEDATA#DescendentsPayout_169408=29.03333333333333
+#GAMEDATA#DescendentsPayout_578=210.25
+#GAMEDATA#DescendentsPayout_11460=29.03333333333333
+#GAMEDATA#DescendentsPayout_713=101.525
+#GAMEDATA#DescendentsPayout_8842=52.050000000000004
+#GAMEDATA#DescendentsPayout_12=176.75
+#GAMEDATA#DescendentsPayout_1101=12.425
+#GAMEDATA#DescendentsPayout_237967=15.233333333333334
+#GAMEDATA#DescendentsPayout_555728=24.85
+#GAMEDATA#DescendentsPayout_156489=12.450000000000001
+#GAMEDATA#DescendentsPayout_10642=7.1000000000000005
+#GAMEDATA#DescendentsPayout_173395=14.516666666666666
+#GAMEDATA#DescendentsPayout_12628=96.30000000000001
+#GAMEDATA#DescendentsPayout_106069=85.25
+#GAMEDATA#DescendentsPayout_52887=30.46666666666667
+#GAMEDATA#DescendentsPayout_383387=186.57500000000002
+#GAMEDATA#DescendentsPayout_209500=20.5
+#GAMEDATA#DescendentsPayout_236834=130.79166666666669
+#GAMEDATA#DescendentsPayout_10260=190.60000000000002
+#GAMEDATA#DescendentsPayout_296361=48.150000000000006
+#GAMEDATA#DescendentsPayout_12770=315.37500000000006
+#GAMEDATA#DescendentsPayout_522658=14.200000000000001
+#GAMEDATA#DescendentsPayout_101493=44.083333333333336
+#GAMEDATA#DescendentsPayout_503=27.700000000000003
+#GAMEDATA#DescendentsPayout_192120=41
+#GAMEDATA#DescendentsPayout_1531=26.025000000000002
+#GAMEDATA#DescendentsPayout_41022=14.516666666666666
+#GAMEDATA#FeedingXPEarned_460737=290.3333333333333
+#GAMEDATA#FeedingXPEarned_578=2102.5
+#GAMEDATA#FeedingXPEarned_47462=520.5
+#GAMEDATA#FeedingXPEarned_634567=248.5
+#GAMEDATA#FeedingXPEarned_309096=410
+#GAMEDATA#FeedingXPEarned_713=1629
+#GAMEDATA#FeedingXPEarned_311783=290.3333333333333
+#GAMEDATA#FeedingXPEarned_166=2102.5
+#GAMEDATA#FeedingXPEarned_8527=277
+#GAMEDATA#FeedingXPEarned_245808=852.5
+#GAMEDATA#FeedingXPEarned_32169=1906
+#GAMEDATA#FeedingXPEarned_106069=881.6666666666667
+#GAMEDATA#FeedingXPEarned_559=142
+#GAMEDATA#FeedingXPEarned_132984=963
+#GAMEDATA#FeedingXPEarned_101493=304.6666666666667
+#GAMEDATA#FeedingXPEarned_190846=124.5
+#GAMEDATA#FeedingPlayers=1,1,2,2,2,2,1,1,2,1,2,2
+#GAMEDATA#<<<<EndStats
+2009-04-21 20:20:22,379 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:23:49,551 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:25:05,705 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:25:29,855 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:26:36,505 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:28:58,466 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240360148096
+#GAMEDATA#TimeStarted=1240370353084
+#GAMEDATA#Now=1240370953457
+#GAMEDATA#TimeLoggedIn_76673=415
+#GAMEDATA#TimeLoggedIn_578=566
+#GAMEDATA#TimeLoggedIn_634567=184
+#GAMEDATA#TimeLoggedIn_713=566
+#GAMEDATA#TimeLoggedIn_1062=566
+#GAMEDATA#TimeLoggedIn_77=179
+#GAMEDATA#TimeLoggedIn_82256=142
+#GAMEDATA#TimeLoggedIn_280082=123
+#GAMEDATA#TimeLoggedIn_1043=566
+#GAMEDATA#TimeLoggedIn_510740=566
+#GAMEDATA#TimeLoggedIn_106069=531
+#GAMEDATA#TimeLoggedIn_460737=566
+#GAMEDATA#TimeLoggedIn_645781=94
+#GAMEDATA#TimeLoggedIn_635021=164
+#GAMEDATA#TimeLoggedIn_49827=566
+#GAMEDATA#TimeLoggedIn_230164=421
+#GAMEDATA#TimeLoggedIn_166=566
+#GAMEDATA#TimeLoggedIn_311783=566
+#GAMEDATA#TimeLoggedIn_597005=26
+#GAMEDATA#TimeLoggedIn_32169=566
+#GAMEDATA#TimeLoggedIn_47462=566
+#GAMEDATA#TimeLoggedIn_559=489
+#GAMEDATA#TimeLoggedIn_245808=315
+#GAMEDATA#TimeLoggedIn_1265=144
+#GAMEDATA#TimeLoggedIn_75123=423
+#GAMEDATA#TimeLoggedIn_101493=408
+#GAMEDATA#TimeLoggedIn_159798=494
+#GAMEDATA#TimeLoggedIn_646135=3
+#GAMEDATA#TimeLoggedIn_132984=566
+#GAMEDATA#TimeLoggedIn_123961=566
+#GAMEDATA#TimeLoggedIn_44987=566
+#GAMEDATA#TimeLoggedIn_81597=365
+#GAMEDATA#TimeLoggedIn_140094=204
+#GAMEDATA#TimeLoggedIn_503=566
+#GAMEDATA#FeedingPlayers_460737=2,1
+#GAMEDATA#FeedingPlayers_47462=2
+#GAMEDATA#FeedingPlayers_634567=3
+#GAMEDATA#FeedingPlayers_32169=1,2
+#GAMEDATA#FeedingPlayers_311783=2
+#GAMEDATA#FeedingPlayers_82256=2
+#GAMEDATA#FeedingPlayers_713=2
+#GAMEDATA#FeedingPlayers_75123=2
+#GAMEDATA#FeedingPlayers_230164=2,1
+#GAMEDATA#FeedingPlayers_106069=1,1
+#GAMEDATA#FeedingPlayers_132984=3,1
+#GAMEDATA#FeedingPlayers_123961=2
+#GAMEDATA#FeedingPlayers_81597=2
+#GAMEDATA#FeedingPlayers_140094=3
+#GAMEDATA#DescendentsPayout_169408=46.95
+#GAMEDATA#DescendentsPayout_578=350.3
+#GAMEDATA#DescendentsPayout_383387=234.17500000000004
+#GAMEDATA#DescendentsPayout_173395=23.475
+#GAMEDATA#DescendentsPayout_1062=165.8
+#GAMEDATA#DescendentsPayout_250837=41.8
+#GAMEDATA#DescendentsPayout_713=363.67499999999995
+#GAMEDATA#DescendentsPayout_8842=112.33333333333334
+#GAMEDATA#DescendentsPayout_12=219.85000000000002
+#GAMEDATA#DescendentsPayout_237967=32.56666666666667
+#GAMEDATA#DescendentsPayout_106069=32.333333333333336
+#GAMEDATA#DescendentsPayout_296361=37.275000000000006
+#GAMEDATA#DescendentsPayout_12770=525.45
+#GAMEDATA#DescendentsPayout_10260=154.35000000000002
+#GAMEDATA#DescendentsPayout_101493=28.5
+#GAMEDATA#DescendentsPayout_52887=65.13333333333334
+#GAMEDATA#DescendentsPayout_190687=20.9
+#GAMEDATA#DescendentsPayout_1531=56.16666666666667
+#GAMEDATA#DescendentsPayout_12628=74.55000000000001
+#GAMEDATA#DescendentsPayout_236834=73.16666666666667
+#GAMEDATA#DescendentsPayout_41022=8.9
+#GAMEDATA#DescendentsPayout_11460=17.8
+#GAMEDATA#FeedingXPEarned_460737=469.5
+#GAMEDATA#FeedingXPEarned_578=3503
+#GAMEDATA#FeedingXPEarned_49827=1658
+#GAMEDATA#FeedingXPEarned_1062=1658
+#GAMEDATA#FeedingXPEarned_311783=178
+#GAMEDATA#FeedingXPEarned_32169=1543.5
+#GAMEDATA#FeedingXPEarned_47462=1123.3333333333333
+#GAMEDATA#FeedingXPEarned_245808=323.3333333333333
+#GAMEDATA#FeedingXPEarned_713=1180.5
+#GAMEDATA#FeedingXPEarned_230164=418
+#GAMEDATA#FeedingXPEarned_106069=570
+#GAMEDATA#FeedingXPEarned_166=3503
+#GAMEDATA#FeedingXPEarned_132984=745.5
+#GAMEDATA#FeedingXPEarned_123961=378
+#GAMEDATA#FeedingXPEarned_101493=651.3333333333333
+#GAMEDATA#FeedingPlayers=2,3,1,2,1,1,2,1,1,2,2,1
+#GAMEDATA#<<<<EndStats
+2009-04-21 20:34:52,326 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:38:39,968 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240360148096
+#GAMEDATA#TimeStarted=1240370953458
+#GAMEDATA#Now=1240371553649
+#GAMEDATA#TimeLoggedIn_460737=37
+#GAMEDATA#TimeLoggedIn_578=572
+#GAMEDATA#TimeLoggedIn_1531=286
+#GAMEDATA#TimeLoggedIn_503=572
+#GAMEDATA#TimeLoggedIn_713=572
+#GAMEDATA#TimeLoggedIn_635021=254
+#GAMEDATA#TimeLoggedIn_82256=572
+#GAMEDATA#TimeLoggedIn_76673=572
+#GAMEDATA#TimeLoggedIn_1043=572
+#GAMEDATA#TimeLoggedIn_510740=572
+#GAMEDATA#TimeLoggedIn_106069=529
+#GAMEDATA#TimeLoggedIn_548248=89
+#GAMEDATA#TimeLoggedIn_380903=247
+#GAMEDATA#TimeLoggedIn_288988=9
+#GAMEDATA#TimeLoggedIn_645781=39
+#GAMEDATA#TimeLoggedIn_162782=3
+#GAMEDATA#TimeLoggedIn_646113=31
+#GAMEDATA#TimeLoggedIn_49827=572
+#GAMEDATA#TimeLoggedIn_646365=29
+#GAMEDATA#TimeLoggedIn_47462=2
+#GAMEDATA#TimeLoggedIn_311783=484
+#GAMEDATA#TimeLoggedIn_77=168
+#GAMEDATA#TimeLoggedIn_32169=572
+#GAMEDATA#TimeLoggedIn_931=137
+#GAMEDATA#TimeLoggedIn_166=572
+#GAMEDATA#TimeLoggedIn_601455=276
+#GAMEDATA#TimeLoggedIn_106865=1
+#GAMEDATA#TimeLoggedIn_75123=429
+#GAMEDATA#TimeLoggedIn_63924=81
+#GAMEDATA#TimeLoggedIn_1062=572
+#GAMEDATA#TimeLoggedIn_132984=154
+#GAMEDATA#TimeLoggedIn_123961=462
+#GAMEDATA#TimeLoggedIn_44987=572
+#GAMEDATA#TimeLoggedIn_81597=572
+#GAMEDATA#TimeLoggedIn_597005=280
+#GAMEDATA#FeedingPlayers_75123=2
+#GAMEDATA#FeedingPlayers_635021=2
+#GAMEDATA#FeedingPlayers_548248=1
+#GAMEDATA#FeedingPlayers_32169=2,2
+#GAMEDATA#FeedingPlayers_1531=2
+#GAMEDATA#FeedingPlayers_77=2
+#GAMEDATA#FeedingPlayers_601455=1
+#GAMEDATA#DescendentsPayout_2843=141.4
+#GAMEDATA#DescendentsPayout_12770=571.6500000000001
+#GAMEDATA#DescendentsPayout_44987=38.25
+#GAMEDATA#DescendentsPayout_1062=31.150000000000002
+#GAMEDATA#DescendentsPayout_713=270.2
+#GAMEDATA#DescendentsPayout_578=355.25
+#GAMEDATA#DescendentsPayout_12=260.77500000000003
+#GAMEDATA#DescendentsPayout_77=13.100000000000001
+#GAMEDATA#DescendentsPayout_16271=20.3
+#GAMEDATA#DescendentsPayout_344937=38.25
+#GAMEDATA#DescendentsPayout_10260=205.55
+#GAMEDATA#DescendentsPayout_251062=19.125
+#GAMEDATA#DescendentsPayout_3383=70.7
+#GAMEDATA#DescendentsPayout_296361=9.850000000000001
+#GAMEDATA#DescendentsPayout_383387=276.6
+#GAMEDATA#DescendentsPayout_12628=19.700000000000003
+#GAMEDATA#DescendentsPayout_284150=10.15
+#GAMEDATA#FeedingXPEarned_578=3552.5
+#GAMEDATA#FeedingXPEarned_49827=311.5
+#GAMEDATA#FeedingXPEarned_166=3552.5
+#GAMEDATA#FeedingXPEarned_713=1207
+#GAMEDATA#FeedingXPEarned_77=131
+#GAMEDATA#FeedingXPEarned_1062=311.5
+#GAMEDATA#FeedingXPEarned_601455=203
+#GAMEDATA#FeedingXPEarned_82256=382.5
+#GAMEDATA#FeedingXPEarned_32169=2055.5
+#GAMEDATA#FeedingXPEarned_75123=1414
+#GAMEDATA#FeedingXPEarned_635021=131
+#GAMEDATA#FeedingXPEarned_132984=197
+#GAMEDATA#FeedingXPEarned_123961=1207
+#GAMEDATA#FeedingXPEarned_1531=641.5
+#GAMEDATA#FeedingXPEarned_81597=382.5
+#GAMEDATA#FeedingPlayers=2,2,1,2,1
+#GAMEDATA#<<<<EndStats
+2009-04-21 20:39:28,984 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:40:56,727 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:43:25,043 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:43:30,387 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240360148096
+#GAMEDATA#TimeStarted=1240371553650
+#GAMEDATA#Now=1240372153952
+#GAMEDATA#TimeLoggedIn_402752=21
+#GAMEDATA#TimeLoggedIn_76673=574
+#GAMEDATA#TimeLoggedIn_578=574
+#GAMEDATA#TimeLoggedIn_1531=574
+#GAMEDATA#TimeLoggedIn_312388=49
+#GAMEDATA#TimeLoggedIn_196231=10
+#GAMEDATA#TimeLoggedIn_713=574
+#GAMEDATA#TimeLoggedIn_102796=340
+#GAMEDATA#TimeLoggedIn_82256=574
+#GAMEDATA#TimeLoggedIn_538369=363
+#GAMEDATA#TimeLoggedIn_1043=574
+#GAMEDATA#TimeLoggedIn_510740=574
+#GAMEDATA#TimeLoggedIn_106069=574
+#GAMEDATA#TimeLoggedIn_548248=574
+#GAMEDATA#TimeLoggedIn_501908=145
+#GAMEDATA#TimeLoggedIn_646113=114
+#GAMEDATA#TimeLoggedIn_49827=170
+#GAMEDATA#TimeLoggedIn_646054=53
+#GAMEDATA#TimeLoggedIn_166=574
+#GAMEDATA#TimeLoggedIn_380903=291
+#GAMEDATA#TimeLoggedIn_32169=574
+#GAMEDATA#TimeLoggedIn_931=101
+#GAMEDATA#TimeLoggedIn_1062=574
+#GAMEDATA#TimeLoggedIn_601455=574
+#GAMEDATA#TimeLoggedIn_645609=35
+#GAMEDATA#TimeLoggedIn_133874=73
+#GAMEDATA#TimeLoggedIn_75123=171
+#GAMEDATA#TimeLoggedIn_63924=555
+#GAMEDATA#TimeLoggedIn_878=333
+#GAMEDATA#TimeLoggedIn_503=97
+#GAMEDATA#TimeLoggedIn_132984=27
+#GAMEDATA#TimeLoggedIn_123961=574
+#GAMEDATA#TimeLoggedIn_44987=574
+#GAMEDATA#TimeLoggedIn_81597=574
+#GAMEDATA#FeedingPlayers_646113=2
+#GAMEDATA#FeedingPlayers_1062=2
+#GAMEDATA#FeedingPlayers_538369=2
+#GAMEDATA#FeedingPlayers_878=2
+#GAMEDATA#FeedingPlayers_601455=1,1
+#GAMEDATA#FeedingPlayers_82256=2
+#GAMEDATA#FeedingPlayers_32169=2
+#GAMEDATA#FeedingPlayers_76673=2
+#GAMEDATA#FeedingPlayers_63924=2,1
+#GAMEDATA#FeedingPlayers_106069=2
+#GAMEDATA#FeedingPlayers_548248=1,2
+#GAMEDATA#FeedingPlayers_133874=2
+#GAMEDATA#FeedingPlayers_81597=2
+#GAMEDATA#DescendentsPayout_12770=460.27500000000003
+#GAMEDATA#DescendentsPayout_44987=55.325
+#GAMEDATA#DescendentsPayout_336228=42.175
+#GAMEDATA#DescendentsPayout_351430=84.35
+#GAMEDATA#DescendentsPayout_344937=16.45
+#GAMEDATA#DescendentsPayout_578=291.15000000000003
+#GAMEDATA#DescendentsPayout_12=73.55
+#GAMEDATA#DescendentsPayout_233517=34.60000000000001
+#GAMEDATA#DescendentsPayout_16271=19.700000000000003
+#GAMEDATA#DescendentsPayout_713=214.89999999999998
+#GAMEDATA#DescendentsPayout_212370=17.300000000000004
+#GAMEDATA#DescendentsPayout_10260=192.8
+#GAMEDATA#DescendentsPayout_284150=9.850000000000001
+#GAMEDATA#DescendentsPayout_123961=142.8
+#GAMEDATA#DescendentsPayout_383387=170.57500000000002
+#GAMEDATA#DescendentsPayout_81597=16.45
+#GAMEDATA#DescendentsPayout_251062=8.225
+#GAMEDATA#FeedingXPEarned_76673=164.5
+#GAMEDATA#FeedingXPEarned_578=2911.5
+#GAMEDATA#FeedingXPEarned_166=2911.5
+#GAMEDATA#FeedingXPEarned_32169=1928
+#GAMEDATA#FeedingXPEarned_878=1428
+#GAMEDATA#FeedingXPEarned_601455=197
+#GAMEDATA#FeedingXPEarned_82256=164.5
+#GAMEDATA#FeedingXPEarned_538369=843.5
+#GAMEDATA#FeedingXPEarned_63924=346
+#GAMEDATA#FeedingXPEarned_1062=471
+#GAMEDATA#FeedingXPEarned_548248=1296.5
+#GAMEDATA#FeedingXPEarned_1531=500
+#GAMEDATA#FeedingXPEarned_81597=471
+#GAMEDATA#FeedingPlayers=1,2,1,2,2,1,1,2,2,2
+#GAMEDATA#<<<<EndStats
+2009-04-21 20:49:47,046 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:49:57,047 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:50:22,228 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:56:44,024 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:57:15,976 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 20:57:54,419 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240360148096
+#GAMEDATA#TimeStarted=1240372153953
+#GAMEDATA#Now=1240372754144
+#GAMEDATA#TimeLoggedIn_76673=574
+#GAMEDATA#TimeLoggedIn_578=574
+#GAMEDATA#TimeLoggedIn_80835=524
+#GAMEDATA#TimeLoggedIn_430717=117
+#GAMEDATA#TimeLoggedIn_634567=224
+#GAMEDATA#TimeLoggedIn_713=471
+#GAMEDATA#TimeLoggedIn_10698=389
+#GAMEDATA#TimeLoggedIn_44987=574
+#GAMEDATA#TimeLoggedIn_77=126
+#GAMEDATA#TimeLoggedIn_82256=555
+#GAMEDATA#TimeLoggedIn_198281=12
+#GAMEDATA#TimeLoggedIn_1043=574
+#GAMEDATA#TimeLoggedIn_510740=574
+#GAMEDATA#TimeLoggedIn_106069=574
+#GAMEDATA#TimeLoggedIn_548248=574
+#GAMEDATA#TimeLoggedIn_447249=96
+#GAMEDATA#TimeLoggedIn_501908=574
+#GAMEDATA#TimeLoggedIn_162782=372
+#GAMEDATA#TimeLoggedIn_646054=196
+#GAMEDATA#TimeLoggedIn_32169=574
+#GAMEDATA#TimeLoggedIn_161773=13
+#GAMEDATA#TimeLoggedIn_166=574
+#GAMEDATA#TimeLoggedIn_601455=411
+#GAMEDATA#TimeLoggedIn_133874=90
+#GAMEDATA#TimeLoggedIn_75123=574
+#GAMEDATA#TimeLoggedIn_63924=169
+#GAMEDATA#TimeLoggedIn_878=44
+#GAMEDATA#TimeLoggedIn_1062=574
+#GAMEDATA#TimeLoggedIn_123961=491
+#GAMEDATA#TimeLoggedIn_1531=574
+#GAMEDATA#TimeLoggedIn_81597=539
+#GAMEDATA#FeedingPlayers_123961=1,2
+#GAMEDATA#FeedingPlayers_10698=2,2
+#GAMEDATA#FeedingPlayers_1531=2
+#GAMEDATA#FeedingPlayers_63924=1
+#GAMEDATA#FeedingPlayers_646054=1
+#GAMEDATA#FeedingPlayers_634567=1
+#GAMEDATA#DescendentsPayout_12770=317.1583333333333
+#GAMEDATA#DescendentsPayout_600315=24.650000000000002
+#GAMEDATA#DescendentsPayout_20260=21.200000000000003
+#GAMEDATA#DescendentsPayout_256746=72.8625
+#GAMEDATA#DescendentsPayout_17790=42.400000000000006
+#GAMEDATA#DescendentsPayout_713=173.71666666666667
+#GAMEDATA#DescendentsPayout_236834=243.23749999999998
+#GAMEDATA#DescendentsPayout_58859=181.825
+#GAMEDATA#DescendentsPayout_383387=102.15
+#GAMEDATA#DescendentsPayout_233517=16.400000000000002
+#GAMEDATA#DescendentsPayout_81597=22.46666666666667
+#GAMEDATA#DescendentsPayout_396113=90.9125
+#GAMEDATA#DescendentsPayout_212370=8.200000000000001
+#GAMEDATA#DescendentsPayout_578=185.00000000000003
+#GAMEDATA#DescendentsPayout_12=106.15833333333333
+#GAMEDATA#DescendentsPayout_101493=85.1875
+#GAMEDATA#DescendentsPayout_174936=145.725
+#GAMEDATA#DescendentsPayout_44987=90.55
+#GAMEDATA#DescendentsPayout_106069=145.725
+#GAMEDATA#DescendentsPayout_201246=12.325000000000001
+#GAMEDATA#FeedingXPEarned_76673=224.66666666666666
+#GAMEDATA#FeedingXPEarned_578=1850
+#GAMEDATA#FeedingXPEarned_80835=1457.25
+#GAMEDATA#FeedingXPEarned_1062=793.1666666666666
+#GAMEDATA#FeedingXPEarned_10698=424
+#GAMEDATA#FeedingXPEarned_646054=119
+#GAMEDATA#FeedingXPEarned_133874=246.5
+#GAMEDATA#FeedingXPEarned_501908=1818.25
+#GAMEDATA#FeedingXPEarned_106069=1703.75
+#GAMEDATA#FeedingXPEarned_166=1850
+#GAMEDATA#FeedingXPEarned_548248=1818.25
+#GAMEDATA#FeedingXPEarned_123961=944
+#GAMEDATA#FeedingXPEarned_1531=193
+#GAMEDATA#FeedingXPEarned_63924=164
+#GAMEDATA#FeedingXPEarned_81597=793.1666666666666
+#GAMEDATA#FeedingPlayers=1,1,1,2,2,1
+#GAMEDATA#<<<<EndStats
+2009-04-21 21:00:30,187 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 21:02:52,248 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 21:04:51,525 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 21:06:52,511 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+Error! Your code is broken! Unable to call a host method, perhaps you've been shut down? [msg=Room not in game [roomId=175733], trace=Error: Room not in game [roomId=175733]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameController/getRoomProps()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameController.as:182]
+	at com.threerings.msoy.avrg.client::ThaneAVRGameBackend/room_sendMessage_v1()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/ThaneAVRGameBackend.as:540]
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::AbstractControl/callHostCodeFriend()
+	at com.whirled::AbstractSubControl/callHostCode()
+	at Function/http://adobe.com/AS3/2006/builtin::apply()
+	at com.whirled::TargetedSubControl/callHostCode()
+	at com.whirled.avrg::RoomSubControlServer/sendMessage()
+	at vampire.feeding.server::ServerCtx/sendMessage()
+	at vampire.feeding.server::ServerGameMode/onTimeOver()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.utils::Timer/expire()
+	at flash.utils::Timer$/heartbeat()
+	at Thane$/heartbeat()
+	at Thane$/heartbeat()].
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240360148096
+#GAMEDATA#TimeStarted=1240372754145
+#GAMEDATA#Now=1240373354658
+#GAMEDATA#TimeLoggedIn_76673=575
+#GAMEDATA#TimeLoggedIn_578=575
+#GAMEDATA#TimeLoggedIn_80835=2
+#GAMEDATA#TimeLoggedIn_646597=59
+#GAMEDATA#TimeLoggedIn_634567=129
+#GAMEDATA#TimeLoggedIn_640763=468
+#GAMEDATA#TimeLoggedIn_81597=575
+#GAMEDATA#TimeLoggedIn_82256=537
+#GAMEDATA#TimeLoggedIn_447249=16
+#GAMEDATA#TimeLoggedIn_1043=575
+#GAMEDATA#TimeLoggedIn_510740=575
+#GAMEDATA#TimeLoggedIn_106069=562
+#GAMEDATA#TimeLoggedIn_102139=290
+#GAMEDATA#TimeLoggedIn_548248=524
+#GAMEDATA#TimeLoggedIn_138841=125
+#GAMEDATA#TimeLoggedIn_501908=304
+#GAMEDATA#TimeLoggedIn_83360=311
+#GAMEDATA#TimeLoggedIn_44987=575
+#GAMEDATA#TimeLoggedIn_166=575
+#GAMEDATA#TimeLoggedIn_502119=174
+#GAMEDATA#TimeLoggedIn_32169=158
+#GAMEDATA#TimeLoggedIn_646617=63
+#GAMEDATA#TimeLoggedIn_161773=269
+#GAMEDATA#TimeLoggedIn_1062=575
+#GAMEDATA#TimeLoggedIn_646706=122
+#GAMEDATA#TimeLoggedIn_75123=575
+#GAMEDATA#TimeLoggedIn_1531=265
+#GAMEDATA#TimeLoggedIn_297020=27
+#GAMEDATA#TimeLoggedIn_430717=408
+#GAMEDATA#FeedingPlayers_82256=4
+#GAMEDATA#FeedingPlayers_76673=4
+#GAMEDATA#FeedingPlayers_81597=2,4
+#GAMEDATA#FeedingPlayers_501908=2,2
+#GAMEDATA#FeedingPlayers_106069=2
+#GAMEDATA#FeedingPlayers_83360=4
+#GAMEDATA#FeedingPlayers_634567=1
+#GAMEDATA#FeedingPlayers_548248=1,1
+#GAMEDATA#FeedingPlayers_640763=2
+#GAMEDATA#FeedingPlayers_102139=1
+#GAMEDATA#FeedingPlayers_161773=2
+#GAMEDATA#FeedingPlayers_430717=2,2
+#GAMEDATA#DescendentsPayout_61984=41.825
+#GAMEDATA#DescendentsPayout_578=301.6
+#GAMEDATA#DescendentsPayout_44987=102.25
+#GAMEDATA#DescendentsPayout_81597=86.96666666666667
+#GAMEDATA#DescendentsPayout_344937=58.76666666666667
+#GAMEDATA#DescendentsPayout_12770=481.7833333333334
+#GAMEDATA#DescendentsPayout_58859=83.65
+#GAMEDATA#DescendentsPayout_1101=12.65
+#GAMEDATA#DescendentsPayout_555728=25.3
+#GAMEDATA#DescendentsPayout_396113=41.825
+#GAMEDATA#DescendentsPayout_256746=83.65
+#GAMEDATA#DescendentsPayout_236834=108.15
+#GAMEDATA#DescendentsPayout_106069=114.10000000000001
+#GAMEDATA#DescendentsPayout_251062=29.383333333333336
+#GAMEDATA#DescendentsPayout_338481=10.350000000000001
+#GAMEDATA#DescendentsPayout_383387=150.8
+#GAMEDATA#DescendentsPayout_101493=25.55
+#GAMEDATA#DescendentsPayout_384703=20.700000000000003
+#GAMEDATA#FeedingXPEarned_83360=282
+#GAMEDATA#FeedingXPEarned_76673=587.6666666666667
+#GAMEDATA#FeedingXPEarned_578=3016
+#GAMEDATA#FeedingXPEarned_81597=587.6666666666667
+#GAMEDATA#FeedingXPEarned_166=3016
+#GAMEDATA#FeedingXPEarned_634567=253
+#GAMEDATA#FeedingXPEarned_161773=207
+#GAMEDATA#FeedingXPEarned_82256=587.6666666666667
+#GAMEDATA#FeedingXPEarned_501908=836.5
+#GAMEDATA#FeedingXPEarned_106069=511
+#GAMEDATA#FeedingXPEarned_548248=825
+#GAMEDATA#FeedingXPEarned_640763=316
+#GAMEDATA#FeedingXPEarned_430717=836.5
+#GAMEDATA#FeedingPlayers=2,2,1,2,2,1,4,1,1
+#GAMEDATA#<<<<EndStats
+2009-04-21 21:12:33,183 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 21:16:05,651 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240360148096
+#GAMEDATA#TimeStarted=1240373354659
+#GAMEDATA#Now=1240373954888
+#GAMEDATA#TimeLoggedIn_83360=438
+#GAMEDATA#TimeLoggedIn_76673=575
+#GAMEDATA#TimeLoggedIn_578=572
+#GAMEDATA#TimeLoggedIn_640763=575
+#GAMEDATA#TimeLoggedIn_75123=575
+#GAMEDATA#TimeLoggedIn_177501=191
+#GAMEDATA#TimeLoggedIn_166=409
+#GAMEDATA#TimeLoggedIn_434613=22
+#GAMEDATA#TimeLoggedIn_132984=272
+#GAMEDATA#TimeLoggedIn_44987=575
+#GAMEDATA#TimeLoggedIn_1062=575
+#GAMEDATA#TimeLoggedIn_430717=346
+#GAMEDATA#TimeLoggedIn_82256=575
+#GAMEDATA#TimeLoggedIn_32169=124
+#GAMEDATA#TimeLoggedIn_646706=5
+#GAMEDATA#TimeLoggedIn_1043=2
+#GAMEDATA#TimeLoggedIn_510740=575
+#GAMEDATA#TimeLoggedIn_106069=558
+#GAMEDATA#TimeLoggedIn_548248=178
+#GAMEDATA#TimeLoggedIn_646617=343
+#GAMEDATA#TimeLoggedIn_102139=575
+#GAMEDATA#TimeLoggedIn_297020=575
+#GAMEDATA#TimeLoggedIn_81597=575
+#GAMEDATA#FeedingPlayers_82256=2
+#GAMEDATA#FeedingPlayers_578=1
+#GAMEDATA#FeedingPlayers_640763=2
+#GAMEDATA#FeedingPlayers_106069=2
+#GAMEDATA#FeedingPlayers_83360=2
+#GAMEDATA#FeedingPlayers_102139=2,1
+#GAMEDATA#FeedingPlayers_297020=2
+#GAMEDATA#DescendentsPayout_578=215
+#GAMEDATA#DescendentsPayout_383387=122.15
+#GAMEDATA#DescendentsPayout_81597=79.54500000000002
+#GAMEDATA#DescendentsPayout_32169=53.685
+#GAMEDATA#DescendentsPayout_236834=56.60000000000001
+#GAMEDATA#DescendentsPayout_344937=64.985
+#GAMEDATA#DescendentsPayout_12770=378.64250000000004
+#GAMEDATA#DescendentsPayout_10260=26.8425
+#GAMEDATA#DescendentsPayout_106069=37.733333333333334
+#GAMEDATA#DescendentsPayout_251062=32.4925
+#GAMEDATA#DescendentsPayout_296361=9.916666666666668
+#GAMEDATA#DescendentsPayout_44987=93.45750000000001
+#GAMEDATA#DescendentsPayout_12628=19.833333333333336
+#GAMEDATA#DescendentsPayout_101493=18.866666666666667
+#GAMEDATA#FeedingXPEarned_83360=258.6
+#GAMEDATA#FeedingXPEarned_76673=536.85
+#GAMEDATA#FeedingXPEarned_578=2443
+#GAMEDATA#FeedingXPEarned_102139=340
+#GAMEDATA#FeedingXPEarned_166=2150
+#GAMEDATA#FeedingXPEarned_82256=649.85
+#GAMEDATA#FeedingXPEarned_106069=377.33333333333337
+#GAMEDATA#FeedingXPEarned_132984=198.33333333333334
+#GAMEDATA#FeedingXPEarned_646617=536.85
+#GAMEDATA#FeedingXPEarned_640763=377.33333333333337
+#GAMEDATA#FeedingXPEarned_297020=106
+#GAMEDATA#FeedingXPEarned_81597=536.85
+#GAMEDATA#FeedingPlayers=2,1,2,1,2
+#GAMEDATA#<<<<EndStats
+2009-04-21 21:23:02,339 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 21:24:27,647 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 21:25:19,810 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 21:27:31,112 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+

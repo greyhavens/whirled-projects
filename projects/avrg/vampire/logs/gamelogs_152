@@ -1,0 +1,962 @@
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240557011280
+#GAMEDATA#TimeStarted=1240597229336
+#GAMEDATA#Now=1240597829720
+#GAMEDATA#TimeLoggedIn_797824=585
+#GAMEDATA#TimeLoggedIn_168743=585
+#GAMEDATA#TimeLoggedIn_9093=585
+#GAMEDATA#TimeLoggedIn_804934=14
+#GAMEDATA#TimeLoggedIn_172743=340
+#GAMEDATA#TimeLoggedIn_713=585
+#GAMEDATA#TimeLoggedIn_682863=20
+#GAMEDATA#TimeLoggedIn_22731=6
+#GAMEDATA#TimeLoggedIn_413580=21
+#GAMEDATA#TimeLoggedIn_77=365
+#GAMEDATA#TimeLoggedIn_616590=250
+#GAMEDATA#TimeLoggedIn_769744=49
+#GAMEDATA#TimeLoggedIn_804945=8
+#GAMEDATA#TimeLoggedIn_533=585
+#GAMEDATA#TimeLoggedIn_789701=7
+#GAMEDATA#TimeLoggedIn_333136=585
+#GAMEDATA#TimeLoggedIn_782874=409
+#GAMEDATA#TimeLoggedIn_730587=585
+#GAMEDATA#TimeLoggedIn_132701=245
+#GAMEDATA#TimeLoggedIn_179423=574
+#GAMEDATA#TimeLoggedIn_206672=161
+#GAMEDATA#TimeLoggedIn_610010=52
+#GAMEDATA#TimeLoggedIn_805031=36
+#GAMEDATA#TimeLoggedIn_800169=43
+#GAMEDATA#TimeLoggedIn_254186=585
+#GAMEDATA#TimeLoggedIn_207979=316
+#GAMEDATA#TimeLoggedIn_23340=585
+#GAMEDATA#TimeLoggedIn_311783=585
+#GAMEDATA#TimeLoggedIn_637936=585
+#GAMEDATA#TimeLoggedIn_560243=585
+#GAMEDATA#TimeLoggedIn_804980=53
+#GAMEDATA#TimeLoggedIn_95479=111
+#GAMEDATA#TimeLoggedIn_54776=585
+#GAMEDATA#TimeLoggedIn_1531=585
+#GAMEDATA#TimeLoggedIn_791358=377
+#GAMEDATA#FeedingPlayers_797824=1,1
+#GAMEDATA#FeedingPlayers_207979=1
+#GAMEDATA#FeedingPlayers_533=2
+#GAMEDATA#FeedingPlayers_168743=2
+#GAMEDATA#FeedingPlayers_254186=1
+#GAMEDATA#FeedingPlayers_730587=2
+#GAMEDATA#FeedingPlayers_132701=2
+#GAMEDATA#DescendentsPayout_149220=73.80000000000001
+#GAMEDATA#DescendentsPayout_88917=14.700000000000001
+#GAMEDATA#DescendentsPayout_11460=6.1000000000000005
+#GAMEDATA#DescendentsPayout_12=148.3
+#GAMEDATA#DescendentsPayout_41022=3.0500000000000003
+#GAMEDATA#DescendentsPayout_82321=77.9
+#GAMEDATA#DescendentsPayout_10642=13.075000000000001
+#GAMEDATA#DescendentsPayout_57717=38.95
+#GAMEDATA#DescendentsPayout_20260=52.800000000000004
+#GAMEDATA#DescendentsPayout_477335=29.400000000000002
+#GAMEDATA#DescendentsPayout_586681=26.150000000000002
+#GAMEDATA#DescendentsPayout_383387=60.95
+#GAMEDATA#DescendentsPayout_430717=36.900000000000006
+#GAMEDATA#DescendentsPayout_154238=38.75
+#GAMEDATA#DescendentsPayout_735743=77.5
+#GAMEDATA#FeedingXPEarned_797824=779
+#GAMEDATA#FeedingXPEarned_254186=294
+#GAMEDATA#FeedingXPEarned_560243=304
+#GAMEDATA#FeedingXPEarned_533=528
+#GAMEDATA#FeedingXPEarned_95479=261.5
+#GAMEDATA#FeedingXPEarned_311783=61
+#GAMEDATA#FeedingXPEarned_782874=127
+#GAMEDATA#FeedingXPEarned_730587=775
+#GAMEDATA#FeedingXPEarned_1531=1219
+#GAMEDATA#FeedingXPEarned_616590=481.5
+#GAMEDATA#FeedingXPEarned_168743=738
+#GAMEDATA#FeedingPlayers=1,2,1,2,1,1
+#GAMEDATA#<<<<EndStats
+2009-04-24 11:30:35,956 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=22731, prey=false, _predatorIndex=207979]
+2009-04-24 11:30:39,338 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=168743, prey=true, _predatorIndex=]
+2009-04-24 11:30:39,339 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=311783, prey=false, _predatorIndex=]
+2009-04-24 11:30:43,838 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=22731, prey=false, _predatorIndex=207979,22731]
+2009-04-24 11:30:55,941 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=22731, prey=false, _predatorIndex=207979,22731]
+2009-04-24 11:31:33,114 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=132701, prey=true, _predatorIndex=]
+2009-04-24 11:31:33,115 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=797824, prey=false, _predatorIndex=]
+2009-04-24 11:31:43,930 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=22731, prey=false, _predatorIndex=207979,22731]
+2009-04-24 11:32:08,014 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=800169, prey=false, _predatorIndex=]
+2009-04-24 11:32:41,512 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=207979, prey=false, _predatorIndex=207979,22731]
+2009-04-24 11:32:49,349 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=93640, prey=true, _predatorIndex=]
+2009-04-24 11:32:49,350 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=413580, prey=false, _predatorIndex=]
+2009-04-24 11:32:52,021 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=533, prey=true, _predatorIndex=]
+2009-04-24 11:32:52,022 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=3383, prey=false, _predatorIndex=]
+2009-04-24 11:32:57,059 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1531, prey=false, _predatorIndex=3383]
+2009-04-24 11:32:57,581 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=207979, prey=false, _predatorIndex=]
+2009-04-24 11:32:58,120 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=9093, prey=false, _predatorIndex=3383,1531]
+2009-04-24 11:33:33,112 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=8842, prey=false, _predatorIndex=3383,1531,9093]
+2009-04-24 11:33:48,532 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=172743, prey=true, _predatorIndex=]
+2009-04-24 11:33:48,533 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=54776, prey=false, _predatorIndex=]
+2009-04-24 11:34:29,201 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=168743, prey=false, _predatorIndex=54776]
+2009-04-24 11:35:39,603 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=132701, prey=true, _predatorIndex=]
+2009-04-24 11:35:39,603 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=797824, prey=false, _predatorIndex=]
+2009-04-24 11:36:02,860 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=207979, prey=true, _predatorIndex=]
+2009-04-24 11:36:02,860 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=667455, prey=false, _predatorIndex=]
+2009-04-24 11:36:48,924 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=206672, prey=true, _predatorIndex=]
+2009-04-24 11:36:48,925 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=54776, prey=false, _predatorIndex=]
+2009-04-24 11:37:22,777 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=413580, prey=false, _predatorIndex=]
+2009-04-24 11:38:33,953 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=745557, prey=false, _predatorIndex=]
+2009-04-24 11:39:49,528 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=637936, prey=true, _predatorIndex=]
+2009-04-24 11:39:49,529 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=782874, prey=false, _predatorIndex=]
+2009-04-24 11:40:21,487 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=785866, prey=false, _predatorIndex=]
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240557011280
+#GAMEDATA#TimeStarted=1240597829721
+#GAMEDATA#Now=1240598430029
+#GAMEDATA#TimeLoggedIn_797824=587
+#GAMEDATA#TimeLoggedIn_805479=13
+#GAMEDATA#TimeLoggedIn_798148=74
+#GAMEDATA#TimeLoggedIn_9093=587
+#GAMEDATA#TimeLoggedIn_172743=464
+#GAMEDATA#TimeLoggedIn_93640=216
+#GAMEDATA#TimeLoggedIn_713=568
+#GAMEDATA#TimeLoggedIn_8842=418
+#GAMEDATA#TimeLoggedIn_22731=231
+#GAMEDATA#TimeLoggedIn_413580=587
+#GAMEDATA#TimeLoggedIn_30989=92
+#GAMEDATA#TimeLoggedIn_11315=22
+#GAMEDATA#TimeLoggedIn_206672=469
+#GAMEDATA#TimeLoggedIn_40017=18
+#GAMEDATA#TimeLoggedIn_785866=92
+#GAMEDATA#TimeLoggedIn_745557=214
+#GAMEDATA#TimeLoggedIn_533=587
+#GAMEDATA#TimeLoggedIn_333136=587
+#GAMEDATA#TimeLoggedIn_610010=264
+#GAMEDATA#TimeLoggedIn_730587=587
+#GAMEDATA#TimeLoggedIn_132701=587
+#GAMEDATA#TimeLoggedIn_668768=124
+#GAMEDATA#TimeLoggedIn_766063=84
+#GAMEDATA#TimeLoggedIn_782874=83
+#GAMEDATA#TimeLoggedIn_803940=56
+#GAMEDATA#TimeLoggedIn_667455=358
+#GAMEDATA#TimeLoggedIn_141909=13
+#GAMEDATA#TimeLoggedIn_168743=587
+#GAMEDATA#TimeLoggedIn_800169=587
+#GAMEDATA#TimeLoggedIn_254186=587
+#GAMEDATA#TimeLoggedIn_207979=545
+#GAMEDATA#TimeLoggedIn_23340=587
+#GAMEDATA#TimeLoggedIn_311783=587
+#GAMEDATA#TimeLoggedIn_637936=587
+#GAMEDATA#TimeLoggedIn_641137=24
+#GAMEDATA#TimeLoggedIn_215585=46
+#GAMEDATA#TimeLoggedIn_560243=587
+#GAMEDATA#TimeLoggedIn_682863=20
+#GAMEDATA#TimeLoggedIn_54776=564
+#GAMEDATA#TimeLoggedIn_1531=587
+#GAMEDATA#TimeLoggedIn_3383=510
+#GAMEDATA#FeedingPlayers_797824=2,2
+#GAMEDATA#FeedingPlayers_637936=2
+#GAMEDATA#FeedingPlayers_168743=2
+#GAMEDATA#FeedingPlayers_9093=5
+#GAMEDATA#FeedingPlayers_745557=1
+#GAMEDATA#FeedingPlayers_172743=2
+#GAMEDATA#FeedingPlayers_93640=2
+#GAMEDATA#FeedingPlayers_800169=1
+#GAMEDATA#FeedingPlayers_8842=5
+#GAMEDATA#FeedingPlayers_207979=1,2
+#GAMEDATA#FeedingPlayers_413580=2,1
+#GAMEDATA#FeedingPlayers_311783=2
+#GAMEDATA#FeedingPlayers_206672=2
+#GAMEDATA#FeedingPlayers_533=5
+#GAMEDATA#FeedingPlayers_3383=5
+#GAMEDATA#FeedingPlayers_54776=2,2
+#GAMEDATA#FeedingPlayers_782874=2
+#GAMEDATA#FeedingPlayers_1531=5
+#GAMEDATA#FeedingPlayers_132701=2,2
+#GAMEDATA#FeedingPlayers_667455=2
+#GAMEDATA#DescendentsPayout_20260=186.46
+#GAMEDATA#DescendentsPayout_1531=160.36
+#GAMEDATA#DescendentsPayout_96987=43.474999999999994
+#GAMEDATA#DescendentsPayout_149220=67.6
+#GAMEDATA#DescendentsPayout_89757=52.2
+#GAMEDATA#DescendentsPayout_154238=16.325000000000003
+#GAMEDATA#DescendentsPayout_735743=32.650000000000006
+#GAMEDATA#DescendentsPayout_16040=160.36
+#GAMEDATA#DescendentsPayout_336228=12.3
+#GAMEDATA#DescendentsPayout_3=80.18
+#GAMEDATA#DescendentsPayout_11460=46.35
+#GAMEDATA#DescendentsPayout_351430=24.6
+#GAMEDATA#DescendentsPayout_237231=39.175
+#GAMEDATA#DescendentsPayout_61045=16.325
+#GAMEDATA#DescendentsPayout_82321=36.05
+#GAMEDATA#DescendentsPayout_12=438
+#GAMEDATA#DescendentsPayout_57717=18.025
+#GAMEDATA#DescendentsPayout_86926=32.65
+#GAMEDATA#DescendentsPayout_12791=160.36
+#GAMEDATA#DescendentsPayout_94072=86.94999999999999
+#GAMEDATA#DescendentsPayout_383387=98.73000000000002
+#GAMEDATA#DescendentsPayout_430717=33.8
+#GAMEDATA#DescendentsPayout_41022=23.175
+#GAMEDATA#DescendentsPayout_261567=78.35
+#GAMEDATA#FeedingXPEarned_797824=360.5
+#GAMEDATA#FeedingXPEarned_730587=326.5
+#GAMEDATA#FeedingXPEarned_9093=1603.6
+#GAMEDATA#FeedingXPEarned_172743=783.5
+#GAMEDATA#FeedingXPEarned_93640=326.5
+#GAMEDATA#FeedingXPEarned_800169=96
+#GAMEDATA#FeedingXPEarned_8842=1603.6
+#GAMEDATA#FeedingXPEarned_22731=246
+#GAMEDATA#FeedingXPEarned_413580=869.5
+#GAMEDATA#FeedingXPEarned_311783=463.5
+#GAMEDATA#FeedingXPEarned_207979=388
+#GAMEDATA#FeedingXPEarned_533=1603.6
+#GAMEDATA#FeedingXPEarned_3383=1603.6
+#GAMEDATA#FeedingXPEarned_168743=676
+#GAMEDATA#FeedingXPEarned_1531=1974.6
+#GAMEDATA#FeedingXPEarned_132701=316
+#GAMEDATA#FeedingXPEarned_54776=522
+#GAMEDATA#FeedingXPEarned_667455=129
+#GAMEDATA#FeedingPlayers=2,2,1,2,1,2,5,2,2,2,1,1,2
+#GAMEDATA#<<<<EndStats
+2009-04-24 11:40:31,366 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=730587, prey=true, _predatorIndex=]
+2009-04-24 11:40:31,366 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=168743, prey=false, _predatorIndex=]
+2009-04-24 11:40:46,668 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=797824, prey=true, _predatorIndex=]
+2009-04-24 11:40:46,668 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=30989, prey=false, _predatorIndex=]
+2009-04-24 11:41:38,103 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=413580, prey=true, _predatorIndex=]
+2009-04-24 11:41:38,103 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=583721, prey=false, _predatorIndex=]
+2009-04-24 11:41:40,430 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=54776, prey=false, _predatorIndex=583721]
+2009-04-24 11:42:29,166 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=510740, prey=false, _predatorIndex=]
+2009-04-24 11:42:36,955 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=782874, prey=true, _predatorIndex=]
+2009-04-24 11:42:36,956 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=637936, prey=false, _predatorIndex=]
+2009-04-24 11:43:11,218 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=30989, prey=false, _predatorIndex=]
+2009-04-24 11:43:59,355 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=784596, prey=false, _predatorIndex=]
+2009-04-24 11:44:02,658 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=785866, prey=true, _predatorIndex=]
+2009-04-24 11:44:02,659 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=803940, prey=false, _predatorIndex=]
+2009-04-24 11:44:12,326 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=560243, prey=true, _predatorIndex=]
+2009-04-24 11:44:12,327 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=616590, prey=false, _predatorIndex=]
+2009-04-24 11:44:17,822 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=254186, prey=false, _predatorIndex=583721,54776]
+2009-04-24 11:45:02,016 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=254186, prey=false, _predatorIndex=]
+2009-04-24 11:45:34,420 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=745557, prey=false, _predatorIndex=]
+2009-04-24 11:46:29,463 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=637936, prey=false, _predatorIndex=]
+2009-04-24 11:46:51,914 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=610010, prey=true, _predatorIndex=]
+2009-04-24 11:46:51,915 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=413580, prey=false, _predatorIndex=]
+2009-04-24 11:47:28,667 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=191352, prey=true, _predatorIndex=]
+2009-04-24 11:47:28,668 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=254186, prey=false, _predatorIndex=]
+2009-04-24 11:48:07,934 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=510740, prey=true, _predatorIndex=]
+2009-04-24 11:48:07,935 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=782874, prey=false, _predatorIndex=]
+2009-04-24 11:49:35,660 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=514341, prey=false, _predatorIndex=254186]
+2009-04-24 11:50:15,445 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=132701, prey=true, _predatorIndex=]
+2009-04-24 11:50:15,446 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=797824, prey=false, _predatorIndex=]
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240557011280
+#GAMEDATA#TimeStarted=1240598430030
+#GAMEDATA#Now=1240599030507
+#GAMEDATA#TimeLoggedIn_797824=586
+#GAMEDATA#TimeLoggedIn_66114=8
+#GAMEDATA#TimeLoggedIn_11315=19
+#GAMEDATA#TimeLoggedIn_9093=586
+#GAMEDATA#TimeLoggedIn_713=586
+#GAMEDATA#TimeLoggedIn_785866=360
+#GAMEDATA#TimeLoggedIn_413580=586
+#GAMEDATA#TimeLoggedIn_30989=290
+#GAMEDATA#TimeLoggedIn_616590=384
+#GAMEDATA#TimeLoggedIn_333136=586
+#GAMEDATA#TimeLoggedIn_40017=57
+#GAMEDATA#TimeLoggedIn_8842=586
+#GAMEDATA#TimeLoggedIn_191352=201
+#GAMEDATA#TimeLoggedIn_510740=486
+#GAMEDATA#TimeLoggedIn_745557=444
+#GAMEDATA#TimeLoggedIn_806167=15
+#GAMEDATA#TimeLoggedIn_782874=586
+#GAMEDATA#TimeLoggedIn_730587=586
+#GAMEDATA#TimeLoggedIn_784596=234
+#GAMEDATA#TimeLoggedIn_132701=586
+#GAMEDATA#TimeLoggedIn_215585=46
+#GAMEDATA#TimeLoggedIn_610010=193
+#GAMEDATA#TimeLoggedIn_131355=43
+#GAMEDATA#TimeLoggedIn_803940=364
+#GAMEDATA#TimeLoggedIn_514341=141
+#GAMEDATA#TimeLoggedIn_533=586
+#GAMEDATA#TimeLoggedIn_311783=37
+#GAMEDATA#TimeLoggedIn_800169=27
+#GAMEDATA#TimeLoggedIn_254186=586
+#GAMEDATA#TimeLoggedIn_23340=193
+#GAMEDATA#TimeLoggedIn_168743=586
+#GAMEDATA#TimeLoggedIn_637936=586
+#GAMEDATA#TimeLoggedIn_583721=50
+#GAMEDATA#TimeLoggedIn_802218=36
+#GAMEDATA#TimeLoggedIn_560243=586
+#GAMEDATA#TimeLoggedIn_3383=586
+#GAMEDATA#TimeLoggedIn_54776=558
+#GAMEDATA#TimeLoggedIn_796026=60
+#GAMEDATA#TimeLoggedIn_1531=586
+#GAMEDATA#FeedingPlayers_797824=2,2
+#GAMEDATA#FeedingPlayers_610010=2
+#GAMEDATA#FeedingPlayers_803940=2
+#GAMEDATA#FeedingPlayers_168743=2
+#GAMEDATA#FeedingPlayers_191352=2
+#GAMEDATA#FeedingPlayers_785866=1,2
+#GAMEDATA#FeedingPlayers_413580=2,2
+#GAMEDATA#FeedingPlayers_30989=2,1
+#GAMEDATA#FeedingPlayers_616590=2
+#GAMEDATA#FeedingPlayers_637936=2,1
+#GAMEDATA#FeedingPlayers_254186=1,2
+#GAMEDATA#FeedingPlayers_560243=2
+#GAMEDATA#FeedingPlayers_784596=1
+#GAMEDATA#FeedingPlayers_745557=1
+#GAMEDATA#FeedingPlayers_54776=2
+#GAMEDATA#FeedingPlayers_782874=2,2
+#GAMEDATA#FeedingPlayers_730587=2
+#GAMEDATA#FeedingPlayers_510740=2
+#GAMEDATA#FeedingPlayers_132701=2
+#GAMEDATA#DescendentsPayout_3=49.74
+#GAMEDATA#DescendentsPayout_154238=23.775000000000002
+#GAMEDATA#DescendentsPayout_206857=16.3
+#GAMEDATA#DescendentsPayout_12=248.70000000000002
+#GAMEDATA#DescendentsPayout_59472=51.400000000000006
+#GAMEDATA#DescendentsPayout_82321=26.700000000000003
+#GAMEDATA#DescendentsPayout_510740=71.7
+#GAMEDATA#DescendentsPayout_88917=18.75
+#GAMEDATA#DescendentsPayout_477335=37.5
+#GAMEDATA#DescendentsPayout_423194=8.15
+#GAMEDATA#DescendentsPayout_96987=55.775000000000006
+#GAMEDATA#DescendentsPayout_445660=35.85
+#GAMEDATA#DescendentsPayout_89757=92.45000000000002
+#GAMEDATA#DescendentsPayout_383387=49.74
+#GAMEDATA#DescendentsPayout_20260=145.705
+#GAMEDATA#DescendentsPayout_16040=99.48
+#GAMEDATA#DescendentsPayout_149220=47.550000000000004
+#GAMEDATA#DescendentsPayout_534632=107.55000000000001
+#GAMEDATA#DescendentsPayout_57717=13.350000000000001
+#GAMEDATA#DescendentsPayout_12791=99.48
+#GAMEDATA#DescendentsPayout_94072=111.55000000000001
+#GAMEDATA#DescendentsPayout_1531=99.48
+#GAMEDATA#DescendentsPayout_430717=23.775000000000002
+#GAMEDATA#DescendentsPayout_174526=25.700000000000003
+#GAMEDATA#DescendentsPayout_735743=47.550000000000004
+#GAMEDATA#FeedingXPEarned_797824=267
+#GAMEDATA#FeedingXPEarned_610010=191
+#GAMEDATA#FeedingXPEarned_1531=994.8
+#GAMEDATA#FeedingXPEarned_9093=994.8
+#GAMEDATA#FeedingXPEarned_168743=475.5
+#GAMEDATA#FeedingXPEarned_191352=163
+#GAMEDATA#FeedingXPEarned_8842=994.8
+#GAMEDATA#FeedingXPEarned_413580=1115.5
+#GAMEDATA#FeedingXPEarned_30989=514
+#GAMEDATA#FeedingXPEarned_616590=568
+#GAMEDATA#FeedingXPEarned_510740=717
+#GAMEDATA#FeedingXPEarned_637936=266.5
+#GAMEDATA#FeedingXPEarned_785866=323
+#GAMEDATA#FeedingXPEarned_560243=568
+#GAMEDATA#FeedingXPEarned_784596=92
+#GAMEDATA#FeedingXPEarned_745557=325
+#GAMEDATA#FeedingXPEarned_3383=994.8
+#GAMEDATA#FeedingXPEarned_54776=924.5
+#GAMEDATA#FeedingXPEarned_782874=916.5
+#GAMEDATA#FeedingXPEarned_730587=475.5
+#GAMEDATA#FeedingXPEarned_254186=375
+#GAMEDATA#FeedingXPEarned_533=994.8
+#GAMEDATA#FeedingPlayers=1,2,2,2,2,1,1,2,2,1,1,1,2,2,2,2
+#GAMEDATA#<<<<EndStats
+2009-04-24 11:50:31,969 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=796026, prey=false, _predatorIndex=]
+2009-04-24 11:51:06,423 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=637936, prey=false, _predatorIndex=]
+2009-04-24 11:52:25,571 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=521194, prey=false, _predatorIndex=]
+2009-04-24 11:52:57,546 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=54776, prey=true, _predatorIndex=]
+2009-04-24 11:52:57,547 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=514341, prey=false, _predatorIndex=]
+2009-04-24 11:52:58,991 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=755876, prey=false, _predatorIndex=514341]
+2009-04-24 11:53:36,819 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=637936, prey=false, _predatorIndex=]
+2009-04-24 11:54:44,471 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=168743, prey=false, _predatorIndex=]
+2009-04-24 11:54:56,485 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=168743, prey=false, _predatorIndex=]
+2009-04-24 11:55:11,239 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=699109, prey=false, _predatorIndex=]
+2009-04-24 11:55:37,817 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=413580, prey=true, _predatorIndex=]
+2009-04-24 11:55:37,818 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=451642, prey=false, _predatorIndex=]
+2009-04-24 11:56:05,531 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=755876, prey=false, _predatorIndex=]
+2009-04-24 11:56:32,259 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=217283, prey=true, _predatorIndex=]
+2009-04-24 11:56:32,260 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=54776, prey=false, _predatorIndex=]
+2009-04-24 11:56:46,384 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=730587, prey=false, _predatorIndex=]
+2009-04-24 11:56:46,753 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=168743, prey=false, _predatorIndex=]
+2009-04-24 11:56:50,326 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=132701, prey=true, _predatorIndex=]
+2009-04-24 11:56:50,326 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=416503, prey=false, _predatorIndex=]
+2009-04-24 11:58:17,299 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=699109, prey=true, _predatorIndex=]
+2009-04-24 11:58:17,299 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=796026, prey=false, _predatorIndex=]
+2009-04-24 11:58:36,726 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=699109, prey=false, _predatorIndex=]
+2009-04-24 11:58:40,564 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=796026, prey=false, _predatorIndex=699109]
+2009-04-24 11:59:03,543 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=755876, prey=false, _predatorIndex=]
+2009-04-24 11:59:05,542 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=730587, prey=false, _predatorIndex=]
+2009-04-24 11:59:42,310 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=796026, prey=false, _predatorIndex=]
+2009-04-24 12:00:20,788 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=451642, prey=false, _predatorIndex=]
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240557011280
+#GAMEDATA#TimeStarted=1240599030514
+#GAMEDATA#Now=1240599630769
+#GAMEDATA#TimeLoggedIn_797824=586
+#GAMEDATA#TimeLoggedIn_451642=365
+#GAMEDATA#TimeLoggedIn_217283=341
+#GAMEDATA#TimeLoggedIn_9093=586
+#GAMEDATA#TimeLoggedIn_806784=2
+#GAMEDATA#TimeLoggedIn_713=473
+#GAMEDATA#TimeLoggedIn_8842=586
+#GAMEDATA#TimeLoggedIn_413580=586
+#GAMEDATA#TimeLoggedIn_616590=583
+#GAMEDATA#TimeLoggedIn_333136=586
+#GAMEDATA#TimeLoggedIn_951=25
+#GAMEDATA#TimeLoggedIn_54776=586
+#GAMEDATA#TimeLoggedIn_510740=586
+#GAMEDATA#TimeLoggedIn_533=586
+#GAMEDATA#TimeLoggedIn_618201=23
+#GAMEDATA#TimeLoggedIn_782874=586
+#GAMEDATA#TimeLoggedIn_131355=287
+#GAMEDATA#TimeLoggedIn_132701=586
+#GAMEDATA#TimeLoggedIn_730587=586
+#GAMEDATA#TimeLoggedIn_755876=460
+#GAMEDATA#TimeLoggedIn_514341=586
+#GAMEDATA#TimeLoggedIn_168743=586
+#GAMEDATA#TimeLoggedIn_254186=85
+#GAMEDATA#TimeLoggedIn_806299=18
+#GAMEDATA#TimeLoggedIn_699109=332
+#GAMEDATA#TimeLoggedIn_595367=200
+#GAMEDATA#TimeLoggedIn_637936=508
+#GAMEDATA#TimeLoggedIn_521194=210
+#GAMEDATA#TimeLoggedIn_560243=586
+#GAMEDATA#TimeLoggedIn_3383=586
+#GAMEDATA#TimeLoggedIn_191352=333
+#GAMEDATA#TimeLoggedIn_796026=586
+#GAMEDATA#TimeLoggedIn_1531=258
+#GAMEDATA#TimeLoggedIn_416503=391
+#GAMEDATA#FeedingPlayers_451642=2,1
+#GAMEDATA#FeedingPlayers_217283=2
+#GAMEDATA#FeedingPlayers_755876=3,1,1
+#GAMEDATA#FeedingPlayers_514341=3
+#GAMEDATA#FeedingPlayers_168743=1,1
+#GAMEDATA#FeedingPlayers_521194=1
+#GAMEDATA#FeedingPlayers_413580=2
+#GAMEDATA#FeedingPlayers_699109=1,1
+#GAMEDATA#FeedingPlayers_637936=1,1
+#GAMEDATA#FeedingPlayers_416503=2
+#GAMEDATA#FeedingPlayers_54776=3,2
+#GAMEDATA#FeedingPlayers_796026=1,1
+#GAMEDATA#FeedingPlayers_730587=1,1
+#GAMEDATA#FeedingPlayers_132701=2
+#GAMEDATA#DescendentsPayout_94072=78.30000000000001
+#GAMEDATA#DescendentsPayout_20260=22.616666666666667
+#GAMEDATA#DescendentsPayout_430717=16.3
+#GAMEDATA#DescendentsPayout_149220=32.6
+#GAMEDATA#DescendentsPayout_259344=58.800000000000004
+#GAMEDATA#DescendentsPayout_82321=27.1
+#GAMEDATA#DescendentsPayout_143538=29.400000000000002
+#GAMEDATA#DescendentsPayout_57717=10.725000000000001
+#GAMEDATA#DescendentsPayout_416503=11.3
+#GAMEDATA#DescendentsPayout_54776=45.06666666666668
+#GAMEDATA#DescendentsPayout_57393=29.1
+#GAMEDATA#DescendentsPayout_96987=39.150000000000006
+#GAMEDATA#DescendentsPayout_159420=14.55
+#GAMEDATA#DescendentsPayout_89757=67.76666666666668
+#GAMEDATA#DescendentsPayout_154238=7.6000000000000005
+#GAMEDATA#DescendentsPayout_735743=15.200000000000001
+#GAMEDATA#FeedingXPEarned_797824=133.5
+#GAMEDATA#FeedingXPEarned_451642=588
+#GAMEDATA#FeedingXPEarned_217283=291
+#GAMEDATA#FeedingXPEarned_755876=289.33333333333337
+#GAMEDATA#FeedingXPEarned_514341=161.33333333333334
+#GAMEDATA#FeedingXPEarned_168743=326
+#GAMEDATA#FeedingXPEarned_521194=113
+#GAMEDATA#FeedingXPEarned_413580=783
+#GAMEDATA#FeedingXPEarned_699109=139
+#GAMEDATA#FeedingXPEarned_616590=2001.5
+#GAMEDATA#FeedingXPEarned_637936=253
+#GAMEDATA#FeedingXPEarned_560243=2001.5
+#GAMEDATA#FeedingXPEarned_416503=81
+#GAMEDATA#FeedingXPEarned_54776=452.33333333333337
+#GAMEDATA#FeedingXPEarned_796026=260
+#GAMEDATA#FeedingXPEarned_730587=152
+#GAMEDATA#FeedingXPEarned_132701=133.5
+#GAMEDATA#FeedingPlayers=1,1,1,3,1,1,1,2,1,2,1,1,2,1,1,1,1,1
+#GAMEDATA#<<<<EndStats
+2009-04-24 12:00:47,028 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=595367, prey=false, _predatorIndex=]
+2009-04-24 12:01:06,940 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=413580, prey=false, _predatorIndex=796026]
+2009-04-24 12:01:16,317 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=699109, prey=false, _predatorIndex=]
+2009-04-24 12:01:30,001 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=610010, prey=false, _predatorIndex=796026,413580]
+2009-04-24 12:02:02,031 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=413580, prey=true, _predatorIndex=]
+2009-04-24 12:02:02,032 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=796026, prey=false, _predatorIndex=]
+2009-04-24 12:02:22,276 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=806074, prey=false, _predatorIndex=]
+2009-04-24 12:02:29,187 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=610010, prey=true, _predatorIndex=]
+2009-04-24 12:02:29,188 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=730587, prey=false, _predatorIndex=]
+2009-04-24 12:02:42,955 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=451642, prey=true, _predatorIndex=]
+2009-04-24 12:02:42,956 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=47379, prey=false, _predatorIndex=]
+2009-04-24 12:03:03,147 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=217283, prey=true, _predatorIndex=]
+2009-04-24 12:03:03,147 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=637936, prey=false, _predatorIndex=]
+2009-04-24 12:03:35,631 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=805031, prey=false, _predatorIndex=]
+2009-04-24 12:04:06,223 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=807066, prey=false, _predatorIndex=]
+2009-04-24 12:04:06,455 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=207151, prey=false, _predatorIndex=796026]
+2009-04-24 12:04:22,742 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=797824, prey=true, _predatorIndex=]
+2009-04-24 12:04:22,743 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=534202, prey=false, _predatorIndex=]
+2009-04-24 12:04:57,458 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=451642, prey=false, _predatorIndex=]
+2009-04-24 12:05:00,392 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=699109, prey=true, _predatorIndex=]
+2009-04-24 12:05:00,393 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=47379, prey=false, _predatorIndex=]
+2009-04-24 12:05:59,632 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=807066, prey=false, _predatorIndex=]
+2009-04-24 12:06:07,600 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=12, prey=false, _predatorIndex=]
+2009-04-24 12:06:48,677 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=730587, prey=false, _predatorIndex=]
+2009-04-24 12:06:53,296 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=805031, prey=false, _predatorIndex=]
+2009-04-24 12:07:16,020 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=47379, prey=false, _predatorIndex=796026,207151]
+2009-04-24 12:07:26,004 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=47379, prey=false, _predatorIndex=]
+2009-04-24 12:08:05,185 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=217283, prey=true, _predatorIndex=]
+2009-04-24 12:08:05,186 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1062, prey=false, _predatorIndex=]
+2009-04-24 12:08:22,814 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=637936, prey=false, _predatorIndex=]
+2009-04-24 12:08:44,188 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=401764, prey=false, _predatorIndex=47379]
+2009-04-24 12:08:50,547 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=401764, prey=false, _predatorIndex=47379,401764]
+2009-04-24 12:09:10,482 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=191352, prey=false, _predatorIndex=47379,401764]
+2009-04-24 12:09:11,269 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=730587, prey=false, _predatorIndex=1062]
+2009-04-24 12:09:39,290 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=47379, prey=false, _predatorIndex=]
+2009-04-24 12:09:43,238 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=207151, prey=true, _predatorIndex=]
+2009-04-24 12:09:43,239 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=797824, prey=false, _predatorIndex=]
+2009-04-24 12:09:45,796 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=510740, prey=true, _predatorIndex=]
+2009-04-24 12:09:45,797 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=699109, prey=false, _predatorIndex=]
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240557011280
+#GAMEDATA#TimeStarted=1240599630770
+#GAMEDATA#Now=1240600230819
+#GAMEDATA#TimeLoggedIn_797824=585
+#GAMEDATA#TimeLoggedIn_806074=173
+#GAMEDATA#TimeLoggedIn_217283=585
+#GAMEDATA#TimeLoggedIn_9093=585
+#GAMEDATA#TimeLoggedIn_805896=21
+#GAMEDATA#TimeLoggedIn_191352=94
+#GAMEDATA#TimeLoggedIn_8842=469
+#GAMEDATA#TimeLoggedIn_796026=585
+#GAMEDATA#TimeLoggedIn_413580=585
+#GAMEDATA#TimeLoggedIn_805031=434
+#GAMEDATA#TimeLoggedIn_333136=585
+#GAMEDATA#TimeLoggedIn_629265=45
+#GAMEDATA#TimeLoggedIn_47379=478
+#GAMEDATA#TimeLoggedIn_510740=585
+#GAMEDATA#TimeLoggedIn_533=585
+#GAMEDATA#TimeLoggedIn_208662=69
+#GAMEDATA#TimeLoggedIn_437400=343
+#GAMEDATA#TimeLoggedIn_618201=2
+#GAMEDATA#TimeLoggedIn_807066=236
+#GAMEDATA#TimeLoggedIn_730587=585
+#GAMEDATA#TimeLoggedIn_132701=334
+#GAMEDATA#TimeLoggedIn_674061=197
+#GAMEDATA#TimeLoggedIn_534202=252
+#GAMEDATA#TimeLoggedIn_207151=496
+#GAMEDATA#TimeLoggedIn_782874=54
+#GAMEDATA#TimeLoggedIn_755876=278
+#GAMEDATA#TimeLoggedIn_514341=43
+#GAMEDATA#TimeLoggedIn_1062=180
+#GAMEDATA#TimeLoggedIn_595367=259
+#GAMEDATA#TimeLoggedIn_760717=92
+#GAMEDATA#TimeLoggedIn_807466=51
+#GAMEDATA#TimeLoggedIn_610010=189
+#GAMEDATA#TimeLoggedIn_401764=151
+#GAMEDATA#TimeLoggedIn_699109=585
+#GAMEDATA#TimeLoggedIn_805523=35
+#GAMEDATA#TimeLoggedIn_168743=585
+#GAMEDATA#TimeLoggedIn_637936=464
+#GAMEDATA#TimeLoggedIn_12=287
+#GAMEDATA#TimeLoggedIn_560243=27
+#GAMEDATA#TimeLoggedIn_337060=43
+#GAMEDATA#TimeLoggedIn_806070=85
+#GAMEDATA#TimeLoggedIn_3383=98
+#GAMEDATA#TimeLoggedIn_54776=10
+#GAMEDATA#TimeLoggedIn_451642=410
+#GAMEDATA#FeedingPlayers_807066=1,1
+#GAMEDATA#FeedingPlayers_796026=2
+#GAMEDATA#FeedingPlayers_217283=2,2
+#GAMEDATA#FeedingPlayers_699109=1,2,2
+#GAMEDATA#FeedingPlayers_1062=2
+#GAMEDATA#FeedingPlayers_595367=1
+#GAMEDATA#FeedingPlayers_797824=2,2
+#GAMEDATA#FeedingPlayers_610010=2
+#GAMEDATA#FeedingPlayers_413580=2
+#GAMEDATA#FeedingPlayers_805031=1,1
+#GAMEDATA#FeedingPlayers_637936=2,1
+#GAMEDATA#FeedingPlayers_47379=2,2,1,1
+#GAMEDATA#FeedingPlayers_12=1
+#GAMEDATA#FeedingPlayers_806074=1
+#GAMEDATA#FeedingPlayers_207151=2
+#GAMEDATA#FeedingPlayers_534202=2
+#GAMEDATA#FeedingPlayers_451642=2
+#GAMEDATA#FeedingPlayers_730587=2,1
+#GAMEDATA#FeedingPlayers_510740=2
+#GAMEDATA#DescendentsPayout_54776=58.95
+#GAMEDATA#DescendentsPayout_217283=21.6
+#GAMEDATA#DescendentsPayout_20260=12.100000000000001
+#GAMEDATA#DescendentsPayout_797824=13.850000000000001
+#GAMEDATA#DescendentsPayout_713=45.550000000000004
+#GAMEDATA#DescendentsPayout_413580=110.95
+#GAMEDATA#DescendentsPayout_259344=36.75
+#GAMEDATA#DescendentsPayout_57393=93.75000000000001
+#GAMEDATA#DescendentsPayout_143538=18.375
+#GAMEDATA#DescendentsPayout_12=22.775000000000002
+#GAMEDATA#DescendentsPayout_57717=6.925000000000001
+#GAMEDATA#DescendentsPayout_383387=52
+#GAMEDATA#DescendentsPayout_94072=148.82500000000002
+#GAMEDATA#DescendentsPayout_82321=20.775000000000002
+#GAMEDATA#DescendentsPayout_96987=46.675000000000004
+#GAMEDATA#DescendentsPayout_159420=41.47500000000001
+#GAMEDATA#DescendentsPayout_89757=53.67500000000001
+#GAMEDATA#DescendentsPayout_154238=27.150000000000002
+#GAMEDATA#DescendentsPayout_735743=54.300000000000004
+#GAMEDATA#FeedingXPEarned_797824=138.5
+#GAMEDATA#FeedingXPEarned_451642=367.5
+#GAMEDATA#FeedingXPEarned_217283=829.5
+#GAMEDATA#FeedingXPEarned_699109=564
+#GAMEDATA#FeedingXPEarned_1062=455.5
+#GAMEDATA#FeedingXPEarned_595367=115
+#GAMEDATA#FeedingXPEarned_534202=138.5
+#GAMEDATA#FeedingXPEarned_413580=933.5
+#GAMEDATA#FeedingXPEarned_805031=299
+#GAMEDATA#FeedingXPEarned_207151=176
+#GAMEDATA#FeedingXPEarned_637936=216
+#GAMEDATA#FeedingXPEarned_47379=589.5
+#GAMEDATA#FeedingXPEarned_12=520
+#GAMEDATA#FeedingXPEarned_54776=242
+#GAMEDATA#FeedingXPEarned_796026=1099.5
+#GAMEDATA#FeedingXPEarned_730587=543
+#GAMEDATA#FeedingPlayers=1,1,2,1,2,2,2,1,1,2,2,1,1,1,1,1,2,1,1,2,2
+#GAMEDATA#<<<<EndStats
+2009-04-24 12:11:26,503 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1062, prey=false, _predatorIndex=47379,401764,191352]
+2009-04-24 12:11:58,122 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=413580, prey=true, _predatorIndex=]
+2009-04-24 12:11:58,123 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=47379, prey=false, _predatorIndex=]
+2009-04-24 12:12:03,638 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=797824, prey=false, _predatorIndex=]
+2009-04-24 12:12:40,020 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=337060, prey=true, _predatorIndex=]
+2009-04-24 12:12:40,021 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=168743, prey=false, _predatorIndex=]
+2009-04-24 12:12:59,394 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=437400, prey=false, _predatorIndex=]
+2009-04-24 12:13:10,947 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=208662, prey=false, _predatorIndex=]
+2009-04-24 12:13:46,691 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=207151, prey=false, _predatorIndex=]
+2009-04-24 12:13:57,243 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=207151, prey=false, _predatorIndex=]
+2009-04-24 12:14:02,503 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1062, prey=false, _predatorIndex=168743]
+2009-04-24 12:14:16,470 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=401764, prey=false, _predatorIndex=]
+2009-04-24 12:14:39,641 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1062, prey=false, _predatorIndex=168743,1062]
+2009-04-24 12:14:55,812 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1062, prey=false, _predatorIndex=401764]
+2009-04-24 12:15:02,256 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=772113, prey=true, _predatorIndex=]
+2009-04-24 12:15:02,257 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=54776, prey=false, _predatorIndex=]
+2009-04-24 12:15:04,591 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=5212, prey=true, _predatorIndex=]
+2009-04-24 12:15:04,591 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=168743, prey=false, _predatorIndex=]
+2009-04-24 12:15:05,941 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=337060, prey=false, _predatorIndex=401764,1062]
+2009-04-24 12:15:10,327 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1062, prey=false, _predatorIndex=168743]
+2009-04-24 12:15:15,649 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=797824, prey=false, _predatorIndex=168743,1062]
+2009-04-24 12:15:33,059 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=565423, prey=false, _predatorIndex=168743,1062,797824]
+2009-04-24 12:15:41,914 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=699109, prey=true, _predatorIndex=]
+2009-04-24 12:15:41,915 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=805031, prey=false, _predatorIndex=]
+2009-04-24 12:15:56,364 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=337060, prey=false, _predatorIndex=]
+2009-04-24 12:16:09,632 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=574401, prey=true, _predatorIndex=]
+2009-04-24 12:16:09,633 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=797824, prey=false, _predatorIndex=]
+2009-04-24 12:16:53,572 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=401764, prey=false, _predatorIndex=]
+2009-04-24 12:17:13,020 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=199760, prey=false, _predatorIndex=337060]
+2009-04-24 12:17:29,163 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=98073, prey=false, _predatorIndex=401764]
+2009-04-24 12:18:07,984 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=98073, prey=false, _predatorIndex=]
+2009-04-24 12:18:08,058 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=796629, prey=false, _predatorIndex=]
+2009-04-24 12:18:11,769 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=510740, prey=true, _predatorIndex=]
+2009-04-24 12:18:11,769 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1062, prey=false, _predatorIndex=]
+2009-04-24 12:19:33,585 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=168743, prey=false, _predatorIndex=796629]
+2009-04-24 12:19:51,645 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=115341, prey=false, _predatorIndex=]
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240557011280
+#GAMEDATA#TimeStarted=1240600230820
+#GAMEDATA#Now=1240600830886
+#GAMEDATA#TimeLoggedIn_797824=584
+#GAMEDATA#TimeLoggedIn_574401=306
+#GAMEDATA#TimeLoggedIn_188135=108
+#GAMEDATA#TimeLoggedIn_217283=482
+#GAMEDATA#TimeLoggedIn_9093=584
+#GAMEDATA#TimeLoggedIn_54776=340
+#GAMEDATA#TimeLoggedIn_565423=300
+#GAMEDATA#TimeLoggedIn_413580=584
+#GAMEDATA#TimeLoggedIn_674061=372
+#GAMEDATA#TimeLoggedIn_333136=584
+#GAMEDATA#TimeLoggedIn_772113=556
+#GAMEDATA#TimeLoggedIn_47379=295
+#GAMEDATA#TimeLoggedIn_510740=584
+#GAMEDATA#TimeLoggedIn_796629=405
+#GAMEDATA#TimeLoggedIn_208662=211
+#GAMEDATA#TimeLoggedIn_437400=319
+#GAMEDATA#TimeLoggedIn_98073=206
+#GAMEDATA#TimeLoggedIn_730587=82
+#GAMEDATA#TimeLoggedIn_5212=436
+#GAMEDATA#TimeLoggedIn_533=584
+#GAMEDATA#TimeLoggedIn_77=258
+#GAMEDATA#TimeLoggedIn_202328=72
+#GAMEDATA#TimeLoggedIn_199760=233
+#GAMEDATA#TimeLoggedIn_401764=499
+#GAMEDATA#TimeLoggedIn_699109=584
+#GAMEDATA#TimeLoggedIn_1062=584
+#GAMEDATA#TimeLoggedIn_168743=584
+#GAMEDATA#TimeLoggedIn_115341=65
+#GAMEDATA#TimeLoggedIn_77353=62
+#GAMEDATA#TimeLoggedIn_337060=485
+#GAMEDATA#TimeLoggedIn_805031=584
+#GAMEDATA#TimeLoggedIn_637936=310
+#GAMEDATA#TimeLoggedIn_754994=24
+#GAMEDATA#TimeLoggedIn_12=584
+#GAMEDATA#TimeLoggedIn_207151=400
+#GAMEDATA#TimeLoggedIn_191352=458
+#GAMEDATA#TimeLoggedIn_796026=141
+#GAMEDATA#TimeLoggedIn_755260=13
+#GAMEDATA#TimeLoggedIn_807230=23
+#GAMEDATA#FeedingPlayers_797824=1,2
+#GAMEDATA#FeedingPlayers_574401=2
+#GAMEDATA#FeedingPlayers_805031=2
+#GAMEDATA#FeedingPlayers_337060=2,1
+#GAMEDATA#FeedingPlayers_699109=2
+#GAMEDATA#FeedingPlayers_1062=3,2
+#GAMEDATA#FeedingPlayers_168743=2,3
+#GAMEDATA#FeedingPlayers_54776=2
+#GAMEDATA#FeedingPlayers_401764=1,1
+#GAMEDATA#FeedingPlayers_207151=1
+#GAMEDATA#FeedingPlayers_772113=2
+#GAMEDATA#FeedingPlayers_47379=2
+#GAMEDATA#FeedingPlayers_413580=2
+#GAMEDATA#FeedingPlayers_796629=1
+#GAMEDATA#FeedingPlayers_208662=1
+#GAMEDATA#FeedingPlayers_437400=1
+#GAMEDATA#FeedingPlayers_98073=1
+#GAMEDATA#FeedingPlayers_510740=2
+#GAMEDATA#FeedingPlayers_5212=3
+#GAMEDATA#DescendentsPayout_94072=37.6
+#GAMEDATA#DescendentsPayout_217283=20.200000000000003
+#GAMEDATA#DescendentsPayout_409861=7
+#GAMEDATA#DescendentsPayout_713=142.72500000000002
+#GAMEDATA#DescendentsPayout_12=49.63333333333334
+#GAMEDATA#DescendentsPayout_407374=5.800000000000001
+#GAMEDATA#DescendentsPayout_82321=40.6
+#GAMEDATA#DescendentsPayout_510740=65.65
+#GAMEDATA#DescendentsPayout_156489=86.91666666666667
+#GAMEDATA#DescendentsPayout_96987=12.825000000000001
+#GAMEDATA#DescendentsPayout_445660=38.7
+#GAMEDATA#DescendentsPayout_413580=23.900000000000002
+#GAMEDATA#DescendentsPayout_149220=59.21666666666667
+#GAMEDATA#DescendentsPayout_699109=15.700000000000001
+#GAMEDATA#DescendentsPayout_63846=17.3
+#GAMEDATA#DescendentsPayout_534632=106.30000000000001
+#GAMEDATA#DescendentsPayout_133482=21.875
+#GAMEDATA#DescendentsPayout_147628=34.6
+#GAMEDATA#DescendentsPayout_402469=11.600000000000001
+#GAMEDATA#DescendentsPayout_89757=69.67500000000001
+#GAMEDATA#DescendentsPayout_157588=43.75
+#GAMEDATA#DescendentsPayout_57393=10.100000000000001
+#GAMEDATA#DescendentsPayout_57717=20.3
+#GAMEDATA#DescendentsPayout_54776=42.150000000000006
+#GAMEDATA#DescendentsPayout_221371=14
+#GAMEDATA#DescendentsPayout_430717=29.608333333333334
+#GAMEDATA#DescendentsPayout_20260=24.300000000000004
+#GAMEDATA#FeedingXPEarned_797824=406
+#GAMEDATA#FeedingXPEarned_574401=140
+#GAMEDATA#FeedingXPEarned_805031=157
+#GAMEDATA#FeedingXPEarned_401764=346
+#GAMEDATA#FeedingXPEarned_699109=578
+#GAMEDATA#FeedingXPEarned_1062=992.6666666666667
+#GAMEDATA#FeedingXPEarned_168743=592.1666666666667
+#GAMEDATA#FeedingXPEarned_54776=486
+#GAMEDATA#FeedingXPEarned_337060=423.5
+#GAMEDATA#FeedingXPEarned_207151=239
+#GAMEDATA#FeedingXPEarned_637936=202
+#GAMEDATA#FeedingXPEarned_772113=222
+#GAMEDATA#FeedingXPEarned_47379=421.5
+#GAMEDATA#FeedingXPEarned_510740=774
+#GAMEDATA#FeedingXPEarned_796629=92
+#GAMEDATA#FeedingXPEarned_565423=437.5
+#GAMEDATA#FeedingXPEarned_437400=116
+#GAMEDATA#FeedingXPEarned_98073=119
+#GAMEDATA#FeedingXPEarned_5212=869.1666666666667
+#GAMEDATA#FeedingXPEarned_413580=256.5
+#GAMEDATA#FeedingPlayers=2,1,2,1,1,1,1,2,3,2,1,2,1,1,2,1
+#GAMEDATA#<<<<EndStats
+2009-04-24 12:20:50,551 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=772113, prey=false, _predatorIndex=]
+2009-04-24 12:20:57,739 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=115341, prey=false, _predatorIndex=]
+2009-04-24 12:21:14,178 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=805031, prey=false, _predatorIndex=]
+2009-04-24 12:21:17,299 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=574401, prey=true, _predatorIndex=]
+2009-04-24 12:21:17,300 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=699109, prey=false, _predatorIndex=]
+2009-04-24 12:21:35,411 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=98073, prey=true, _predatorIndex=]
+2009-04-24 12:21:35,411 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1062, prey=false, _predatorIndex=]
+2009-04-24 12:22:35,882 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=510740, prey=true, _predatorIndex=]
+2009-04-24 12:22:35,882 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=796629, prey=false, _predatorIndex=]
+2009-04-24 12:23:13,589 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=797824, prey=false, _predatorIndex=]
+2009-04-24 12:23:28,213 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=772113, prey=false, _predatorIndex=]
+2009-04-24 12:24:17,828 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=98073, prey=false, _predatorIndex=]
+2009-04-24 12:24:23,422 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=115341, prey=false, _predatorIndex=]
+2009-04-24 12:24:24,018 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=95479, prey=false, _predatorIndex=98073]
+2009-04-24 12:24:49,106 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=77, prey=true, _predatorIndex=]
+2009-04-24 12:24:49,107 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=54776, prey=false, _predatorIndex=]
+2009-04-24 12:25:09,423 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=168743, prey=true, _predatorIndex=]
+2009-04-24 12:25:09,424 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=199760, prey=false, _predatorIndex=]
+2009-04-24 12:25:15,343 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=565423, prey=false, _predatorIndex=199760]
+2009-04-24 12:25:25,036 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=5212, prey=true, _predatorIndex=]
+2009-04-24 12:25:25,037 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=565423, prey=false, _predatorIndex=]
+2009-04-24 12:25:30,832 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=95479, prey=false, _predatorIndex=98073,95479]
+2009-04-24 12:25:38,583 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=502119, prey=true, _predatorIndex=]
+2009-04-24 12:25:38,584 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1062, prey=false, _predatorIndex=]
+2009-04-24 12:25:42,903 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=3200, prey=false, _predatorIndex=565423]
+2009-04-24 12:25:56,760 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=95479, prey=false, _predatorIndex=98073,95479]
+2009-04-24 12:26:00,497 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=188037, prey=true, _predatorIndex=]
+2009-04-24 12:26:00,498 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=115341, prey=false, _predatorIndex=]
+2009-04-24 12:26:09,298 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=772113, prey=false, _predatorIndex=]
+2009-04-24 12:26:33,684 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=3200, prey=false, _predatorIndex=565423,3200]
+2009-04-24 12:26:58,806 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=98073, prey=false, _predatorIndex=]
+2009-04-24 12:27:13,958 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=772113, prey=false, _predatorIndex=98073]
+2009-04-24 12:28:09,979 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=168743, prey=true, _predatorIndex=]
+2009-04-24 12:28:09,979 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=77, prey=false, _predatorIndex=]
+2009-04-24 12:28:12,852 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=772113, prey=false, _predatorIndex=]
+2009-04-24 12:28:41,018 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=188037, prey=false, _predatorIndex=77]
+2009-04-24 12:29:04,539 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=54776, prey=true, _predatorIndex=]
+2009-04-24 12:29:04,540 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=188037, prey=false, _predatorIndex=]
+2009-04-24 12:29:05,894 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=805031, prey=false, _predatorIndex=]
+2009-04-24 12:29:22,665 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=98073, prey=false, _predatorIndex=]
+2009-04-24 12:29:38,208 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=574401, prey=true, _predatorIndex=]
+2009-04-24 12:29:38,209 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=797824, prey=false, _predatorIndex=]
+2009-04-24 12:29:56,873 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=3200, prey=false, _predatorIndex=77,188037]
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240557011280
+#GAMEDATA#TimeStarted=1240600830887
+#GAMEDATA#Now=1240601431102
+#GAMEDATA#TimeLoggedIn_797824=585
+#GAMEDATA#TimeLoggedIn_574401=585
+#GAMEDATA#TimeLoggedIn_9093=447
+#GAMEDATA#TimeLoggedIn_3200=506
+#GAMEDATA#TimeLoggedIn_54776=585
+#GAMEDATA#TimeLoggedIn_413580=160
+#GAMEDATA#TimeLoggedIn_77=585
+#GAMEDATA#TimeLoggedIn_229006=75
+#GAMEDATA#TimeLoggedIn_199760=585
+#GAMEDATA#TimeLoggedIn_772113=585
+#GAMEDATA#TimeLoggedIn_807745=62
+#GAMEDATA#TimeLoggedIn_510740=585
+#GAMEDATA#TimeLoggedIn_533=570
+#GAMEDATA#TimeLoggedIn_188037=313
+#GAMEDATA#TimeLoggedIn_202328=585
+#GAMEDATA#TimeLoggedIn_98073=585
+#GAMEDATA#TimeLoggedIn_5212=561
+#GAMEDATA#TimeLoggedIn_796629=582
+#GAMEDATA#TimeLoggedIn_115341=585
+#GAMEDATA#TimeLoggedIn_333136=585
+#GAMEDATA#TimeLoggedIn_337060=118
+#GAMEDATA#TimeLoggedIn_699109=460
+#GAMEDATA#TimeLoggedIn_1062=585
+#GAMEDATA#TimeLoggedIn_502119=476
+#GAMEDATA#TimeLoggedIn_723692=69
+#GAMEDATA#TimeLoggedIn_168743=553
+#GAMEDATA#TimeLoggedIn_12=585
+#GAMEDATA#TimeLoggedIn_773108=207
+#GAMEDATA#TimeLoggedIn_565423=585
+#GAMEDATA#TimeLoggedIn_805031=585
+#GAMEDATA#TimeLoggedIn_8148=64
+#GAMEDATA#TimeLoggedIn_95479=457
+#GAMEDATA#FeedingPlayers_797824=1,2
+#GAMEDATA#FeedingPlayers_574401=2,2
+#GAMEDATA#FeedingPlayers_502119=2
+#GAMEDATA#FeedingPlayers_699109=2
+#GAMEDATA#FeedingPlayers_1062=2,2
+#GAMEDATA#FeedingPlayers_805031=1
+#GAMEDATA#FeedingPlayers_115341=1,2
+#GAMEDATA#FeedingPlayers_168743=2,2
+#GAMEDATA#FeedingPlayers_199760=2
+#GAMEDATA#FeedingPlayers_772113=1,1,1,1
+#GAMEDATA#FeedingPlayers_510740=2
+#GAMEDATA#FeedingPlayers_796629=2
+#GAMEDATA#FeedingPlayers_188037=2,2
+#GAMEDATA#FeedingPlayers_565423=2
+#GAMEDATA#FeedingPlayers_54776=2,2
+#GAMEDATA#FeedingPlayers_98073=2,1,1,1
+#GAMEDATA#FeedingPlayers_5212=2
+#GAMEDATA#FeedingPlayers_77=2,2
+#GAMEDATA#DescendentsPayout_409861=5.2250000000000005
+#GAMEDATA#DescendentsPayout_713=63.25
+#GAMEDATA#DescendentsPayout_8842=10.65
+#GAMEDATA#DescendentsPayout_12=23.575000000000003
+#GAMEDATA#DescendentsPayout_82321=20.700000000000003
+#GAMEDATA#DescendentsPayout_10642=10.05
+#GAMEDATA#DescendentsPayout_47379=21.950000000000003
+#GAMEDATA#DescendentsPayout_157588=32.2
+#GAMEDATA#DescendentsPayout_202327=13.4
+#GAMEDATA#DescendentsPayout_156489=32.2
+#GAMEDATA#DescendentsPayout_383387=55.825
+#GAMEDATA#DescendentsPayout_510740=42.550000000000004
+#GAMEDATA#DescendentsPayout_89757=57.300000000000004
+#GAMEDATA#DescendentsPayout_626711=21.950000000000003
+#GAMEDATA#DescendentsPayout_12770=111.65
+#GAMEDATA#DescendentsPayout_20260=28.650000000000002
+#GAMEDATA#DescendentsPayout_699109=27.1
+#GAMEDATA#DescendentsPayout_639655=10.975000000000001
+#GAMEDATA#DescendentsPayout_534632=33.050000000000004
+#GAMEDATA#DescendentsPayout_133482=16.1
+#GAMEDATA#DescendentsPayout_149220=81.15
+#GAMEDATA#DescendentsPayout_445660=9.275
+#GAMEDATA#DescendentsPayout_22707=21.3
+#GAMEDATA#DescendentsPayout_166836=26.8
+#GAMEDATA#DescendentsPayout_57717=10.350000000000001
+#GAMEDATA#DescendentsPayout_54776=10.975000000000001
+#GAMEDATA#DescendentsPayout_586681=20.1
+#GAMEDATA#DescendentsPayout_221371=10.450000000000001
+#GAMEDATA#DescendentsPayout_430717=40.575
+#GAMEDATA#FeedingXPEarned_797824=207
+#GAMEDATA#FeedingXPEarned_574401=104.5
+#GAMEDATA#FeedingXPEarned_502119=213
+#GAMEDATA#FeedingXPEarned_699109=104.5
+#GAMEDATA#FeedingXPEarned_1062=471.5
+#GAMEDATA#FeedingXPEarned_805031=271
+#GAMEDATA#FeedingXPEarned_77=1116.5
+#GAMEDATA#FeedingXPEarned_168743=811.5
+#GAMEDATA#FeedingXPEarned_199760=268
+#GAMEDATA#FeedingXPEarned_772113=347
+#GAMEDATA#FeedingXPEarned_510740=185.5
+#GAMEDATA#FeedingXPEarned_796629=185.5
+#GAMEDATA#FeedingXPEarned_188037=219.5
+#GAMEDATA#FeedingXPEarned_565423=322
+#GAMEDATA#FeedingXPEarned_54776=573
+#GAMEDATA#FeedingXPEarned_98073=579.5
+#GAMEDATA#FeedingXPEarned_5212=322
+#GAMEDATA#FeedingXPEarned_115341=219.5
+#GAMEDATA#FeedingXPEarned_95479=201
+#GAMEDATA#FeedingPlayers=1,1,1,2,2,2,1,1,1,2,2,2,2,2,1,1,2,1,2,1,2
+#GAMEDATA#<<<<EndStats
+2009-04-24 12:30:42,017 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=229006, prey=true, _predatorIndex=]
+2009-04-24 12:30:42,017 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=199760, prey=false, _predatorIndex=]
+2009-04-24 12:30:43,031 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=510740, prey=true, _predatorIndex=]
+2009-04-24 12:30:43,032 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=773108, prey=false, _predatorIndex=]
+2009-04-24 12:30:50,285 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=3200, prey=false, _predatorIndex=773108]
+2009-04-24 12:31:08,619 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=95479, prey=false, _predatorIndex=773108,3200]
+2009-04-24 12:31:10,144 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=502119, prey=true, _predatorIndex=]
+2009-04-24 12:31:10,145 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=168743, prey=false, _predatorIndex=]
+2009-04-24 12:31:18,541 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=3200, prey=true, _predatorIndex=]
+2009-04-24 12:31:18,542 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=95479, prey=false, _predatorIndex=]
+2009-04-24 12:31:22,195 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=54776, prey=true, _predatorIndex=]
+2009-04-24 12:31:22,196 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=77, prey=false, _predatorIndex=]
+2009-04-24 12:31:23,375 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=115341, prey=false, _predatorIndex=]
+2009-04-24 12:31:43,245 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=63924, prey=true, _predatorIndex=]
+2009-04-24 12:31:43,245 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=115341, prey=false, _predatorIndex=]
+2009-04-24 12:32:22,988 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=98073, prey=false, _predatorIndex=]
+2009-04-24 12:32:59,294 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=637734, prey=false, _predatorIndex=]
+2009-04-24 12:33:07,114 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=199760, prey=true, _predatorIndex=]
+2009-04-24 12:33:07,115 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=229006, prey=false, _predatorIndex=]
+2009-04-24 12:33:45,965 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=294694, prey=false, _predatorIndex=637734]
+2009-04-24 12:34:01,204 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=510740, prey=true, _predatorIndex=]
+2009-04-24 12:34:01,204 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=772113, prey=false, _predatorIndex=]
+2009-04-24 12:34:02,784 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=294694, prey=false, _predatorIndex=637734,294694]
+2009-04-24 12:34:05,383 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=115341, prey=false, _predatorIndex=637734,294694]
+2009-04-24 12:34:17,320 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=77, prey=true, _predatorIndex=]
+2009-04-24 12:34:17,321 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=294694, prey=false, _predatorIndex=]
+2009-04-24 12:34:21,482 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=115341, prey=false, _predatorIndex=637734,294694,115341]
+2009-04-24 12:34:34,595 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=95479, prey=true, _predatorIndex=]
+2009-04-24 12:34:34,596 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=188037, prey=false, _predatorIndex=]
+2009-04-24 12:34:41,681 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=805031, prey=true, _predatorIndex=]
+2009-04-24 12:34:41,682 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=656715, prey=false, _predatorIndex=]
+2009-04-24 12:35:11,527 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=63924, prey=false, _predatorIndex=]
+2009-04-24 12:35:17,586 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=115341, prey=false, _predatorIndex=]
+2009-04-24 12:35:24,276 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=98073, prey=false, _predatorIndex=]
+2009-04-24 12:35:34,014 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=637936, prey=false, _predatorIndex=]
+2009-04-24 12:36:09,814 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=202328, prey=true, _predatorIndex=]
+2009-04-24 12:36:09,814 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=199760, prey=false, _predatorIndex=]
+2009-04-24 12:36:12,928 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1062, prey=false, _predatorIndex=]
+2009-04-24 12:36:46,799 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=98073, prey=false, _predatorIndex=]
+2009-04-24 12:36:59,528 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=773108, prey=true, _predatorIndex=]
+2009-04-24 12:36:59,529 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=3200, prey=false, _predatorIndex=]
+2009-04-24 12:37:39,614 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=115341, prey=true, _predatorIndex=]
+2009-04-24 12:37:39,615 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=229006, prey=false, _predatorIndex=]
+2009-04-24 12:38:30,664 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=63924, prey=true, _predatorIndex=]
+2009-04-24 12:38:30,664 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=63026, prey=false, _predatorIndex=]
+2009-04-24 12:39:01,795 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=755876, prey=false, _predatorIndex=]
+2009-04-24 12:39:21,002 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=742701, prey=false, _predatorIndex=]
+2009-04-24 12:39:53,778 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=98073, prey=false, _predatorIndex=]
+

@@ -1,0 +1,38 @@
+Vampire Server initializing...
+2009-04-21 22:22:10,598 ERROR: vampire.server.GameServer AVRServerGameControl should of been initialized already
+2009-04-21 22:30:44,197 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+
+#GAMEDATA#>>>>BeginStats
+#GAMEDATA#ServerReboots=1240377730608
+#GAMEDATA#TimeStarted=1240377730607
+#GAMEDATA#Now=1240378330765
+#GAMEDATA#TimeLoggedIn_995=540
+#GAMEDATA#TimeLoggedIn_32169=583
+#GAMEDATA#TimeLoggedIn_67882=116
+#GAMEDATA#TimeLoggedIn_4139=504
+#GAMEDATA#TimeLoggedIn_260155=5
+#GAMEDATA#TimeLoggedIn_245808=101
+#GAMEDATA#TimeLoggedIn_713=240
+#GAMEDATA#TimeLoggedIn_230164=129
+#GAMEDATA#TimeLoggedIn_533=554
+#GAMEDATA#TimeLoggedIn_132984=21
+#GAMEDATA#TimeLoggedIn_132921=281
+#GAMEDATA#TimeLoggedIn_646491=49
+#GAMEDATA#FeedingPlayers_245808=2
+#GAMEDATA#FeedingPlayers_32169=3
+#GAMEDATA#FeedingPlayers_67882=1
+#GAMEDATA#FeedingPlayers_995=3
+#GAMEDATA#FeedingPlayers_230164=2
+#GAMEDATA#FeedingPlayers_533=3
+#GAMEDATA#DescendentsPayout_713=193.53333333333336
+#GAMEDATA#DescendentsPayout_383387=78.43333333333334
+#GAMEDATA#DescendentsPayout_10260=156.86666666666667
+#GAMEDATA#DescendentsPayout_12=292.85
+#GAMEDATA#DescendentsPayout_20260=156.86666666666667
+#GAMEDATA#FeedingXPEarned_32169=1568.6666666666667
+#GAMEDATA#FeedingXPEarned_995=1568.6666666666667
+#GAMEDATA#FeedingXPEarned_4139=1151
+#GAMEDATA#FeedingXPEarned_533=1568.6666666666667
+#GAMEDATA#FeedingPlayers=3,1,2
+#GAMEDATA#<<<<EndStats
+

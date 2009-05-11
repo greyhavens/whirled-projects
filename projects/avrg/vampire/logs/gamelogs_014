@@ -1,0 +1,947 @@
+
+>>>>BeginStats
+ServerReboots=1240349408466
+TimeStarted=1240353008654
+Now=1240356608672
+TimeLoggedIn_75520=954
+TimeLoggedIn_152551=654
+TimeLoggedIn_62941=105
+TimeLoggedIn_363783=434
+TimeLoggedIn_322825=150
+TimeLoggedIn_483338=2712
+TimeLoggedIn_39180=97
+TimeLoggedIn_128013=621
+TimeLoggedIn_380174=1004
+TimeLoggedIn_447249=447
+TimeLoggedIn_510740=3331
+TimeLoggedIn_161813=344
+TimeLoggedIn_626711=1445
+TimeLoggedIn_147988=3308
+TimeLoggedIn_533=3306
+TimeLoggedIn_219424=1796
+TimeLoggedIn_633123=240
+TimeLoggedIn_230164=3032
+TimeLoggedIn_314400=69
+TimeLoggedIn_2090=1640
+TimeLoggedIn_418347=62
+TimeLoggedIn_11315=442
+TimeLoggedIn_4139=303
+TimeLoggedIn_235839=449
+TimeLoggedIn_600642=33
+TimeLoggedIn_112707=390
+TimeLoggedIn_246858=121
+TimeLoggedIn_161355=778
+TimeLoggedIn_208204=228
+TimeLoggedIn_77=225
+TimeLoggedIn_8527=1842
+TimeLoggedIn_135504=1419
+TimeLoggedIn_639058=61
+TimeLoggedIn_6227=1101
+TimeLoggedIn_261716=237
+TimeLoggedIn_70997=2117
+TimeLoggedIn_643670=19
+TimeLoggedIn_202327=1991
+TimeLoggedIn_574288=1088
+TimeLoggedIn_106844=24
+TimeLoggedIn_1885=1546
+TimeLoggedIn_247134=278
+TimeLoggedIn_641120=447
+TimeLoggedIn_90210=12
+TimeLoggedIn_1892=1690
+TimeLoggedIn_552285=1141
+TimeLoggedIn_578918=51
+TimeLoggedIn_1632=5
+TimeLoggedIn_617321=573
+TimeLoggedIn_16719=47
+TimeLoggedIn_177005=1531
+TimeLoggedIn_47462=1800
+TimeLoggedIn_425071=624
+TimeLoggedIn_106069=2889
+TimeLoggedIn_192882=29
+TimeLoggedIn_75123=28
+TimeLoggedIn_47445=2584
+TimeLoggedIn_643708=782
+TimeLoggedIn_106880=528
+TimeLoggedIn_16514=841
+TimeLoggedIn_459651=2159
+TimeLoggedIn_9093=816
+TimeLoggedIn_336524=1036
+TimeLoggedIn_115341=1842
+TimeLoggedIn_171151=1591
+TimeLoggedIn_91280=666
+TimeLoggedIn_554385=433
+TimeLoggedIn_630419=2104
+TimeLoggedIn_277399=38
+TimeLoggedIn_147608=201
+TimeLoggedIn_207263=205
+TimeLoggedIn_160166=322
+TimeLoggedIn_93095=353
+TimeLoggedIn_143788=43
+TimeLoggedIn_237231=184
+TimeLoggedIn_161716=3331
+TimeLoggedIn_23989=1864
+TimeLoggedIn_133295=288
+TimeLoggedIn_90041=59
+TimeLoggedIn_44987=3028
+TimeLoggedIn_432820=1859
+TimeLoggedIn_74429=345
+TimeLoggedIn_460737=2199
+TimeLoggedIn_404675=449
+TimeLoggedIn_127942=759
+TimeLoggedIn_172743=551
+TimeLoggedIn_713=768
+TimeLoggedIn_361155=1943
+TimeLoggedIn_24525=3
+TimeLoggedIn_365254=193
+TimeLoggedIn_119761=943
+TimeLoggedIn_561618=22
+TimeLoggedIn_174027=248
+TimeLoggedIn_217283=3331
+TimeLoggedIn_143309=1542
+TimeLoggedIn_505559=1549
+TimeLoggedIn_39384=28
+TimeLoggedIn_643545=60
+TimeLoggedIn_84698=365
+TimeLoggedIn_42972=77
+TimeLoggedIn_64221=135
+TimeLoggedIn_162782=1214
+TimeLoggedIn_205535=1329
+TimeLoggedIn_527332=1234
+TimeLoggedIn_159461=770
+TimeLoggedIn_213214=183
+TimeLoggedIn_311783=939
+TimeLoggedIn_206312=1453
+TimeLoggedIn_14825=345
+TimeLoggedIn_58859=1281
+TimeLoggedIn_643301=64
+TimeLoggedIn_240605=503
+TimeLoggedIn_643567=263
+TimeLoggedIn_314573=1317
+TimeLoggedIn_187381=897
+TimeLoggedIn_199398=17
+TimeLoggedIn_54776=2901
+TimeLoggedIn_643294=113
+TimeLoggedIn_1531=1600
+TimeLoggedIn_159989=714
+FeedingPlayers_75520=1,1
+FeedingPlayers_16514=2
+FeedingPlayers_459651=2
+FeedingPlayers_9093=3
+FeedingPlayers_363783=1
+FeedingPlayers_106880=1
+FeedingPlayers_483338=1,1,2,3,2,2,2,2,2
+FeedingPlayers_336524=2,2
+FeedingPlayers_115341=1,1,1,1,1
+FeedingPlayers_380174=1,1,1
+FeedingPlayers_171151=2,2,2,1
+FeedingPlayers_404675=2
+FeedingPlayers_447249=2,1
+FeedingPlayers_630419=2
+FeedingPlayers_147988=1,2,2,2,2,2,2
+FeedingPlayers_161813=2
+FeedingPlayers_626711=1
+FeedingPlayers_91280=1,2,2
+FeedingPlayers_152551=1
+FeedingPlayers_230164=2,2,2
+FeedingPlayers_533=3
+FeedingPlayers_219424=2,2,2,2,1,2,2
+FeedingPlayers_510740=2,3,2,2,2
+FeedingPlayers_160166=1
+FeedingPlayers_93095=2,1
+FeedingPlayers_2090=2,2,1,2
+FeedingPlayers_133295=2
+FeedingPlayers_432820=1,2,1,1,1
+FeedingPlayers_23989=2,2
+FeedingPlayers_44987=2,2,2
+FeedingPlayers_74429=2,2
+FeedingPlayers_235839=2,2
+FeedingPlayers_460737=1,1
+FeedingPlayers_217283=2,2,2,2
+FeedingPlayers_127942=2,2,2
+FeedingPlayers_713=2
+FeedingPlayers_361155=1,2,2,2
+FeedingPlayers_208204=1
+FeedingPlayers_314573=2,1,2
+FeedingPlayers_365254=1
+FeedingPlayers_8527=2,2,2,3,3,2
+FeedingPlayers_135504=2,2,1,1
+FeedingPlayers_119761=2
+FeedingPlayers_6227=2,2,2
+FeedingPlayers_112707=2
+FeedingPlayers_70997=1,2,1,2,2
+FeedingPlayers_202327=2,1,2,2,2
+FeedingPlayers_574288=2,2
+FeedingPlayers_161355=1,2,1
+FeedingPlayers_106069=2,1
+FeedingPlayers_143309=1
+FeedingPlayers_505559=2,2
+FeedingPlayers_641120=2,2
+FeedingPlayers_1892=2
+FeedingPlayers_552285=2,2
+FeedingPlayers_47462=2,2,1,1
+FeedingPlayers_311783=1,1
+FeedingPlayers_206312=2,2
+FeedingPlayers_14825=2,2
+FeedingPlayers_58859=2,2,2
+FeedingPlayers_527332=3,2
+FeedingPlayers_177005=1,2,1
+FeedingPlayers_1885=2,2,3
+FeedingPlayers_425071=2
+FeedingPlayers_47445=2,1,1,1
+FeedingPlayers_77=2
+FeedingPlayers_187381=2,2
+FeedingPlayers_159461=2,2,2,2,2
+FeedingPlayers_643567=2
+FeedingPlayers_54776=2,2,2,2,2,2,2
+FeedingPlayers_162782=2,2,2,1,2,1,1
+FeedingPlayers_1531=2,2,3
+FeedingPlayers_643708=1,1,2
+FeedingPlayers_159989=2
+DescendentsPayout_193558=40.45
+DescendentsPayout_361219=102.35
+DescendentsPayout_334835=45.775000000000006
+DescendentsPayout_133611=63.55
+DescendentsPayout_8842=264.05
+DescendentsPayout_397835=261.1
+DescendentsPayout_12=553.2000000000002
+DescendentsPayout_380174=48.050000000000004
+DescendentsPayout_171151=75.95
+DescendentsPayout_181264=227.20000000000005
+DescendentsPayout_10642=7.65
+DescendentsPayout_47379=130.55
+DescendentsPayout_199427=112.85
+DescendentsPayout_307477=133.35000000000002
+DescendentsPayout_85115=34.3
+DescendentsPayout_626711=97
+DescendentsPayout_195736=91.55000000000001
+DescendentsPayout_75123=111.15
+DescendentsPayout_249362=124.50000000000001
+DescendentsPayout_383387=254.1516666666667
+DescendentsPayout_510740=708.2666666666667
+DescendentsPayout_89757=360.82500000000005
+DescendentsPayout_125827=27.575000000000003
+DescendentsPayout_250107=80.9
+DescendentsPayout_236834=136.4
+DescendentsPayout_93202=70.675
+DescendentsPayout_20260=252.97833333333338
+DescendentsPayout_298388=7.75
+DescendentsPayout_1062=21
+DescendentsPayout_551=43.7
+DescendentsPayout_16040=49.85333333333334
+DescendentsPayout_39171=60.6
+DescendentsPayout_36377=136.15000000000003
+DescendentsPayout_2843=473.92500000000007
+DescendentsPayout_205330=172.22500000000002
+DescendentsPayout_143278=17.15
+DescendentsPayout_639655=58.900000000000006
+DescendentsPayout_337162=34.4
+DescendentsPayout_57393=99.15
+DescendentsPayout_336524=5.2
+DescendentsPayout_3=24.92666666666667
+DescendentsPayout_3383=196.72500000000002
+DescendentsPayout_86951=26.400000000000002
+DescendentsPayout_116627=15.5
+DescendentsPayout_44987=254.87500000000003
+DescendentsPayout_159420=49.575
+DescendentsPayout_84747=37.3
+DescendentsPayout_41022=53.35
+DescendentsPayout_247992=51.175
+DescendentsPayout_453809=68.07500000000002
+DescendentsPayout_302907=113
+DescendentsPayout_11460=106.7
+DescendentsPayout_3653=52.800000000000004
+DescendentsPayout_195654=19.225
+DescendentsPayout_169408=14.5
+DescendentsPayout_713=63.97
+DescendentsPayout_21067=263.97499999999997
+DescendentsPayout_174526=17.2
+DescendentsPayout_192080=51.72500000000001
+DescendentsPayout_396113=209.85000000000002
+DescendentsPayout_5842=122.875
+DescendentsPayout_173395=7.25
+DescendentsPayout_132052=74.6
+DescendentsPayout_47445=49.800000000000004
+DescendentsPayout_202327=50.5
+DescendentsPayout_181388=22.050000000000004
+DescendentsPayout_208602=56.425
+DescendentsPayout_445660=292.71666666666664
+DescendentsPayout_250837=129.8
+DescendentsPayout_190687=64.9
+DescendentsPayout_55009=70.35000000000001
+DescendentsPayout_12770=300.125
+DescendentsPayout_995=56.95
+DescendentsPayout_3812=113.60000000000002
+DescendentsPayout_168422=31.775
+DescendentsPayout_273767=74.10000000000001
+DescendentsPayout_309096=35.175000000000004
+DescendentsPayout_159201=55.150000000000006
+DescendentsPayout_176491=52.800000000000004
+DescendentsPayout_238812=103.45000000000002
+DescendentsPayout_73072=245.75
+DescendentsPayout_637033=15.3
+DescendentsPayout_102770=30.3
+DescendentsPayout_142699=38.45
+DescendentsPayout_336500=66.67500000000001
+DescendentsPayout_101493=68.2
+DescendentsPayout_231158=141.35
+DescendentsPayout_12791=49.625
+DescendentsPayout_54776=238.75000000000006
+DescendentsPayout_534632=939.5666666666667
+DescendentsPayout_1531=214.32833333333332
+DescendentsPayout_39403=29.400000000000002
+DescendentsPayout_135293=44.10000000000001
+DescendentsPayout_101987=58.800000000000004
+DescendentsPayout_503=243.5666666666667
+FeedingXPEarned_75520=1413.5
+FeedingXPEarned_16514=210
+FeedingXPEarned_459651=1457.5
+FeedingXPEarned_9093=498.5333333333333
+FeedingXPEarned_106880=588
+FeedingXPEarned_483338=2844.8333333333335
+FeedingXPEarned_336524=915.5
+FeedingXPEarned_115341=970
+FeedingXPEarned_380174=1482
+FeedingXPEarned_171151=2260
+FeedingXPEarned_404675=606
+FeedingXPEarned_447249=1128.5
+FeedingXPEarned_630419=1457.5
+FeedingXPEarned_147988=1333.5
+FeedingXPEarned_161813=153
+FeedingXPEarned_626711=104
+FeedingXPEarned_91280=344
+FeedingXPEarned_152551=441
+FeedingXPEarned_230164=1298
+FeedingXPEarned_533=805.5333333333333
+FeedingXPEarned_219424=384.5
+FeedingXPEarned_510740=5854.333333333334
+FeedingXPEarned_160166=343
+FeedingXPEarned_93095=498
+FeedingXPEarned_2090=2457.5
+FeedingXPEarned_4139=316.2
+FeedingXPEarned_237231=451
+FeedingXPEarned_432820=2272
+FeedingXPEarned_23989=703.5
+FeedingXPEarned_44987=2129
+FeedingXPEarned_74429=746
+FeedingXPEarned_235839=746
+FeedingXPEarned_460737=145
+FeedingXPEarned_112707=437
+FeedingXPEarned_365254=155
+FeedingXPEarned_713=581.5
+FeedingXPEarned_217283=991.5
+FeedingXPEarned_208204=367
+FeedingXPEarned_314573=1028
+FeedingXPEarned_127942=635.5
+FeedingXPEarned_8527=2435.6666666666665
+FeedingXPEarned_135504=1111.5
+FeedingXPEarned_119761=250
+FeedingXPEarned_6227=1499.5
+FeedingXPEarned_361155=505
+FeedingXPEarned_70997=2611
+FeedingXPEarned_202327=992.5
+FeedingXPEarned_574288=809
+FeedingXPEarned_161355=667.5
+FeedingXPEarned_47445=3596
+FeedingXPEarned_213214=480.5
+FeedingXPEarned_505559=219
+FeedingXPEarned_641120=219
+FeedingXPEarned_1892=569.5
+FeedingXPEarned_552285=1023.5
+FeedingXPEarned_47462=2640.5
+FeedingXPEarned_311783=1067
+FeedingXPEarned_206312=551.5
+FeedingXPEarned_14825=485
+FeedingXPEarned_58859=2098.5
+FeedingXPEarned_527332=4623.833333333334
+FeedingXPEarned_177005=580
+FeedingXPEarned_1885=823.0333333333333
+FeedingXPEarned_643567=274.5
+FeedingXPEarned_106069=1364
+FeedingXPEarned_143309=284
+FeedingXPEarned_187381=338.5
+FeedingXPEarned_159461=1034.5
+FeedingXPEarned_425071=528
+FeedingXPEarned_54776=2546.5
+FeedingXPEarned_162782=1361.5
+FeedingXPEarned_1531=2250.0333333333333
+FeedingXPEarned_643708=474
+FeedingXPEarned_159989=528
+FeedingXPEarned_77=122.5
+FeedingPlayers=1,2,2,1,2,2,2,1,1,2,2,2,1,2,1,1,2,1,1,2,2,2,1,2,1,1,2,1,2,1,1,2,2,2,1,2,2,1,1,2,2,1,2,1,2,1,1,2,1,1,2,1,2,2,2,1,1,1,1,2,1,2,1,2,2,2,1,1,2,3,2,2,1,1,2,2,2,2,2,2,1,2,2,1,2,2,2,2,1,1,1,2,2,2,1,1,1,1,1,1,2,2,2,1,2,3,1,2,2,1,1,1,1,2,2,2,1,2,1,2,3,2,2,1,1,2,1
+<<<<EndStats
+2009-04-21 16:30:12,054 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=9093, name=Shango, roomId=null, xp=12999, level=4, bloodbond=0, sire=16040, progeny=617462]]
+2009-04-21 16:30:12,054 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Shango]
+2009-04-21 16:30:37,039 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=54658, name=vgcats  leo, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 16:30:37,040 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=vgcats  leo]
+2009-04-21 16:30:38,345 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=219424, name=destroyerangel, roomId=null, xp=10131.505000000001, level=4, bloodbond=0, sire=142699, progeny=268218,598928]]
+2009-04-21 16:30:38,346 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=destroyerangel]
+movePrimaryPred
+primaryPredatorId=460737
+primaryPred=Player [playerId=460737, name=kage, roomId=585459, xp=5181.400000000001, level=3, bloodbond=0, sire=169408, progeny=487102]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.3433181941509247,0,0.09169328957796097,0
+_room.getPlayer(_gameServer.preyId).location=0.37906819581985474,0,0.06761574000120163,0
+primaryPred.location=0.3433181941509247,0,0.09169328957796097,0
+movePrimaryPred
+primaryPredatorId=460737
+2009-04-21 16:30:46,227 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 16:30:46,783 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=235839, name=Da Ji, roomId=null, xp=15304.5, level=5, bloodbond=0, sire=381346, progeny=555452]]
+2009-04-21 16:30:46,784 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Da Ji]
+2009-04-21 16:30:47,444 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=219424, name=destroyerangel, roomId=null, xp=10131.505000000001, level=4, bloodbond=0, sire=142699, progeny=268218,598928]]
+2009-04-21 16:30:47,445 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=destroyerangel]
+2009-04-21 16:30:53,007 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=178599, name=death5500, roomId=null, xp=510, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 16:30:53,008 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=death5500]
+2009-04-21 16:31:02,149 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=129377, name=Pancake Q. Giggles, roomId=null, xp=3465.5, level=3, bloodbond=0, sire=157588, progeny=]]
+2009-04-21 16:31:02,150 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Pancake Q. Giggles]
+movePrimaryPred
+primaryPredatorId=8527
+movePrimaryPred
+primaryPredatorId=135504
+primaryPred=Player [playerId=135504, name=Axel, roomId=553273, xp=10436.025000000001, level=4, bloodbond=139439, sire=75123, progeny=164290,619701]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.49770453572273254,0,0.2749636471271515,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 16:31:15,112 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=74429, name=?Light_Yagami?, roomId=null, xp=12999, level=4, bloodbond=0, sire=132052, progeny=]]
+2009-04-21 16:31:15,112 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=?Light_Yagami?]
+2009-04-21 16:31:34,578 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=8527, name=Green, roomId=null, xp=12999, level=4, bloodbond=0, sire=503, progeny=]]
+2009-04-21 16:31:34,578 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Green]
+2009-04-21 16:31:43,289 ERROR: vampire.data.Lineage setPlayerName [playerId=191906, name=null]
+2009-04-21 16:31:43,290 ERROR: vampire.data.Lineage setPlayerName [playerId=318242, name=null]
+2009-04-21 16:31:43,290 ERROR: vampire.data.Lineage setPlayerName [playerId=393693, name=null]
+2009-04-21 16:31:43,290 ERROR: vampire.data.Lineage setPlayerName [playerId=65246, name=null]
+2009-04-21 16:31:48,082 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=204720, name=jelloguy, roomId=null, xp=1696, level=2, bloodbond=0, sire=368090, progeny=]]
+2009-04-21 16:31:48,083 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=jelloguy]
+movePrimaryPred
+primaryPredatorId=133295
+primaryPred=Player [playerId=133295, name=night wonderer, roomId=702665, xp=136.5, level=1, bloodbond=0, sire=510740, progeny=]
+_preyInitialLocation=0.6063408851623535,0,0.23204566538333893,0
+_primaryPredInitialLocation=0.6063408851623535,0,0.23250021040439606,0
+_room.getPlayer(_gameServer.preyId).location=0.6395227313041687,0,0.3526541292667389,0
+primaryPred.location=0.6063408851623535,0,0.23250021040439606,0
+movePrimaryPred
+primaryPredatorId=133295
+movePrimaryPred
+primaryPredatorId=162782
+primaryPred=Player [playerId=162782, name=x-Venus-x, roomId=553273, xp=19822.15, level=5, bloodbond=430717, sire=36377, progeny=616045,618797]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.19540908932685852,0,0.42113032937049866,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+movePrimaryPred
+primaryPredatorId=127942
+primaryPred=Player [playerId=127942, name=bloodgoddess4u, roomId=702665, xp=11939.755, level=4, bloodbond=0, sire=133611, progeny=230751,610724]
+_preyInitialLocation=0.3627045452594757,0,0.28724613785743713,0
+_primaryPredInitialLocation=0.3627045452594757,0,0.28770068287849426,0
+_room.getPlayer(_gameServer.preyId).location=0.3627045452594757,0,0.28724613785743713,0
+primaryPred.location=0.3627045452594757,0,0.28770068287849426,0
+2009-04-21 16:32:24,655 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+movePrimaryPred
+primaryPredatorId=460737
+primaryPred=Player [playerId=460737, name=kage, roomId=585459, xp=5181.400000000001, level=3, bloodbond=0, sire=169408, progeny=487102]
+_preyInitialLocation=null
+_primaryPredInitialLocation=null
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 16:32:31,473 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=128013, name=?Queen Cheyenne?, roomId=null, xp=7487.19, level=4, bloodbond=0, sire=254152, progeny=171720]]
+2009-04-21 16:32:31,474 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=?Queen Cheyenne?]
+2009-04-21 16:32:31,502 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=624820, name=Kandyfloss, roomId=null, xp=125.5, level=1, bloodbond=0, sire=586681, progeny=]]
+2009-04-21 16:32:31,502 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Kandyfloss]
+2009-04-21 16:32:31,530 ERROR: vampire.data.Lineage setPlayerName [playerId=586681, name=null]
+2009-04-21 16:32:33,080 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=639655, name=Adam, roomId=null, xp=1186.65, level=2, bloodbond=0, sire=336524, progeny=626711]]
+2009-04-21 16:32:33,080 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Adam]
+movePrimaryPred
+primaryPredatorId=152551
+primaryPred=Player [playerId=152551, name=frogman, roomId=585459, xp=12999, level=4, bloodbond=0, sire=135293, progeny=]
+_preyInitialLocation=0.11002272367477417,0,0.9605277180671692,0
+_primaryPredInitialLocation=0.11002272367477417,0,0.9609822630882263,0
+_room.getPlayer(_gameServer.preyId).location=0.11002272367477417,0,0.9605277180671692,0
+primaryPred.location=0.11002272367477417,0,0.9609822630882263,0
+2009-04-21 16:32:39,195 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=643818, name=Guest 643,818, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 16:32:39,195 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 643,818]
+2009-04-21 16:32:53,526 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=314573, name=vampire knight, roomId=null, xp=12999, level=4, bloodbond=0, sire=54776, progeny=]]
+2009-04-21 16:32:53,527 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=vampire knight]
+2009-04-21 16:32:53,773 ERROR: vampire.data.Lineage setPlayerName [playerId=298388, name=null]
+2009-04-21 16:32:53,773 ERROR: vampire.data.Lineage setPlayerName [playerId=44731, name=null]
+movePrimaryPred
+primaryPredatorId=161355
+primaryPred=Player [playerId=161355, name=Connor, roomId=553273, xp=5393, level=3, bloodbond=0, sire=54776, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.08824999630451202,0,0.70261549949646,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 16:33:10,697 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 16:33:19,395 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 16:33:20,247 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=195670, name=graciee_80, roomId=null, xp=94.5, level=1, bloodbond=0, sire=328568, progeny=]]
+2009-04-21 16:33:20,248 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=graciee_80]
+2009-04-21 16:33:22,536 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 16:33:26,983 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=195722, name=siana, roomId=null, xp=19352.35, level=5, bloodbond=37528, sire=208602, progeny=203405]]
+2009-04-21 16:33:26,983 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=siana]
+2009-04-21 16:33:52,107 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 16:34:12,894 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+movePrimaryPred
+primaryPredatorId=147988
+primaryPred=Player [playerId=147988, name=Micheal Rein, roomId=385674, xp=29459.113333333327, level=6, bloodbond=170446, sire=307477, progeny=155078,193337,282180,556276,607160,632368]
+_preyInitialLocation=0.6471583247184753,0,0.021075155586004257,0
+_primaryPredInitialLocation=0.6471583247184753,0,0.02242833562195301,0
+_room.getPlayer(_gameServer.preyId).location=0.6471583247184753,0,0.021075155586004257,0
+primaryPred.location=0.6471583247184753,0,0.02242833562195301,0
+movePrimaryPred
+primaryPredatorId=147988
+2009-04-21 16:34:17,696 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 16:34:21,288 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 16:34:22,068 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=127942, name=bloodgoddess4u, roomId=null, xp=11939.755, level=4, bloodbond=0, sire=133611, progeny=230751,610724]]
+2009-04-21 16:34:22,069 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=bloodgoddess4u]
+movePrimaryPred
+primaryPredatorId=219424
+movePrimaryPred
+primaryPredatorId=219424
+movePrimaryPred
+primaryPredatorId=178599
+primaryPred=Player [playerId=178599, name=death5500, roomId=553273, xp=510, level=1, bloodbond=0, sire=217283, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.338522732257843,0,0.3252530097961426,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+movePrimaryPred
+primaryPredatorId=127942
+movePrimaryPred
+primaryPredatorId=152551
+movePrimaryPred
+primaryPredatorId=639655
+primaryPred=Player [playerId=639655, name=Adam, roomId=553273, xp=1659.5, level=2, bloodbond=0, sire=336524, progeny=626711]
+_preyInitialLocation=0.338522732257843,0,0.3252530097961426,0
+_primaryPredInitialLocation=0.338522732257843,0,0.3257075548171997,0
+_room.getPlayer(_gameServer.preyId).location=0.44986364245414734,0,0.5323759913444519,0
+primaryPred.location=0.338522732257843,0,0.3257075548171997,0
+movePrimaryPred
+primaryPredatorId=639655
+movePrimaryPred
+primaryPredatorId=311783
+primaryPred=Player [playerId=311783, name=Lycanthrope, roomId=67021, xp=7233.5, level=4, bloodbond=0, sire=11460, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.8999999761581421,0,0.2800000011920929,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 16:35:24,203 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=643818, name=Guest 643,818, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 16:35:24,203 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 643,818]
+movePrimaryPred
+primaryPredatorId=115341
+primaryPred=Player [playerId=115341, name=Ayame, roomId=553273, xp=4470.5, level=3, bloodbond=0, sire=626711, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=null
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+movePrimaryPred
+primaryPredatorId=161355
+primaryPred=Player [playerId=161355, name=Connor, roomId=553273, xp=5661, level=3, bloodbond=0, sire=54776, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.22088636457920074,0,0.11049290001392365,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+movePrimaryPred
+primaryPredatorId=162782
+primaryPred=Player [playerId=162782, name=x-Venus-x, roomId=553273, xp=20293.15, level=5, bloodbond=430717, sire=36377, progeny=616045,618797]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.42225000262260437,0,0.2500838041305542,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+movePrimaryPred
+primaryPredatorId=460737
+primaryPred=Player [playerId=460737, name=kage, roomId=585459, xp=5346.400000000001, level=3, bloodbond=0, sire=169408, progeny=487102]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.3154999911785126,0,0.07159435749053955,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 16:35:49,120 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=510740, name=Szpan, roomId=null, xp=169859.49833333332, level=13, bloodbond=230164, sire=534632, progeny=110183,133295,133697,16993,177227,206096,246858,313682,336024,483338,519693,527332,552672,572898,575184,595474,610111,611550,612283,620013,84017]]
+2009-04-21 16:35:49,120 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Szpan]
+2009-04-21 16:35:49,305 ERROR: vampire.data.Lineage setPlayerName [playerId=191906, name=null]
+2009-04-21 16:35:49,305 ERROR: vampire.data.Lineage setPlayerName [playerId=318242, name=null]
+2009-04-21 16:35:49,305 ERROR: vampire.data.Lineage setPlayerName [playerId=393693, name=null]
+2009-04-21 16:35:49,305 ERROR: vampire.data.Lineage setPlayerName [playerId=65246, name=null]
+2009-04-21 16:36:01,631 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+movePrimaryPred
+primaryPredatorId=314573
+primaryPred=Player [playerId=314573, name=vampire knight, roomId=553273, xp=12999, level=4, bloodbond=0, sire=54776, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.08824999630451202,0,0.70261549949646,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 16:36:03,334 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+movePrimaryPred
+primaryPredatorId=90041
+primaryPred=Player [playerId=90041, name=Maverick Tears, roomId=702665, xp=94595.56999999999, level=11, bloodbond=175933, sire=258951, progeny=154004]
+_preyInitialLocation=0.6395227313041687,0,0.3526541292667389,0
+_primaryPredInitialLocation=0.6395227313041687,0,0.353108674287796,0
+_room.getPlayer(_gameServer.preyId).location=0.4163409173488617,0,0.4495368003845215,0
+primaryPred.location=0.6395227313041687,0,0.353108674287796,0
+movePrimaryPred
+primaryPredatorId=90041
+2009-04-21 16:36:29,599 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 16:36:41,445 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+movePrimaryPred
+primaryPredatorId=432820
+primaryPred=Player [playerId=432820, name=Corey-Duh, roomId=585459, xp=3769, level=3, bloodbond=0, sire=181264, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.4608863592147827,0,0.3265603482723236,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+movePrimaryPred
+primaryPredatorId=195670
+primaryPred=Player [playerId=195670, name=graciee_80, roomId=553273, xp=94.5, level=1, bloodbond=0, sire=328568, progeny=]
+_preyInitialLocation=0.30343180894851685,0,0.5457795262336731,0
+_primaryPredInitialLocation=0.42361363768577576,0,0.0035001400392502546,0
+_room.getPlayer(_gameServer.preyId).location=0.30343180894851685,0,0.5457795262336731,0
+primaryPred.location=0.42361363768577576,0,0.0035001400392502546,0
+2009-04-21 16:37:17,323 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=504477, name=Cierra, roomId=null, xp=1408.3999999999999, level=2, bloodbond=0, sire=211710, progeny=]]
+2009-04-21 16:37:17,324 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Cierra]
+movePrimaryPred
+primaryPredatorId=483338
+primaryPred=Player [playerId=483338, name=shadow_angel, roomId=702665, xp=3666.8333333333335, level=3, bloodbond=0, sire=510740, progeny=]
+_preyInitialLocation=0.5026136636734009,0,0.4302968680858612,0
+_primaryPredInitialLocation=0.5026136636734009,0,0.43075141310691833,0
+_room.getPlayer(_gameServer.preyId).location=0.5026136636734009,0,0.4302968680858612,0
+primaryPred.location=0.5026136636734009,0,0.43075141310691833,0
+2009-04-21 16:37:19,662 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=93339, name=Luin9, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 16:37:19,662 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Luin9]
+movePrimaryPred
+primaryPredatorId=483338
+2009-04-21 16:37:32,845 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=8527, name=Green, roomId=null, xp=12999, level=4, bloodbond=0, sire=503, progeny=]]
+2009-04-21 16:37:32,845 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Green]
+movePrimaryPred
+primaryPredatorId=161355
+movePrimaryPred
+primaryPredatorId=161355
+2009-04-21 16:37:51,611 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=561972, name=hot girl 99, roomId=null, xp=4022.3, level=3, bloodbond=0, sire=1101, progeny=563198]]
+2009-04-21 16:37:51,612 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=hot girl 99]
+movePrimaryPred
+primaryPredatorId=195670
+movePrimaryPred
+primaryPredatorId=127942
+primaryPred=Player [playerId=127942, name=bloodgoddess4u, roomId=839011, xp=12105.755, level=4, bloodbond=0, sire=133611, progeny=230751,610724]
+_preyInitialLocation=0.38297414779663086,0,0.30037105083465576,0
+_primaryPredInitialLocation=0.38297414779663086,0,0.3012436628341675,0
+_room.getPlayer(_gameServer.preyId).location=0.26621055603027344,0,0.36837735772132874,0
+primaryPred.location=0.38297414779663086,0,0.3012436628341675,0
+movePrimaryPred
+primaryPredatorId=127942
+movePrimaryPred
+primaryPredatorId=128013
+primaryPred=Player [playerId=128013, name=?Queen Cheyenne?, roomId=36540, xp=7582.19, level=4, bloodbond=0, sire=254152, progeny=171720]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.2620515525341034,0,0.16121818125247955,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+movePrimaryPred
+primaryPredatorId=115341
+primaryPred=Player [playerId=115341, name=Ayame, roomId=553273, xp=4950.5, level=3, bloodbond=0, sire=626711, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.46588635444641113,0,0.20205767452716827,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 16:38:43,828 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+movePrimaryPred
+primaryPredatorId=311783
+primaryPred=Player [playerId=311783, name=Lycanthrope, roomId=67021, xp=7434.5, level=4, bloodbond=0, sire=11460, progeny=643818]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.10410648584365845,0,0.38463714718818665,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 16:38:49,982 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=55725, name=hottlier, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 16:38:49,982 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=hottlier]
+2009-04-21 16:38:53,923 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=70997, name=c-alley, roomId=null, xp=11512.543333333335, level=4, bloodbond=0, sire=397835, progeny=377058,521919,625379]]
+2009-04-21 16:38:53,923 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=c-alley]
+2009-04-21 16:39:30,854 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=572784, name=depredator, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 16:39:30,854 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=depredator]
+movePrimaryPred
+primaryPredatorId=127942
+primaryPred=Player [playerId=127942, name=bloodgoddess4u, roomId=839011, xp=12105.755, level=4, bloodbond=0, sire=133611, progeny=230751,610724]
+_preyInitialLocation=null
+_primaryPredInitialLocation=null
+--- buffer full ---
+

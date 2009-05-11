@@ -1,0 +1,6 @@
+2009-05-04 11:03:53,456 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1237744, prey=false, _predatorIndex=]
+2009-05-04 11:04:55,043 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=23340, prey=false, _predatorIndex=]
+2009-05-04 11:05:00,275 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=73015, prey=false, _predatorIndex=]
+2009-05-04 11:05:28,628 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=185526, prey=false, _predatorIndex=]
+2009-05-04 11:05:58,415 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=338409, prey=false, _predatorIndex=]
+

@@ -1,0 +1,688 @@
+Vampire Server initializing...
+2009-04-21 14:30:08,387 ERROR: vampire.server.GameServer AVRServerGameControl should of been initialized already
+2009-04-21 14:30:08,584 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=64152, name=?FallingForever, roomId=null, xp=70360.585, level=9, bloodbond=45129, sire=108338, progeny=391630,428795]]
+2009-04-21 14:30:08,585 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=?FallingForever]
+2009-04-21 14:30:08,622 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=11315, name=Pachirisu, roomId=null, xp=140537.63000000006, level=12, bloodbond=0, sire=12, progeny=121604,142681,166214,461633,54812,609631,642617]]
+2009-04-21 14:30:08,623 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Pachirisu]
+2009-04-21 14:30:08,629 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=624356, name=bloodsucker89, roomId=null, xp=1660, level=2, bloodbond=0, sire=16514, progeny=]]
+2009-04-21 14:30:08,629 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=bloodsucker89]
+2009-04-21 14:30:08,656 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=23340, name=Ragbeard, roomId=null, xp=705750.8749999999, level=20, bloodbond=0, sire=383387, progeny=183053,322173,333860,40508]]
+2009-04-21 14:30:08,657 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Ragbeard]
+2009-04-21 14:30:08,968 ERROR: vampire.data.Lineage setPlayerName [playerId=112264, name=null]
+2009-04-21 14:30:08,968 ERROR: vampire.data.Lineage setPlayerName [playerId=189384, name=null]
+2009-04-21 14:30:08,969 ERROR: vampire.data.Lineage setPlayerName [playerId=191156, name=null]
+2009-04-21 14:30:08,969 ERROR: vampire.data.Lineage setPlayerName [playerId=199131, name=null]
+2009-04-21 14:30:08,969 ERROR: vampire.data.Lineage setPlayerName [playerId=387199, name=null]
+2009-04-21 14:30:08,969 ERROR: vampire.data.Lineage setPlayerName [playerId=32314, name=null]
+2009-04-21 14:30:08,970 ERROR: vampire.data.Lineage setPlayerName [playerId=59336, name=null]
+2009-04-21 14:30:08,970 ERROR: vampire.data.Lineage setPlayerName [playerId=102538, name=null]
+2009-04-21 14:30:08,971 ERROR: vampire.data.Lineage setPlayerName [playerId=137581, name=null]
+2009-04-21 14:30:08,971 ERROR: vampire.data.Lineage setPlayerName [playerId=162474, name=null]
+2009-04-21 14:30:08,971 ERROR: vampire.data.Lineage setPlayerName [playerId=445660, name=null]
+2009-04-21 14:30:10,849 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=3383, name=Version2.0, roomId=null, xp=151109.59833333333, level=12, bloodbond=968, sire=12791, progeny=16826,195261,2843,420786]]
+2009-04-21 14:30:10,850 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Version2.0]
+2009-04-21 14:30:11,027 ERROR: vampire.data.Lineage setPlayerName [playerId=12791, name=null]
+2009-04-21 14:30:11,028 ERROR: vampire.data.Lineage setPlayerName [playerId=16826, name=null]
+2009-04-21 14:30:11,029 ERROR: vampire.data.Lineage setPlayerName [playerId=195261, name=null]
+2009-04-21 14:30:11,029 ERROR: vampire.data.Lineage setPlayerName [playerId=2843, name=null]
+2009-04-21 14:30:11,029 ERROR: vampire.data.Lineage setPlayerName [playerId=420786, name=null]
+2009-04-21 14:30:12,059 ERROR: vampire.data.Lineage setPlayerName [playerId=47445, name=null]
+2009-04-21 14:30:12,060 ERROR: vampire.data.Lineage setPlayerName [playerId=620394, name=null]
+2009-04-21 14:30:12,060 ERROR: vampire.data.Lineage setPlayerName [playerId=632159, name=null]
+2009-04-21 14:30:12,060 ERROR: vampire.data.Lineage setPlayerName [playerId=75123, name=null]
+2009-04-21 14:30:12,061 ERROR: vampire.data.Lineage setPlayerName [playerId=423460, name=null]
+2009-04-21 14:30:15,700 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=196462, name=thelonleyvampire, roomId=null, xp=16638.75833333333, level=5, bloodbond=0, sire=392944, progeny=39030]]
+2009-04-21 14:30:15,701 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=thelonleyvampire]
+2009-04-21 14:30:16,655 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 14:30:19,217 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 14:30:24,124 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=643183, name=Guest 643,183, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 14:30:24,125 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 643,183]
+2009-04-21 14:30:30,099 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=202327, name=Pein, roomId=null, xp=12943.48, level=4, bloodbond=166836, sire=249362, progeny=166836,371210]]
+2009-04-21 14:30:30,099 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Pein]
+2009-04-21 14:30:32,287 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=63575, name=Hunkydory, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 14:30:32,288 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Hunkydory]
+2009-04-21 14:30:35,944 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=90041, name=Maverick Tears, roomId=null, xp=92871.53, level=11, bloodbond=175933, sire=258951, progeny=154004]]
+2009-04-21 14:30:35,945 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Maverick Tears]
+2009-04-21 14:30:36,051 ERROR: vampire.data.Lineage setPlayerName [playerId=125480, name=null]
+2009-04-21 14:30:36,052 ERROR: vampire.data.Lineage setPlayerName [playerId=185299, name=null]
+2009-04-21 14:30:36,052 ERROR: vampire.data.Lineage setPlayerName [playerId=209378, name=null]
+2009-04-21 14:30:36,052 ERROR: vampire.data.Lineage setPlayerName [playerId=29552, name=null]
+2009-04-21 14:30:36,053 ERROR: vampire.data.Lineage setPlayerName [playerId=481793, name=null]
+2009-04-21 14:30:36,053 ERROR: vampire.data.Lineage setPlayerName [playerId=617569, name=null]
+2009-04-21 14:30:44,739 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 14:30:45,852 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 14:30:54,384 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=206807, name=annabuddy, roomId=null, xp=106, level=1, bloodbond=0, sire=58429, progeny=]]
+2009-04-21 14:30:54,384 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=annabuddy]
+2009-04-21 14:30:55,554 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=106069, name=Lord Weegee The Insane, roomId=null, xp=15159.200000000003, level=5, bloodbond=19174, sire=236834, progeny=168398,379694,72176]]
+2009-04-21 14:30:55,554 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Lord Weegee The Insane]
+2009-04-21 14:30:55,561 ERROR: vampire.data.Lineage setPlayerName [playerId=236834, name=null]
+2009-04-21 14:30:55,562 ERROR: vampire.data.Lineage setPlayerName [playerId=168398, name=null]
+2009-04-21 14:30:55,562 ERROR: vampire.data.Lineage setPlayerName [playerId=379694, name=null]
+2009-04-21 14:30:55,562 ERROR: vampire.data.Lineage setPlayerName [playerId=72176, name=null]
+2009-04-21 14:30:56,083 ERROR: vampire.data.Lineage setPlayerName [playerId=170670, name=null]
+2009-04-21 14:30:56,083 ERROR: vampire.data.Lineage setPlayerName [playerId=218862, name=null]
+2009-04-21 14:30:56,470 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 14:30:57,113 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=196462, name=thelonleyvampire, roomId=null, xp=16638.75833333333, level=5, bloodbond=0, sire=392944, progeny=39030]]
+2009-04-21 14:30:57,114 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=thelonleyvampire]
+2009-04-21 14:31:11,027 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=45129, name=`Freezing Fire`, roomId=null, xp=76225.7606666667, level=10, bloodbond=64152, sire=66842, progeny=154238,209397,256452,273499,391782,474409,639200]]
+2009-04-21 14:31:11,028 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=`Freezing Fire`]
+2009-04-21 14:31:12,223 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=643181, name=Guest 643,181, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 14:31:12,223 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 643,181]
+2009-04-21 14:31:23,394 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=179390, name=Poul, roomId=null, xp=12999, level=4, bloodbond=0, sire=52484, progeny=]]
+2009-04-21 14:31:23,395 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Poul]
+2009-04-21 14:31:24,851 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=161716, name=Bella Cullen, roomId=null, xp=12999, level=4, bloodbond=285576, sire=143278, progeny=]]
+2009-04-21 14:31:24,851 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Bella Cullen]
+2009-04-21 14:31:37,754 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=1892, name=Paul, roomId=null, xp=46537.259999999995, level=8, bloodbond=455390, sire=995, progeny=111395,161730,197148,561864]]
+2009-04-21 14:31:37,754 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Paul]
+2009-04-21 14:31:39,630 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=115341, name=Ayame, roomId=null, xp=1062.5, level=2, bloodbond=0, sire=0, progeny=]]
+2009-04-21 14:31:39,631 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Ayame]
+2009-04-21 14:31:43,284 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 14:31:59,686 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=58429, name=jackie0305, roomId=null, xp=7278.635, level=4, bloodbond=0, sire=10642, progeny=128063,206807,286053,616423,642360]]
+2009-04-21 14:31:59,686 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=jackie0305]
+movePrimaryPred
+primaryPredatorId=624356
+primaryPred=Player [playerId=624356, name=bloodsucker89, roomId=584927, xp=1660, level=2, bloodbond=0, sire=16514, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.44861364364624023,0,0.6176056861877441,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 14:31:59,746 ERROR: vampire.data.Lineage setPlayerName [playerId=128063, name=null]
+2009-04-21 14:31:59,746 ERROR: vampire.data.Lineage setPlayerName [playerId=286053, name=null]
+2009-04-21 14:31:59,747 ERROR: vampire.data.Lineage setPlayerName [playerId=616423, name=null]
+2009-04-21 14:31:59,747 ERROR: vampire.data.Lineage setPlayerName [playerId=642360, name=null]
+2009-04-21 14:32:00,471 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 14:32:01,605 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=286053, name=notsolucky4, roomId=null, xp=2169.2900000000004, level=2, bloodbond=0, sire=58429, progeny=233794,626694]]
+2009-04-21 14:32:01,606 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=notsolucky4]
+movePrimaryPred
+primaryPredatorId=643181
+movePrimaryPred
+primaryPredatorId=643181
+2009-04-21 14:32:13,999 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 14:32:17,951 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=171683, name=??¢?azy Løv????, roomId=null, xp=12999, level=4, bloodbond=0, sire=161283, progeny=]]
+2009-04-21 14:32:17,951 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=??¢?azy Løv????]
+movePrimaryPred
+primaryPredatorId=196462
+primaryPred=Player [playerId=196462, name=thelonleyvampire, roomId=584927, xp=16638.75833333333, level=5, bloodbond=0, sire=392944, progeny=39030]
+_preyInitialLocation=null
+_primaryPredInitialLocation=null
+_room.getPlayer(_gameServer.preyId).location=0.36222726106643677,0,0.18440893292427063,0
+primaryPred.location=0.36222726106643677,0,0.18486347794532776,0
+movePrimaryPred
+primaryPredatorId=196462
+2009-04-21 14:32:39,474 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=230164, name=enigma, roomId=null, xp=57965.2, level=9, bloodbond=510740, sire=250837, progeny=128048,157891,374376,601397,602270,616484]]
+2009-04-21 14:32:39,474 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=enigma]
+2009-04-21 14:32:39,495 ERROR: vampire.data.Lineage setPlayerName [playerId=250837, name=null]
+2009-04-21 14:32:39,496 ERROR: vampire.data.Lineage setPlayerName [playerId=128048, name=null]
+2009-04-21 14:32:39,496 ERROR: vampire.data.Lineage setPlayerName [playerId=157891, name=null]
+2009-04-21 14:32:39,496 ERROR: vampire.data.Lineage setPlayerName [playerId=374376, name=null]
+2009-04-21 14:32:39,497 ERROR: vampire.data.Lineage setPlayerName [playerId=601397, name=null]
+2009-04-21 14:32:39,497 ERROR: vampire.data.Lineage setPlayerName [playerId=602270, name=null]
+2009-04-21 14:32:39,497 ERROR: vampire.data.Lineage setPlayerName [playerId=616484, name=null]
+movePrimaryPred
+primaryPredatorId=206807
+movePrimaryPred
+primaryPredatorId=206807
+2009-04-21 14:32:59,966 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=626711, name=HELL, roomId=null, xp=934, level=1, bloodbond=0, sire=639655, progeny=]]
+2009-04-21 14:32:59,966 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=HELL]
+2009-04-21 14:33:02,445 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=128886, name=Necroton, roomId=null, xp=1695.7, level=2, bloodbond=0, sire=147896, progeny=574676,618176,94307]]
+2009-04-21 14:33:02,445 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Necroton]
+movePrimaryPred
+primaryPredatorId=23340
+primaryPred=Player [playerId=23340, name=Ragbeard, roomId=142830, xp=706336.8749999999, level=20, bloodbond=0, sire=383387, progeny=183053,322173,333860,40508]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.35674649477005005,0,0.18122076988220215,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+movePrimaryPred
+primaryPredatorId=643183
+primaryPred=Player [playerId=643183, name=Guest 643,183, roomId=585459, xp=171, level=1, bloodbond=0, sire=0, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.27093181014060974,0,0.3995217978954315,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 14:33:14,305 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=179390, name=Poul, roomId=null, xp=12999, level=4, bloodbond=0, sire=52484, progeny=]]
+2009-04-21 14:33:14,305 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Poul]
+2009-04-21 14:33:25,600 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=102400, name=fuzzy, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 14:33:25,601 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=fuzzy]
+2009-04-21 14:33:26,676 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=638396, name=lizzy cullen, roomId=null, xp=214, level=1, bloodbond=0, sire=171151, progeny=]]
+2009-04-21 14:33:26,676 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=lizzy cullen]
+2009-04-21 14:33:36,422 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=282350, name=Loving soul, roomId=null, xp=12999, level=4, bloodbond=396425, sire=143278, progeny=205544,599508]]
+2009-04-21 14:33:36,422 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Loving soul]
+2009-04-21 14:33:39,902 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=190140, name=rosey, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 14:33:39,902 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=rosey]
+movePrimaryPred
+primaryPredatorId=64152
+primaryPred=Player [playerId=64152, name=?FallingForever, roomId=584927, xp=70487.585, level=9, bloodbond=45129, sire=108338, progeny=391630,428795]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.5440681576728821,0,0.2686975598335266,0
+_room.getPlayer(_gameServer.preyId).location=0.36222726106643677,0,0.18440893292427063,0
+primaryPred.location=0.5440681576728821,0,0.2686975598335266,0
+movePrimaryPred
+primaryPredatorId=64152
+2009-04-21 14:33:58,863 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 14:34:17,662 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=461605, name=badirl, roomId=null, xp=1262.25, level=2, bloodbond=0, sire=518979, progeny=]]
+2009-04-21 14:34:17,662 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=badirl]
+2009-04-21 14:34:34,368 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=74653, name=Jaden, roomId=null, xp=1808, level=2, bloodbond=0, sire=74372, progeny=]]
+2009-04-21 14:34:34,368 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Jaden]
+2009-04-21 14:34:35,349 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=263049, name=katy, roomId=null, xp=610, level=1, bloodbond=0, sire=187381, progeny=]]
+2009-04-21 14:34:35,349 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=katy]
+2009-04-21 14:34:35,820 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=237231, name=andy321, roomId=null, xp=12999, level=4, bloodbond=0, sire=20260, progeny=240605,261567]]
+2009-04-21 14:34:35,821 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=andy321]
+2009-04-21 14:34:45,233 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=142749, name=weerapat, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 14:34:45,234 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=weerapat]
+movePrimaryPred
+primaryPredatorId=1892
+primaryPred=Player [playerId=1892, name=Paul, roomId=553273, xp=46789.759999999995, level=8, bloodbond=455390, sire=995, progeny=111395,161730,197148,561864]
+_preyInitialLocation=0.28452274203300476,0,0.12152953445911407,0
+_primaryPredInitialLocation=0.28452274203300476,0,0.1219840794801712,0
+_room.getPlayer(_gameServer.preyId).location=0.28452274203300476,0,0.12152953445911407,0
+primaryPred.location=0.28452274203300476,0,0.1219840794801712,0
+movePrimaryPred
+primaryPredatorId=202327
+primaryPred=Player [playerId=202327, name=Pein, roomId=584927, xp=12999, level=4, bloodbond=166836, sire=249362, progeny=166836,371210]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.3050227165222168,0,0.17191554605960846,0
+_room.getPlayer(_gameServer.preyId).location=0.36222726106643677,0,0.18440893292427063,0
+primaryPred.location=0.3050227165222168,0,0.17191554605960846,0
+movePrimaryPred
+primaryPredatorId=202327
+2009-04-21 14:35:06,271 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=117675, name=GEOsonic the hedgehog jr, roomId=null, xp=434, level=1, bloodbond=0, sire=286697, progeny=]]
+2009-04-21 14:35:06,272 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=GEOsonic the hedgehog jr]
+2009-04-21 14:35:06,935 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+movePrimaryPred
+primaryPredatorId=1892
+movePrimaryPred
+primaryPredatorId=263049
+primaryPred=Player [playerId=263049, name=katy, roomId=553273, xp=610, level=1, bloodbond=0, sire=187381, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=null
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 14:35:58,643 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=117675, name=GEOsonic the hedgehog jr, roomId=null, xp=434, level=1, bloodbond=0, sire=286697, progeny=]]
+2009-04-21 14:35:58,643 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=GEOsonic the hedgehog jr]
+movePrimaryPred
+primaryPredatorId=626711
+primaryPred=Player [playerId=626711, name=HELL, roomId=553273, xp=1149, level=2, bloodbond=0, sire=639655, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.03634091094136238,0,0.020910492166876793,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 14:36:13,333 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=311007, name=bekah, roomId=null, xp=1109, level=2, bloodbond=0, sire=185786, progeny=]]
+2009-04-21 14:36:13,333 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=bekah]
+2009-04-21 14:36:26,900 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=456303, name=Guest 456,303, roomId=null, xp=195, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 14:36:26,900 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 456,303]
+2009-04-21 14:36:34,369 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=713, name=Silk, roomId=null, xp=150364.08166666667, level=12, bloodbond=1265, sire=12, progeny=10260,1062,1229,123961,156489,178269,4139,551]]
+2009-04-21 14:36:34,369 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Silk]
+2009-04-21 14:36:34,802 ERROR: vampire.data.Lineage setPlayerName [playerId=208903, name=null]
+2009-04-21 14:36:34,802 ERROR: vampire.data.Lineage setPlayerName [playerId=49827, name=null]
+2009-04-21 14:36:34,802 ERROR: vampire.data.Lineage setPlayerName [playerId=625910, name=null]
+2009-04-21 14:36:34,803 ERROR: vampire.data.Lineage setPlayerName [playerId=32169, name=null]
+2009-04-21 14:36:34,803 ERROR: vampire.data.Lineage setPlayerName [playerId=493115, name=null]
+2009-04-21 14:36:34,803 ERROR: vampire.data.Lineage setPlayerName [playerId=578004, name=null]
+2009-04-21 14:36:34,803 ERROR: vampire.data.Lineage setPlayerName [playerId=98803, name=null]
+2009-04-21 14:36:34,804 ERROR: vampire.data.Lineage setPlayerName [playerId=24474, name=null]
+2009-04-21 14:36:34,804 ERROR: vampire.data.Lineage setPlayerName [playerId=326332, name=null]
+2009-04-21 14:36:34,805 ERROR: vampire.data.Lineage setPlayerName [playerId=86605, name=null]
+2009-04-21 14:36:34,805 ERROR: vampire.data.Lineage setPlayerName [playerId=1358, name=null]
+2009-04-21 14:36:34,805 ERROR: vampire.data.Lineage setPlayerName [playerId=43402, name=null]
+2009-04-21 14:36:34,805 ERROR: vampire.data.Lineage setPlayerName [playerId=520521, name=null]
+2009-04-21 14:36:34,805 ERROR: vampire.data.Lineage setPlayerName [playerId=878, name=null]
+2009-04-21 14:36:34,806 ERROR: vampire.data.Lineage setPlayerName [playerId=150643, name=null]
+2009-04-21 14:36:34,806 ERROR: vampire.data.Lineage setPlayerName [playerId=396425, name=null]
+2009-04-21 14:36:34,806 ERROR: vampire.data.Lineage setPlayerName [playerId=512168, name=null]
+2009-04-21 14:36:34,806 ERROR: vampire.data.Lineage setPlayerName [playerId=619967, name=null]
+2009-04-21 14:36:34,807 ERROR: vampire.data.Lineage setPlayerName [playerId=62593, name=null]
+2009-04-21 14:36:34,807 ERROR: vampire.data.Lineage setPlayerName [playerId=109506, name=null]
+2009-04-21 14:36:34,807 ERROR: vampire.data.Lineage setPlayerName [playerId=159194, name=null]
+2009-04-21 14:36:34,808 ERROR: vampire.data.Lineage setPlayerName [playerId=506297, name=null]
+2009-04-21 14:36:34,808 ERROR: vampire.data.Lineage setPlayerName [playerId=112707, name=null]
+2009-04-21 14:36:34,808 ERROR: vampire.data.Lineage setPlayerName [playerId=363514, name=null]
+2009-04-21 14:36:34,808 ERROR: vampire.data.Lineage setPlayerName [playerId=365218, name=null]
+2009-04-21 14:36:35,342 ERROR: vampire.data.Lineage setPlayerName [playerId=208903, name=null]
+2009-04-21 14:36:35,343 ERROR: vampire.data.Lineage setPlayerName [playerId=49827, name=null]
+2009-04-21 14:36:35,344 ERROR: vampire.data.Lineage setPlayerName [playerId=625910, name=null]
+movePrimaryPred
+primaryPredatorId=237231
+primaryPred=Player [playerId=237231, name=andy321, roomId=585459, xp=12999, level=4, bloodbond=0, sire=20260, progeny=240605,261567]
+_preyInitialLocation=0.32184091210365295,0,0.5843988060951233,0
+_primaryPredInitialLocation=0.32184091210365295,0,0.5848533511161804,0
+_room.getPlayer(_gameServer.preyId).location=0.32184091210365295,0,0.5843988060951233,0
+primaryPred.location=0.32184091210365295,0,0.5848533511161804,0
+2009-04-21 14:36:50,331 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=75123, name=Moonshade, roomId=null, xp=85933.8025, level=10, bloodbond=101358, sire=2843, progeny=135504,19969,377629,481880,66878]]
+2009-04-21 14:36:50,332 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Moonshade]
+2009-04-21 14:36:50,492 ERROR: vampire.data.Lineage setPlayerName [playerId=619701, name=null]
+2009-04-21 14:36:50,493 ERROR: vampire.data.Lineage setPlayerName [playerId=19963, name=null]
+2009-04-21 14:36:50,493 ERROR: vampire.data.Lineage setPlayerName [playerId=377436, name=null]
+2009-04-21 14:36:50,493 ERROR: vampire.data.Lineage setPlayerName [playerId=183163, name=null]
+movePrimaryPred
+primaryPredatorId=237231
+movePrimaryPred
+primaryPredatorId=461605
+primaryPred=Player [playerId=461605, name=badirl, roomId=553273, xp=1980.7, level=2, bloodbond=0, sire=518979, progeny=]
+_preyInitialLocation=0.2390681952238083,0,0.021984079852700233,0
+_primaryPredInitialLocation=0.2390681952238083,0,0.022438624873757362,0
+_room.getPlayer(_gameServer.preyId).location=0.2390681952238083,0,0.021984079852700233,0
+primaryPred.location=0.2390681952238083,0,0.022438624873757362,0
+movePrimaryPred
+primaryPredatorId=461605
+2009-04-21 14:37:35,973 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=638396, name=lizzy cullen, roomId=null, xp=214, level=1, bloodbond=0, sire=171151, progeny=]]
+2009-04-21 14:37:35,973 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=lizzy cullen]
+movePrimaryPred
+primaryPredatorId=263049
+primaryPred=Player [playerId=263049, name=katy, roomId=553273, xp=654.5, level=1, bloodbond=0, sire=187381, progeny=]
+_preyInitialLocation=0.647704541683197,0,0.5007242560386658,0
+_primaryPredInitialLocation=0.5490681529045105,0,0.14436866343021393,0
+_room.getPlayer(_gameServer.preyId).location=0.647704541683197,0,0.5007242560386658,0
+primaryPred.location=0.5490681529045105,0,0.14436866343021393,0
+movePrimaryPred
+primaryPredatorId=263049
+2009-04-21 14:38:16,006 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=233794, name=Vidia,sister of Sherwood, roomId=null, xp=4887.675000000001, level=3, bloodbond=246858, sire=286053, progeny=128025]]
+2009-04-21 14:38:16,006 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Vidia,sister of Sherwood]
+2009-04-21 14:38:28,190 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+movePrimaryPred
+primaryPredatorId=74653
+primaryPred=Player [playerId=74653, name=Jaden, roomId=584927, xp=1943, level=2, bloodbond=0, sire=74372, progeny=]
+_preyInitialLocation=0.5532272458076477,0,0.5784791707992554,0
+_primaryPredInitialLocation=0.5532272458076477,0,0.5789337158203125,0
+_room.getPlayer(_gameServer.preyId).location=0.5532272458076477,0,0.5784791707992554,0
+primaryPred.location=0.5532272458076477,0,0.5789337158203125,0
+movePrimaryPred
+primaryPredatorId=74653
+movePrimaryPred
+primaryPredatorId=171683
+primaryPred=Player [playerId=171683, name=??¢?azy Løv????, roomId=553273, xp=12999, level=4, bloodbond=0, sire=161283, progeny=]
+_preyInitialLocation=0.3008863627910614,0,0.05157499015331268,0
+_primaryPredInitialLocation=0.4417954683303833,0,0.23828072845935822,0
+_room.getPlayer(_gameServer.preyId).location=0.3008863627910614,0,0.05157499015331268,0
+primaryPred.location=0.4417954683303833,0,0.23828072845935822,0
+movePrimaryPred
+primaryPredatorId=171683
+movePrimaryPred
+primaryPredatorId=196462
+primaryPred=Player [playerId=196462, name=thelonleyvampire, roomId=584927, xp=17122.75833333333, level=5, bloodbond=0, sire=392944, progeny=39030]
+_preyInitialLocation=0.36222726106643677,0,0.18440893292427063,0
+_primaryPredInitialLocation=0.36222726106643677,0,0.18486347794532776,0
+_room.getPlayer(_gameServer.preyId).location=0.36222726106643677,0,0.18440893292427063,0
+primaryPred.location=0.36222726106643677,0,0.18486347794532776,0
+movePrimaryPred
+primaryPredatorId=196462
+2009-04-21 14:39:22,624 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=617321, name=ice   girl, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 14:39:22,624 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=ice   girl]
+2009-04-21 14:39:32,308 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=172743, name=Ace, roomId=null, xp=5277.950000000001, level=3, bloodbond=0, sire=148695, progeny=]]
+2009-04-21 14:39:32,309 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Ace]
+2009-04-21 14:39:44,932 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 14:39:48,146 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=90041, name=Maverick Tears, roomId=null, xp=93239.56999999999, level=11, bloodbond=175933, sire=258951, progeny=154004]]
+2009-04-21 14:39:48,146 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Maverick Tears]
+2009-04-21 14:40:13,245 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=610111, name=crazym97, roomId=null, xp=1780.5, level=2, bloodbond=0, sire=510740, progeny=]]
+2009-04-21 14:40:13,245 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=crazym97]
+movePrimaryPred
+primaryPredatorId=142749
+primaryPred=Player [playerId=142749, name=weerapat, roomId=553273, xp=141.5, level=1, bloodbond=0, sire=0, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.6563408970832825,0,0.4141215682029724,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+movePrimaryPred
+primaryPredatorId=263049
+primaryPred=Player [playerId=263049, name=katy, roomId=553273, xp=736, level=1, bloodbond=0, sire=187381, progeny=]
+_preyInitialLocation=0.2390681952238083,0,0.021984079852700233,0
+_primaryPredInitialLocation=0.2390681952238083,0,0.022438624873757362,0
+_room.getPlayer(_gameServer.preyId).location=0.2390681952238083,0,0.021984079852700233,0
+primaryPred.location=0.2390681952238083,0,0.022438624873757362,0
+movePrimaryPred
+primaryPredatorId=263049
+2009-04-21 14:41:11,831 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=171513, name=Elric42, roomId=null, xp=49159.47666666667, level=8, bloodbond=0, sire=170191, progeny=231052,274013,546231,563125]]
+2009-04-21 14:41:11,831 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Elric42]
+2009-04-21 14:41:11,888 ERROR: vampire.data.Lineage setPlayerName [playerId=170191, name=null]
+2009-04-21 14:41:11,888 ERROR: vampire.data.Lineage setPlayerName [playerId=231052, name=null]
+2009-04-21 14:41:11,888 ERROR: vampire.data.Lineage setPlayerName [playerId=274013, name=null]
+2009-04-21 14:41:11,888 ERROR: vampire.data.Lineage setPlayerName [playerId=546231, name=null]
+2009-04-21 14:41:11,889 ERROR: vampire.data.Lineage setPlayerName [playerId=563125, name=null]
+2009-04-21 14:41:16,043 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+movePrimaryPred
+primaryPredatorId=638396
+movePrimaryPred
+primaryPredatorId=638396
+movePrimaryPred
+primaryPredatorId=117675
+primaryPred=Player [playerId=117675, name=GEOsonic the hedgehog jr, roomId=584927, xp=569, level=1, bloodbond=0, sire=286697, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=null
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 14:41:48,186 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=171151, name=Anorel, roomId=null, xp=126302.63999999993, level=12, bloodbond=0, sire=21067, progeny=141768,14825,261108,294694,52484,550541,613540,618781,619610,638396,97243]]
+2009-04-21 14:41:48,187 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Anorel]
+movePrimaryPred
+primaryPredatorId=115341
+primaryPred=Player [playerId=115341, name=Ayame, roomId=553273, xp=1596.5, level=2, bloodbond=0, sire=0, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.322704553604126,0,0.442735880613327,0
+_room.getPlayer(_gameServer.preyId).location=0.32997727394104004,0,0.08361226320266724,0
+primaryPred.location=0.322704553604126,0,0.442735880613327,0
+movePrimaryPred
+primaryPredatorId=115341
+movePrimaryPred
+primaryPredatorId=74653
+primaryPred=Player [playerId=74653, name=Jaden, roomId=584927, xp=2191.5, level=2, bloodbond=0, sire=74372, progeny=]
+_preyInitialLocation=0.3167727291584015,0,0.18440893292427063,0
+_primaryPredInitialLocation=0.3167727291584015,0,0.18486347794532776,0
+_room.getPlayer(_gameServer.preyId).location=0.3167727291584015,0,0.18440893292427063,0
+primaryPred.location=0.3167727291584015,0,0.18486347794532776,0
+movePrimaryPred
+primaryPredatorId=74653
+movePrimaryPred
+primaryPredatorId=233794
+primaryPred=Player [playerId=233794, name=Vidia,sister of Sherwood, roomId=553273, xp=5084.450000000001, level=3, bloodbond=246858, sire=286053, progeny=128025]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.3704318106174469,0,0.24393999576568604,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 14:42:32,480 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+movePrimaryPred
+primaryPredatorId=117675
+2009-04-21 14:43:11,584 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-21 14:43:24,741 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=126546, name=AnimeLuver, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 14:43:24,742 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=AnimeLuver]
+2009-04-21 14:43:40,776 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=188279, name=Kult of Klooz, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-21 14:43:40,777 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Kult of Klooz]
+movePrimaryPred
+primaryPredatorId=263049
+primaryPred=Player [playerId=263049, name=katy, roomId=585127, xp=844, level=1, bloodbond=0, sire=187381, progeny=]
+_preyInitialLocation=0.2800000011920929,0,0.7699999809265137,0
+_primaryPredInitialLocation=0.2800000011920929,0,0.7704545259475708,0
+_room.getPlayer(_gameServer.preyId).location=0.2800000011920929,0,0.7699999809265137,0
+primaryPred.location=0.2800000011920929,0,0.7704545259475708,0
+movePrimaryPred
+primaryPredatorId=263049
+movePrimaryPred
+primaryPredatorId=64152
+primaryPred=Player [playerId=64152, name=?FallingForever, roomId=584927, xp=71487.51000000001, level=9, bloodbond=45129, sire=108338, progeny=391630,428795]
+_preyInitialLocation=0.2786591053009033,0,0.39262545108795166,0
+_primaryPredInitialLocation=0.2786591053009033,0,0.3930799961090088,0
+_room.getPlayer(_gameServer.preyId).location=0.21456818282604218,0,0.3586733937263489,0
+primaryPred.location=0.2786591053009033,0,0.3930799961090088,0
+movePrimaryPred
+primaryPredatorId=64152
+movePrimaryPred
+primaryPredatorId=117675
+2009-04-21 14:44:22,105 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=217283, name=The Grimreaper?, roomId=null, xp=36737.810000000005, level=7, bloodbond=0, sire=57393, progeny=164902,235686,251308,323132]]
+2009-04-21 14:44:22,105 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=The Grimreaper?]
+2009-04-21 14:44:22,261 ERROR: vampire.data.Lineage setPlayerName [playerId=305986, name=null]
+2009-04-21 14:44:22,262 ERROR: vampire.data.Lineage setPlayerName [playerId=97489, name=null]
+movePrimaryPred
+primaryPredatorId=74653
+primaryPred=Player [playerId=74653, name=Jaden, roomId=584927, xp=2329.5, level=2, bloodbond=0, sire=74372, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.687250018119812,0,0.2378261834383011,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+movePrimaryPred
+primaryPredatorId=196462
+primaryPred=Player [playerId=196462, name=thelonleyvampire, roomId=584927, xp=17472.25833333333, level=5, bloodbond=0, sire=392944, progeny=39030]
+_preyInitialLocation=0.36222726106643677,0,0.18440893292427063,0
+_primaryPredInitialLocation=0.36222726106643677,0,0.18486347794532776,0
+_room.getPlayer(_gameServer.preyId).location=0.36222726106643677,0,0.18440893292427063,0
+primaryPred.location=0.36222726106643677,0,0.18486347794532776,0
+movePrimaryPred
+primaryPredatorId=196462
+2009-04-21 14:44:55,000 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+movePrimaryPred
+primaryPredatorId=610111
+primaryPred=Player [playerId=610111, name=crazym97, roomId=318335, xp=2034, level=2, bloodbond=0, sire=510740, progeny=]
+_preyInitialLocation=0.3520857095718384,0,0.19769790768623352,0
+_primaryPredInitialLocation=0.3520857095718384,0,0.19798362255096436,0
+_room.getPlayer(_gameServer.preyId).location=0.3520857095718384,0,0.19769790768623352,0
+primaryPred.location=0.3520857095718384,0,0.19798362255096436,0
+movePrimaryPred
+primaryPredatorId=610111
+movePrimaryPred
+primaryPredatorId=142749
+primaryPred=Player [playerId=142749, name=weerapat, roomId=218835, xp=270.5, level=1, bloodbond=0, sire=0, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.5079062581062317,0,0.5126304030418396,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+2009-04-21 14:45:24,860 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=4139, name=Anni, roomId=null, xp=135969.58, level=12, bloodbond=16040, sire=713, progeny=506297]]
+2009-04-21 14:45:24,861 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Anni]
+2009-04-21 14:45:25,022 ERROR: vampire.data.Lineage setPlayerName [playerId=208903, name=null]
+2009-04-21 14:45:25,022 ERROR: vampire.data.Lineage setPlayerName [playerId=49827, name=null]
+2009-04-21 14:45:25,022 ERROR: vampire.data.Lineage setPlayerName [playerId=625910, name=null]
+movePrimaryPred
+primaryPredatorId=115341
+primaryPred=Player [playerId=115341, name=Ayame, roomId=553273, xp=1737.5, level=2, bloodbond=0, sire=626711, progeny=]
+_preyInitialLocation=0.49452272057533264,0,0.015583394095301628,0
+_primaryPredInitialLocation=0.49452272057533264,0,0.016037939116358757,0
+_room.getPlayer(_gameServer.preyId).location=0.49452272057533264,0,0.015583394095301628,0
+primaryPred.location=0.49452272057533264,0,0.016037939116358757,0
+movePrimaryPred
+primaryPredatorId=115341
+2009-04-21 14:46:08,533 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=69690, name=Neltaco, roomId=null, xp=1981.1666666666667, level=2, bloodbond=0, sire=155376, progeny=]]
+2009-04-21 14:46:08,533 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Neltaco]
+2009-04-21 14:46:08,909 ERROR: vampire.data.Lineage setPlayerName [playerId=155376, name=null]
+2009-04-21 14:46:09,241 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=481714, name=Halzorn, roomId=null, xp=12999, level=4, bloodbond=88261, sire=432723, progeny=]]
+2009-04-21 14:46:09,241 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Halzorn]
+2009-04-21 14:46:12,618 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=448021, name=Roncrush, roomId=null, xp=4244.2, level=3, bloodbond=0, sire=473842, progeny=366856]]
+2009-04-21 14:46:12,619 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Roncrush]
+2009-04-21 14:46:12,667 ERROR: vampire.data.Lineage setPlayerName [playerId=473842, name=null]
+2009-04-21 14:46:12,667 ERROR: vampire.data.Lineage setPlayerName [playerId=366856, name=null]
+2009-04-21 14:46:19,590 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+movePrimaryPred
+primaryPredatorId=188279
+primaryPred=Player [playerId=188279, name=Kult of Klooz, roomId=218835, xp=134, level=1, bloodbond=0, sire=0, progeny=]
+_preyInitialLocation=null
+_primaryPredInitialLocation=0.7939375042915344,0,0.030869944021105766,0
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.server::FeedingRecord/movePrimaryPred()
+	at vampire.server::FeedingRecord/onPlayerLeft()
+	at vampire.feeding.server::Server/playerLeft()
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+movePrimaryPred
+primaryPredatorId=230164
+--- buffer full ---
+

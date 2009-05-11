@@ -1,0 +1,794 @@
+2009-04-20 14:21:03,818 ERROR: vampire.server.ServerLogic _room._bloodBloomGameManager=FeedingManager
+ _games.length=75
+ _playerId2Game.size()=8
+ _playerId2Game.keys()=76673,404675,377629,254186,407435,68460,5212,283455
+ games listed:
+  FeedingRecord _preyId=631938 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=574288 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=456303 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=407435 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=582351 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=626474 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=29624 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=634025 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=626474 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=263049 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=167153 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632814 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=88946 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=59589 _predators=203013 _primaryPredatorId=203013 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=212587 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=33511 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=127834 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=33511 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=637978 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=238812 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=77606 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=383249 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=263049 _primaryPredatorId=263049 _started=true _finished=false
+  FeedingRecord _preyId=404675 _predators=263049 _primaryPredatorId=263049 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=376624 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=68460 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=68460 _predators=254186 _primaryPredatorId=254186 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=76673 _predators=538550,283455 _primaryPredatorId=538550 _started=true _finished=false
+  FeedingRecord _preyId=5212 _predators= _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=407435 _predators=377629 _primaryPredatorId=377629 _started=false _finished=false
+2009-04-20 14:21:05,830 ERROR: vampire.server.ServerLogic handleFeedConfirmMessage [requestingPlayer=null]
+2009-04-20 14:21:06,304 ERROR: vampire.server.ServerLogic actionChange(ArrivedToFeed) but no game. We should have already registered.
+2009-04-20 14:21:06,305 ERROR: vampire.server.ServerLogic _room._bloodBloomGameManager=FeedingManager
+ _games.length=75
+ _playerId2Game.size()=8
+ _playerId2Game.keys()=76673,404675,377629,254186,407435,68460,5212,283455
+ games listed:
+  FeedingRecord _preyId=631938 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=574288 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=456303 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=407435 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=582351 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=626474 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=29624 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=634025 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=626474 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=263049 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=167153 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632814 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=88946 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=59589 _predators=203013 _primaryPredatorId=203013 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=212587 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=33511 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=127834 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=33511 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=637978 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=238812 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=77606 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=383249 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=263049 _primaryPredatorId=263049 _started=true _finished=false
+  FeedingRecord _preyId=404675 _predators=263049 _primaryPredatorId=263049 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=376624 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=68460 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=68460 _predators=254186 _primaryPredatorId=254186 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=76673 _predators=538550,283455 _primaryPredatorId=538550 _started=true _finished=false
+  FeedingRecord _preyId=5212 _predators= _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=407435 _predators=377629 _primaryPredatorId=377629 _started=false _finished=false
+2009-04-20 14:21:08,340 ERROR: vampire.server.ServerLogic actionChange(ArrivedToFeed) but no game. We should have already registered.
+2009-04-20 14:21:08,341 ERROR: vampire.server.ServerLogic _room._bloodBloomGameManager=FeedingManager
+ _games.length=4
+ _playerId2Game.size()=3
+ _playerId2Game.keys()=123169,4139,187381
+ games listed:
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=123169 _predators=4139,187381 _primaryPredatorId=187381 _started=true _finished=false
+adding 365.5xp
+ before xp=109815.1583333333
+ after xp=110180.6583333333
+adding 18.275000000000002xp
+ before xp=108108.87499999997
+ after xp=108127.14999999997
+adding 365.5xp
+ before xp=108127.14999999997
+ after xp=108492.64999999997
+adding 18.275000000000002xp
+ before xp=110180.6583333333
+ after xp=110198.93333333329
+adding 403xp
+ before xp=161247.19500000004
+ after xp=161650.19500000004
+2009-04-20 14:21:34,316 ERROR: vampire.server.ServerLogic actionChange(ArrivedToFeed) but no game. We should have already registered.
+2009-04-20 14:21:34,318 ERROR: vampire.server.ServerLogic _room._bloodBloomGameManager=FeedingManager
+ _games.length=75
+ _playerId2Game.size()=7
+ _playerId2Game.keys()=404675,377629,58859,254186,407435,68460,283455
+ games listed:
+  FeedingRecord _preyId=631938 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=574288 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=456303 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=407435 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=582351 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=626474 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=29624 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=634025 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=626474 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=263049 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=167153 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632814 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=88946 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=59589 _predators=203013 _primaryPredatorId=203013 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=212587 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=33511 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=127834 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=33511 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=637978 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=238812 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=77606 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=383249 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=263049 _primaryPredatorId=263049 _started=true _finished=false
+  FeedingRecord _preyId=404675 _predators=263049 _primaryPredatorId=263049 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=376624 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=68460 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=68460 _predators=254186 _primaryPredatorId=254186 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=538550,283455 _primaryPredatorId=538550 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=407435 _predators=58859,377629 _primaryPredatorId=377629 _started=true _finished=false
+2009-04-20 14:21:43,830 ERROR: vampire.server.ServerLogic actionChange(ArrivedToFeed) but no game. We should have already registered.
+2009-04-20 14:21:43,842 ERROR: vampire.server.ServerLogic _room._bloodBloomGameManager=FeedingManager
+ _games.length=75
+ _playerId2Game.size()=6
+ _playerId2Game.keys()=404675,377629,58859,254186,68460,283455
+ games listed:
+  FeedingRecord _preyId=631938 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=574288 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=456303 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=407435 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=582351 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=626474 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=29624 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=634025 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=626474 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=263049 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=167153 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632814 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=88946 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=59589 _predators=203013 _primaryPredatorId=203013 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=212587 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=33511 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=127834 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=33511 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=637978 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=238812 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=77606 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=383249 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=263049 _primaryPredatorId=263049 _started=true _finished=false
+  FeedingRecord _preyId=404675 _predators=263049 _primaryPredatorId=263049 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=376624 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=68460 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=68460 _predators=254186 _primaryPredatorId=254186 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=538550,283455 _primaryPredatorId=538550 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=58859,377629 _primaryPredatorId=377629 _started=true _finished=false
+2009-04-20 14:21:49,606 ERROR: vampire.server.ServerLogic actionChange(ArrivedToFeed) but no game. We should have already registered.
+2009-04-20 14:21:49,607 ERROR: vampire.server.ServerLogic _room._bloodBloomGameManager=FeedingManager
+ _games.length=75
+ _playerId2Game.size()=6
+ _playerId2Game.keys()=404675,377629,58859,254186,68460,283455
+ games listed:
+  FeedingRecord _preyId=631938 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=574288 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=456303 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=407435 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=582351 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=626474 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=29624 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=634025 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=626474 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=263049 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=167153 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632814 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=88946 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=59589 _predators=203013 _primaryPredatorId=203013 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=212587 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=33511 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=127834 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=33511 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=637978 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=238812 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=77606 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=383249 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=263049 _primaryPredatorId=263049 _started=true _finished=false
+  FeedingRecord _preyId=404675 _predators=263049 _primaryPredatorId=263049 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=376624 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=68460 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=68460 _predators=254186 _primaryPredatorId=254186 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=538550,283455 _primaryPredatorId=538550 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=58859,377629 _primaryPredatorId=377629 _started=true _finished=false
+2009-04-20 14:21:53,282 ERROR: vampire.server.ServerLogic actionChange(ArrivedToFeed) but no game. We should have already registered.
+2009-04-20 14:21:53,283 ERROR: vampire.server.ServerLogic _room._bloodBloomGameManager=FeedingManager
+ _games.length=75
+ _playerId2Game.size()=6
+ _playerId2Game.keys()=404675,377629,58859,254186,68460,283455
+ games listed:
+  FeedingRecord _preyId=631938 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=574288 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=456303 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=407435 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=582351 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=626474 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=29624 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=634025 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=626474 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=263049 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=167153 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632814 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=88946 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=59589 _predators=203013 _primaryPredatorId=203013 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=212587 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=33511 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=127834 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=33511 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=637978 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=238812 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=77606 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=383249 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=263049 _primaryPredatorId=263049 _started=true _finished=false
+  FeedingRecord _preyId=404675 _predators=263049 _primaryPredatorId=263049 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=376624 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=68460 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=68460 _predators=254186 _primaryPredatorId=254186 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=538550,283455 _primaryPredatorId=538550 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=58859,377629 _primaryPredatorId=377629 _started=true _finished=false
+adding 336xp
+ before xp=9022.733333333334
+ after xp=9358.733333333334
+2009-04-20 14:21:58,096 ERROR: vampire.server.ServerLogic actionChange(ArrivedToFeed) but no game. We should have already registered.
+2009-04-20 14:21:58,098 ERROR: vampire.server.ServerLogic _room._bloodBloomGameManager=FeedingManager
+ _games.length=75
+ _playerId2Game.size()=6
+ _playerId2Game.keys()=404675,377629,58859,254186,68460,283455
+ games listed:
+  FeedingRecord _preyId=631938 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=574288 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=456303 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=407435 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=582351 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=557086 _predators=140094 _primaryPredatorId=140094 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=626474 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632862 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=29624 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=634025 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=626474 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=263049 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=167153 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=632814 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=88946 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=59589 _predators=203013 _primaryPredatorId=203013 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=212587 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=404675 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=33511 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=127834 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=33511 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=637978 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=238812 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=77606 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=383249 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=263049 _primaryPredatorId=263049 _started=true _finished=false
+  FeedingRecord _preyId=404675 _predators=263049 _primaryPredatorId=263049 _started=false _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=376624 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=68460 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=68460 _predators=254186 _primaryPredatorId=254186 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=538550,283455 _primaryPredatorId=538550 _started=true _finished=false
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators=58859,377629 _primaryPredatorId=377629 _started=true _finished=false
+2009-04-20 14:22:04,148 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=555137, name=Guest 555,137, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-20 14:22:04,148 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 555,137]
+2009-04-20 14:22:11,103 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=260838, name=owen, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-20 14:22:11,103 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=owen]
+2009-04-20 14:22:20,213 ERROR: vampire.server.ServerLogic actionChange(ArrivedToFeed) but no game. We should have already registered.
+2009-04-20 14:22:20,214 ERROR: vampire.server.ServerLogic _room._bloodBloomGameManager=FeedingManager
+ _games.length=5
+ _playerId2Game.size()=4
+ _playerId2Game.keys()=123169,23266,4139,637892
+ games listed:
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=0 _predators= _primaryPredatorId=0 _started=true _finished=true
+  FeedingRecord _preyId=123169 _predators=4139 _primaryPredatorId=0 _started=true _finished=false
+  FeedingRecord _preyId=637892 _predators=23266 _primaryPredatorId=23266 _started=true _finished=false
+2009-04-20 14:22:21,165 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=128025, name=darkmaster, roomId=null, xp=890, level=1, bloodbond=0, sire=233794, progeny=]]
+2009-04-20 14:22:21,165 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=darkmaster]
+2009-04-20 14:22:21,165 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=233794]
+2009-04-20 14:22:24,924 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-20 14:22:31,907 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=260838, name=owen, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-20 14:22:31,908 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=owen]
+adding 253xp
+ before xp=18901.1
+ after xp=19154.1
+2009-04-20 14:22:54,758 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+2009-04-20 14:23:06,345 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+adding 159xp
+ before xp=196
+ after xp=355
+adding 159xp
+ before xp=4554.5
+ after xp=4713.5
+2009-04-20 14:23:31,086 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=5212, name=Mootsie, roomId=null, xp=161650.19500000004, level=13, bloodbond=2843, sire=341266, progeny=500950,506686,559150,570187,615823]]
+2009-04-20 14:23:31,086 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Mootsie]
+2009-04-20 14:23:31,086 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=341266]
+2009-04-20 14:23:36,334 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=33511, name=AbbyAutumn, roomId=null, xp=46204.923333333325, level=8, bloodbond=0, sire=246356, progeny=]]
+2009-04-20 14:23:36,335 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=AbbyAutumn]
+2009-04-20 14:23:36,335 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=246356]
+adding 1086.5xp
+ before xp=110198.93333333329
+ after xp=111285.43333333329
+adding 54.325xp
+ before xp=108492.64999999997
+ after xp=108546.97499999996
+adding 1086.5xp
+ before xp=108546.97499999996
+ after xp=109633.47499999996
+adding 54.325xp
+ before xp=111285.43333333329
+ after xp=111339.75833333329
+2009-04-20 14:24:08,206 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=65442, name=Draco, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-20 14:24:08,207 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Draco]
+2009-04-20 14:24:23,161 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=5212, name=Mootsie, roomId=null, xp=161650.19500000004, level=13, bloodbond=2843, sire=341266, progeny=500950,506686,559150,570187,615823]]
+2009-04-20 14:24:23,161 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Mootsie]
+2009-04-20 14:24:23,162 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=341266]
+TypeError: Error #1009: Cannot access a property or method of a null object reference.
+	at vampire.feeding.server::Server/onMsgReceived()
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.whirled::AbstractControl/dispatch()
+	at com.whirled.avrg::GameSubControlBase/messageReceived()
+	at com.threerings.msoy.avrg.client::BackendNetAdapter/messageReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/WHIRLED-PROD/src/as/com/threerings/msoy/avrg/client/BackendNetAdapter.as:106]
+	at com.threerings.presents.dobj::MessageEvent/notifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/MessageEvent.as:95]
+	at com.threerings.presents.dobj::DEvent/friendNotifyListener()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DEvent.as:67]
+	at com.threerings.presents.dobj::DObject/notifyListeners()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/dobj/DObject.as:117]
+	at com.threerings.presents.client::ClientDObjectMgr/dispatchEvent()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:223]
+	at com.threerings.presents.client::ClientDObjectMgr/processMessage()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/ClientDObjectMgr.as:155]
+	at com.threerings.presents.client::Communicator/inputFrameReceived()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/presents/client/Communicator.as:253]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at com.threerings.io::FrameReader/readAvailable()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:105]
+	at com.threerings.io::FrameReader/socketHasData()[/export/bamboo/bamboo-home/xml-data/build-dir/OOOLIBS-DEPLOY/narya/src/as/com/threerings/io/FrameReader.as:61]
+	at flash.events::EventDispatcher/dispatchEvent()
+	at flash.net::Socket/heartbeat()
+	at Thane$/heartbeat()
+adding 92xp
+ before xp=2967.5
+ after xp=3059.5
+adding 123.5xp
+ before xp=19154.1
+ after xp=19277.6
+adding 123.5xp
+ before xp=79320.76083333333
+ after xp=79444.26083333333
+2009-04-20 14:25:30,178 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=163914, name=$*slash8222*$, roomId=null, xp=4017.4, level=3, bloodbond=0, sire=227953, progeny=]]
+2009-04-20 14:25:30,179 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=$*slash8222*$]
+2009-04-20 14:25:30,179 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=227953]
+adding 410.9500000000001xp
+ before xp=4017.4
+ after xp=4428.35
+adding 122xp
+ before xp=26042.875
+ after xp=26164.875
+2009-04-20 14:25:54,626 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=208085, name=link's girl, roomId=null, xp=452.5, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-20 14:25:54,627 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=link's girl]
+adding 383xp
+ before xp=76067.55633333333
+ after xp=76450.55633333333
+adding 383xp
+ before xp=1007.5
+ after xp=1390.5
+2009-04-20 14:26:22,466 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=65442, name=Draco, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-20 14:26:22,466 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Draco]
+adding 805xp
+ before xp=111339.75833333329
+ after xp=112144.75833333329
+adding 40.25xp
+ before xp=109633.47499999996
+ after xp=109673.72499999996
+adding 805xp
+ before xp=109673.72499999996
+ after xp=110478.72499999996
+adding 40.25xp
+ before xp=112144.75833333329
+ after xp=112185.00833333329
+2009-04-20 14:26:56,005 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=281486, name=link7933, roomId=null, xp=1585, level=2, bloodbond=0, sire=16993, progeny=]]
+2009-04-20 14:26:56,006 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=link7933]
+2009-04-20 14:26:56,006 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=16993]
+adding 189.5xp
+ before xp=4428.35
+ after xp=4617.85
+adding 189.5xp
+ before xp=452.5
+ after xp=642
+adding 18.95xp
+ before xp=4617.85
+ after xp=4636.8
+adding 144xp
+ before xp=3968.475
+ after xp=4112.475
+adding 144xp
+ before xp=0
+ after xp=144
+adding 14.4xp
+ before xp=4112.475
+ after xp=4126.875
+adding 420.5xp
+ before xp=19277.6
+ after xp=19698.1
+adding 420.5xp
+ before xp=4713.5
+ after xp=5134
+adding 812xp
+ before xp=112185.00833333329
+ after xp=112997.00833333329
+adding 40.6xp
+ before xp=110478.72499999996
+ after xp=110519.32499999997
+adding 812xp
+ before xp=110519.32499999997
+ after xp=111331.32499999997
+adding 40.6xp
+ before xp=112997.00833333329
+ after xp=113037.6083333333
+adding 391xp
+ before xp=76450.55633333333
+ after xp=76841.55633333333
+2009-04-20 14:29:55,002 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=140983, name=Colee(:, roomId=null, xp=5325.5, level=3, bloodbond=0, sire=117857, progeny=]]
+2009-04-20 14:29:55,002 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Colee(:]
+2009-04-20 14:29:55,002 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=117857]
+2009-04-20 14:30:25,952 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+adding 195xp
+ before xp=26164.875
+ after xp=26359.875
+2009-04-20 14:30:42,371 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=638337, name=Guest 638,337, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-20 14:30:42,372 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Guest 638,337]
+2009-04-20 14:30:43,423 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=30158, name=???????????, roomId=null, xp=2159.5, level=2, bloodbond=0, sire=280634, progeny=]]
+2009-04-20 14:30:43,423 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=???????????]
+2009-04-20 14:30:43,423 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=280634]
+2009-04-20 14:31:06,142 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=254186, name=Giddy, roomId=null, xp=19698.1, level=5, bloodbond=268558, sire=477335, progeny=77606]]
+2009-04-20 14:31:06,142 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=Giddy]
+2009-04-20 14:31:06,142 ERROR: vampire.server.LineageServer playerJoined, setting sire [player.name=477335]
+2009-04-20 14:31:17,600 ERROR: vampire.server.ServerLogic stateChange(MoveToFeed) but no game. We should have already registered.
+adding 186xp
+ before xp=113037.6083333333
+ after xp=113223.6083333333
+adding 9.3xp
+ before xp=111331.32499999997
+ after xp=111340.62499999997
+adding 186xp
+ before xp=111340.62499999997
+ after xp=111526.62499999997
+adding 9.3xp
+ before xp=113223.6083333333
+ after xp=113232.9083333333
+2009-04-20 14:31:37,457 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=376443, name=$$Hottie$$, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-20 14:31:37,458 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=$$Hottie$$]
+adding 86.5xp
+ before xp=642
+ after xp=728.5
+adding 8.65xp
+ before xp=4636.8
+ after xp=4645.45
+adding 86.5xp
+ before xp=1585
+ after xp=1671.5
+2009-04-20 14:32:19,657 ERROR: vampire.server.LineageServer playerJoined [player=Player [playerId=376443, name=$$Hottie$$, roomId=null, xp=0, level=1, bloodbond=0, sire=0, progeny=]]
+2009-04-20 14:32:19,657 ERROR: vampire.server.LineageServer playerJoined, setting name [player.name=$$Hottie$$]
+2009-04-20 14:32:27,224 ERROR: vampire.server.ServerLogic actionChange(ArrivedToFeed) but no game. We should have already registered.
+--- buffer full ---
+

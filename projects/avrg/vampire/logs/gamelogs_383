@@ -1,0 +1,5 @@
+2009-05-03 07:49:15,871 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=60640, prey=false, _predatorIndex=]
+07:49:37 AM: service failure [service=awardPrize, cause=m.access_denied]
+2009-05-03 07:49:50,444 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=1192337, prey=false, _predatorIndex=]
+2009-05-03 07:49:59,147 ERROR: vampire.server.feeding.FeedingRecord sendPlayerStartGameMsg [playerId=261567, prey=false, _predatorIndex=60640]
+
