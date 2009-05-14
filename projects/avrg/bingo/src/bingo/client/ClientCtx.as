@@ -41,14 +41,9 @@ public class ClientCtx
 
     public static function getPlayerName (playerId :int) :String
     {
-        if (gameCtrl.isConnected()) {
-            var avatar :AVRGameAvatar = gameCtrl.room.getAvatarInfo(playerId);
-            if (null != avatar) {
-                return avatar.name;
-            }
-        }
-
-        return "player " + playerId.toString();
+        return (gameCtrl.isConnected() ?
+            gameCtrl.room.getOccupantName(playerId) :
+            "player " + playerId.toString());
     }
 }
 

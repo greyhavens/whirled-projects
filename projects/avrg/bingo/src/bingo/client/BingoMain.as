@@ -23,9 +23,7 @@ public class BingoMain extends Sprite
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
         // setup simplegame
-        var config :Config = new Config();
-        config.hostSprite = this;
-        _sg = new SimpleGame(config);
+        _sg = new SimpleGame(new Config());
         ClientCtx.mainLoop = _sg.ctx.mainLoop;
         ClientCtx.rsrcs = _sg.ctx.rsrcs;
         ClientCtx.audio = _sg.ctx.audio;
@@ -53,7 +51,7 @@ public class BingoMain extends Sprite
             ClientCtx.model = new Model();
             ClientCtx.model.setup();
 
-            _sg.run();
+            _sg.run(this);
             ClientCtx.mainLoop.pushMode(new IntroMode());
         }
     }
