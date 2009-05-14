@@ -43,10 +43,7 @@ public class RedRover extends Sprite
         this.scrollRect = new Rectangle(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
 
         // setup simplegame
-        var config :Config = new Config();
-        config.hostSprite = this;
-        config.keyDispatcher = (isConnected ? ClientCtx.gameCtrl.local : this.stage);
-        _sg = new SimpleGame(config);
+        _sg = new SimpleGame(new Config());
         ClientCtx.mainLoop = _sg.ctx.mainLoop;
         ClientCtx.rsrcs = _sg.ctx.rsrcs;
         ClientCtx.audio = _sg.ctx.audio;
@@ -66,7 +63,7 @@ public class RedRover extends Sprite
             handleSizeChanged();
         }
 
-        _sg.run();
+        _sg.run(this, (isConnected ? ClientCtx.gameCtrl.local : this.stage));
         ClientCtx.mainLoop.pushMode(new LoadingMode());
     }
 
