@@ -17,6 +17,7 @@ import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.errors.IllegalOperationError;
 import flash.events.Event;
+import flash.events.IEventDispatcher;
 import flash.events.KeyboardEvent;
 import flash.events.TimerEvent;
 import flash.geom.Point;
@@ -59,10 +60,7 @@ public class PopCraft extends Sprite
         this.scrollRect = new Rectangle(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
 
         // setup simplegame
-        var config :Config = new Config();
-        config.hostSprite = this;
-        config.keyDispatcher = (isConnected ? ClientCtx.gameCtrl.local : this.stage);
-        _sg = new SimpleGame(config);
+        _sg = new SimpleGame(new Config());
 
         ClientCtx.mainLoop = _sg.ctx.mainLoop;
         ClientCtx.rsrcs = _sg.ctx.rsrcs;
@@ -125,7 +123,8 @@ public class PopCraft extends Sprite
                 int.MAX_VALUE);
         }
 
-        _sg.run();
+        var keyDispatcher :IEventDispatcher = (isConnected ? ClientCtx.gameCtrl.local : this.stage);
+        _sg.run(this, keyDispatcher);
 
         // Before we kick off our loading mode, we need to load an initial set of resources
         // required to actually show the loading screen.
@@ -137,7 +136,7 @@ public class PopCraft extends Sprite
                 ClientCtx.mainLoop.unwindToMode(new GenericLoadErrorMode(loadErr));
             });
 
-        _events.registerListener(config.keyDispatcher, KeyboardEvent.KEY_DOWN, onKeyDown);
+        _events.registerListener(keyDispatcher, KeyboardEvent.KEY_DOWN, onKeyDown);
     }
 
     protected function onKeyDown (e :KeyboardEvent) :void
