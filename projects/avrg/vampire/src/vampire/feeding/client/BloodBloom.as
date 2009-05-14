@@ -15,8 +15,6 @@ import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.Sprite;
-import flash.events.Event;
-import flash.utils.Dictionary;
 
 import vampire.feeding.*;
 import vampire.feeding.net.*;
@@ -32,10 +30,10 @@ public class BloodBloom extends FeedingClient
             throw new Error("init has already been called");
         }
 
+        _hostSprite = hostSprite;
+
         // Init simplegame
-        var config :Config = new Config();
-        config.hostSprite = hostSprite;
-        _sg = new SimpleGame(config);
+        _sg = new SimpleGame(new Config());
 
         ClientCtx.gameCtrl = gameCtrl;
         ClientCtx.mainLoop = _sg.ctx.mainLoop;
@@ -80,7 +78,7 @@ public class BloodBloom extends FeedingClient
             maybeFinishInit();
         }
 
-        ClientCtx.mainLoop.run();
+        ClientCtx.mainLoop.run(_hostSprite);
     }
 
     override public function shutdown () :void
@@ -244,6 +242,7 @@ public class BloodBloom extends FeedingClient
     protected var _curModeName :String;
 
     protected static var _inited :Boolean;
+    protected static var _hostSprite :Sprite;
     protected static var _sg :SimpleGame;
     protected static var _resourcesLoaded :Boolean;
 

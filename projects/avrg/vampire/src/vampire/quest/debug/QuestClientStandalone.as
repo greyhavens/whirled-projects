@@ -8,6 +8,7 @@ import com.whirled.net.PropertySubControl;
 import flash.display.Sprite;
 
 import vampire.avatar.VampireBody;
+import vampire.client.VampireMain;
 import vampire.debug.LocalPropertySubControl;
 import vampire.feeding.FeedingClient;
 import vampire.furni.QuestTotem;
@@ -21,6 +22,7 @@ public class QuestClientStandalone extends Sprite
     QuestTestClient;
     QuestTotem;
     VampireBody;
+    VampireMain;
 
     public function QuestClientStandalone ()
     {
@@ -33,11 +35,9 @@ public class QuestClientStandalone extends Sprite
         appMode.modeSprite.addChild(notificationLayer);
 
         // Init simplegame
-        var config :Config = new Config();
-        config.hostSprite = this;
-        _sg = new SimpleGame(config);
+        _sg = new SimpleGame(new Config());
         _sg.ctx.mainLoop.pushMode(appMode);
-        _sg.run();
+        _sg.run(this);
 
         // Init local props
         var localProps :LocalPropertySubControl = new LocalPropertySubControl();

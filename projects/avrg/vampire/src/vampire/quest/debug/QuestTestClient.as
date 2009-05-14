@@ -32,11 +32,9 @@ public class QuestTestClient extends Sprite
         appMode.modeSprite.addChild(notificationLayer);
 
         // Init simplegame
-        var config :Config = new Config();
-        config.hostSprite = this;
-        _sg = new SimpleGame(config);
+        _sg = new SimpleGame(new Config());
         _sg.ctx.mainLoop.pushMode(appMode);
-        _sg.run();
+        _sg.run(this);
 
         // Init props
         _gameCtrl = new AVRGameControl(this);

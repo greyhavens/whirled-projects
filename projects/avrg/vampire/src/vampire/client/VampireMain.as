@@ -21,11 +21,7 @@ public class VampireMain extends Sprite
 
 
         // instantiate MainLoop singleton, and load its resources.
-        var gameSprite :Sprite = new Sprite();
-        addChild(gameSprite);
-        var config :Config = new Config();
-        config.hostSprite = gameSprite;
-        ClientContext.game = new SimpleGame(config);
+        ClientContext.game = new SimpleGame(new Config());
 
         loadResources();
     }
@@ -79,7 +75,9 @@ public class VampireMain extends Sprite
 
 
             //Start the game.
-            ClientContext.game.run();
+            var gameSprite :Sprite = new Sprite();
+            addChild(gameSprite);
+            ClientContext.game.run(gameSprite);
 
         }
     }
