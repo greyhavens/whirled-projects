@@ -44,7 +44,7 @@ public class LevelData
     {
         var data :LevelData = new LevelData();
 
-        data.endCondition = XmlReader.getEnumAttr(xml, "endCondition",
+        data.endCondition = XmlReader.getStringArrayAttr(xml, "endCondition",
             Constants.END_CONDITION_NAMES);
         data.endValue = XmlReader.getNumberAttr(xml, "endValue");
         data.cellSize = XmlReader.getUintAttr(xml, "cellSize");
