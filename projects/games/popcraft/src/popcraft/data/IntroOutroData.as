@@ -1,7 +1,5 @@
 package popcraft.data {
 
-import popcraft.util.XmlReader;
-
 public class IntroOutroData
 {
     public var introVerses :Array = [];

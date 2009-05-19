@@ -95,7 +95,7 @@ public class GameData
             (useDefaults ? defaults.nightLength : undefined));
         data.dawnWarning = XmlReader.getNumberAttr(xml, "dawnWarning",
             (useDefaults ? defaults.dawnWarning : undefined));
-        data.initialDayPhase = XmlReader.getEnumAttr(xml, "initialDayPhase",
+        data.initialDayPhase = XmlReader.getStringArrayAttr(xml, "initialDayPhase",
             Constants.DAY_PHASE_NAMES, (useDefaults ? defaults.initialDayPhase : undefined));
         data.disableDiurnalCycle = XmlReader.getBooleanAttr(xml, "disableDiurnalCycle",
             (useDefaults ? defaults.disableDiurnalCycle : undefined));
@@ -163,7 +163,7 @@ public class GameData
         }
 
         for each (var unitNode :XML in xml.Units.Unit) {
-            type = XmlReader.getEnumAttr(unitNode, "type", Constants.UNIT_NAMES);
+            type = XmlReader.getStringArrayAttr(unitNode, "type", Constants.UNIT_NAMES);
             data.units[type] = UnitData.fromXml(unitNode,
                 (useDefaults ? defaults.units[type] : null));
         }
@@ -174,7 +174,7 @@ public class GameData
         }
 
         for each (var spellNode :XML in xml.Spells.Spell) {
-            type = XmlReader.getEnumAttr(spellNode, "type", Constants.SPELL_NAMES);
+            type = XmlReader.getStringArrayAttr(spellNode, "type", Constants.SPELL_NAMES);
             var spellClass :Class =
                 (type < Constants.CREATURE_SPELL_TYPE__LIMIT ? CreatureSpellData : SpellData);
             data.spells[type] = spellClass.fromXml(spellNode,

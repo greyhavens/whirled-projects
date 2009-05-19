@@ -36,7 +36,7 @@ public class DataUtil
 
         } else {
             for each (var unitData :XML in xml.elements(xmlNodeName)) {
-                types.push(XmlReader.getEnumAttr(unitData, "type", typeNames));
+                types.push(XmlReader.getStringArrayAttr(unitData, "type", typeNames));
             }
         }
 

@@ -40,7 +40,8 @@ public class ScoreData
         }
 
         for each (var unitXml :XML in xml.PointsPerCreatureKill.Unit) {
-            var type :int = XmlReader.getEnumAttr(unitXml, "type", Constants.CREATURE_UNIT_NAMES);
+            var type :int = XmlReader.getStringArrayAttr(
+                unitXml, "type", Constants.CREATURE_UNIT_NAMES);
             var points :int = XmlReader.getIntAttr(unitXml, "points",
                 (useDefaults ? defaults[type] : 0));
             data.pointsPerCreatureKill[type] = points;

@@ -44,7 +44,8 @@ public class PuzzleData
         }
 
         for each (var resourceNode :XML in xml.Resource) {
-            var type :int = XmlReader.getEnumAttr(resourceNode, "type", Constants.RESOURCE_NAMES);
+            var type :int = XmlReader.getStringArrayAttr(
+                resourceNode, "type", Constants.RESOURCE_NAMES);
             data.resources[type] = ResourceData.fromXml(resourceNode,
                 (useDefaults ? defaults.resources[type] : null));
         }

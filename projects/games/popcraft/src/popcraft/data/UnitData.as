@@ -82,7 +82,7 @@ public class UnitData
             // don't inherit resource costs
             data.resourceCosts = [ 0, 0, 0, 0 ];
             for each (var resourceNode :XML in resourceCostsNode.Resource) {
-                var resourceType :int = XmlReader.getEnumAttr(resourceNode, "type",
+                var resourceType :int = XmlReader.getStringArrayAttr(resourceNode, "type",
                     Constants.RESOURCE_NAMES);
                 var cost :int = XmlReader.getUintAttr(resourceNode, "amount");
                 data.resourceCosts[resourceType] = cost;

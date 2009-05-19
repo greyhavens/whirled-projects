@@ -57,7 +57,7 @@ public class UnitWeaponData
 
         var data :UnitWeaponData = (useDefaults ? defaults : new UnitWeaponData());
 
-        data.damageType = XmlReader.getEnumAttr(xml, "damageType",
+        data.damageType = XmlReader.getStringArrayAttr(xml, "damageType",
             Constants.DAMAGE_TYPE_NAMES, (useDefaults ? defaults.damageType : undefined));
         data.initialWarmup = XmlReader.getNumberAttr(xml, "initialWarmup",
             (useDefaults ? defaults.initialWarmup : 0));

@@ -42,7 +42,8 @@ public class ComputerPlayerData
 
         // read spells
         for each (var spellData :XML in xml.InitialSpells.Spell) {
-            spellType = XmlReader.getEnumAttr(spellData, "type", Constants.CREATURE_SPELL_NAMES);
+            spellType = XmlReader.getStringArrayAttr(
+                spellData, "type", Constants.CREATURE_SPELL_NAMES);
             var amount :int = XmlReader.getUintAttr(spellData, "amount");
             computerPlayer.startingCreatureSpells[spellType] = amount;
         }

@@ -63,9 +63,9 @@ public class LevelData
         level.maxResourcesScore = XmlReader.getIntAttr(xml, "maxResourcesScore", -1);
         level.introText = XmlReader.getStringAttr(xml, "introText");
         level.introText2 = XmlReader.getStringAttr(xml, "introText2", level.introText);
-        level.newCreatureType = XmlReader.getEnumAttr(xml, "newCreatureType",
+        level.newCreatureType = XmlReader.getStringArrayAttr(xml, "newCreatureType",
             Constants.PLAYER_CREATURE_UNIT_NAMES, -1);
-        level.newSpellType = XmlReader.getEnumAttr(xml, "newSpellType",
+        level.newSpellType = XmlReader.getStringArrayAttr(xml, "newSpellType",
             Constants.CASTABLE_SPELL_NAMES, -1);
 
         level.playerName = XmlReader.getStringAttr(xml, "playerName");
@@ -90,7 +90,7 @@ public class LevelData
         // parse the initial resources
         level.initialResources = ArrayUtil.create(Constants.RESOURCE__LIMIT, 0);
         for each (var resourceNode :XML in xml.InitialResources.Resource) {
-            var type :int = XmlReader.getEnumAttr(resourceNode, "type",
+            var type :int = XmlReader.getStringArrayAttr(resourceNode, "type",
                 Constants.RESOURCE_NAMES);
             var amount :int = XmlReader.getUintAttr(resourceNode, "amount");
             level.initialResources[type] = amount;
@@ -99,7 +99,7 @@ public class LevelData
         // parse the initial spells
         level.initialSpells = ArrayUtil.create(Constants.CASTABLE_SPELL_TYPE__LIMIT, 0);
         for each (var spellNode :XML in xml.InitialSpells.Spell) {
-            type = XmlReader.getEnumAttr(spellNode, "type", Constants.CASTABLE_SPELL_NAMES);
+            type = XmlReader.getStringArrayAttr(spellNode, "type", Constants.CASTABLE_SPELL_NAMES);
             amount = XmlReader.getUintAttr(spellNode, "amount");
             level.initialSpells[type] = amount;
         }
