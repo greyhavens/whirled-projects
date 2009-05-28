@@ -40,7 +40,19 @@ public class ParameterPanel extends Sprite
         }
 
         heights.push(CELL_HEIGHT);
-        _grid = new GridPanel([50, 25, 200], heights);
+        _grid = new GridPanel([150, 50, 200], heights);
+
+        var topRow :GridPanel = new GridPanel([150, 100, 100], [CELL_HEIGHT]);
+        if (title != null) {
+            var titleText :TextField = new TextField();
+            titleText.autoSize = TextFieldAutoSize.LEFT;
+            titleText.text = title;
+            topRow.addCell(0, 0, titleText);
+        }
+
+        topRow.addCell(1, 0, _call = new Button("Local Call", "call"));
+        topRow.addCell(2, 0, _serverCall = new Button("Server Call", "callonserver"));
+        _grid.addCell(0, 0, topRow);
 
         for (row = 0; row < _entries.length; ++row) {
             var entry :ParameterEntry = _entries[row];
@@ -54,24 +66,6 @@ public class ParameterPanel extends Sprite
                 nullButton.addEventListener(ButtonEvent.CLICK, handleNullClick);
                 setNull(entry, nullButton, defaultNulls);
             }
-        }
-
-        
-        var buttonGrid :GridPanel = new GridPanel([100, 100], [CELL_HEIGHT]);
-
-        _call = new Button("Local Call", "call");
-        buttonGrid.addCell(0, 0, _call);
-
-        _serverCall = new Button("Server Call", "callonserver");
-        buttonGrid.addCell(1, 0, _serverCall);
-
-        _grid.addCell(2, 0, buttonGrid);
-
-        if (title != null) {
-            var titleText :TextField = new TextField();
-            titleText.autoSize = TextFieldAutoSize.LEFT;
-            titleText.text = title;
-            _grid.addCell(0, 0, titleText);
         }
 
         addChild(_grid);

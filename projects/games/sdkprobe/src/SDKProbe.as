@@ -39,6 +39,8 @@ public class SDKProbe extends Sprite
             new FunctionPanel(_ctrl, defs.getMessageFuncs()));
         _tabPanel.addTab("local", new Button("Local"), 
             new FunctionPanel(_ctrl, defs.getLocalFuncs()));
+        _tabPanel.addTab("party", new Button("Party"), 
+            new FunctionPanel(_ctrl, defs.getPartyFuncs()));
 
         defs.addListenerToAll(logEvent);
 

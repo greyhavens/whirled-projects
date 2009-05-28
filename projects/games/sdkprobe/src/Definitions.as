@@ -67,6 +67,7 @@ public class Definitions
         _funcs.bags = createBagsFuncs();
         _funcs.messages = createMessageFuncs();
         _funcs.local = createLocalFuncs();
+        _funcs.party = createPartyFuncs();
     }
 
     public function getGameFuncs () :Array
@@ -109,6 +110,11 @@ public class Definitions
         return _funcs.local.slice();
     }
 
+    public function getPartyFuncs () :Array
+    {
+        return _funcs.party.slice();
+    }
+
     public function findByName (name :String) :FunctionSpec
     {
         for each (var fnArray :Array in _funcs) {
@@ -142,11 +148,13 @@ public class Definitions
             new FunctionSpec("amInControl", game.amInControl),
             new FunctionSpec("amServerAgent", game.amServerAgent),
             new FunctionSpec("endGameWithScore", game.endGameWithScore, 
-                [new Parameter("score", int)]),
+                [new Parameter("score", int),
+                 new Parameter("gameMode", int, Parameter.OPTIONAL)]),
             new FunctionSpec("endGameWithScores", game.endGameWithScores,
                 [new ArrayParameter("playerIds", int), 
                  new ArrayParameter("scores", int), 
-                 new Parameter("payoutType", int)]),
+                 new Parameter("payoutType", int),
+                 new Parameter("gameMode", int, Parameter.OPTIONAL)]),
             new FunctionSpec("endGameWithWinners", game.endGameWithWinners,
                 [new ArrayParameter("winnerIds", int), 
                  new ArrayParameter("loserIds", int), 
@@ -157,6 +165,14 @@ public class Definitions
             new FunctionSpec("getControllerId", game.getControllerId),
             new FunctionSpec("getItemPacks", game.getItemPacks),
             new FunctionSpec("getLevelPacks", game.getLevelPacks),
+            new FunctionSpec("loadItemPackData", game.loadItemPackData,
+                [new Parameter("ident", String),
+                 new CallbackParameter("onLoaded"),
+                 new CallbackParameter("onFailure")]),
+            new FunctionSpec("loadLevelPackData", game.loadLevelPackData,
+                [new Parameter("ident", String),
+                 new CallbackParameter("onLoaded"),
+                 new CallbackParameter("onFailure")]),
             new FunctionSpec("getMyId", game.getMyId),
             new FunctionSpec("getOccupantIds", game.getOccupantIds),
             new FunctionSpec("getOccupantName", game.getOccupantName,
@@ -166,8 +182,11 @@ public class Definitions
             new FunctionSpec("isInPlay", game.isInPlay),
             new FunctionSpec("isMyTurn", game.isMyTurn),
             new FunctionSpec("playerReady", game.playerReady),
+            new FunctionSpec("takeOverPlayer", game.takeOverPlayer,
+                [new Parameter("playerId", int)]),
             new FunctionSpec("restartGameIn", game.restartGameIn,
-                [new Parameter("seconds", int, Parameter.OPTIONAL)]),
+                [new Parameter("seconds", int)]),
+            new FunctionSpec("getPartyIds", game.getPartyIds),
             new FunctionSpec("startNextTurn", game.startNextTurn,
                 [new Parameter("nextPlayerId", int, Parameter.OPTIONAL)]),
             new FunctionSpec("systemMessage", game.systemMessage,
@@ -190,8 +209,8 @@ public class Definitions
                  new Parameter("playerId", int, Parameter.OPTIONAL)]),
             new FunctionSpec("set", net.set,
                 [new Parameter("propName", String),
-                new ObjectParameter("value"),
-                new Parameter("immediate", Boolean, Parameter.OPTIONAL)]),
+                 new ObjectParameter("value"),
+                 new Parameter("immediate", Boolean, Parameter.OPTIONAL)]),
             new FunctionSpec("setAt", net.setAt,
                 [new Parameter("propName", String),
                  new Parameter("index", int),
@@ -213,7 +232,7 @@ public class Definitions
     {
         var local :LocalSubControl = _ctrl.local;
         return [
-            new FunctionSpec("getSize", local.getSize, []),
+            new FunctionSpec("getSize", local.getSize),
             new FunctionSpec("feedback", local.feedback,
                 [new Parameter("msg", String)]),
             new FunctionSpec("filter", local.filter,
@@ -224,12 +243,10 @@ public class Definitions
                 [new Parameter("frameRate", Number, Parameter.OPTIONAL)]),
             new FunctionSpec("setStageQuality", local.setStageQuality,
                 [new Parameter("quality", String, Parameter.OPTIONAL)]),
-            new FunctionSpec("setShowReplay", local.setShowReplay,
-                [new Parameter("show", Boolean)]),
             new FunctionSpec("setOccupantsLabel", local.setOccupantsLabel,
                 [new Parameter("label", String)]),
             new FunctionSpec("clearScores", local.clearScores,
-                [new Parameter("clearValue", Object, Parameter.OPTIONAL),
+                [new ObjectParameter("clearValue", Parameter.OPTIONAL|Parameter.NULLABLE),
                  new Parameter("sortValuesToo", Boolean, Parameter.OPTIONAL)]),
             new FunctionSpec("setPlayerScores", local.setPlayerScores,
                 [new Parameter("scores", Array),
@@ -241,12 +258,16 @@ public class Definitions
             new FunctionSpec("showGameShop", local.showGameShop,
                 [new Parameter("itemType", String),
                  new Parameter("catalogId", int, Parameter.OPTIONAL)]),
-            new FunctionSpec("invPage", local.showInvitePage,
+            new FunctionSpec("showInvitePage", local.showInvitePage,
                 [new Parameter("defmsg", String),
                  new Parameter("token", String, Parameter.OPTIONAL)]),
-            new FunctionSpec("showTrophies", local.showTrophies, []),
-            new FunctionSpec("invToken", local.getInviteToken, []),
-            new FunctionSpec("invMemberId", local.getInviterMemberId, [])
+            new FunctionSpec("showTrophies", local.showTrophies),
+            new FunctionSpec("getInviteToken", local.getInviteToken),
+            new FunctionSpec("getInviterMemberId", local.getInviterMemberId),
+            new FunctionSpec("isEmbedded", local.isEmbedded),
+            new FunctionSpec("showPage", local.showPage,
+                [new Parameter("token", String)]),
+            new FunctionSpec("showAllGames", local.showAllGames),
         ];
     }
 
@@ -290,23 +311,31 @@ public class Definitions
         var player :PlayerSubControl = _ctrl.player;
 
         return [
+            new FunctionSpec("getPartyId", player.getPartyId, 
+                [new Parameter("occupantId", int, Parameter.OPTIONAL)]),
             new FunctionSpec("getCookie", player.getCookie,
                 [new CallbackParameter("callback"), 
-                new Parameter("occupantId", int, Parameter.OPTIONAL)]),
+                 new Parameter("occupantId", int, Parameter.OPTIONAL)]),
             new FunctionSpec("setCookie", player.setCookie,
                 [new ObjectParameter("cookie"), 
-                new Parameter("occupantId", int, Parameter.OPTIONAL)]),
+                 new Parameter("occupantId", int, Parameter.OPTIONAL)]),
+            new FunctionSpec("isRegistered", player.isRegistered),
             new FunctionSpec("getPlayerItemPacks", player.getPlayerItemPacks,
                 [new Parameter("playerId", int, Parameter.OPTIONAL)]),
+            new FunctionSpec("getPlayerLevelPacks", player.getPlayerLevelPacks,
+                [new Parameter("playerId", int, Parameter.OPTIONAL)]),
+            new FunctionSpec("requestConsumeItemPack", player.requestConsumeItemPack,
+                [new Parameter("ident", String),
+                 new Parameter("msg", String)]),
             new FunctionSpec("holdsTrophy", player.holdsTrophy,
                 [new Parameter("ident", String), 
-                new Parameter("playerId", int, Parameter.OPTIONAL)]),
+                 new Parameter("playerId", int, Parameter.OPTIONAL)]),
             new FunctionSpec("awardTrophy", player.awardTrophy,
                 [new Parameter("ident", String), 
-                new Parameter("playerId", int, Parameter.OPTIONAL)]),
+                 new Parameter("playerId", int, Parameter.OPTIONAL)]),
             new FunctionSpec("awardPrize", player.awardPrize,
                 [new Parameter("ident", String), 
-                new Parameter("playerId", int, Parameter.OPTIONAL)]),
+                 new Parameter("playerId", int, Parameter.OPTIONAL)]),
         ];
     }
 
@@ -320,7 +349,7 @@ public class Definitions
                  new Parameter("dictionary", String, Parameter.NULLABLE),
                  new Parameter("word", String),
                  new CallbackParameter("callback")]),
-            new FunctionSpec("getDictionaryLetterSet", services.getDictionaryLetterSet,
+            new FunctionSpec("getDictionaryLetters", services.getDictionaryLetters,
                 [new Parameter("locale", String),
                  new Parameter("dictionary", String, Parameter.NULLABLE),
                  new Parameter("count", int),
@@ -363,6 +392,51 @@ public class Definitions
                  new CallbackParameter("callback", Parameter.OPTIONAL|Parameter.NULLABLE),
                  new Parameter("playerId", int, Parameter.OPTIONAL)]),
         ];
+    }
+
+    protected function createPartyFuncs () :Array
+    {
+        var game :GameSubControl = _ctrl.game;
+
+        var proxies :Object = {
+            getPartyId: function (partyId :int) :Function {
+                return game.getParty(partyId).getPartyId;
+            },
+            getName: function (partyId :int) :Function {
+                return game.getParty(partyId).getName;
+            },
+            getGroupId: function (partyId :int) :Function {
+                return game.getParty(partyId).getGroupId;
+            },
+            getGroupName: function (partyId :int) :Function {
+                return game.getParty(partyId).getGroupName;
+            },
+            getGroupLogo: function (partyId :int) :Function {
+                return game.getParty(partyId).getGroupLogo;
+            },
+            getLeaderId: function (partyId :int) :Function {
+                return game.getParty(partyId).getLeaderId;
+            },
+            getPlayerIds: function (partyId :int) :Function {
+                return game.getParty(partyId).getPlayerIds;
+            }
+        };
+
+        function makeFunc (name :String) :Function {
+            return function (...args) :* {
+                var partyId :int = args.shift() as int;
+                var proxy :Function = proxies[name].call(null, partyId);
+                return proxy.apply(null, args);
+            }
+        }
+
+        var partyId :Parameter = new Parameter("partyId", int);
+        var funcs :Array = [];
+        for (var key : String in proxies) {
+            var spec :FunctionSpec = new FunctionSpec(key, makeFunc(key), [partyId]);
+            funcs.push(spec);
+        }
+        return funcs;
     }
 
     protected var _ctrl :GameControl;
