@@ -34,7 +34,7 @@ public class Constants
     public static const CELL_MULTIPLIER :int = 2;
     public static const CELL_SPECIAL :int = 3;
     public static const MAX_CELL_COUNT :Array = [ 60, 8, 999, 1 ];
-    public static const BEAT_CELL_BIRTH_COUNT :IntRange = new IntRange(3, 4, Rand.STREAM_GAME);
+    public static const BEAT_CELL_BIRTH_COUNT :IntRange = new IntRange(3, 3, Rand.STREAM_GAME);
     public static const CELL_BIRTH_DISTANCE :Array = [
         new NumRange(65, 85, Rand.STREAM_GAME),     // Red
         new NumRange(190, 195, Rand.STREAM_GAME),   // White

@@ -42,7 +42,7 @@ public class Variant
         settings.cursorSpeed = 70;
         settings.boardCreatesWhiteCells = true;
         settings.boardWhiteCellCreationTime = new NumRange(7, 9, Rand.STREAM_GAME);
-        settings.boardWhiteCellCreationCount = new IntRange(1, 3, Rand.STREAM_GAME);
+        settings.boardWhiteCellCreationCount = new IntRange(1, 2, Rand.STREAM_GAME);
         settings.playerCreatesWhiteCells = false;
         settings.playerWhiteCellCreationTime = 0;
         settings.playerCarriesWhiteCells = true;
@@ -68,7 +68,7 @@ public class Variant
         settings.cursorSpeed = 70;
         settings.boardCreatesWhiteCells = false;
         settings.boardWhiteCellCreationTime = new NumRange(7, 9, Rand.STREAM_GAME);
-        settings.boardWhiteCellCreationCount = new IntRange(1, 3, Rand.STREAM_GAME);
+        settings.boardWhiteCellCreationCount = new IntRange(1, 2, Rand.STREAM_GAME);
         settings.playerCreatesWhiteCells = true;
         settings.playerWhiteCellCreationTime = 2;
         settings.playerCarriesWhiteCells = false;
