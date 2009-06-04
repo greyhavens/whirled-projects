@@ -45,7 +45,7 @@ public class DaySequenceData
             "spellDropCourierGroupSizeMax", -1);
         data.spellDropCourierGroupSize = new IntRange(
             spellDropCourierGroupSizeMin,
-            spellDropCourierGroupSizeMax + 1, // IntRange returns values in [min, max); what we want here is [min, max]
+            spellDropCourierGroupSizeMax,
             Rand.STREAM_GAME);
 
         return data;
