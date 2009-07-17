@@ -2,19 +2,17 @@ package popcraft.puzzle {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
+import com.threerings.util.ObjectSet;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
 import flash.display.DisplayObject;
-import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
-import flash.text.TextField;
 
 import popcraft.*;
 import popcraft.data.ResourceData;
@@ -165,7 +163,8 @@ public class PuzzleBoard extends SceneObject
 
     protected function createResourceChunk (x :int, y :int) :void
     {
-        var chunkSize :int = Rand.nextIntRange(1, RESOURCE_CHUNK_SIZE_MAX + 1, ClientCtx.randStreamPuzzle);
+        var chunkSize :int = Rand.nextIntRange(1, RESOURCE_CHUNK_SIZE_MAX + 1,
+            ClientCtx.randStreamPuzzle);
         var resType :int = _resourceGenerator.nextEntry();
 
         for (var i :int = 0; i < chunkSize; ++i) {
@@ -184,7 +183,8 @@ public class PuzzleBoard extends SceneObject
                 case 3: yy -= 1; break;
                 }
 
-                if (xx >= 0 && xx < _cols && yy >= 0 && yy < _rows && (null == _board[(yy * _cols) + xx])) {
+                if (xx >= 0 && xx < _cols && yy >= 0 && yy < _rows &&
+                    (null == _board[(yy * _cols) + xx])) {
                     freeAdjacentSpaces.push(new Point(xx, yy));
                 }
             }
@@ -322,7 +322,8 @@ public class PuzzleBoard extends SceneObject
             new FunctionTask(function () :void { addNewPieces(animate); } )));
     }
 
-    protected function drop1Piece (col :int, fromRow :int, toRow :int, initialDelay :Number, animate :Boolean) :Number
+    protected function drop1Piece (col :int, fromRow :int, toRow :int, initialDelay :Number,
+        animate :Boolean) :Number
     {
         Assert.isTrue(_resolvingClears);
 
@@ -443,7 +444,8 @@ public class PuzzleBoard extends SceneObject
         piece2.addNamedTask(MOVE_TASK_NAME, LocationTask.CreateSmooth(px1, py1, 0.25));
     }
 
-    protected function findConnectedSimilarPiecesInternal (x :int, y :int, resourceType :int, pieces :ObjectSet) :void
+    protected function findConnectedSimilarPiecesInternal (x :int, y :int, resourceType :int,
+        pieces :ObjectSet) :void
     {
         var thisPiece :Piece = getPieceAt(x, y);
 
