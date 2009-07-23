@@ -10,6 +10,7 @@ import flash.utils.Dictionary;
 import com.threerings.util.StringUtil;
 
 import com.whirled.game.*;
+import com.whirled.net.*;
 
 /**
  * Clickfest: sample game.
