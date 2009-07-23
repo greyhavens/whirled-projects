@@ -124,7 +124,7 @@ import flash.events.MouseEvent;
 
 import flash.utils.getTimer; // function import
 
-import com.threerings.flash.FrameSprite;
+import com.threerings.display.FrameSprite;
 
 class Explosion extends FrameSprite
 {
