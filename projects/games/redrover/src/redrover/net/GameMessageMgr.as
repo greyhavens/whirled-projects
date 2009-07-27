@@ -3,15 +3,17 @@ package redrover.net {
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.net.BasicMessageManager;
 import com.whirled.contrib.simplegame.net.Message;
+import com.whirled.game.GameControl;
+import com.whirled.game.NetSubControl;
 import com.whirled.net.MessageReceivedEvent;
 
 public class GameMessageMgr extends BasicMessageManager
 {
-    public function GameMessageMgr (bridge :WhirledBridge)
+    public function GameMessageMgr (gameCtrl :GameControl)
     {
-        _bridge = bridge;
-        _events.registerListener(_bridge.msgReceiver, MessageReceivedEvent.MESSAGE_RECEIVED,
-                                 onMsgReceived);
+        _gameCtrl = gameCtrl;
+        _events.registerListener(_gameCtrl.game, MessageReceivedEvent.MESSAGE_RECEIVED,
+            onMsgReceived);
     }
 
     public function shutdown () :void
@@ -21,12 +23,12 @@ public class GameMessageMgr extends BasicMessageManager
 
     public function sendAgentMessage (msg :Message) :void
     {
-        sendMessage(msg, WhirledBridge.TO_SERVER_AGENT);
+        sendMessage(msg, NetSubControl.TO_SERVER_AGENT);
     }
 
     public function sendMessage (msg :Message, toPlayer :int = 0) :void
     {
-        _bridge.sendMessage(msg.name, msg.toBytes(), toPlayer);
+        _gameCtrl.net.sendMessage(msg.name, msg.toBytes(), toPlayer);
     }
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
@@ -37,7 +39,7 @@ public class GameMessageMgr extends BasicMessageManager
         }
     }
 
-    protected var _bridge :WhirledBridge;
+    protected var _gameCtrl :GameControl;
     protected var _events :EventHandlerManager = new EventHandlerManager();
 }
 

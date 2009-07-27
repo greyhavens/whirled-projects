@@ -3,8 +3,8 @@ package redrover {
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.game.GameControl;
 import com.whirled.game.SizeChangedEvent;
+import com.whirled.game.loopback.LoopbackGameControl;
 
 import flash.display.Graphics;
 import flash.display.Sprite;
@@ -14,7 +14,7 @@ import flash.geom.Rectangle;
 
 import redrover.data.*;
 import redrover.net.GameMessageMgr;
-import redrover.net.WhirledBridge;
+import redrover.server.Server;
 
 public class RedRover extends Sprite
 {
@@ -22,10 +22,15 @@ public class RedRover extends Sprite
     {
         ClientCtx.mainSprite = this;
 
+        // Connect to Whirled
+        var gameCtrl :LoopbackGameControl = new LoopbackGameControl(this, false, false, false);
+
+        // Start a local server
+        _localServer = new Server(true);
+
         // initialize ClientCtx
-        ClientCtx.gameCtrl = new GameControl(this, false);
-        ClientCtx.bridge = new WhirledBridge(false, ClientCtx.gameCtrl);
-        ClientCtx.msgMgr = new GameMessageMgr(ClientCtx.bridge);
+        ClientCtx.gameCtrl = gameCtrl;
+        ClientCtx.msgMgr = new GameMessageMgr(ClientCtx.gameCtrl);
         ClientCtx.seatingMgr.init(ClientCtx.gameCtrl);
         ClientCtx.localPlayerIdx = ClientCtx.seatingMgr.localPlayerSeat;
 
@@ -79,6 +84,8 @@ public class RedRover extends Sprite
         _events.freeAllHandlers();
         _sg.shutdown();
     }
+
+    protected var _localServer :Server;
 
     protected var _sg :SimpleGame;
     protected var _events :EventHandlerManager = new EventHandlerManager();

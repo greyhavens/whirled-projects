@@ -1,8 +1,8 @@
 package redrover.game {
 
-import com.threerings.flash.DisplayUtil;
+import com.threerings.display.DisplayUtil;
 import com.threerings.util.Integer;
-import com.threerings.util.KeyboardCodes;
+import com.threerings.ui.KeyboardCodes;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;

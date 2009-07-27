@@ -1,6 +1,6 @@
 package redrover.ui {
 
-import com.threerings.flash.DisplayUtil;
+import com.threerings.display.DisplayUtil;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;

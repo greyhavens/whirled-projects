@@ -6,21 +6,21 @@ import com.whirled.ServerObject;
 import com.whirled.contrib.LevelPackManager;
 import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;
+import com.whirled.game.loopback.LoopbackGameControl;
 
 import flash.utils.ByteArray;
 
 import redrover.data.*;
 import redrover.net.GameMessageMgr;
-import redrover.net.WhirledBridge;
 import redrover.util.GameUtil;
 
 public class Server extends ServerObject
 {
     public function Server (offline :Boolean = false)
     {
-        ServerCtx.gameCtrl = new GameControl(this);
-        ServerCtx.bridge = new WhirledBridge(true, (offline ? null :ServerCtx.gameCtrl));
-        ServerCtx.msgMgr = new GameMessageMgr(ServerCtx.bridge);
+        ServerCtx.gameCtrl = (offline ? new LoopbackGameControl(this, true, false, false) :
+            new GameControl(this));
+        ServerCtx.msgMgr = new GameMessageMgr(ServerCtx.gameCtrl);
         ServerCtx.seatingMgr.init(ServerCtx.gameCtrl);
 
         // We don't have anything to do in single-player games

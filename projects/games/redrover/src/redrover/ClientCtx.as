@@ -13,7 +13,6 @@ import flash.display.SimpleButton;
 import flash.display.Sprite;
 
 import redrover.net.GameMessageMgr;
-import redrover.net.WhirledBridge;
 
 public class ClientCtx
 {
@@ -23,7 +22,6 @@ public class ClientCtx
     public static var audio :AudioManager;
 
     public static var gameCtrl :GameControl;
-    public static var bridge :WhirledBridge;
     public static var msgMgr :GameMessageMgr;
     public static var levelMgr :LevelManager = new LevelManager();
     public static var seatingMgr :SeatingManager = new SeatingManager();

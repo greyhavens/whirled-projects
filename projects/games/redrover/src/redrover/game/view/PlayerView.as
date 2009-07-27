@@ -1,6 +1,6 @@
 package redrover.game.view {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.*;

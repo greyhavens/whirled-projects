@@ -1,6 +1,6 @@
 package redrover.game.robot {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.threerings.util.ArrayUtil;
 
 import redrover.game.*;

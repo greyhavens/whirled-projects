@@ -1,6 +1,6 @@
 package redrover {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 
 public class Constants
 {
