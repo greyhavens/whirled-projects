@@ -1,6 +1,6 @@
 package popcraft.lobby {
 
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.text.TextFieldUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
@@ -415,8 +415,8 @@ import flash.display.DisplayObject;
 import flash.text.TextField;
 import flash.geom.Point;
 
-import com.threerings.flash.TextFieldUtil;
-import com.threerings.flash.DisplayUtil;
+import com.threerings.text.TextFieldUtil;
+import com.threerings.display.DisplayUtil;
 
 import com.whirled.contrib.simplegame.resource.SwfResource;
 

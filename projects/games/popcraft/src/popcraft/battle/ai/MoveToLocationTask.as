@@ -1,6 +1,6 @@
 package popcraft.battle.ai {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 
 import popcraft.battle.CreatureUnit;
 

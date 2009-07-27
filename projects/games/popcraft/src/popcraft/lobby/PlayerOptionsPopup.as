@@ -1,6 +1,6 @@
 package popcraft.lobby {
 
-import com.threerings.flash.DisplayUtil;
+import com.threerings.display.DisplayUtil;
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SceneObject;

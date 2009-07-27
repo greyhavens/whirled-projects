@@ -19,7 +19,7 @@ public class BossCreatureUnit extends ColossusCreatureUnit
 
 }
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 
 import popcraft.*;
 import popcraft.battle.*;

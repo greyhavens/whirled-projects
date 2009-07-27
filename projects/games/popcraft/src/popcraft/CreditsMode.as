@@ -1,6 +1,6 @@
 package popcraft {
 
-import com.threerings.flash.DisplayUtil;
+import com.threerings.display.DisplayUtil;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.SwfResource;
@@ -157,7 +157,7 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.util.Rand;
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.threerings.util.Assert;
 
 import flash.display.DisplayObject;

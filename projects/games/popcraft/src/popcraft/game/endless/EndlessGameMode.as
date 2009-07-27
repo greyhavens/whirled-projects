@@ -1,8 +1,8 @@
 package popcraft.game.endless {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.KeyboardCodes;
+import com.threerings.ui.KeyboardCodes;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;
 import com.whirled.game.StateChangedEvent;

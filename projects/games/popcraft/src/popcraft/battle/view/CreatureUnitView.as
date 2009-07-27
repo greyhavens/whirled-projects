@@ -1,6 +1,6 @@
 package popcraft.battle.view {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.threerings.util.Assert;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.AppMode;

@@ -1,6 +1,6 @@
 package popcraft.battle {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 
 import popcraft.*;
 import popcraft.game.*;

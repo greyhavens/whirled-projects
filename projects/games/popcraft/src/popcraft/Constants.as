@@ -1,6 +1,6 @@
 package popcraft {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.util.*;
 

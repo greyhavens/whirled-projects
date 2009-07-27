@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.threerings.util.HashMap;
 import com.whirled.contrib.XmlReader;
 

@@ -2,7 +2,7 @@ package popcraft.game {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
-import com.threerings.util.KeyboardCodes;
+import com.threerings.ui.KeyboardCodes;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;

@@ -18,7 +18,7 @@
 		<link>
 			<name>[source path] src</name>
 			<type>2</type>
-			<location>/export/ooo-libs/lib/flex_sdk_3.2.0.3958/frameworks/projects/framework/src</location>
+			<location>/export/ooo-libs/lib/flex_sdk_3.3.0.4852/frameworks/projects/framework/src</location>
 		</link>
 		<link>
 			<name>[source path] whirled-src-as</name>
@@ -29,6 +29,11 @@
 			<name>[source path] narya-src-as</name>
 			<type>2</type>
 			<locationURI>EXPORT_ROOT/whirled/libraries/narya/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] flash-utils-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/whirled/libraries/flash-utils/src/as</locationURI>
 		</link>
 		<link>
 			<name>[source path] contrib-src-as</name>

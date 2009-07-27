@@ -51,7 +51,7 @@ import popcraft.game.*;
 import popcraft.battle.*;
 import popcraft.battle.ai.*;
 import com.threerings.util.Log;
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import popcraft.data.BaseLocationData;
 
 class HeavyFormationManager extends SimObject

@@ -1,6 +1,6 @@
 package popcraft.game.endless {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
@@ -400,7 +400,7 @@ public class EndlessLevelSelectModeBase extends AppMode
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.threerings.util.StringUtil;
-import com.threerings.flash.DisplayUtil;
+import com.threerings.display.DisplayUtil;
 import com.threerings.util.Integer;
 
 import flash.display.DisplayObject;

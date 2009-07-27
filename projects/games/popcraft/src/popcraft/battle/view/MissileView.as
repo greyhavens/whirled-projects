@@ -1,6 +1,6 @@
 package popcraft.battle.view {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;

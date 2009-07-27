@@ -1,6 +1,6 @@
 package popcraft.battle {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.threerings.util.Assert;
 import com.whirled.contrib.simplegame.*;
 
@@ -165,7 +165,7 @@ import popcraft.battle.*;
 import popcraft.battle.ai.*;
 import flash.display.Loader;
 import com.threerings.util.Log;
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.threerings.util.Name;
 import flash.geom.Rectangle;
 
