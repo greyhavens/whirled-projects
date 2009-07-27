@@ -99,7 +99,7 @@ public class EndlessLevelSelectModeBase extends AppMode
             multiplierObj.addTask(new SerialTask(
                 new VisibleTask(true),
                 new ParallelTask(
-                    new AdvancedLocationTask(
+                    new ComplexLocationTask(
                         Constants.SCREEN_SIZE.x * 0.5,
                         (Constants.SCREEN_SIZE.y * 0.5) - 20,
                         1,
@@ -108,7 +108,7 @@ public class EndlessLevelSelectModeBase extends AppMode
                     new ScaleTask(2, 2, 1)),
                 new TimedTask(4.5),
                 new ParallelTask(
-                    new AdvancedLocationTask(
+                    new ComplexLocationTask(
                         nextMap.multiplierDropLoc.x,
                         nextMap.multiplierDropLoc.y,
                         1,
