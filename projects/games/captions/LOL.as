@@ -55,8 +55,8 @@ import com.threerings.util.RandomUtil;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flash.DisplayUtil;
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.display.DisplayUtil;
+import com.threerings.text.TextFieldUtil;
 
 import com.whirled.game.*;
 
@@ -235,6 +235,7 @@ public class LOL extends Sprite
         _input = find("text_input") as TextField;
         TextFieldUtil.setFocusable(_input);
         _input.height = 200;
+        _input.maxChars = MAX_CAPTION_LENGTH;
 
         _clock = find("clock") as TextField;
         _clock.selectable = false;
@@ -468,7 +469,7 @@ public class LOL extends Sprite
     protected function handleSubmitCaption (event :Event = null) :void
     {
         if (_input != null) {
-            _game.submitCaption(_input.text);
+            _game.submitCaption(StringUtil.truncate(_input.text, MAX_CAPTION_LENGTH));
         }
     }
 
@@ -1064,6 +1065,8 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     /** The maximum size of an image. */
     protected static const MAX_IMAGE_WIDTH :int = 500;
     protected static const MAX_IMAGE_HEIGHT :int = 500;
+
+    protected static const MAX_CAPTION_LENGTH :int = 190;
 
     /** The width of the voting/results pane, which is the ideal width, minus padding, 
      * minus the sidebar and minus a possible scrollbar. */
