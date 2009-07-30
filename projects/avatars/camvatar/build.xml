@@ -16,7 +16,7 @@
   <!--<property name="app.source-extras" value="../../../libraries/whirled/contrib/src/as"/>-->
 
   <!-- if you need to compile with extra .SWC files, uncomment and edit this line -->
-  <property name="app.lib-extras" value="../../../lib/corelib.swc"/>
+  <property name="app.lib-extras" value="../../../dist/lib/corelib.swc"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
