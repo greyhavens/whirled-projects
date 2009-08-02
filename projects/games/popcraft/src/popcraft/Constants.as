@@ -41,11 +41,15 @@ public class Constants
      * "The Incident"
      * - unlocks the last half of the Incident campaign
      * - Introduced: 2009-1-30
+     * - Discontinued: 2009-8-3
      *
      * "Weardd Academy"
      * - unlocks Survival challenge
      * - unlocks multiplayer customization options
      * - Introduced: 2009-1-30
+     * - Discontinued: 2009-8-3
+     *
+     * The game is free to play as of 2009-8-3
      */
     public static const NUM_FREE_SP_LEVELS :int = 7;
     public static const COMPLEAT_LEVEL_PACK_NAME :String = "CorpseCraftCompleat";
@@ -68,7 +72,7 @@ public class Constants
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean   = false;
     public static const DEBUG_GIVE_MORBID_INFECTION :Boolean        = false;
 
-    public static const DEBUG_EXTEND_LOAD_SEQUENCE :Boolean         = true;
+    public static const DEBUG_EXTEND_LOAD_SEQUENCE :Boolean         = false;
     public static const DEBUG_DRAW_STATS :Boolean                   = false;
     public static const DEBUG_ALLOW_CHEATS :Boolean                 = false;
     public static const DEBUG_DISABLE_AUDIO :Boolean                = false;

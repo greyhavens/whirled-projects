@@ -54,18 +54,21 @@ public class ClientCtx
 
     public static function get isMpCustomizationUnlocked () :Boolean
     {
-        return (ClientCtx.hasCompleatLevelPack || ClientCtx.hasAcademyLevelPack);
+        //return (ClientCtx.hasCompleatLevelPack || ClientCtx.hasAcademyLevelPack);
+        return true;    // the game is free for everyone
     }
 
     public static function get isEndlessModeUnlocked () :Boolean
     {
-        return (ClientCtx.hasCompleatLevelPack || ClientCtx.hasAcademyLevelPack);
+        //return (ClientCtx.hasCompleatLevelPack || ClientCtx.hasAcademyLevelPack);
+        return true;    // the game is free for everyone
     }
 
     public static function get isStoryModeUnlocked () :Boolean
     {
-        return (ClientCtx.hasCompleatLevelPack || ClientCtx.hasIncidentLevelPack ||
-                savedPlayerBits.hasFreeStoryMode);
+        /*return (ClientCtx.hasCompleatLevelPack || ClientCtx.hasIncidentLevelPack ||
+                savedPlayerBits.hasFreeStoryMode);*/
+        return true;    // the game is free for everyone
     }
 
     public static function get hasCompleatLevelPack () :Boolean
