@@ -182,6 +182,18 @@ public class MainMenuMode extends DemoGameMode
         manualCover.y = 420;
         DisplayUtil.addChildBelow(_mainUiLayer, manualCover, storyBanner);
 
+        // If the game is embedded on another site, show a link to more Whirled games
+        if (ClientCtx.gameCtrl.isConnected() && ClientCtx.gameCtrl.local.isEmbedded()) {
+            var moreGamesBtn :SimpleButton = ClientCtx.instantiateButton("splashUi",
+                "whirled_button");
+            moreGamesBtn.x = 226;
+            _mainUiLayer.addChild(moreGamesBtn);
+            registerListener(moreGamesBtn, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    ClientCtx.gameCtrl.local.showAllGames();
+                });
+        }
+
         /* 2009-1-22: We're not going to push this in peoples' faces so much.
         if (!ClientContext.isPremiumContentUnlocked) {
             var buyGameButton :SimpleButton = UIBits.createButton("Unlock Full Version!", 1.2);
