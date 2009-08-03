@@ -9,7 +9,6 @@ import flash.events.MouseEvent;
 import flash.text.TextField;
 
 import popcraft.*;
-import popcraft.game.story.LevelSelectMode;
 import popcraft.ui.UIBits;
 
 public class PauseMode extends AppMode
@@ -44,7 +43,7 @@ public class PauseMode extends AppMode
         windowElements.addChild(endBtn);
         registerOneShotCallback(endBtn, MouseEvent.CLICK,
             function (...ignored) :void {
-                LevelSelectMode.create();
+                MainMenuMode.create();
             });
 
         var frame :Sprite = UIBits.createFrame(WIDTH, windowElements.height + (V_BORDER * 2));

@@ -1,4 +1,4 @@
-package popcraft.game.story {
+package popcraft {
 
 import com.threerings.display.DisplayUtil;
 import com.whirled.contrib.simplegame.*;
@@ -14,17 +14,15 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
-import popcraft.*;
 import popcraft.battle.view.WorkshopView;
 import popcraft.data.LevelData;
 import popcraft.game.*;
-import popcraft.game.endless.ResetSavedGamesDialog;
-import popcraft.game.endless.SpEndlessLevelSelectMode;
-import popcraft.ui.PlayerStatusView;
-import popcraft.ui.UIBits;
+import popcraft.game.endless.*;
+import popcraft.game.story.*;
+import popcraft.ui.*;
 import popcraft.util.SpriteUtil;
 
-public class LevelSelectMode extends DemoGameMode
+public class MainMenuMode extends DemoGameMode
 {
     public static function create (fadeIn :Boolean = true, callback :Function = null) :void
     {
@@ -32,7 +30,7 @@ public class LevelSelectMode extends DemoGameMode
         ClientCtx.levelMgr.playLevel(
             function (level :LevelData) :void {
                 _demoLevel = level;
-                var mode :LevelSelectMode = new LevelSelectMode(fadeIn);
+                var mode :MainMenuMode = new MainMenuMode(fadeIn);
                 if (callback != null) {
                     callback(mode);
                 } else {
@@ -41,7 +39,7 @@ public class LevelSelectMode extends DemoGameMode
             });
     }
 
-    public function LevelSelectMode (fadeIn :Boolean)
+    public function MainMenuMode (fadeIn :Boolean)
     {
         super(_demoLevel);
 
@@ -478,7 +476,7 @@ public class LevelSelectMode extends DemoGameMode
         ClientCtx.userCookieMgr.needsUpdate();
 
         // reload the mode
-        LevelSelectMode.create();
+        MainMenuMode.create();
     }
 
     protected function unlockLevels () :void
@@ -492,7 +490,7 @@ public class LevelSelectMode extends DemoGameMode
         ClientCtx.userCookieMgr.needsUpdate();
 
         // reload the mode
-        LevelSelectMode.create();
+        MainMenuMode.create();
     }
 
     protected function createLevelSelectButton (levelNum :int, levelName :String) :SimpleButton
@@ -535,7 +533,7 @@ public class LevelSelectMode extends DemoGameMode
     protected function onPlayerPurchasedContent (e :GameContentEvent) :void
     {
         // recreate the level select mode, in case the player unlocked new content
-        LevelSelectMode.create();
+        MainMenuMode.create();
     }
 
     protected var _mainUiLayer :Sprite;

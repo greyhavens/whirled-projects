@@ -5,7 +5,6 @@ import com.whirled.contrib.simplegame.tasks.*;
 
 import popcraft.*;
 import popcraft.game.*;
-import popcraft.game.story.LevelSelectMode;
 
 public class SpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
 {
@@ -37,7 +36,7 @@ public class SpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
 
     protected function quitToMainMenu () :void
     {
-        LevelSelectMode.create(false, animateToMode);
+        MainMenuMode.create(false, animateToMode);
     }
 
 }

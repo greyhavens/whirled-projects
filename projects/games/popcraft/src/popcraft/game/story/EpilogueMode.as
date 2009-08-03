@@ -76,7 +76,7 @@ public class EpilogueMode extends TransitionMode
         switch (_nextTransition) {
         case TRANSITION_LEVELSELECT:
             fadeOut(function () :void {
-                LevelSelectMode.create();
+                MainMenuMode.create();
             });
             break;
 

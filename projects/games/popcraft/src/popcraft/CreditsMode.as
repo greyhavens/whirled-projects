@@ -2,8 +2,6 @@ package popcraft {
 
 import com.threerings.display.DisplayUtil;
 import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.audio.AudioManager;
-import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.DisplayObject;
@@ -16,7 +14,6 @@ import flash.events.MouseEvent;
 
 import popcraft.battle.view.CreatureAnimFactory;
 import popcraft.battle.view.TeslaSoundPlayer;
-import popcraft.game.story.LevelSelectMode;
 import popcraft.ui.UIBits;
 import popcraft.util.SpriteUtil;
 
@@ -65,7 +62,7 @@ public class CreditsMode extends AppMode
         backButton.y = Constants.SCREEN_SIZE.y - backButton.height - 10;
         registerOneShotCallback(backButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                LevelSelectMode.create();
+                MainMenuMode.create();
             });
         _modeSprite.addChild(backButton);
 

@@ -41,7 +41,7 @@ public class LevelLoadErrorMode extends AppMode
         var button :SimpleButton = UIBits.createButton("Back");
         registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
-                LevelSelectMode.create();
+                MainMenuMode.create();
             });
         button.x = 100;
         button.y = 450;

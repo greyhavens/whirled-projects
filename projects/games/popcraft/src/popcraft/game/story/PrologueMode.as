@@ -74,7 +74,7 @@ public class PrologueMode extends TransitionMode
         // fade out and pop mode
         switch (_nextTransition) {
         case TRANSITION_LEVELSELECT:
-            fadeOut(LevelSelectMode.create);
+            fadeOut(MainMenuMode.create);
             break;
         case TRANSITION_GAME:
             fadeOutToMode(new StoryGameMode(_level));

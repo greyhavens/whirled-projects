@@ -215,7 +215,6 @@ import popcraft.ui.GenericLoadingMode;
 
 import com.whirled.contrib.simplegame.resource.ResourceManager;
 import popcraft.ui.GenericLoadErrorMode;
-import popcraft.game.story.LevelSelectMode;
 import com.whirled.contrib.simplegame.util.Rand;
 import popcraft.game.endless.SavedEndlessGame;
 import popcraft.lobby.MultiplayerLobbyMode;
@@ -252,7 +251,7 @@ class LoadingMode extends GenericLoadingMode
         if (ClientCtx.isMultiplayer) {
             ClientCtx.mainLoop.unwindToMode(new MultiplayerLobbyMode());
         } else {
-            LevelSelectMode.create();
+            MainMenuMode.create();
         }
 
         // award the player any prizes they haven't gotten yet

@@ -124,7 +124,7 @@ public class LevelOutroMode extends AppMode
         button = UIBits.createButton("Main Menu", 1.5, 210);
         registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
-                LevelSelectMode.create();
+                MainMenuMode.create();
             });
 
         button.x = (WIDTH * 0.5) - (button.width * 0.5);

@@ -9,7 +9,6 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
 import popcraft.*;
-import popcraft.game.story.LevelSelectMode;
 import popcraft.ui.UIBits;
 
 public class EndlessLevelLoadErrorMode extends AppMode
@@ -42,7 +41,7 @@ public class EndlessLevelLoadErrorMode extends AppMode
         var button :SimpleButton = UIBits.createButton("Back");
         registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
-                LevelSelectMode.create();
+                MainMenuMode.create();
             });
         button.x = 100;
         button.y = 450;
