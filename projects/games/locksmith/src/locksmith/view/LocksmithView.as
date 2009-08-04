@@ -23,13 +23,13 @@ public class LocksmithView extends LocksmithSprite
         addChild(_leftBackground = new BACKGROUND() as Sprite);
         addChild(_rightBackground = new BACKGROUND() as Sprite);
         addChild(_board = new Board());
-        conditionalCall(ringsCreated, _model.ringMgr.smallestRing != null, 
+        callWhenTrue(ringsCreated, _model.ringMgr.smallestRing != null,
             RingManager.RINGS_CREATED, _model.ringMgr);
     }
 
     public function updateSize (viewSize :Point) :void
     {
-        _leftBackground.width = _rightBackground.width = 
+        _leftBackground.width = _rightBackground.width =
             Math.max(0, (viewSize.x - DISPLAY_WIDTH) / 2) + 1;
         _rightBackground.x = viewSize.x - _rightBackground.width;
         _board.x = DISPLAY_WIDTH / 2 + _leftBackground.width - 0.5;

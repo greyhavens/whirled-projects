@@ -32,10 +32,10 @@ public class LocksmithSprite extends Sprite
         _eventMgr.registerOneShotCallback(getDispatcher(dispatcher), event, callback);
     }
 
-    public function conditionalCall (callback :Function, callNow :Boolean, event :String,
+    public function callWhenTrue (callback :Function, callNow :Boolean, event :String,
         dispatcher :IEventDispatcher = null) :void
     {
-        _eventMgr.conditionalCall(callback, callNow, getDispatcher(dispatcher), event);
+        _eventMgr.callWhenTrue(callback, callNow, getDispatcher(dispatcher), event);
     }
 
     public function freeAllOn (event :String, dispatcher :IEventDispatcher = null) :void
@@ -44,7 +44,7 @@ public class LocksmithSprite extends Sprite
             getDispatcher(dispatcher), event, _eventMgr.freeAllHandlers, false, -100);
     }
 
-    protected function getDispatcher (dispatcher :IEventDispatcher) :IEventDispatcher 
+    protected function getDispatcher (dispatcher :IEventDispatcher) :IEventDispatcher
     {
         return dispatcher != null ? dispatcher : this;
     }
