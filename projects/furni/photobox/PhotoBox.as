@@ -36,7 +36,7 @@ import com.adobe.webapis.flickr.PhotoSize;
 import com.adobe.webapis.flickr.PhotoUrl;
 import com.adobe.webapis.flickr.events.FlickrResultEvent;
 
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.text.TextFieldUtil;
 
 import com.whirled.ControlEvent;
 import com.whirled.FurniControl;
