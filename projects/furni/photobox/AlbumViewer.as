@@ -6,7 +6,6 @@ package {
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Loader;
-import flash.display.SimpleButton;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -29,7 +28,7 @@ import com.adobe.webapis.flickr.PhotoSize;
 import com.adobe.webapis.flickr.PhotoUrl;
 import com.adobe.webapis.flickr.events.FlickrResultEvent;
 
-import com.threerings.flash.SimpleTextButton;
+import com.threerings.ui.SimpleTextButton;
 
 import com.whirled.FurniControl;
 import com.whirled.ControlEvent;
@@ -546,8 +545,8 @@ import flash.text.TextFormat;
 
 import flash.ui.Keyboard;
 
-import com.threerings.flash.TextFieldUtil;
-import com.threerings.flash.SimpleTextButton;
+import com.threerings.text.TextFieldUtil;
+import com.threerings.ui.SimpleTextButton;
 
 class ConfigPanel extends Sprite
 {
