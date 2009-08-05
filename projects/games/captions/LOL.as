@@ -175,9 +175,9 @@ public class LOL extends Sprite
             ui = LOL_THEME_UI;
             break;
 
-        case SILENT_THEME:
-            ui = SILENT_THEME_UI;
-            break;
+//        case SILENT_THEME:
+//            ui = SILENT_THEME_UI;
+//            break;
         }
 
         MultiLoader.getLoaders(ui, handleUILoaded, false, ApplicationDomain.currentDomain);
@@ -302,12 +302,12 @@ public class LOL extends Sprite
             _formatter.configure(_captionFont.fontName);
             break;
 
-        case SILENT_THEME:
-            var grain :MovieClip = find("film_grain") as MovieClip;
-            grain.mouseEnabled = false;
-            grain.mouseChildren = false;
-            _formatter.configure(_captionFont.fontName, 0xFFFFFF, false);
-            break;
+//        case SILENT_THEME:
+//            var grain :MovieClip = find("film_grain") as MovieClip;
+//            grain.mouseEnabled = false;
+//            grain.mouseChildren = false;
+//            _formatter.configure(_captionFont.fontName, 0xFFFFFF, false);
+//            break;
         }
         _formatter.watch(_input, handleTextFieldChanged);
         _formatter.watch(_winningCaption, handleWinningCaptionFieldChanged);
@@ -326,15 +326,15 @@ public class LOL extends Sprite
             // nada, currently
             break;
 
-        case SILENT_THEME:
-            // make a grayscale filter for the image
-//            var T :Number = 1 / 3;
-//            _image.filters = [ new ColorMatrixFilter([
-//                T, T, T, 0, 0,
-//                T, T, T, 0, 0,
-//                T, T, T, 0, 0,
-//                0, 0, 0, 1, 0]) ];
-            break;
+//        case SILENT_THEME:
+//            // make a grayscale filter for the image
+////            var T :Number = 1 / 3;
+////            _image.filters = [ new ColorMatrixFilter([
+////                T, T, T, 0, 0,
+////                T, T, T, 0, 0,
+////                T, T, T, 0, 0,
+////                0, 0, 0, 1, 0]) ];
+//            break;
         }
     }
 
@@ -1046,8 +1046,8 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
     [Embed(source="rsrc/lol_theme.swf", mimeType="application/octet-stream")]
     protected static const LOL_THEME_UI :Class;
 
-    [Embed(source="rsrc/silent_theme.swf", mimeType="application/octet-stream")]
-    protected static const SILENT_THEME_UI :Class;
+//    [Embed(source="rsrc/silent_theme.swf", mimeType="application/octet-stream")]
+//    protected static const SILENT_THEME_UI :Class;
 
     protected static const IDEAL_WIDTH :int = 700;
     protected static const IDEAL_HEIGHT :int = 500;
@@ -1074,12 +1074,12 @@ for (var jj :int = 0; jj < (DEBUG ? 20 : 1); jj++) {
 
     /** Theme constants. */
     protected static const LOL_THEME :String = "lol";
-    protected static const SILENT_THEME :String = "silent";
+//    protected static const SILENT_THEME :String = "silent";
 
     /** The themes we're using. */
-    protected static const THEMES :Array = [ LOL_THEME, SILENT_THEME ];
-    protected static const THEME_WEIGHTS :Array = [ 3, 1 ];
-//    protected static const THEMES :Array = [ LOL_THEME ];
+//    protected static const THEMES :Array = [ LOL_THEME, SILENT_THEME ];
+    protected static const THEME_WEIGHTS :Array = [ 1 ];
+    protected static const THEMES :Array = [ LOL_THEME ];
 //    protected static const THEMES :Array = [ SILENT_THEME ];
 
     protected var _ctrl :GameControl;
