@@ -9,6 +9,8 @@ import flash.events.Event;
 import flash.events.IEventDispatcher;
 import flash.events.KeyboardEvent;
 import flash.text.TextField;
+import flash.utils.clearTimeout; // function
+import flash.utils.setTimeout; // function
 
 import com.threerings.util.ClassUtil;
 import com.threerings.util.StringUtil;
@@ -30,21 +32,37 @@ public class StageTest extends Sprite
             addedToStage();
 
         } else {
+            trace("Delaying add to stage......");
             addEventListener(Event.ADDED_TO_STAGE, addedToStage);
+
+            //_timeout = setTimeout(addedToStage, 200);
         }
 
         this.graphics.beginFill(0x3366FF);
         this.graphics.drawRect(0, 0, 700, 500);
         this.graphics.endFill();
     }
+    //protected var _timeout :uint;
 
     protected function addedToStage (... ignored) :void
     {
+        _theStage = this.stage;
+        //clearTimeout(_timeout);
         removeEventListener(Event.ADDED_TO_STAGE, addedToStage);
 
-        this.stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKey);
+        _theStage.addEventListener(KeyboardEvent.KEY_DOWN, handleKey);
         trace("================= I added a listener to the stage!");
+
+        _theStage.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
     }
+
+    protected function handleEnterFrame (event :Event) :void
+    {
+        if (++_frameCount % 100 == 0) {
+            trace("Getting them frames like a mad dog!");
+        }
+    }
+    protected var _frameCount :int = 0;
 
     protected function handleKey (event :KeyboardEvent) :void
     {
@@ -75,26 +93,26 @@ public class StageTest extends Sprite
 
     protected function pokeAndBreak () :void
     {
-        try {
-            var d :DisplayObject = this;
-            while (d.parent != null) {
-                d = d.parent;
+//        try {
+//            var d :DisplayObject = this;
+//            while (d.parent != null) {
+//                d = d.parent;
+//
+//                trace(": " + StringUtil.simpleToString(d));
+//            }
+//            trace("== top");
+//        } catch (e :Error) {
+//            trace("Got error climbing: " + e);
+//        }
 
-                trace(": " + StringUtil.simpleToString(d));
-            }
-            trace("== top");
-        } catch (e :Error) {
-            trace("Got error climbing: " + e);
-        }
 
-
-        trace(DisplayUtil.dumpHierarchy(this.stage));
+        trace(DisplayUtil.dumpHierarchy(_theStage));
 
         trace("Now trying to push buttons!");
-        DisplayUtil.applyToHierarchy(this.stage, pushButtons);
+        DisplayUtil.applyToHierarchy(_theStage, pushButtons);
 
         trace("Now trying to fill fields");
-        DisplayUtil.applyToHierarchy(this.stage, alterText);
+        DisplayUtil.applyToHierarchy(_theStage, alterText);
     }
 
     protected function pushButtons (disp :DisplayObject) :void
@@ -114,5 +132,6 @@ public class StageTest extends Sprite
     }
 
     protected var _ctrl :GameControl;
+    protected var _theStage :DisplayObject;
 }
 }
