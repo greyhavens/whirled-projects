@@ -1,7 +1,8 @@
 package popcraft.util {
 
-import com.threerings.util.HashMap;
+import com.threerings.util.Maps;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
 
 import flash.system.Capabilities;
 import flash.utils.getTimer;
@@ -11,7 +12,7 @@ public class Profiler
     public static function reset () :void
     {
         if (ENABLED) {
-            _timers = new HashMap();
+            _timers = Maps.newMapOf(String);
         }
     }
 
@@ -86,7 +87,7 @@ public class Profiler
     }
 
     protected static var _runningTimerNames :Array = [];
-    protected static var _timers :HashMap = new HashMap();
+    protected static var _timers :Map = Maps.newMapOf(String);
     protected static const ENABLED :Boolean = Capabilities.isDebugger;
     protected static const log :Log = Log.getLog(Profiler);
 }

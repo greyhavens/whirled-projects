@@ -1,9 +1,8 @@
 package popcraft {
 
-import com.threerings.util.HashMap;
+import com.threerings.util.Map;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -12,7 +11,6 @@ import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
-import popcraft.*;
 import popcraft.battle.view.*;
 import popcraft.data.*;
 import popcraft.ui.UIBits;
@@ -22,7 +20,7 @@ public class UnitAnimTestMode extends AppMode
 {
     override protected function setup () :void
     {
-        var playerDisplayDatas :HashMap = ClientCtx.defaultGameData.playerDisplayDatas;
+        var playerDisplayDatas :Map = ClientCtx.defaultGameData.playerDisplayDatas;
         var playerDisplayData :PlayerDisplayData = playerDisplayDatas.values()[0];
         _recolor = playerDisplayData.color;
 

@@ -1,8 +1,9 @@
 package popcraft.net {
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.whirled.game.OccupantChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 
@@ -19,8 +20,6 @@ public class PlayerMonitor
 
         ClientCtx.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
             onPlayerLeft);
-
-        _scores = new HashMap();
     }
 
     public function shutdown () :void
@@ -109,7 +108,7 @@ public class PlayerMonitor
         }
     }
 
-    protected var _scores :HashMap; // HashMap<roundId, Array<PlayerScore>>
+    protected var _scores :Map = Maps.newMapOf(int); // Map<roundId, Array<PlayerScore>>
     protected var _gotScoresCallback :Function;
     protected var _waitingForScoresForRoundId :int = -1;
 

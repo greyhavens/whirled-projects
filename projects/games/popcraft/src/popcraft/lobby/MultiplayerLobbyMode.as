@@ -1,8 +1,9 @@
 package popcraft.lobby {
 
 import com.threerings.text.TextFieldUtil;
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.resource.SwfResource;
@@ -371,7 +372,7 @@ public class MultiplayerLobbyMode extends AppMode
     protected var _lobbyLayer :Sprite;
     protected var _playerOptionsLayer :Sprite;
     protected var _bg :MovieClip;
-    protected var _headshots :HashMap = new HashMap();
+    protected var _headshots :Map = Maps.newMapOf(int); // Map<playerSeat, headshot>
     protected var _statusText :TextField;
     protected var _initedLocalPlayerData :Boolean;
     protected var _gameStartTimer :SimObjectRef = SimObjectRef.Null();

@@ -1,7 +1,8 @@
 package popcraft {
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.HashMap;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 
 import flash.utils.ByteArray;
 
@@ -10,7 +11,6 @@ public class PrizeManager
 {
     public function PrizeManager ()
     {
-        _trophyPrizeMap = new HashMap();
         for (var ii :int = 0; ii < TROPHY_PRIZES.length; ii += 3) {
             var trophyPrize :TrophyPrize = new TrophyPrize(
                 TROPHY_PRIZES[ii],
@@ -122,7 +122,7 @@ public class PrizeManager
     protected var _jackAwarded :Boolean;
     protected var _ralphAwarded :Boolean;
     protected var _ivyAwarded :Boolean;
-    protected var _trophyPrizeMap :HashMap;
+    protected var _trophyPrizeMap :Map = Maps.newMapOf(String);
 
     // Cookie version >= 1
     protected static const LADYFINGERS :int = 0;   // buy Compleat or Weardd Academy

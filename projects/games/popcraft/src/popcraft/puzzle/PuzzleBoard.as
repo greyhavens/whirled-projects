@@ -2,7 +2,8 @@ package popcraft.puzzle {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
-import com.threerings.util.ObjectSet;
+import com.threerings.util.Set;
+import com.threerings.util.Sets;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.objects.*;
@@ -445,7 +446,7 @@ public class PuzzleBoard extends SceneObject
     }
 
     protected function findConnectedSimilarPiecesInternal (x :int, y :int, resourceType :int,
-        pieces :ObjectSet) :void
+        pieces :Set) :void
     {
         var thisPiece :Piece = getPieceAt(x, y);
 
@@ -460,7 +461,7 @@ public class PuzzleBoard extends SceneObject
 
     public function findConnectedSimilarPieces (x :int, y :int) :Array
     {
-        var pieces :ObjectSet = new ObjectSet();
+        var pieces :Set = Sets.newDictionarySet();
 
         var thisPiece :Piece = getPieceAt(x, y);
         if (null != thisPiece) {

@@ -1,7 +1,8 @@
 package popcraft.data {
 
 import com.threerings.geom.Vector2;
-import com.threerings.util.HashMap;
+import com.threerings.util.Maps;
+import com.threerings.util.Map;
 import com.whirled.contrib.XmlReader;
 
 import popcraft.*;
@@ -16,7 +17,7 @@ public class EndlessMapData
 
     public var multiplierDropLoc :Vector2 = new Vector2();
 
-    public var humans :HashMap = new HashMap(); // Map<PlayerName, EndlessHumanPlayerData>
+    public var humans :Map = Maps.newMapOf(String); // Map<PlayerName, EndlessHumanPlayerData>
     public var computers :Array = []; // array of EndlessComputerPlayerDatas
 
     public static function fromXml (xml :XML) :EndlessMapData

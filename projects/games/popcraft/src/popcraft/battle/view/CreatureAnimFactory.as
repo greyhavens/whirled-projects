@@ -1,16 +1,17 @@
 package popcraft.battle.view {
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.HashMap;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.MovieClip;
 
 import popcraft.*;
-import popcraft.game.*;
 import popcraft.battle.*;
 import popcraft.data.*;
+import popcraft.game.*;
 
 public class CreatureAnimFactory
 {
@@ -30,17 +31,17 @@ public class CreatureAnimFactory
     public static function getBitmapAnim (unitType :int, playerColor :uint, animName :String)
         :BitmapAnim
     {
-        // get the colorFrameMap, which is a HashMap<playerColor, HashMap<animName, BitmapAnim>>
-        var colorFrameMap :HashMap = g_bitmapAnimFrames[unitType];
+        // get the colorFrameMap, which is a Map<playerColor, Map<animName, BitmapAnim>>
+        var colorFrameMap :Map = g_bitmapAnimFrames[unitType];
         if (colorFrameMap == null) {
-            colorFrameMap = new HashMap();
+            colorFrameMap = Maps.newMapOf(uint);
             g_bitmapAnimFrames[unitType] = colorFrameMap;
         }
 
-        // get the animMap, which is a HashMap<animName, frameArray>
-        var animMap :HashMap = colorFrameMap.get(playerColor);
+        // get the animMap, which is a Map<animName, frameArray>
+        var animMap :Map = colorFrameMap.get(playerColor);
         if (animMap == null) {
-            animMap = new HashMap();
+            animMap = Maps.newMapOf(String);
             colorFrameMap.put(playerColor, animMap);
         }
 
