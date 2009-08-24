@@ -461,7 +461,7 @@ public class PuzzleBoard extends SceneObject
 
     public function findConnectedSimilarPieces (x :int, y :int) :Array
     {
-        var pieces :Set = Sets.newDictionarySet();
+        var pieces :Set = Sets.newSetOf(Piece);
 
         var thisPiece :Piece = getPieceAt(x, y);
         if (null != thisPiece) {
