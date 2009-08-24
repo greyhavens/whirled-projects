@@ -1,7 +1,7 @@
 package loopbacktest {
 
-import com.threerings.flash.DisplayUtil;
-import com.threerings.flash.SimpleTextButton;
+import com.threerings.display.DisplayUtil;
+import com.threerings.ui.SimpleTextButton;
 import com.threerings.util.StringUtil;
 import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;

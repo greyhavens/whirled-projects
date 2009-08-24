@@ -31,14 +31,14 @@
 			<locationURI>EXPORT_ROOT/whirled/contrib/src/as</locationURI>
 		</link>
 		<link>
-			<name>[source path] nenya-src-as</name>
-			<type>2</type>
-			<locationURI>EXPORT_ROOT/whirled/libraries/nenya/src/as</locationURI>
-		</link>
-		<link>
 			<name>[source path] toybox-src-as</name>
 			<type>2</type>
 			<locationURI>EXPORT_ROOT/whirled/libraries/toybox/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] nenya-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/whirled/libraries/nenya/src/as</locationURI>
 		</link>
 		<link>
 			<name>[source path] vilya-src-as</name>
