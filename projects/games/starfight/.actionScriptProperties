@@ -2,13 +2,13 @@
 <actionScriptProperties mainApplicationPath="starfight/client/StarFight.as" version="3">
 <compiler additionalCompilerArguments="" copyDependentFiles="true" enableModuleDebug="true" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="true" htmlHistoryManagement="true" htmlPlayerVersion="9.0.28" htmlPlayerVersionCheck="true" outputFolderPath="" sourceFolderPath="src" strict="true" useApolloConfig="false" verifyDigests="true" warn="true">
 <compilerSourcePath>
+<compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/libraries/flash-utils/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/libraries/whirled/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/contrib/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/libraries/narya/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/libraries/nenya/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/libraries/toybox/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/libraries/vilya/src/as"/>
-<compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/libraries/narya/src/player"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="${PROJECT_FRAMEWORKS}/projects/framework/src"/>
 </compilerSourcePath>
 <libraryPath defaultLinkType="1">

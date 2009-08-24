@@ -1,6 +1,7 @@
 package starfight.client {
 
-import com.threerings.util.HashMap;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 
 import flash.display.Bitmap;
 import flash.display.Shape;
@@ -209,7 +210,7 @@ public class StatusOverlay extends Sprite
      * Updates the radar display.
      */
     public function updateRadar (
-        ships :HashMap, powerups :Array, boardX :Number, boardY :Number) :void
+        ships :Map, powerups :Array, boardX :Number, boardY :Number) :void
     {
         boardX = Constants.GAME_WIDTH/2 - boardX*Constants.PIXELS_PER_TILE;
         boardY = Constants.GAME_HEIGHT/2 - boardY*Constants.PIXELS_PER_TILE;
@@ -310,8 +311,8 @@ public class StatusOverlay extends Sprite
     protected var _scoreText :TextField;
 
     /** Radar elements. */
-    protected var _ships :HashMap = new HashMap();
-    protected var _powerups :HashMap = new HashMap();
+    protected var _ships :Map = Maps.newMapOf(int); // Map<id, Shape>
+    protected var _powerups :Map = Maps.newMapOf(int); // Map<id, Shape>
 
     /** Status elements. */
     protected var _roundText :TextField;

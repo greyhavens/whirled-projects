@@ -1,6 +1,7 @@
 package starfight.client {
 
-import com.threerings.util.HashMap;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.GameControl;
 import com.whirled.net.MessageReceivedEvent;
@@ -422,7 +423,7 @@ public class ClientGameController extends GameController
     protected var _shotViews :Array = [];
     protected var _ownShip :ClientShip;
     protected var _ownShipView :ShipView;
-    protected var _shipViews :HashMap = new HashMap();
+    protected var _shipViews :Map = Maps.newMapOf(int); // Map<id, ShipView>
     protected var _newShipTimerRunning :Boolean;
 }
 

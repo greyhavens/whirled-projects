@@ -1,7 +1,8 @@
 package starfight {
 
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.StringUtil;
 import com.whirled.contrib.ManagedTimer;
 import com.whirled.contrib.TimerManager;
@@ -367,7 +368,7 @@ public class GameController
         _gameCtrl.net.set(propName, value, true);
     }
 
-    public function get ships () :HashMap
+    public function get ships () :Map
     {
         return _ships;
     }
@@ -376,7 +377,7 @@ public class GameController
     protected var _gameCtrl :GameControl;
     protected var _running :Boolean;
     protected var _gameState :int;
-    protected var _ships :HashMap = new HashMap(); // HashMap<int, Ship>
+    protected var _ships :Map = Maps.newMapOf(int); // HashMap<int, Ship>
     protected var _shots :Array = []; // Array<Shot>
     protected var _shipUpdateTime :int;
     protected var _lastTickTime :int;

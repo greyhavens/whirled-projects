@@ -1,6 +1,7 @@
 package starfight.client {
 
-import com.threerings.util.HashMap;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.MultiLoader;
 
 import flash.display.Bitmap;
@@ -92,6 +93,6 @@ public class Resources
     protected static var _resourceDomain :ApplicationDomain;
     protected static var _callback :Function;
     protected static var _ready :Boolean = false;
-    protected static var _map :HashMap = new HashMap();
+    protected static var _map :Map = Maps.newMapOf(String); // Map<String, Class>
 }
 }
