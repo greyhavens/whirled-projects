@@ -4,8 +4,9 @@
 package {
 
 import com.threerings.util.ClassUtil;
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.Random;
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
@@ -415,12 +416,12 @@ public class MovieClipBody
     protected var _mediaWidth :int;
     protected var _mediaHeight :int;
 
-    protected var _movies :HashMap = new HashMap();
+    protected var _movies :Map = Maps.newMapOf(String);
 
     protected var _state :String;
     protected var _mode :String = "";
     protected var _playing :MovieList;
-    protected var _movieQueue :Array = new Array();
+    protected var _movieQueue :Array = [];
     protected var _curMovie :MovieClip;
 }
 }
