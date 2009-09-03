@@ -1,6 +1,6 @@
 package config {
 
-import com.threerings.flash.DisplayUtil;
+import com.threerings.display.DisplayUtil;
 import com.threerings.util.Log;
 
 import flash.display.BitmapData;
