@@ -55,10 +55,5 @@
 			<type>2</type>
 			<locationURI>EXPORT_ROOT/whirled/libraries/vilya/src/as</locationURI>
 		</link>
-		<link>
-			<name>[source path] player</name>
-			<type>2</type>
-			<locationURI>EXPORT_ROOT/whirled/libraries/narya/src/player</locationURI>
-		</link>
 	</linkedResources>
 </projectDescription>
