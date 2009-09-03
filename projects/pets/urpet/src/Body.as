@@ -8,8 +8,9 @@ import flash.display.MovieClip;
 import flash.display.Scene;
 import flash.events.Event;
 
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.Random;
 
 import com.whirled.ControlEvent;
@@ -291,13 +292,13 @@ public class Body
     protected var _mediaWidth :int;
     protected var _nameHeight :Number;
 
-    protected var _scenes :HashMap = new HashMap();
+    protected var _scenes :Map = Maps.newMapOf(String);
     protected var _rando :Random = new Random();
 
     protected var _state :String;
     protected var _playing :SceneList;
     protected var _fromWalk :SceneList;
-    protected var _sceneQueue :Array = new Array();
+    protected var _sceneQueue :Array = [];
 }
 }
 
@@ -341,8 +342,8 @@ class SceneList
 
     protected var _curidx :int;
 
-    protected var _scenes :Array = new Array();
-    protected var _weights :Array = new Array();
+    protected var _scenes :Array = [];
+    protected var _weights :Array = [];
     protected var _totalWeight :int = 0;
 
     protected var _rando :Random = new Random();

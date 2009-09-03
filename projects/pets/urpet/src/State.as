@@ -3,7 +3,8 @@
 
 package {
 
-import com.threerings.util.HashMap;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 
 /**
  * Represents information about a Pet state.
@@ -53,7 +54,7 @@ public class State
 
         // yay for wacky static initializer execution order
         if (_states == null) {
-            _states = new HashMap();
+            _states = Maps.newMapOf(String);
         }
         _states.put(name, this);
     }
@@ -77,7 +78,7 @@ public class State
         EXCITED.transitions = [ CONTENT, PLAYFUL, CURIOUS ];
     }
 
-    protected static var _states :HashMap;
+    protected static var _states :Map;
 
     // we have to do this after our constants are all initialized
     registerTransitions();

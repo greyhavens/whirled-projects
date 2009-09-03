@@ -6,8 +6,9 @@ package {
 import flash.events.Event;
 import flash.events.TimerEvent;
 
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.threerings.util.Random;
 
 import com.whirled.ControlEvent;
@@ -133,6 +134,6 @@ public class Brain
     protected var _rando :Random = new Random();
 
     protected var _state :State;
-    protected var _states :HashMap = new HashMap();
+    protected var _states :Map = Maps.newMapOf(String);
 }
 }
