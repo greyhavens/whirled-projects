@@ -5,7 +5,7 @@ import flash.display.DisplayObjectContainer;
 import flash.events.MouseEvent;
 import flash.display.SimpleButton;
 import com.threerings.util.MultiLoader;
-import com.threerings.flash.DisplayUtil;
+import com.threerings.display.DisplayUtil;
 import com.whirled.contrib.card.trick.Bids;
 import com.whirled.contrib.card.trick.BidEvent;
 import com.whirled.contrib.card.graphics.Text;

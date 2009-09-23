@@ -1,10 +1,10 @@
 package {
 
-import flash.display.DisplayObject;
+import com.whirled.ServerObject;
 import com.whirled.game.GameControl;
 import spades.Controller;
 
-public class Server extends DisplayObject
+public class Server extends ServerObject
 {
     public function Server ()
     {
