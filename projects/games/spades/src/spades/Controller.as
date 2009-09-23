@@ -50,50 +50,54 @@ public class Controller
             _templateDeck = _templateDeck.shortFilter(isHighCard);
         }
 
+        // watching...
         if (!_server && 
             gameCtrl.game.seating.getMyPosition() == -1) {
             attachToModel(createModel(gameCtrl));
             createViews(_model);
-        }
-        else {
-            // Listen for game start and round start events, on the first one that occurs,
-            // construct the model and views and call the appropriate listener method. This
-            // is necessary because 1) whirled starts the round before the game, but there
-            // is a load of stuff that spades needs to do specifically to restart a round
-            // and 2) the model needs all the players to be at the table before construction
-            gameCtrl.game.addEventListener(
-                StateChangedEvent.GAME_STARTED, 
-                startGame);
-            gameCtrl.game.addEventListener(
-                StateChangedEvent.ROUND_STARTED, 
-                startRound);
+            return;
         }
 
+        // Listen for game start and round start events, on the first one that occurs,
+        // construct the model and views and call the appropriate listener method. This
+        // is necessary because 1) whirled starts the round before the game, but there
+        // is a load of stuff that spades needs to do specifically to restart a round
+        // and 2) the model needs all the players to be at the table before construction
+        var triggers :Array = [StateChangedEvent.GAME_STARTED, StateChangedEvent.ROUND_STARTED];
+        for each (var trigger :String in triggers) {
+            gameCtrl.game.addEventListener(trigger, bootstrap);
+        }
 
-        function bootstrap (fn :Function, evt :StateChangedEvent) :void {
-            if (_model == null) {
-                attachToModel(createModel(gameCtrl));
-                if (createViews != null) {
-                    createViews(_model);
+        var events :Object = new Object();
+        function bootstrap (evt :StateChangedEvent) :void {
+            Debug.debug("Bootstrapping " + evt);
+
+            // check for duplicate event
+            if (events[evt.type] != null) {
+                throw new Error("Uh oh, event " + evt + " received twice");
+            }
+
+            // assign and bail if we are not yet fully populated
+            events[evt.type] = evt;
+            for each (var trigger1 :String in triggers) {
+                if (events[trigger1] == null) {
+                    return;
                 }
             }
-            fn(evt);
-        }
 
-        function startGame (event :StateChangedEvent) :void {
-            Debug.debug("Bootstrapping game start");
-            bootstrap(handleGameStarted, event);
-            gameCtrl.game.removeEventListener(
-                StateChangedEvent.GAME_STARTED, 
-                startGame);
-        }
+            // remove listeners
+            for each (var trigger2 :String in triggers) {
+                gameCtrl.game.removeEventListener(trigger2, bootstrap);
+            }
 
-        function startRound (event :StateChangedEvent) :void {
-            Debug.debug("Bootstrapping round start");
-            bootstrap(handleRoundStarted, event);
-            gameCtrl.game.removeEventListener(
-                StateChangedEvent.ROUND_STARTED, 
-                startRound);
+            // kick off
+            attachToModel(createModel(gameCtrl));
+            if (createViews != null) {
+                createViews(_model);
+            }
+
+            handleGameStarted(events[StateChangedEvent.GAME_STARTED]);
+            handleRoundStarted(events[StateChangedEvent.ROUND_STARTED]);
         }
     }
 
@@ -102,7 +106,7 @@ public class Controller
         return _model;
     }
 
-    / ** For debugging, log a string prefixed with player name and seating position. */
+    /** For debugging, log a string prefixed with player name and seating position. */
     public function log (str :String) :void
     {
         Debug.debug(str);
@@ -160,7 +164,8 @@ public class Controller
             gameCtrl.game.seating.getPlayerIds(), 
             gameCtrl.game.seating.getMyPosition(),
             [new Team(0, [0, 2]), new Team(1, [1, 3])]);
-        var hand :Hand = table.isWatcher() ? null : new Hand(gameCtrl, sorter);
+        var createHand :Boolean = !table.isWatcher() || gameCtrl.game.amServerAgent();
+        var hand :Hand = createHand ? new Hand(gameCtrl, sorter) : null;
         var trick :Trick = new Trick(gameCtrl, trumps);
         var bids :SpadesBids = new SpadesBids(gameCtrl, 52 / table.numPlayers);
         var scores :Scores = new SpadesScores(gameCtrl, table, bids, targetScore);
