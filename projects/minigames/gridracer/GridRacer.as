@@ -57,7 +57,8 @@ public class GridRacer extends Sprite
                     nextP.y < MIN_BOUND) {
                 break;
             }
-            var nextP2 :Point = new Point(Math.cos(angle + Math.PI) * dist, Math.sin(angle + Math.PI) * dist);
+            var nextP2 :Point = new Point(
+                Math.cos(angle + Math.PI) * dist, Math.sin(angle + Math.PI) * dist);
             if (lastP != null) {
                 _lines.push(new LineSegment(lastP, nextP));
                 _lines.push(new LineSegment(lastP2, nextP2));
@@ -112,24 +113,29 @@ public class GridRacer extends Sprite
         addChild(_debug);
     }
 
-    // TODO: remove
-    protected function pickDimension () :Number
-    {
-        return MIN_BOUND + (MAX_BOUND - MIN_BOUND) * Math.random();
-    }
+//    // TODO: remove
+//    protected function pickDimension () :Number
+//    {
+//        return MIN_BOUND + (MAX_BOUND - MIN_BOUND) * Math.random();
+//    }
 
-    // TODO: remove
     protected function pickColor () :uint
     {
         return uint(COLORS[int(Math.random() * COLORS.length)]);
     }
 
+    /**
+     * Set the velocity deltas, the accellerations.
+     */
     public function setDeltas (dx :Number, dy :Number) :void
     {
         _dx = dx;
         _dy = dy;
     }
 
+    /**
+     * Indicate that we should dampen the velocity, rather than add the deltas.
+     */
     public function setDampen (dampen :Boolean) :void
     {
         _dampen = dampen;
@@ -254,8 +260,6 @@ public class GridRacer extends Sprite
     // these all affect the background.
     protected static const MIN_BOUND :int = -2000;
     protected static const MAX_BOUND :int = 2000;
-    protected static const SPACING :int = 40;
-    protected static const RADIUS :int = 2;
 
     protected static const COLORS :Array = [
         0xCCFFCC,
@@ -277,6 +281,12 @@ import flash.events.MouseEvent;
 
 class AccelControl extends Sprite
 {
+    /** The number of pixels outward from the center that maps to 100% acceleration. */
+    public static const GRANULARITY :int = 100;
+
+    /** The maximum pixel size of the accelleration indicator. */
+    public static const SIZE :int = 50;
+
     public function AccelControl (dad :GridRacer)
     {
         _dad = dad;
@@ -299,6 +309,7 @@ class AccelControl extends Sprite
     {
         var p :Point;
         if (evt == null || evt.type != MouseEvent.MOUSE_MOVE) {
+            // if the mouse has exited...
             _dad.setDampen(true);
             p = new Point(); // 0, 0
 
@@ -307,18 +318,20 @@ class AccelControl extends Sprite
             p = new Point(evt.localX, evt.localY);
 
             // bound it in, if necessary
-            if (Point.distance(p, new Point()) > 50) {
-                p.normalize(50);
+            if (Point.distance(p, new Point()) > GRANULARITY) {
+                p.normalize(GRANULARITY);
             }
+            p.x /= GRANULARITY;
+            p.y /= GRANULARITY;
         }
 
         var g :Graphics = graphics;
         g.clear();
         g.lineStyle(3, 0xFFFFFF);
         g.moveTo(0, 0);
-        g.lineTo(p.x, p.y);
+        g.lineTo(p.x * SIZE, p.y * SIZE);
 
-        _dad.setDeltas(p.x / 50, p.y / 50);
+        _dad.setDeltas(p.x, p.y);
     }
 
     protected var _dad :GridRacer;
