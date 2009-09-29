@@ -1,8 +1,5 @@
 package config {
 
-import com.threerings.display.DisplayUtil;
-import com.threerings.util.Log;
-
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -12,6 +9,9 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.system.ApplicationDomain;
+
+import com.threerings.display.DisplayUtil;
+import com.threerings.util.Log;
 
 public class ConfigPanel extends Sprite
 {

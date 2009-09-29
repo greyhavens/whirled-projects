@@ -1,15 +1,15 @@
 ﻿package config {
 
-import com.whirled.AvatarControl;
-import com.whirled.ControlEvent;
-import com.whirled.contrib.ColorMatrix;
-
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.filters.BitmapFilter;
 import flash.filters.ColorMatrixFilter;
+
+import com.whirled.AvatarControl;
+import com.whirled.ControlEvent;
+import com.whirled.contrib.ColorMatrix;
 
 public class ConfigBody extends MovieClipBody
 {
