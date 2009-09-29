@@ -8,8 +8,6 @@ import flash.events.Event;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
-import com.threerings.util.Util;
-
 import com.whirled.AvatarControl;
 
 /**
