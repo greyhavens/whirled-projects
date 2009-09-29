@@ -2,7 +2,7 @@
 <project name="ArrowHead" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name" value="ArrowHead"/>
+  <property name="app.name" value="Arrows"/>
   <property name="app.type" value="avatar"/>
 
   <!-- include the standard build script -->
