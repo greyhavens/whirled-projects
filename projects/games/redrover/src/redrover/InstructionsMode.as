@@ -1,8 +1,8 @@
 package redrover {
 
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.resource.ImageResource;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.resource.ImageResource;
 
 import flash.display.Bitmap;
 import flash.display.SimpleButton;

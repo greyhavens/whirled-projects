@@ -1,8 +1,8 @@
 package redrover.net {
 
 import com.threerings.util.EventHandlerManager;
-import com.whirled.contrib.simplegame.net.BasicMessageManager;
-import com.whirled.contrib.simplegame.net.Message;
+import com.whirled.contrib.messagemgr.BasicMessageManager;
+import com.whirled.contrib.messagemgr.Message;
 import com.whirled.game.GameControl;
 import com.whirled.game.NetSubControl;
 import com.whirled.net.MessageReceivedEvent;

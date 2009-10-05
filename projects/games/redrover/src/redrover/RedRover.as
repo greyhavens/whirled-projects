@@ -1,8 +1,8 @@
 package redrover {
 
 import com.threerings.util.EventHandlerManager;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.resource.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.resource.*;
 import com.whirled.game.SizeChangedEvent;
 import com.whirled.game.loopback.LoopbackGameControl;
 
@@ -48,7 +48,7 @@ public class RedRover extends Sprite
         this.scrollRect = new Rectangle(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
 
         // setup simplegame
-        _sg = new SimpleGame(new Config());
+        _sg = new FlashbangApp(new Config());
         ClientCtx.mainLoop = _sg.ctx.mainLoop;
         ClientCtx.rsrcs = _sg.ctx.rsrcs;
         ClientCtx.audio = _sg.ctx.audio;
@@ -87,7 +87,7 @@ public class RedRover extends Sprite
 
     protected var _localServer :Server;
 
-    protected var _sg :SimpleGame;
+    protected var _sg :FlashbangApp;
     protected var _events :EventHandlerManager = new EventHandlerManager();
 }
 

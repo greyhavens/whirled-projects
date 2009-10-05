@@ -1,12 +1,12 @@
 package redrover.game.view {
 
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.audio.*;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.audio.*;
 
 import redrover.*;
 import redrover.game.*;
 
-public class MusicPlayer extends SimObject
+public class MusicPlayer extends GameObject
 {
     public function MusicPlayer ()
     {

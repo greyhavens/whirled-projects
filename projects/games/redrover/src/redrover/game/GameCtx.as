@@ -1,9 +1,9 @@
 package redrover.game {
 
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.simplegame.audio.*;
-import com.whirled.contrib.simplegame.objects.SimpleTimer;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.audio.*;
+import com.threerings.flashbang.objects.SimpleTimer;
+import com.threerings.flashbang.util.Rand;
 
 import redrover.*;
 import redrover.data.LevelData;

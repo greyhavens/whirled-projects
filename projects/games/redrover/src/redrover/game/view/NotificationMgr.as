@@ -1,13 +1,13 @@
 package redrover.game.view {
 
-import com.whirled.contrib.simplegame.SimObject;
+import com.threerings.flashbang.GameObject;
 
 import flash.geom.Point;
 
 import redrover.*;
 import redrover.game.*;
 
-public class NotificationMgr extends SimObject
+public class NotificationMgr extends GameObject
 {
     // Notification types
     public static const MAJOR :int = 0;
@@ -56,9 +56,9 @@ public class NotificationMgr extends SimObject
 
 import com.threerings.display.DisplayUtil;
 import com.threerings.display.ColorMatrix;
-import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.objects.*;
+import com.threerings.flashbang.resource.*;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -77,7 +77,7 @@ import redrover.game.*;
 import redrover.util.SpriteUtil;
 import redrover.ui.UIBits;
 import redrover.game.view.NotificationMgr;
-import com.whirled.contrib.simplegame.SimObjectRef;
+import com.threerings.flashbang.GameObjectRef;
 
 class Notification extends SceneObject
 {
@@ -179,7 +179,7 @@ class Notification extends SceneObject
     }
 
     protected var _mgr :NotificationMgr;
-    protected var _playerRef :SimObjectRef;
+    protected var _playerRef :GameObjectRef;
     protected var _text :String;
     protected var _type :int;
     protected var _offset :Point;

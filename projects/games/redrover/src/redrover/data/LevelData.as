@@ -1,8 +1,8 @@
 package redrover.data {
 
 import com.threerings.util.StringUtil;
-import com.whirled.contrib.simplegame.util.NumRange;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.util.NumRange;
+import com.threerings.flashbang.util.Rand;
 import com.threerings.util.XmlReader;
 import com.threerings.util.XmlReadError;
 

@@ -1,10 +1,10 @@
 package redrover.game.robot {
 
-import com.whirled.contrib.simplegame.SimObject;
+import com.threerings.flashbang.GameObject;
 
 import redrover.aitask.AITask;
 
-public class Robot extends SimObject
+public class Robot extends GameObject
 {
     public function Robot (ai :AITask)
     {

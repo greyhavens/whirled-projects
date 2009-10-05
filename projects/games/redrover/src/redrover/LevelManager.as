@@ -1,7 +1,7 @@
 package redrover {
 
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.resource.*;
+import com.threerings.flashbang.resource.*;
 
 import redrover.data.*;
 import redrover.game.GameMode;

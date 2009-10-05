@@ -1,6 +1,6 @@
 package redrover.game.view {
 
-import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.threerings.flashbang.objects.SceneObject;
 
 import flash.display.DisplayObject;
 import flash.display.SimpleButton;

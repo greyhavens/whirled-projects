@@ -1,6 +1,6 @@
 package redrover {
 
-import com.whirled.contrib.simplegame.resource.*;
+import com.threerings.flashbang.resource.*;
 
 public class Resources
 {

@@ -1,11 +1,11 @@
 package redrover.game {
 
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.tasks.*;
 
 import redrover.*;
 
-public class GemSpawner extends SimObject
+public class GemSpawner extends GameObject
 {
     public static function getAll () :Array
     {

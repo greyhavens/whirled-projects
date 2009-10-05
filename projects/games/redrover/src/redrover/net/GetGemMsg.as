@@ -1,7 +1,7 @@
 package redrover.net {
 
 import com.threerings.util.ClassUtil;
-import com.whirled.contrib.simplegame.net.Message;
+import com.whirled.contrib.messagemgr.Message;
 
 import flash.utils.ByteArray;
 

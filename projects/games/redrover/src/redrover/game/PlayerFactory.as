@@ -1,6 +1,6 @@
 package redrover.game {
 
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.util.Rand;
 
 import redrover.*;
 import redrover.aitask.AITask;

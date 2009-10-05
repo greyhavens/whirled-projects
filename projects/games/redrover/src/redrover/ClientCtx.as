@@ -1,8 +1,8 @@
 package redrover {
 
-import com.whirled.contrib.simplegame.MainLoop;
-import com.whirled.contrib.simplegame.audio.*;
-import com.whirled.contrib.simplegame.resource.*;
+import com.threerings.flashbang.MainLoop;
+import com.threerings.flashbang.audio.*;
+import com.threerings.flashbang.resource.*;
 import com.whirled.game.GameControl;
 
 import flash.display.Bitmap;

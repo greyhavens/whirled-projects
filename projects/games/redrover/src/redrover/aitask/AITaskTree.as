@@ -1,7 +1,7 @@
 package redrover.aitask {
 
 import com.threerings.util.Assert;
-import com.whirled.contrib.simplegame.*;
+import com.threerings.flashbang.*;
 
 public class AITaskTree extends AITask
 {

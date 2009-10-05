@@ -2,9 +2,9 @@ package redrover.ui {
 
 import com.threerings.display.DisplayUtil;
 import com.threerings.display.ColorMatrix;
-import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.objects.*;
+import com.threerings.flashbang.resource.*;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -202,7 +202,7 @@ public class UIBits
             // fall through to FACE_OVER
 
         case FACE_OVER:
-            frame.filters = [ ColorMatrix.create().adjustContrast(0.3, 0.3, 0.3).createFilter() ];
+            frame.filters = [ new ColorMatrix().adjustContrast(0.3, 0.3, 0.3).createFilter() ];
             break;
         }
 

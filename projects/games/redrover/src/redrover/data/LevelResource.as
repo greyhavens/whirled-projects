@@ -1,6 +1,6 @@
 package redrover.data {
 
-import com.whirled.contrib.simplegame.resource.XmlResource;
+import com.threerings.flashbang.resource.XmlResource;
 
 public class LevelResource extends XmlResource
 {

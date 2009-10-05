@@ -3,10 +3,10 @@ package redrover.game.view {
 import com.threerings.geom.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.display.ColorMatrix;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.objects.*;
+import com.threerings.flashbang.resource.*;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;

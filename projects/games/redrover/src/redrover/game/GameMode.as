@@ -3,12 +3,12 @@ package redrover.game {
 import com.threerings.display.DisplayUtil;
 import com.threerings.util.Integer;
 import com.threerings.ui.KeyboardCodes;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.audio.*;
-import com.whirled.contrib.simplegame.objects.SimpleTimer;
-import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.audio.*;
+import com.threerings.flashbang.objects.SimpleTimer;
+import com.threerings.flashbang.resource.*;
+import com.threerings.flashbang.tasks.*;
+import com.threerings.flashbang.util.Rand;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;

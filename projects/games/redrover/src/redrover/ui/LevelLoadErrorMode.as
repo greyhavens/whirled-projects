@@ -1,6 +1,6 @@
 package redrover.ui {
 
-import com.whirled.contrib.simplegame.AppMode;
+import com.threerings.flashbang.AppMode;
 
 import flash.display.Graphics;
 import flash.display.SimpleButton;

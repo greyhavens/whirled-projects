@@ -1,8 +1,8 @@
 package redrover.game.view {
 
 import com.threerings.geom.Vector2;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.tasks.ScaleTask;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.tasks.ScaleTask;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;

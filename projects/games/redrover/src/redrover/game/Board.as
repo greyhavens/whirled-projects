@@ -1,11 +1,11 @@
 package redrover.game {
 
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.simplegame.SimObject;
+import com.threerings.flashbang.GameObject;
 
 import redrover.*;
 
-public class Board extends SimObject
+public class Board extends GameObject
 {
     public function Board (teamId :int, cols :int, rows :int, terrain :Array)
     {

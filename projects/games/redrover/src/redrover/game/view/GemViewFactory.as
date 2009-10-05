@@ -1,7 +1,7 @@
 package redrover.game.view {
 
 import com.threerings.display.ColorMatrix;
-import com.whirled.contrib.simplegame.resource.ImageResource;
+import com.threerings.flashbang.resource.ImageResource;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;

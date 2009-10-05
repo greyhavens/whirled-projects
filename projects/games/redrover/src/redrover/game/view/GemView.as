@@ -1,9 +1,9 @@
 package redrover.game.view {
 
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.GameObjectRef;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -43,7 +43,7 @@ public class GemView extends SceneObject
 
         // all gems scale simultaneously
         if (_gemPulser.isNull) {
-            var gemPulserObj :SimObject = new SceneObject();
+            var gemPulserObj :GameObject = new SceneObject();
             gemPulserObj.addTask(new RepeatingTask(
                 AnimateValueTask.CreateEaseIn(_gemScale, SCALE_HI, 0.4),
                 AnimateValueTask.CreateEaseOut(_gemScale, SCALE_LO, 0.4)));
@@ -69,7 +69,7 @@ public class GemView extends SceneObject
     protected var _sprite :Sprite;
 
     protected static var _gemScale :Object = { value: SCALE_LO };
-    protected static var _gemPulser :SimObjectRef = SimObjectRef.Null();
+    protected static var _gemPulser :GameObjectRef = GameObjectRef.Null();
 
     protected static const SCALE_LO :Number = 1.2;
     protected static const SCALE_HI :Number = 2.2;

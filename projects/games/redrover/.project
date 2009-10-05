@@ -16,24 +16,14 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>[source path] nenya-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/whirled/libraries/nenya/src/as</locationURI>
+		</link>
+		<link>
 			<name>[source path] src</name>
 			<type>2</type>
 			<location>/export/ooo-libs/lib/flex_sdk_3.3.0.4852/frameworks/projects/framework/src</location>
-		</link>
-		<link>
-			<name>[source path] whirled-src-as</name>
-			<type>2</type>
-			<locationURI>EXPORT_ROOT/whirled/libraries/whirled/src/as</locationURI>
-		</link>
-		<link>
-			<name>[source path] narya-src-as</name>
-			<type>2</type>
-			<locationURI>EXPORT_ROOT/whirled/libraries/narya/src/as</locationURI>
-		</link>
-		<link>
-			<name>[source path] flash-utils-src-as</name>
-			<type>2</type>
-			<locationURI>EXPORT_ROOT/whirled/libraries/flash-utils/src/as</locationURI>
 		</link>
 		<link>
 			<name>[source path] contrib-src-as</name>
@@ -41,9 +31,19 @@
 			<locationURI>EXPORT_ROOT/whirled/contrib/src/as</locationURI>
 		</link>
 		<link>
-			<name>[source path] nenya-src-as</name>
+			<name>[source path] vilya-src-as</name>
 			<type>2</type>
-			<locationURI>EXPORT_ROOT/whirled/libraries/nenya/src/as</locationURI>
+			<locationURI>EXPORT_ROOT/whirled/libraries/vilya/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] narya-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/whirled/libraries/narya/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] whirled-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/whirled/libraries/whirled/src/as</locationURI>
 		</link>
 		<link>
 			<name>[source path] toybox-src-as</name>
@@ -51,9 +51,9 @@
 			<locationURI>EXPORT_ROOT/whirled/libraries/toybox/src/as</locationURI>
 		</link>
 		<link>
-			<name>[source path] vilya-src-as</name>
+			<name>[source path] flash-utils-src-as</name>
 			<type>2</type>
-			<locationURI>EXPORT_ROOT/whirled/libraries/vilya/src/as</locationURI>
+			<locationURI>EXPORT_ROOT/whirled/libraries/flash-utils/src/as</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

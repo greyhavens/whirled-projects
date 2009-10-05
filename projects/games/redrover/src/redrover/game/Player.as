@@ -2,15 +2,15 @@ package redrover.game {
 
 import com.threerings.geom.Vector2;
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.tasks.*;
 
 import flash.utils.ByteArray;
 
 import redrover.*;
 import redrover.data.LevelData;
 
-public class Player extends SimObject
+public class Player extends GameObject
 {
     public function Player (playerIdx :int, playerName :String, teamId :int, gridX :int,
         gridY :int, color :uint, locallyControlled :Boolean)
