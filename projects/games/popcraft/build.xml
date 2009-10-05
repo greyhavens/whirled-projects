@@ -6,6 +6,7 @@
   <property name="app.source-dir" value="src"/>
   <property name="app.package-dir" value="popcraft"/>
   <property name="app.library-dir" value="lib"/>
+  <property name="app.source-extras" value="lib/flashbang/src"/>
   <property name="app.enable-server-agent" value="true"/>
   <property name="app.server-agent" value="Server"/>
   <property name="app.server-agent-package-dir" value="popcraft/server"/>
