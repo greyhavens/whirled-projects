@@ -1,6 +1,6 @@
 package redrover.net {
 
-import com.whirled.contrib.EventHandlerManager;
+import com.threerings.util.EventHandlerManager;
 import com.whirled.contrib.simplegame.net.BasicMessageManager;
 import com.whirled.contrib.simplegame.net.Message;
 import com.whirled.game.GameControl;

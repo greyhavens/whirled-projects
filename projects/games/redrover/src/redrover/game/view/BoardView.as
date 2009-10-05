@@ -1,6 +1,6 @@
 package redrover.game.view {
 
-import com.whirled.contrib.ColorMatrix;
+import com.threerings.display.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.ImageResource;
 

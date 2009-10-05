@@ -1,6 +1,6 @@
 package redrover {
 
-import com.whirled.contrib.EventHandlerManager;
+import com.threerings.util.EventHandlerManager;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.game.SizeChangedEvent;

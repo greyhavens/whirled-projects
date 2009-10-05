@@ -1,6 +1,6 @@
 package redrover.server {
 
-import com.whirled.contrib.EventHandlerManager;
+import com.threerings.util.EventHandlerManager;
 import com.whirled.contrib.TimerManager;
 
 import redrover.data.LevelData;

@@ -55,7 +55,7 @@ public class NotificationMgr extends SimObject
 }
 
 import com.threerings.display.DisplayUtil;
-import com.whirled.contrib.ColorMatrix;
+import com.threerings.display.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
