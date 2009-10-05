@@ -1,7 +1,7 @@
 package popcraft {
 
 import com.threerings.util.Map;
-import com.whirled.contrib.ColorMatrix;
+import com.threerings.display.ColorMatrix;
 import com.whirled.contrib.simplegame.AppMode;
 
 import flash.display.DisplayObject;

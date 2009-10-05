@@ -1,7 +1,7 @@
 package popcraft.data {
 
 import com.threerings.geom.Vector2;
-import com.whirled.contrib.XmlReader;
+import com.threerings.util.XmlReader;
 
 import popcraft.*;
 

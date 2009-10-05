@@ -2,7 +2,7 @@ package popcraft.server {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
-import com.whirled.contrib.EventHandlerManager;
+import com.threerings.util.EventHandlerManager;
 import com.whirled.contrib.ManagedTimer;
 import com.whirled.contrib.TimerManager;
 import com.whirled.net.MessageReceivedEvent;

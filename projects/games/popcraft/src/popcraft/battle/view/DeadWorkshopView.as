@@ -1,6 +1,6 @@
 package popcraft.battle.view {
 
-import com.whirled.contrib.ColorMatrix;
+import com.threerings.display.ColorMatrix;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;

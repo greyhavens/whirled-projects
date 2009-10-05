@@ -1,7 +1,7 @@
 package popcraft.data {
 
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.XmlReader;
+import com.threerings.util.XmlReader;
 
 import popcraft.*;
 

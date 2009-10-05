@@ -3,7 +3,7 @@ package popcraft.battle.view {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
-import com.whirled.contrib.ColorMatrix;
+import com.threerings.display.ColorMatrix;
 import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.MovieClip;

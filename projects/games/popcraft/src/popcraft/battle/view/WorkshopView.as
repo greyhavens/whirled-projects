@@ -1,7 +1,7 @@
 package popcraft.battle.view {
 
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.ColorMatrix;
+import com.threerings.display.ColorMatrix;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.objects.*;

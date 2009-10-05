@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.whirled.contrib.XmlReader;
+import com.threerings.util.XmlReader;
 
 public class LevelProgressionData
 {

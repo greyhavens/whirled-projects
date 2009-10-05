@@ -1,7 +1,7 @@
 package popcraft.ui {
 
 import com.threerings.display.DisplayUtil;
-import com.whirled.contrib.ColorMatrix;
+import com.threerings.display.ColorMatrix;
 import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.DisplayObject;
