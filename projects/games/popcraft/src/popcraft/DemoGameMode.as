@@ -1,6 +1,6 @@
 package popcraft {
 
-import com.whirled.contrib.simplegame.audio.*;
+import com.threerings.flashbang.audio.*;
 
 import popcraft.data.LevelData;
 import popcraft.game.story.LevelManager;

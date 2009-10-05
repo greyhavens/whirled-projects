@@ -1,10 +1,10 @@
 package popcraft.game.endless {
 
 import com.threerings.geom.Vector2;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.objects.*;
+import com.threerings.flashbang.resource.*;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
@@ -72,7 +72,7 @@ public class EndlessLevelSelectModeBase extends AppMode
         if (_mode == INTERSTITIAL_MODE) {
             // if this is a level interstitial, show the scores for the current level,
             // then animate the move to the next level, then move to the next level
-            var interstitialAnimObj :SimObject = new SimObject();
+            var interstitialAnimObj :GameObject = new GameObject();
             interstitialAnimObj.addTask(new SerialTask(
                 new TimedTask(4),
                 new FunctionTask(
@@ -397,8 +397,8 @@ public class EndlessLevelSelectModeBase extends AppMode
 
 }
 
-import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.resource.*;
+import com.threerings.flashbang.objects.*;
+import com.threerings.flashbang.resource.*;
 import com.threerings.util.StringUtil;
 import com.threerings.display.DisplayUtil;
 import com.threerings.util.Integer;

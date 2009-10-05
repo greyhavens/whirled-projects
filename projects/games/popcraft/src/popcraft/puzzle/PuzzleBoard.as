@@ -4,11 +4,11 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
 import com.threerings.util.Set;
 import com.threerings.util.Sets;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.audio.*;
-import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.util.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.audio.*;
+import com.threerings.flashbang.objects.*;
+import com.threerings.flashbang.tasks.*;
+import com.threerings.flashbang.util.*;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;

@@ -1,6 +1,6 @@
 package popcraft {
 
-import com.whirled.contrib.simplegame.resource.ResourceManager;
+import com.threerings.flashbang.resource.ResourceManager;
 
 import popcraft.server.Server;
 

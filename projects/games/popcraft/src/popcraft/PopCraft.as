@@ -6,9 +6,9 @@ package popcraft {
 import com.threerings.ui.KeyboardCodes;
 import com.threerings.util.Log;
 import com.threerings.util.EventHandlerManager;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.resource.*;
+import com.threerings.flashbang.util.Rand;
 import com.whirled.game.GameContentEvent;
 import com.whirled.game.GameControl;
 import com.whirled.game.SizeChangedEvent;
@@ -60,7 +60,7 @@ public class PopCraft extends Sprite
         this.scrollRect = new Rectangle(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
 
         // setup simplegame
-        _sg = new SimpleGame(new Config());
+        _sg = new FlashbangApp(new Config());
 
         ClientCtx.mainLoop = _sg.ctx.mainLoop;
         ClientCtx.rsrcs = _sg.ctx.rsrcs;
@@ -204,7 +204,7 @@ public class PopCraft extends Sprite
     }
 
     protected var _events :EventHandlerManager = new EventHandlerManager();
-    protected var _sg :SimpleGame;
+    protected var _sg :FlashbangApp;
 }
 
 }
@@ -213,9 +213,9 @@ import popcraft.*;
 import popcraft.game.*;
 import popcraft.ui.GenericLoadingMode;
 
-import com.whirled.contrib.simplegame.resource.ResourceManager;
+import com.threerings.flashbang.resource.ResourceManager;
 import popcraft.ui.GenericLoadErrorMode;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.util.Rand;
 import popcraft.game.endless.SavedEndlessGame;
 import popcraft.lobby.MultiplayerLobbyMode;
 

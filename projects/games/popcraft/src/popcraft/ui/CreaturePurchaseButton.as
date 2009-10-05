@@ -1,9 +1,9 @@
 package popcraft.ui {
 
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.resource.*;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.BitmapData;
 import flash.display.DisplayObjectContainer;
@@ -24,7 +24,7 @@ import popcraft.battle.view.*;
 import popcraft.data.*;
 import popcraft.game.*;
 
-public class CreaturePurchaseButton extends SimObject
+public class CreaturePurchaseButton extends GameObject
 {
     public function CreaturePurchaseButton (unitType :int, slotNum :int, parent :MovieClip)
     {

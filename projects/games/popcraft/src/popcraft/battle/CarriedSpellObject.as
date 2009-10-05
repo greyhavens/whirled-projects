@@ -1,11 +1,11 @@
 package popcraft.battle {
 
-import com.whirled.contrib.simplegame.SimObject;
+import com.threerings.flashbang.GameObject;
 
 import popcraft.game.*;
 import popcraft.data.SpellData;
 
-public class CarriedSpellObject extends SimObject
+public class CarriedSpellObject extends GameObject
 {
     public static const GROUP_NAME :String = "CarriedSpell";
 

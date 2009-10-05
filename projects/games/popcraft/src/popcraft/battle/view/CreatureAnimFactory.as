@@ -4,7 +4,7 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.display.ColorMatrix;
-import com.whirled.contrib.simplegame.resource.*;
+import com.threerings.flashbang.resource.*;
 
 import flash.display.MovieClip;
 

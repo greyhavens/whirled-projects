@@ -1,15 +1,15 @@
 package popcraft.battle {
 
 import com.threerings.geom.Vector2;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.objects.SimpleTimer;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.GameObjectRef;
+import com.threerings.flashbang.objects.SimpleTimer;
+import com.threerings.flashbang.util.Rand;
 
 import popcraft.*;
 import popcraft.game.*;
 
-public class SpellDropTimer extends SimObject
+public class SpellDropTimer extends GameObject
 {
     override protected function addedToDB () :void
     {
@@ -137,7 +137,7 @@ public class SpellDropTimer extends SimObject
         }
     }
 
-    protected var _timerRef :SimObjectRef = new SimObjectRef();
+    protected var _timerRef :GameObjectRef = new GameObjectRef();
 
 }
 

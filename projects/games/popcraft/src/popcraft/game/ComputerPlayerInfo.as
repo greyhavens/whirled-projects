@@ -1,7 +1,7 @@
 package popcraft.game {
 
 import com.threerings.util.Assert;
-import com.whirled.contrib.simplegame.SimObjectRef;
+import com.threerings.flashbang.GameObjectRef;
 
 import popcraft.*;
 import popcraft.data.*;
@@ -85,7 +85,7 @@ public class ComputerPlayerInfo extends PlayerInfo
 
     protected var _heldSpells :Array;
     protected var _data :ComputerPlayerData;
-    protected var _aiRef :SimObjectRef;
+    protected var _aiRef :GameObjectRef;
 
 }
 

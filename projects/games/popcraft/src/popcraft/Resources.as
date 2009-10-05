@@ -1,8 +1,8 @@
 package popcraft {
 
 import com.threerings.util.FileUtil;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.resource.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.resource.*;
 
 import popcraft.ui.GenericLoadingMode;
 
@@ -396,14 +396,14 @@ public class Resources
 
 }
 
-import com.whirled.contrib.simplegame.AppMode;
+import com.threerings.flashbang.AppMode;
 import flash.display.Graphics;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
 import popcraft.*;
 import popcraft.ui.GenericLoadingMode;
-import com.whirled.contrib.simplegame.resource.ResourceManager;
+import com.threerings.flashbang.resource.ResourceManager;
 import popcraft.ui.GenericLoadErrorMode;
 
 class LevelPackLoadingMode extends GenericLoadingMode

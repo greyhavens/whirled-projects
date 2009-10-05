@@ -1,9 +1,9 @@
 package popcraft {
 
 import com.whirled.contrib.LevelPackManager;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.audio.*;
-import com.whirled.contrib.simplegame.resource.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.audio.*;
+import com.threerings.flashbang.resource.*;
 import com.whirled.game.GameControl;
 
 import flash.display.Bitmap;

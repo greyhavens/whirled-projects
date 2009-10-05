@@ -1,7 +1,7 @@
 package popcraft.game {
 
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.SimObjectRef;
+import com.threerings.flashbang.GameObjectRef;
 
 import flash.display.DisplayObject;
 import flash.events.EventDispatcher;
@@ -196,7 +196,7 @@ public class PlayerInfo extends EventDispatcher
         return _baseLoc;
     }
 
-    public function get workshopRef () :SimObjectRef
+    public function get workshopRef () :GameObjectRef
     {
         return _workshopRef;
     }
@@ -310,7 +310,7 @@ public class PlayerInfo extends EventDispatcher
     protected var _headshot :DisplayObject;
     protected var _leftGame :Boolean;
     protected var _targetedEnemy :PlayerInfo;
-    protected var _workshopRef :SimObjectRef;
+    protected var _workshopRef :GameObjectRef;
     protected var _handicap :Number;
     protected var _minResourceAmount :int;
     protected var _maxResourceAmount :int;

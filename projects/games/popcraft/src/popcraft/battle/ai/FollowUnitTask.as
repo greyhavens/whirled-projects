@@ -2,7 +2,7 @@ package popcraft.battle.ai {
 
 import com.threerings.geom.Vector2;
 import com.threerings.util.Assert;
-import com.whirled.contrib.simplegame.*;
+import com.threerings.flashbang.*;
 
 import popcraft.*;
 import popcraft.battle.*;
@@ -12,7 +12,7 @@ public class FollowUnitTask
 {
     public static const NAME :String = "FollowUnitTask";
 
-    public function FollowUnitTask (unitRef :SimObjectRef, minFollowDistance :Number, maxFollowDistance :Number)
+    public function FollowUnitTask (unitRef :GameObjectRef, minFollowDistance :Number, maxFollowDistance :Number)
     {
         Assert.isTrue(minFollowDistance >= 0);
         Assert.isTrue(maxFollowDistance >= minFollowDistance);
@@ -48,7 +48,7 @@ public class FollowUnitTask
         return NAME;
     }
 
-    protected var _unitRef :SimObjectRef;
+    protected var _unitRef :GameObjectRef;
     protected var _maxFollowDistance :Number;
     protected var _minFollowDistance :Number;
 

@@ -2,12 +2,12 @@ package popcraft.battle.view {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.display.ColorMatrix;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.audio.*;
-import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.audio.*;
+import com.threerings.flashbang.objects.*;
+import com.threerings.flashbang.resource.*;
+import com.threerings.flashbang.tasks.*;
+import com.threerings.flashbang.util.Rand;
 
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
@@ -185,7 +185,7 @@ public class WorkshopView extends BattlefieldSprite
     {
         var playerColor :uint = _unit.owningPlayerInfo.color;
         var recolor :MovieClip = workshop["recolor"];
-        recolor.filters = [ ColorMatrix.create().colorize(playerColor).createFilter() ];
+        recolor.filters = [ new ColorMatrix().colorize(playerColor).createFilter() ];
     }
 
     override public function get objectName () :String

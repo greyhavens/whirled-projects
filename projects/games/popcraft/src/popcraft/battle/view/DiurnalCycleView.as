@@ -1,8 +1,8 @@
 package popcraft.battle.view {
 
-import com.whirled.contrib.simplegame.audio.*;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.resource.*;
+import com.threerings.flashbang.audio.*;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.resource.*;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;

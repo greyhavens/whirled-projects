@@ -1,7 +1,7 @@
 package popcraft.battle {
 
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.SimObjectRef;
+import com.threerings.flashbang.GameObjectRef;
 
 import popcraft.battle.ai.*;
 
@@ -71,7 +71,7 @@ public class ColossusAI extends AITaskTree
     }
 
     protected var _unit :ColossusCreatureUnit;
-    protected var _targetBaseRef :SimObjectRef = SimObjectRef.Null();
+    protected var _targetBaseRef :GameObjectRef = GameObjectRef.Null();
 
     protected static const TARGET_BASE_DIED :String = "TargetBaseDied";
 
@@ -80,7 +80,7 @@ public class ColossusAI extends AITaskTree
 
 }
 
-import com.whirled.contrib.simplegame.SimObjectRef;
+import com.threerings.flashbang.GameObjectRef;
 
 import popcraft.*;
 import popcraft.game.*;
@@ -103,7 +103,7 @@ class DetectColossusTargetAction extends DetectCreatureAction
         if (null == detectedUnit) {
             // are we in range of an enemy base?
             var baseRefs :Array = GameCtx.netObjects.getObjectRefsInGroup(WorkshopUnit.GROUP_NAME);
-            for each (var baseRef :SimObjectRef in baseRefs) {
+            for each (var baseRef :GameObjectRef in baseRefs) {
                 var base :WorkshopUnit = baseRef.object as WorkshopUnit;
                 if (null != base && AIPredicates.isAttackableEnemyPredicate(thisCreature, base)) {
                     detectedUnit = base;

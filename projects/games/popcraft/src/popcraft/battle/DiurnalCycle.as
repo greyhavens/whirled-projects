@@ -1,13 +1,13 @@
 package popcraft.battle {
 
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.tasks.*;
 
 import popcraft.*;
 import popcraft.game.*;
 import popcraft.data.GameData;
 
-public class DiurnalCycle extends SimObject
+public class DiurnalCycle extends GameObject
 {
     public static function get isDisabled () :Boolean
     {

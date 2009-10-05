@@ -4,11 +4,11 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.ui.KeyboardCodes;
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.audio.*;
-import com.whirled.contrib.simplegame.net.*;
-import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.util.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.audio.*;
+import com.whirled.contrib.messagemgr.*;
+import com.threerings.flashbang.resource.*;
+import com.threerings.flashbang.util.*;
 import com.whirled.game.OccupantChangedEvent;
 
 import flash.display.DisplayObjectContainer;

@@ -2,7 +2,7 @@ package popcraft.battle {
 
 import com.threerings.geom.Vector2;
 import com.threerings.util.Assert;
-import com.whirled.contrib.simplegame.*;
+import com.threerings.flashbang.*;
 
 import popcraft.*;
 import popcraft.game.*;
@@ -155,8 +155,8 @@ public class CourierCreatureUnit extends CreatureUnit
 
 }
 
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.util.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.util.*;
 import flash.geom.Point;
 
 import popcraft.*;
@@ -362,7 +362,7 @@ class PickupSpellTask extends AITaskTree
 
     protected var _retrieved :Boolean;
     protected var _unit :CourierCreatureUnit;
-    protected var _spellRef :SimObjectRef;
+    protected var _spellRef :GameObjectRef;
 }
 
 class WanderTask extends AITaskTree
@@ -414,7 +414,7 @@ class WanderTask extends AITaskTree
     }
 
     protected var _unit :CourierCreatureUnit;
-    protected var _wanderBaseRef :SimObjectRef = SimObjectRef.Null();
+    protected var _wanderBaseRef :GameObjectRef = GameObjectRef.Null();
 }
 
 class ScanForSpellPickupsTask extends WanderTask

@@ -1,14 +1,14 @@
 package popcraft.game {
 
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.tasks.*;
+import com.threerings.flashbang.util.Rand;
 
 import popcraft.*;
 import popcraft.battle.*;
 import popcraft.data.*;
 
-public class ComputerPlayerAI extends SimObject
+public class ComputerPlayerAI extends GameObject
 {
     public function ComputerPlayerAI (data :ComputerPlayerData, playerIndex :int)
     {

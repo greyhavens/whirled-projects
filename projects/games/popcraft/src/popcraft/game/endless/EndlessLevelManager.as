@@ -1,8 +1,8 @@
 package popcraft.game.endless {
 
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.resource.*;
+import com.threerings.flashbang.util.Rand;
 
 import flash.utils.ByteArray;
 

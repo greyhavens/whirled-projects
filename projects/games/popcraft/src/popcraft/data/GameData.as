@@ -3,7 +3,7 @@ package popcraft.data {
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
 import com.threerings.util.XmlReader;
-import com.whirled.contrib.simplegame.util.*;
+import com.threerings.flashbang.util.*;
 
 import popcraft.*;
 import popcraft.util.*;

@@ -1,6 +1,6 @@
 package popcraft.game.endless {
 
-import com.whirled.contrib.simplegame.AppMode;
+import com.threerings.flashbang.AppMode;
 
 import popcraft.*;
 

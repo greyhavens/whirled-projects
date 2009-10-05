@@ -1,8 +1,8 @@
 package popcraft.puzzle {
 
-import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.objects.*;
+import com.threerings.flashbang.resource.*;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;

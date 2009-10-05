@@ -1,11 +1,11 @@
 package popcraft.game.story {
 
 import com.threerings.text.TextFieldUtil;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
-import com.whirled.contrib.simplegame.resource.SwfResource;
-import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.objects.SimpleSceneObject;
+import com.threerings.flashbang.resource.SwfResource;
+import com.threerings.flashbang.tasks.*;
+import com.threerings.flashbang.util.Rand;
 
 import flash.display.Graphics;
 import flash.display.MovieClip;

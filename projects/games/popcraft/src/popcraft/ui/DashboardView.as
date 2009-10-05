@@ -1,11 +1,11 @@
 package popcraft.ui {
 
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
-import com.whirled.contrib.simplegame.resource.SwfResource;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.objects.SimpleSceneObject;
+import com.threerings.flashbang.resource.SwfResource;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -419,9 +419,9 @@ import flash.display.MovieClip;
 import flash.display.DisplayObject;
 import flash.text.TextField;
 
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.resource.*;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.tasks.*;
+import com.threerings.flashbang.resource.*;
 import flash.display.InteractiveObject;
 
 /** Currently unused */

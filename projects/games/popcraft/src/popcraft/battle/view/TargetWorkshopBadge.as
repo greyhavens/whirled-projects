@@ -1,9 +1,9 @@
 package popcraft.battle.view {
 
 import com.threerings.display.ColorMatrix;
-import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.resource.SwfResource;
+import com.threerings.flashbang.GameObjectRef;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.resource.SwfResource;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -19,7 +19,7 @@ public class TargetWorkshopBadge extends SceneObject
         _movie = ClientCtx.instantiateMovieClip("workshop", "target_bounce", true, true);
 
         // recolor
-        _movie.filters = [ ColorMatrix.create().colorize(_owningPlayerInfo.color).createFilter() ];
+        _movie.filters = [ new ColorMatrix().colorize(_owningPlayerInfo.color).createFilter() ];
     }
 
     override protected function destroyed () :void
@@ -43,7 +43,7 @@ public class TargetWorkshopBadge extends SceneObject
         var workshopView :WorkshopView = _workshopViewRef.object as WorkshopView;
         if (workshopView != null) {
             workshopView.removeTargetWorkshopBadge(this);
-            _workshopViewRef = SimObjectRef.Null();
+            _workshopViewRef = GameObjectRef.Null();
         }
     }
 
@@ -73,7 +73,7 @@ public class TargetWorkshopBadge extends SceneObject
     protected var _movie :MovieClip;
     protected var _owningPlayerInfo :PlayerInfo;
     protected var _targetEnemy :PlayerInfo;
-    protected var _workshopViewRef :SimObjectRef = SimObjectRef.Null();
+    protected var _workshopViewRef :GameObjectRef = GameObjectRef.Null();
 }
 
 }

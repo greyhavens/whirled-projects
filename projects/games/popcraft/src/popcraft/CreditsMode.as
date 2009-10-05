@@ -1,8 +1,8 @@
 package popcraft {
 
 import com.threerings.display.DisplayUtil;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.util.Rand;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -150,9 +150,9 @@ public class CreditsMode extends AppMode
 
 }
 
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.util.Rand;
 
 import com.threerings.geom.Vector2;
 import com.threerings.util.Assert;
@@ -166,10 +166,10 @@ import popcraft.*;
 import popcraft.data.UnitData;
 import popcraft.util.SpriteUtil;
 import popcraft.battle.view.CreatureAnimFactory;
-import com.whirled.contrib.simplegame.tasks.LocationTask;
-import com.whirled.contrib.simplegame.tasks.RepeatingTask;
+import com.threerings.flashbang.tasks.LocationTask;
+import com.threerings.flashbang.tasks.RepeatingTask;
 import com.threerings.util.Random;
-import com.whirled.contrib.simplegame.tasks.TimedTask;
+import com.threerings.flashbang.tasks.TimedTask;
 import mx.effects.Move;
 
 class WanderingCreature extends SceneObject

@@ -2,7 +2,7 @@ package popcraft {
 
 import com.threerings.util.Map;
 import com.threerings.display.ColorMatrix;
-import com.whirled.contrib.simplegame.AppMode;
+import com.threerings.flashbang.AppMode;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -136,7 +136,7 @@ public class UnitAnimTestMode extends AppMode
         var anim :MovieClip = ClientCtx.instantiateMovieClip("workshop", "base");
         var workshop :MovieClip = anim["workshop"];
         var recolorMovie :MovieClip = workshop["recolor"];
-        recolorMovie.filters = [ ColorMatrix.create().colorize(_recolor).createFilter() ];
+        recolorMovie.filters = [ new ColorMatrix().colorize(_recolor).createFilter() ];
         addAnimToWindow(anim);
     }
 

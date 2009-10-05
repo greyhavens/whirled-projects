@@ -1,7 +1,7 @@
 package popcraft.battle.view {
 
 import com.threerings.display.ColorMatrix;
-import com.whirled.contrib.simplegame.resource.SwfResource;
+import com.threerings.flashbang.resource.SwfResource;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -44,7 +44,7 @@ public class DeadWorkshopView extends BattlefieldSprite
         // recolor
         var playerColor :uint = unit.owningPlayerInfo.color;
         var recolor :MovieClip = _rubble["recolor"];
-        recolor.filters = [ ColorMatrix.create().colorize(playerColor).createFilter() ];
+        recolor.filters = [ new ColorMatrix().colorize(playerColor).createFilter() ];
 
         updateLoc(unit.x, unit.y);
     }

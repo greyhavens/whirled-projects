@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.whirled.contrib.simplegame.resource.ImageResource;
+import com.threerings.flashbang.resource.ImageResource;
 import com.threerings.util.XmlReader;
 
 import flash.display.DisplayObject;

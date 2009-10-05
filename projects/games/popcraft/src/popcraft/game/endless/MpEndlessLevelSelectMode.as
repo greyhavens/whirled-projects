@@ -1,6 +1,6 @@
 package popcraft.game.endless {
 
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.util.Rand;
 
 import popcraft.*;
 

@@ -1,7 +1,7 @@
 package popcraft.util {
 
 import com.threerings.util.Assert;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.util.Rand;
 
 public class WeightedTable
 {

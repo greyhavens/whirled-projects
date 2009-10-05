@@ -1,6 +1,6 @@
 package popcraft.ui {
 
-import com.whirled.contrib.simplegame.*;
+import com.threerings.flashbang.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;

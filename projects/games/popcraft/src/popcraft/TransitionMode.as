@@ -1,8 +1,8 @@
 package popcraft {
 
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.objects.*;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.Graphics;
 import flash.display.Shape;

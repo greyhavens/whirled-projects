@@ -1,13 +1,13 @@
 package popcraft.battle.view {
 
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.MovieClip;
 
 import popcraft.*;
 
-public class TeslaSoundPlayer extends SimObject
+public class TeslaSoundPlayer extends GameObject
 {
     public function TeslaSoundPlayer (teslaBg :MovieClip, playSoundCallback :Function)
     {

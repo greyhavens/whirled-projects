@@ -1,7 +1,7 @@
 package popcraft.battle {
 
 import com.threerings.geom.Vector2;
-import com.whirled.contrib.simplegame.audio.*;
+import com.threerings.flashbang.audio.*;
 
 import popcraft.*;
 import popcraft.game.*;
@@ -19,7 +19,7 @@ public class SpellDropFactory
         GameCtx.netObjects.addObject(spellDrop);
 
         // create the view after adding the spellDrop to the game, so that its
-        // SimObjectRef is valid
+        // GameObjectRef is valid
         var spellDropView :SpellDropView = new SpellDropView(spellDrop);
         spellDropView.x = loc.x;
         spellDropView.y = loc.y;

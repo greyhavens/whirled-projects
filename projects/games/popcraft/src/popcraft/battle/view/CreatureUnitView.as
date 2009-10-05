@@ -3,12 +3,12 @@ package popcraft.battle.view {
 import com.threerings.geom.Vector2;
 import com.threerings.util.Assert;
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.audio.*;
-import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.audio.*;
+import com.threerings.flashbang.objects.*;
+import com.threerings.flashbang.resource.*;
+import com.threerings.flashbang.tasks.*;
+import com.threerings.flashbang.util.Rand;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -421,7 +421,7 @@ public class CreatureUnitView extends BattlefieldSprite
         }
     }
 
-    // Retain a pointer to the CreatureUnit rather than a SimObjectRef to
+    // Retain a pointer to the CreatureUnit rather than a GameObjectRef to
     // prevent a bunch of irritating checks against null. This isn't a big deal
     // here - the CreatureUnitView's lifespan is almost exactly that of its
     // associated CreatureUnit.

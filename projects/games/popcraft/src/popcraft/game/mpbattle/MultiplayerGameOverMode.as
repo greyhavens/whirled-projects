@@ -2,9 +2,9 @@ package popcraft.game.mpbattle {
 
 import com.threerings.display.DisplayUtil;
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.audio.AudioManager;
-import com.whirled.contrib.simplegame.resource.ImageResource;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.audio.AudioManager;
+import com.threerings.flashbang.resource.ImageResource;
 import com.whirled.game.GameSubControl;
 
 import flash.display.DisplayObject;

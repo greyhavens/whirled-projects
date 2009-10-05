@@ -1,6 +1,6 @@
 package popcraft.battle.ai {
 
-import com.whirled.contrib.simplegame.SimObjectRef;
+import com.threerings.flashbang.GameObjectRef;
 
 import popcraft.battle.CreatureUnit;
 

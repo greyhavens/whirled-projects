@@ -1,8 +1,8 @@
 package popcraft.battle.view {
 
-import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.GameObjectRef;
+import com.threerings.flashbang.resource.*;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -46,7 +46,7 @@ public class SpellDropView extends BattlefieldSprite
         }
     }
 
-    protected var _spellObjRef :SimObjectRef;
+    protected var _spellObjRef :GameObjectRef;
     protected var _movie :MovieClip;
 }
 

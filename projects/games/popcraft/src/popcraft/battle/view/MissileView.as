@@ -1,9 +1,9 @@
 package popcraft.battle.view {
 
 import com.threerings.geom.Vector2;
-import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.GameObjectRef;
+import com.threerings.flashbang.resource.*;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -70,7 +70,7 @@ public class MissileView extends BattlefieldSprite
     }
 
     protected var _startLoc :Vector2;
-    protected var _targetUnitRef :SimObjectRef;
+    protected var _targetUnitRef :GameObjectRef;
 
     protected var _totalDistance :Number;
 

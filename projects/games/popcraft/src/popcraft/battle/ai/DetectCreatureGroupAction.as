@@ -1,7 +1,7 @@
 package popcraft.battle.ai
 {
 
-import com.whirled.contrib.simplegame.SimObjectRef;
+import com.threerings.flashbang.GameObjectRef;
 
 import popcraft.*;
 import popcraft.game.*;
@@ -31,7 +31,7 @@ public class DetectCreatureGroupAction extends AITask
         var validCreatures :Array = [];
 
         // determine all valid creatures
-        for each (var ref :SimObjectRef in creatureRefs) {
+        for each (var ref :GameObjectRef in creatureRefs) {
             var creature :CreatureUnit = ref.object as CreatureUnit;
 
             if (null != creature && thisCreature != creature && _creaturePred(thisCreature, creature)) {
@@ -51,7 +51,7 @@ public class DetectCreatureGroupAction extends AITask
     {
         var group :Array = [ testCreature ];
 
-        for each (var ref :SimObjectRef in allCreatures) {
+        for each (var ref :GameObjectRef in allCreatures) {
             var creature :CreatureUnit = ref.object as CreatureUnit;
 
             if (null != creature && testCreature != creature && thisCreature != creature && _groupPred(thisCreature, testCreature, creature)) {

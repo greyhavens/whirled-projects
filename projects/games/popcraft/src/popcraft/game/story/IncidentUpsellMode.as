@@ -1,9 +1,9 @@
 package popcraft.game.story {
 
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
-import com.whirled.contrib.simplegame.resource.SwfResource;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.objects.SimpleSceneObject;
+import com.threerings.flashbang.resource.SwfResource;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.MovieClip;
 import flash.display.SimpleButton;

@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.whirled.contrib.simplegame.util.*;
+import com.threerings.flashbang.util.*;
 import com.threerings.util.XmlReader;
 
 import popcraft.*;

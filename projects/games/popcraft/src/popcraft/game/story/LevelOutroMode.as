@@ -1,10 +1,10 @@
 package popcraft.game.story {
 
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.audio.AudioManager;
-import com.whirled.contrib.simplegame.resource.ImageResource;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.audio.AudioManager;
+import com.threerings.flashbang.resource.ImageResource;
+import com.threerings.flashbang.util.Rand;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;

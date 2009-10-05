@@ -4,9 +4,9 @@ import com.threerings.text.TextFieldUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.objects.SimpleTimer;
-import com.whirled.contrib.simplegame.resource.SwfResource;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.objects.SimpleTimer;
+import com.threerings.flashbang.resource.SwfResource;
 import com.whirled.game.GameContentEvent;
 import com.whirled.game.NetSubControl;
 import com.whirled.game.OccupantChangedEvent;
@@ -375,7 +375,7 @@ public class MultiplayerLobbyMode extends AppMode
     protected var _headshots :Map = Maps.newMapOf(int); // Map<playerSeat, headshot>
     protected var _statusText :TextField;
     protected var _initedLocalPlayerData :Boolean;
-    protected var _gameStartTimer :SimObjectRef = SimObjectRef.Null();
+    protected var _gameStartTimer :GameObjectRef = GameObjectRef.Null();
     protected var _showingPremiumContent :Boolean;
     protected var _endlessWarnText :TextField;
     protected var _playedSound :Boolean;
@@ -419,13 +419,13 @@ import flash.geom.Point;
 import com.threerings.text.TextFieldUtil;
 import com.threerings.display.DisplayUtil;
 
-import com.whirled.contrib.simplegame.resource.SwfResource;
+import com.threerings.flashbang.resource.SwfResource;
 
 import popcraft.*;
 import popcraft.ui.UIBits;
 import popcraft.util.SpriteUtil;
 import popcraft.ui.HeadshotSprite;
-import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.threerings.flashbang.objects.SceneObject;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.ElementChangedEvent;
 import flash.display.Bitmap;

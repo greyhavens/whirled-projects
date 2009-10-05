@@ -1,8 +1,8 @@
 package popcraft {
 
 import com.threerings.geom.Vector2;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.util.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.util.*;
 
 import popcraft.battle.*;
 import popcraft.data.*;

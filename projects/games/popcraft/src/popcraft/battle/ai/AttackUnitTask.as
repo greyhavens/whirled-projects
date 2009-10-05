@@ -1,7 +1,7 @@
 package popcraft.battle.ai {
 
 import com.threerings.geom.Vector2;
-import com.whirled.contrib.simplegame.*;
+import com.threerings.flashbang.*;
 
 import popcraft.*;
 import popcraft.battle.*;
@@ -12,7 +12,7 @@ public class AttackUnitTask extends MoveToLocationTask
     public static const NAME :String = "AttackUnit";
 
     public function AttackUnitTask (
-        unitRef :SimObjectRef,
+        unitRef :GameObjectRef,
         followUnit :Boolean,
         loseInterestRange :Number,
         disableCollisionsAfter :Number = -1,
@@ -63,7 +63,7 @@ public class AttackUnitTask extends MoveToLocationTask
         return NAME;
     }
 
-    protected var _unitRef :SimObjectRef;
+    protected var _unitRef :GameObjectRef;
     protected var _followUnit :Boolean;
     protected var _loseInterestRange :Number;
 }

@@ -1,6 +1,6 @@
 package popcraft.battle.ai {
 
-import com.whirled.contrib.simplegame.*;
+import com.threerings.flashbang.*;
 
 import popcraft.*;
 import popcraft.game.*;
@@ -21,7 +21,7 @@ public class DetectCreatureAction extends AITask
         var creatureRefs :Array = GameCtx.netObjects.getObjectRefsInGroup(CreatureUnit.GROUP_NAME);
         var detectedCreature :CreatureUnit;
 
-        for each (var ref :SimObjectRef in creatureRefs) {
+        for each (var ref :GameObjectRef in creatureRefs) {
             var creature :CreatureUnit = ref.object as CreatureUnit;
             if (null != creature && unit != creature && _detectPredicate(unit, creature)) {
                 detectedCreature = creature;

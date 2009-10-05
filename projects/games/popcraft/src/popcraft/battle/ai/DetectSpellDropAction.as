@@ -1,6 +1,6 @@
 package popcraft.battle.ai {
 
-import com.whirled.contrib.simplegame.*;
+import com.threerings.flashbang.*;
 
 import popcraft.*;
 import popcraft.game.*;

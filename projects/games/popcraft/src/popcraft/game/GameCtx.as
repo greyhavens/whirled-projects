@@ -1,9 +1,9 @@
 package popcraft.game {
 
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.simplegame.audio.AudioChannel;
-import com.whirled.contrib.simplegame.audio.AudioControls;
-import com.whirled.contrib.simplegame.audio.AudioManager;
+import com.threerings.flashbang.audio.AudioChannel;
+import com.threerings.flashbang.audio.AudioControls;
+import com.threerings.flashbang.audio.AudioManager;
 
 import flash.display.Sprite;
 

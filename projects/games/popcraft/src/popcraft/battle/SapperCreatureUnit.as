@@ -1,6 +1,6 @@
 package popcraft.battle {
 
-import com.whirled.contrib.simplegame.*;
+import com.threerings.flashbang.*;
 
 import popcraft.*;
 import popcraft.game.*;
@@ -68,8 +68,8 @@ public class SapperCreatureUnit extends CreatureUnit
 
 }
 
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.util.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.util.*;
 import flash.geom.Point;
 
 import popcraft.*;
@@ -145,7 +145,7 @@ class SapperAI extends AITaskTree
     }
 
     protected var _unit :SapperCreatureUnit;
-    protected var _targetBaseRef :SimObjectRef = SimObjectRef.Null();
+    protected var _targetBaseRef :GameObjectRef = GameObjectRef.Null();
 
     protected static const SCAN_FOR_ENEMIES_DELAY :Number = 1;
     protected static const SCAN_FOR_ENEMY_GROUP_SIZE :int = 2;

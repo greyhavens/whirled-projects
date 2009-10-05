@@ -1,10 +1,10 @@
 package popcraft.battle {
 
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.GameObjectRef;
+import com.threerings.flashbang.tasks.*;
 
-public class Missile extends SimObject
+public class Missile extends GameObject
 {
     public function Missile (targetUnit :Unit, attack :UnitAttack, travelTime :Number)
     {
@@ -29,7 +29,7 @@ public class Missile extends SimObject
     }
 
     protected var _attack :UnitAttack;
-    protected var _targetUnitRef :SimObjectRef
+    protected var _targetUnitRef :GameObjectRef
 
 }
 

@@ -1,13 +1,13 @@
 package popcraft.battle {
 
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.components.LocationComponent;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.components.LocationComponent;
 
 import popcraft.*;
 import popcraft.game.*;
 import popcraft.data.SpellData;
 
-public class SpellDropObject extends SimObject
+public class SpellDropObject extends GameObject
     implements LocationComponent
 {
     public static const GROUP_NAME :String = "SpellDropObject";

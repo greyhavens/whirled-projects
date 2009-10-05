@@ -1,11 +1,11 @@
 package popcraft {
 
 import com.threerings.display.DisplayUtil;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
-import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.objects.SimpleSceneObject;
+import com.threerings.flashbang.resource.*;
+import com.threerings.flashbang.tasks.*;
 import com.whirled.game.GameContentEvent;
 
 import flash.display.MovieClip;

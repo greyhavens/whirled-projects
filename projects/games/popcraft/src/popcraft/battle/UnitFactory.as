@@ -1,7 +1,7 @@
 package popcraft.battle {
 
 import com.threerings.util.Assert;
-import com.whirled.contrib.simplegame.audio.*;
+import com.threerings.flashbang.audio.*;
 
 import flash.events.EventDispatcher;
 

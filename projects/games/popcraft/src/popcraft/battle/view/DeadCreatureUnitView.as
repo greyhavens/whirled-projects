@@ -1,6 +1,6 @@
 package popcraft.battle.view {
 
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;

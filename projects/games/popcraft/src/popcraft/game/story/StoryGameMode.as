@@ -1,9 +1,9 @@
 package popcraft.game.story {
 
 import com.threerings.ui.KeyboardCodes;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.net.OfflineTickedMessageManager;
-import com.whirled.contrib.simplegame.net.TickedMessageManager;
+import com.threerings.flashbang.AppMode;
+import com.whirled.contrib.messagemgr.OfflineTickedMessageManager;
+import com.whirled.contrib.messagemgr.TickedMessageManager;
 
 import popcraft.*;
 import popcraft.battle.*;

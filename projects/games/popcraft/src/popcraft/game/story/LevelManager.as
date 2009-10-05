@@ -1,7 +1,7 @@
 package popcraft.game.story {
 
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.resource.*;
+import com.threerings.flashbang.resource.*;
 
 import flash.utils.ByteArray;
 

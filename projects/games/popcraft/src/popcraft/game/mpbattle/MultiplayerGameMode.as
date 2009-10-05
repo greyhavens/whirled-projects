@@ -1,9 +1,9 @@
 package popcraft.game.mpbattle {
 
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.simplegame.net.OnlineTickedMessageManager;
-import com.whirled.contrib.simplegame.net.TickedMessageManager;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.whirled.contrib.messagemgr.OnlineTickedMessageManager;
+import com.whirled.contrib.messagemgr.TickedMessageManager;
+import com.threerings.flashbang.util.Rand;
 import com.whirled.game.StateChangedEvent;
 
 import flash.display.DisplayObject;

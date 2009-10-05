@@ -1,8 +1,8 @@
 package popcraft.battle {
 
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.tasks.*;
 
 import popcraft.*;
 import popcraft.game.*;
@@ -53,7 +53,7 @@ public class ColossusCreatureUnit extends CreatureUnit
         // is started that will remove the movement penalty after a set time
         // (unless he is hit again by the same attacker)
 
-        var attacker :SimObjectRef = attack.sourceUnitRef;
+        var attacker :GameObjectRef = attack.sourceUnitRef;
         var index :int = ArrayUtil.indexIf(
             _attackers,
             function (record :AttackRecord) :Boolean { return record.attacker == attacker; });
@@ -100,11 +100,11 @@ public class ColossusCreatureUnit extends CreatureUnit
 
 }
 
-import com.whirled.contrib.simplegame.SimObjectRef;
+import com.threerings.flashbang.GameObjectRef;
 
 class AttackRecord
 {
-    public var attacker :SimObjectRef;
+    public var attacker :GameObjectRef;
     public var expirationTime :Number;
 
     public static function compare (a :AttackRecord, b :AttackRecord) :int

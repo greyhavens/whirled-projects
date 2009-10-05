@@ -1,11 +1,11 @@
 package popcraft.battle {
 
 import com.threerings.geom.Vector2;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.util.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.objects.*;
+import com.threerings.flashbang.resource.*;
+import com.threerings.flashbang.tasks.*;
+import com.threerings.flashbang.util.*;
 
 import popcraft.*;
 import popcraft.game.*;
@@ -22,7 +22,7 @@ public class CreatureUnit extends Unit
     {
         var count :int = 0;
         var creatureRefs :Array = GameCtx.netObjects.getObjectRefsInGroup(GROUP_NAME);
-        for each (var ref :SimObjectRef in creatureRefs) {
+        for each (var ref :GameObjectRef in creatureRefs) {
             var creature :CreatureUnit = ref.object as CreatureUnit;
             if (null != creature && creature.owningPlayerIndex == owningPlayerIndex && creature.unitType == unitType) {
                 ++count;
@@ -188,7 +188,7 @@ public class CreatureUnit extends Unit
     }
 
     // returns an enemy base
-    public function getEnemyBaseToAttack () :SimObjectRef
+    public function getEnemyBaseToAttack () :GameObjectRef
     {
         var enemyPlayerInfo :PlayerInfo = _owningPlayerInfo.targetedEnemy;
         if (enemyPlayerInfo.isAlive && !enemyPlayerInfo.isInvincible) {
@@ -200,7 +200,7 @@ public class CreatureUnit extends Unit
             }
         }
 
-        return SimObjectRef.Null();
+        return GameObjectRef.Null();
     }
 
     protected function get aiRoot () :AITask

@@ -1,6 +1,6 @@
 package popcraft.battle.ai {
 
-import com.whirled.contrib.simplegame.SimObjectRef;
+import com.threerings.flashbang.GameObjectRef;
 
 import popcraft.battle.CreatureUnit;
 
@@ -11,7 +11,7 @@ public class AIDelayUntilTask extends AITask
         return !creature.inAttackCooldown;
     }
 
-    public static function createUnitDiedPredicate (unitRef :SimObjectRef) :Function
+    public static function createUnitDiedPredicate (unitRef :GameObjectRef) :Function
     {
         return function (dt :Number, creature :CreatureUnit) :Boolean { return unitRef.isNull; }
     }

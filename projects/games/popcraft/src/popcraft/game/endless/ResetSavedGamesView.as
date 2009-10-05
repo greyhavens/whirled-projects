@@ -1,8 +1,8 @@
 package popcraft.game.endless {
 
 import com.threerings.display.DisplayUtil;
-import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.resource.*;
+import com.threerings.flashbang.objects.*;
+import com.threerings.flashbang.resource.*;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;

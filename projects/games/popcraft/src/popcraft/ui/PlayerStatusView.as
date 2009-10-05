@@ -2,7 +2,7 @@ package popcraft.ui {
 
 import com.threerings.display.DisplayUtil;
 import com.threerings.display.ColorMatrix;
-import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.threerings.flashbang.objects.SceneObject;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -32,14 +32,14 @@ public class PlayerStatusView extends SceneObject
         _deathMovie.visible = false;
 
         _healthMeter = _movie["health_meter"];
-        _healthMeter.filters = [ ColorMatrix.create().tint(_playerInfo.color).createFilter() ];
+        _healthMeter.filters = [ new ColorMatrix().tint(_playerInfo.color).createFilter() ];
         _meterArrow = _movie["meter_arrow"];
 
         var playerName :TextField = _movie["player_name"];
         playerName.text = _playerInfo.displayName;
 
         var namePlate :MovieClip = _movie["name_plate"];
-        namePlate.filters = [ ColorMatrix.create().colorize(_playerInfo.color).createFilter() ];
+        namePlate.filters = [ new ColorMatrix().colorize(_playerInfo.color).createFilter() ];
 
         var headshot :HeadshotSprite =
             new HeadshotSprite(playerIndex, HEADSHOT_SIZE.x, HEADSHOT_SIZE.y, _playerInfo.headshot);

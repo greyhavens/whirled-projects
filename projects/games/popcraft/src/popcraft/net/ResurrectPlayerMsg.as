@@ -1,6 +1,6 @@
 package popcraft.net {
 
-import com.whirled.contrib.simplegame.net.*;
+import com.whirled.contrib.messagemgr.*;
 
 import flash.utils.ByteArray;
 

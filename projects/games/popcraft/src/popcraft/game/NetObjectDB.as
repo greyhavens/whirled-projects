@@ -1,6 +1,6 @@
 package popcraft.game {
 
-import com.whirled.contrib.simplegame.*;
+import com.threerings.flashbang.*;
 
 public class NetObjectDB extends ObjectDB
 {

@@ -1,6 +1,6 @@
 package popcraft.battle.view {
 
-import com.whirled.contrib.simplegame.resource.*;
+import com.threerings.flashbang.resource.*;
 
 import flash.display.MovieClip;
 

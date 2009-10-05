@@ -1,7 +1,7 @@
 package popcraft.lobby {
 
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.audio.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.audio.*;
 
 import flash.display.SimpleButton;
 import flash.display.Sprite;

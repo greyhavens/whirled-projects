@@ -1,8 +1,8 @@
 package popcraft.ui {
 
 import com.threerings.util.RingBuffer;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.objects.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.objects.*;
 
 import flash.display.DisplayObject;
 import flash.geom.Point;

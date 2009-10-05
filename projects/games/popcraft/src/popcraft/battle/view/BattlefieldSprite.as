@@ -1,6 +1,6 @@
 package popcraft.battle.view {
 
-import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.threerings.flashbang.objects.SceneObject;
 
 import flash.display.DisplayObject;
 

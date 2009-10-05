@@ -2,15 +2,15 @@ package popcraft.battle {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.tasks.*;
 
 import flash.events.Event;
 
 import popcraft.game.*;
 import popcraft.data.*;
 
-public class CreatureSpellSet extends SimObject
+public class CreatureSpellSet extends GameObject
 {
     public static const SET_MODIFIED :String = "setModified";
 

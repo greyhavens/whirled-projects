@@ -2,12 +2,12 @@ package popcraft.battle {
 
 import com.threerings.geom.Vector2;
 import com.threerings.util.Assert;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.components.*;
-import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.util.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.components.*;
+import com.threerings.flashbang.objects.*;
+import com.threerings.flashbang.resource.*;
+import com.threerings.flashbang.tasks.*;
+import com.threerings.flashbang.util.*;
 
 import flash.display.Graphics;
 import flash.display.Shape;
@@ -24,7 +24,7 @@ import popcraft.util.*;
  * If ActionScript allowed the creation of abstract classes or private constructors, I would do that here.
  * Alas, it doesn't. But Unit is not intended to be instantiated directly.
  */
-public class Unit extends SimObject
+public class Unit extends GameObject
     implements LocationComponent
 {
     public static const GROUP_NAME :String = "Unit";
@@ -106,7 +106,7 @@ public class Unit extends SimObject
     public function sendAttack (targetUnitOrLocation :*, weapon :UnitWeaponData) :Number
     {
         var targetUnit :Unit = targetUnitOrLocation as Unit;
-        _currentAttackTarget = (null != targetUnit ? targetUnit.ref : SimObjectRef.Null());
+        _currentAttackTarget = (null != targetUnit ? targetUnit.ref : GameObjectRef.Null());
 
         // don't attack if we're already attacking
         if (this.inAttackCooldown) {
@@ -166,7 +166,7 @@ public class Unit extends SimObject
         var totalDamageRemaining :Number = weapon.aoeMaxDamage;
         var totalDamage :Number = 0;
         var refs :Array = GameCtx.netObjects.getObjectRefsInGroup(Unit.GROUP_NAME);
-        for each (var ref :SimObjectRef in refs) {
+        for each (var ref :GameObjectRef in refs) {
             var unit :Unit = ref.object as Unit;
             if (null == unit) {
                 continue;
@@ -381,7 +381,7 @@ public class Unit extends SimObject
     protected var _owningPlayerInfo :PlayerInfo;
     protected var _unitType :int;
     protected var _unitData :UnitData;
-    protected var _currentAttackTarget :SimObjectRef;
+    protected var _currentAttackTarget :GameObjectRef;
     protected var _speedScale :Number = 1;
     protected var _needsAttackWarmup :Boolean = true;
 
@@ -400,7 +400,7 @@ public class Unit extends SimObject
 
 }
 
-import com.whirled.contrib.simplegame.*;
+import com.threerings.flashbang.*;
 import popcraft.battle.Unit;
 
 // Completes when the weapon cooldown time has elapsed, taking into
@@ -413,7 +413,7 @@ class UnitAttackCooldownTask implements ObjectTask
         _timeRemaining = cooldownTime;
     }
 
-    public function update (dt :Number, obj :SimObject) :Boolean
+    public function update (dt :Number, obj :GameObject) :Boolean
     {
         var unit :Unit = (obj as Unit);
         dt = Math.max(dt * unit.speedScale, 0);

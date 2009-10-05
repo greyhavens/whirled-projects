@@ -2,8 +2,8 @@ package popcraft.lobby {
 
 import com.threerings.display.DisplayUtil;
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.objects.SceneObject;
 import com.whirled.game.GameContentEvent;
 import com.whirled.game.NetSubControl;
 

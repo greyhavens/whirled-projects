@@ -42,8 +42,8 @@ public class HeavyCreatureUnit extends CreatureUnit
 
 }
 
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.util.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.util.*;
 import flash.geom.Point;
 
 import popcraft.*;
@@ -54,7 +54,7 @@ import com.threerings.util.Log;
 import com.threerings.geom.Vector2;
 import popcraft.data.BaseLocationData;
 
-class HeavyFormationManager extends SimObject
+class HeavyFormationManager extends GameObject
 {
     public static const ROW_SIZE :int = 4;
     public static const UNIT_SEPARATION :Number = 30;
@@ -73,7 +73,7 @@ class HeavyFormationManager extends SimObject
 
     protected static function getManager (owningPlayerIndex :int) :HeavyFormationManager
     {
-        var mgr :SimObject = GameCtx.netObjects.getObjectNamed(getObjectName(owningPlayerIndex));
+        var mgr :GameObject = GameCtx.netObjects.getObjectNamed(getObjectName(owningPlayerIndex));
         if (null == mgr) {
             mgr = new HeavyFormationManager(owningPlayerIndex);
             GameCtx.netObjects.addObject(mgr);

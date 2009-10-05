@@ -3,8 +3,8 @@ package popcraft.game.endless {
 import com.threerings.geom.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.ui.KeyboardCodes;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.net.*;
+import com.threerings.flashbang.*;
+import com.whirled.contrib.messagemgr.*;
 import com.whirled.game.StateChangedEvent;
 
 import flash.display.DisplayObject;
@@ -558,7 +558,7 @@ public class EndlessGameMode extends GameMode
     protected var _readyToStart :Boolean;
     protected var _playerGotMultiplier :Array;
 
-    protected var _unhideMultiplierOnEnter :SimObjectRef;
+    protected var _unhideMultiplierOnEnter :GameObjectRef;
 
     protected var _playersCheckedIn :Array = [];
 
