@@ -8,8 +8,8 @@ import flash.filters.GlowFilter;
 
 import flash.utils.getTimer;
 
-import com.threerings.flash.FrameSprite;
-import com.threerings.flash.Siner;
+import com.threerings.display.FrameSprite;
+import com.threerings.display.Siner;
 
 public class Sparkle extends FrameSprite
 {

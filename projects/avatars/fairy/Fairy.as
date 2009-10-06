@@ -31,8 +31,8 @@ import flash.utils.ByteArray;
 import flash.utils.Timer;
 import flash.utils.getTimer; // function import
 
-import com.threerings.flash.FrameSprite;
-import com.threerings.flash.Siner;
+import com.threerings.display.FrameSprite;
+import com.threerings.display.Siner;
 
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
