@@ -224,7 +224,7 @@ public class EndTurnButton extends Button
             return;
         }
         stopAFKTimer();
-        _ctx.notice("Hello?  It's your turn and you haven't moved in 30 seconds'!");
+        _ctx.notice("Hello?  It's your turn and you haven't moved in 30 seconds'!", true);
         displayingAFKNotice = true;
         // 20000 = 20 seconds
         afkTimer = new Timer(20000, 1);
@@ -244,7 +244,7 @@ public class EndTurnButton extends Button
             return;
         }
         stopAFKTimer();
-        _ctx.notice("If you don't move in 10 seconds your turn will end.");
+        _ctx.notice("If you don't move in 10 seconds your turn will end.", true);
         displayingAFKNotice = true;
         _ctx.broadcast(_ctx.player.name + " may be away from their keyboard.");
         // 10000 = 10 seconds

@@ -1,5 +1,7 @@
 ﻿package lawsanddisorder.component {
 
+import com.whirled.contrib.card.graphics.Text;
+
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
@@ -55,6 +57,7 @@ public class Notices extends Component
         history.x = 15;
         history.y = -380;
         historyText = Content.defaultTextField(1.0, "left");
+        historyText.multiline = true;
         historyText.width = 320;
         historyText.x = 20;
         
@@ -75,25 +78,25 @@ public class Notices extends Component
     /**
      * When a new game notice comes in, add it to the list of notices and display it.
      */
-    public function addNotice (notice :String, alsoLog :Boolean = true) :void
+    public function addNotice (notice :String, lessImportant :Boolean = false) :void
     {
         // if blank, just clear the current notice but do not log to history
         if (notice == null || notice.length == 0) {
             if (_ctx.board.players.isMyTurn()) {
-                currentNotice.text = "It's your turn."
+                currentNotice.htmlText = "It's your turn."
             } else {
-                currentNotice.text = "It's " + _ctx.board.players.turnHolder.name + "'s turn."
+                currentNotice.htmlText = "It's " + _ctx.board.players.turnHolder.name + "'s turn."
             }
             return;
         }
-    
-        if (alsoLog) {
-            _ctx.log(notice);
-        }
-        
+
         notice = notice.replace("\n", "");
-        currentNotice.text = notice;
-        historyText.appendText(notice + "\n");
+        // less important notices like opponent activities are displayed in grey
+        if (lessImportant) {
+            notice = "<font color='#333333'>" + notice + "</font>";
+        }
+        currentNotice.htmlText = notice;
+        historyText.htmlText += notice + "\n";
 
         updateDisplay();
     }

@@ -301,6 +301,10 @@ public class Player extends Component
         toPlayer.hand.addCards(cardsToGive);
 
         for each (var card :Card in cardsToGive) {
+        	if (card == null) {
+                _ctx.error("Card is null in Player.giveCardsTo");
+                continue;
+        	}
             _ctx.sendMessage(Deck.CARD_MOVED, new Array(card.id, this.id, toPlayer.id));
         } 
     }
@@ -325,6 +329,27 @@ public class Player extends Component
      */
     public function getWinningPercentile (includeCards :Boolean = true) :int
     {
+    	/*
+        var totalPoints :int = 0;
+        for each (var somePlayer :Player in _ctx.board.players.playerObjects) {
+            totalPoints += somePlayer.monies;
+            if (includeCards) {
+                totalPoints += somePlayer.hand.numCards / 2;
+            }
+        }
+        
+        var ourPoints :int = this.monies;
+        if (includeCards) {
+            ourPoints += this.hand.numCards/2;
+        }
+        
+        var percentile :int = Math.round((ourPoints / totalPoints) * 100);
+        
+        _ctx.debug("player " + this + " has " + ourPoints + " points, percentile: " + percentile);
+        
+        return percentile;
+        */
+        
         var betterPlayers :int = 0;
         for each (var player :Player in _ctx.board.players.playerObjects) {
             if (includeCards) {
@@ -337,7 +362,7 @@ public class Player extends Component
                 }
             }
         }
-        return Math.round((1 - betterPlayers / _ctx.numPlayers) * 100);
+        return Math.round((1 - betterPlayers / (_ctx.numPlayers-1)) * 100);
     }
 
     /** Can the player change jobs right now? */

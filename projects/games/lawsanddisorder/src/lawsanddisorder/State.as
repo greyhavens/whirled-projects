@@ -136,7 +136,6 @@ public class State
     public function exchangeVerb (listener :Function) :void
     {
         var message :String = "Please drag a red card from your hand drop it over a red card in a law";
-        //_ctx.notice(message);
         startModeReminder(message, cancelUsingPower);
         modeListener = listener;
         mode = MODE_EXCHANGE_VERB;
@@ -233,8 +232,7 @@ public class State
      */
     public function hasFocus (displayNotices :Boolean = true) :Boolean
     {
-        //if (mode == MODE_DEFAULT && _ctx.board.players.isMyTurn() && !enactingLaws) {
-        if (mode == MODE_DEFAULT && _ctx.player.isMyTurn && !enactingLaws) {
+        if (mode == MODE_DEFAULT && _ctx.player.isMyTurn && !enactingLaws && _ctx.gameStarted) {
             return true;
         }
         if (enactingLaws && waitingForOpponent != null) {
@@ -250,6 +248,11 @@ public class State
         else if (!_ctx.player.isMyTurn) {
             if (displayNotices) {
                _ctx.notice("Not your turn.");
+            }
+        }
+        else if (!_ctx.gameStarted) {
+            if (displayNotices) {
+               _ctx.notice("Game hasn't started.");
             }
         }
         else if (displayNotices) {
@@ -314,13 +317,15 @@ public class State
         lastReminderMessage = message;
         
         // play a reminder noise when not your turn, even in single player mode.
+        var importantNotice :Boolean = false;
         if (!_ctx.board.players.isMyTurn()) {
             Content.playSound(Content.SFX_FOCUS_DING);
+            importantNotice = true;
         }
                         
-        // in single player mode, don't display reminders.
+        // in single player mode, don't display reminders after this one.
         if (_ctx.board.players.numHumanPlayers == 1) {
-            _ctx.notice(message);
+            _ctx.notice(message, importantNotice);
             return;
         }
         
@@ -328,7 +333,7 @@ public class State
 
         // first time through
         if (reminderNum == 1) {
-            _ctx.notice(message);
+            _ctx.notice(message, importantNotice);
             reminderText = "We're waiting for you.  ";
             if (modeReminderTimer != null) {
                 _ctx.error("mode reminder timer is not null - continuing");
@@ -357,7 +362,7 @@ public class State
         modeReminderTimer = new Timer(10000, 1);
         modeReminderTimer.addEventListener(TimerEvent.TIMER,
             function () :void {
-                _ctx.notice(reminderText + message);
+                _ctx.notice(reminderText + message, true);
                 startModeReminder(message, listener, reminderNum+1)
             });
         modeReminderTimer.start();

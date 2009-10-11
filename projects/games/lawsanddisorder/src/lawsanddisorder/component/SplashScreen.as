@@ -90,8 +90,8 @@ public class SplashScreen extends Component
     {
         var button :SimpleButton = embedGraphics["button_ailevel_" + levelName];
         button.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-	        	highlightButton(button.name);
-	            _ctx.setAiLevel(levelName);
+                highlightButton(button.name);
+                _ctx.setAiLevel(levelName);
             });
     }
     
@@ -102,8 +102,8 @@ public class SplashScreen extends Component
     {
         var button :SimpleButton = embedGraphics["button_aispeed_" + speedName];
         button.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-	        	highlightButton(button.name);
-	            _ctx.setAiSpeed(speedName);
+                highlightButton(button.name);
+                _ctx.setAiSpeed(speedName);
             });
     }
     
@@ -114,8 +114,8 @@ public class SplashScreen extends Component
     {
         var button :SimpleButton = embedGraphics["button_ainum_" + numAIPlayers];
         button.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-	        	highlightButton(button.name);
-	            _ctx.setNumAIPlayers(String(numAIPlayers));
+                highlightButton(button.name);
+                _ctx.setNumAIPlayers(String(numAIPlayers));
             });
     }
     
@@ -126,8 +126,8 @@ public class SplashScreen extends Component
     {
         var button :SimpleButton = embedGraphics["button_sound_" + soundName];
         button.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-	            highlightButton(button.name);
-	            Context.setSoundConfig(soundName);
+                highlightButton(button.name);
+                Context.setSoundConfig(soundName);
             });
     }
     
@@ -146,9 +146,9 @@ public class SplashScreen extends Component
             deHighlightButton("button_ailevel_" + Context.LEVEL_DUMBER_STRING);
             deHighlightButton("button_ailevel_" + Context.LEVEL_DUMBEST_STRING);
         } else if (buttonName.search("ainum") != -1) {
-	        for (var ii:int = 1; ii <= 5; ii++) {
-	            deHighlightButton("button_ainum_" + ii);
-	        }
+            for (var ii:int = 1; ii <= 5; ii++) {
+                deHighlightButton("button_ainum_" + ii);
+            }
         } else if (buttonName.search("sound") != -1) {
             deHighlightButton("button_sound_" + Context.SOUND_ALL_STRING);
             deHighlightButton("button_sound_" + Context.SOUND_SFX_STRING);
@@ -202,9 +202,9 @@ public class SplashScreen extends Component
      */
     protected static function helpScreenClicked (event :MouseEvent) :void
     {
-    	if (helpScreen.parent != null) {
-    		helpScreen.parent.removeChild(helpScreen);
-    	}
+        if (helpScreen.parent != null) {
+            helpScreen.parent.removeChild(helpScreen);
+        }
     }
 
     /** Splash screen with settings displayed at start of game */

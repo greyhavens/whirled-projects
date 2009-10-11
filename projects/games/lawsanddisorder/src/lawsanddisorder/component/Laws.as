@@ -312,7 +312,7 @@ public class Laws extends Component
         law.x = 0;
         if (laws.length > MAX_LAWS) {
             var oldestLaw :Law = laws[oldestLawId];
-            _ctx.notice("There are too many laws - removing the oldest one.");
+            _ctx.log("There are too many laws - removing the oldest one.");
             removeChild(oldestLaw);
             oldestLawId++;
             arrangeLaws();

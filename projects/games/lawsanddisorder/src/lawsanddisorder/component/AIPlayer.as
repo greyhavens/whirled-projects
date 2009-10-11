@@ -10,8 +10,8 @@ import lawsanddisorder.*;
  */
 public class AIPlayer extends Opponent
 {
-	protected static const TESTING :Boolean = false;
-	
+    protected static const TESTING :Boolean = false;
+    
     /**
      * Constructor
      * @param id Identifier for this player according to their position on the board
@@ -39,8 +39,8 @@ public class AIPlayer extends Opponent
     
     public function startTurn() :void
     {
-    	// for easier testing, all ais play as the DOCTOR
-    	//_ctx.board.deck.switchJobs(_ctx.board.deck.getJob(Job.DOCTOR), this);
+        // for easier testing, all ais play as the DOCTOR
+        //_ctx.board.deck.switchJobs(_ctx.board.deck.getJob(Job.DOCTOR), this);
 
         canPlay = true;
         hand.drawCard(Deck.CARDS_AT_START_OF_TURN);
@@ -79,11 +79,11 @@ public class AIPlayer extends Opponent
     
     protected function selectRandomCard (type :int) :Card
     {
-    	var card :Card = hand.pickRandom(type);
-    	if (TESTING) {
-    		_ctx.log("Picked random card of type " + type + " : " + card);
-    	}
-    	return card;
+        var card :Card = hand.pickRandom(type);
+        if (TESTING) {
+            _ctx.log("Picked random card of type " + type + " : " + card);
+        }
+        return card;
     }
     
     /**
@@ -101,7 +101,7 @@ public class AIPlayer extends Opponent
         
         var law :Law = _ctx.board.laws.getLawByValue(this, type);
         if (TESTING) {
-        	_ctx.log("Selected law using method " + type + " : " + law);
+            _ctx.log("Selected law using method " + type + " : " + law);
         }
         return law;
     }
@@ -124,7 +124,7 @@ public class AIPlayer extends Opponent
     protected function play () :void
     {
         if (!canPlay) {
-        	if (TESTING) {
+            if (TESTING) {
                 _ctx.log("AIPlayer has been told to halt, stopping.");
             }
             return;
@@ -135,35 +135,35 @@ public class AIPlayer extends Opponent
         
         if (!changedJobs) {
             var cardOptions :Array = new Array();
-	        for each (var card :Card in hand.cards) {
-	            if (card.group == Card.SUBJECT && card.type != job.id) {
-	                cardOptions.push(card);
-	            }
-	        }
-	        if (cardOptions.length != 0) {
-	            // pick up to 3 options for changing jobs and add them to the options list
-	            for (var ii :int = 0; ii < 3 && ii < cardOptions.length; ii++) {
-	                addChangeJobOption(cardOptions);
-	            }
-	        }
+            for each (var card :Card in hand.cards) {
+                if (card.group == Card.SUBJECT && card.type != job.id) {
+                    cardOptions.push(card);
+                }
+            }
+            if (cardOptions.length != 0) {
+                // pick up to 3 options for changing jobs and add them to the options list
+                for (var ii :int = 0; ii < 3 && ii < cardOptions.length; ii++) {
+                    addChangeJobOption(cardOptions);
+                }
+            }
         }
         
         if (!createdLaw) {
             for (var jj :int = 0; jj < 3; jj++) {
-	            addCreateLawOption();
-	        }
+                addCreateLawOption();
+            }
         }
 
         if (!usedPower) {
-	        if (job.getUsePowerError()) {
-	            if (TESTING) {
-	                _ctx.log("\ncan't use power because: " + job.getUsePowerError());
-	            }
-	        } else {
-		        for (var kk :int = 0; kk < 3; kk++) {
-		            addUsePowerOption();
-		        }
-	        }
+            if (job.getUsePowerError()) {
+                if (TESTING) {
+                    _ctx.log("\ncan't use power because: " + job.getUsePowerError());
+                }
+            } else {
+                for (var kk :int = 0; kk < 3; kk++) {
+                    addUsePowerOption();
+                }
+            }
         }
         
         // if no options (or randomly 1/4 of the time) end turn

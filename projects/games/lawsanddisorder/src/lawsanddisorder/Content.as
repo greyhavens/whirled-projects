@@ -141,9 +141,9 @@ public class Content
      */
     public static function playMusic (sound :Sound) :void
     {
-    	if (Context.musicEnabled == false) {
-    		return;
-    	}
+        if (Context.musicEnabled == false) {
+            return;
+        }
         if (_musicChannel != null) {
             _musicChannel.stop();
         }

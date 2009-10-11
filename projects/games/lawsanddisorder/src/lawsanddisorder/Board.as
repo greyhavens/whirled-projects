@@ -26,6 +26,7 @@ public class Board extends Sprite
         _ctx = ctx;
         _ctx.eventHandler.addEventListener(EventHandler.MY_TURN_ENDED, myTurnEnded);
         _ctx.eventHandler.addEventListener(EventHandler.MY_TURN_STARTED, myTurnStarted);
+        _ctx.eventHandler.addEventListener(EventHandler.GAME_ENDED, gameEnded);
 
         // display background
         var background :Sprite = new BOARD_BACKGROUND();
@@ -99,6 +100,13 @@ public class Board extends Sprite
         turnHighlight = new Sprite();
         turnHighlight.graphics.lineStyle(8, 0xFFFF00);
         turnHighlight.graphics.drawRect(3, 3, 694, 494);
+        
+        // displayed at the end of the game
+        playAgainButton = new Button(_ctx);
+        playAgainButton.text = "play again";
+        playAgainButton.addEventListener(MouseEvent.CLICK, playAgainButtonClicked);
+        playAgainButton.x = 300;
+        playAgainButton.y = 300;
     }
     
     /**
@@ -170,6 +178,24 @@ public class Board extends Sprite
         }
     }
 
+    /**
+     * Game is over, add button to let player play again.
+     */
+    protected function gameEnded (event :Event) :void
+    {
+        addChild(playAgainButton);
+    }
+
+    /**
+     * Player wants a rematch.
+     */
+    protected function playAgainButtonClicked (event :MouseEvent) :void
+    {
+        removeChild(playAgainButton);
+        _ctx.broadcast(_ctx.player.name + " requested a rematch.", null, true);
+        _ctx.control.game.playerReady();
+    }
+
     /** Displays in-game messages to the player */
     public var notices :Notices;
 
@@ -202,6 +228,9 @@ public class Board extends Sprite
 
     /** Displays to indicate it is the player's turn */
     protected var turnHighlight :Sprite;
+    
+    /** Shown when game ends to allow starting over */
+    protected var playAgainButton :Button;
 
     /** Background image for the entire board */
     [Embed(source="../../rsrc/components.swf#bg")]

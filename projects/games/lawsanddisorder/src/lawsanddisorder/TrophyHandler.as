@@ -137,7 +137,7 @@ public class TrophyHandler
         if (player.getWinningPercentile(false) < 100) {
             return;
         }
-        _ctx.notice("You came in first place!");
+        //_ctx.notice("You came in first place!");
         
         if (_ctx.board.players.numHumanPlayers == 1) {
             awardTrophy("winnerVsBots");

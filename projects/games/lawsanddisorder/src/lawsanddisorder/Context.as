@@ -9,7 +9,7 @@ import lawsanddisorder.component.*;
  */
 public class Context
 {
-	/** AI Intelligence multipliers */
+    /** AI Intelligence multipliers */
     public static const LEVEL_DUMB :int = 0;
     public static const LEVEL_DUMBER :int = 50;
     public static const LEVEL_DUMBEST :int = 100;
@@ -60,7 +60,20 @@ public class Context
         if (!control.isConnected()) {
             return;
         }
+        // logging disabled because it appears over the game in Facebook
+        //control.local.feedback(message + "\n");
         
+        if (board != null) {
+            board.notices.addNotice(message, true);
+        }
+    }
+
+    /**
+     * Debug messages go to local feedback
+     */
+    public function debug (message :String) :void
+    {
+        notice("DEBUG: " + message);
         control.local.feedback(message + "\n");
     }
 
@@ -69,16 +82,23 @@ public class Context
      */
     public function error (message :String) :void
     {
-        log("ERROR: " + message);
+        notice("ERROR: " + message);
+        control.local.feedback(message + "\n");
     }
 
     /**
      * Display an in-game notice message to the player
      */
-    public function notice (notice :String, alsoLog :Boolean = true) :void
+    public function notice (notice :String, moreImportant :Boolean = false) :void
     {
         if (board != null) {
-            board.notices.addNotice(notice, alsoLog);
+            board.notices.addNotice(notice);
+            // only important messages are displayed as chat
+            if (moreImportant && control.isConnected()) {
+                control.local.feedback(notice + "\n");
+            }
+        } else if (control.isConnected()) {
+            control.local.feedback(notice + "\n");
         }
     }
 
@@ -202,7 +222,7 @@ public class Context
             case "0":
                 if (numHumanPlayers == 1) {
                     log("Adding one AI Player - there must be at least two players.");
-                	numAIPlayers = 1;
+                    numAIPlayers = 1;
                 } else {
                     numAIPlayers = 0;
                 }

@@ -154,7 +154,6 @@ public class EventHandler extends EventDispatcher
         }
     }
 
-
     /**
      * Wrapper for retrieving data values from the control
      */
@@ -195,27 +194,28 @@ public class EventHandler extends EventDispatcher
     }
 
     /**
-     * The last round ended, so finally end the game.
+     * The last round ended, so finally end the game.  Called by the player who ended the game.
      * Calculate the scores and send a message to everyone, awarding flow.
      * Assumes player seats may have changed during the game and rebuilds playerIds array.
      */
     public function endGame () :void
     {
-        // whoever's turn it is when the game ends,
-        // end every player's turn to lock the board.
+        // tell other players the game has ended to lock the board.
         _ctx.board.endTurnButton.gameEnded();
 
-        var playerIds :Array = new Array;
-        var playerScores :Array = new Array;
+        var playerIds :Array = [];
+        var playerScores :Array = [];
 
-        // TODO use winning percentile instead?
         for each (var player :Player in _ctx.board.players.playerObjects) {
-            playerIds.push(player.serverId);
-            playerScores.push(player.monies);
+            if (!(player as AIPlayer)) {
+                playerIds.push(player.serverId);
+                // score = how well you did in comparaison to other players including AI.  
+                // 100 = winner, 0 = loser
+                playerScores.push(player.getWinningPercentile(false));
+            }
         }
 
-        _ctx.control.game.endGameWithScores(playerIds, playerScores, 
-            GameSubControl.CASCADING_PAYOUT);
+        _ctx.control.game.endGameWithScores(playerIds, playerScores, GameSubControl.TO_EACH_THEIR_OWN);
     }
 
     /**
@@ -225,8 +225,9 @@ public class EventHandler extends EventDispatcher
     {
         _ctx.gameStarted = false;
         Content.playSound(Content.SFX_GAME_OVER);
-        //Content.stopMusic();
         dispatchEvent(new Event(GAME_ENDED));
+            
+        _ctx.log("Your final score is " + _ctx.player.getWinningPercentile(false));
     }
 
     /**
@@ -234,7 +235,7 @@ public class EventHandler extends EventDispatcher
      */
     protected function coinsAwarded (event :CoinsAwardedEvent) :void
     {
-        _ctx.notice("\nGame over - thanks for playing!");
+        _ctx.notice("Game over - thanks for playing!", true);
     }
     
     /**

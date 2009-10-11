@@ -236,7 +236,7 @@ public class Job extends Component
                 _ctx.state.selectedCard = targetCard;
                 _ctx.state.activeCard = _ctx.state.selectedLaw.cards[1];
                 
-                _ctx.log("banker card in law: " + _ctx.state.activeCard + ", card in hand: " + _ctx.state.selectedCard);
+                //_ctx.log("banker card in law: " + _ctx.state.activeCard + ", card in hand: " + _ctx.state.selectedCard);
                 
                 // perform the actual swap here - propagate data change info only when adding
                 player.hand.removeCards(_ctx.state.selectedCards, false);
@@ -291,11 +291,11 @@ public class Job extends Component
                     player.hand.addCards(new Array(_ctx.state.activeCard), true);
                     
                 } else {
-                	if (targetCard == null) {
-                		_ctx.error("targetCard is null in Job.usePowerAI#DOCTOR. Law: " + targetLaw);
+                    if (targetCard == null) {
+                        _ctx.error("targetCard is null in Job.usePowerAI#DOCTOR. Law: " + targetLaw);
                         doneUsingPower();
-                		return;
-                	}
+                        return;
+                    }
                     // add a when from hand to the end of the law
                     _ctx.state.selectedCard = targetCard;
                     _ctx.state.activeCard = targetCard;
@@ -489,10 +489,17 @@ public class Job extends Component
         var opponent :Player = _ctx.state.selectedPlayer;
         if (opponent == null) {
            _ctx.error("opponent null when theif card selected.");
+           doneUsingPower();
            return;
         }
-        opponent.giveCardsTo(_ctx.state.selectedCards, player);
+        
         var stolenCard :Card = _ctx.state.selectedCard;
+        if (stolenCard == null) {
+        	_ctx.error(player + " tried to steal a null card from " + opponent);
+            doneUsingPower();
+        	return;
+        }
+        opponent.giveCardsTo(_ctx.state.selectedCards, player);
         _ctx.state.deselectOpponent();
         _ctx.state.deselectCards();
 
@@ -550,7 +557,7 @@ public class Job extends Component
         var card :Card = _ctx.state.activeCard;
         
         if (law == null || card == null) {
-        	_ctx.error("Law or card null in Job.doctorWhenMoved: " + law + ", " + card);
+            _ctx.error("Law or card null in Job.doctorWhenMoved: " + law + ", " + card);
             doneUsingPower();
             return;
         }

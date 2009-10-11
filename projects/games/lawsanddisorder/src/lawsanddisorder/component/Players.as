@@ -70,11 +70,6 @@ public class Players extends Component
             var aiPlayer :AIPlayer = new AIPlayer(_ctx, playerId);
             opponents.addOpponent(aiPlayer);
             playerObjects[playerId] = aiPlayer;
-            // last player controls all ais that are added after them
-            //if (player.id == numHumanPlayers - 1) {
-            //    aiPlayer.isController = true;
-            //}
-            
             playerId++;
         }
         
@@ -170,74 +165,59 @@ public class Players extends Component
     }
 
     /**
-     * Called when a player leaves the game.  Remove them from the visible opponents and
-     * the list of player objects, and make their job available, but don't change player.ids or
-     * remove them from distributed data arrays.
+     * Called when a player leaves the game.  Replace them with an ai player controlled by the
+     * controller player.
      */
     public function playerLeft (playerServerId :int) :void
     {
-        // if we were controlling an ai player, halt that player's turn
-        if (turnHolder as AIPlayer && player.isController) {
-            //_ctx.log("Halting AI Player's turn.");
+        // if controller instance was controlling an ai player, halt that player's turn
+        if (player.isController && turnHolder as AIPlayer) {
             AIPlayer(turnHolder).canPlay = false;
         }
         
-        // if anything was happening with any player, stop it now
+        // every instance halts all actions on all players
         _ctx.state.cancelMode();
         _ctx.board.laws.cancelTriggering();
         
-        // find the opponent who left and determine the new controller player
-        var opponent :Opponent;
-        for each (var tempPlayer :Player in playerObjects) {
-            if (tempPlayer.serverId == playerServerId) {
-                opponent = tempPlayer as Opponent;
-            } else if (_ctx.control.game.getControllerId() == tempPlayer.serverId) {
-                tempPlayer.isController = true;
+        // every instance finds the opponent who left and determines the new controller player
+        var opponentWhoLeft :Opponent;
+        for each (var somePlayer :Player in playerObjects) {
+            if (somePlayer.serverId == playerServerId) {
+                opponentWhoLeft = somePlayer as Opponent;
+            } else if (_ctx.control.game.getControllerId() == somePlayer.serverId) {
+                somePlayer.isController = true;
             }
         }
-        
-        if (opponent == null) {
+        if (opponentWhoLeft == null) {
             _ctx.error("Could not find player who left.");
             _ctx.sendMessage(EventHandler.TURN_CHANGED);
             return;
         }
         
-        // return the player's job to the pile
-        //if (_ctx.control.game.amInControl()) {
-        //    _ctx.eventHandler.setData(Deck.JOBS_DATA, -1, opponent.id);
-        //}
+        // every instance replaces opponent who left with an ai
+        var aiPlayer :AIPlayer = new AIPlayer(_ctx, opponentWhoLeft.id, opponentWhoLeft);
+        _ctx.notice("Replacing " + opponentWhoLeft + " with an AI Player: " + aiPlayer);
+        opponents.replaceOpponent(opponentWhoLeft, aiPlayer);
+        playerObjects[opponentWhoLeft.id] = aiPlayer;
 
-        // replace the player who left with a new AI player
-        //opponents.removeOpponent(opponent);
-        //var index :int = playerObjects.indexOf(opponent);
-        //playerObjects.splice(index, 1);
-        
-        var aiPlayer :AIPlayer = new AIPlayer(_ctx, opponent.id, opponent);
-        _ctx.notice("Replacing " + opponent + " with an AI Player: " + aiPlayer);
-        opponents.replaceOpponent(opponent, aiPlayer);
-        playerObjects[opponent.id] = aiPlayer;
-
-        // control player may be unset, so have the player in seating position 0 control for now
-        //if (turnHolder == null && playerObjects.indexOf(player) == 0) {
-        if (_ctx.player.isController && (
-            turnHolder == null || turnHolder == opponent || turnHolder as AIPlayer)) {
+        // controller instance moves the game to the next turn
+        if (player.isController && (
+            turnHolder == null || turnHolder == opponentWhoLeft || turnHolder as AIPlayer)) {
             _ctx.broadcast("Moving on to next player's turn.");
             _ctx.sendMessage(EventHandler.TURN_CHANGED);
-            //_ctx.board.endTurnButton.turnChanged();
-            //_ctx.control.game.startNextTurn();
         }
 
         // unload the opponent object
-        opponent.unload();
+        opponentWhoLeft.unload();
     }
 
-    /** All player objects in the game, indexed by id */
+    /** All player objects in the game, indexed by id, including ais and humans */
     public var playerObjects :Array;
 
-    /** All the other players */
+    /** All the other players (ai or human) who are not our player */
     public var opponents :Opponents;
 
-    /** Current player */
+    /** Our player */
     public var player :Player;
     
     /** The player (including AIs) whose turn it is now */

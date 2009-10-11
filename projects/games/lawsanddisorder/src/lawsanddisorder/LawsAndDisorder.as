@@ -33,7 +33,7 @@ public class LawsAndDisorder extends Sprite
     public static const GAME_ENDING :String = "gameEnding";
     
     /** Game version for testing/debugging purposes */
-    public static const VERSION :String = "0.518";
+    public static const VERSION :String = "0.604";
 
     /**
      * Constructor.  Set up game control, context, and board.  Add listeners for game events, and
@@ -75,9 +75,9 @@ public class LawsAndDisorder extends Sprite
      */ 
     protected function gotCookie () :void
     {
-    	// fetch configuration from multiplayer game params or cookies
-    	_ctx.gatherConfig();
-    	
+        // fetch configuration from multiplayer game params or cookies
+        _ctx.gatherConfig();
+        
         // if we're a watcher, assume the game has already started and fetch data
         if (_ctx.control.game.seating.getMyPosition() == -1) {
             gameStarted();
@@ -86,8 +86,8 @@ public class LawsAndDisorder extends Sprite
 
         // if we are playing a single player game, show the 1p/multi select splash screen first.
         if (_ctx.control.game.seating.getPlayerIds().length == 1) {
-        	splashScreen = new SplashScreen(_ctx);
-        	addChild(splashScreen);
+            splashScreen = new SplashScreen(_ctx);
+            addChild(splashScreen);
             
         // if playing a multiplayer game, just get started
         } else {
@@ -221,7 +221,7 @@ public class LawsAndDisorder extends Sprite
      */
     protected function occupantLeft (event :OccupantChangedEvent) :void
     {
-        if (event.player) {
+        if (event.player && _ctx.board != null) {
             _ctx.board.players.playerLeft(event.occupantId);
         }
     }
