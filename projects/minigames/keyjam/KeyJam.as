@@ -12,7 +12,7 @@ import flash.ui.Keyboard;
 
 import flash.utils.getTimer;
 
-import com.threerings.flash.ClearingTextField;
+import com.threerings.text.ClearingTextField;
 
 import com.whirled.MiniGameControl;
 
