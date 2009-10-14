@@ -17,10 +17,10 @@ import flash.text.TextFieldAutoSize;
 import flash.utils.Dictionary;
 import flash.utils.getTimer; // function import
 
-import com.threerings.flash.FloatingTextAnimation;
-import com.threerings.flash.FrameSprite;
-import com.threerings.flash.SiningTextAnimation;
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.display.FloatingTextAnimation;
+import com.threerings.display.FrameSprite;
+import com.threerings.display.SiningTextAnimation;
+import com.threerings.text.TextFieldUtil;
 
 import com.whirled.MiniGameControl;
 
@@ -393,9 +393,10 @@ import flash.filters.ColorMatrixFilter;
 
 import flash.utils.getTimer; // function import
 
-import com.threerings.util.HashMap;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 
-import com.threerings.flash.ColorUtil;
+import com.threerings.display.ColorUtil;
 
 class Cursor extends Sprite
 {
@@ -500,7 +501,7 @@ class BlockMap
         return ly * 1000 + lx;
     }
 
-    protected var _map :HashMap = new HashMap();
+    protected var _map :Map = Maps.newMapOf(int);
 
     protected var _destroying :Array = [];
 }
