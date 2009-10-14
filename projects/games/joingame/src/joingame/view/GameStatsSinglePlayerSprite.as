@@ -1,6 +1,5 @@
 package joingame.view
 {
-    import com.threerings.util.StringBuilder;
     import com.whirled.contrib.simplegame.resource.ResourceManager;
     import com.whirled.contrib.simplegame.resource.SwfResource;
     
@@ -145,9 +144,9 @@ package joingame.view
         
         protected function createTextFromCookies( oldCookie :UserCookieDataSourcePlayer, newCookie :UserCookieDataSourcePlayer) :String 
         {
-            var sb :StringBuilder = new StringBuilder();
+            var s :String = "";
             var format :Function = Sprintf.format; 
-            sb.append( format("%60s",  "Change:\n"));
+            s += format("%60s",  "Change:\n");
             var addition :String = "";
             if( newCookie.highestRobotLevelDefeated > oldCookie.highestRobotLevelDefeated) {
                 addition = "+" + (newCookie.highestRobotLevelDefeated - oldCookie.highestRobotLevelDefeated);    
@@ -155,16 +154,16 @@ package joingame.view
             else {
                 addition= "-";
             }
-            sb.append( format("Level:%30s%20s", newCookie.highestRobotLevelDefeated, addition));
+            s += format("Level:%30s%20s", newCookie.highestRobotLevelDefeated, addition);
             
-            sb.append("\n");
+            s += "\n";
             newCookie.bestKillsPerDeltaRatio = 0.123456789;
             var maxStringSize :int = 5;
             var ratingString :String = "" + oldCookie.bestKillsPerDeltaRatio;
-            sb.append( format("Best Rating:                   %1.3f%s", oldCookie.bestKillsPerDeltaRatio, "\n"));
+            s += format("Best Rating:                   %1.3f%s", oldCookie.bestKillsPerDeltaRatio, "\n");
 //            ratingString = "" + newCookie.bestKillsPerDeltaRatio;
             addition = "";
-//            sb.append( "Current Rating:\t\t" + ratingString.substr(0, maxStringSize) );
+//            s += "Current Rating:\t\t" + ratingString.substr(0, maxStringSize);
 //            if( newCookie.bestKillsPerDeltaRatio > oldCookie.bestKillsPerDeltaRatio) {
 //                ratingString = "" + (newCookie.bestKillsPerDeltaRatio - oldCookie.bestKillsPerDeltaRatio);
                  
@@ -172,17 +171,17 @@ package joingame.view
 //                    ratingString = "+" + ratingString;
                     addition = "+";
                 }
-                sb.append( format("Current Rating:            %1.3f      "+addition+"%1.3f%s", newCookie.bestKillsPerDeltaRatio,(newCookie.bestKillsPerDeltaRatio - oldCookie.bestKillsPerDeltaRatio), "\n"));
-//                sb.append( format(" ",);    
+                s += format("Current Rating:            %1.3f      "+addition+"%1.3f%s", newCookie.bestKillsPerDeltaRatio,(newCookie.bestKillsPerDeltaRatio - oldCookie.bestKillsPerDeltaRatio), "\n");
+//                s += format(" ",);
 //            }
 //            else {
-//                sb.append( "\t\t  -");
+//                s += "\t\t  -";
 //            }
-//            sb.append("\n   (Boards destroyed per move)\n");
-            sb.append("\n");
+//            s += "\n   (Boards destroyed per move)\n";
+            s += "\n";
             
             
-            return sb.toString();
+            return s;
         }
         
         protected static function em (text :String) :String
