@@ -1,5 +1,5 @@
 <!-- build configuration -->
-<project name="Match3" default="compile" basedir=".">
+<project name="boomer" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
   <property name="app.name" value="Boomer"/>
