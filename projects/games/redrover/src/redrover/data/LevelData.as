@@ -3,7 +3,7 @@ package redrover.data {
 import com.threerings.util.StringUtil;
 import com.threerings.flashbang.util.NumRange;
 import com.threerings.flashbang.util.Rand;
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 import com.threerings.util.XmlReadError;
 
 import redrover.*;
@@ -44,40 +44,40 @@ public class LevelData
     {
         var data :LevelData = new LevelData();
 
-        data.endCondition = XmlReader.getStringArrayAttr(xml, "endCondition",
+        data.endCondition = XmlUtil.getStringArrayAttr(xml, "endCondition",
             Constants.END_CONDITION_NAMES);
-        data.endValue = XmlReader.getNumberAttr(xml, "endValue");
-        data.cellSize = XmlReader.getUintAttr(xml, "cellSize");
-        data.ownBoardZoom = XmlReader.getNumberAttr(xml, "ownBoardZoom");
-        data.otherBoardZoom = XmlReader.getNumberAttr(xml, "otherBoardZoom");
-        data.gemSpawnTime.min = XmlReader.getUintAttr(xml, "gemSpawnTimeMin");
-        data.gemSpawnTime.max = XmlReader.getUintAttr(xml, "gemSpawnTimeMax");
-        data.ownBoardSpeedBase = XmlReader.getNumberAttr(xml, "ownBoardSpeedBase");
-        data.otherBoardSpeedBase = XmlReader.getNumberAttr(xml, "otherBoardSpeedBase");
-        data.speedOffsetPerGem = XmlReader.getNumberAttr(xml, "speedOffsetPerGem");
-        data.slowTerrainSpeedMultiplier = XmlReader.getNumberAttr(xml, "slowTerrainSpeedMultiplier");
-        data.maxTurnOvershoot = XmlReader.getNumberAttr(xml, "maxTurnOvershoot");
-        data.maxCarriedGems = XmlReader.getUintAttr(xml, "maxCarriedGems");
-        data.switchBoardsTime = XmlReader.getNumberAttr(xml, "switchBoardsTime");
-        data.gotEatenTime = XmlReader.getNumberAttr(xml, "gotEatenTime");
-        data.returnHomeGemsMin = XmlReader.getUintAttr(xml, "returnHomeGemsMin");
-        data.eatPlayerPoints = XmlReader.getIntAttr(xml, "eatPlayerPoints");
-        data.switchedBoardsInvincibleTime = XmlReader.getNumberAttr(xml,
+        data.endValue = XmlUtil.getNumberAttr(xml, "endValue");
+        data.cellSize = XmlUtil.getUintAttr(xml, "cellSize");
+        data.ownBoardZoom = XmlUtil.getNumberAttr(xml, "ownBoardZoom");
+        data.otherBoardZoom = XmlUtil.getNumberAttr(xml, "otherBoardZoom");
+        data.gemSpawnTime.min = XmlUtil.getUintAttr(xml, "gemSpawnTimeMin");
+        data.gemSpawnTime.max = XmlUtil.getUintAttr(xml, "gemSpawnTimeMax");
+        data.ownBoardSpeedBase = XmlUtil.getNumberAttr(xml, "ownBoardSpeedBase");
+        data.otherBoardSpeedBase = XmlUtil.getNumberAttr(xml, "otherBoardSpeedBase");
+        data.speedOffsetPerGem = XmlUtil.getNumberAttr(xml, "speedOffsetPerGem");
+        data.slowTerrainSpeedMultiplier = XmlUtil.getNumberAttr(xml, "slowTerrainSpeedMultiplier");
+        data.maxTurnOvershoot = XmlUtil.getNumberAttr(xml, "maxTurnOvershoot");
+        data.maxCarriedGems = XmlUtil.getUintAttr(xml, "maxCarriedGems");
+        data.switchBoardsTime = XmlUtil.getNumberAttr(xml, "switchBoardsTime");
+        data.gotEatenTime = XmlUtil.getNumberAttr(xml, "gotEatenTime");
+        data.returnHomeGemsMin = XmlUtil.getUintAttr(xml, "returnHomeGemsMin");
+        data.eatPlayerPoints = XmlUtil.getIntAttr(xml, "eatPlayerPoints");
+        data.switchedBoardsInvincibleTime = XmlUtil.getNumberAttr(xml,
             "switchedBoardsInvincibleTime");
-        data.teammateScoreMultiplier = XmlReader.getNumberAttr(xml, "teammateScoreMultiplier");
+        data.teammateScoreMultiplier = XmlUtil.getNumberAttr(xml, "teammateScoreMultiplier");
 
-        data.gemValues = IntValueTable.fromXml(XmlReader.getSingleChild(xml, "GemValues"));
+        data.gemValues = IntValueTable.fromXml(XmlUtil.getSingleChild(xml, "GemValues"));
 
         for each (var colorXml :XML in xml.PlayerColors.Color) {
-            data.playerColors.push(XmlReader.getUintAttr(colorXml, "value"));
+            data.playerColors.push(XmlUtil.getUintAttr(colorXml, "value"));
         }
 
         for each (var nameXml :XML in xml.MaleRobotNames.Name) {
-            data.maleRobotNames.push(XmlReader.getStringAttr(nameXml, "value"));
+            data.maleRobotNames.push(XmlUtil.getStringAttr(nameXml, "value"));
         }
 
         for each (nameXml in xml.FemaleRobotNames.Name) {
-            data.femaleRobotNames.push(XmlReader.getStringAttr(nameXml, "value"));
+            data.femaleRobotNames.push(XmlUtil.getStringAttr(nameXml, "value"));
         }
 
         parseTerrainString(xml.Terrain, data);
