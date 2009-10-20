@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import popcraft.*;
 
@@ -14,10 +14,10 @@ public class GameVariantData
     {
         var variant :GameVariantData = new GameVariantData();
 
-        variant.name = XmlReader.getStringAttr(xml, "name");
-        variant.description = XmlReader.getStringAttr(xml, "description");
+        variant.name = XmlUtil.getStringAttr(xml, "name");
+        variant.description = XmlUtil.getStringAttr(xml, "description");
 
-        var gameDataOverrideNode :XML = XmlReader.getSingleChild(xml, "GameDataOverride");
+        var gameDataOverrideNode :XML = XmlUtil.getSingleChild(xml, "GameDataOverride");
         variant.gameDataOverride = GameData.fromXml(gameDataOverrideNode,
             ClientCtx.defaultGameData.clone());
 

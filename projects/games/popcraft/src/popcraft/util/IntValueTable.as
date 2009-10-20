@@ -1,7 +1,7 @@
 package popcraft.util {
 
 import com.threerings.util.Assert;
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 /**
  * A simple utility class that stores a table of values.
@@ -39,13 +39,13 @@ public class IntValueTable
     {
         var values :Array = [];
         for each (var indexData :XML in xmlData.Index) {
-            values.push(XmlReader.getIntAttr(indexData, "value"));
+            values.push(XmlUtil.getIntAttr(indexData, "value"));
         }
 
         var outOfBoundsScaleVal :int;
         var outOfBoundsScaleData :XML = xmlData.OutOfBoundsScale[0];
         if (null != outOfBoundsScaleData) {
-            outOfBoundsScaleVal = XmlReader.getIntAttr(outOfBoundsScaleData, "value", 0);
+            outOfBoundsScaleVal = XmlUtil.getIntAttr(outOfBoundsScaleData, "value", 0);
         }
 
         return new IntValueTable(values, outOfBoundsScaleVal);

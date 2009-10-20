@@ -2,7 +2,7 @@ package popcraft.data {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.flashbang.resource.ImageResource;
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import flash.display.DisplayObject;
 
@@ -56,21 +56,21 @@ public class LevelData
                 ClientCtx.defaultGameData.clone());
         }
 
-        level.levelCompletionBonus = XmlReader.getIntAttr(xml, "levelCompletionBonus");
-        level.expertCompletionBonus = XmlReader.getIntAttr(xml, "expertCompletionBonus");
-        level.expertCompletionDays = XmlReader.getIntAttr(xml, "expertCompletionDays");
+        level.levelCompletionBonus = XmlUtil.getIntAttr(xml, "levelCompletionBonus");
+        level.expertCompletionBonus = XmlUtil.getIntAttr(xml, "expertCompletionBonus");
+        level.expertCompletionDays = XmlUtil.getIntAttr(xml, "expertCompletionDays");
         // only used on levels 1 and 2 to prevent infinite resource farming
-        level.maxResourcesScore = XmlReader.getIntAttr(xml, "maxResourcesScore", -1);
-        level.introText = XmlReader.getStringAttr(xml, "introText");
-        level.introText2 = XmlReader.getStringAttr(xml, "introText2", level.introText);
-        level.newCreatureType = XmlReader.getStringArrayAttr(xml, "newCreatureType",
+        level.maxResourcesScore = XmlUtil.getIntAttr(xml, "maxResourcesScore", -1);
+        level.introText = XmlUtil.getStringAttr(xml, "introText");
+        level.introText2 = XmlUtil.getStringAttr(xml, "introText2", level.introText);
+        level.newCreatureType = XmlUtil.getStringArrayAttr(xml, "newCreatureType",
             Constants.PLAYER_CREATURE_UNIT_NAMES, -1);
-        level.newSpellType = XmlReader.getStringArrayAttr(xml, "newSpellType",
+        level.newSpellType = XmlUtil.getStringArrayAttr(xml, "newSpellType",
             Constants.CASTABLE_SPELL_NAMES, -1);
 
-        level.playerName = XmlReader.getStringAttr(xml, "playerName");
-        level.playerBaseHealth = XmlReader.getIntAttr(xml, "playerBaseHealth");
-        level.playerBaseStartHealth = XmlReader.getIntAttr(xml, "playerBaseStartHealth",
+        level.playerName = XmlUtil.getStringAttr(xml, "playerName");
+        level.playerBaseHealth = XmlUtil.getIntAttr(xml, "playerBaseHealth");
+        level.playerBaseStartHealth = XmlUtil.getIntAttr(xml, "playerBaseStartHealth",
             level.playerBaseHealth);
 
         // level hints
@@ -90,22 +90,22 @@ public class LevelData
         // parse the initial resources
         level.initialResources = ArrayUtil.create(Constants.RESOURCE__LIMIT, 0);
         for each (var resourceNode :XML in xml.InitialResources.Resource) {
-            var type :int = XmlReader.getStringArrayAttr(resourceNode, "type",
+            var type :int = XmlUtil.getStringArrayAttr(resourceNode, "type",
                 Constants.RESOURCE_NAMES);
-            var amount :int = XmlReader.getUintAttr(resourceNode, "amount");
+            var amount :int = XmlUtil.getUintAttr(resourceNode, "amount");
             level.initialResources[type] = amount;
         }
 
         // parse the initial spells
         level.initialSpells = ArrayUtil.create(Constants.CASTABLE_SPELL_TYPE__LIMIT, 0);
         for each (var spellNode :XML in xml.InitialSpells.Spell) {
-            type = XmlReader.getStringArrayAttr(spellNode, "type", Constants.CASTABLE_SPELL_NAMES);
-            amount = XmlReader.getUintAttr(spellNode, "amount");
+            type = XmlUtil.getStringArrayAttr(spellNode, "type", Constants.CASTABLE_SPELL_NAMES);
+            amount = XmlUtil.getUintAttr(spellNode, "amount");
             level.initialSpells[type] = amount;
         }
 
         // map settings
-        level.mapSettings = MapSettingsData.fromXml(XmlReader.getSingleChild(xml, "MapSettings"));
+        level.mapSettings = MapSettingsData.fromXml(XmlUtil.getSingleChild(xml, "MapSettings"));
 
         return level;
     }

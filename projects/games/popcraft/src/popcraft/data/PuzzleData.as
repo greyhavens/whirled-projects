@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import popcraft.*;
 import popcraft.util.IntValueTable;
@@ -29,10 +29,10 @@ public class PuzzleData
         var useDefaults :Boolean = (defaults != null);
         var data :PuzzleData = (useDefaults ? defaults : new PuzzleData());
 
-        data.useSpecialPuzzleFrame = XmlReader.getBooleanAttr(xml, "useSpecialPuzzleFrame",
+        data.useSpecialPuzzleFrame = XmlUtil.getBooleanAttr(xml, "useSpecialPuzzleFrame",
             (useDefaults ? defaults.useSpecialPuzzleFrame : undefined));
 
-        var clearTableXml :XML = XmlReader.getSingleChild(xml, "ClearValues",
+        var clearTableXml :XML = XmlUtil.getSingleChild(xml, "ClearValues",
             (useDefaults ? null : undefined));
         if (clearTableXml != null) {
             data.clearValues = IntValueTable.fromXml(clearTableXml);
@@ -44,7 +44,7 @@ public class PuzzleData
         }
 
         for each (var resourceNode :XML in xml.Resource) {
-            var type :int = XmlReader.getStringArrayAttr(
+            var type :int = XmlUtil.getStringArrayAttr(
                 resourceNode, "type", Constants.RESOURCE_NAMES);
             data.resources[type] = ResourceData.fromXml(resourceNode,
                 (useDefaults ? defaults.resources[type] : null));

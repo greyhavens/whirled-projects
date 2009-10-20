@@ -2,7 +2,7 @@ package popcraft.data {
 
 import com.threerings.util.Map;
 import com.threerings.util.Maps;
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 import com.threerings.flashbang.util.*;
 
 import popcraft.*;
@@ -90,66 +90,66 @@ public class GameData
 
         var data :GameData = (useDefaults ? defaults : new GameData());
 
-        data.dayLength = XmlReader.getNumberAttr(xml, "dayLength",
+        data.dayLength = XmlUtil.getNumberAttr(xml, "dayLength",
             (useDefaults ? defaults.dayLength : undefined));
-        data.nightLength = XmlReader.getNumberAttr(xml, "nightLength",
+        data.nightLength = XmlUtil.getNumberAttr(xml, "nightLength",
             (useDefaults ? defaults.nightLength : undefined));
-        data.dawnWarning = XmlReader.getNumberAttr(xml, "dawnWarning",
+        data.dawnWarning = XmlUtil.getNumberAttr(xml, "dawnWarning",
             (useDefaults ? defaults.dawnWarning : undefined));
-        data.initialDayPhase = XmlReader.getStringArrayAttr(xml, "initialDayPhase",
+        data.initialDayPhase = XmlUtil.getStringArrayAttr(xml, "initialDayPhase",
             Constants.DAY_PHASE_NAMES, (useDefaults ? defaults.initialDayPhase : undefined));
-        data.disableDiurnalCycle = XmlReader.getBooleanAttr(xml, "disableDiurnalCycle",
+        data.disableDiurnalCycle = XmlUtil.getBooleanAttr(xml, "disableDiurnalCycle",
             (useDefaults ? defaults.disableDiurnalCycle : undefined));
-        data.enableEclipse = XmlReader.getBooleanAttr(xml, "enableEclipse",
+        data.enableEclipse = XmlUtil.getBooleanAttr(xml, "enableEclipse",
             (useDefaults ? defaults.enableEclipse : undefined));
-        data.eclipseLength = XmlReader.getNumberAttr(xml, "eclipseLength",
+        data.eclipseLength = XmlUtil.getNumberAttr(xml, "eclipseLength",
             (useDefaults ? defaults.eclipseLength : undefined));
 
-        var spellDropTimeMin :Number = XmlReader.getNumberAttr(xml, "spellDropTimeMin",
+        var spellDropTimeMin :Number = XmlUtil.getNumberAttr(xml, "spellDropTimeMin",
             (useDefaults ? defaults.spellDropTime.min : undefined));
-        var spellDropTimeMax :Number = XmlReader.getNumberAttr(xml, "spellDropTimeMax",
+        var spellDropTimeMax :Number = XmlUtil.getNumberAttr(xml, "spellDropTimeMax",
             (useDefaults ? defaults.spellDropTime.max : undefined));
         data.spellDropTime = new NumRange(spellDropTimeMin, spellDropTimeMax, Rand.STREAM_GAME);
 
-        var spellDropScatterMin :Number = XmlReader.getNumberAttr(xml, "spellDropScatterMin",
+        var spellDropScatterMin :Number = XmlUtil.getNumberAttr(xml, "spellDropScatterMin",
             (useDefaults ? defaults.spellDropScatter.min : undefined));
-        var spellDropScatterMax :Number = XmlReader.getNumberAttr(xml, "spellDropScatterMax",
+        var spellDropScatterMax :Number = XmlUtil.getNumberAttr(xml, "spellDropScatterMax",
             (useDefaults ? defaults.spellDropScatter.max : undefined));
         data.spellDropScatter = new NumRange(spellDropScatterMin, spellDropScatterMax,
             Rand.STREAM_GAME);
 
-        var spellDropCenterOffsetMin :Number = XmlReader.getNumberAttr(xml,
+        var spellDropCenterOffsetMin :Number = XmlUtil.getNumberAttr(xml,
             "spellDropCenterOffsetMin",
             (useDefaults ? defaults.spellDropCenterOffset.min : undefined));
-        var spellDropCenterOffsetMax :Number = XmlReader.getNumberAttr(xml,
+        var spellDropCenterOffsetMax :Number = XmlUtil.getNumberAttr(xml,
             "spellDropCenterOffsetMax",
             (useDefaults ? defaults.spellDropCenterOffset.max : undefined));
         data.spellDropCenterOffset = new NumRange(spellDropCenterOffsetMin, spellDropCenterOffsetMax, Rand.STREAM_GAME);
 
-        data.maxLosingPlayerSpellDropShift = XmlReader.getNumberAttr(xml,
+        data.maxLosingPlayerSpellDropShift = XmlUtil.getNumberAttr(xml,
             "maxLosingPlayerSpellDropShift",
             (useDefaults ? defaults.maxLosingPlayerSpellDropShift : undefined));
 
-        data.minResourceAmount = XmlReader.getIntAttr(xml, "minResourceAmount",
+        data.minResourceAmount = XmlUtil.getIntAttr(xml, "minResourceAmount",
             (useDefaults ? defaults.minResourceAmount : undefined));
-        data.maxResourceAmount = XmlReader.getIntAttr(xml, "maxResourceAmount",
+        data.maxResourceAmount = XmlUtil.getIntAttr(xml, "maxResourceAmount",
             (useDefaults ? defaults.maxResourceAmount : undefined));
-        data.maxSpellsPerType = XmlReader.getIntAttr(xml, "maxSpellsPerType",
+        data.maxSpellsPerType = XmlUtil.getIntAttr(xml, "maxSpellsPerType",
             (useDefaults ? defaults.maxSpellsPerType : undefined));
 
-        data.maxMultiplier = XmlReader.getUintAttr(xml, "maxMultiplier",
+        data.maxMultiplier = XmlUtil.getUintAttr(xml, "maxMultiplier",
             (useDefaults ? defaults.maxMultiplier : undefined));
-        data.multiplierDamageSoak = XmlReader.getNumberAttr(xml, "multiplierDamageSoak",
+        data.multiplierDamageSoak = XmlUtil.getNumberAttr(xml, "multiplierDamageSoak",
             (useDefaults ? defaults.multiplierDamageSoak : undefined));
 
-        var puzzleDataXml :XML = XmlReader.getSingleChild(xml, "PuzzleSettings",
+        var puzzleDataXml :XML = XmlUtil.getSingleChild(xml, "PuzzleSettings",
             (useDefaults ? null : undefined));
         if (puzzleDataXml != null) {
             data.puzzleData = PuzzleData.fromXml(puzzleDataXml,
                 (useDefaults ? defaults.puzzleData : null));
         }
 
-        var pointsDataXml :XML = XmlReader.getSingleChild(xml, "ScoreValues",
+        var pointsDataXml :XML = XmlUtil.getSingleChild(xml, "ScoreValues",
             (useDefaults ? null : undefined));
         if (pointsDataXml != null) {
             data.scoreData = ScoreData.fromXml(pointsDataXml,
@@ -164,7 +164,7 @@ public class GameData
         }
 
         for each (var unitNode :XML in xml.Units.Unit) {
-            type = XmlReader.getStringArrayAttr(unitNode, "type", Constants.UNIT_NAMES);
+            type = XmlUtil.getStringArrayAttr(unitNode, "type", Constants.UNIT_NAMES);
             data.units[type] = UnitData.fromXml(unitNode,
                 (useDefaults ? defaults.units[type] : null));
         }
@@ -175,7 +175,7 @@ public class GameData
         }
 
         for each (var spellNode :XML in xml.Spells.Spell) {
-            type = XmlReader.getStringArrayAttr(spellNode, "type", Constants.SPELL_NAMES);
+            type = XmlUtil.getStringArrayAttr(spellNode, "type", Constants.SPELL_NAMES);
             var spellClass :Class =
                 (type < Constants.CREATURE_SPELL_TYPE__LIMIT ? CreatureSpellData : SpellData);
             data.spells[type] = spellClass.fromXml(spellNode,
@@ -184,7 +184,7 @@ public class GameData
 
         // read PlayerDisplayData
         for each (var playerDisplayXml :XML in xml.PlayerDisplayDatas.PlayerDisplay) {
-            var name :String = XmlReader.getStringAttr(playerDisplayXml, "name");
+            var name :String = XmlUtil.getStringAttr(playerDisplayXml, "name");
             var inheritDisplayData :PlayerDisplayData;
             if (defaults != null) {
                 inheritDisplayData = defaults.getPlayerDisplayData(name);

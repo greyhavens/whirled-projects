@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import popcraft.util.*;
 
@@ -26,13 +26,13 @@ public class ResourceData
         var useDefaults :Boolean = (null != defaults);
         var data :ResourceData = (useDefaults ? defaults : new ResourceData());
 
-        data.displayName = XmlReader.getStringAttr(xml, "displayName",
+        data.displayName = XmlUtil.getStringAttr(xml, "displayName",
             (useDefaults ? defaults.displayName : undefined));
-        data.color = XmlReader.getUintAttr(xml, "color",
+        data.color = XmlUtil.getUintAttr(xml, "color",
             (useDefaults ? defaults.color : undefined));
-        data.hiliteColor = XmlReader.getUintAttr(xml, "hiliteColor",
+        data.hiliteColor = XmlUtil.getUintAttr(xml, "hiliteColor",
             (useDefaults ? defaults.hiliteColor : undefined));
-        data.frequency = XmlReader.getNumberAttr(xml, "frequency",
+        data.frequency = XmlUtil.getNumberAttr(xml, "frequency",
             (useDefaults ? defaults.frequency : undefined));
 
         return data;

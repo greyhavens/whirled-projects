@@ -1,7 +1,7 @@
 package popcraft.data {
 
 import com.threerings.geom.Vector2;
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import popcraft.*;
 
@@ -18,15 +18,15 @@ public class MapSettingsData
     {
         var data :MapSettingsData = new MapSettingsData();
 
-        data.backgroundName = XmlReader.getStringAttr(xml, "backgroundName");
-        data.mapScaleX = XmlReader.getNumberAttr(xml, "mapScaleX", 1);
-        data.mapScaleY = XmlReader.getNumberAttr(xml, "mapScaleY", 1);
-        data.scaleSprites = XmlReader.getBooleanAttr(xml, "scaleSprites", false);
+        data.backgroundName = XmlUtil.getStringAttr(xml, "backgroundName");
+        data.mapScaleX = XmlUtil.getNumberAttr(xml, "mapScaleX", 1);
+        data.mapScaleY = XmlUtil.getNumberAttr(xml, "mapScaleY", 1);
+        data.scaleSprites = XmlUtil.getBooleanAttr(xml, "scaleSprites", false);
 
-        var spellDropXml :XML = XmlReader.getSingleChild(xml, "SpellDropLocation", null);
+        var spellDropXml :XML = XmlUtil.getSingleChild(xml, "SpellDropLocation", null);
         if (null != spellDropXml) {
-            var x :Number = XmlReader.getNumberAttr(spellDropXml, "x");
-            var y :Number = XmlReader.getNumberAttr(spellDropXml, "y");
+            var x :Number = XmlUtil.getNumberAttr(spellDropXml, "x");
+            var y :Number = XmlUtil.getNumberAttr(spellDropXml, "y");
             data.spellDropLoc = new Vector2(x, y);
         }
 

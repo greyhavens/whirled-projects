@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import popcraft.*;
 import popcraft.util.*;
@@ -16,27 +16,27 @@ public class UnitWaveData
     {
         var unitWave :UnitWaveData = new UnitWaveData();
 
-        if (XmlReader.hasAttribute(xmlData, "absoluteDelay")) {
-            var absoluteDelay :Number = XmlReader.getNumberAttr(xmlData, "absoluteDelay");
+        if (XmlUtil.hasAttribute(xmlData, "absoluteDelay")) {
+            var absoluteDelay :Number = XmlUtil.getNumberAttr(xmlData, "absoluteDelay");
             unitWave.delayBefore = Math.max(absoluteDelay - totalDelay, 0.1);
         } else {
-            unitWave.delayBefore = XmlReader.getNumberAttr(xmlData, "delayBefore");
+            unitWave.delayBefore = XmlUtil.getNumberAttr(xmlData, "delayBefore");
         }
 
-        unitWave.spellCastChance = XmlReader.getNumberAttr(xmlData, "spellCastChance", 0);
+        unitWave.spellCastChance = XmlUtil.getNumberAttr(xmlData, "spellCastChance", 0);
 
         for each (var unitNode :XML in xmlData.Unit) {
-            var unitType :int = XmlReader.getStringArrayAttr(unitNode, "type",
+            var unitType :int = XmlUtil.getStringArrayAttr(unitNode, "type",
                 Constants.CREATURE_UNIT_NAMES);
-            var count :int = XmlReader.getUintAttr(unitNode, "count");
-            var max :int = XmlReader.getIntAttr(unitNode, "max", -1);
+            var count :int = XmlUtil.getUintAttr(unitNode, "count");
+            var max :int = XmlUtil.getIntAttr(unitNode, "max", -1);
 
             unitWave.units.push(unitType);
             unitWave.units.push(count);
             unitWave.units.push(max);
         }
 
-        unitWave.targetPlayerName = XmlReader.getStringAttr(xmlData, "targetPlayerName",
+        unitWave.targetPlayerName = XmlUtil.getStringAttr(xmlData, "targetPlayerName",
             null);
 
         return unitWave;

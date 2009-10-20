@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 public class LevelProgressionData
 {
@@ -11,7 +11,7 @@ public class LevelProgressionData
         var lpd :LevelProgressionData = new LevelProgressionData();
 
         for each (var level :XML in xml.Level) {
-            lpd.levelNames.push(XmlReader.getStringAttr(level, "name"));
+            lpd.levelNames.push(XmlUtil.getStringAttr(level, "name"));
         }
 
         return lpd;

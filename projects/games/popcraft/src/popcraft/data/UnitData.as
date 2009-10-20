@@ -1,7 +1,7 @@
 package popcraft.data {
 
 import com.threerings.flashbang.util.*;
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import popcraft.*;
 import popcraft.util.*;
@@ -66,15 +66,15 @@ public class UnitData
         var useDefaults :Boolean = (null != defaults);
         var data :UnitData = (useDefaults ? defaults : new UnitData());
 
-        data.name = XmlReader.getStringAttr(xml, "type",
+        data.name = XmlUtil.getStringAttr(xml, "type",
             (useDefaults ? defaults.name : undefined));
-        data.displayName = XmlReader.getStringAttr(xml, "displayName",
+        data.displayName = XmlUtil.getStringAttr(xml, "displayName",
             (useDefaults ? defaults.displayName : undefined));
-        data.description = XmlReader.getStringAttr(xml, "description",
+        data.description = XmlUtil.getStringAttr(xml, "description",
             (useDefaults ? defaults.description : undefined));
-        data.introText = XmlReader.getStringAttr(xml, "introText",
+        data.introText = XmlUtil.getStringAttr(xml, "introText",
             (useDefaults ? defaults.introText : undefined));
-        data.introText2 = XmlReader.getStringAttr(xml, "introText2",
+        data.introText2 = XmlUtil.getStringAttr(xml, "introText2",
             (useDefaults ? defaults.introText2 : undefined));
 
         var resourceCostsNode :XML = xml.ResourceCosts[0];
@@ -82,22 +82,22 @@ public class UnitData
             // don't inherit resource costs
             data.resourceCosts = [ 0, 0, 0, 0 ];
             for each (var resourceNode :XML in resourceCostsNode.Resource) {
-                var resourceType :int = XmlReader.getStringArrayAttr(resourceNode, "type",
+                var resourceType :int = XmlUtil.getStringArrayAttr(resourceNode, "type",
                     Constants.RESOURCE_NAMES);
-                var cost :int = XmlReader.getUintAttr(resourceNode, "amount");
+                var cost :int = XmlUtil.getUintAttr(resourceNode, "amount");
                 data.resourceCosts[resourceType] = cost;
             }
         }
 
-        data.baseMoveSpeed = XmlReader.getNumberAttr(xml, "baseMoveSpeed",
+        data.baseMoveSpeed = XmlUtil.getNumberAttr(xml, "baseMoveSpeed",
             (useDefaults ? defaults.baseMoveSpeed : undefined));
-        data.hasRepulseForce = XmlReader.getBooleanAttr(xml, "hasRepulseForce",
+        data.hasRepulseForce = XmlUtil.getBooleanAttr(xml, "hasRepulseForce",
             (useDefaults ? defaults.hasRepulseForce : undefined));
-        data.survivesDaytime = XmlReader.getBooleanAttr(xml, "survivesDaytime",
+        data.survivesDaytime = XmlUtil.getBooleanAttr(xml, "survivesDaytime",
             (useDefaults ? defaults.survivesDaytime : false));
-        data.minHealth = XmlReader.getUintAttr(xml, "minHealth",
+        data.minHealth = XmlUtil.getUintAttr(xml, "minHealth",
             (useDefaults ? defaults.minHealth : 0));
-        data.maxHealth = XmlReader.getUintAttr(xml, "maxHealth",
+        data.maxHealth = XmlUtil.getUintAttr(xml, "maxHealth",
             (useDefaults ? defaults.maxHealth : undefined));
 
         var armorNode :XML = xml.Armor[0];
@@ -111,11 +111,11 @@ public class UnitData
                 (useDefaults ? defaults.weapon : null));
         }
 
-        data.collisionRadius = XmlReader.getNumberAttr(xml, "collisionRadius",
+        data.collisionRadius = XmlUtil.getNumberAttr(xml, "collisionRadius",
             (useDefaults ? defaults.collisionRadius : undefined));
-        data.detectRadius = XmlReader.getNumberAttr(xml, "detectRadius",
+        data.detectRadius = XmlUtil.getNumberAttr(xml, "detectRadius",
             (useDefaults ? defaults.detectRadius : undefined));
-        data.loseInterestRadius = XmlReader.getNumberAttr(xml, "loseInterestRadius",
+        data.loseInterestRadius = XmlUtil.getNumberAttr(xml, "loseInterestRadius",
             (useDefaults ? defaults.loseInterestRadius : undefined));
 
         return data;

@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import popcraft.*;
 
@@ -14,10 +14,10 @@ public class MultiplayerSettingsData
     {
         var data :MultiplayerSettingsData = new MultiplayerSettingsData();
 
-        data.arrangeType = XmlReader.getStringArrayAttr(xml, "arrangeType",
+        data.arrangeType = XmlUtil.getStringArrayAttr(xml, "arrangeType",
             Constants.TEAM_ARRANGEMENT_NAMES);
-        data.smallerTeamHandicap = XmlReader.getNumberAttr(xml, "smallerTeamHandicap");
-        data.mapSettings = MapSettingsData.fromXml(XmlReader.getSingleChild(xml, "MapSettings"));
+        data.smallerTeamHandicap = XmlUtil.getNumberAttr(xml, "smallerTeamHandicap");
+        data.mapSettings = MapSettingsData.fromXml(XmlUtil.getSingleChild(xml, "MapSettings"));
 
         return data;
     }

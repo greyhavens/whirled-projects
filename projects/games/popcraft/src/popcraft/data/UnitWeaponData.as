@@ -1,7 +1,7 @@
 package popcraft.data {
 
 import com.threerings.flashbang.util.*;
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import popcraft.*;
 import popcraft.util.*;
@@ -57,38 +57,38 @@ public class UnitWeaponData
 
         var data :UnitWeaponData = (useDefaults ? defaults : new UnitWeaponData());
 
-        data.damageType = XmlReader.getStringArrayAttr(xml, "damageType",
+        data.damageType = XmlUtil.getStringArrayAttr(xml, "damageType",
             Constants.DAMAGE_TYPE_NAMES, (useDefaults ? defaults.damageType : undefined));
-        data.initialWarmup = XmlReader.getNumberAttr(xml, "initialWarmup",
+        data.initialWarmup = XmlUtil.getNumberAttr(xml, "initialWarmup",
             (useDefaults ? defaults.initialWarmup : 0));
-        data.cooldown = XmlReader.getNumberAttr(xml, "cooldown",
+        data.cooldown = XmlUtil.getNumberAttr(xml, "cooldown",
             (useDefaults ? defaults.cooldown : 0.1));
-        data.maxAttackDistance = XmlReader.getNumberAttr(xml, "maxAttackDistance",
+        data.maxAttackDistance = XmlUtil.getNumberAttr(xml, "maxAttackDistance",
             (useDefaults ? defaults.maxAttackDistance : 0));
 
-        var damageMin :Number = XmlReader.getNumberAttr(xml, "damageMin",
+        var damageMin :Number = XmlUtil.getNumberAttr(xml, "damageMin",
             (useDefaults ? defaults.damageRange.min : undefined));
-        var damageMax :Number = XmlReader.getNumberAttr(xml, "damageMax",
+        var damageMax :Number = XmlUtil.getNumberAttr(xml, "damageMax",
             (useDefaults ? defaults.damageRange.max : undefined));
         data.damageRange = new NumRange(damageMin, damageMax, Rand.STREAM_GAME);
 
         // ranged weapons
-        data.isRanged = XmlReader.getBooleanAttr(xml, "isRanged",
+        data.isRanged = XmlUtil.getBooleanAttr(xml, "isRanged",
             (useDefaults ? defaults.isRanged : false));
         if (data.isRanged) {
-            data.missileSpeed = XmlReader.getNumberAttr(xml, "missileSpeed",
+            data.missileSpeed = XmlUtil.getNumberAttr(xml, "missileSpeed",
                 (useDefaults ? defaults.missileSpeed : undefined));
         }
 
         // AOE weapons
-        data.isAOE = XmlReader.getBooleanAttr(xml, "isAOE",
+        data.isAOE = XmlUtil.getBooleanAttr(xml, "isAOE",
             (useDefaults ? defaults.isAOE : false));
         if (data.isAOE) {
-            data.aoeRadius = XmlReader.getNumberAttr(xml, "aoeRadius",
+            data.aoeRadius = XmlUtil.getNumberAttr(xml, "aoeRadius",
                 (useDefaults ? defaults.aoeRadius : undefined));
-            data.aoeDamageFriendlies = XmlReader.getBooleanAttr(xml, "aoeDamageFriendlies",
+            data.aoeDamageFriendlies = XmlUtil.getBooleanAttr(xml, "aoeDamageFriendlies",
                 (useDefaults ? defaults.aoeDamageFriendlies : undefined));
-            data.aoeMaxDamage = XmlReader.getNumberAttr(xml, "aoeMaxDamage",
+            data.aoeMaxDamage = XmlUtil.getNumberAttr(xml, "aoeMaxDamage",
                 (useDefaults ? defaults.aoeMaxDamage : undefined));
         }
 

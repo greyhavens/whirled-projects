@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 public class EndlessComputerPlayerData extends ComputerPlayerData
 {
@@ -14,9 +14,9 @@ public class EndlessComputerPlayerData extends ComputerPlayerData
 
         ComputerPlayerData.fromXml(xml, data);
 
-        data.baseHealthIncrement = XmlReader.getNumberAttr(xml, "baseHealthIncrement");
-        data.waveDelayScale = XmlReader.getNumberAttr(xml, "waveDelayScale");
-        data.baseLoc = BaseLocationData.fromXml(XmlReader.getSingleChild(xml, "BaseLocation"));
+        data.baseHealthIncrement = XmlUtil.getNumberAttr(xml, "baseHealthIncrement");
+        data.waveDelayScale = XmlUtil.getNumberAttr(xml, "waveDelayScale");
+        data.baseLoc = BaseLocationData.fromXml(XmlUtil.getSingleChild(xml, "BaseLocation"));
 
         return data;
     }

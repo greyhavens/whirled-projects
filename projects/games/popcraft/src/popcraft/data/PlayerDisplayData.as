@@ -1,7 +1,7 @@
 package popcraft.data {
 
 import com.threerings.flashbang.resource.ImageResource;
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import flash.display.DisplayObject;
 
@@ -38,14 +38,14 @@ public class PlayerDisplayData
         var useDefaults :Boolean = (defaults != null);
         var data :PlayerDisplayData = (useDefaults ? defaults : new PlayerDisplayData());
 
-        data.playerName = XmlReader.getStringAttr(xml, "name");
-        data.displayName = XmlReader.getStringAttr(xml, "displayName",
+        data.playerName = XmlUtil.getStringAttr(xml, "name");
+        data.displayName = XmlUtil.getStringAttr(xml, "displayName",
             (useDefaults ? defaults.displayName : undefined));
-        data.headshotName = XmlReader.getStringAttr(xml, "headshotName",
+        data.headshotName = XmlUtil.getStringAttr(xml, "headshotName",
             (useDefaults ? defaults.headshotName : undefined));
-        data.color = XmlReader.getUintAttr(xml, "color",
+        data.color = XmlUtil.getUintAttr(xml, "color",
             (useDefaults ? defaults.color : undefined));
-        data.excludeFromMpBattle = XmlReader.getBooleanAttr(xml, "excludeFromMpBattle",
+        data.excludeFromMpBattle = XmlUtil.getBooleanAttr(xml, "excludeFromMpBattle",
             (useDefaults ? defaults.excludeFromMpBattle : false));
 
         return data;

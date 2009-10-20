@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import popcraft.*;
 import popcraft.util.*;
@@ -40,10 +40,10 @@ public class SpellData
 
         var spell :SpellData = (useDefaults ? inheritFrom : new SpellData());
 
-        spell.type = XmlReader.getStringArrayAttr(xml, "type", Constants.SPELL_NAMES);
-        spell.displayName = XmlReader.getStringAttr(xml, "displayName",
+        spell.type = XmlUtil.getStringArrayAttr(xml, "type", Constants.SPELL_NAMES);
+        spell.displayName = XmlUtil.getStringAttr(xml, "displayName",
             (useDefaults ? inheritFrom.displayName : undefined));
-        spell.introText = XmlReader.getStringAttr(xml, "introText",
+        spell.introText = XmlUtil.getStringAttr(xml, "introText",
             (useDefaults ? inheritFrom.introText : undefined));
 
         return spell;

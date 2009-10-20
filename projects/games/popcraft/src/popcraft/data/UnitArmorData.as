@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import popcraft.*;
 import popcraft.util.*;
@@ -41,9 +41,9 @@ public class UnitArmorData
             }
 
             for each (var damageNode :XML in xml.Damage) {
-                var type :int = XmlReader.getStringArrayAttr(damageNode, "type",
+                var type :int = XmlUtil.getStringArrayAttr(damageNode, "type",
                     Constants.DAMAGE_TYPE_NAMES);
-                var scale :Number = XmlReader.getNumberAttr(damageNode, "scale");
+                var scale :Number = XmlUtil.getNumberAttr(damageNode, "scale");
                 armorData.armor[type] = scale;
             }
         }

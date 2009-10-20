@@ -3,7 +3,7 @@ package popcraft.data {
 import com.threerings.geom.Vector2;
 import com.threerings.util.Maps;
 import com.threerings.util.Map;
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import popcraft.*;
 
@@ -31,18 +31,18 @@ public class EndlessMapData
                                                         ClientCtx.defaultGameData.clone());
         }
 
-        data.mapSettings = MapSettingsData.fromXml(XmlReader.getSingleChild(xml, "MapSettings"));
+        data.mapSettings = MapSettingsData.fromXml(XmlUtil.getSingleChild(xml, "MapSettings"));
 
-        data.displayName = XmlReader.getStringAttr(xml, "displayName");
-        data.isSavePoint = XmlReader.getBooleanAttr(xml, "isSavePoint");
+        data.displayName = XmlUtil.getStringAttr(xml, "displayName");
+        data.isSavePoint = XmlUtil.getBooleanAttr(xml, "isSavePoint");
 
         for each (var humanXml :XML in xml.HumanPlayers.HumanPlayer) {
-            var playerName :String = XmlReader.getStringAttr(humanXml, "playerName");
+            var playerName :String = XmlUtil.getStringAttr(humanXml, "playerName");
             var humanPlayerData :EndlessHumanPlayerData = EndlessHumanPlayerData.fromXml(humanXml);
             data.humans.put(playerName, humanPlayerData);
         }
 
-        var multiplierDropXml :XML = XmlReader.getSingleChild(xml, "MultiplierDropLocation");
+        var multiplierDropXml :XML = XmlUtil.getSingleChild(xml, "MultiplierDropLocation");
         data.multiplierDropLoc = DataUtil.parseVector2(multiplierDropXml);
 
         for each (var computerXml :XML in xml.Computer) {

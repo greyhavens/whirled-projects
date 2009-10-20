@@ -1,7 +1,7 @@
 package popcraft.data {
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import popcraft.*;
 
@@ -38,7 +38,7 @@ public class EndlessLevelData
         var data :EndlessLevelData = new EndlessLevelData();
 
         for each (var nameXml :XML in xml.HumanPlayers.Player) {
-            data.humanPlayerNames.push(XmlReader.getStringAttr(nameXml, "name"));
+            data.humanPlayerNames.push(XmlUtil.getStringAttr(nameXml, "name"));
         }
 
         for each (var mapSequenceXml :XML in xml.MapSequence.Map) {

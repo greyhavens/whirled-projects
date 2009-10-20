@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import popcraft.*;
 import popcraft.util.*;
@@ -43,11 +43,11 @@ public class CreatureSpellData extends SpellData
 
         SpellData.fromXml(xml, spell);
 
-        spell.expireTime = XmlReader.getNumberAttr(xml, "expireTime",
+        spell.expireTime = XmlUtil.getNumberAttr(xml, "expireTime",
             (useDefaults ? inheritFrom.expireTime : undefined));
-        spell.speedScaleOffset = XmlReader.getNumberAttr(xml, "speedScaleOffset",
+        spell.speedScaleOffset = XmlUtil.getNumberAttr(xml, "speedScaleOffset",
             (useDefaults ? inheritFrom.speedScaleOffset : 0));
-        spell.damageScaleOffset = XmlReader.getNumberAttr(xml, "damageScaleOffset",
+        spell.damageScaleOffset = XmlUtil.getNumberAttr(xml, "damageScaleOffset",
             (useDefaults ? inheritFrom.damageScaleOffset : 0));
 
         return spell;

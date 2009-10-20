@@ -3,7 +3,7 @@ package popcraft.data {
 import com.threerings.flashbang.util.IntRange;
 import com.threerings.flashbang.util.NumRange;
 import com.threerings.flashbang.util.Rand;
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 public class DaySequenceData
 {
@@ -21,7 +21,7 @@ public class DaySequenceData
     {
         var data :DaySequenceData = new DaySequenceData();
 
-        data.repeatWaves = XmlReader.getBooleanAttr(xmlData, "repeatWaves");
+        data.repeatWaves = XmlUtil.getBooleanAttr(xmlData, "repeatWaves");
 
         var totalWaveDelay :Number = 0;
         for each (var waveData :XML in xmlData.Wave) {
@@ -30,18 +30,18 @@ public class DaySequenceData
             data.unitWaves.push(uwd);
         }
 
-        var noticeSpellDropAfterMin :Number = XmlReader.getNumberAttr(xmlData,
+        var noticeSpellDropAfterMin :Number = XmlUtil.getNumberAttr(xmlData,
             "noticeSpellDropAfterMin", -1);
-        var noticeSpellDropAfterMax :Number = XmlReader.getNumberAttr(xmlData,
+        var noticeSpellDropAfterMax :Number = XmlUtil.getNumberAttr(xmlData,
             "noticeSpellDropAfterMax", -1);
         data.noticeSpellDropAfter = new NumRange(
             noticeSpellDropAfterMin,
             noticeSpellDropAfterMax,
             Rand.STREAM_GAME);
 
-        var spellDropCourierGroupSizeMin :int = XmlReader.getIntAttr(xmlData,
+        var spellDropCourierGroupSizeMin :int = XmlUtil.getIntAttr(xmlData,
             "spellDropCourierGroupSizeMin", -1);
-        var spellDropCourierGroupSizeMax :int = XmlReader.getIntAttr(xmlData,
+        var spellDropCourierGroupSizeMax :int = XmlUtil.getIntAttr(xmlData,
             "spellDropCourierGroupSizeMax", -1);
         data.spellDropCourierGroupSize = new IntRange(
             spellDropCourierGroupSizeMin,

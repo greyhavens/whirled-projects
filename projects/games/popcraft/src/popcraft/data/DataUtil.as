@@ -1,7 +1,7 @@
 package popcraft.data {
 
 import com.threerings.geom.Vector2;
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import popcraft.*;
 
@@ -10,8 +10,8 @@ public class DataUtil
     public static function parseVector2 (xml :XML) :Vector2
     {
         var vec :Vector2 = new Vector2();
-        vec.x = XmlReader.getNumberAttr(xml, "x");
-        vec.y = XmlReader.getNumberAttr(xml, "y");
+        vec.x = XmlUtil.getNumberAttr(xml, "x");
+        vec.y = XmlUtil.getNumberAttr(xml, "y");
         return vec;
     }
 
@@ -29,14 +29,14 @@ public class DataUtil
     {
         var types :Array = [];
 
-        if (XmlReader.getBooleanAttr(xml, "all", false)) {
+        if (XmlUtil.getBooleanAttr(xml, "all", false)) {
             for (var type :int = 0; type < typeNames.length; ++type) {
                 types.push(type);
             }
 
         } else {
             for each (var unitData :XML in xml.elements(xmlNodeName)) {
-                types.push(XmlReader.getStringArrayAttr(unitData, "type", typeNames));
+                types.push(XmlUtil.getStringArrayAttr(unitData, "type", typeNames));
             }
         }
 

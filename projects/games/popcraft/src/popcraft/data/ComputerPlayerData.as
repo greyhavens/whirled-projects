@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import popcraft.*;
 import popcraft.util.*;
@@ -20,12 +20,12 @@ public class ComputerPlayerData
     {
         var computerPlayer :ComputerPlayerData = (data != null ? data : new ComputerPlayerData());
 
-        computerPlayer.playerName = XmlReader.getStringAttr(xml, "playerName");
-        computerPlayer.baseHealth = XmlReader.getIntAttr(xml, "baseHealth");
-        computerPlayer.baseStartHealth = XmlReader.getIntAttr(xml, "baseStartHealth",
+        computerPlayer.playerName = XmlUtil.getStringAttr(xml, "playerName");
+        computerPlayer.baseHealth = XmlUtil.getIntAttr(xml, "baseHealth");
+        computerPlayer.baseStartHealth = XmlUtil.getIntAttr(xml, "baseStartHealth",
             computerPlayer.baseHealth);
-        computerPlayer.invincible = XmlReader.getBooleanAttr(xml, "invincible", false);
-        computerPlayer.team = XmlReader.getUintAttr(xml, "team");
+        computerPlayer.invincible = XmlUtil.getBooleanAttr(xml, "invincible", false);
+        computerPlayer.team = XmlUtil.getUintAttr(xml, "team");
 
         for each (var initialDayData :XML in xml.InitialDays.Day) {
             computerPlayer.initialDays.push(DaySequenceData.fromXml(initialDayData));
@@ -42,9 +42,9 @@ public class ComputerPlayerData
 
         // read spells
         for each (var spellData :XML in xml.InitialSpells.Spell) {
-            spellType = XmlReader.getStringArrayAttr(
+            spellType = XmlUtil.getStringArrayAttr(
                 spellData, "type", Constants.CREATURE_SPELL_NAMES);
-            var amount :int = XmlReader.getUintAttr(spellData, "amount");
+            var amount :int = XmlUtil.getUintAttr(spellData, "amount");
             computerPlayer.startingCreatureSpells[spellType] = amount;
         }
 

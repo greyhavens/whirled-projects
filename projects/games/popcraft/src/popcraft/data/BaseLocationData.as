@@ -1,7 +1,7 @@
 package popcraft.data {
 
 import com.threerings.geom.Vector2;
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 public class BaseLocationData
 {
@@ -11,9 +11,9 @@ public class BaseLocationData
     public static function fromXml (xml :XML) :BaseLocationData
     {
         var data :BaseLocationData = new BaseLocationData();
-        data.loc.x = XmlReader.getNumberAttr(xml, "x");
-        data.loc.y = XmlReader.getNumberAttr(xml, "y");
-        data.team = XmlReader.getIntAttr(xml, "team");
+        data.loc.x = XmlUtil.getNumberAttr(xml, "x");
+        data.loc.y = XmlUtil.getNumberAttr(xml, "y");
+        data.team = XmlUtil.getIntAttr(xml, "team");
 
         return data;
     }

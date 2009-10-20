@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 import popcraft.*;
 
@@ -26,11 +26,11 @@ public class ScoreData
         var useDefaults :Boolean = (defaults != null);
         var data :ScoreData = (useDefaults ? defaults : new ScoreData);
 
-        data.pointsPerExtraMultiplier = XmlReader.getIntAttr(xml, "pointsPerExtraMultiplier",
+        data.pointsPerExtraMultiplier = XmlUtil.getIntAttr(xml, "pointsPerExtraMultiplier",
             (useDefaults ? defaults.pointsPerExtraMultiplier : undefined));
-        data.pointsPerResource = XmlReader.getIntAttr(xml, "pointsPerResource",
+        data.pointsPerResource = XmlUtil.getIntAttr(xml, "pointsPerResource",
             (useDefaults ? defaults.pointsPerResource : undefined));
-        data.pointsPerOpponentKill = XmlReader.getIntAttr(xml, "pointsPerOpponentKill",
+        data.pointsPerOpponentKill = XmlUtil.getIntAttr(xml, "pointsPerOpponentKill",
             (useDefaults ? defaults.pointsPerOpponentKill : undefined));
 
         // init pointsPerCreatureKill
@@ -40,9 +40,9 @@ public class ScoreData
         }
 
         for each (var unitXml :XML in xml.PointsPerCreatureKill.Unit) {
-            var type :int = XmlReader.getStringArrayAttr(
+            var type :int = XmlUtil.getStringArrayAttr(
                 unitXml, "type", Constants.CREATURE_UNIT_NAMES);
-            var points :int = XmlReader.getIntAttr(unitXml, "points",
+            var points :int = XmlUtil.getIntAttr(unitXml, "points",
                 (useDefaults ? defaults[type] : 0));
             data.pointsPerCreatureKill[type] = points;
         }

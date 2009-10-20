@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.threerings.util.XmlReader;
+import com.threerings.util.XmlUtil;
 
 public class EndlessHumanPlayerData
 {
@@ -13,8 +13,8 @@ public class EndlessHumanPlayerData
     {
         var data :EndlessHumanPlayerData = new EndlessHumanPlayerData();
 
-        data.resourceHandicap = XmlReader.getNumberAttr(xml, "resourceHandicap", 1);
-        data.baseLoc = BaseLocationData.fromXml(XmlReader.getSingleChild(xml, "BaseLocation"));
+        data.resourceHandicap = XmlUtil.getNumberAttr(xml, "resourceHandicap", 1);
+        data.baseLoc = BaseLocationData.fromXml(XmlUtil.getSingleChild(xml, "BaseLocation"));
 
         // parse the available units and spells
         data.availableUnits = DataUtil.parseCreatureTypes(xml.AvailableUnits[0]);
