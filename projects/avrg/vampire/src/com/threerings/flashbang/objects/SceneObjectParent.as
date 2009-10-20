@@ -1,9 +1,10 @@
-package com.whirled.contrib.simplegame.objects
+package com.threerings.flashbang.objects
 {
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.GameObjectRef;
+import com.threerings.flashbang.components.SceneComponent;
+import com.threerings.ui.DisplayUtils;
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.DisplayUtil;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.components.SceneComponent;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -11,7 +12,7 @@ import flash.display.Sprite;
 
 
 /**
- * A SceneObject with children SimObjects.  The children use the db, but are destroyed
+ * A SceneObject with children GameObjects.  The children use the db, but are destroyed
  * with the parent.
  */
 public class SceneObjectParent extends SceneObject
@@ -19,30 +20,29 @@ public class SceneObjectParent extends SceneObject
     override protected function addedToDB () :void
     {
         super.addedToDB();
-        for each (var sim :SimObject in _yetToAddToDB) {
+        for each (var sim :GameObject in _yetToAddToDB) {
             if (sim.db == null) {
                 db.addObject(sim);
             }
+            _subObjects.push(sim.ref);
         }
         _yetToAddToDB = null;
     }
 
-    protected function addSimObjectInternal (s :SimObject) :void
+    protected function addGameObjectInternal (s :GameObject) :void
     {
         if (db != null) {
             if (s.db == null) {
                 db.addObject(s);
             }
+            _subObjects.push(s.ref);
         }
         else {
             _yetToAddToDB.push(s);
         }
-        if (!ArrayUtil.contains(_subObjects, s)) {
-            _subObjects.push(s);
-        }
     }
 
-    public function addSceneObject (obj :SimObject, displayParent :DisplayObjectContainer = null) :void
+    public function addSceneObject (obj :GameObject, displayParent :DisplayObjectContainer = null) :void
     {
         if (obj is SceneComponent) {
             // Attach the object to a display parent.
@@ -57,16 +57,18 @@ public class SceneObjectParent extends SceneObject
             }
             displayParent.addChild(disp);
         }
-        addSimObjectInternal(obj);
+        addGameObjectInternal(obj);
     }
 
-    public function addSimObject (obj :SimObject) :void
+    public function addGameObject (obj :GameObject) :void
     {
-        addSimObjectInternal(obj);
+        addGameObjectInternal(obj);
     }
 
-    protected function destroySimObject (s :SimObject) :void
+    protected function destroyGameObject (s :GameObject) :void
     {
+        ArrayUtil.removeAll(_subObjects, s.ref);
+
         if (s == null) {
             return;
         }
@@ -74,21 +76,14 @@ public class SceneObjectParent extends SceneObject
             s.destroySelf();
         }
         else if (s is SceneObject) {
-            DisplayUtil.detach(SceneObject(s).displayObject);
+            DisplayUtils.detach(SceneObject(s).displayObject);
         }
-
-        ArrayUtil.removeAll(_subObjects, s);
-
     }
 
     override protected function destroyed () :void
     {
         super.destroyed();
-        for each (var child :SimObject in _subObjects) {
-            if (child.isLiveObject) {
-                child.destroySelf();
-            }
-        }
+        destroyChildren();
     }
 
     override public function get displayObject () :DisplayObject
@@ -98,9 +93,9 @@ public class SceneObjectParent extends SceneObject
 
     protected function destroyChildren () :void
     {
-        for each (var child :SimObject in _subObjects) {
-            if (child.isLiveObject) {
-                child.destroySelf();
+        for each (var child :GameObjectRef in _subObjects) {
+            if (child != null && child.object.isLiveObject) {
+                child.object.destroySelf();
             }
         }
         _subObjects = [];

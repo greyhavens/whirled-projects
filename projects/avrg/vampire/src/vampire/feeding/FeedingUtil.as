@@ -1,6 +1,6 @@
 package vampire.feeding {
 
-import com.whirled.contrib.simplegame.net.MessageManager;
+import com.whirled.contrib.messagemgr.MessageManager;
 
 import flash.utils.Dictionary;
 

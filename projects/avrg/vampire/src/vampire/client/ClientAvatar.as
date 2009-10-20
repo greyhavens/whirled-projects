@@ -7,12 +7,12 @@ package vampire.client
     import com.whirled.avrg.AVRGameAvatar;
     import com.whirled.avrg.AVRGameControl;
     import com.whirled.avrg.AVRGameRoomEvent;
-    import com.whirled.contrib.simplegame.SimObject;
-    import com.whirled.contrib.simplegame.net.Message;
-    import com.whirled.contrib.simplegame.objects.SimpleTimer;
-    import com.whirled.contrib.simplegame.tasks.FunctionTask;
-    import com.whirled.contrib.simplegame.tasks.SerialTask;
-    import com.whirled.contrib.simplegame.tasks.TimedTask;
+    import com.threerings.flashbang.GameObject;
+    import com.whirled.contrib.messagemgr.Message;
+    import com.threerings.flashbang.objects.SimpleTimer;
+    import com.threerings.flashbang.tasks.FunctionTask;
+    import com.threerings.flashbang.tasks.SerialTask;
+    import com.threerings.flashbang.tasks.TimedTask;
     import com.whirled.net.MessageReceivedEvent;
     import com.whirled.net.PropertyChangedEvent;
 
@@ -26,7 +26,7 @@ package vampire.client
 /**
  * The avatar
  */
-public class ClientAvatar extends SimObject
+public class ClientAvatar extends GameObject
 {
     public function ClientAvatar (ctrl :AVRGameControl)
     {

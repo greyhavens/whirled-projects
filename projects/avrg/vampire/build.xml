@@ -3,31 +3,19 @@
   
 
   <property name="app.name" value="VampireMain"/>
-  <!--<property name="app.name" value="VProbe"/>-->
   <property name="app.source-dir" value="src"/>
   <property name="app.package-dir" value="vampire/client"/>
   <property name="app.enable-server-agent" value="true"/>
   <property name="app.server-agent" value="Server"/>
   <property name="app.server-agent-package-dir" value="vampire/server"/> 
   
-  <!-- define some basic project parameters -->
-<!--  <property name="app.name" value="Vampire"/>
-  <property name="app.source-dir" value="src"/>
-  <property name="app.package-dir" value="vampire"/>
-
-  <property name="app.server-agent" value="server/Server"/>
-  <property name="app.enable-server-agent" value="true"/>-->
-
   <!-- if you need to include extra source files, uncomment and edit this line -->
   <property name="app.source-extras" value="/export/whirled/contrib/src/as,/export/whirled/projects/avrg/probe/src,/export/whirled/projects/avatars/uravatar/src"/>
 	
   <!-- include the standard build script -->
+  <!--<import file="/export/whirled/etc/project-include.xml"/>-->
+  <import file="/export/whirled/dist/sdk/whirled/etc/project-include.xml"/>
   
-  
-
-
-
-  <import file="/export/whirled/etc/project-include.xml"/>
 
   <!-- Print a time stamp at the end of every compile.  Useful because sometimes I forget. -->
   <target name="TS">
@@ -39,6 +27,15 @@
 	  <format property="progtime" pattern="HH:mm:ss"/>
     </tstamp>
     <echo message="${progtime}" />
+    <echo message="${java.version}" />
+    
+    <!--Growl Notify -->
+    <exec executable="/usr/local/bin/growlnotify" os="Mac OS X">
+	    <arg value="-p Normal"/>
+	    <arg value="-m ant"/>
+	    <arg value="finished build"/>
+  </exec>
+
 </target>
   
 </project>

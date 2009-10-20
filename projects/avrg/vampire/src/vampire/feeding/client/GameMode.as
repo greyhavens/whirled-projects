@@ -4,12 +4,12 @@ import com.threerings.flash.Vector2;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControlEvent;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.audio.AudioChannel;
-import com.whirled.contrib.simplegame.net.*;
-import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
-import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.util.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.audio.AudioChannel;
+import com.whirled.contrib.messagemgr.*;
+import com.threerings.flashbang.objects.SimpleSceneObject;
+import com.threerings.flashbang.tasks.*;
+import com.threerings.flashbang.util.*;
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
@@ -44,7 +44,7 @@ public class GameMode extends AppMode
             // In single-player games, there's nobody else to volley our multipliers back
             // to us, so we fake it by occasionally sending fake multipliers to ourselves
             if (Rand.nextNumber(Rand.STREAM_GAME) < Constants.SP_MULTIPLIER_RETURN_CHANCE) {
-                var sendMultiplierObj :SimObject = new SimObject();
+                var sendMultiplierObj :GameObject = new GameObject();
                 var loc :Vector2 = new Vector2(x, y);
                 loc.x += Rand.nextNumberRange(5, 25, Rand.STREAM_COSMETIC);
                 loc.y += Rand.nextNumberRange(5, 25, Rand.STREAM_COSMETIC);
@@ -135,7 +135,7 @@ public class GameMode extends AppMode
 
         // spawn white cells on a timer separate from the heartbeat
         if (ClientCtx.variantSettings.boardCreatesWhiteCells) {
-            var whiteCellSpawner :SimObject = new SimObject();
+            var whiteCellSpawner :GameObject = new GameObject();
             whiteCellSpawner.addTask(new RepeatingTask(
                 new VariableTimedTask(
                     ClientCtx.variantSettings.boardWhiteCellCreationTime.min,

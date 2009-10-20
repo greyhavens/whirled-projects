@@ -1,7 +1,7 @@
 package vampire.feeding {
 
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.simplegame.util.*;
+import com.threerings.flashbang.util.*;
 
 public class Constants
 {

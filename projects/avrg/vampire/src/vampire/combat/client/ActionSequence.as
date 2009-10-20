@@ -4,8 +4,8 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Util;
 import com.whirled.contrib.DisplayUtil;
-import com.whirled.contrib.simplegame.components.SceneComponent;
-import com.whirled.contrib.simplegame.objects.SceneObjectParent;
+import com.threerings.flashbang.components.SceneComponent;
+import com.threerings.flashbang.objects.SceneObjectParent;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -77,7 +77,7 @@ public class ActionSequence extends SceneObjectParent
             currentAction.nextRound();
 //            currentAction.nextRound();
             if (_currentUnit.energy < Action.energyCost(currentAction.action)) {
-                destroySimObject(currentAction);
+                destroyGameObject(currentAction);
                 currentAction = new ActionObject(Action.REST, ActionObject.NULL);
                 addSceneObject(currentAction);
                 _actionSequence.unshift(currentAction);
@@ -86,7 +86,7 @@ public class ActionSequence extends SceneObjectParent
             if (currentAction.warmUpRemaining > 0) {
 //                currentAction.nextRound();
 //                if (_previousAction != null) {
-//                    destroySimObject(_previousAction);
+//                    destroyGameObject(_previousAction);
 //
 //                }
 //                _previousAction = new ActionObject(Action.REST, ActionObject.NULL, _currentUnit);
@@ -132,7 +132,7 @@ public class ActionSequence extends SceneObjectParent
             return;
         }
 //        log.debug("removeAction, Destroying");
-        destroySimObject(actionObj);
+        destroyGameObject(actionObj);
         ArrayUtil.removeAll(_actionSequence, actionObj);
         refresh();
 //        log.debug("removeAction, end, ", "_actionSequence", _actionSequence);
@@ -141,11 +141,11 @@ public class ActionSequence extends SceneObjectParent
     public function shiftActions () :void
     {
         var current :ActionObject = _actionSequence.shift() as ActionObject;
-        destroySimObject(_previousAction);
+        destroyGameObject(_previousAction);
         _previousAction = null;
 
         if (current != null) {
-            destroySimObject(current);
+            destroyGameObject(current);
             _previousAction = new ActionObject(current.action, ActionObject.NULL, _currentUnit);
             addSceneObject(_previousAction);
         }

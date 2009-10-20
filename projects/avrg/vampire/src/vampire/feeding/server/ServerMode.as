@@ -1,9 +1,9 @@
 package vampire.feeding.server {
 
 import com.threerings.util.Log;
-import com.whirled.contrib.EventHandlerManager;
+import com.threerings.util.EventHandlerManager;
 import com.whirled.contrib.TimerManager;
-import com.whirled.contrib.simplegame.net.Message;
+import com.whirled.contrib.messagemgr.Message;
 
 import vampire.feeding.*;
 import vampire.feeding.net.*;

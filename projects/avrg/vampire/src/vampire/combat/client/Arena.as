@@ -1,7 +1,7 @@
 package vampire.combat.client
 {
 import com.whirled.contrib.DisplayUtil;
-import com.whirled.contrib.simplegame.objects.SceneObjectParent;
+import com.threerings.flashbang.objects.SceneObjectParent;
 
 import flash.display.Graphics;
 import flash.display.Sprite;
@@ -45,7 +45,7 @@ public class Arena extends SceneObjectParent
 
 //    public function addUnit (u :CombatUnitInfoView) :void
 //    {
-//        addSimObject(u, _displaySprite);
+//        addGameObject(u, _displaySprite);
 //    }
 
 }

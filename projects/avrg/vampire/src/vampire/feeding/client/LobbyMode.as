@@ -2,12 +2,12 @@ package vampire.feeding.client {
 
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Log;
-import com.whirled.contrib.ColorMatrix;
+import com.threerings.display.ColorMatrix;
 import com.whirled.contrib.avrg.RoomDragger;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.util.Rand;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
@@ -216,7 +216,7 @@ public class LobbyMode extends AppMode
 
             log.info("showRoundTimer", "time", remainingTime, "curFrame", curFrame);
 
-            var obj :SimObject = new SimObject();
+            var obj :GameObject = new GameObject();
             obj.addTask(new ShowFramesTask(roundTimer, curFrame, -1, remainingTime));
             addObject(obj);
 

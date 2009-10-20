@@ -1,7 +1,7 @@
 package vampire.client
 {
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.SimObject;
+import com.threerings.flashbang.GameObject;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.ByteArray;
@@ -11,7 +11,7 @@ import mx.utils.Base64Encoder;
 import vampire.data.Lineage;
 import vampire.net.messages.StatsMsg;
 
-public class AnalyserClient extends SimObject
+public class AnalyserClient extends GameObject
 {
     public function AnalyserClient()
     {

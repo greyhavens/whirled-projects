@@ -1,7 +1,7 @@
 package vampire.feeding.client {
 
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.resource.SwfResource;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.resource.SwfResource;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;

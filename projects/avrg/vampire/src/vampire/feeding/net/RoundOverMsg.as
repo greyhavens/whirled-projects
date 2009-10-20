@@ -1,7 +1,7 @@
 package vampire.feeding.net {
 
 import com.threerings.util.HashMap;
-import com.whirled.contrib.simplegame.net.Message;
+import com.whirled.contrib.messagemgr.Message;
 
 import vampire.feeding.FeedingRoundResults;
 

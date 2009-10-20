@@ -3,7 +3,7 @@ package com.whirled.contrib.avrg {
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.contrib.simplegame.objects.Dragger;
+import com.threerings.flashbang.objects.Dragger;
 
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;

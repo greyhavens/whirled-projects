@@ -1,7 +1,7 @@
 package equip
 {
 import com.threerings.util.Command;
-import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
+import com.threerings.flashbang.objects.SimpleSceneObject;
 
 import flash.display.DisplayObject;
 import flash.events.MouseEvent;

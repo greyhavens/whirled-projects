@@ -4,13 +4,13 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Util;
 import com.whirled.avrg.AVRGameControl;
-import com.whirled.contrib.EventHandlerManager;
+import com.threerings.util.EventHandlerManager;
 import com.whirled.contrib.LevelPackManager;
 import com.whirled.contrib.ManagedTimer;
 import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.namespc.*;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.resource.ResourceManager;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.resource.ResourceManager;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
@@ -33,7 +33,7 @@ public class BloodBloom extends FeedingClient
         _hostSprite = hostSprite;
 
         // Init simplegame
-        _sg = new SimpleGame(new Config());
+        _sg = new FlashbangApp(new Config());
 
         ClientCtx.gameCtrl = gameCtrl;
         ClientCtx.mainLoop = _sg.ctx.mainLoop;
@@ -243,7 +243,7 @@ public class BloodBloom extends FeedingClient
 
     protected static var _inited :Boolean;
     protected static var _hostSprite :Sprite;
-    protected static var _sg :SimpleGame;
+    protected static var _sg :FlashbangApp;
     protected static var _resourcesLoaded :Boolean;
 
     [Embed(source="../../../../rsrc/feeding/blood.swf", mimeType="application/octet-stream")]

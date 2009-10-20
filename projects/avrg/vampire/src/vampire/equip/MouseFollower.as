@@ -1,13 +1,13 @@
 package equip
 {
-import com.whirled.contrib.simplegame.SimObject;
+import com.threerings.flashbang.GameObject;
 
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
-public class MouseFollower extends SimObject
+public class MouseFollower extends GameObject
 {
     override protected function update (dt:Number) :void
     {

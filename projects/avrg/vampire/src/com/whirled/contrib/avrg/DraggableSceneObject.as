@@ -5,7 +5,7 @@ import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.threerings.flashbang.objects.SceneObject;
 import com.whirled.net.NetConstants;
 
 import flash.display.DisplayObject;

@@ -10,7 +10,7 @@ import com.threerings.util.Hashable;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.RoomSubControlServer;
-import com.whirled.contrib.simplegame.objects.BasicGameObject;
+import com.threerings.flashbang.objects.BasicGameObject;
 
 public class Room extends BasicGameObject
     implements Hashable

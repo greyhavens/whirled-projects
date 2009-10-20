@@ -1,6 +1,6 @@
-package com.whirled.contrib.simplegame
+package com.threerings.flashbang
 {
-import com.whirled.contrib.EventHandlerManager;
+import com.threerings.util.EventHandlerManager;
 
 import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;
@@ -14,7 +14,7 @@ public class EventCollecter extends EventDispatcher
     /**
      * Adds the specified listener to the specified dispatcher for the specified event.
      *
-     * Listeners registered in this way will be automatically unregistered when the SimObject is
+     * Listeners registered in this way will be automatically unregistered when the GameObject is
      * destroyed.
      */
     protected function registerListener (dispatcher :IEventDispatcher, event :String,

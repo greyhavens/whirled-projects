@@ -1,6 +1,6 @@
 package com.whirled.contrib
 {
-import com.whirled.contrib.simplegame.Updatable;
+import com.threerings.flashbang.Updatable;
 
 import flash.utils.Dictionary;
 

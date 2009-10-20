@@ -1,9 +1,9 @@
 package vampire.feeding.client {
 
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.GameObjectRef;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -98,7 +98,7 @@ public class BurstCascade extends SceneObject
     override protected function update (dt :Number) :void
     {
         var isAlive :Boolean = ArrayUtil.findIf(_bursts,
-            function (burstRef :SimObjectRef) :Boolean {
+            function (burstRef :GameObjectRef) :Boolean {
                 return !burstRef.isNull;
             });
 

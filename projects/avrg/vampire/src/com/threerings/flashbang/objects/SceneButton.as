@@ -1,4 +1,4 @@
-package com.whirled.contrib.simplegame.objects
+package com.threerings.flashbang.objects
 {
     import flash.display.SimpleButton;
 

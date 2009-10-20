@@ -2,9 +2,9 @@ package vampire.feeding.client {
 
 import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.resource.SwfResource;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.resource.SwfResource;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -97,8 +97,8 @@ public class SentMultiplierIndicator extends SceneObject
 }
 
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;

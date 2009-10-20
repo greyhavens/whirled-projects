@@ -2,7 +2,7 @@ package vampire.quest.debug {
 
 import com.whirled.contrib.ManagedTimer;
 import com.whirled.contrib.TimerManager;
-import com.whirled.contrib.simplegame.*;
+import com.threerings.flashbang.*;
 import com.whirled.net.PropertySubControl;
 
 import flash.display.Sprite;
@@ -35,7 +35,7 @@ public class QuestClientStandalone extends Sprite
         appMode.modeSprite.addChild(notificationLayer);
 
         // Init simplegame
-        _sg = new SimpleGame(new Config());
+        _sg = new FlashbangApp(new Config());
         _sg.ctx.mainLoop.pushMode(appMode);
         _sg.run(this);
 
@@ -62,7 +62,7 @@ public class QuestClientStandalone extends Sprite
         ClientCtx.dockSprite.showQuestPanel();
     }
 
-    protected var _sg :SimpleGame;
+    protected var _sg :FlashbangApp;
     protected var _localProps :PropertySubControl;
     protected var _timerMgr :TimerManager = new TimerManager();
 }

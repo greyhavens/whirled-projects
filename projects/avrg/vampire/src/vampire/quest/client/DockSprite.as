@@ -1,9 +1,9 @@
 package vampire.quest.client {
 
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.GameObjectRef;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.Sprite;
 import flash.geom.Rectangle;
@@ -182,7 +182,7 @@ public class DockSprite extends Sprite
     protected var _width :int;
     protected var _height :int;
     protected var _lastLoc :LocationDesc;
-    protected var _dockedPanelRef :SimObjectRef = SimObjectRef.Null();
+    protected var _dockedPanelRef :GameObjectRef = GameObjectRef.Null();
 
     protected static const PANEL_SLIDE_TIME :Number = 0.5;
 

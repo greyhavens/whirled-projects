@@ -3,7 +3,7 @@ package vampire.server
 import com.threerings.util.HashMap;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.objects.BasicGameObject;
+import com.threerings.flashbang.objects.BasicGameObject;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.ByteArray;

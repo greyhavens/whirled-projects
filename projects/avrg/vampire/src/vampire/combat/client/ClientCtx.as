@@ -1,7 +1,7 @@
 package vampire.combat.client
 {
-import com.whirled.contrib.simplegame.resource.ImageResource;
-import com.whirled.contrib.simplegame.resource.ResourceManager;
+import com.threerings.flashbang.resource.ImageResource;
+import com.threerings.flashbang.resource.ResourceManager;
 
 import flash.display.Bitmap;
 

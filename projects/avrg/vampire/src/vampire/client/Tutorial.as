@@ -4,12 +4,12 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
-import com.whirled.contrib.simplegame.tasks.FunctionTask;
-import com.whirled.contrib.simplegame.tasks.LocationTask;
-import com.whirled.contrib.simplegame.tasks.SerialTask;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.objects.SimpleSceneObject;
+import com.threerings.flashbang.tasks.FunctionTask;
+import com.threerings.flashbang.tasks.LocationTask;
+import com.threerings.flashbang.tasks.SerialTask;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;

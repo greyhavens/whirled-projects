@@ -1,6 +1,6 @@
 package vampire.feeding.client {
 
-import com.whirled.contrib.simplegame.AppMode;
+import com.threerings.flashbang.AppMode;
 
 import flash.geom.Point;
 

@@ -4,7 +4,7 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.objects.BasicGameObject;
+import com.threerings.flashbang.objects.BasicGameObject;
 
 import vampire.server.Room;
 

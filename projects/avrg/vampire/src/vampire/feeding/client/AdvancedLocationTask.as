@@ -1,9 +1,9 @@
 package vampire.feeding.client {
 
-import com.whirled.contrib.simplegame.ObjectMessage;
-import com.whirled.contrib.simplegame.ObjectTask;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.components.LocationComponent;
+import com.threerings.flashbang.ObjectMessage;
+import com.threerings.flashbang.ObjectTask;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.components.LocationComponent;
 
 public class AdvancedLocationTask
     implements ObjectTask
@@ -22,12 +22,12 @@ public class AdvancedLocationTask
         _yInterpolator = yInterpolator;
     }
 
-    public function update (dt :Number, obj :SimObject) :Boolean
+    public function update (dt :Number, obj :GameObject) :Boolean
     {
         var lc :LocationComponent = (obj as LocationComponent);
 
         if (null == lc) {
-            throw new Error("AdvancedLocationTask can only be applied to SimObjects that " +
+            throw new Error("AdvancedLocationTask can only be applied to GameObjects that " +
                             "implement LocationComponent");
         }
 

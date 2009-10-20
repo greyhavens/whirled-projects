@@ -2,7 +2,7 @@ package vampire.combat.client
 {
 import com.threerings.util.Command;
 import com.whirled.contrib.DisplayUtil;
-import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.threerings.flashbang.objects.SceneObject;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;

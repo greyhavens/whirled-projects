@@ -4,8 +4,8 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
 import com.whirled.contrib.avrg.AvatarHUD;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.SimObject;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.GameObject;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
@@ -112,7 +112,7 @@ public class VampireController extends Controller
     public function handleShowDebug () :void
     {
         try {
-            var hierarchySceneObject :SimObject =
+            var hierarchySceneObject :GameObject =
                 ClientContext.game.ctx.mainLoop.topMode.getObjectNamed(AdminPanel.NAME);
 
             if (hierarchySceneObject == null) {

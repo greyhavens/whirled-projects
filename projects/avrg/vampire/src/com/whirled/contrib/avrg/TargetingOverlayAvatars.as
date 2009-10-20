@@ -7,8 +7,8 @@ import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRGameRoomEvent;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.objects.SimpleTimer;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.objects.SimpleTimer;
 
 import vampire.data.VConstants;
 
@@ -39,7 +39,7 @@ public class TargetingOverlayAvatars extends TargetingOverlay
         super.addedToDB();
         //Check for missing avatars/HUDs every second.  Lets not overload the client on checking.
         var avatarCheckTimer :SimpleTimer = new SimpleTimer(1, checkAvatarsAndUsersMatch, true, "avatarCheck");
-        addSimObject(avatarCheckTimer);
+        addGameObject(avatarCheckTimer);
     }
 
     override protected function update(dt:Number) :void

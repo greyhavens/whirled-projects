@@ -4,7 +4,7 @@ import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.namespc.*;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.util.Rand;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;

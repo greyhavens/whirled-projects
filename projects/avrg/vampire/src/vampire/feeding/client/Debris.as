@@ -1,12 +1,12 @@
 package vampire.feeding.client {
 
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.resource.SwfResource;
-import com.whirled.contrib.simplegame.tasks.AlphaTask;
-import com.whirled.contrib.simplegame.tasks.FunctionTask;
-import com.whirled.contrib.simplegame.tasks.SerialTask;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.resource.SwfResource;
+import com.threerings.flashbang.tasks.AlphaTask;
+import com.threerings.flashbang.tasks.FunctionTask;
+import com.threerings.flashbang.tasks.SerialTask;
+import com.threerings.flashbang.util.Rand;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;

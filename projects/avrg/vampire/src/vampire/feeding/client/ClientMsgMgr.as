@@ -2,8 +2,8 @@ package vampire.feeding.client {
 
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
-import com.whirled.contrib.EventHandlerManager;
-import com.whirled.contrib.simplegame.net.*;
+import com.threerings.util.EventHandlerManager;
+import com.whirled.contrib.messagemgr.*;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.contrib.namespc.*;
 

@@ -1,7 +1,7 @@
 package vampire.feeding.variant {
 
-import com.whirled.contrib.simplegame.util.IntRange;
-import com.whirled.contrib.simplegame.util.NumRange;
+import com.threerings.flashbang.util.IntRange;
+import com.threerings.flashbang.util.NumRange;
 
 // Settings that can be modified by game variants
 public class VariantSettings

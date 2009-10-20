@@ -3,8 +3,8 @@ package vampire.client
 import com.threerings.util.HashMap;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRGameRoomEvent;
-import com.whirled.contrib.EventHandlerManager;
-import com.whirled.contrib.simplegame.objects.BasicGameObject;
+import com.threerings.util.EventHandlerManager;
+import com.threerings.flashbang.objects.BasicGameObject;
 import com.whirled.net.ElementChangedEvent;
 
 import flash.utils.ByteArray;

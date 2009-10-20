@@ -2,7 +2,7 @@ package vampire.quest.client {
 
 import com.threerings.util.Log;
 import com.threerings.util.Util;
-import com.whirled.contrib.EventHandlerManager;
+import com.threerings.util.EventHandlerManager;
 import com.whirled.contrib.ImmediatePropControl;
 import com.whirled.contrib.namespc.NamespacePropControl;
 import com.whirled.net.ElementChangedEvent;

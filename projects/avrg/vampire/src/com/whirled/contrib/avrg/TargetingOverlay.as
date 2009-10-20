@@ -2,8 +2,8 @@ package com.whirled.contrib.avrg
 {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.objects.SceneObject;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -131,13 +131,13 @@ public class TargetingOverlay extends SceneObject
         override protected function addedToDB () :void
     {
         super.addedToDB();
-        for each (var sim :SimObject in _yetToAddToDB) {
+        for each (var sim :GameObject in _yetToAddToDB) {
             db.addObject(sim);
         }
         _yetToAddToDB = null;
     }
 
-    protected function addSimObject (s :SimObject) :void
+    protected function addGameObject (s :GameObject) :void
     {
         if (db != null) {
             db.addObject(s);
@@ -155,10 +155,10 @@ public class TargetingOverlay extends SceneObject
         else {
             _displaySprite.addChild(s.displayObject);
         }
-        addSimObject(s);
+        addGameObject(s);
     }
 
-    protected function destroySimObject (s :SimObject) :void
+    protected function destroyGameObject (s :GameObject) :void
     {
         if (s.isLiveObject) {
             s.destroySelf();
@@ -169,7 +169,7 @@ public class TargetingOverlay extends SceneObject
     override protected function destroyed () :void
     {
         super.destroyed();
-        for each (var child :SimObject in _subObjects) {
+        for each (var child :GameObject in _subObjects) {
             if (child.isLiveObject) {
                 child.destroySelf();
             }

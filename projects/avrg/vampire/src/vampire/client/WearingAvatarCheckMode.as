@@ -1,7 +1,7 @@
 package vampire.client
 {
 import com.whirled.avrg.AVRGameControlEvent;
-import com.whirled.contrib.simplegame.AppMode;
+import com.threerings.flashbang.AppMode;
 
 import flash.display.MovieClip;
 import flash.display.SimpleButton;

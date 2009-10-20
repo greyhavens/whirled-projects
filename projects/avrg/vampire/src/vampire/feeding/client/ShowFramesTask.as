@@ -1,6 +1,6 @@
 package vampire.feeding.client {
 
-import com.whirled.contrib.simplegame.*;
+import com.threerings.flashbang.*;
 
 import flash.display.MovieClip;
 
@@ -22,7 +22,7 @@ public class ShowFramesTask
             (interpolateFn != null ? interpolateFn : mx.effects.easing.Linear.easeNone);
     }
 
-    public function update (dt :Number, obj :SimObject) :Boolean
+    public function update (dt :Number, obj :GameObject) :Boolean
     {
         if (_elapsedTime == 0) {
             if (_endFrame < 0) {

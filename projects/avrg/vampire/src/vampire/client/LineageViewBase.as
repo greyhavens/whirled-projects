@@ -5,14 +5,14 @@ import com.threerings.flash.Vector2;
 import com.threerings.util.HashMap;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.objects.SceneObjectParent;
-import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
-import com.whirled.contrib.simplegame.tasks.AlphaTask;
-import com.whirled.contrib.simplegame.tasks.FunctionTask;
-import com.whirled.contrib.simplegame.tasks.LocationTask;
-import com.whirled.contrib.simplegame.tasks.SerialTask;
-import com.whirled.contrib.simplegame.tasks.TimedTask;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.objects.SceneObjectParent;
+import com.threerings.flashbang.objects.SimpleSceneObject;
+import com.threerings.flashbang.tasks.AlphaTask;
+import com.threerings.flashbang.tasks.FunctionTask;
+import com.threerings.flashbang.tasks.LocationTask;
+import com.threerings.flashbang.tasks.SerialTask;
+import com.threerings.flashbang.tasks.TimedTask;
 
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
@@ -436,7 +436,7 @@ public class LineageViewBase extends SceneObjectParent
 
             drop = new DropSceneObject(_dropCreation, playerId, playerName, updateLineage);
 
-            addSimObject(drop);
+            addGameObject(drop);
             _displaySprite.addChild(drop.displayObject);
             drop.alpha = 0;
             _player2Drop.put(playerId, drop);
@@ -623,7 +623,7 @@ public class LineageViewBase extends SceneObjectParent
 }
 }
 
-import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.threerings.flashbang.objects.SceneObject;
 import vampire.client.VampireController;
 import flash.events.MouseEvent;
 import com.threerings.util.Command;

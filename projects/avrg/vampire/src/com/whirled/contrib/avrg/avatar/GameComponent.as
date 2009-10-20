@@ -3,7 +3,7 @@ package com.whirled.contrib.avrg.avatar
     import com.threerings.util.Log;
     import com.whirled.EntityControl;
     import com.whirled.avrg.AVRGameControl;
-    import com.whirled.contrib.simplegame.EventCollecter;
+    import com.threerings.flashbang.EventCollecter;
 
 public class GameComponent extends EventCollecter
 {

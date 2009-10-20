@@ -4,7 +4,7 @@ import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.StringBuilder;
 import com.whirled.avrg.AVRServerGameControl;
-import com.whirled.contrib.simplegame.objects.BasicGameObject;
+import com.threerings.flashbang.objects.BasicGameObject;
 import com.whirled.net.NetConstants;
 import com.whirled.net.PropertySubControl;
 

@@ -1,10 +1,10 @@
 package vampire.client {
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
-import com.whirled.contrib.EventHandlers;
-import com.whirled.contrib.simplegame.Config;
-import com.whirled.contrib.simplegame.SimpleGame;
-import com.whirled.contrib.simplegame.resource.ResourceManager;
+import com.threerings.util.EventHandlers;
+import com.threerings.flashbang.Config;
+import com.threerings.flashbang.FlashbangApp;
+import com.threerings.flashbang.resource.ResourceManager;
 
 import flash.display.Sprite;
 import flash.events.Event;
@@ -21,7 +21,7 @@ public class VampireMain extends Sprite
 
 
         // instantiate MainLoop singleton, and load its resources.
-        ClientContext.game = new SimpleGame(new Config());
+        ClientContext.game = new FlashbangApp(new Config());
 
         loadResources();
     }

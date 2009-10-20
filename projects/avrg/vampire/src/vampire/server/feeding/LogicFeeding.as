@@ -6,8 +6,8 @@ package vampire.server.feeding
     import com.whirled.avrg.AVRGameAvatar;
     import com.whirled.avrg.OfflinePlayerPropertyControl;
     import com.whirled.avrg.PlayerSubControlServer;
-    import com.whirled.contrib.simplegame.net.Message;
-    import com.whirled.contrib.simplegame.objects.BasicGameObject;
+    import com.whirled.contrib.messagemgr.Message;
+    import com.threerings.flashbang.objects.BasicGameObject;
 
     import flash.utils.ByteArray;
 

@@ -1,10 +1,10 @@
 package vampire.feeding.client {
 
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.resource.SwfResource;
-import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.util.*;
+import com.threerings.flashbang.GameObjectRef;
+import com.threerings.flashbang.resource.SwfResource;
+import com.threerings.flashbang.tasks.*;
+import com.threerings.flashbang.util.*;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -72,7 +72,7 @@ public class Cell extends CollidableObj
         // returns the first cell that collides with the given circle
         var cells :Array = getCellRefs(cellType);
 
-        for each (var cellRef :SimObjectRef in cells) {
+        for each (var cellRef :GameObjectRef in cells) {
             var cell :Cell = cellRef.object as Cell;
             if (cell != null &&
                 cell.canCollide &&
@@ -156,7 +156,7 @@ public class Cell extends CollidableObj
 
     public function detachFromCursor () :void
     {
-        _attachedTo = SimObjectRef.Null();
+        _attachedTo = GameObjectRef.Null();
         addNamedTask(DETACH_COOLDOWN_TASK, new TimedTask(DETACH_COOLDOWN_TIME));
     }
 
@@ -441,13 +441,13 @@ public class Cell extends CollidableObj
     protected var _multiplier :int;
     protected var _specialStrain :int;
     protected var _moveCCW :Boolean;
-    protected var _attachedTo :SimObjectRef = SimObjectRef.Null();
+    protected var _attachedTo :GameObjectRef = GameObjectRef.Null();
     protected var _needsBirth :Boolean;
 
     protected var _sprite :Sprite;
     protected var _movie :MovieClip;
     protected var _movieLoadedFromCache :Boolean;
-    protected var _attachedTip :SimObjectRef = SimObjectRef.Null();
+    protected var _attachedTip :GameObjectRef = GameObjectRef.Null();
 
     protected static const SPEED_FOLLOW :Number = 60;
 

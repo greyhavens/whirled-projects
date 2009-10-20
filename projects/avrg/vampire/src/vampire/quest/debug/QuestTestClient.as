@@ -2,10 +2,10 @@ package vampire.quest.debug {
 
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
-import com.whirled.contrib.EventHandlerManager;
+import com.threerings.util.EventHandlerManager;
 import com.whirled.contrib.ManagedTimer;
 import com.whirled.contrib.TimerManager;
-import com.whirled.contrib.simplegame.*;
+import com.threerings.flashbang.*;
 
 import flash.display.Sprite;
 import flash.events.Event;
@@ -32,7 +32,7 @@ public class QuestTestClient extends Sprite
         appMode.modeSprite.addChild(notificationLayer);
 
         // Init simplegame
-        _sg = new SimpleGame(new Config());
+        _sg = new FlashbangApp(new Config());
         _sg.ctx.mainLoop.pushMode(appMode);
         _sg.run(this);
 
@@ -67,7 +67,7 @@ public class QuestTestClient extends Sprite
     protected var _gameCtrl :AVRGameControl;
     protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _timerMgr :TimerManager = new TimerManager();
-    protected var _sg :SimpleGame;
+    protected var _sg :FlashbangApp;
 
     protected static var log :Log = Log.getLog(QuestTestClient);
 }

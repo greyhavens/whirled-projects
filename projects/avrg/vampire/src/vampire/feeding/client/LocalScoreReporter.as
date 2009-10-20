@@ -2,9 +2,9 @@ package vampire.feeding.client {
 
 import vampire.feeding.net.CurrentScoreMsg;
 
-import com.whirled.contrib.simplegame.SimObject;
+import com.threerings.flashbang.GameObject;
 
-public class LocalScoreReporter extends SimObject
+public class LocalScoreReporter extends GameObject
 {
     override protected function update (dt :Number) :void
     {

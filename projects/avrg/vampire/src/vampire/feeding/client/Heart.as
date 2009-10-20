@@ -1,8 +1,8 @@
 package vampire.feeding.client {
 
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.util.*;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.util.*;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;

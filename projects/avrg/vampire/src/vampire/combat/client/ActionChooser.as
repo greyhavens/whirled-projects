@@ -1,6 +1,6 @@
 package vampire.combat.client
 {
-import com.whirled.contrib.simplegame.objects.SceneObjectParent;
+import com.threerings.flashbang.objects.SceneObjectParent;
 
 import vampire.combat.data.Action;
 

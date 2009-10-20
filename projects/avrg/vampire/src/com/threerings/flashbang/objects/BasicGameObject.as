@@ -1,6 +1,6 @@
-package com.whirled.contrib.simplegame.objects
+package com.threerings.flashbang.objects
 {
-import com.whirled.contrib.EventHandlerManager;
+import com.threerings.util.EventHandlerManager;
 
 import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;

@@ -7,8 +7,8 @@ import com.threerings.util.Log;
 import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameRoomEvent;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.objects.SceneObject;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;

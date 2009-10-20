@@ -4,7 +4,7 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.contrib.CheatDetector;
-import com.whirled.contrib.simplegame.EventCollecter;
+import com.threerings.flashbang.EventCollecter;
 import com.whirled.net.MessageReceivedEvent;
 
 import vampire.data.Codes;

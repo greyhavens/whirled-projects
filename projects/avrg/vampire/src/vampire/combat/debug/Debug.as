@@ -6,9 +6,9 @@ import aduros.util.F;
 
 import com.threerings.util.Log;
 import com.whirled.contrib.MessageDelayer;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.Config;
-import com.whirled.contrib.simplegame.SimpleGame;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.Config;
+import com.threerings.flashbang.FlashbangApp;
 
 import flash.display.Sprite;
 
@@ -24,15 +24,15 @@ public class Debug extends Sprite
     {
         Log.setLevel("", Log.DEBUG);
 //        Log.setLevel("vampire.combat.UnitRecord", Log.DEBUG);
-        //Start a SimpleGame for testing
+        //Start a FlashbangApp for testing
         var gameSprite :Sprite = new Sprite();
         addChild(gameSprite);
         var config :Config = new Config();
-        config.hostSprite = gameSprite;
-        var game :SimpleGame = new SimpleGame(config);
+//        config.hostSprite = gameSprite;
+        var game :FlashbangApp = new FlashbangApp(config);
         var mode :AppMode = new AppMode();
         game.ctx.mainLoop.pushMode(mode);
-        game.run();
+        game.run(gameSprite);
         ClientCtx.rsrcs = game.ctx.rsrcs;
 
         // load resources
@@ -52,7 +52,7 @@ public class Debug extends Sprite
     {
     }
 
-    protected function begin (game :SimpleGame, mode :AppMode) :void
+    protected function begin (game :FlashbangApp, mode :AppMode) :void
     {
         //We can test the game with arbitrarily lag times.
         var msgDelayer :MessageDelayer = new MessageDelayer(100);

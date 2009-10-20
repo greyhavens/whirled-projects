@@ -1,7 +1,7 @@
 package vampire.quest.client {
 
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.tasks.*;
 
 import flash.geom.Rectangle;
 
@@ -73,7 +73,7 @@ public class NotificationMgr
 }
 
 import flash.display.Shape;
-import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.threerings.flashbang.objects.SceneObject;
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.geom.Rectangle;

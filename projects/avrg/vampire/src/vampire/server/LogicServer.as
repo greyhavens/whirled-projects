@@ -4,8 +4,8 @@ package vampire.server
 import com.threerings.util.Log;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
 import com.whirled.avrg.PlayerSubControlServer;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.net.Message;
+import com.threerings.flashbang.GameObject;
+import com.whirled.contrib.messagemgr.Message;
 
 import flash.utils.ByteArray;
 
@@ -25,7 +25,7 @@ import vampire.net.messages.StatsMsg;
 
 
 
-public class LogicServer extends SimObject
+public class LogicServer extends GameObject
 {
 
     public static function increaseLevel (player :PlayerData) :void

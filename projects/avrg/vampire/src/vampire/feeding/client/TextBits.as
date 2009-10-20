@@ -1,6 +1,6 @@
 package vampire.feeding.client {
 
-import com.whirled.contrib.simplegame.resource.*;
+import com.threerings.flashbang.resource.*;
 
 import flash.text.AntiAliasType;
 import flash.text.TextField;

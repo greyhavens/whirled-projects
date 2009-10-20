@@ -1,7 +1,7 @@
 package vampire.combat.client
 {
 import com.threerings.util.Command;
-import com.whirled.contrib.simplegame.objects.SceneObjectParent;
+import com.threerings.flashbang.objects.SceneObjectParent;
 
 import flash.display.Sprite;
 import flash.events.MouseEvent;

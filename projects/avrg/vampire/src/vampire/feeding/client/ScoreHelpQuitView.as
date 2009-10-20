@@ -1,8 +1,8 @@
 package vampire.feeding.client {
 
-import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.resource.SwfResource;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.objects.*;
+import com.threerings.flashbang.resource.SwfResource;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -128,13 +128,13 @@ public class ScoreHelpQuitView extends SceneObject
 
 }
 
-import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.threerings.flashbang.objects.SceneObject;
 import flash.display.MovieClip;
 import flash.display.DisplayObject;
 
 import vampire.client.SpriteUtil;
 import vampire.feeding.client.*;
-import com.whirled.contrib.simplegame.resource.SwfResource;
+import com.threerings.flashbang.resource.SwfResource;
 import flash.display.Sprite;
 
 class FlyingCell extends SceneObject

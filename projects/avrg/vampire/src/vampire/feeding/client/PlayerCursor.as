@@ -2,9 +2,9 @@ package vampire.feeding.client {
 
 import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.resource.SwfResource;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.GameObjectRef;
+import com.threerings.flashbang.resource.SwfResource;
+import com.threerings.flashbang.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -169,7 +169,7 @@ public class PlayerCursor extends CollidableObj
     {
         if (_attachedWhiteCells.length > 0) {
             var loc :Point = new Point();
-            for each (var cellRef :SimObjectRef in _attachedWhiteCells) {
+            for each (var cellRef :GameObjectRef in _attachedWhiteCells) {
                 var cell :Cell = cellRef.object as Cell;
                 if (cell != null) {
                     loc.x = cell.x;
@@ -240,7 +240,7 @@ public class PlayerCursor extends CollidableObj
         // get rid of cells
         var numWhiteCells :int;
         if (_attachedWhiteCells.length > 0) {
-            for each (var cellRef :SimObjectRef in _attachedWhiteCells) {
+            for each (var cellRef :GameObjectRef in _attachedWhiteCells) {
                 if (!cellRef.isNull) {
                     numWhiteCells++;
                     cellRef.object.destroySelf();
@@ -277,7 +277,7 @@ public class PlayerCursor extends CollidableObj
     protected var _sprite :Sprite;
     protected var _movie :MovieClip;
     protected var _createdWhiteCell :Sprite;
-    protected var _whiteCellTip :SimObjectRef = SimObjectRef.Null();
+    protected var _whiteCellTip :GameObjectRef = GameObjectRef.Null();
 
     protected var _moveDirection :Vector2 = new Vector2();
     protected var _lastMoveTarget :Vector2 = new Vector2();
@@ -295,12 +295,12 @@ public class PlayerCursor extends CollidableObj
 }
 
 import com.threerings.util.Assert;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.ObjectMessage;
-import com.whirled.contrib.simplegame.ObjectTask;
-import com.whirled.contrib.simplegame.components.AlphaComponent;
-import com.whirled.contrib.simplegame.util.Interpolator;
-import com.whirled.contrib.simplegame.util.MXInterpolatorAdapter;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.ObjectMessage;
+import com.threerings.flashbang.ObjectTask;
+import com.threerings.flashbang.components.AlphaComponent;
+import com.threerings.flashbang.util.Interpolator;
+import com.threerings.flashbang.util.MXInterpolatorAdapter;
 
 import mx.effects.easing.*;
 import flash.display.DisplayObject;
@@ -367,7 +367,7 @@ class TargetedScaleTask
         _interpolator = interpolator;
     }
 
-    public function update (dt :Number, obj :SimObject) :Boolean
+    public function update (dt :Number, obj :GameObject) :Boolean
     {
         if (0 == _elapsedTime) {
             _fromX = _target.scaleX;

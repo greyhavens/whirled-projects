@@ -1,8 +1,8 @@
 package vampire.quest.client {
 
 import com.whirled.avrg.AVRGameControl;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.resource.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.resource.*;
 
 import flash.display.Bitmap;
 import flash.display.MovieClip;

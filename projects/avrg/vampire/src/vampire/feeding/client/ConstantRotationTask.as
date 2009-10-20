@@ -1,7 +1,7 @@
 package vampire.feeding.client {
 
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.components.RotationComponent;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.components.RotationComponent;
 
 public class ConstantRotationTask
     implements ObjectTask
@@ -12,7 +12,7 @@ public class ConstantRotationTask
         _ccw = ccw;
     }
 
-    public function update (dt :Number, obj :SimObject) :Boolean
+    public function update (dt :Number, obj :GameObject) :Boolean
     {
         var rc :RotationComponent = obj as RotationComponent;
         if (rc == null) {

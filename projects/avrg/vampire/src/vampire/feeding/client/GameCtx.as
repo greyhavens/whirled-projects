@@ -2,7 +2,7 @@ package vampire.feeding.client {
 
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.CheatDetector;
-import com.whirled.contrib.simplegame.components.LocationComponent;
+import com.threerings.flashbang.components.LocationComponent;
 
 import flash.display.Sprite;
 

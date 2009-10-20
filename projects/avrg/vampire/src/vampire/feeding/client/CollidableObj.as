@@ -1,9 +1,9 @@
 package vampire.feeding.client {
 
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.simplegame.components.*;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.util.Collision;
+import com.threerings.flashbang.components.*;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.util.Collision;
 
 public class CollidableObj extends SceneObject
 {

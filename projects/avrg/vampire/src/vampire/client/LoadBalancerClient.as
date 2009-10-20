@@ -4,14 +4,14 @@ import com.threerings.flash.DisplayUtil;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.objects.SceneObjectParent;
-import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
-import com.whirled.contrib.simplegame.tasks.FunctionTask;
-import com.whirled.contrib.simplegame.tasks.LocationTask;
-import com.whirled.contrib.simplegame.tasks.ScaleTask;
-import com.whirled.contrib.simplegame.tasks.SerialTask;
-import com.whirled.contrib.simplegame.tasks.TimedTask;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.objects.SceneObjectParent;
+import com.threerings.flashbang.objects.SimpleSceneObject;
+import com.threerings.flashbang.tasks.FunctionTask;
+import com.threerings.flashbang.tasks.LocationTask;
+import com.threerings.flashbang.tasks.ScaleTask;
+import com.threerings.flashbang.tasks.SerialTask;
+import com.threerings.flashbang.tasks.TimedTask;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.DisplayObject;
@@ -48,8 +48,8 @@ public class LoadBalancerClient extends SceneObjectParent
         _huntingGroundsExpanded = new SimpleSceneObject(expanded);
         _huntingGroundsCollapsed = new SimpleSceneObject(collapsed);
 
-        addSimObject(_huntingGroundsExpanded);
-        addSimObject(_huntingGroundsCollapsed);
+        addGameObject(_huntingGroundsExpanded);
+        addGameObject(_huntingGroundsCollapsed);
         ClientUtil.detach(expanded);
 
         _initialContractedLoc = new Point(_huntingGroundsCollapsed.x, _huntingGroundsCollapsed.y);
@@ -63,7 +63,7 @@ public class LoadBalancerClient extends SceneObjectParent
         blackscreen.x = bounds.left;
         blackscreen.y = bounds.top;
         _blackScreen = new SimpleSceneObject(blackscreen);
-        addSimObject(_blackScreen);
+        addGameObject(_blackScreen);
 
         _displaySprite.addChild(_blackScreen.displayObject);
         _displaySprite.addChild(_huntingGroundsCollapsed.displayObject);

@@ -1,8 +1,8 @@
 package equip.debug
 {
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.Config;
-import com.whirled.contrib.simplegame.SimpleGame;
+import com.threerings.flashbang.Config;
+import com.threerings.flashbang.FlashbangApp;
 
 import equip.EquipAvatarMode;
 import equip.EquipCtx;
@@ -21,7 +21,7 @@ public class DebugEquip extends Sprite
         addChild(gameSprite);
         var config :Config = new Config();
         config.hostSprite = gameSprite;
-        EquipCtx.game = new SimpleGame(config);
+        EquipCtx.game = new FlashbangApp(config);
         EquipCtx.game.run();
         EquipCtx.rsrcs = EquipCtx.game.ctx.rsrcs;
 

@@ -1,11 +1,10 @@
 package vampire.combat.client
 {
-import com.threerings.flash.SimpleTextButton;
+import com.threerings.flashbang.objects.SceneObjectParent;
+import com.threerings.ui.SimpleTextButton;
 import com.threerings.util.Command;
 import com.whirled.contrib.DisplayUtil;
-import com.whirled.contrib.simplegame.objects.SceneObjectParent;
 
-import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.text.TextField;
@@ -39,7 +38,7 @@ public class CombatPanel extends SceneObjectParent
 
         //Action chooser
         _actionChooser = new ActionChooser();
-        addSimObject(_actionChooser);
+        addGameObject(_actionChooser);
         _actionChooser.x = -30;
         _actionChooser.y = 50;
 

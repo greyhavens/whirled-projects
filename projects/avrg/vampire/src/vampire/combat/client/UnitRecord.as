@@ -3,7 +3,7 @@ package vampire.combat.client
 
 import com.threerings.flash.MathUtil;
 import com.whirled.contrib.DisplayUtil;
-import com.whirled.contrib.simplegame.objects.SceneObjectParent;
+import com.threerings.flashbang.objects.SceneObjectParent;
 
 import flash.display.Graphics;
 import flash.display.Sprite;
@@ -30,7 +30,7 @@ public class UnitRecord extends SceneObjectParent
 
         //Add the icon
         _arenaIcon = new UnitArenaIcon(this);
-        addSimObject(_arenaIcon);
+        addGameObject(_arenaIcon);
 //        DisplayUtil.centerOn(_arenaIcon.displayObject, location.x, location.y);
 
         //Add the action seqeuence
@@ -47,8 +47,8 @@ public class UnitRecord extends SceneObjectParent
     override protected function destroyed () :void
     {
         super.destroyed();
-        destroySimObject(_arenaIcon);
-        destroySimObject(actions);
+        destroyGameObject(_arenaIcon);
+        destroyGameObject(actions);
     }
 
     public function get arenaIcon () :UnitArenaIcon
@@ -104,7 +104,7 @@ public class UnitRecord extends SceneObjectParent
 //        g.lineStyle(4, 0xff0000, 0.5);
 //        g.drawCircle(0, 0, 20);
 //        _targetReticle = new SimpleSceneObject(s);
-//        addSimObject(_targetReticle);
+//        addGameObject(_targetReticle);
     }
 
 //    protected function drawHealth () :void

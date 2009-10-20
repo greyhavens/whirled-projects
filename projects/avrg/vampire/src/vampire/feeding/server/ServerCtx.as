@@ -4,8 +4,8 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.RoomSubControlServer;
-import com.whirled.contrib.simplegame.net.BasicMessageManager;
-import com.whirled.contrib.simplegame.net.Message;
+import com.whirled.contrib.messagemgr.BasicMessageManager;
+import com.whirled.contrib.messagemgr.Message;
 import com.whirled.contrib.namespc.*;
 
 import vampire.feeding.*;

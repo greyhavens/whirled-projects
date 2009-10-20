@@ -4,8 +4,8 @@ import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRGameRoomEvent;
-import com.whirled.contrib.EventHandlerManager;
-import com.whirled.contrib.simplegame.objects.BasicGameObject;
+import com.threerings.util.EventHandlerManager;
+import com.threerings.flashbang.objects.BasicGameObject;
 
 import flash.utils.clearInterval;
 

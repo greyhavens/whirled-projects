@@ -2,8 +2,8 @@ package vampire.combat.client
 {
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.GameModeStack;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.SimpleGame;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.FlashbangApp;
 
 import flash.display.Sprite;
 
@@ -16,7 +16,7 @@ public class GameInstance
     public var enemyUnits :Array = [];
 
     public var mode :AppMode;
-    public var game :SimpleGame;
+    public var game :FlashbangApp;
     public var modeStack :GameModeStack;
     public var client :CombatClient;
 

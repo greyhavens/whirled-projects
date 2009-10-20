@@ -10,8 +10,8 @@ import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.CheatDetector;
-import com.whirled.contrib.simplegame.net.Message;
-import com.whirled.contrib.simplegame.objects.BasicGameObject;
+import com.whirled.contrib.messagemgr.Message;
+import com.threerings.flashbang.objects.BasicGameObject;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.events.Event;

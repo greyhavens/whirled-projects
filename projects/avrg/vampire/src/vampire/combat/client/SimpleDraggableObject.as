@@ -1,6 +1,6 @@
 package vampire.combat.client
 {
-import com.whirled.contrib.simplegame.objects.DraggableObject;
+import com.threerings.flashbang.objects.DraggableObject;
 
 import flash.display.DisplayObject;
 

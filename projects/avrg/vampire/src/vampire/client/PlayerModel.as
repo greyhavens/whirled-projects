@@ -5,7 +5,7 @@ import com.threerings.util.Log;
 import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AgentSubControl;
-import com.whirled.contrib.simplegame.SimObject;
+import com.threerings.flashbang.GameObject;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.PropertyGetSubControl;
@@ -27,7 +27,7 @@ import vampire.feeding.PlayerFeedingData;
  */
 
 [Event(name="Hierarchy Updated", type="vampire.client.events.LineageUpdatedEvent")]
-public class PlayerModel extends SimObject
+public class PlayerModel extends GameObject
 {
     public function PlayerModel ()
     {

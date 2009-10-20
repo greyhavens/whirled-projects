@@ -1,6 +1,6 @@
 package vampire.feeding.client {
 
-import com.whirled.contrib.simplegame.net.Message;
+import com.whirled.contrib.messagemgr.Message;
 
 import flash.events.Event;
 

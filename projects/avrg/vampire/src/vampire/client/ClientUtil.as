@@ -1,10 +1,10 @@
 package vampire.client {
 
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.tasks.AlphaTask;
-import com.whirled.contrib.simplegame.tasks.FunctionTask;
-import com.whirled.contrib.simplegame.tasks.SelfDestructTask;
-import com.whirled.contrib.simplegame.tasks.SerialTask;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.tasks.AlphaTask;
+import com.threerings.flashbang.tasks.FunctionTask;
+import com.threerings.flashbang.tasks.SelfDestructTask;
+import com.threerings.flashbang.tasks.SerialTask;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;

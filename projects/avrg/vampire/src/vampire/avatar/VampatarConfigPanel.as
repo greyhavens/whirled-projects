@@ -245,7 +245,7 @@ import flash.display.BitmapData;
 import flash.geom.Rectangle;
 import flash.geom.Matrix;
 import flash.display.Bitmap;
-import com.whirled.contrib.ColorMatrix;
+import com.threerings.display.ColorMatrix;
 import vampire.client.ClientUtil;
 
 function getClass (name :String) :Class

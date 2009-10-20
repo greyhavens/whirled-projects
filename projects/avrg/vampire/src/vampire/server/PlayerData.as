@@ -10,8 +10,8 @@ import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
 import com.whirled.avrg.PlayerSubControlBase;
 import com.whirled.avrg.PlayerSubControlServer;
-import com.whirled.contrib.EventHandlerManager;
-import com.whirled.contrib.simplegame.ObjectMessage;
+import com.threerings.util.EventHandlerManager;
+import com.threerings.flashbang.ObjectMessage;
 
 import flash.utils.ByteArray;
 

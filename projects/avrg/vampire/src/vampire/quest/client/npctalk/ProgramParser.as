@@ -1,7 +1,7 @@
 package vampire.quest.client.npctalk {
 
-import com.whirled.contrib.XmlReadError;
-import com.whirled.contrib.XmlReader;
+import com.threerings.util.XmlReadError;
+import com.threerings.util.XmlUtil;
 
 import vampire.quest.*;
 
@@ -25,7 +25,7 @@ public class ProgramParser
     protected static function parseRoutine (xml :XML) :Routine
     {
         return new Routine(
-            XmlReader.getStringAttr(xml, "name"),
+            XmlUtil.getStringAttr(xml, "name"),
             parseBlockStatement(xml));
     }
 
@@ -138,18 +138,18 @@ public class ProgramParser
     protected static function parseSayStatement (xml :XML) :Statement
     {
         var sayStatement :SayStatement = new SayStatement(
-            XmlReader.getStringAttr(xml, "speaker"),
-            XmlReader.getStringAttr(xml, "text"));
+            XmlUtil.getStringAttr(xml, "speaker"),
+            XmlUtil.getStringAttr(xml, "text"));
 
         var childStatements :BlockStatement;
         if (xml.children().length() > 0) {
             childStatements = parseBlockStatement(xml);
 
-        } else if (XmlReader.hasAttribute(xml, "response")) {
+        } else if (XmlUtil.hasAttribute(xml, "response")) {
             // add an implicit AddResponse statement
             childStatements = new BlockStatement();
             childStatements.addStatement(
-                new AddResponseStatement("", XmlReader.getStringAttr(xml, "response"), 0));
+                new AddResponseStatement("", XmlUtil.getStringAttr(xml, "response"), 0));
         }
 
         // If SayStatement has any children, they execute immediately after the Say, and we
@@ -166,16 +166,16 @@ public class ProgramParser
     protected static function parseAddResponseStatement (xml :XML) :AddResponseStatement
     {
         return new AddResponseStatement(
-            XmlReader.getStringAttr(xml, "id", ""),
-            XmlReader.getStringAttr(xml, "text"),
-            XmlReader.getUintAttr(xml, "juiceCost", 0));
+            XmlUtil.getStringAttr(xml, "id", ""),
+            XmlUtil.getStringAttr(xml, "text"),
+            XmlUtil.getUintAttr(xml, "juiceCost", 0));
     }
 
     protected static function parseHandleResponseStatement (xml :XML) :Statement
     {
         // a "HandleResponse" statement is a Conditional
         var conditional :ConditionalStatement = new ConditionalStatement();
-        var responseId :String = XmlReader.getStringAttr(xml, "id");
+        var responseId :String = XmlUtil.getStringAttr(xml, "id");
         conditional.addIf(
             new BinaryCompExpr(
                 new ResponseExpr(),
@@ -188,12 +188,12 @@ public class ProgramParser
 
     protected static function parseCallRoutineStatement (xml :XML) :CallRoutineStatement
     {
-        return new CallRoutineStatement(XmlReader.getStringAttr(xml, "name"));
+        return new CallRoutineStatement(XmlUtil.getStringAttr(xml, "name"));
     }
 
     protected static function parseWaitStatement (xml :XML) :WaitStatement
     {
-        return new WaitStatement(XmlReader.getNumberAttr(xml, "seconds"));
+        return new WaitStatement(XmlUtil.getNumberAttr(xml, "seconds"));
     }
 
     protected static function parseExitStatement (xml :XML) :ExitStatement
@@ -203,12 +203,12 @@ public class ProgramParser
 
     protected static function parseSetVarStatement (xml :XML) :SetVarStatement
     {
-        var name :String = XmlReader.getStringAttr(xml, "name");
+        var name :String = XmlUtil.getStringAttr(xml, "name");
         var expr :Expr;
-        if (XmlReader.hasAttribute(xml, "number")) {
-            expr = new ValueExpr(XmlReader.getNumberAttr(xml, "number"));
-        } else if (XmlReader.hasAttribute(xml, "string")) {
-            expr = new ValueExpr(XmlReader.getStringAttr(xml, "string"));
+        if (XmlUtil.hasAttribute(xml, "number")) {
+            expr = new ValueExpr(XmlUtil.getNumberAttr(xml, "number"));
+        } else if (XmlUtil.hasAttribute(xml, "string")) {
+            expr = new ValueExpr(XmlUtil.getStringAttr(xml, "string"));
         } else {
             expr = new ValueExpr(true);
         }
@@ -218,22 +218,22 @@ public class ProgramParser
 
     protected static function parseGiveQuestStatement (xml :XML) :GiveQuestStatement
     {
-        return new GiveQuestStatement(getQuest(XmlReader.getStringAttr(xml, "name")));
+        return new GiveQuestStatement(getQuest(XmlUtil.getStringAttr(xml, "name")));
     }
 
     protected static function parseGiveActivityStatement (xml :XML) :GiveActivityStatement
     {
-        return new GiveActivityStatement(getActivity(XmlReader.getStringAttr(xml, "name")));
+        return new GiveActivityStatement(getActivity(XmlUtil.getStringAttr(xml, "name")));
     }
 
     protected static function parseSetPropStatement (xml :XML) :SetQuestPropStatement
     {
-        var propName :String = XmlReader.getStringAttr(xml, "name");
+        var propName :String = XmlUtil.getStringAttr(xml, "name");
         var expr :Expr;
-        if (XmlReader.hasAttribute(xml, "number")) {
-            expr = new ValueExpr(XmlReader.getNumberAttr(xml, "number"));
-        } else if (XmlReader.hasAttribute(xml, "string")) {
-            expr = new ValueExpr(XmlReader.getStringAttr(xml, "string"));
+        if (XmlUtil.hasAttribute(xml, "number")) {
+            expr = new ValueExpr(XmlUtil.getNumberAttr(xml, "number"));
+        } else if (XmlUtil.hasAttribute(xml, "string")) {
+            expr = new ValueExpr(XmlUtil.getStringAttr(xml, "string"));
         } else {
             expr = new ValueExpr(true);
         }
@@ -243,12 +243,12 @@ public class ProgramParser
 
     protected static function parseClearPropStatement (xml :XML) :ClearQuestPropStatement
     {
-        return new ClearQuestPropStatement(XmlReader.getStringAttr(xml, "name"));
+        return new ClearQuestPropStatement(XmlUtil.getStringAttr(xml, "name"));
     }
 
     protected static function parseTakeJuiceStatement (xml :XML) :OffsetJuiceStatement
     {
-        return new OffsetJuiceStatement(-(XmlReader.getUintAttr(xml, "amount")));
+        return new OffsetJuiceStatement(-(XmlUtil.getUintAttr(xml, "amount")));
     }
 
     protected static function parseExpr (xml :XML) :Expr
@@ -346,32 +346,32 @@ public class ProgramParser
 
     protected static function parseStringExpr (xml :XML) :ValueExpr
     {
-        return new ValueExpr(XmlReader.getStringAttr(xml, "val"));
+        return new ValueExpr(XmlUtil.getStringAttr(xml, "val"));
     }
 
     protected static function parseNumberExpr (xml :XML) :ValueExpr
     {
-        return new ValueExpr(XmlReader.getNumberAttr(xml, "val"));
+        return new ValueExpr(XmlUtil.getNumberAttr(xml, "val"));
     }
 
     protected static function parseHasQuestExpr (xml :XML, type :int) :HasQuestExpr
     {
-        return new HasQuestExpr(getQuest(XmlReader.getStringAttr(xml, "name")), type);
+        return new HasQuestExpr(getQuest(XmlUtil.getStringAttr(xml, "name")), type);
     }
 
     protected static function parseHasActivityExpr (xml :XML) :HasActivityExpr
     {
-        return new HasActivityExpr(getActivity(XmlReader.getStringAttr(xml, "name")));
+        return new HasActivityExpr(getActivity(XmlUtil.getStringAttr(xml, "name")));
     }
 
     protected static function parseHasPropExpr (xml :XML) :HasQuestPropExpr
     {
-        return new HasQuestPropExpr(XmlReader.getStringAttr(xml, "name"));
+        return new HasQuestPropExpr(XmlUtil.getStringAttr(xml, "name"));
     }
 
     protected static function parsePropValueExpr (xml :XML) :QuestPropValExpr
     {
-        return new QuestPropValExpr(XmlReader.getStringAttr(xml, "name"));
+        return new QuestPropValExpr(XmlUtil.getStringAttr(xml, "name"));
     }
 
     protected static function parseBinaryCompExpr (xml :XML, type :int) :BinaryCompExpr
@@ -386,7 +386,7 @@ public class ProgramParser
 
     protected static function parseVarExpr (xml :XML) :VarExpr
     {
-        return new VarExpr(XmlReader.getStringAttr(xml, "name"));
+        return new VarExpr(XmlUtil.getStringAttr(xml, "name"));
     }
 
     protected static function getQuest (questName :String) :QuestDesc

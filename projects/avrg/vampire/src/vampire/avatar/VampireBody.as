@@ -4,7 +4,7 @@ import com.threerings.flash.ColorUtil;
 import com.threerings.util.ArrayUtil;
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
-import com.whirled.contrib.ColorMatrix;
+import com.threerings.display.ColorMatrix;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;

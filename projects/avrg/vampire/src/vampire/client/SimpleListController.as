@@ -1,7 +1,7 @@
 package vampire.client {
 
 import com.threerings.util.HashMap;
-import com.whirled.contrib.EventHandlerManager;
+import com.threerings.util.EventHandlerManager;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;

@@ -1,14 +1,14 @@
 package vampire.debug
 {
-    import com.whirled.contrib.simplegame.SimObject;
-    import com.whirled.contrib.simplegame.util.Rand;
+    import com.threerings.flashbang.GameObject;
+    import com.threerings.flashbang.util.Rand;
 
     import vampire.client.ClientContext;
     import vampire.client.events.LineageUpdatedEvent;
     import vampire.data.Lineage;
     import vampire.server.GameServer;
 
-public class LineageDebug extends SimObject
+public class LineageDebug extends GameObject
 {
 
     protected var _localdt :Number = 0;

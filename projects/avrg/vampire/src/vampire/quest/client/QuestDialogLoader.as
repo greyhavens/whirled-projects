@@ -1,6 +1,6 @@
 package vampire.quest.client {
 
-import com.whirled.contrib.simplegame.resource.ResourceManager;
+import com.threerings.flashbang.resource.ResourceManager;
 
 public class QuestDialogLoader
 {

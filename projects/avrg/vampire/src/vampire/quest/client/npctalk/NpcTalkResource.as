@@ -1,6 +1,6 @@
 package vampire.quest.client.npctalk {
 
-import com.whirled.contrib.simplegame.resource.XmlResource;
+import com.threerings.flashbang.resource.XmlResource;
 
 public class NpcTalkResource extends XmlResource
 {

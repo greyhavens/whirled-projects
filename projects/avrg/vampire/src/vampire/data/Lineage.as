@@ -5,7 +5,7 @@ import com.threerings.util.Equalable;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.StringBuilder;
-import com.whirled.contrib.simplegame.objects.BasicGameObject;
+import com.threerings.flashbang.objects.BasicGameObject;
 
 import flash.utils.ByteArray;
 import flash.utils.IDataInput;

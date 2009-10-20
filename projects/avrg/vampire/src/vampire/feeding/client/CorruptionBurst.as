@@ -1,6 +1,6 @@
 package vampire.feeding.client {
 
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.tasks.*;
 
 import vampire.feeding.*;
 import vampire.server.Trophies;

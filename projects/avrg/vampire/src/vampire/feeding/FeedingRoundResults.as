@@ -1,7 +1,7 @@
 package vampire.feeding {
 
 import com.threerings.util.HashMap;
-import com.whirled.contrib.simplegame.net.Message;
+import com.whirled.contrib.messagemgr.Message;
 
 import flash.utils.ByteArray;
 

@@ -7,17 +7,17 @@ import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.contrib.GameMode;
 import com.whirled.contrib.GameModeStack;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.SimpleGame;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.FlashbangApp;
 
 import flash.display.Graphics;
 import flash.display.Sprite;
 
 
-public class CombatClient extends SimObject
+public class CombatClient extends GameObject
 {
-    public function CombatClient(game :SimpleGame, mode :AppMode, clientContext :GameInstance,
+    public function CombatClient(game :FlashbangApp, mode :AppMode, clientContext :GameInstance,
         gameService :RemoteProxy)
     {
         _game = clientContext;

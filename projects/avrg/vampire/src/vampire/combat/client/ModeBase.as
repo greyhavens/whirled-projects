@@ -1,6 +1,5 @@
 package vampire.combat.client
 {
-import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.whirled.contrib.GameMode;
 

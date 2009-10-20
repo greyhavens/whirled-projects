@@ -1,6 +1,6 @@
 package vampire.combat.client
 {
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.util.Rand;
 
 import vampire.combat.data.Action;
 /**

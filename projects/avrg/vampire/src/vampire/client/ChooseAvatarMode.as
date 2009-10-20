@@ -1,6 +1,6 @@
 package vampire.client
 {
-    import com.whirled.contrib.simplegame.AppMode;
+    import com.threerings.flashbang.AppMode;
 
     import flash.display.MovieClip;
     import flash.events.MouseEvent;

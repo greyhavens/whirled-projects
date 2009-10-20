@@ -1,7 +1,7 @@
 package vampire.combat.client
 {
 import com.threerings.util.Util;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.flashbang.util.Rand;
 
 import flash.utils.Dictionary;
 

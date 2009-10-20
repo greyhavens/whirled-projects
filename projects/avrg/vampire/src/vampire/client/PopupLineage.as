@@ -1,8 +1,8 @@
 package vampire.client
 {
 import com.whirled.contrib.avrg.RoomDragger;
-import com.whirled.contrib.simplegame.objects.DraggableObject;
-import com.whirled.contrib.simplegame.objects.Dragger;
+import com.threerings.flashbang.objects.DraggableObject;
+import com.threerings.flashbang.objects.Dragger;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;

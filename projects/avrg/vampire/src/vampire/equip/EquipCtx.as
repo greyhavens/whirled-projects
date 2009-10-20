@@ -1,7 +1,7 @@
 package equip
 {
-import com.whirled.contrib.simplegame.SimpleGame;
-import com.whirled.contrib.simplegame.resource.ResourceManager;
+import com.threerings.flashbang.FlashbangApp;
+import com.threerings.flashbang.resource.ResourceManager;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -12,7 +12,7 @@ import flash.geom.Point;
 public class EquipCtx
 {
     public static var playerId :int;
-    public static var game :SimpleGame;
+    public static var game :FlashbangApp;
     public static var rsrcs :ResourceManager;
 
     public static var itemLayer :Sprite;

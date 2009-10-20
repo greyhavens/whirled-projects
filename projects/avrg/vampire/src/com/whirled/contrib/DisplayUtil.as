@@ -1,6 +1,6 @@
 package com.whirled.contrib
 {
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.text.TextFieldUtil;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -77,7 +77,7 @@ public class DisplayUtil
         return new Point(startX + index * xInc, startY + index * yInc);
     }
 
-    public static function centerOn (d :DisplayObject, x :int, y :int) :void
+    public static function centerOn (d :DisplayObject, x :int = 0, y :int = 0) :void
     {
         d.x = x;
         d.y = y;

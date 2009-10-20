@@ -3,7 +3,7 @@ package vampire.server
 import com.threerings.util.HashMap;
 import com.threerings.util.HashSet;
 import com.whirled.avrg.AVRGameControlEvent;
-import com.whirled.contrib.simplegame.ObjectMessage;
+import com.threerings.flashbang.ObjectMessage;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.ByteArray;
@@ -16,7 +16,7 @@ import vampire.net.messages.StatsMsg;
 /**
  * Builds statistics of player data and player patterns
  */
-public class AnalyserServer extends SimObjectServer
+public class AnalyserServer extends GameObjectServer
 {
 
     override protected function addedToDB () :void

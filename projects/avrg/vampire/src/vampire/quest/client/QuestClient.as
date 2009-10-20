@@ -3,8 +3,8 @@ package vampire.quest.client {
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.SimpleGame;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.FlashbangApp;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertySubControl;
 
@@ -20,7 +20,7 @@ import vampire.quest.client.npctalk.*;
 
 public class QuestClient
 {
-    public static function init (gameCtrl :AVRGameControl, simpleGame :SimpleGame,
+    public static function init (gameCtrl :AVRGameControl, simpleGame :FlashbangApp,
         appMode :AppMode, hudSprite :Sprite, minigameLayer :Sprite, notificationLayer :Sprite,
         playerProps :PropertySubControl = null) :void
     {

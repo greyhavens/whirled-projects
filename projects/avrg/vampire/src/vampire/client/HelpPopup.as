@@ -4,8 +4,8 @@ package vampire.client
     import com.threerings.flash.TextFieldUtil;
     import com.threerings.util.Log;
     import com.whirled.contrib.avrg.RoomDragger;
-    import com.whirled.contrib.simplegame.objects.DraggableObject;
-    import com.whirled.contrib.simplegame.objects.Dragger;
+    import com.threerings.flashbang.objects.DraggableObject;
+    import com.threerings.flashbang.objects.Dragger;
     import com.whirled.net.PropertyChangedEvent;
 
     import flash.display.DisplayObject;

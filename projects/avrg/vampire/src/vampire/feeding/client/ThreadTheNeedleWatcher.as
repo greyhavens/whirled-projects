@@ -1,15 +1,15 @@
 package vampire.feeding.client {
 
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.TimeBuffer;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.util.Collision;
+import com.threerings.util.TimeBuffer;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.GameObjectRef;
+import com.threerings.flashbang.util.Collision;
 
 import vampire.feeding.*;
 import vampire.server.Trophies;
 
-public class ThreadTheNeedleWatcher extends SimObject
+public class ThreadTheNeedleWatcher extends GameObject
 {
     public function ThreadTheNeedleWatcher ()
     {
@@ -41,7 +41,7 @@ public class ThreadTheNeedleWatcher extends SimObject
         var loc :Vector2 = GameCtx.cursor.loc;
         var radius :Number = Constants.CURSOR_RADIUS + Trophies.THREAD_DIST;
 
-        for each (var cellRef :SimObjectRef in Cell.getCellRefs(Constants.CELL_RED)) {
+        for each (var cellRef :GameObjectRef in Cell.getCellRefs(Constants.CELL_RED)) {
             var cell :Cell = cellRef.object as Cell;
             if (cell == null ||
                 !cell.canCollide ||

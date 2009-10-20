@@ -2,7 +2,7 @@ package vampire
 {
 import com.threerings.util.HashMap;
 import com.threerings.util.StringBuilder;
-import com.whirled.contrib.simplegame.net.MessageManager;
+import com.whirled.contrib.messagemgr.MessageManager;
 
 import vampire.net.messages.AvatarChosenMsg;
 import vampire.net.messages.BloodBondRequestMsg;

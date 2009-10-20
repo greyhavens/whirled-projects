@@ -1,7 +1,7 @@
 package com.whirled.contrib.avrg.debug.fakeavrg
 {
-    import com.whirled.contrib.simplegame.net.BasicMessageManager;
-    import com.whirled.contrib.simplegame.net.MessageManager;
+    import com.whirled.contrib.messagemgr.BasicMessageManager;
+    import com.whirled.contrib.messagemgr.MessageManager;
 
     import flash.geom.Rectangle;
     import flash.utils.Dictionary;

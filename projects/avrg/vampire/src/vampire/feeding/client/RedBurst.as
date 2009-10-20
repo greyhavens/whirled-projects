@@ -1,7 +1,7 @@
 package vampire.feeding.client {
 
-import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.tasks.*;
+import com.threerings.flashbang.GameObjectRef;
+import com.threerings.flashbang.tasks.*;
 
 import vampire.data.VConstants;
 import vampire.feeding.*;
@@ -13,7 +13,7 @@ public class RedBurst extends CellBurst
     {
         // returns the first burst that collides with the given object
         var bursts :Array = GameCtx.gameMode.getObjectRefsInGroup(GROUP_NAME);
-        for each (var ref :SimObjectRef in bursts) {
+        for each (var ref :GameObjectRef in bursts) {
             var burst :RedBurst = ref.object as RedBurst;
             if (burst != null && burst.collidesWith(obj)) {
                 return burst;

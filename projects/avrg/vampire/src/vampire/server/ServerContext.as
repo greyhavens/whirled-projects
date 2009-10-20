@@ -3,8 +3,8 @@ package vampire.server
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRServerGameControl;
-import com.whirled.contrib.simplegame.net.BasicMessageManager;
-import com.whirled.contrib.simplegame.net.MessageManager;
+import com.whirled.contrib.messagemgr.BasicMessageManager;
+import com.whirled.contrib.messagemgr.MessageManager;
 
 import vampire.Util;
 import vampire.data.Codes;

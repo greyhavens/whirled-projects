@@ -1,7 +1,7 @@
 package vampire.combat.client
 {
-import com.whirled.contrib.simplegame.objects.Dragger;
-import com.whirled.contrib.simplegame.objects.SceneObjectParent;
+import com.threerings.flashbang.objects.Dragger;
+import com.threerings.flashbang.objects.SceneObjectParent;
 
 import flash.display.InteractiveObject;
 

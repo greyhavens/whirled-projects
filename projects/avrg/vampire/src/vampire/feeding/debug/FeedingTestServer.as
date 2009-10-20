@@ -25,8 +25,8 @@ import com.whirled.contrib.avrg.oneroom.OneRoomGameRoom;
 
 import vampire.feeding.*;
 import com.whirled.net.MessageReceivedEvent;
-import com.whirled.contrib.EventHandlerManager;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.threerings.util.EventHandlerManager;
+import com.threerings.flashbang.util.Rand;
 import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.ManagedTimer;
 import vampire.data.Logic;

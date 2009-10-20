@@ -2,7 +2,7 @@ package vampire.combat.client
 {
     import com.threerings.util.Util;
     import com.whirled.contrib.DisplayUtil;
-    import com.whirled.contrib.simplegame.tasks.LocationTask;
+    import com.threerings.flashbang.tasks.LocationTask;
 
     import flash.geom.Point;
 

@@ -3,7 +3,7 @@ package vampire.server.feeding
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.EventCollecter;
+import com.threerings.flashbang.EventCollecter;
 
 import vampire.data.Logic;
 import vampire.data.VConstants;

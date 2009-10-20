@@ -3,8 +3,8 @@ package vampire.feeding.server {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.net.Message;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.whirled.contrib.messagemgr.Message;
+import com.threerings.flashbang.util.Rand;
 
 import flash.utils.getTimer;
 

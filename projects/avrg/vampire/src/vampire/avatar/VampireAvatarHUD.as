@@ -4,15 +4,15 @@ package vampire.avatar
     import com.threerings.util.ArrayUtil;
     import com.threerings.util.Command;
     import com.whirled.avrg.AVRGameControl;
-    import com.whirled.contrib.EventHandlerManager;
+    import com.threerings.util.EventHandlerManager;
     import com.whirled.contrib.avrg.AvatarHUD;
-    import com.whirled.contrib.simplegame.objects.SceneButton;
-    import com.whirled.contrib.simplegame.objects.SceneObject;
-    import com.whirled.contrib.simplegame.objects.SceneObjectPlayMovieClipOnce;
-    import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
-    import com.whirled.contrib.simplegame.tasks.AlphaTask;
-    import com.whirled.contrib.simplegame.tasks.FunctionTask;
-    import com.whirled.contrib.simplegame.tasks.SerialTask;
+    import com.threerings.flashbang.objects.SceneButton;
+    import com.threerings.flashbang.objects.SceneObject;
+    import com.threerings.flashbang.objects.SceneObjectPlayMovieClipOnce;
+    import com.threerings.flashbang.objects.SimpleSceneObject;
+    import com.threerings.flashbang.tasks.AlphaTask;
+    import com.threerings.flashbang.tasks.FunctionTask;
+    import com.threerings.flashbang.tasks.SerialTask;
     import com.whirled.net.PropertyChangedEvent;
 
     import flash.display.DisplayObject;

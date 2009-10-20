@@ -1,6 +1,6 @@
 package equip
 {
-import com.whirled.contrib.simplegame.tasks.LocationTask;
+import com.threerings.flashbang.tasks.LocationTask;
 
 import flash.display.Sprite;
 import flash.geom.Point;

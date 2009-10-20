@@ -5,13 +5,13 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.EntityControl;
 import com.whirled.avrg.AVRGameControl;
-import com.whirled.contrib.simplegame.SimpleGame;
-import com.whirled.contrib.simplegame.net.BasicMessageManager;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.resource.ResourceManager;
-import com.whirled.contrib.simplegame.resource.SwfResource;
-import com.whirled.contrib.simplegame.tasks.LocationTask;
-import com.whirled.contrib.simplegame.tasks.ScaleTask;
+import com.threerings.flashbang.FlashbangApp;
+import com.whirled.contrib.messagemgr.BasicMessageManager;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.resource.ResourceManager;
+import com.threerings.flashbang.resource.SwfResource;
+import com.threerings.flashbang.tasks.LocationTask;
+import com.threerings.flashbang.tasks.ScaleTask;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -33,7 +33,7 @@ public class ClientContext
     public static var ctrl :AVRGameControl;
     public static var msg :BasicMessageManager;
 
-    public static var game :SimpleGame;
+    public static var game :FlashbangApp;
     public static var gameResources :ResourceManager;
 
     public static var model :PlayerModel;

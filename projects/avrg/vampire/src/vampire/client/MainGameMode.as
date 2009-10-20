@@ -7,10 +7,10 @@ import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRGameRoomEvent;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.net.Message;
-import com.whirled.contrib.simplegame.objects.BasicGameObject;
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.GameObject;
+import com.whirled.contrib.messagemgr.Message;
+import com.threerings.flashbang.objects.BasicGameObject;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
@@ -166,7 +166,7 @@ public class MainGameMode extends AppMode
     protected function handlePlayerLeftRoom (e :AVRGameRoomEvent) :void
     {
         //Remove any outstanding feed requests from the leaving player
-        var feedRequest :SimObject =
+        var feedRequest :GameObject =
             getObjectNamed(VampireController.POPUP_PREFIX_FEED_REQUEST + e.value);
         if (feedRequest != null && feedRequest.isLiveObject) {
             feedRequest.destroySelf();
@@ -279,7 +279,7 @@ public class MainGameMode extends AppMode
 
             else if (message is FeedRequestCancelMsg) {
                 var feedcancel :FeedRequestCancelMsg = FeedRequestCancelMsg(message);
-                var waitinForXPopup :SimObject = getObjectNamed(VampireController.POPUP_PREFIX_FEED_REQUEST +
+                var waitinForXPopup :GameObject = getObjectNamed(VampireController.POPUP_PREFIX_FEED_REQUEST +
                     feedcancel.playerId);
 
                 if (waitinForXPopup != null && waitinForXPopup.isLiveObject) {
@@ -296,7 +296,7 @@ public class MainGameMode extends AppMode
         shutDownFeedingClient();
 
         //Remove outstanding feed requests.
-        for each( var s :SimObject in getObjectsInGroup(PopupQuery.GROUP)) {
+        for each( var s :GameObject in getObjectsInGroup(PopupQuery.GROUP)) {
             if (s.objectName.indexOf(VConstants.POPUP_MESSAGE_FEED_CONFIRM) > -1) {
                 s.destroySelf();
             }

@@ -1,10 +1,10 @@
 package vampire.feeding.client {
 
-import com.whirled.contrib.simplegame.SimObject;
+import com.threerings.flashbang.GameObject;
 
 import vampire.feeding.*;
 
-public class SpecialCellSpawner extends SimObject
+public class SpecialCellSpawner extends GameObject
 {
     override protected function update (dt :Number) :void
     {

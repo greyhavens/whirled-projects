@@ -5,7 +5,7 @@ import com.threerings.util.Log;
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
 import com.whirled.EntityControl;
-import com.whirled.contrib.EventHandlerManager;
+import com.threerings.util.EventHandlerManager;
 
 import flash.events.Event;
 

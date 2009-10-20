@@ -1,8 +1,8 @@
 package vampire.feeding.client {
 
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.objects.*;
+import com.threerings.flashbang.*;
+import com.threerings.flashbang.objects.*;
 
 public class TipFactory
 {
@@ -25,24 +25,24 @@ public class TipFactory
     public static const NUM_TIPS :int = 12;
 
     public function createTip (type :int, owner :SceneObject, followsOwner :Boolean = true)
-        :SimObjectRef
+        :GameObjectRef
     {
         // Have we already displayed this tip enough?
         if (MAX_TIP_COUNT[type] >= 0 && _tipCounts[type] >= MAX_TIP_COUNT[type]) {
-            return SimObjectRef.Null();
+            return GameObjectRef.Null();
         }
 
         // Is this tip dependent on another one?
         var dependentTip :int = DEPENDENT_TIP[type];
         if (dependentTip >= 0 && _tipCounts[dependentTip] == 0) {
-            return SimObjectRef.Null();
+            return GameObjectRef.Null();
         }
 
         // Are we already displaying a tip? Has it existed for longer than a few seconds?
         var existingTip :Tip = GameCtx.gameMode.getObjectNamed("Tip") as Tip;
         if (existingTip != null) {
             if (existingTip.type == type || existingTip.lifeTime < 5) {
-                return SimObjectRef.Null();
+                return GameObjectRef.Null();
             } else {
                 existingTip.destroySelf();
             }
@@ -59,18 +59,18 @@ public class TipFactory
     }
 
     public function createTipFromList (types :Array, owner :SceneObject,
-        followsOwner :Boolean = true) :SimObjectRef
+        followsOwner :Boolean = true) :GameObjectRef
     {
         // try to create each tip type in the list, and return when the first one is
         // successfully created
         for each (var type :int in types) {
-            var tipRef :SimObjectRef = createTip(type, owner, followsOwner);
+            var tipRef :GameObjectRef = createTip(type, owner, followsOwner);
             if (!tipRef.isNull) {
                 return tipRef;
             }
         }
 
-        return SimObjectRef.Null();
+        return GameObjectRef.Null();
     }
 
     protected var _tipCounts :Array = ArrayUtil.create(NUM_TIPS, 0);
@@ -112,20 +112,20 @@ function createTipText (type :int) :TextField
     return TextBits.createText(TIP_TEXT[type], 1.3, 0, 0xffffff, "center", TextBits.FONT_ARNO);
 }
 
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.components.SceneComponent;
+import com.threerings.flashbang.GameObject;
+import com.threerings.flashbang.GameObjectRef;
+import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.flashbang.components.SceneComponent;
 import flash.text.TextField;
 
 import vampire.feeding.client.*;
 import com.threerings.flash.Vector2;
 import flash.geom.Point;
 import flash.display.DisplayObject;
-import com.whirled.contrib.simplegame.tasks.SerialTask;
-import com.whirled.contrib.simplegame.tasks.AlphaTask;
-import com.whirled.contrib.simplegame.tasks.SelfDestructTask;
-import com.whirled.contrib.simplegame.tasks.TimedTask;
+import com.threerings.flashbang.tasks.SerialTask;
+import com.threerings.flashbang.tasks.AlphaTask;
+import com.threerings.flashbang.tasks.SelfDestructTask;
+import com.threerings.flashbang.tasks.TimedTask;
 
 class Tip extends SceneObject
 {
@@ -199,7 +199,7 @@ class Tip extends SceneObject
 
     protected var _type :int;
     protected var _tf :TextField;
-    protected var _ownerRef :SimObjectRef;
+    protected var _ownerRef :GameObjectRef;
     protected var _followsOwner :Boolean;
     protected var _lifeTime :Number = 0;
 

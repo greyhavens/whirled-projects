@@ -2,7 +2,7 @@ package vampire.feeding.debug {
 
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
-import com.whirled.contrib.EventHandlerManager;
+import com.threerings.util.EventHandlerManager;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.Sprite;

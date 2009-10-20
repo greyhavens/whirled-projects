@@ -23,12 +23,12 @@ public class ModeInitCombat extends ModeBase
         super.pushed();
         var u :UnitRecord;
         for each (u in _ctx.enemyUnits) {
-            _ctx.panel.addSimObject(u);
+            _ctx.panel.addGameObject(u);
             _ctx.panel.arena.addSceneObject(u.arenaIcon);
             bindMouseOver(u, u.arenaIcon);
         }
         for each (u in _ctx.friendlyUnits) {
-            _ctx.panel.addSimObject(u);
+            _ctx.panel.addGameObject(u);
             _ctx.panel.arena.addSceneObject(u.arenaIcon);
             bindMouseOver(u, u.arenaIcon);
         }
