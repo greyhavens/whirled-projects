@@ -22,12 +22,15 @@ import flash.text.TextFieldType;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
-import com.threerings.util.MethodQueue;
+import com.threerings.display.LoaderUtil;
+
+import com.threerings.util.DelayUtil;
 import com.threerings.util.StringUtil;
 import com.threerings.util.Util;
+import com.threerings.util.XmlUtil;
 
-import com.threerings.flash.SimpleTextButton;
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.ui.SimpleTextButton;
+import com.threerings.text.TextFieldUtil;
 
 import com.whirled.FurniControl;
 import com.whirled.ControlEvent;
@@ -113,7 +116,7 @@ public class Embedder extends Sprite
         }
 
         // in case we only have an <embed>, we make it one-level-down...
-        var xml :XML = Util.newXML("<xml>" + embed + "</xml>");
+        var xml :XML = XmlUtil.newXML("<xml>" + embed + "</xml>");
 
         // TODO: What I should do is find the first embed child as XML and then look in that
         // for "src" and "flashvars". The below code could find a different flashvars because
@@ -162,23 +165,14 @@ public class Embedder extends Sprite
                 });
                 lc.send("_" + _youtubeId, "killVid");
 
-                MethodQueue.callLater(MethodQueue.callLater, [ killLoader, [ _loader ] ]);
+                DelayUtil.delayFrames(2, LoaderUtil.unload, [ _loader ]);
                 _youtubeId = null;
 
             } else {
-                killLoader(_loader);
+                LoaderUtil.unload(_loader);
             }
             _loader = null;
         }
-    }
-
-    protected function killLoader (l :Loader) :void
-    {
-        try {
-            l.close();
-        } catch (err :Error) {
-        }
-        l.unload();
     }
 
     protected function handleError (evt :ErrorEvent) :void
