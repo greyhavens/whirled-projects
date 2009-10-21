@@ -1,14 +1,13 @@
 package popcraft.game {
 
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.ClassUtil;
-import com.threerings.ui.KeyboardCodes;
-import com.threerings.util.Log;
 import com.threerings.flashbang.*;
 import com.threerings.flashbang.audio.*;
-import com.whirled.contrib.messagemgr.*;
 import com.threerings.flashbang.resource.*;
 import com.threerings.flashbang.util.*;
+import com.threerings.ui.KeyboardCodes;
+import com.threerings.util.ClassUtil;
+import com.threerings.util.Log;
+import com.whirled.contrib.messagemgr.Message;
 import com.whirled.game.OccupantChangedEvent;
 
 import flash.display.DisplayObjectContainer;
@@ -23,6 +22,7 @@ import popcraft.game.mpbattle.*;
 import popcraft.game.story.*;
 import popcraft.lobby.MultiplayerFailureMode;
 import popcraft.net.*;
+import popcraft.net.messagemgr.*;
 import popcraft.puzzle.*;
 import popcraft.ui.*;
 import popcraft.util.*;

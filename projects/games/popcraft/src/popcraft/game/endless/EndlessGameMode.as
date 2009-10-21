@@ -4,7 +4,7 @@ import com.threerings.geom.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.ui.KeyboardCodes;
 import com.threerings.flashbang.*;
-import com.whirled.contrib.messagemgr.*;
+import popcraft.net.messagemgr.*;
 import com.whirled.game.StateChangedEvent;
 
 import flash.display.DisplayObject;
