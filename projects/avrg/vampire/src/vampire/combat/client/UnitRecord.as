@@ -1,9 +1,9 @@
 package vampire.combat.client
 {
 
-import com.threerings.flash.MathUtil;
-import com.whirled.contrib.DisplayUtil;
 import com.threerings.flashbang.objects.SceneObjectParent;
+import com.threerings.util.MathUtil;
+import com.whirled.contrib.DisplayUtil;
 
 import flash.display.Graphics;
 import flash.display.Sprite;

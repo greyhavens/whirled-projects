@@ -2,14 +2,13 @@ package vampire.combat.client
 {
 import aduros.net.RemoteProxy;
 
+import com.threerings.flashbang.AppMode;
+import com.threerings.flashbang.FlashbangApp;
+import com.threerings.flashbang.GameObject;
 import com.threerings.util.ClassUtil;
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.contrib.GameMode;
 import com.whirled.contrib.GameModeStack;
-import com.threerings.flashbang.AppMode;
-import com.threerings.flashbang.GameObject;
-import com.threerings.flashbang.FlashbangApp;
 
 import flash.display.Graphics;
 import flash.display.Sprite;
@@ -119,7 +118,7 @@ public class CombatClient extends GameObject
     protected var _game :GameInstance;
     protected var _inited :Boolean;
     protected var _resourcesLoaded :Boolean;
-    protected var _unitDisplays :HashMap = new HashMap();
+//    protected var _unitDisplays :HashMap = new HashMap();
     protected static var log :Log = Log.getLog(CombatClient);
 
     public var popModeOnUpdate :Boolean = false;

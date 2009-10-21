@@ -1,10 +1,10 @@
 ﻿package vampire.avatar {
 
-import com.threerings.flash.ColorUtil;
+import com.threerings.display.ColorMatrix;
+import com.threerings.display.ColorUtil;
 import com.threerings.util.ArrayUtil;
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
-import com.threerings.display.ColorMatrix;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;

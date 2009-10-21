@@ -1,11 +1,12 @@
 package vampire.avatar
 {
-import com.threerings.util.HashMap;
+import com.threerings.util.EventHandlerManager;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
 import com.whirled.EntityControl;
-import com.threerings.util.EventHandlerManager;
 
 import flash.events.Event;
 
@@ -146,7 +147,7 @@ public class AvatarEndMovementNotifier
         _avatarArrivedCallback = callback;
     }
 
-    protected var _locations :HashMap = new HashMap();
+    protected var _locations :Map = Maps.newMapOf(int);
     protected var _ctrl :AvatarControl;
     protected var _avatarArrivedCallback :Function;
 

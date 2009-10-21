@@ -26,14 +26,14 @@
 			<locationURI>EXPORT_ROOT/ooo-libs/whirled/src/as</locationURI>
 		</link>
 		<link>
-			<name>[source path] flash-utils-src-as</name>
-			<type>2</type>
-			<locationURI>EXPORT_ROOT/ooo-libs/flash-utils/src/as</locationURI>
-		</link>
-		<link>
 			<name>[source path] narya-src-as</name>
 			<type>2</type>
 			<locationURI>EXPORT_ROOT/ooo-libs/narya/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] flash-utils-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/ooo-libs/flash-utils/src/as</locationURI>
 		</link>
 		<link>
 			<name>[source path] contrib-src-as</name>
@@ -49,6 +49,11 @@
 			<name>[source path] vilya-src-as</name>
 			<type>2</type>
 			<locationURI>EXPORT_ROOT/ooo-libs/vilya/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] framework-src</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/ooo-libs/lib/flex_sdk_%33.%33.0.%34%38%35%32/frameworks/projects/framework/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

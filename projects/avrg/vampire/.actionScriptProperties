@@ -8,6 +8,7 @@
 <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/ooo-libs/vilya/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/ooo-libs/whirled/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/whirled/contrib/src/as"/>
+<compilerSourcePathEntry kind="1" linkType="1" path="${EXPORT_ROOT}/ooo-libs/lib/flex_sdk_3.3.0.4852/frameworks/projects/framework/src"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="lib/libaduros/src"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="lib/flashbang/src"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="lib/libdamago"/>
