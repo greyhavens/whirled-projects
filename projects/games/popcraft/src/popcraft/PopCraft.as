@@ -3,12 +3,12 @@
 
 package popcraft {
 
-import com.threerings.ui.KeyboardCodes;
-import com.threerings.util.Log;
-import com.threerings.util.EventHandlerManager;
 import com.threerings.flashbang.*;
 import com.threerings.flashbang.resource.*;
 import com.threerings.flashbang.util.Rand;
+import com.threerings.ui.KeyboardCodes;
+import com.threerings.util.EventHandlerManager;
+import com.threerings.util.Log;
 import com.whirled.game.GameContentEvent;
 import com.whirled.game.GameControl;
 import com.whirled.game.SizeChangedEvent;
@@ -39,6 +39,9 @@ public class PopCraft extends Sprite
 
     public function PopCraft ()
     {
+        // Enforce specification of the random stream we're using to prevent sync errors
+        Rand.errorOnUnspecifiedStreamId = true;
+
         ClientCtx.mainSprite = this;
 
         // setup GameControl
