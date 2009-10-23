@@ -33,8 +33,8 @@ public class PlayerFactory
         var startX :int;
         var startY :int;
         for (;;) {
-            startX = Rand.nextIntRange(0, board.cols, Rand.STREAM_GAME);
-            startY = Rand.nextIntRange(0, board.rows, Rand.STREAM_GAME);
+            startX = Rand.nextIntInRange(0, board.cols - 1, Rand.STREAM_GAME);
+            startY = Rand.nextIntInRange(0, board.rows - 1, Rand.STREAM_GAME);
             if (!GameCtx.isCellOccupied(initialTeam, startX, startY)) {
                 break;
             }

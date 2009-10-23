@@ -21,12 +21,12 @@ public class DumbAI extends AITaskTree
 
         if (Rand.nextBoolean(Rand.STREAM_GAME)) {
             while (gridX == _player.gridX) {
-                gridX = Rand.nextIntRange(0, _player.curBoard.cols, Rand.STREAM_GAME);
+                gridX = Rand.nextIntInRange(0, _player.curBoard.cols - 1, Rand.STREAM_GAME);
             }
 
         } else {
             while (gridY == _player.gridY) {
-                gridY = Rand.nextIntRange(0, _player.curBoard.rows, Rand.STREAM_GAME);
+                gridY = Rand.nextIntInRange(0, _player.curBoard.rows - 1, Rand.STREAM_GAME);
             }
         }
 
