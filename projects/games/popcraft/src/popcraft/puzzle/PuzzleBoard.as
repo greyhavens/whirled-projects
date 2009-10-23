@@ -164,7 +164,7 @@ public class PuzzleBoard extends SceneObject
 
     protected function createResourceChunk (x :int, y :int) :void
     {
-        var chunkSize :int = Rand.nextIntRange(1, RESOURCE_CHUNK_SIZE_MAX + 1,
+        var chunkSize :int = Rand.nextIntInRange(1, RESOURCE_CHUNK_SIZE_MAX,
             ClientCtx.randStreamPuzzle);
         var resType :int = _resourceGenerator.nextEntry();
 

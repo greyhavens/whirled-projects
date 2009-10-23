@@ -219,7 +219,7 @@ public class LevelIntroMode extends AppMode
         registerListener(_okButton, MouseEvent.CLICK, okClicked);
 
         // page number
-        _pageNum = Rand.nextIntRange(_pageNum + 10, _pageNum + 1000, Rand.STREAM_COSMETIC);
+        _pageNum = Rand.nextIntInRange(_pageNum + 10, _pageNum + 1000, Rand.STREAM_COSMETIC);
         TextField(leftPage["pagenum"]).text = String(_pageNum);
 
         // left title

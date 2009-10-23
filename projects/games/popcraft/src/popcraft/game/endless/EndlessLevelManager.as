@@ -44,7 +44,7 @@ public class EndlessLevelManager
     protected function createDummySaves (min :int, max :int) :SavedEndlessGameList
     {
         var dummySaves :SavedEndlessGameList = new SavedEndlessGameList();
-        var numSaves :int = Rand.nextIntRange(min, max + 1, Rand.STREAM_COSMETIC);
+        var numSaves :int = Rand.nextIntInRange(min, max, Rand.STREAM_COSMETIC);
         for (var mapIndex :int = 1; mapIndex < numSaves; ++mapIndex) {
             dummySaves.addSave(SavedEndlessGame.create(mapIndex, 0, 0, 1, 150));
         }

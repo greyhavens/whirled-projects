@@ -72,9 +72,9 @@ public class CreditsMode extends AppMode
                 Constants.UNIT_TYPE_GRUNT,
                 0xFFFFFF);
             creature.x =
-                Rand.nextIntRange(WANDER_BOUNDS.left, WANDER_BOUNDS.right + 1, Rand.STREAM_COSMETIC);
+                Rand.nextIntInRange(WANDER_BOUNDS.left, WANDER_BOUNDS.right, Rand.STREAM_COSMETIC);
             creature.y =
-                Rand.nextIntRange(WANDER_BOUNDS.top, WANDER_BOUNDS.bottom + 1, Rand.STREAM_COSMETIC);
+                Rand.nextIntInRange(WANDER_BOUNDS.top, WANDER_BOUNDS.bottom, Rand.STREAM_COSMETIC);
             addSceneObject(creature, _unitParent);
         }
 
@@ -96,9 +96,9 @@ public class CreditsMode extends AppMode
             // create an anim view using only the last frame of the death animation
             var animView :BitmapAnimView = new BitmapAnimView(new BitmapAnim([ lastFrame ], 1));
             animView.x =
-                Rand.nextIntRange(DIE_BOUNDS.left, DIE_BOUNDS.right + 1, Rand.STREAM_COSMETIC);
+                Rand.nextIntInRange(DIE_BOUNDS.left, DIE_BOUNDS.right, Rand.STREAM_COSMETIC);
             animView.y =
-                Rand.nextIntRange(DIE_BOUNDS.top, DIE_BOUNDS.bottom + 1, Rand.STREAM_COSMETIC);
+                Rand.nextIntInRange(DIE_BOUNDS.top, DIE_BOUNDS.bottom, Rand.STREAM_COSMETIC);
             animView.scaleX = (flipX ? -1 : 1);
 
             addSceneObject(animView, _unitParent);
@@ -327,8 +327,8 @@ class WanderTask extends LocationTask
         var loc :Vector2 = new Vector2(creature.x, creature.y);
 
         var targetLoc :Vector2 = new Vector2(
-            Rand.nextIntRange(WANDER_BOUNDS.left, WANDER_BOUNDS.right + 1, Rand.STREAM_COSMETIC),
-            Rand.nextIntRange(WANDER_BOUNDS.top, WANDER_BOUNDS.bottom + 1, Rand.STREAM_COSMETIC));
+            Rand.nextIntInRange(WANDER_BOUNDS.left, WANDER_BOUNDS.right, Rand.STREAM_COSMETIC),
+            Rand.nextIntInRange(WANDER_BOUNDS.top, WANDER_BOUNDS.bottom, Rand.STREAM_COSMETIC));
 
         var d :Vector2 = targetLoc.subtract(loc);
         var time :Number = d.length / creature.unitData.baseMoveSpeed;

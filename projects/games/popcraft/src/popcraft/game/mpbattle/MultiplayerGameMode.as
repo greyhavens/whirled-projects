@@ -127,7 +127,7 @@ public class MultiplayerGameMode extends GameMode
             playerColor = ClientCtx.lobbyConfig.getPlayerColor(playerIndex);
             if (playerColor == Constants.RANDOM_COLOR) {
                 // choose a random color for this player
-                var index :int = Rand.nextIntRange(0, playerDisplayDatas.length, Rand.STREAM_GAME);
+                var index :int = Rand.nextIntInRange(0, playerDisplayDatas.length - 1, Rand.STREAM_GAME);
                 var playerDisplayData :PlayerDisplayData = playerDisplayDatas[index];
                 playerDisplayDatas.splice(index, 1); // we're operating on a copy of the data
                 playerColor = playerDisplayData.color;
