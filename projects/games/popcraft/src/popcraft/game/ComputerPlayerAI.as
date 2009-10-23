@@ -66,7 +66,7 @@ public class ComputerPlayerAI extends GameObject
 
             // before each wave goes out, there's a chance that the computer
             // player will cast a spell (if it has one available)
-            if (Rand.nextNumberRange(0, 1, Rand.STREAM_GAME) < _nextWave.spellCastChance) {
+            if (Rand.nextNumberInRange(0, 1, Rand.STREAM_GAME) < _nextWave.spellCastChance) {
                 var availableSpells :Array = [];
                 for (var spellType :int = 0; spellType < Constants.CASTABLE_SPELL_NAMES.length; ++spellType) {
                     if (_playerInfo.canCastSpell(spellType)) {

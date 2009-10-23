@@ -107,7 +107,7 @@ public class SpellDropTimer extends GameObject
 
         if (null != spellLoc) {
             // randomize the location a bit more
-            direction = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
+            direction = Rand.nextNumberInRange(0, Math.PI * 2, Rand.STREAM_GAME);
             var length :Number = GameCtx.gameData.spellDropScatter.next();
             spellLoc.addLocal(Vector2.fromAngle(direction, length));
 
@@ -138,7 +138,6 @@ public class SpellDropTimer extends GameObject
     }
 
     protected var _timerRef :GameObjectRef = new GameObjectRef();
-
 }
 
 }

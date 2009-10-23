@@ -131,8 +131,8 @@ public class CreatureUnitView extends BattlefieldSprite
 
             // pick a random location for the blood
             var bounds :Rectangle = _sprite.getBounds(_sprite);
-            var x :Number = Rand.nextNumberRange(bounds.left, bounds.right, Rand.STREAM_COSMETIC);
-            var y :Number = Rand.nextNumberRange(bounds.top, bounds.bottom, Rand.STREAM_COSMETIC);
+            var x :Number = Rand.nextNumberInRange(bounds.left, bounds.right, Rand.STREAM_COSMETIC);
+            var y :Number = Rand.nextNumberInRange(bounds.top, bounds.bottom, Rand.STREAM_COSMETIC);
             bloodObj.x = x;
             bloodObj.y = y;
 

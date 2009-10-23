@@ -45,7 +45,7 @@ public class WeightedTable
             return undefined;
         }
 
-        var val :Number = Rand.nextNumberRange(0, _maxVal, (randStreamId >= 0 ? randStreamId : _defaultRandStreamId));
+        var val :Number = Rand.nextNumberInRange(0, _maxVal, (randStreamId >= 0 ? randStreamId : _defaultRandStreamId));
         return findEntry(val).data;
     }
 

@@ -129,7 +129,7 @@ public class PuzzleBoard extends SceneObject
                 piece.scaleX = 0;
                 piece.scaleY = 0;
                 piece.addTask(new SerialTask(
-                    new TimedTask(Rand.nextNumberRange(0.25, 1, Rand.STREAM_COSMETIC)),
+                    new TimedTask(Rand.nextNumberInRange(0.25, 1, Rand.STREAM_COSMETIC)),
                     ScaleTask.CreateSmooth(1, 1, 0.25)));
             }*/
         }
@@ -304,7 +304,7 @@ public class PuzzleBoard extends SceneObject
                                 animate);
 
                             timeUntilDone = Math.max(timeUntilDone, timeUntilThisDropCompletes);
-                            dropDelay += Rand.nextNumberRange(0.04, 0.07, Rand.STREAM_COSMETIC);
+                            dropDelay += Rand.nextNumberInRange(0.04, 0.07, Rand.STREAM_COSMETIC);
                             --dstRow;
                             piecesDropped = true;
                         }

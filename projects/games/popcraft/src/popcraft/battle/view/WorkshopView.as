@@ -350,9 +350,9 @@ public class WorkshopView extends BattlefieldSprite
             debrisObj.addTask(After(0.3, new SelfDestructTask()));
 
             // pick a random location for the debris
-            var x :Number = Rand.nextNumberRange(DEBRIS_RECT.left, DEBRIS_RECT.right,
+            var x :Number = Rand.nextNumberInRange(DEBRIS_RECT.left, DEBRIS_RECT.right,
                 Rand.STREAM_COSMETIC);
-            var y :Number = Rand.nextNumberRange(DEBRIS_RECT.top, DEBRIS_RECT.bottom,
+            var y :Number = Rand.nextNumberInRange(DEBRIS_RECT.top, DEBRIS_RECT.bottom,
                 Rand.STREAM_COSMETIC);
             debrisObj.x = x;
             debrisObj.y = y;

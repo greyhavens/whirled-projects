@@ -1,7 +1,7 @@
 package redrover.server {
 
 import com.threerings.util.Log;
-import com.threerings.util.Util;
+import com.threerings.util.XmlUtil;
 import com.whirled.ServerObject;
 import com.whirled.contrib.LevelPackManager;
 import com.whirled.game.GameControl;
@@ -99,7 +99,7 @@ public class Server extends ServerObject
         var levelData :LevelData;
         try {
             data.position = 0;
-            var xml :XML = Util.newXML(data.readUTFBytes(data.length));
+            var xml :XML = XmlUtil.newXML(data.readUTFBytes(data.length));
             levelData = LevelData.fromXml(xml.Level[0]);
 
         } catch (e :Error) {

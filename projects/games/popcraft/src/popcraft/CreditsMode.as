@@ -353,7 +353,7 @@ class RandomPauseTask extends TimedTask
         _high = high;
         _randStreamId = randStreamId;
 
-        super(Rand.nextNumberRange(low, high, randStreamId));
+        super(Rand.nextNumberInRange(low, high, randStreamId));
     }
 
     override public function clone () :ObjectTask
