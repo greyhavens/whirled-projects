@@ -15,6 +15,7 @@ import flash.events.TimerEvent;
 
 import flash.media.Microphone;
 import flash.media.Sound;
+import flash.media.SoundCodec;
 
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
@@ -29,7 +30,7 @@ import com.whirled.contrib.Chunker;
 /**
  * Provides voice chat for whirled rooms.
  */
-[SWF(width="300", height="50")]
+[SWF(width="215", height="138")]
 public class VoiceChat extends Sprite
 {
     /** The maximum sample time, in milliseconds. */
@@ -43,7 +44,7 @@ public class VoiceChat extends Sprite
         _chunker = new Chunker(_ctrl, "");
         _chunker.addEventListener(Event.COMPLETE, handleChunk);
 
-        _ctrl.doLog("====== VoiceChat starting up v7");
+        log("====== VoiceChat starting up v11");
         _recTimer = new Timer(MAX_SAMPLE, 1);
         _recTimer.addEventListener(TimerEvent.TIMER, handleTimer);
 
@@ -55,7 +56,7 @@ public class VoiceChat extends Sprite
             setupMic();
             readyToRecord();
         } catch (e :Error) {
-            _ctrl.doLog("Got an error: " + e.name + ", " + e.message + "; " + e.getStackTrace());
+            log("Got an error: " + e.name + ", " + e.message + "; " + e.getStackTrace());
         }
     }
 
@@ -64,25 +65,24 @@ public class VoiceChat extends Sprite
     {
         _button.graphics.clear();
         _button.graphics.beginFill(STATE_COLORS[state]);
-        _button.graphics.drawRect(0, 0, 300, 50);
+        _button.graphics.drawRect(0, 0, 215, 138);
         _button.graphics.endFill();
-        _ctrl.doLog("State now : " + state);
+        log("State now : " + state);
     }
 
     protected function setupMic () :void
     {
         _mic = _ctrl.getMicrophone();
-        _ctrl.doLog("Got microphone: " + _mic);
+        log("Got microphone: " + _mic);
+        _mic.codec = SoundCodec.SPEEX;
         _mic.setSilenceLevel(0, 2000); // TODO
         _mic.gain = 100;
         _mic.rate = 44;
         _mic.addEventListener(ActivityEvent.ACTIVITY, handleMicActivity);
         _mic.addEventListener(StatusEvent.STATUS, handleMicStatus);
         _mic.addEventListener(SampleDataEvent.SAMPLE_DATA, handleMicData);
-        _ctrl.doLog("Microphone names: " + Microphone.names.join());
-        _ctrl.doLog("Microphone: " + _mic.name +
-            ", muted: " + _mic.muted + ", index=" + _mic.index +
-            ", rate: " + _mic.rate + ", gain=" + _mic.gain);
+        log("Microphone names: " + Microphone.names.join());
+        debugMic();
     }
 
     protected function readyToRecord () :void
@@ -107,9 +107,15 @@ public class VoiceChat extends Sprite
         _button.removeEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
         //_mic.removeEventListener(SampleDataEvent.SAMPLE_DATA, handleMicData);
 
-        _chunker.send(_output);
+        var out :ByteArray = _output;
         _output = null;
-        setState(STATE_WAITING);
+        if (out.length > 0) {
+            _chunker.send(out);
+            setState(STATE_WAITING);
+        } else {
+            log("nothing to send...");
+            readyToRecord();
+        }
     }
 
     protected function handleMouseDown (event :MouseEvent) :void
@@ -129,24 +135,32 @@ public class VoiceChat extends Sprite
 
     protected function handleMicActivity (event :ActivityEvent) :void
     {
-        _ctrl.doLog("activating " + event.activating + ", activityLevel=" + _mic.activityLevel);
+        log("activating " + event.activating + ", activityLevel=" + _mic.activityLevel);
+        if (event.activating) {
+            _mic.gain = 100;
+            _mic.rate = 44;
+            debugMic();
+        }
     }
 
     protected function handleMicStatus (event :StatusEvent) :void
     {
-        _ctrl.doLog("status level=" + event.level + ", code=" + event.code);
+        log("status level=" + event.level + ", code=" + event.code);
     }
 
     protected function handleMicData (event :SampleDataEvent) :void
     {
-        _ctrl.doLog("Got mic data!  " + event);
+        if (_output == null) {
+            return;
+        }
+        log("Got mic data!  " + event.data.length);
         _output.writeBytes(event.data);
-        _ctrl.doLog(" output byte position is now: " + _output.position);
+        log(" output byte position is now: " + _output.position);
     }
 
     protected function handleChunk (event :NamedValueEvent) :void
     {
-        _ctrl.doLog("Got sound from " + event.name + ", length: " + event.value.length);
+        log("Got sound from " + event.name + ", length: " + event.value.length);
 
         // play this sound until it finishes...
         var sound :Sound = new Sound();
@@ -163,29 +177,47 @@ public class VoiceChat extends Sprite
     protected function handlePlaySound (event :SampleDataEvent) :void
     {
         var ba :ByteArray = ByteArray(_sounds[event.target]);
-        var count :int = Math.min(8192, int(ba.bytesAvailable / 4));
+        var count :int = Math.min(CHUNK, int(ba.bytesAvailable / 4));
         var s :Number;
         for (var ii :int = 0; ii < count; ii++) {
             s = ba.readFloat();
             event.data.writeFloat(s);
             event.data.writeFloat(s);
         }
-        _ctrl.doLog("Wrote " + count + " floats, " + ba.bytesAvailable + "bytes left");
+        log("Wrote " + count + " floats, " + ba.bytesAvailable + " bytes left");
 
-        if (count < 8192) {
+        if (count < CHUNK) {
             delete _sounds[event.target];
         }
     }
 
     protected function handleSoundComplete (event :Event) :void
     {
-        _ctrl.doLog("Sound complete: " + event.target);
+        log("Sound complete: " + event.target);
         delete _sounds[event.target];
     }
 
     protected function handleUnload (event :Event) :void
     {
         _recTimer.stop();
+    }
+
+    protected function debugMic () :void
+    {
+        log("Microphone: " + _mic.name +
+            ", codec=" + _mic.codec +
+            ", muted=" + _mic.muted +
+            ", index=" + _mic.index +
+            ", rate=" + _mic.rate +
+            ", gain=" + _mic.gain +
+            ", echo=" + _mic.useEchoSuppression +
+            ", silenceLevel=" + _mic.silenceLevel +
+            ", framesPerPacket=" + _mic.framesPerPacket);
+    }
+
+    protected function log (msg :String) :void
+    {
+        _ctrl.doLog(msg);
     }
 
     protected var _sounds :Dictionary = new Dictionary();
@@ -202,6 +234,8 @@ public class VoiceChat extends Sprite
     protected var _output :ByteArray;
 
     protected var _button :Sprite;
+
+    protected static const CHUNK :int = 8192;
 
     protected static const STATE_UNREADY :int = 0;
     protected static const STATE_READY :int = 1;
