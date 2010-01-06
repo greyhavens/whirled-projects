@@ -1,6 +1,6 @@
 package vampire.avatar
 {
-    import com.threerings.flash.DisplayUtil;
+    import com.threerings.display.DisplayUtil;
     import com.threerings.util.ArrayUtil;
     import com.threerings.util.Command;
     import com.whirled.avrg.AVRGameControl;

@@ -1,10 +1,11 @@
 package vampire.feeding.server {
 
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.HashMap;
-import com.threerings.util.Log;
-import com.whirled.contrib.messagemgr.Message;
 import com.threerings.flashbang.util.Rand;
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
+import com.whirled.contrib.messagemgr.Message;
 
 import flash.utils.getTimer;
 
@@ -103,7 +104,7 @@ public class ServerGameMode extends ServerMode
     {
         _state = STATE_WAITING_FOR_SCORES;
         _playersNeedingScoreUpdate = _playersInGame.slice();
-        _finalScores = new HashMap();
+        _finalScores = Maps.newMapOf(int);
         _ctx.sendMessage(GetRoundScores.create());
     }
 
@@ -156,7 +157,7 @@ public class ServerGameMode extends ServerMode
     protected var _playersInGame :Array;
     protected var _playersNeedingScoreUpdate :Array;
     protected var _initialPlayerCount :int; // the number of players that began the round
-    protected var _finalScores :HashMap; // Map<playerId, score>
+    protected var _finalScores :Map; // Map<playerId, score>
     protected var _startTime :int;
 
     protected static const log :Log = Log.getLog(ServerGameMode);

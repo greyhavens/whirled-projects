@@ -1,7 +1,8 @@
 package vampire.server
 {
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 
 import vampire.data.Codes;
 
@@ -61,7 +62,7 @@ public class Feedback
     }
 
 //    protected static const FEEDBACK_INTERVAL_MS :int = 1000*2;
-    protected var _room2feedback :HashMap = new HashMap();
+    protected var _room2feedback :Map = Maps.newMapOf(int);
     protected static const log :Log = Log.getLog(Feedback);
 }
 }

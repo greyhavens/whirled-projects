@@ -17,11 +17,9 @@ public class BasicGameObject extends EventDispatcher
     }
 
     public function registerListener (dispatcher :IEventDispatcher, event :String,
-        listener :Function, useCapture :Boolean = false, priority :int = 0,
-        useWeakReference :Boolean = false) :void
+        listener :Function, useCapture :Boolean = false, priority :int = 0) :void
     {
-        _events.registerListener(dispatcher, event, listener, useCapture, priority,
-            useWeakReference);
+        _events.registerListener(dispatcher, event, listener, useCapture, priority);
     }
 
     protected function addIntervalId (id :uint) :void

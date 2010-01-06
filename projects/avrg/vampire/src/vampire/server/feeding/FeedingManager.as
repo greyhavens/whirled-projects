@@ -1,15 +1,16 @@
 package vampire.server.feeding
 {
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.HashMap;
-import com.threerings.util.Log;
 import com.threerings.flashbang.objects.BasicGameObject;
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 
 import flash.events.EventDispatcher;
 
 import vampire.data.Codes;
-import vampire.server.PlayerData;
 import vampire.server.GameEvent;
+import vampire.server.PlayerData;
 import vampire.server.Room;
 import vampire.server.ServerContext;
 
@@ -84,7 +85,7 @@ public class FeedingManager extends BasicGameObject
     }
 
 
-    protected var _roomFeedingManagers :HashMap = new HashMap();
+    protected var _roomFeedingManagers :Map = Maps.newMapOf(int);
     protected static const log :Log = Log.getLog(FeedingManager);
 }
 }

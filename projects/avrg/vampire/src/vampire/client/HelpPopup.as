@@ -1,7 +1,7 @@
 package vampire.client
 {
-    import com.threerings.flash.DisplayUtil;
-    import com.threerings.flash.TextFieldUtil;
+    import com.threerings.display.DisplayUtil;
+    import com.threerings.text.TextFieldUtil;
     import com.threerings.util.Log;
     import com.whirled.contrib.avrg.RoomDragger;
     import com.threerings.flashbang.objects.DraggableObject;

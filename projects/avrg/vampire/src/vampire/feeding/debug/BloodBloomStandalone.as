@@ -25,11 +25,11 @@ public class BloodBloomStandalone extends Sprite
 {
     public static function DEBUG_REMOVE_ME () :void
     {
-        var c :Class;
+        /*var c :Class;
         c = vampire.feeding.server.Server;
         c = vampire.feeding.debug.FeedingTestClient;
         c = vampire.feeding.debug.FeedingTestServer;
-        c = vampire.avatar.VampireBody;
+        c = vampire.avatar.VampireBody;*/
     }
 
     public function BloodBloomStandalone (parent :DisplayObjectContainer = null)

@@ -1,9 +1,9 @@
 package vampire.server
 {
-import com.threerings.util.HashMap;
-import com.threerings.util.HashSet;
-import com.threerings.util.Log;
 import com.threerings.flashbang.objects.BasicGameObject;
+import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.ByteArray;
@@ -117,7 +117,7 @@ public class LoadBalancerServer extends BasicGameObject
 
     protected function refreshLowPopulationRoomData (...ignored) :void
     {
-        var roomId2Players :HashMap = new HashMap();
+        var roomId2Players :Map = Maps.newMapOf(int);
         //Create the roomId to population map
         _server.rooms.forEach(function (roomId :int, room :Room) :void {
             if (room.ctrl != null && room.name != null) {
@@ -130,7 +130,7 @@ public class LoadBalancerServer extends BasicGameObject
     }
 
 
-    protected static function sortRoomsToSendPlayers (roomId2PlayerCount :HashMap) :Array
+    protected static function sortRoomsToSendPlayers (roomId2PlayerCount :Map) :Array
     {
         var rooms :Array = roomId2PlayerCount.keys();
         //We want rooms with 3-6 occupants preferentially, then rooms with 1 person, then 7+

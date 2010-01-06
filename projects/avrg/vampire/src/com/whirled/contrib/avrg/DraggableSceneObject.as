@@ -1,6 +1,6 @@
 package com.whirled.contrib.avrg
 {
-import com.threerings.flash.MathUtil;
+import com.threerings.util.MathUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameControlEvent;

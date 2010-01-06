@@ -1,15 +1,16 @@
 package vampire.feeding.client {
 
+import com.threerings.flashbang.MainLoop;
+import com.threerings.flashbang.audio.*;
+import com.threerings.flashbang.resource.*;
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.HashSet;
 import com.threerings.util.Log;
+import com.threerings.util.Set;
+import com.threerings.util.Sets;
 import com.threerings.util.Util;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.CheatDetector;
 import com.whirled.contrib.namespc.*;
-import com.threerings.flashbang.MainLoop;
-import com.threerings.flashbang.audio.*;
-import com.threerings.flashbang.resource.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -32,7 +33,7 @@ public class ClientCtx
 
     // Initialized every time a new feeding takes place
     public static var clientSettings :FeedingClientSettings;
-    public static var awardedTrophies :HashSet;
+    public static var awardedTrophies :Set;
     public static var lastRoundResults :FeedingRoundResults;
     public static var variantSettings :VariantSettings;
     // Valid only if clientSettings.spOnly is false
@@ -54,7 +55,7 @@ public class ClientCtx
     public static function init () :void
     {
         clientSettings = null;
-        awardedTrophies = new HashSet();
+        awardedTrophies = Sets.newSetOf(String);
         lastRoundResults = null;
         variantSettings = null;
         props = null;

@@ -1,6 +1,6 @@
 package vampire.feeding.client {
 
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.text.TextFieldUtil;
 import com.threerings.util.Log;
 import com.threerings.display.ColorMatrix;
 import com.whirled.contrib.avrg.RoomDragger;

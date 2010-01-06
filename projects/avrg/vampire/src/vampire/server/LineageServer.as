@@ -1,14 +1,14 @@
 package vampire.server
 {
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.HashSet;
 import com.threerings.util.Log;
+import com.threerings.util.Set;
+import com.threerings.util.Sets;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.OfflinePlayerPropertyControl;
 
 import flash.utils.ByteArray;
 import flash.utils.clearInterval;
-import flash.utils.setInterval;
 
 import vampire.data.Codes;
 import vampire.data.Lineage;
@@ -398,7 +398,7 @@ public class LineageServer extends Lineage
 
 
     protected var _vserver :GameServer;
-    protected var _playerIdsResendLineage :HashSet = new HashSet();
+    protected var _playerIdsResendLineage :Set = Sets.newSetOf(int);
 
 //    protected var _intervalIds :Array = [];
 

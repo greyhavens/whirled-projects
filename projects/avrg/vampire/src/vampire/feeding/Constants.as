@@ -1,6 +1,6 @@
 package vampire.feeding {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.threerings.flashbang.util.*;
 
 public class Constants

@@ -3,14 +3,14 @@
 
 package vampire.server {
 
-import com.threerings.util.ArrayUtil;
+import com.threerings.flashbang.objects.BasicGameObject;
 import com.threerings.util.ClassUtil;
-import com.threerings.util.HashMap;
 import com.threerings.util.Hashable;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.RoomSubControlServer;
-import com.threerings.flashbang.objects.BasicGameObject;
 
 public class Room extends BasicGameObject
     implements Hashable
@@ -116,7 +116,7 @@ public class Room extends BasicGameObject
         }
     }
 
-    public function get players () :HashMap
+    public function get players () :Map
     {
         return _players;
     }
@@ -139,7 +139,7 @@ public class Room extends BasicGameObject
     protected var _roomId :int;
     protected var _ctrl :RoomSubControlServer;
 
-    protected var _players :HashMap = new HashMap();
+    protected var _players :Map = Maps.newMapOf(int);
     protected var _roomShutdownCallback :Function;
 
 }

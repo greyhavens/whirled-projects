@@ -1,13 +1,13 @@
 package vampire.feeding {
 
-import com.threerings.util.HashMap;
-import com.whirled.contrib.messagemgr.Message;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 
 import flash.utils.ByteArray;
 
 public class FeedingRoundResults
 {
-    public var scores :HashMap; // Map<playerId, score>
+    public var scores :Map = Maps.newMapOf(int); // Map<playerId, score>
     public var initialPlayerCount :int;
 
     public function get totalScore () :int
@@ -45,7 +45,7 @@ public class FeedingRoundResults
 
     public function fromBytes (ba :ByteArray) :void
     {
-        scores = new HashMap();
+        scores = Maps.newMapOf(int);
 
         var numScores :int = ba.readByte();
         for (var ii :int = 0; ii < numScores; ++ii) {

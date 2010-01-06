@@ -1,6 +1,6 @@
 package vampire.feeding.client {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.threerings.flashbang.components.*;
 import com.threerings.flashbang.objects.SceneObject;
 import com.threerings.flashbang.util.Collision;

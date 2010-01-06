@@ -37,5 +37,14 @@
   </exec>
 
 </target>
+
+  <property name="local.msoy-pages-dir" value="/export/msoy/pages/media"/>
+  <property name="local.client-name" value="3ea558bef322391f8e5792be02541c1b6fccd41f.swf"/>
+  <property name="local.server-name" value="d30ab44a17ac3f3a3f68765f56063dc3dbf97f64.abc"/>
+
+  <target name="copylocal">
+	<copy overwrite="true" file="${app.name}.swf" toFile="${local.msoy-pages-dir}/${local.client-name}"/>
+	<copy overwrite="true" file="${app.name}.abc" toFile="${local.msoy-pages-dir}/${local.server-name}"/>
+  </target>
   
 </project>

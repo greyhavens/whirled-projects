@@ -1,10 +1,9 @@
 package vampire.server.feeding
 {
-import com.threerings.util.HashMap;
-import com.threerings.util.Log;
-import com.threerings.util.StringBuilder;
-import com.whirled.avrg.AVRServerGameControl;
 import com.threerings.flashbang.objects.BasicGameObject;
+import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.net.NetConstants;
 import com.whirled.net.PropertySubControl;
 
@@ -117,7 +116,7 @@ public class LeaderBoardServer extends BasicGameObject
         newHighScores(e.averageScore, e.scores);
     }
 
-    protected function newHighScores (averageScore :Number, playerScores :HashMap) :void
+    protected function newHighScores (averageScore :Number, playerScores :Map) :void
     {
         checkForStaleScores();
         if (playerScores != null) {
@@ -305,18 +304,18 @@ public class LeaderBoardServer extends BasicGameObject
     {
         var ii :int;
         var scoreArray :Array;
-        var sb :StringBuilder = new StringBuilder("Current Leaderboard:\n");
-        sb.append("  Daily scores:\n");
+        var sb :String = "Current Leaderboard:\n";
+        sb += "  Daily scores:\n";
         for each (scoreArray in scoresAndNamesDay) {
-            sb.append("\t\t" + scoreArray + "\n");
+            sb += "\t\t" + scoreArray + "\n";
         }
 
-        sb.append("  Monthy scores:\n");
+        sb += "  Monthy scores:\n";
         for each (scoreArray in scoresAndNamesMonth) {
-            sb.append("\t\t" + scoreArray + "\n");
+            sb += "\t\t" + scoreArray + "\n";
         }
 
-        return sb.toString();
+        return sb;
     }
 
     protected function get scoresAndNamesDay () :Array

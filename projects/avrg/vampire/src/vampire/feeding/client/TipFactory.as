@@ -119,7 +119,7 @@ import com.threerings.flashbang.components.SceneComponent;
 import flash.text.TextField;
 
 import vampire.feeding.client.*;
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import flash.geom.Point;
 import flash.display.DisplayObject;
 import com.threerings.flashbang.tasks.SerialTask;

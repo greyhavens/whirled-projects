@@ -1,7 +1,7 @@
 package vampire.client
 {
-import com.threerings.flash.TextFieldUtil;
-import com.threerings.flash.Vector2;
+import com.threerings.text.TextFieldUtil;
+import com.threerings.geom.Vector2;
 import com.threerings.util.HashMap;
 import com.threerings.util.HashSet;
 import com.threerings.util.Log;
@@ -629,7 +629,7 @@ import flash.events.MouseEvent;
 import com.threerings.util.Command;
 import flash.display.MovieClip;
 import flash.text.TextField;
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.text.TextFieldUtil;
 import flash.text.AntiAliasType;
 import flash.display.DisplayObject;
 import flash.display.Sprite;

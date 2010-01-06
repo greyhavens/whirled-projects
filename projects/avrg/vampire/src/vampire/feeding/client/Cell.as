@@ -1,6 +1,6 @@
 package vampire.feeding.client {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.threerings.flashbang.GameObjectRef;
 import com.threerings.flashbang.resource.SwfResource;
 import com.threerings.flashbang.tasks.*;
@@ -187,7 +187,7 @@ public class Cell extends CollidableObj
         GameCtx.cellBirthLayer.addChild(this.displayObject);
 
         // fire out of the heart in a random direction
-        var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
+        var angle :Number = Rand.nextNumberInRange(0, Math.PI * 2, Rand.STREAM_GAME);
         var distRange :NumRange = Constants.CELL_BIRTH_DISTANCE[Constants.CELL_RED];
         var dist :Number = distRange.next();
         var birthTarget :Vector2 = Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
@@ -212,7 +212,7 @@ public class Cell extends CollidableObj
     protected function birthWhiteCell () :void
     {
         // pick a random location on the outside of the board
-        var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
+        var angle :Number = Rand.nextNumberInRange(0, Math.PI * 2, Rand.STREAM_GAME);
         var distRange :NumRange = Constants.CELL_BIRTH_DISTANCE[Constants.CELL_WHITE];
         var dist :Number = distRange.next();
         var loc :Vector2 = Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
@@ -255,7 +255,7 @@ public class Cell extends CollidableObj
     protected function birthSpecialCell () :void
     {
         // pick a random location anywhere on the board
-        var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
+        var angle :Number = Rand.nextNumberInRange(0, Math.PI * 2, Rand.STREAM_GAME);
         var distRange :NumRange = Constants.CELL_BIRTH_DISTANCE[Constants.CELL_SPECIAL];
         var dist :Number = distRange.next();
         var loc :Vector2 = Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);

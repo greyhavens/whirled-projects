@@ -1,6 +1,6 @@
 package vampire.feeding.client {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.threerings.util.TimeBuffer;
 import com.threerings.flashbang.GameObject;
 import com.threerings.flashbang.GameObjectRef;

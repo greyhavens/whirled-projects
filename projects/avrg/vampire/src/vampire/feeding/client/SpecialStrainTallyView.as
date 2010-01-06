@@ -1,7 +1,7 @@
 package vampire.feeding.client {
 
-import com.threerings.flash.DisplayUtil;
-import com.threerings.flash.Vector2;
+import com.threerings.display.DisplayUtil;
+import com.threerings.geom.Vector2;
 import com.threerings.flashbang.objects.SceneObject;
 import com.threerings.flashbang.resource.SwfResource;
 import com.threerings.flashbang.tasks.*;
@@ -68,7 +68,7 @@ public class SpecialStrainTallyView extends SceneObject
 
 }
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.threerings.flashbang.objects.SceneObject;
 import com.threerings.flashbang.resource.SwfResource;
 import com.threerings.flashbang.tasks.*;

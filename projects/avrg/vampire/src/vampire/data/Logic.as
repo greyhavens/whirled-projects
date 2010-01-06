@@ -1,6 +1,6 @@
 package vampire.data
 {
-    import com.threerings.flash.MathUtil;
+    import com.threerings.util.MathUtil;
 
 
 /**

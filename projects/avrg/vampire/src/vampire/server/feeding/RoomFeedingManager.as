@@ -1,10 +1,9 @@
 package vampire.server.feeding
 {
+import com.threerings.flashbang.objects.BasicGameObject;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
-import com.threerings.util.HashSet;
 import com.threerings.util.Log;
-import com.threerings.flashbang.objects.BasicGameObject;
 
 import vampire.server.Room;
 

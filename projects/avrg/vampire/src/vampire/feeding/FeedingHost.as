@@ -1,7 +1,5 @@
 package vampire.feeding {
 
-import com.threerings.util.HashMap;
-
 public interface FeedingHost
 {
     /** Called when the game starts. */

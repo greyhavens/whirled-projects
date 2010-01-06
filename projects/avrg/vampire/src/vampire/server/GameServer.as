@@ -3,15 +3,15 @@
 
 package vampire.server {
 
+import com.threerings.flashbang.objects.BasicGameObject;
 import com.threerings.util.ClassUtil;
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.PlayerSubControlServer;
-import com.whirled.contrib.CheatDetector;
 import com.whirled.contrib.messagemgr.Message;
-import com.threerings.flashbang.objects.BasicGameObject;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.events.Event;
@@ -248,19 +248,19 @@ public class GameServer extends BasicGameObject
         return _players.containsKey(playerId);
     }
 
-    public function get rooms () :HashMap
+    public function get rooms () :Map
     {
         return _rooms;
     }
 
-    public function get players () :HashMap
+    public function get players () :Map
     {
         return _players;
     }
 
     protected var _ctrl :AVRServerGameControl;
-    protected var _rooms :HashMap = new HashMap();
-    protected var _players :HashMap = new HashMap();
+    protected var _rooms :Map = Maps.newMapOf(int);
+    protected var _players :Map = Maps.newMapOf(int);
 
     public static var log :Log = Log.getLog(GameServer);
 }

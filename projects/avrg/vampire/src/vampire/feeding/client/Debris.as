@@ -1,6 +1,6 @@
 package vampire.feeding.client {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.threerings.flashbang.objects.SceneObject;
 import com.threerings.flashbang.resource.SwfResource;
 import com.threerings.flashbang.tasks.AlphaTask;
@@ -34,20 +34,20 @@ public class Debris extends SceneObject
         _respawnNow = false;
 
         // pick a random location
-        var dist :Number = Rand.nextNumberRange(
+        var dist :Number = Rand.nextNumberInRange(
             Constants.HEART_RADIUS + 5,
             Constants.GAME_RADIUS - 25,
             Rand.STREAM_COSMETIC);
-        var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_COSMETIC);
+        var angle :Number = Rand.nextNumberInRange(0, Math.PI * 2, Rand.STREAM_COSMETIC);
         _loc = Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
 
         // pick a random location to die at
         var respawnDist :Number =
-            Rand.nextNumberRange(dist, Constants.GAME_RADIUS - 5, Rand.STREAM_COSMETIC);
+            Rand.nextNumberInRange(dist, Constants.GAME_RADIUS - 5, Rand.STREAM_COSMETIC);
         _respawnDist2 = respawnDist * respawnDist;
 
         _moveCCW = Rand.nextBoolean(Rand.STREAM_COSMETIC);
-        _speed = Rand.nextNumberRange(3, 7, Rand.STREAM_COSMETIC);
+        _speed = Rand.nextNumberInRange(3, 7, Rand.STREAM_COSMETIC);
 
         // fade in
         this.alpha = 0;
@@ -55,7 +55,7 @@ public class Debris extends SceneObject
 
         // rotate
         addTask(new ConstantRotationTask(
-            Rand.nextNumberRange(3, 5, Rand.STREAM_COSMETIC),
+            Rand.nextNumberInRange(3, 5, Rand.STREAM_COSMETIC),
             _moveCCW));
     }
 

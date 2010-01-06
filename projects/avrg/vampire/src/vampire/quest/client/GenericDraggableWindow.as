@@ -1,10 +1,10 @@
 package vampire.quest.client {
 
-import com.threerings.flash.DisplayUtil;
-import com.threerings.flash.SimpleTextButton;
+import com.threerings.display.DisplayUtil;
+import com.threerings.flashbang.objects.DraggableObject;
+import com.threerings.ui.SimpleTextButton;
 import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
-import com.threerings.flashbang.objects.DraggableObject;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;

@@ -1,15 +1,16 @@
 package vampire.feeding.client {
 
-import com.threerings.flash.Vector2;
-import com.threerings.util.HashMap;
-import com.threerings.util.Log;
-import com.whirled.avrg.AVRGameControlEvent;
 import com.threerings.flashbang.*;
 import com.threerings.flashbang.audio.AudioChannel;
-import com.whirled.contrib.messagemgr.*;
 import com.threerings.flashbang.objects.SimpleSceneObject;
 import com.threerings.flashbang.tasks.*;
 import com.threerings.flashbang.util.*;
+import com.threerings.geom.Vector2;
+import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
+import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.contrib.messagemgr.*;
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
@@ -46,8 +47,8 @@ public class GameMode extends AppMode
             if (Rand.nextNumber(Rand.STREAM_GAME) < Constants.SP_MULTIPLIER_RETURN_CHANCE) {
                 var sendMultiplierObj :GameObject = new GameObject();
                 var loc :Vector2 = new Vector2(x, y);
-                loc.x += Rand.nextNumberRange(5, 25, Rand.STREAM_COSMETIC);
-                loc.y += Rand.nextNumberRange(5, 25, Rand.STREAM_COSMETIC);
+                loc.x += Rand.nextNumberInRange(5, 25, Rand.STREAM_COSMETIC);
+                loc.y += Rand.nextNumberInRange(5, 25, Rand.STREAM_COSMETIC);
                 sendMultiplierObj.addTask(new SerialTask(
                     new TimedTask(Constants.SP_MULTIPLIER_RETURN_TIME.next()),
                     new FunctionTask(function () :void {
@@ -332,7 +333,7 @@ public class GameMode extends AppMode
             // End the game manually if we're in standalone mode;
             // otherwise we'll wait for the actual RoundOverMsg to come in
             if (ClientCtx.clientSettings.spOnly) {
-                var scores :HashMap = new HashMap();
+                var scores :Map = Maps.newMapOf(int);
                 scores.put(ClientCtx.localPlayerId, GameCtx.score.bloodCount);
                 onRoundOver(RoundOverMsg.create(scores, 1));
 

@@ -1,11 +1,11 @@
 package vampire.data
 {
+import com.threerings.flashbang.objects.BasicGameObject;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Equalable;
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
-import com.threerings.util.StringBuilder;
-import com.threerings.flashbang.objects.BasicGameObject;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 
 import flash.utils.ByteArray;
 import flash.utils.IDataInput;
@@ -116,10 +116,10 @@ public class Lineage extends BasicGameObject
         });
     }
 
-    protected function getMapOfSiresAndDescendents (playerId :int, results :HashMap = null) :HashMap
+    protected function getMapOfSiresAndDescendents (playerId :int, results :Map = null) :Map
     {
         if (results == null) {
-            results = new HashMap();
+            results = Maps.newMapOf(int);
         }
 
         var descendents :Array = getAllDescendents(playerId);
@@ -130,7 +130,7 @@ public class Lineage extends BasicGameObject
 
         results.put(playerId, [getPlayerName(playerId), getSireId(playerId)]);
 
-        function addHashData(playerData :Array, results :HashMap) :void
+        function addHashData(playerData :Array, results :Map) :void
         {
             if (playerData == null || results == null) {
                 return;
@@ -310,13 +310,13 @@ public class Lineage extends BasicGameObject
 
     override public function toString () :String
     {
-        var sb :StringBuilder = new StringBuilder(" Lineage:");
+        var sb :String = " Lineage:";
         for each(var playerId :int in playerIds) {
             var player :Node = _playerId2Node.get(playerId) as Node;
-            sb.append(" (" + playerId + ", " + (isPlayerName(playerId) ? getPlayerName(playerId) : "no name"));
-            sb.append(", " + getSireId(playerId) + ")");
+            sb += " (" + playerId + ", " + (isPlayerName(playerId) ? getPlayerName(playerId) : "no name");
+            sb += ", " + getSireId(playerId) + ")";
         }
-        return sb.toString();
+        return sb;
     }
 
 
@@ -558,8 +558,8 @@ public class Lineage extends BasicGameObject
 
 
 
-    protected var _playerId2Node :HashMap = new HashMap();
-    public var _playerId2Name :HashMap = new HashMap();
+    protected var _playerId2Node :Map = Maps.newMapOf(int);
+    public var _playerId2Name :Map = Maps.newMapOf(int);
 
     public var isConnectedToLilith :Boolean;
 

@@ -1,9 +1,10 @@
 package vampire.quest.client {
 
-import com.threerings.flash.SimpleTextButton;
-import com.threerings.util.HashMap;
 import com.threerings.display.ColorMatrix;
 import com.threerings.flashbang.objects.SceneObject;
+import com.threerings.ui.SimpleTextButton;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -96,6 +97,6 @@ public class LocationPanel extends SceneObject
     protected var _loc :LocationDesc;
 
     protected var _panelMovie :MovieClip;
-    protected var _activityButtons :HashMap = new HashMap(); // Map<activityId:int, buttonMovie>
+    protected var _activityButtons :Map = Maps.newMapOf(int); // Map<activityId:int, buttonMovie>
 }
 }

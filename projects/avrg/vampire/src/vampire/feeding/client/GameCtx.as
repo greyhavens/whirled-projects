@@ -1,6 +1,6 @@
 package vampire.feeding.client {
 
-import com.threerings.flash.Vector2;
+import com.threerings.geom.Vector2;
 import com.whirled.contrib.CheatDetector;
 import com.threerings.flashbang.components.LocationComponent;
 

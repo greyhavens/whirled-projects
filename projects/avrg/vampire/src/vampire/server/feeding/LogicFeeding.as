@@ -1,7 +1,7 @@
 package vampire.server.feeding
 {
-    import com.threerings.flash.MathUtil;
-    import com.threerings.flash.Vector2;
+    import com.threerings.util.MathUtil;
+    import com.threerings.geom.Vector2;
     import com.threerings.util.Log;
     import com.whirled.avrg.AVRGameAvatar;
     import com.whirled.avrg.OfflinePlayerPropertyControl;

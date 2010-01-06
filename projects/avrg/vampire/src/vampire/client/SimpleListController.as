@@ -1,7 +1,8 @@
 package vampire.client {
 
-import com.threerings.util.HashMap;
 import com.threerings.util.EventHandlerManager;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -127,7 +128,7 @@ public class SimpleListController
     protected var _columnNames :Array;
     protected var _rows :Array = [];
 
-    protected var _customColumnHandlers :HashMap = new HashMap();
+    protected var _customColumnHandlers :Map = Maps.newMapOf(String);
 
     protected var _upButton :SimpleButton;
     protected var _downButton :SimpleButton;

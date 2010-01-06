@@ -1,7 +1,8 @@
 package vampire.quest.client.npctalk {
 
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 
 import vampire.quest.client.NpcTalkPanel;
 
@@ -23,7 +24,7 @@ public class Program
         ProgramCtx.init();
         ProgramCtx.program = this;
         ProgramCtx.view = talkView;
-        ProgramCtx.vars = new HashMap();
+        ProgramCtx.vars = Maps.newMapOf(String);
 
         _routineStack = [];
         _routineState = [];
@@ -148,7 +149,7 @@ public class Program
         return (_routineState.length > 0 ? _routineState[_routineState.length - 1] : null);
     }
 
-    protected var _routines :HashMap = new HashMap();
+    protected var _routines :Map = Maps.newMapOf(String);
     protected var _routineStack :Array;
     protected var _routineState :Array;
     protected var _scheduledRoutineName :String;

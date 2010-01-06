@@ -1,7 +1,8 @@
 package vampire.quest {
 
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.threerings.util.Map;
+import com.threerings.util.Maps;
 
 import vampire.quest.client.PlayerQuestProps;
 
@@ -136,7 +137,7 @@ public class Quests
     }
 
     protected static var _inited :Boolean;
-    protected static var _quests :HashMap = new HashMap(); // Map<id:int, quest:QuestDesc>
+    protected static var _quests :Map = Maps.newMapOf(int); // Map<id:int, quest:QuestDesc>
 
     protected static var log :Log = Log.getLog(Quests);
 }
