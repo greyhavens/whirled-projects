@@ -44,7 +44,7 @@ public class VoiceChat extends Sprite
         _chunker = new Chunker(_ctrl, "");
         _chunker.addEventListener(Event.COMPLETE, handleChunk);
 
-        log("====== VoiceChat starting up v11");
+        log("====== VoiceChat starting up v13");
         _recTimer = new Timer(MAX_SAMPLE, 1);
         _recTimer.addEventListener(TimerEvent.TIMER, handleTimer);
 
@@ -74,14 +74,18 @@ public class VoiceChat extends Sprite
     {
         _mic = _ctrl.getMicrophone();
         log("Got microphone: " + _mic);
-        _mic.codec = SoundCodec.SPEEX;
-        _mic.setSilenceLevel(0, 2000); // TODO
-        _mic.gain = 100;
-        _mic.rate = 44;
+        setMicProps();
         _mic.addEventListener(ActivityEvent.ACTIVITY, handleMicActivity);
         _mic.addEventListener(StatusEvent.STATUS, handleMicStatus);
         _mic.addEventListener(SampleDataEvent.SAMPLE_DATA, handleMicData);
-        log("Microphone names: " + Microphone.names.join());
+    }
+
+    protected function setMicProps () :void
+    {
+        _mic.codec = SoundCodec.SPEEX;
+        _mic.setSilenceLevel(0, 4000); // TODO
+        _mic.gain = 100;
+        _mic.rate = 44;
         debugMic();
     }
 
@@ -137,9 +141,7 @@ public class VoiceChat extends Sprite
     {
         log("activating " + event.activating + ", activityLevel=" + _mic.activityLevel);
         if (event.activating) {
-            _mic.gain = 100;
-            _mic.rate = 44;
-            debugMic();
+            setMicProps();
         }
     }
 
@@ -153,9 +155,12 @@ public class VoiceChat extends Sprite
         if (_output == null) {
             return;
         }
-        log("Got mic data!  " + event.data.length);
+//        var ba :ByteArray = event.data;
+//        while (ba.bytesAvailable > 0) {
+//            _output.writeFloat(ba.readFloat());
+//        }
         _output.writeBytes(event.data);
-        log(" output byte position is now: " + _output.position);
+        log("Got mic data! " + event.data.length + " : " + _output.length);
     }
 
     protected function handleChunk (event :NamedValueEvent) :void
@@ -177,16 +182,22 @@ public class VoiceChat extends Sprite
     protected function handlePlaySound (event :SampleDataEvent) :void
     {
         var ba :ByteArray = ByteArray(_sounds[event.target]);
+        if (ba == null) {
+            log("Sound stopped");
+            return;
+        }
+        var out :ByteArray = event.data;
         var count :int = Math.min(CHUNK, int(ba.bytesAvailable / 4));
         var s :Number;
         for (var ii :int = 0; ii < count; ii++) {
             s = ba.readFloat();
-            event.data.writeFloat(s);
-            event.data.writeFloat(s);
+            out.writeFloat(s);
+            out.writeFloat(s);
         }
         log("Wrote " + count + " floats, " + ba.bytesAvailable + " bytes left");
 
         if (count < CHUNK) {
+            log("I think I'm done");
             delete _sounds[event.target];
         }
     }
@@ -217,6 +228,7 @@ public class VoiceChat extends Sprite
 
     protected function log (msg :String) :void
     {
+        trace("VOICECHAT: " + msg);
         _ctrl.doLog(msg);
     }
 
