@@ -8,7 +8,7 @@ import flash.display.MovieClip;
 import flash.display.Scene;
 import flash.events.Event;
 
-import com.threerings.util.HashMap;
+import com.threerings.util.maps.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
 
