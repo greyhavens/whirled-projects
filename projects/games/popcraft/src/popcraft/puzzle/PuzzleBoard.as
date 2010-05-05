@@ -3,15 +3,15 @@
 
 package popcraft.puzzle {
 
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.Assert;
-import com.threerings.util.Set;
-import com.threerings.util.Sets;
 import com.threerings.flashbang.*;
 import com.threerings.flashbang.audio.*;
 import com.threerings.flashbang.objects.*;
 import com.threerings.flashbang.tasks.*;
 import com.threerings.flashbang.util.*;
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.Assert;
+import com.threerings.util.Set;
+import com.threerings.util.Sets;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -36,14 +36,11 @@ public class PuzzleBoard extends SceneObject
         _tileSize = tileSize;
 
         // create the resource generator
-        var table :Array = new Array();
+        _resourceGenerator = new WeightedArray(ClientCtx.randStreamPuzzle);
         for (var resType: int = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
             var resourceData :ResourceData = GameCtx.gameData.puzzleData.resources[resType];
-            table.push(resType);
-            table.push(resourceData.frequency);
+            _resourceGenerator.push(resType, resourceData.frequency);
         }
-
-        _resourceGenerator = new WeightedTable(table, ClientCtx.randStreamPuzzle);
 
         // create the visual representation of the board
         _sprite = SpriteUtil.createSprite(false, true);
@@ -90,7 +87,7 @@ public class PuzzleBoard extends SceneObject
         Assert.isNull(_board[boardIndex]);
 
         if (resourceType < 0) {
-            resourceType = _resourceGenerator.nextEntry();
+            resourceType = _resourceGenerator.getNextData();
         }
 
         var piece :Piece = new Piece(resourceType, boardIndex);
@@ -169,7 +166,7 @@ public class PuzzleBoard extends SceneObject
     {
         var chunkSize :int = Rand.nextIntInRange(1, RESOURCE_CHUNK_SIZE_MAX,
             ClientCtx.randStreamPuzzle);
-        var resType :int = _resourceGenerator.nextEntry();
+        var resType :int = _resourceGenerator.getNextData();
 
         for (var i :int = 0; i < chunkSize; ++i) {
             var index :int = (y * _cols) + x;
@@ -524,7 +521,7 @@ public class PuzzleBoard extends SceneObject
 
     protected var _resolvingClears :Boolean;
 
-    protected var _resourceGenerator :WeightedTable;
+    protected var _resourceGenerator :WeightedArray;
 
     protected static const MOVE_TASK_NAME :String = "move";
 
