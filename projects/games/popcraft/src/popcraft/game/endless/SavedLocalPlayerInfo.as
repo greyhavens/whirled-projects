@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.game.endless {
 
 public class SavedLocalPlayerInfo extends SavedPlayerInfo

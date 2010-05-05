@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.battle.ai {
 
 import com.threerings.flashbang.GameObjectRef;

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft {
 
 public class Trophies

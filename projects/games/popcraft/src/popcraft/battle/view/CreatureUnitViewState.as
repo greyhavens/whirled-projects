@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.battle.view {
 
 public class CreatureUnitViewState

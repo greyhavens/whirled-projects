@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.net {
 
 import flash.utils.ByteArray;

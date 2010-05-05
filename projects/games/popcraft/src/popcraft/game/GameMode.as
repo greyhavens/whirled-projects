@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.game {
 
 import com.threerings.flashbang.*;

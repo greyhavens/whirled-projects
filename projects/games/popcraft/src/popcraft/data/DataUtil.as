@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.data {
 
 import com.threerings.geom.Vector2;

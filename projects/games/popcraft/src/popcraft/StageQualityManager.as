@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft {
 
 import flash.display.StageQuality;

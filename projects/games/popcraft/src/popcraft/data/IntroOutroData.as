@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.data {
 
 public class IntroOutroData

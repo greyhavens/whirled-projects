@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.server {
 
 import com.whirled.game.GameControl;

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.ui {
 
 import com.threerings.display.DisplayUtil;

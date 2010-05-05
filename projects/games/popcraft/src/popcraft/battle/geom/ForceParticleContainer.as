@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.battle.geom {
 
 import com.threerings.util.ArrayUtil;

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.game.story {
 
 import flash.utils.ByteArray;

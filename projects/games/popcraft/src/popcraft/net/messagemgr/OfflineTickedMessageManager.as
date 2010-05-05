@@ -1,6 +1,9 @@
 //
 // $Id$
 
+//
+// $Id$
+
 package popcraft.net.messagemgr {
 
 import com.whirled.contrib.messagemgr.BasicMessageManager;

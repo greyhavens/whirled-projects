@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.battle {
 
 public class UnitDamageShield

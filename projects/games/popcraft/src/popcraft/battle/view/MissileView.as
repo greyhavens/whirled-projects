@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.battle.view {
 
 import com.threerings.geom.Vector2;

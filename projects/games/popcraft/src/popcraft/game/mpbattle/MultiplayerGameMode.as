@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.game.mpbattle {
 
 import com.threerings.util.ArrayUtil;

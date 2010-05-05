@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.lobby {
 
 import com.threerings.text.TextFieldUtil;

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.battle.ai {
 
 import popcraft.battle.CreatureUnit;

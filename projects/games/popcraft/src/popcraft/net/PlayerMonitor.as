@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.net {
 
 import com.threerings.util.ArrayUtil;

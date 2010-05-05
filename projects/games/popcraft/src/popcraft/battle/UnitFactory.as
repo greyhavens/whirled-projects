@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.battle {
 
 import com.threerings.util.Assert;

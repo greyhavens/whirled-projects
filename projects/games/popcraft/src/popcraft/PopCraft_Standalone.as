@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft {
 
 import com.threerings.flashbang.resource.ResourceManager;

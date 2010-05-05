@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.data {
 
 import com.threerings.flashbang.util.*;

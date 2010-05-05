@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.puzzle {
 
 import com.threerings.flashbang.objects.SceneObject;

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package popcraft.util {
 
 import flash.display.Bitmap;
