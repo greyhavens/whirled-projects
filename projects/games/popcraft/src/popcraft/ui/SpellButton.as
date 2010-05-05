@@ -13,7 +13,7 @@ import flash.display.MovieClip;
 
 import popcraft.*;
 import popcraft.game.*;
-import popcraft.battle.CreatureSpellSet;
+import popcraft.game.battle.CreatureSpellSet;
 import popcraft.data.SpellData;
 
 public class SpellButton extends SceneObject

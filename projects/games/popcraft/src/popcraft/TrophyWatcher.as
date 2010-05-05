@@ -3,7 +3,7 @@
 
 package popcraft {
 
-import popcraft.battle.*;
+import popcraft.game.battle.*;
 import popcraft.game.*;
 
 /**

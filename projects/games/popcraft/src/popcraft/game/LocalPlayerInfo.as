@@ -8,7 +8,7 @@ import com.threerings.util.Assert;
 import flash.display.DisplayObject;
 
 import popcraft.*;
-import popcraft.battle.*;
+import popcraft.game.battle.*;
 import popcraft.data.*;
 import popcraft.game.endless.SavedEndlessGame;
 import popcraft.game.endless.SavedLocalPlayerInfo;

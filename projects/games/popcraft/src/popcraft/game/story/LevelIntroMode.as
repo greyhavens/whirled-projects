@@ -20,7 +20,7 @@ import flash.text.TextField;
 
 import popcraft.*;
 import popcraft.game.*;
-import popcraft.battle.view.CreatureAnimFactory;
+import popcraft.game.battle.view.CreatureAnimFactory;
 import popcraft.data.LevelData;
 import popcraft.data.SpellData;
 import popcraft.data.UnitData;

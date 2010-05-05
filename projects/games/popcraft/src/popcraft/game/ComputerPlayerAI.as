@@ -8,7 +8,7 @@ import com.threerings.flashbang.tasks.*;
 import com.threerings.flashbang.util.Rand;
 
 import popcraft.*;
-import popcraft.battle.*;
+import popcraft.game.battle.*;
 import popcraft.data.*;
 
 public class ComputerPlayerAI extends GameObject

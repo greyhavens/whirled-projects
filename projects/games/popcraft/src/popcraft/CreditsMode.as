@@ -15,8 +15,8 @@ import flash.display.Sprite;
 import flash.display.StageQuality;
 import flash.events.MouseEvent;
 
-import popcraft.battle.view.CreatureAnimFactory;
-import popcraft.battle.view.TeslaSoundPlayer;
+import popcraft.game.battle.view.CreatureAnimFactory;
+import popcraft.game.battle.view.TeslaSoundPlayer;
 import popcraft.ui.UIBits;
 import popcraft.util.SpriteUtil;
 
@@ -168,7 +168,7 @@ import flash.geom.Rectangle;
 import popcraft.*;
 import popcraft.data.UnitData;
 import popcraft.util.SpriteUtil;
-import popcraft.battle.view.CreatureAnimFactory;
+import popcraft.game.battle.view.CreatureAnimFactory;
 import com.threerings.flashbang.tasks.LocationTask;
 import com.threerings.flashbang.tasks.RepeatingTask;
 import com.threerings.util.Random;

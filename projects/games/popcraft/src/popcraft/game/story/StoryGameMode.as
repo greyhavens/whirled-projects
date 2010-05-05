@@ -9,7 +9,7 @@ import popcraft.net.messagemgr.OfflineTickedMessageManager;
 import popcraft.net.messagemgr.TickedMessageManager;
 
 import popcraft.*;
-import popcraft.battle.*;
+import popcraft.game.battle.*;
 import popcraft.data.*;
 import popcraft.game.*;
 

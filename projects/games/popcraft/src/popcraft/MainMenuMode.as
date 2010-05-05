@@ -17,7 +17,7 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
-import popcraft.battle.view.WorkshopView;
+import popcraft.game.battle.view.WorkshopView;
 import popcraft.data.LevelData;
 import popcraft.game.*;
 import popcraft.game.endless.*;

@@ -11,11 +11,11 @@ import com.threerings.flashbang.audio.AudioManager;
 import flash.display.Sprite;
 
 import popcraft.*;
-import popcraft.battle.*;
-import popcraft.battle.geom.ForceParticleContainer;
-import popcraft.battle.view.*;
+import popcraft.game.battle.*;
+import popcraft.game.battle.geom.ForceParticleContainer;
+import popcraft.game.battle.view.*;
 import popcraft.data.*;
-import popcraft.puzzle.*;
+import popcraft.game.puzzle.*;
 import popcraft.ui.DashboardView;
 
 public class GameCtx

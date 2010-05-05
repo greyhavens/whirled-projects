@@ -13,8 +13,8 @@ import com.whirled.game.StateChangedEvent;
 import flash.display.DisplayObject;
 
 import popcraft.*;
-import popcraft.battle.*;
-import popcraft.battle.view.SpellDropView;
+import popcraft.game.battle.*;
+import popcraft.game.battle.view.SpellDropView;
 import popcraft.data.*;
 import popcraft.game.*;
 import popcraft.game.mpbattle.*;

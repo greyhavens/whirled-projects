@@ -7,7 +7,7 @@ import com.threerings.geom.Vector2;
 import com.threerings.flashbang.*;
 import com.threerings.flashbang.util.*;
 
-import popcraft.battle.*;
+import popcraft.game.battle.*;
 import popcraft.data.*;
 import popcraft.util.*;
 

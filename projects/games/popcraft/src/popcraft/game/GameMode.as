@@ -17,16 +17,16 @@ import flash.display.DisplayObjectContainer;
 import flash.geom.Point;
 
 import popcraft.*;
-import popcraft.battle.*;
-import popcraft.battle.geom.ForceParticleContainer;
-import popcraft.battle.view.*;
+import popcraft.game.battle.*;
+import popcraft.game.battle.geom.ForceParticleContainer;
+import popcraft.game.battle.view.*;
 import popcraft.data.*;
 import popcraft.game.mpbattle.*;
 import popcraft.game.story.*;
 import popcraft.lobby.MultiplayerFailureMode;
 import popcraft.net.*;
 import popcraft.net.messagemgr.*;
-import popcraft.puzzle.*;
+import popcraft.game.puzzle.*;
 import popcraft.ui.*;
 import popcraft.util.*;
 

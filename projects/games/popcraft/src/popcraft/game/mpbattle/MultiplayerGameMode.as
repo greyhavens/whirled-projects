@@ -12,7 +12,7 @@ import com.whirled.game.StateChangedEvent;
 import flash.display.DisplayObject;
 
 import popcraft.*;
-import popcraft.battle.*;
+import popcraft.game.battle.*;
 import popcraft.data.*;
 import popcraft.game.*;
 
