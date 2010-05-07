@@ -120,7 +120,7 @@ public class CreatureUnitView extends BattlefieldSprite
 
     protected function handleUnitAttacked (...ignored) :void
     {
-        var timeNow :Number = ClientCtx.mainLoop.elapsedSeconds;
+        var timeNow :Number = ClientCtx.mainLoop.getAppTime();
         if (timeNow - _lastBloodTime >= BLOOD_INTERVAL_MIN) {
             // show a blood splatter
             if (null == g_bloodClass) {
