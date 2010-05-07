@@ -4,11 +4,13 @@
 package popcraft.server {
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.Log;
 import com.threerings.util.EventHandlerManager;
-import com.whirled.contrib.ManagedTimer;
-import com.whirled.contrib.TimerManager;
+import com.threerings.util.Log;
+import com.threerings.util.TimerGroup;
 import com.whirled.net.MessageReceivedEvent;
+
+import flash.events.TimerEvent;
+import flash.utils.Timer;
 
 import popcraft.*;
 
@@ -125,7 +127,8 @@ public class ServerLobby
     protected function restartCountdown () :void
     {
         stopCountdown();
-        _countdownTimer = _timers.createTimer(LobbyConfig.COUNTDOWN_TIME * 1000, 1,
+        _countdownTimer = _timers.createTimer(LobbyConfig.COUNTDOWN_TIME * 1000, 1);
+        _countdownTimer.addEventListener(TimerEvent.TIMER,
             function (...ignored) :void {
                 log.info("Starting game");
                 stopCountdown();
@@ -141,7 +144,7 @@ public class ServerLobby
     protected function stopCountdown () :void
     {
         if (_countdownTimer != null) {
-            _countdownTimer.cancel();
+            _timers.cancelTimer(_countdownTimer);
             _countdownTimer = null;
             setProp(LobbyConfig.PROP_GAME_START_COUNTDOWN, false);
             log.info("Stopped countdown");
@@ -172,10 +175,10 @@ public class ServerLobby
     }
 
     protected var _events :EventHandlerManager = new EventHandlerManager();
-    protected var _timers :TimerManager = new TimerManager();
+    protected var _timers :TimerGroup = new TimerGroup();
 
     protected var _gameStarted :Boolean;
-    protected var _countdownTimer :ManagedTimer;
+    protected var _countdownTimer :Timer;
 
     protected static var log :Log = Log.getLog(ServerLobby);
 }
