@@ -217,8 +217,10 @@ public class PuzzleBoard extends SceneObject
 
         _resolvingClears = true;
 
+        // "Animation Canceling" is plaguing multiplayer games, so we always animate.
+        var animate :Boolean = true;
         // let's only animate if the game isn't running slowly
-        var animate :Boolean = !PerfMonitor.isLowFramerate;
+        //var animate :Boolean = !PerfMonitor.isLowFramerate;
 
         // remove the cleared pieces from the board
         for each (var piece :Piece in clearPieces) {
