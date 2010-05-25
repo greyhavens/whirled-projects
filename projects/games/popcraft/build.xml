@@ -41,6 +41,6 @@
     </copy>
   </target>
 
-  <target name="testpacks" depends="compile, copydata, test"/>
+  <target name="testpacks" depends="compile, copydata, test-debug"/>
 
 </project>

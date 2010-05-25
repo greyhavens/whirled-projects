@@ -7,35 +7,34 @@ import com.whirled.contrib.messagemgr.Message;
 
 import flash.utils.ByteArray;
 
-public class TeamShoutMsg
-    implements Message
+import popcraft.game.PlayerInfo;
+
+public class TeamShoutMsg extends GameMsg
 {
-    public var playerIndex :int;
     public var shoutType :int;
 
-    public static function create (playerIndex :int, shoutType :int) :TeamShoutMsg
+    public static function create (playerInfo :PlayerInfo, shoutType :int) :TeamShoutMsg
     {
         var msg :TeamShoutMsg = new TeamShoutMsg();
-        msg.playerIndex = playerIndex;
+        msg.init(playerInfo);
         msg.shoutType = shoutType;
         return msg;
     }
 
-    public function fromBytes (ba :ByteArray) :void
+    override public function fromBytes (ba :ByteArray) :void
     {
-        playerIndex = ba.readByte();
+        super.fromBytes(ba);
         shoutType = ba.readByte();
     }
 
-    public function toBytes (ba :ByteArray = null) :ByteArray
+    override public function toBytes (ba :ByteArray = null) :ByteArray
     {
-        ba = (ba != null ? ba : new ByteArray());
-        ba.writeByte(playerIndex);
+        ba = super.toBytes(ba);
         ba.writeByte(shoutType);
         return ba;
     }
 
-    public function get name () :String
+    override public function get name () :String
     {
         return "TeamShout";
     }

@@ -7,35 +7,34 @@ import com.whirled.contrib.messagemgr.Message;
 
 import flash.utils.ByteArray;
 
-public class CastCreatureSpellMsg
-    implements Message
+import popcraft.game.PlayerInfo;
+
+public class CastCreatureSpellMsg extends GameMsg
 {
-    public var playerIndex :int;
     public var spellType :int;
 
-    public static function create (playerIndex :int, spellType :int) :CastCreatureSpellMsg
+    public static function create (playerInfo :PlayerInfo, spellType :int) :CastCreatureSpellMsg
     {
         var msg :CastCreatureSpellMsg = new CastCreatureSpellMsg();
-        msg.playerIndex = playerIndex;
+        msg.init(playerInfo);
         msg.spellType = spellType;
         return msg;
     }
 
-    public function fromBytes (ba :ByteArray) :void
+    override public function fromBytes (ba :ByteArray) :void
     {
-        playerIndex = ba.readByte();
+        super.fromBytes(ba);
         spellType = ba.readByte();
     }
 
-    public function toBytes (ba :ByteArray = null) :ByteArray
+    override public function toBytes (ba :ByteArray = null) :ByteArray
     {
-        ba = (ba != null ? ba : new ByteArray());
-        ba.writeByte(playerIndex);
+        ba = super.toBytes(ba);
         ba.writeByte(spellType);
         return ba;
     }
 
-    public function get name () :String
+    override public function get name () :String
     {
         return "CastCreatureSpell";
     }

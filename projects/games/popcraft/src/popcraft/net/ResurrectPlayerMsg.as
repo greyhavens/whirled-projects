@@ -7,31 +7,18 @@ import com.whirled.contrib.messagemgr.Message;
 
 import flash.utils.ByteArray;
 
-public class ResurrectPlayerMsg
-    implements Message
-{
-    public var playerIndex :int;
+import popcraft.game.PlayerInfo;
 
-    public static function create (playerIndex :int) :ResurrectPlayerMsg
+public class ResurrectPlayerMsg extends GameMsg
+{
+    public static function create (playerInfo :PlayerInfo) :ResurrectPlayerMsg
     {
         var msg :ResurrectPlayerMsg = new ResurrectPlayerMsg();
-        msg.playerIndex = playerIndex;
+        msg.init(playerInfo);
         return msg;
     }
 
-    public function fromBytes (ba :ByteArray) :void
-    {
-        playerIndex = ba.readByte();
-    }
-
-    public function toBytes (ba :ByteArray = null) :ByteArray
-    {
-        ba = (ba != null ? ba : new ByteArray());
-        ba.writeByte(playerIndex);
-        return ba;
-    }
-
-    public function get name () :String
+    override public function get name () :String
     {
         return "ResurrectPlayer";
     }

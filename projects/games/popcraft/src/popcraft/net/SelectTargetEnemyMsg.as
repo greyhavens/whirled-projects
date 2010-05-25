@@ -7,35 +7,35 @@ import com.whirled.contrib.messagemgr.Message;
 
 import flash.utils.ByteArray;
 
-public class SelectTargetEnemyMsg
-    implements Message
+import popcraft.game.PlayerInfo;
+
+public class SelectTargetEnemyMsg extends GameMsg
 {
-    public var playerIndex :int;
     public var targetPlayerIndex :int;
 
-    public static function create (playerIndex :int, targetPlayerIndex :int) :SelectTargetEnemyMsg
+    public static function create (playerInfo :PlayerInfo, targetPlayerIndex :int)
+        :SelectTargetEnemyMsg
     {
         var msg :SelectTargetEnemyMsg = new SelectTargetEnemyMsg();
-        msg.playerIndex = playerIndex;
+        msg.init(playerInfo);
         msg.targetPlayerIndex = targetPlayerIndex;
         return msg;
     }
 
-    public function fromBytes (ba :ByteArray) :void
+    override public function fromBytes (ba :ByteArray) :void
     {
-        playerIndex = ba.readByte();
+        super.fromBytes(ba);
         targetPlayerIndex = ba.readByte();
     }
 
-    public function toBytes (ba :ByteArray = null) :ByteArray
+    override public function toBytes (ba :ByteArray = null) :ByteArray
     {
-        ba = (ba != null ? ba : new ByteArray());
-        ba.writeByte(playerIndex);
+        ba = super.toBytes(ba);
         ba.writeByte(targetPlayerIndex);
         return ba;
     }
 
-    public function get name () :String
+    override public function get name () :String
     {
         return "SelectTargetEnemy";
     }

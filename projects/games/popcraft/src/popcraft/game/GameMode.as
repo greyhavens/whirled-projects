@@ -17,16 +17,16 @@ import flash.display.DisplayObjectContainer;
 import flash.geom.Point;
 
 import popcraft.*;
+import popcraft.data.*;
 import popcraft.game.battle.*;
 import popcraft.game.battle.geom.ForceParticleContainer;
 import popcraft.game.battle.view.*;
-import popcraft.data.*;
 import popcraft.game.mpbattle.*;
+import popcraft.game.puzzle.*;
 import popcraft.game.story.*;
 import popcraft.lobby.MultiplayerFailureMode;
 import popcraft.net.*;
 import popcraft.net.messagemgr.*;
-import popcraft.game.puzzle.*;
 import popcraft.ui.*;
 import popcraft.util.*;
 
@@ -557,13 +557,30 @@ public class GameMode extends TransitionMode
 
     protected function handleMessage (msg :Message) :void
     {
-        var playerIndex :int;
-        var playerInfo :PlayerInfo;
+        if (!(msg is GameMsg)) {
+            log.warning("handleMessage: unrecognized message type", "msg", msg);
+            return;
+        }
+
+        var gameMsg :GameMsg = GameMsg(msg);
+        var playerIndex :int = gameMsg.playerIndex;
+        var playerInfo :PlayerInfo = GameCtx.playerInfos[playerIndex];
+
+        if (playerInfo.nextReceivedGameMsgId != gameMsg.messageId) {
+            // Somebody's probably cheating.
+            // Let's just silently fail, for now.
+            /*log.warning("handleMessage: received out-of-order message",
+                "playerIndex", playerIndex, "expectedId", playerInfo.nextReceivedGameMsgId,
+                "msg", gameMsg);*/
+            return;
+        }
+
+        // The next message we receive from this player should have the next ID
+        playerInfo.nextReceivedGameMsgId++;
 
         if (msg is CreateCreatureMsg) {
             var createUnitMsg :CreateCreatureMsg = (msg as CreateCreatureMsg);
-            playerIndex = createUnitMsg.playerIndex;
-            if (PlayerInfo(GameCtx.playerInfos[playerIndex]).isAlive) {
+            if (playerInfo.isAlive) {
                 for (var ii :int = 0; ii < createUnitMsg.count; ++ii) {
                     GameCtx.unitFactory.createCreature(createUnitMsg.creatureType, playerIndex);
                 }
@@ -575,15 +592,13 @@ public class GameMode extends TransitionMode
 
         } else if (msg is SelectTargetEnemyMsg) {
             var selectTargetEnemyMsg :SelectTargetEnemyMsg = msg as SelectTargetEnemyMsg;
-            playerIndex = selectTargetEnemyMsg.playerIndex;
-            if (PlayerInfo(GameCtx.playerInfos[playerIndex]).isAlive) {
+            if (playerInfo.isAlive) {
                 setTargetEnemy(playerIndex, selectTargetEnemyMsg.targetPlayerIndex);
             }
 
         } else if (msg is CastCreatureSpellMsg) {
             var castSpellMsg :CastCreatureSpellMsg = msg as CastCreatureSpellMsg;
-            playerIndex = castSpellMsg.playerIndex;
-            if (PlayerInfo(GameCtx.playerInfos[playerIndex]).isAlive) {
+            if (playerInfo.isAlive) {
                 var spellSet :CreatureSpellSet = GameCtx.getActiveSpellSet(playerIndex);
                 var spell :CreatureSpellData = GameCtx.gameData.spells[castSpellMsg.spellType];
                 spellSet.addSpell(spell.clone() as CreatureSpellData);
@@ -591,19 +606,16 @@ public class GameMode extends TransitionMode
             }
 
         } else if (msg is ResurrectPlayerMsg) {
-            var resurrectMsg :ResurrectPlayerMsg = msg as ResurrectPlayerMsg;
-            resurrectPlayer(resurrectMsg.playerIndex);
+            resurrectPlayer(playerIndex);
 
         } else if (msg is TeamShoutMsg) {
             var teamShoutMsg :TeamShoutMsg = msg as TeamShoutMsg;
-            playerInfo = GameCtx.playerInfos[teamShoutMsg.playerIndex];
             if (playerInfo.teamId == GameCtx.localPlayerInfo.teamId) {
                 var workshopView :WorkshopView = WorkshopView.getForPlayer(teamShoutMsg.playerIndex);
                 if (workshopView != null) {
                     workshopView.showShout(teamShoutMsg.shoutType);
                 }
             }
-
         }
     }
 
@@ -699,7 +711,8 @@ public class GameMode extends TransitionMode
     public function sendCreateCreatureMsg (playerIndex :int, unitType :int, count :int,
         isAiMsg :Boolean) :void
     {
-        sendMessage(CreateCreatureMsg.create(playerIndex, unitType, count), isAiMsg);
+        var playerInfo :PlayerInfo = GameCtx.playerInfos[playerIndex];
+        sendMessage(CreateCreatureMsg.create(playerInfo, unitType, count), isAiMsg);
     }
 
     public function sendCastSpellMsg (playerIndex :int, spellType :int, isAiMsg :Boolean) :void
@@ -715,7 +728,7 @@ public class GameMode extends TransitionMode
         playerInfo.spellCast(spellType);
 
         if (isCreatureSpell) {
-            sendMessage(CastCreatureSpellMsg.create(playerIndex, spellType), isAiMsg);
+            sendMessage(CastCreatureSpellMsg.create(playerInfo, spellType), isAiMsg);
 
         } else if (spellType == Constants.SPELL_TYPE_PUZZLERESET) {
             // there's only one non-creature spell
@@ -727,17 +740,20 @@ public class GameMode extends TransitionMode
 
     public function sendTargetEnemyMsg (playerIndex :int, enemyId :int, isAiMsg :Boolean) :void
     {
-        sendMessage(SelectTargetEnemyMsg.create(playerIndex, enemyId), isAiMsg);
+        var playerInfo :PlayerInfo = GameCtx.playerInfos[playerIndex];
+        sendMessage(SelectTargetEnemyMsg.create(playerInfo, enemyId), isAiMsg);
     }
 
     public function sendResurrectPlayerMsg () :void
     {
-        sendMessage(ResurrectPlayerMsg.create(GameCtx.localPlayerIndex), false);
+        var playerInfo :PlayerInfo = GameCtx.playerInfos[GameCtx.localPlayerIndex];
+        sendMessage(ResurrectPlayerMsg.create(playerInfo), false);
     }
 
     public function sendTeamShoutMsg (playerIndex :int, shoutType :int, isAiMsg :Boolean) :void
     {
-        sendMessage(TeamShoutMsg.create(playerIndex, shoutType), isAiMsg);
+        var playerInfo :PlayerInfo = GameCtx.playerInfos[playerIndex];
+        sendMessage(TeamShoutMsg.create(playerInfo, shoutType), isAiMsg);
     }
 
     protected function sendMessage (msg :Message, isAiMsg :Boolean) :void

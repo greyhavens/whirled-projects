@@ -3,16 +3,16 @@
 
 package popcraft.game {
 
-import com.threerings.util.Log;
 import com.threerings.flashbang.GameObjectRef;
+import com.threerings.util.Log;
 
 import flash.display.DisplayObject;
 import flash.events.EventDispatcher;
 
 import popcraft.*;
+import popcraft.data.*;
 import popcraft.game.battle.*;
 import popcraft.game.battle.view.*;
-import popcraft.data.*;
 import popcraft.game.endless.*;
 
 /**
@@ -301,7 +301,32 @@ public class PlayerInfo extends EventDispatcher
         return true;
     }
 
-    protected var _playerIndex :int;  // an unsigned integer corresponding to the player's seating position
+    public function get nextReceivedGameMsgId () :int
+    {
+        return _nextReceivedGameMsgId;
+    }
+
+    public function set nextReceivedGameMsgId (val :int) :void
+    {
+        _nextReceivedGameMsgId = val;
+    }
+
+    public function get nextSentGameMsgId () :int
+    {
+        return _nextSentGameMsgId;
+    }
+
+    public function set nextSentGameMsgId (val :int) :void
+    {
+        _nextSentGameMsgId = val;
+    }
+
+    // an unsigned integer corresponding to the player's seating position
+    protected var _playerIndex :int;
+    // The next message id we expect to see from this player, if they're not cheating
+    protected var _nextReceivedGameMsgId :int;
+    // The next message id we will use when we send a message
+    protected var _nextSentGameMsgId :int;
     protected var _color :uint;
     protected var _teamId :int;
     protected var _maxHealth :Number;

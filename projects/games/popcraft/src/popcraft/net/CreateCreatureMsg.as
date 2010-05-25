@@ -7,39 +7,39 @@ import com.whirled.contrib.messagemgr.Message;
 
 import flash.utils.ByteArray;
 
-public class CreateCreatureMsg
-    implements Message
+import popcraft.game.PlayerInfo;
+
+public class CreateCreatureMsg extends GameMsg
 {
-    public var playerIndex :int;
     public var creatureType :int;
     public var count :int;
 
-    public static function create (playerIndex :int, unitType :int, count :int) :CreateCreatureMsg
+    public static function create (playerInfo :PlayerInfo, unitType :int, count :int)
+        :CreateCreatureMsg
     {
         var msg :CreateCreatureMsg = new CreateCreatureMsg();
-        msg.playerIndex = playerIndex;
+        msg.init(playerInfo);
         msg.creatureType = unitType;
         msg.count = count;
         return msg;
     }
 
-    public function fromBytes (ba :ByteArray) :void
+    override public function fromBytes (ba :ByteArray) :void
     {
-        playerIndex = ba.readByte();
+        super.fromBytes(ba);
         creatureType = ba.readByte();
         count = ba.readByte();
     }
 
-    public function toBytes (ba :ByteArray = null) :ByteArray
+    override public function toBytes (ba :ByteArray = null) :ByteArray
     {
-        ba = (ba != null ? ba : new ByteArray());
-        ba.writeByte(playerIndex);
+        ba = super.toBytes(ba);
         ba.writeByte(creatureType);
         ba.writeByte(count);
         return ba;
     }
 
-    public function get name () :String
+    override public function get name () :String
     {
         return "CreateCreature";
     }
