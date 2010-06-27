@@ -55,15 +55,42 @@ public class PuzzleBoard extends SceneObject
         registerListener(_sprite, MouseEvent.CLICK, handleClicked);
     }
 
-    override protected function addedToDB () :void
-    {
-        puzzleReset(true);
-    }
-
     // from SceneObject
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
+    }
+
+    public function puzzleShuffle () :void
+    {
+        // cancel any existing animations
+        removeAllTasks();
+        _resolvingClears = false;
+
+        // clear the existing board
+        if (null != _board) {
+            for each (var piece :Piece in _board) {
+                if (null != piece) {
+                    piece.destroySelf();
+                }
+            }
+        }
+
+        // create a new board, and populate it with contiguous chunks of resources
+        _board = ArrayUtil.create(_cols * _rows, null);
+        for (var y :int = 0; y < _rows; ++y) {
+            for (var x :int = 0; x < _cols; ++x) {
+                var index :int = (y * _cols) + x;
+                if (_board[index] == null) {
+                    createResourceChunk(x, y);
+                }
+            }
+        }
+    }
+
+    override protected function addedToDB () :void
+    {
+        puzzleReset(true);
     }
 
     protected function handleClicked (e :MouseEvent) :void
@@ -135,33 +162,6 @@ public class PuzzleBoard extends SceneObject
         }
     }
 
-    public function puzzleShuffle () :void
-    {
-        // cancel any existing animations
-        removeAllTasks();
-        _resolvingClears = false;
-
-        // clear the existing board
-        if (null != _board) {
-            for each (var piece :Piece in _board) {
-                if (null != piece) {
-                    piece.destroySelf();
-                }
-            }
-        }
-
-        // create a new board, and populate it with contiguous chunks of resources
-        _board = ArrayUtil.create(_cols * _rows, null);
-        for (var y :int = 0; y < _rows; ++y) {
-            for (var x :int = 0; x < _cols; ++x) {
-                var index :int = (y * _cols) + x;
-                if (_board[index] == null) {
-                    createResourceChunk(x, y);
-                }
-            }
-        }
-    }
-
     protected function createResourceChunk (x :int, y :int) :void
     {
         var chunkSize :int = Rand.nextIntInRange(1, RESOURCE_CHUNK_SIZE_MAX,
@@ -200,7 +200,7 @@ public class PuzzleBoard extends SceneObject
         }
     }
 
-    public function clearPieceGroup (x :int, y :int) :void
+    protected function clearPieceGroup (x :int, y :int) :void
     {
         Assert.isFalse(_resolvingClears);
 
@@ -391,7 +391,7 @@ public class PuzzleBoard extends SceneObject
         _resolvingClears = false;
     }
 
-    public function swapPiecesInternal (index1 :int, index2 :int) :void
+    protected function swapPiecesInternal (index1 :int, index2 :int) :void
     {
         Assert.isTrue(index1 >= 0 && index1 < _board.length);
         Assert.isTrue(index2 >= 0 && index2 < _board.length);
@@ -411,42 +411,6 @@ public class PuzzleBoard extends SceneObject
         _board[index2] = piece1;
     }
 
-    public function swapPieces (x1 :int, y1 :int, x2 :int, y2 :int) :void
-    {
-        Assert.isFalse(_resolvingClears);
-
-        var index1 :int = coordsToIdx(x1, y1);
-        var index2 :int = coordsToIdx(x2, y2);
-
-        Assert.isTrue(index1 >= 0 && index1 < _board.length);
-        Assert.isTrue(index2 >= 0 && index2 < _board.length);
-        Assert.isTrue(index1 != index2);
-
-        var piece1 :Piece = _board[index1];
-        var piece2 :Piece = _board[index2];
-
-        // swap their positions in the array
-        swapPiecesInternal(index1, index2);
-
-        // make sure the pieces are in their correct initial locations
-        var px1 :int = getPieceXLoc(x1);
-        var py1 :int = getPieceYLoc(y1);
-        var px2 :int = getPieceXLoc(x2);
-        var py2 :int = getPieceYLoc(y2);
-
-        piece1.x = px1;
-        piece1.y = py1;
-        piece2.x = px2;
-        piece2.y = py2;
-
-        // animate them to their new locations
-        piece1.removeNamedTasks(MOVE_TASK_NAME);
-        piece2.removeNamedTasks(MOVE_TASK_NAME);
-
-        piece1.addNamedTask(MOVE_TASK_NAME, LocationTask.CreateSmooth(px2, py2, 0.25));
-        piece2.addNamedTask(MOVE_TASK_NAME, LocationTask.CreateSmooth(px1, py1, 0.25));
-    }
-
     protected function findConnectedSimilarPiecesInternal (x :int, y :int, resourceType :int,
         pieces :Set) :void
     {
@@ -461,7 +425,7 @@ public class PuzzleBoard extends SceneObject
         }
     }
 
-    public function findConnectedSimilarPieces (x :int, y :int) :Array
+    protected function findConnectedSimilarPieces (x :int, y :int) :Array
     {
         var pieces :Set = Sets.newSetOf(Piece);
 
@@ -473,7 +437,7 @@ public class PuzzleBoard extends SceneObject
         return pieces.toArray();
     }
 
-    public function getPieceAt (x :int, y :int) :Piece
+    protected function getPieceAt (x :int, y :int) :Piece
     {
         var piece :Piece;
 
@@ -484,32 +448,32 @@ public class PuzzleBoard extends SceneObject
         return piece;
     }
 
-    public function coordsToIdx (x :int, y :int) :int
+    protected function coordsToIdx (x :int, y :int) :int
     {
         return (y * _cols) + x;
     }
 
-    public function idxToX (index :int) :int
+    protected function idxToX (index :int) :int
     {
         return (index % _cols);
     }
 
-    public function idxToY (index :int) :int
+    protected function idxToY (index :int) :int
     {
         return (index / _cols);
     }
 
-    public function getPieceXLoc (xCoord :int) :int
+    protected function getPieceXLoc (xCoord :int) :int
     {
         return ((xCoord + 0.5) * _tileSize) - xCoord;
     }
 
-    public function getPieceYLoc (yCoord :int) :int
+    protected function getPieceYLoc (yCoord :int) :int
     {
         return ((yCoord + 0.5) * _tileSize) - yCoord;
     }
 
-    public function get resolvingClears () :Boolean
+    protected function get resolvingClears () :Boolean
     {
         return _resolvingClears;
     }
