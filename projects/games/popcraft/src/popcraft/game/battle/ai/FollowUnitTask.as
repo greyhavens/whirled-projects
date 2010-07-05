@@ -43,7 +43,7 @@ public class FollowUnitTask
             unit.setMovementDestination(v);
         }
 
-        return AITaskStatus.ACTIVE;
+        return AITaskStatus.INCOMPLETE;
     }
 
     public function get name () :String

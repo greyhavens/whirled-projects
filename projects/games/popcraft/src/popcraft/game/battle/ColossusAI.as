@@ -35,7 +35,7 @@ public class ColossusAI extends AITaskTree
     {
         // scan for units in our immediate vicinity
         var scanSequence :AITaskSequence = new AITaskSequence(true);
-        scanSequence.addSequencedTask(new AIDelayUntilTask("DelayUntilNotAttacking", AIDelayUntilTask.notAttackingPredicate));
+        scanSequence.addSequencedTask(new AIDelayUntilTask(AIDelayUntilTask.notAttackingPredicate, "DelayUntilNotAttacking"));
         scanSequence.addSequencedTask(new DetectColossusTargetAction());
 
         return scanSequence;
@@ -49,8 +49,9 @@ public class ColossusAI extends AITaskTree
         }
 
         addSubtask(new MoveToAttackLocationTask(_targetBaseRef, true, -1));
-        addSubtask(new AIDelayUntilTask(TARGET_BASE_DIED,
-            AIDelayUntilTask.createUnitDiedPredicate(_targetBaseRef)));
+        addSubtask(new AIDelayUntilTask(
+            AIDelayUntilTask.createUnitDiedPredicate(_targetBaseRef),
+            TARGET_BASE_DIED));
     }
 
     override public function get name () :String

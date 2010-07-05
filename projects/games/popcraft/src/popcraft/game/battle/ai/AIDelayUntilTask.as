@@ -19,15 +19,22 @@ public class AIDelayUntilTask extends AITask
         return function (dt :Number, creature :CreatureUnit) :Boolean { return unitRef.isNull; }
     }
 
-    public function AIDelayUntilTask (name :String, pred :Function)
+    public function AIDelayUntilTask (pred :Function, name :String = "AIDelayUntilTask")
     {
         _name = name;
         _pred = pred;
     }
 
-    override public function update (dt :Number, creature :CreatureUnit) :int
+    override public function update (dt :Number, creature :CreatureUnit) :AITaskStatus
     {
-        return (_pred(dt, creature) ? AITaskStatus.COMPLETE : AITaskStatus.ACTIVE);
+        var val :Boolean;
+        if (_pred.length == 2) {
+            val = _pred(dt, creature);
+        } else {
+            val = _pred();
+        }
+
+        return (val ? AITaskStatus.COMPLETE : AITaskStatus.INCOMPLETE);
     }
 
     override public function get name () :String
@@ -37,7 +44,7 @@ public class AIDelayUntilTask extends AITask
 
     override public function clone () :AITask
     {
-        return new AIDelayUntilTask(_name, _pred);
+        return new AIDelayUntilTask(_pred, _name);
     }
 
     protected var _name :String;

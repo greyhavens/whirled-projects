@@ -15,7 +15,7 @@ public class DetectSpellDropAction extends AITask
 
     public static const MSG_SPELLDETECTED :String = "SpellDetected";
 
-    override public function update (dt :Number, unit :CreatureUnit) :int
+    override public function update (dt :Number, unit :CreatureUnit) :AITaskStatus
     {
         var spells :Array = GameCtx.netObjects.getObjectsInGroup(SpellDropObject.GROUP_NAME);
         if (spells.length > 0) {

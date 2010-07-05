@@ -3,8 +3,10 @@
 
 package popcraft.game.battle.ai {
 
-import popcraft.game.battle.CreatureUnit;
 import com.threerings.util.Assert;
+import com.threerings.util.Util;
+
+import popcraft.game.battle.CreatureUnit;
 
 public class AITaskSequence extends AITaskTree
 {
@@ -19,6 +21,24 @@ public class AITaskSequence extends AITaskTree
         _completedTasks = [];
     }
 
+    public function repeats (val :Boolean) :AITaskSequence
+    {
+        _repeating = val;
+        return this;
+    }
+
+    public function named (val :String) :AITaskSequence
+    {
+        _name = val;
+        return this;
+    }
+
+    public function withTasks (...tasks) :AITaskSequence
+    {
+        tasks.forEach(Util.adapt(addSequencedTask));
+        return this;
+    }
+
     public function addSequencedTask (task :AITask) :void
     {
         _pendingTasks.push(task);
@@ -28,13 +48,7 @@ public class AITaskSequence extends AITaskTree
         }
     }
 
-    protected function beginNextTask () :void
-    {
-        Assert.isTrue(_pendingTasks.length > 0);
-        addSubtask(_pendingTasks[0]);
-    }
-
-    override public function update (dt :Number, unit :CreatureUnit) :int
+    override public function update (dt :Number, unit :CreatureUnit) :AITaskStatus
     {
         super.update(dt, unit);
 
@@ -48,7 +62,7 @@ public class AITaskSequence extends AITaskTree
             }
         }
 
-        return (_pendingTasks.length > 0 ? AITaskStatus.ACTIVE : AITaskStatus.COMPLETE);
+        return (_pendingTasks.length > 0 ? AITaskStatus.INCOMPLETE : AITaskStatus.COMPLETE);
     }
 
     override public function get name () :String
@@ -62,6 +76,12 @@ public class AITaskSequence extends AITaskTree
         clone._pendingTasks = cloneSubtasks();
 
         return clone;
+    }
+
+    protected function beginNextTask () :void
+    {
+        Assert.isTrue(_pendingTasks.length > 0);
+        addSubtask(_pendingTasks[0]);
     }
 
     override protected function subtaskCompleted (task :AITask) :void

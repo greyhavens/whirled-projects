@@ -38,7 +38,7 @@ public class MoveToLocationTask extends AITask
         _destReset = true;
     }
 
-    override public function update (dt :Number, creature :CreatureUnit) :int
+    override public function update (dt :Number, creature :CreatureUnit) :AITaskStatus
     {
         // init
         if (0 == _elapsedTime) {
@@ -75,7 +75,7 @@ public class MoveToLocationTask extends AITask
         // keep moving (CreatureUnit requires that we reset the movement destination every frame)
         creature.setMovementDestination(_dest);
 
-        return AITaskStatus.ACTIVE;
+        return AITaskStatus.INCOMPLETE;
     }
 
     protected var _name :String;

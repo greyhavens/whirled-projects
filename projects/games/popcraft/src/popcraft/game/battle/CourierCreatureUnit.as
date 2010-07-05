@@ -224,7 +224,7 @@ class CourierAI extends AITaskTree
         }
     }
 
-    override public function update (dt :Number, creature :CreatureUnit) :int
+    override public function update (dt :Number, creature :CreatureUnit) :AITaskStatus
     {
         super.update(dt, creature);
 
@@ -235,7 +235,7 @@ class CourierAI extends AITaskTree
             _ownerIsDead = true;
         }
 
-        return AITaskStatus.ACTIVE;
+        return AITaskStatus.INCOMPLETE;
     }
 
     override public function get name () :String
@@ -301,13 +301,13 @@ class CourierMoveTask extends AITaskTree
         }
     }
 
-    override public function update (dt :Number, creature :CreatureUnit) :int
+    override public function update (dt :Number, creature :CreatureUnit) :AITaskStatus
     {
         if (_complete) {
             return AITaskStatus.COMPLETE;
         } else {
             super.update(dt, creature);
-            return AITaskStatus.ACTIVE;
+            return AITaskStatus.INCOMPLETE;
         }
     }
 
@@ -349,7 +349,7 @@ class PickupSpellTask extends AITaskTree
         }
     }
 
-    override public function update (dt :Number, creature :CreatureUnit) :int
+    override public function update (dt :Number, creature :CreatureUnit) :AITaskStatus
     {
         // does the spell object still exist?
         if (_spellRef.isNull) {
@@ -359,7 +359,7 @@ class PickupSpellTask extends AITaskTree
             return AITaskStatus.COMPLETE;
         } else {
             super.update(dt, creature);
-            return AITaskStatus.ACTIVE;
+            return AITaskStatus.INCOMPLETE;
         }
     }
 

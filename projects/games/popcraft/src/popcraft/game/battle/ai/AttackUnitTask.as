@@ -30,7 +30,7 @@ public class AttackUnitTask extends MoveToLocationTask
         _loseInterestRange = loseInterestRange;
     }
 
-    override public function update (dt :Number, unit :CreatureUnit) :int
+    override public function update (dt :Number, unit :CreatureUnit) :AITaskStatus
     {
         // is the enemy dead?
         // (or has it turned invincible, in which case attacking it is futile?)
@@ -42,13 +42,13 @@ public class AttackUnitTask extends MoveToLocationTask
         var weapon :UnitWeaponData = unit.unitData.weapon;
         if (unit.canAttackWithWeapon(enemy, weapon)) {
             unit.sendAttack(enemy, weapon);
-            return AITaskStatus.ACTIVE;
+            return AITaskStatus.INCOMPLETE;
 
         } else if (_followUnit && !shouldLoseInterest(unit, enemy)) {
             // get closer to the enemy (via MoveToLocationTask, our super class)
             moveToLoc = unit.findNearestAttackLocation(enemy, weapon);
             super.update(dt, unit);
-            return AITaskStatus.ACTIVE;
+            return AITaskStatus.INCOMPLETE;
 
         } else {
             // we've lost interest

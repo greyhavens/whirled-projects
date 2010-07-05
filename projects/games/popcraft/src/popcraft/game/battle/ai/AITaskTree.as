@@ -3,8 +3,9 @@
 
 package popcraft.game.battle.ai {
 
-import com.threerings.util.Assert;
 import com.threerings.flashbang.*;
+import com.threerings.util.Assert;
+import com.threerings.util.ClassUtil;
 
 import popcraft.game.battle.CreatureUnit;
 
@@ -12,7 +13,7 @@ public class AITaskTree extends AITask
 {
     public static const MSG_SUBTASKCOMPLETED :String = "SubtaskCompleted";
 
-    override public function update (dt :Number, unit :CreatureUnit) :int
+    override public function update (dt :Number, unit :CreatureUnit) :AITaskStatus
     {
         _stopProcessingSubtasks = false;
 
@@ -20,7 +21,7 @@ public class AITaskTree extends AITask
         for each (var task :AITask in _subtasks) {
             // we can have holes in the array
             if (null != task) {
-                var status :int = task.update(dt, unit);
+                var status :AITaskStatus = task.update(dt, unit);
 
                 if (!_stopProcessingSubtasks && AITaskStatus.COMPLETE == status) {
                     _subtasks[i] = null;
@@ -39,7 +40,7 @@ public class AITaskTree extends AITask
             ++i;
         }
 
-        return AITaskStatus.ACTIVE;
+        return AITaskStatus.INCOMPLETE;
     }
 
     public function addSubtask (task :AITask) :void
@@ -104,30 +105,30 @@ public class AITaskTree extends AITask
         return (_subtasks.length - _freeIndices.length) > 0;
     }
 
-    public function getStateString (depth :int = 0) :String
+    protected function createStateString (depth :int = 0) :String
     {
-        var stateString :String = "";
-        for (var i :int = 0; i < depth; ++i) {
-            stateString += "-";
+        var str :String = "";
+        for (var ii :int = 0; ii < depth; ++ii) {
+            str += "-";
         }
 
-        stateString += this.name;
+        str += "'" + this.name + "' [" + ClassUtil.tinyClassName(this) + "]";
 
         for each (var subtask :AITask in _subtasks) {
-            stateString += "\n";
+            str += "\n";
 
             if (subtask is AITaskTree) {
-                stateString += (subtask as AITaskTree).getStateString(depth + 1);
+                str += (subtask as AITaskTree).createStateString(depth + 1);
             } else {
                 for (var j :int = 0; j < depth + 1; ++j) {
-                    stateString += "-";
+                    str += "-";
                 }
 
-                stateString += subtask.name;
+                str += "'" + subtask.name + "' [" + ClassUtil.tinyClassName(subtask) + "]";
             }
         }
 
-        return stateString;
+        return str;
     }
 
     /**

@@ -49,7 +49,7 @@ class BossAI extends ColossusAI
         super.init();
     }
 
-    override public function update (dt :Number, creature :CreatureUnit) :int
+    override public function update (dt :Number, creature :CreatureUnit) :AITaskStatus
     {
         // return home to recharge when health runs out
         if (_boss.health == 1) {
@@ -98,10 +98,10 @@ class RegenerateTask extends AITask
         _regenRate = regenRate;
     }
 
-    override public function update (dt :Number, creature :CreatureUnit) :int
+    override public function update (dt :Number, creature :CreatureUnit) :AITaskStatus
     {
         creature.health += (dt * _regenRate);
-        return (creature.health < creature.maxHealth ? AITaskStatus.ACTIVE : AITaskStatus.COMPLETE);
+        return (creature.health < creature.maxHealth ? AITaskStatus.INCOMPLETE : AITaskStatus.COMPLETE);
     }
 
     override public function get name () :String

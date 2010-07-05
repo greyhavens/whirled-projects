@@ -27,7 +27,7 @@ public class DetectCreatureGroupAction extends AITask
         return name;
     }
 
-    override public function update (dt :Number, thisCreature :CreatureUnit) :int
+    override public function update (dt :Number, thisCreature :CreatureUnit) :AITaskStatus
     {
         var creatureRefs :Array = GameCtx.netObjects.getObjectRefsInGroup(CreatureUnit.GROUP_NAME);
 

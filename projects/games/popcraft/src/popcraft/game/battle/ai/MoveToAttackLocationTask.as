@@ -30,7 +30,7 @@ public class MoveToAttackLocationTask extends MoveToLocationTask
         _loseInterestRange = loseInterestRange;
     }
 
-    override public function update (dt :Number, unit :CreatureUnit) :int
+    override public function update (dt :Number, unit :CreatureUnit) :AITaskStatus
     {
         // is the enemy dead?
         var enemy :Unit = _targetRef.object as Unit;
@@ -47,7 +47,7 @@ public class MoveToAttackLocationTask extends MoveToLocationTask
             // get closer to the enemy (via MoveToLocationTask, our super class)
             moveToLoc = unit.findNearestAttackLocation(enemy, weapon);
             super.update(dt, unit);
-            return AITaskStatus.ACTIVE;
+            return AITaskStatus.INCOMPLETE;
 
         } else {
             // we've lost interest

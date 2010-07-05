@@ -16,14 +16,14 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>[source path] aspirin-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/whirled/libraries/aspirin/src/as</locationURI>
+		</link>
+		<link>
 			<name>[source path] contrib-src-as</name>
 			<type>2</type>
 			<locationURI>EXPORT_ROOT/whirled/contrib/src/as</locationURI>
-		</link>
-		<link>
-			<name>[source path] flash-utils-src-as</name>
-			<type>2</type>
-			<locationURI>EXPORT_ROOT/whirled/libraries/flash-utils/src/as</locationURI>
 		</link>
 		<link>
 			<name>[source path] narya-src-as</name>
