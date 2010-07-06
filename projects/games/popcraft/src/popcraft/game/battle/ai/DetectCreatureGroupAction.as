@@ -31,8 +31,6 @@ public class DetectCreatureGroupAction extends AITask
     {
         var creatureRefs :Array = GameCtx.netObjects.getObjectRefsInGroup(CreatureUnit.GROUP_NAME);
 
-        var validCreatures :Array = [];
-
         // determine all valid creatures
         for each (var ref :GameObjectRef in creatureRefs) {
             var creature :CreatureUnit = ref.object as CreatureUnit;
