@@ -45,8 +45,6 @@ public class DemoGameMode extends StoryGameMode
 
 
     protected var _soundChannel :AudioChannel;
-
-    protected static const UPDATE_DT :Number = 1/30; // 30 fps
 }
 
 }
