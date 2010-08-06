@@ -47,7 +47,7 @@ public class MainMenuMode extends DemoGameMode
         super(_demoLevel);
 
         if (_demoLevel == null) {
-            throw new Error("LevelSelectMode must be instantiated via LevelSelectMode.create()");
+            throw new Error("MainMenuMode must be instantiated via MainMenuMode.create()");
         }
 
         _shouldFadeIn = fadeIn;
