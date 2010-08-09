@@ -226,11 +226,6 @@ public class WorkshopView extends BattlefieldSprite
         return _sprite;
     }
 
-    public function get clickableObject () :InteractiveObject
-    {
-        return _clickableSprite;
-    }
-
     protected function updateWorkshopLocation () :void
     {
         updateLoc(_unit.x, _unit.y);
