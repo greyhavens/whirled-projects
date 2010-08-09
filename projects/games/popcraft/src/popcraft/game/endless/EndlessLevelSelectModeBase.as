@@ -62,7 +62,7 @@ public class EndlessLevelSelectModeBase extends AppMode
         switch (_mode) {
         case GAME_OVER_MODE:
         case INTERSTITIAL_MODE:
-            initialMapIndex = EndlessGameContext.mapIndex;
+            initialMapIndex = EndlessGameCtx.mapIndex;
             break;
 
         case LEVEL_SELECT_MODE:
@@ -86,13 +86,13 @@ public class EndlessLevelSelectModeBase extends AppMode
                 new FunctionTask(
                     function () :void {
                         animateToMode(new EndlessGameMode(GameCtx.isMultiplayerGame,
-                                      EndlessGameContext.level, null, false));
+                                      EndlessGameCtx.level, null, false));
                     })));
             addObject(interstitialAnimObj);
 
             // create the multiplier object, which will move to the center of the screen, pause,
             // and then move to its location in the new level
-            var nextMap :EndlessMapData = EndlessGameContext.level.getMapData(initialMapIndex + 1);
+            var nextMap :EndlessMapData = EndlessGameCtx.level.getMapData(initialMapIndex + 1);
             var multiplierMovie :MovieClip =
                 ClientCtx.instantiateMovieClip("infusions", "infusion_multiplier");
             var multiplierObj :SceneObject = new SimpleSceneObject(multiplierMovie);
@@ -179,10 +179,10 @@ public class EndlessLevelSelectModeBase extends AppMode
         }
 
         var showGameOverStats :Boolean =
-            (_mode == GAME_OVER_MODE && mapIndex == EndlessGameContext.mapIndex);
+            (_mode == GAME_OVER_MODE && mapIndex == EndlessGameCtx.mapIndex);
 
         var showRoundScores :Array;
-        if (_mode == INTERSTITIAL_MODE && mapIndex == EndlessGameContext.mapIndex) {
+        if (_mode == INTERSTITIAL_MODE && mapIndex == EndlessGameCtx.mapIndex) {
             showRoundScores = this.scores;
         }
 
@@ -653,7 +653,7 @@ class SaveView extends SceneObject
             var statText :TextField = statPanel["flavor_text"];
             statText.text =
                 "You were defeated by " + MyStringUtil.commafyWords(opponentNames) + "!\n" +
-                "Final score: " + StringUtil.formatNumber(EndlessGameContext.totalScore) + "\n" +
+                "Final score: " + StringUtil.formatNumber(EndlessGameCtx.totalScore) + "\n" +
                 "Schoolmates whipped: " + numOpponentsDefeated + "\n\nHave another go?";
 
         } else {

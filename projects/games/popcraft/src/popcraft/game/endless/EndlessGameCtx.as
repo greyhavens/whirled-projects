@@ -11,7 +11,7 @@ import popcraft.data.EndlessLevelData;
 import popcraft.net.PlayerMonitor;
 import popcraft.net.PlayerScoreMsg;
 
-public class EndlessGameContext
+public class EndlessGameCtx
 {
     public static var gameMode :EndlessGameMode;
     public static var level :EndlessLevelData;
@@ -41,13 +41,13 @@ public class EndlessGameContext
     {
         if (GameCtx.isSinglePlayerGame && ClientCtx.gameCtrl.isConnected()) {
             ClientCtx.gameCtrl.game.endGameWithScore(
-                EndlessGameContext.totalScore,
+                EndlessGameCtx.totalScore,
                 Constants.SCORE_MODE_ENDLESS);
 
         } else if (GameCtx.isMultiplayerGame && ClientCtx.seatingMgr.isLocalPlayerInControl) {
             // convert PlayerScore objects to ints for reporting to the server
             var finalScores :Array =
-                EndlessGameContext.playerMonitor.getScores(EndlessGameContext.roundId);
+                EndlessGameCtx.playerMonitor.getScores(EndlessGameCtx.roundId);
 
             var finalScoreValues :Array = finalScores.map(
                 function (score :PlayerScoreMsg, index :int, arr :Array) :int {
@@ -64,7 +64,7 @@ public class EndlessGameContext
 
     public static function resetGameData () :void
     {
-        EndlessGameContext.resetLevelData();
+        EndlessGameCtx.resetLevelData();
 
         resourceScore = 0;
         damageScore = 0;
@@ -104,7 +104,7 @@ public class EndlessGameContext
         resourceScore += offset;
         resourceScoreThisRound += offset;
 
-        EndlessGameContext.checkHeadOfTheClassTrophy();
+        EndlessGameCtx.checkHeadOfTheClassTrophy();
     }
 
     public static function incrementDamageScore (offset :int) :void
@@ -113,12 +113,12 @@ public class EndlessGameContext
         damageScore += offset;
         damageScoreThisRound += offset;
 
-        EndlessGameContext.checkHeadOfTheClassTrophy();
+        EndlessGameCtx.checkHeadOfTheClassTrophy();
     }
 
     protected static function checkHeadOfTheClassTrophy () :void
     {
-        if (EndlessGameContext.totalScore >= Trophies.HEAD_OF_THE_CLASS_SCORE) {
+        if (EndlessGameCtx.totalScore >= Trophies.HEAD_OF_THE_CLASS_SCORE) {
             ClientCtx.awardTrophy(Trophies.HEAD_OF_THE_CLASS);
         }
     }
@@ -128,7 +128,7 @@ public class EndlessGameContext
         if (scoreMultiplier < GameCtx.gameData.maxMultiplier) {
             ++scoreMultiplier;
         } else {
-            EndlessGameContext.incrementResourceScore(
+            EndlessGameCtx.incrementResourceScore(
                 GameCtx.gameData.scoreData.pointsPerExtraMultiplier);
         }
     }

@@ -28,7 +28,7 @@ public class EndlessGameMode extends GameMode
     public function EndlessGameMode (isMultiplayer :Boolean, level :EndlessLevelData, saves :Array,
         isNewGame :Boolean)
     {
-        EndlessGameContext.level = level;
+        EndlessGameCtx.level = level;
         _playerSaves = saves;
         _needsReset = isNewGame;
         _isMultiplayer = isMultiplayer;
@@ -37,35 +37,35 @@ public class EndlessGameMode extends GameMode
     override protected function setup () :void
     {
         if (_needsReset) {
-            EndlessGameContext.resetGameData();
+            EndlessGameCtx.resetGameData();
         } else {
-            EndlessGameContext.resetLevelData();
-            EndlessGameContext.roundId += 1;
+            EndlessGameCtx.resetLevelData();
+            EndlessGameCtx.roundId += 1;
         }
 
-        EndlessGameContext.gameMode = this;
+        EndlessGameCtx.gameMode = this;
 
         if (_playerSaves != null) {
             // all saved games will point to the same mapIndex
             var save :SavedEndlessGame = _playerSaves[0];
 
             // restore saved data if it exists
-            EndlessGameContext.mapIndex = save.mapIndex;
-            EndlessGameContext.resourceScore = save.resourceScore;
-            EndlessGameContext.damageScore = save.damageScore;
-            EndlessGameContext.scoreMultiplier = save.multiplier;
+            EndlessGameCtx.mapIndex = save.mapIndex;
+            EndlessGameCtx.resourceScore = save.resourceScore;
+            EndlessGameCtx.damageScore = save.damageScore;
+            EndlessGameCtx.scoreMultiplier = save.multiplier;
 
         } else {
             // otherwise, move to the next map
-            EndlessGameContext.mapIndex++;
+            EndlessGameCtx.mapIndex++;
         }
 
-        _curMapData = EndlessGameContext.level.getMapData(EndlessGameContext.mapIndex);
+        _curMapData = EndlessGameCtx.level.getMapData(EndlessGameCtx.mapIndex);
 
         super.setup();
 
         // if this is not the first level, create a new multiplier drop object
-        if (EndlessGameContext.mapIndex != 0) {
+        if (EndlessGameCtx.mapIndex != 0) {
             var multiplierView :SpellDropView = createMultiplierDrop(false);
             // hide the multiplier until the mode is entered for the first time,
             // to allow the interstitial movie to play
@@ -128,7 +128,7 @@ public class EndlessGameMode extends GameMode
         var localPlayerWorkshop :WorkshopUnit = GameCtx.localPlayerInfo.workshop;
         var multiplier :int =
             (localPlayerWorkshop != null ? localPlayerWorkshop.damageShields.length + 1 : 1);
-        EndlessGameContext.scoreMultiplier = multiplier;
+        EndlessGameCtx.scoreMultiplier = multiplier;
 
         checkForComputerDeath();
     }
@@ -178,10 +178,10 @@ public class EndlessGameMode extends GameMode
     {
         // save data about our human players so that they can be resurrected
         // when the next round starts
-        EndlessGameContext.savedHumanPlayers = [];
+        EndlessGameCtx.savedHumanPlayers = [];
         for each (var playerInfo :PlayerInfo in GameCtx.playerInfos) {
             if (playerInfo.teamId == HUMAN_TEAM_ID) {
-                EndlessGameContext.savedHumanPlayers.push(playerInfo.saveData());
+                EndlessGameCtx.savedHumanPlayers.push(playerInfo.saveData());
             }
         }
 
@@ -205,7 +205,7 @@ public class EndlessGameMode extends GameMode
         if (_switchingMaps) {
             if (Constants.DEBUG_SKIP_LEVEL_INTRO) {
                 ClientCtx.mainLoop.unwindToMode(
-                    new EndlessGameMode(_isMultiplayer, EndlessGameContext.level, null, false));
+                    new EndlessGameMode(_isMultiplayer, EndlessGameCtx.level, null, false));
                 return;
             }
 
@@ -213,8 +213,8 @@ public class EndlessGameMode extends GameMode
             nextMode = new EndlessInterstitialMode(_lastLiveComputerLoc);
 
             // end-of-level trophies
-            var mapIndex :int = EndlessGameContext.mapIndex;
-            var numLevels :int = EndlessGameContext.level.mapSequence.length;
+            var mapIndex :int = EndlessGameCtx.mapIndex;
+            var numLevels :int = EndlessGameCtx.level.mapSequence.length;
             // get halfway through the levels
             if (mapIndex >= Trophies.ABECEDARIAN_MAP_INDEX) {
                 ClientCtx.awardTrophy(Trophies.ABECEDARIAN);
@@ -248,19 +248,19 @@ public class EndlessGameMode extends GameMode
         if (GameCtx.isMultiplayerGame) {
             // In a multiplayer game, wait for everyone to report their scores so that the next mode
             // can call endGameWithScores
-            EndlessGameContext.playerMonitor.reportScore(PlayerScoreMsg.create(
+            EndlessGameCtx.playerMonitor.reportScore(PlayerScoreMsg.create(
                     GameCtx.localPlayerIndex,
-                    EndlessGameContext.resourceScore,
-                    EndlessGameContext.damageScore,
-                    EndlessGameContext.resourceScoreThisRound,
-                    EndlessGameContext.damageScoreThisRound,
-                    EndlessGameContext.roundId));
+                    EndlessGameCtx.resourceScore,
+                    EndlessGameCtx.damageScore,
+                    EndlessGameCtx.resourceScoreThisRound,
+                    EndlessGameCtx.damageScoreThisRound,
+                    EndlessGameCtx.roundId));
 
-            EndlessGameContext.playerMonitor.waitForScores(
+            EndlessGameCtx.playerMonitor.waitForScores(
                 function () :void {
                     ClientCtx.mainLoop.pushMode(nextMode);
                 },
-                EndlessGameContext.roundId);
+                EndlessGameCtx.roundId);
 
         } else {
             // otherwise, just move to the next mode immediately
@@ -311,7 +311,7 @@ public class EndlessGameMode extends GameMode
         var actualResourcesEarned :int =
             super.playerEarnedResources(resourceType, offset, numClearPieces);
 
-        EndlessGameContext.incrementResourceScore(
+        EndlessGameCtx.incrementResourceScore(
             actualResourcesEarned * GameCtx.gameData.scoreData.pointsPerResource);
 
         return actualResourcesEarned;
@@ -322,7 +322,7 @@ public class EndlessGameMode extends GameMode
         super.creatureKilled(creature, killingPlayerIndex);
 
         if (killingPlayerIndex == GameCtx.localPlayerIndex) {
-            EndlessGameContext.incrementDamageScore(
+            EndlessGameCtx.incrementDamageScore(
                 GameCtx.gameData.scoreData.pointsPerCreatureKill[creature.unitType]);
         }
     }
@@ -332,7 +332,7 @@ public class EndlessGameMode extends GameMode
         super.workshopKilled(workshop, killingPlayerIndex);
 
         if (killingPlayerIndex == GameCtx.localPlayerIndex) {
-            EndlessGameContext.incrementDamageScore(
+            EndlessGameCtx.incrementDamageScore(
                 GameCtx.gameData.scoreData.pointsPerOpponentKill);
 
             // award the Handicapper trophy if the local player killed an opponent who stole
@@ -358,8 +358,8 @@ public class EndlessGameMode extends GameMode
             }
 
             if (playerIndex == GameCtx.localPlayerIndex) {
-                EndlessGameContext.incrementMultiplier();
-                if (EndlessGameContext.scoreMultiplier >= 5) {
+                EndlessGameCtx.incrementMultiplier();
+                if (EndlessGameCtx.scoreMultiplier >= 5) {
                     ClientCtx.awardTrophy(Trophies.MAX_X);
                 }
             }
@@ -400,7 +400,7 @@ public class EndlessGameMode extends GameMode
 
         // create PlayerInfos for the human players
         for (var playerIndex :int = 0; playerIndex < this.numHumanPlayers; ++playerIndex) {
-            var playerName :String = EndlessGameContext.level.humanPlayerNames[playerIndex];
+            var playerName :String = EndlessGameCtx.level.humanPlayerNames[playerIndex];
             var playerDisplayData :PlayerDisplayData =
                 GameCtx.gameData.getPlayerDisplayData(playerName);
 
@@ -468,10 +468,10 @@ public class EndlessGameMode extends GameMode
 
         // restore data that was saved from the previous map (must be done after playerInfos
         // are init()'d)
-        for (playerIndex = 0; playerIndex < EndlessGameContext.savedHumanPlayers.length;
+        for (playerIndex = 0; playerIndex < EndlessGameCtx.savedHumanPlayers.length;
             ++playerIndex) {
 
-            var savedPlayer :SavedPlayerInfo = EndlessGameContext.savedHumanPlayers[playerIndex];
+            var savedPlayer :SavedPlayerInfo = EndlessGameCtx.savedHumanPlayers[playerIndex];
             playerInfo = GameCtx.playerInfos[playerIndex];
             playerInfo.restoreSavedPlayerInfo(savedPlayer, damageShieldHealth);
         }
@@ -495,7 +495,7 @@ public class EndlessGameMode extends GameMode
 
     protected function createComputerPlayers () :Array
     {
-        var mapCycleNumber :int = EndlessGameContext.mapCycleNumber;
+        var mapCycleNumber :int = EndlessGameCtx.mapCycleNumber;
 
         // the first computer index is 1 more than the number of human players in the game
         var playerIndex :int = this.numHumanPlayers;

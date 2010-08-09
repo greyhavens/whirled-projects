@@ -16,7 +16,7 @@ public class MpEndlessGameOverMode extends MpEndlessLevelSelectModeBase
     {
         super.setup();
 
-        EndlessGameContext.endGameAndSendScores();
+        EndlessGameCtx.endGameAndSendScores();
     }
 
 }

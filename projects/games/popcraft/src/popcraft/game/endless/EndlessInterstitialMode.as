@@ -20,8 +20,8 @@ public class EndlessInterstitialMode extends EndlessLevelSelectModeBase
     {
         super.setup();
 
-        EndlessGameContext.endGameAndSendScores();
-        onLevelLoaded(EndlessGameContext.level);
+        EndlessGameCtx.endGameAndSendScores();
+        onLevelLoaded(EndlessGameCtx.level);
     }
 
     override protected function getLocalSavedGames () :SavedEndlessGameList
@@ -30,19 +30,19 @@ public class EndlessInterstitialMode extends EndlessLevelSelectModeBase
         var saves :SavedEndlessGameList = new SavedEndlessGameList();
 
         var savedPlayerData :SavedLocalPlayerInfo =
-            EndlessGameContext.savedHumanPlayers[GameCtx.localPlayerIndex];
+            EndlessGameCtx.savedHumanPlayers[GameCtx.localPlayerIndex];
 
-        saves.addSave(SavedEndlessGame.create(EndlessGameContext.mapIndex,
-                EndlessGameContext.resourceScore,
-                EndlessGameContext.damageScore,
-                EndlessGameContext.scoreMultiplier,
+        saves.addSave(SavedEndlessGame.create(EndlessGameCtx.mapIndex,
+                EndlessGameCtx.resourceScore,
+                EndlessGameCtx.damageScore,
+                EndlessGameCtx.scoreMultiplier,
                 savedPlayerData.health,
                 savedPlayerData.spells));
 
-        saves.addSave(SavedEndlessGame.create(EndlessGameContext.mapIndex + 1,
-                EndlessGameContext.resourceScore,
-                EndlessGameContext.damageScore,
-                EndlessGameContext.scoreMultiplier,
+        saves.addSave(SavedEndlessGame.create(EndlessGameCtx.mapIndex + 1,
+                EndlessGameCtx.resourceScore,
+                EndlessGameCtx.damageScore,
+                EndlessGameCtx.scoreMultiplier,
                 savedPlayerData.health,
                 savedPlayerData.spells));
 
@@ -53,12 +53,12 @@ public class EndlessInterstitialMode extends EndlessLevelSelectModeBase
     {
         return (GameCtx.isSinglePlayerGame ?
             [ PlayerScoreMsg.create(GameCtx.localPlayerIndex,
-                EndlessGameContext.resourceScore,
-                EndlessGameContext.damageScore,
-                EndlessGameContext.resourceScoreThisRound,
-                EndlessGameContext.damageScoreThisRound)
+                EndlessGameCtx.resourceScore,
+                EndlessGameCtx.damageScore,
+                EndlessGameCtx.resourceScoreThisRound,
+                EndlessGameCtx.damageScoreThisRound)
             ] :
-            EndlessGameContext.playerMonitor.getScores(EndlessGameContext.roundId));
+            EndlessGameCtx.playerMonitor.getScores(EndlessGameCtx.roundId));
     }
 
     override protected function get enableNextPrevPlayButtons () :Boolean

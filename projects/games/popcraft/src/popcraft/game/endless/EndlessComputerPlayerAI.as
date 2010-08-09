@@ -28,7 +28,7 @@ public class EndlessComputerPlayerAI extends ComputerPlayerAI
 
         // increase the speed of waves every time the computer cycles through its days,
         // and every time the player cycles all the way through the levels.
-        var cycle :int = Math.ceil(daysOver / numRepeatingDays) + EndlessGameContext.mapCycleNumber;
+        var cycle :int = Math.ceil(daysOver / numRepeatingDays) + EndlessGameCtx.mapCycleNumber;
 
         return 1 * Math.pow(_endlessData.waveDelayScale, cycle);
     }

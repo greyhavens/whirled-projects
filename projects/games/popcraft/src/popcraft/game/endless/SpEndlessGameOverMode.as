@@ -16,7 +16,7 @@ public class SpEndlessGameOverMode extends SpEndlessLevelSelectModeBase
     {
         super.setup();
 
-        EndlessGameContext.endGameAndSendScores();
+        EndlessGameCtx.endGameAndSendScores();
     }
 
 }
