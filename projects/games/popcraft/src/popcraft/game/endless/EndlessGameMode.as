@@ -563,8 +563,6 @@ public class EndlessGameMode extends GameMode
 
     protected var _unhideMultiplierOnEnter :GameObjectRef;
 
-    protected var _playersCheckedIn :Array = [];
-
     protected static const SWITCH_MAP_AUDIO_FADE_TIME :Number = 2.5;
     protected static const GAME_OVER_AUDIO_FADE_TIME :Number = 2.75;
 }
