@@ -23,7 +23,6 @@ import popcraft.net.PlayerScoreMsg;
 public class EndlessGameMode extends GameMode
 {
     public static const HUMAN_TEAM_ID :int = 0;
-    public static const FIRST_COMPUTER_TEAM_ID :int = 1;
 
     public function EndlessGameMode (isMultiplayer :Boolean, level :EndlessLevelData, saves :Array,
         isNewGame :Boolean)
