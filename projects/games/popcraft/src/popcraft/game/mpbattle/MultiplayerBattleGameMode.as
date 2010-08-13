@@ -16,7 +16,7 @@ import popcraft.game.battle.*;
 import popcraft.data.*;
 import popcraft.game.*;
 
-public class MultiplayerGameMode extends GameMode
+public class MultiplayerBattleGameMode extends GameMode
 {
     override public function get mapSettings () :MapSettingsData
     {
@@ -203,7 +203,7 @@ public class MultiplayerGameMode extends GameMode
 
     override protected function handleGameOver () :void
     {
-        fadeOutToMode(new MultiplayerGameOverMode(), FADE_OUT_TIME);
+        fadeOutToMode(new MultiplayerBattleGameOverMode(), FADE_OUT_TIME);
 
         GameCtx.musicControls.fadeOut(FADE_OUT_TIME - 0.25);
         GameCtx.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);

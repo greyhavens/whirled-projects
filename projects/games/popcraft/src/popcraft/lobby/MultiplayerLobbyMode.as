@@ -30,7 +30,7 @@ import flash.text.TextField;
 import popcraft.*;
 import popcraft.game.*;
 import popcraft.game.endless.*;
-import popcraft.game.mpbattle.MultiplayerGameMode;
+import popcraft.game.mpbattle.MultiplayerBattleGameMode;
 import popcraft.ui.UIBits;
 
 public class MultiplayerLobbyMode extends AppMode
@@ -245,7 +245,7 @@ public class MultiplayerLobbyMode extends AppMode
         if (ClientCtx.lobbyConfig.isEndlessModeSelected) {
             ClientCtx.mainLoop.pushMode(new MpEndlessLevelSelectMode());
         } else {
-            ClientCtx.mainLoop.unwindToMode(new MultiplayerGameMode());
+            ClientCtx.mainLoop.unwindToMode(new MultiplayerBattleGameMode());
         }
     }
 

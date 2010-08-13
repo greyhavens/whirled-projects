@@ -23,7 +23,7 @@ import popcraft.lobby.*;
 import popcraft.ui.UIBits;
 import popcraft.util.MoonCalculation;
 
-public class MultiplayerGameOverMode extends AppMode
+public class MultiplayerBattleGameOverMode extends AppMode
 {
     override protected function setup () :void
     {
