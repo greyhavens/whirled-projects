@@ -20,7 +20,7 @@ import flash.geom.Rectangle;
 
 import popcraft.*;
 import popcraft.game.battle.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.game.*;
 import popcraft.ui.HealthMeters;
 import popcraft.ui.RectMeterView;

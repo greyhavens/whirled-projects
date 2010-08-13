@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package popcraft.data {
+package popcraft.gamedata {
 
 import com.threerings.geom.Vector2;
 import com.threerings.util.XmlUtil;

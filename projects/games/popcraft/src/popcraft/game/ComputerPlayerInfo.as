@@ -7,7 +7,7 @@ import com.threerings.util.Assert;
 import com.threerings.flashbang.GameObjectRef;
 
 import popcraft.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 
 public class ComputerPlayerInfo extends PlayerInfo
 {

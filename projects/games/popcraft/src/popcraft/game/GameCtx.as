@@ -14,7 +14,7 @@ import popcraft.*;
 import popcraft.game.battle.*;
 import popcraft.game.battle.geom.ForceParticleContainer;
 import popcraft.game.battle.view.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.game.puzzle.*;
 import popcraft.ui.DashboardView;
 

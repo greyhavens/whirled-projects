@@ -8,7 +8,7 @@ import com.threerings.flashbang.components.LocationComponent;
 
 import popcraft.*;
 import popcraft.game.*;
-import popcraft.data.SpellData;
+import popcraft.gamedata.SpellData;
 
 public class SpellDropObject extends GameObject
     implements LocationComponent

@@ -8,7 +8,7 @@ import com.threerings.flashbang.*;
 import com.threerings.flashbang.util.*;
 
 import popcraft.game.battle.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.util.*;
 
 public class Constants

@@ -11,7 +11,7 @@ import com.threerings.flashbang.tasks.*;
 import flash.events.Event;
 
 import popcraft.game.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 
 public class CreatureSpellSet extends GameObject
 {

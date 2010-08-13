@@ -9,7 +9,7 @@ import com.threerings.flashbang.util.Rand;
 
 import popcraft.*;
 import popcraft.game.battle.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 
 public class ComputerPlayerAI extends GameObject
 {

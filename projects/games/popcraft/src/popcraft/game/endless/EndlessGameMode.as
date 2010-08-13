@@ -15,7 +15,7 @@ import flash.display.DisplayObject;
 import popcraft.*;
 import popcraft.game.battle.*;
 import popcraft.game.battle.view.SpellDropView;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.game.*;
 import popcraft.game.mpbattle.*;
 import popcraft.net.PlayerScoreMsg;

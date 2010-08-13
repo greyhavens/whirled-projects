@@ -10,7 +10,7 @@ import flash.utils.ByteArray;
 
 import popcraft.*;
 import popcraft.game.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.util.*;
 
 public class LevelManager

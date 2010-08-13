@@ -20,7 +20,7 @@ import flash.geom.Point;
 import flash.text.TextField;
 
 import popcraft.*;
-import popcraft.data.ResourceData;
+import popcraft.gamedata.ResourceData;
 import popcraft.game.*;
 import popcraft.util.SpriteUtil;
 

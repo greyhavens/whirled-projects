@@ -5,7 +5,7 @@ package popcraft.game.battle {
 
 import com.threerings.flashbang.*;
 
-import popcraft.data.*;
+import popcraft.gamedata.*;
 
 public class UnitAttack
 {

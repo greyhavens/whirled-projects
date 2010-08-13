@@ -9,7 +9,7 @@ import flash.display.MovieClip;
 
 import popcraft.*;
 import popcraft.game.battle.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 
 public class CourierCreatureUnitView extends CreatureUnitView
 {

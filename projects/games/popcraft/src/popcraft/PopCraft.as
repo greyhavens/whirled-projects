@@ -24,7 +24,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.utils.Timer;
 
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.game.*;
 import popcraft.game.mpbattle.*;
 import popcraft.game.story.*;

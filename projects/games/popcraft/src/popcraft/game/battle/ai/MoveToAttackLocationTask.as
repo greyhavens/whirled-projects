@@ -8,7 +8,7 @@ import com.threerings.flashbang.*;
 
 import popcraft.*;
 import popcraft.game.battle.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 
 public class MoveToAttackLocationTask extends MoveToLocationTask
 {

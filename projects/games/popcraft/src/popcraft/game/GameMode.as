@@ -17,7 +17,7 @@ import flash.display.DisplayObjectContainer;
 import flash.geom.Point;
 
 import popcraft.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.game.battle.*;
 import popcraft.game.battle.geom.ForceParticleContainer;
 import popcraft.game.battle.view.*;

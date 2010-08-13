@@ -10,7 +10,7 @@ import popcraft.net.messagemgr.TickedMessageManager;
 
 import popcraft.*;
 import popcraft.game.battle.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.game.*;
 
 public class StoryGameMode extends GameMode

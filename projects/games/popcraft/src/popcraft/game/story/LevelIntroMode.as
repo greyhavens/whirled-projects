@@ -21,9 +21,9 @@ import flash.text.TextField;
 import popcraft.*;
 import popcraft.game.*;
 import popcraft.game.battle.view.CreatureAnimFactory;
-import popcraft.data.LevelData;
-import popcraft.data.SpellData;
-import popcraft.data.UnitData;
+import popcraft.gamedata.LevelData;
+import popcraft.gamedata.SpellData;
+import popcraft.gamedata.UnitData;
 
 public class LevelIntroMode extends AppMode
 {

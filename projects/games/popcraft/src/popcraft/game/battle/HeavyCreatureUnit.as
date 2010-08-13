@@ -55,7 +55,7 @@ import popcraft.game.battle.*;
 import popcraft.game.battle.ai.*;
 import com.threerings.util.Log;
 import com.threerings.geom.Vector2;
-import popcraft.data.BaseLocationData;
+import popcraft.gamedata.BaseLocationData;
 
 class HeavyFormationManager extends GameObject
 {

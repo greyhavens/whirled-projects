@@ -3,7 +3,7 @@
 
 package popcraft.game.endless {
 
-import popcraft.data.EndlessComputerPlayerData;
+import popcraft.gamedata.EndlessComputerPlayerData;
 import popcraft.game.ComputerPlayerAI;
 import popcraft.game.ComputerPlayerInfo;
 

@@ -15,7 +15,7 @@ import flash.display.StageQuality;
 import flash.events.MouseEvent;
 
 import popcraft.*;
-import popcraft.data.LevelData;
+import popcraft.gamedata.LevelData;
 import popcraft.ui.UIBits;
 
 public class EpilogueMode extends TransitionMode

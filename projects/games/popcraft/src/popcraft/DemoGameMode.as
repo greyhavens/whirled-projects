@@ -5,7 +5,7 @@ package popcraft {
 
 import com.threerings.flashbang.audio.*;
 
-import popcraft.data.LevelData;
+import popcraft.gamedata.LevelData;
 import popcraft.game.story.LevelManager;
 import popcraft.game.story.StoryGameMode;
 

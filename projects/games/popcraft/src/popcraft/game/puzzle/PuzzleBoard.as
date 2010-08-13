@@ -19,7 +19,7 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 
 import popcraft.*;
-import popcraft.data.ResourceData;
+import popcraft.gamedata.ResourceData;
 import popcraft.game.*;
 import popcraft.util.*;
 

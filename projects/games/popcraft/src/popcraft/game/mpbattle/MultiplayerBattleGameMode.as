@@ -13,7 +13,7 @@ import flash.display.DisplayObject;
 
 import popcraft.*;
 import popcraft.game.battle.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.game.*;
 
 public class MultiplayerBattleGameMode extends GameMode

@@ -16,7 +16,7 @@ import flash.text.TextField;
 import flash.text.TextFormatAlign;
 
 import popcraft.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.game.*;
 import popcraft.ui.*;
 import popcraft.util.SpriteUtil;

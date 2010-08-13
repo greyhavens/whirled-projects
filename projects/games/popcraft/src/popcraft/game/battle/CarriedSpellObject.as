@@ -6,7 +6,7 @@ package popcraft.game.battle {
 import com.threerings.flashbang.GameObject;
 
 import popcraft.game.*;
-import popcraft.data.SpellData;
+import popcraft.gamedata.SpellData;
 
 public class CarriedSpellObject extends GameObject
 {

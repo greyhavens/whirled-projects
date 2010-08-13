@@ -10,7 +10,7 @@ import com.threerings.flashbang.util.Rand;
 import flash.utils.ByteArray;
 
 import popcraft.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.game.*;
 import popcraft.util.*;
 

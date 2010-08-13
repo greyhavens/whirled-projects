@@ -13,7 +13,7 @@ import flash.display.MovieClip;
 
 import popcraft.*;
 import popcraft.game.battle.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.game.*;
 
 public class CreatureAnimFactory

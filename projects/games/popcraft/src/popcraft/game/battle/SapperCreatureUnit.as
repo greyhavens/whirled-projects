@@ -8,7 +8,7 @@ import com.threerings.flashbang.*;
 import popcraft.*;
 import popcraft.game.*;
 import popcraft.game.battle.ai.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 
 /**
  * Sappers are suicide-bombers. They deal heavy

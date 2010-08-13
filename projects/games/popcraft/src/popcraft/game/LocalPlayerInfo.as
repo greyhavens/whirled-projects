@@ -9,7 +9,7 @@ import flash.display.DisplayObject;
 
 import popcraft.*;
 import popcraft.game.battle.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.game.endless.SavedEndlessGame;
 import popcraft.game.endless.SavedLocalPlayerInfo;
 import popcraft.game.endless.SavedPlayerInfo;

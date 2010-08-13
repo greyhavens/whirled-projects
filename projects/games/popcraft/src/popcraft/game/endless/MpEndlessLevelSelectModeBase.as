@@ -12,8 +12,8 @@ import flash.display.Sprite;
 
 import popcraft.*;
 import popcraft.game.*;
-import popcraft.data.EndlessLevelData;
-import popcraft.data.UnitData;
+import popcraft.gamedata.EndlessLevelData;
+import popcraft.gamedata.UnitData;
 import popcraft.lobby.MultiplayerFailureMode;
 import popcraft.util.SpriteUtil;
 

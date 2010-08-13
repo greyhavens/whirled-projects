@@ -3,8 +3,8 @@
 
 package popcraft.game.endless {
 
-import popcraft.data.EndlessComputerPlayerData;
-import popcraft.data.UnitWaveData;
+import popcraft.gamedata.EndlessComputerPlayerData;
+import popcraft.gamedata.UnitWaveData;
 import popcraft.game.ComputerPlayerAI;
 
 public class EndlessComputerPlayerAI extends ComputerPlayerAI

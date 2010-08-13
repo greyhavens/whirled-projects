@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package popcraft.data {
+package popcraft.gamedata {
 
 import com.threerings.flashbang.resource.XmlResource;
 
@@ -50,7 +50,7 @@ public class GameDataResource extends XmlResource
 
 }
 
-import popcraft.data.*;
+import popcraft.gamedata.*;
 
 class LoadedData
 {

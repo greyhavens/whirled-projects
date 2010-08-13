@@ -24,7 +24,7 @@ import flash.text.TextField;
 import popcraft.*;
 import popcraft.game.battle.*;
 import popcraft.game.battle.view.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.game.*;
 
 public class CreaturePurchaseButton extends GameObject

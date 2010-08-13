@@ -7,7 +7,7 @@ import com.whirled.game.GameSubControl;
 
 import popcraft.*;
 import popcraft.game.*;
-import popcraft.data.EndlessLevelData;
+import popcraft.gamedata.EndlessLevelData;
 import popcraft.net.PlayerMonitor;
 import popcraft.net.PlayerScoreMsg;
 

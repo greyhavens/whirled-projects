@@ -10,7 +10,7 @@ import flash.display.DisplayObject;
 import flash.events.EventDispatcher;
 
 import popcraft.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.game.battle.*;
 import popcraft.game.battle.view.*;
 import popcraft.game.endless.*;

@@ -8,7 +8,7 @@ import com.threerings.flashbang.tasks.*;
 
 import popcraft.*;
 import popcraft.game.*;
-import popcraft.data.GameData;
+import popcraft.gamedata.GameData;
 
 public class DiurnalCycle extends GameObject
 {

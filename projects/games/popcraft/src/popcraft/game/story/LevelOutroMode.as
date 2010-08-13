@@ -18,7 +18,7 @@ import flash.text.TextField;
 import flash.text.TextFormatAlign;
 
 import popcraft.*;
-import popcraft.data.LevelData;
+import popcraft.gamedata.LevelData;
 import popcraft.game.*;
 import popcraft.ui.UIBits;
 

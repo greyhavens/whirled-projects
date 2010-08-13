@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package popcraft.data {
+package popcraft.gamedata {
 
 import com.threerings.flashbang.resource.ImageResource;
 import com.threerings.util.XmlUtil;

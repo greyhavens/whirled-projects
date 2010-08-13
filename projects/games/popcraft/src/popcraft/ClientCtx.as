@@ -15,7 +15,7 @@ import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.game.endless.EndlessLevelManager;
 import popcraft.game.story.LevelManager;
 

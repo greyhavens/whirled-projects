@@ -166,7 +166,7 @@ import flash.display.Sprite;
 import flash.geom.Rectangle;
 
 import popcraft.*;
-import popcraft.data.UnitData;
+import popcraft.gamedata.UnitData;
 import popcraft.util.SpriteUtil;
 import popcraft.game.battle.view.CreatureAnimFactory;
 import com.threerings.flashbang.tasks.LocationTask;

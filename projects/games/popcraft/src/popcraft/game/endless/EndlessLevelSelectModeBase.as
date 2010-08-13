@@ -19,7 +19,7 @@ import flash.geom.Point;
 import mx.effects.easing.*;
 
 import popcraft.*;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.game.*;
 import popcraft.ui.UIBits;
 import popcraft.util.SpriteUtil;
@@ -421,7 +421,7 @@ import flash.events.MouseEvent;
 import popcraft.*;
 import popcraft.game.*;
 import popcraft.util.SpriteUtil;
-import popcraft.data.*;
+import popcraft.gamedata.*;
 import popcraft.game.endless.*;
 import popcraft.ui.*;
 import popcraft.util.MyStringUtil;
