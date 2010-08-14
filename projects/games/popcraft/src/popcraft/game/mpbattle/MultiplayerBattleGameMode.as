@@ -72,7 +72,6 @@ public class MultiplayerBattleGameMode extends GameMode
         }
 
         teamInfos.sort(TeamInfo.teamSizeCompare);
-        var baseLocIndex :int = 0;
         for (var teamInfoId :int = 0; teamInfoId < teamInfos.length; ++teamInfoId) {
             teamInfo = teamInfos[teamInfoId];
             for (var i :int = 0; i < teamInfo.teamSize; ++i) {
