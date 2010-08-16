@@ -1,9 +1,6 @@
 //
 // $Id$
 
-//
-// $Id$
-
 package popcraft.net.messagemgr {
 
 import com.threerings.util.EventHandlerManager;
