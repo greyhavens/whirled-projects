@@ -122,7 +122,7 @@ public class LevelIntroMode extends AppMode
         return phaseNum;
     }
 
-    protected function doNextPhase () :Boolean
+    protected function doNextPhase () :void
     {
        _phase = getNextPhase(_phase);
 
@@ -178,8 +178,6 @@ public class LevelIntroMode extends AppMode
                 null);
             break;
         }
-
-        return true;
     }
 
     protected function showPage (pageType :String, leftTitle :String, rightTitle :String,
