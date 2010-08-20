@@ -835,7 +835,6 @@ class SaveView extends SceneObject
         return _resetButton;
     }
 
-    protected var _mode :int;
     protected var _movie :MovieClip;
     protected var _playButton :SimpleButton;
     protected var _quitButton :SimpleButton;
