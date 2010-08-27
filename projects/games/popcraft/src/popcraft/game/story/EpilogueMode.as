@@ -93,8 +93,6 @@ public class EpilogueMode extends TransitionMode
     protected var _musicChannel :AudioChannel;
     protected var _nextTransition :int;
     protected var _level :LevelData;
-
-    protected static const SCREEN_FADE_TIME :Number = 1.5;
 }
 
 }
