@@ -65,7 +65,7 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
 
         ClientCtx.endlessLevelMgr.playMpLevel(onLevelLoaded);
 
-        tryCreateUi();
+        maybeCreateUi();
     }
 
     override protected function selectMap (mapIndex :int, animationType :int) :void
@@ -80,10 +80,10 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
     override protected function onLevelLoaded (level :EndlessLevelData) :void
     {
         _level = level;
-        tryCreateUi();
+        maybeCreateUi();
     }
 
-    protected function tryCreateUi () :void
+    protected function maybeCreateUi () :void
     {
         if (isDataReady && !_createdUi) {
             _waitScreen.visible = false;
@@ -128,7 +128,7 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
             onGameStarting();
         }
 
-        tryCreateUi();
+        maybeCreateUi();
     }
 
     protected function onGameStarting () :void
@@ -155,7 +155,7 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
 
     protected function onElemChanged (e :ElementChangedEvent) :void
     {
-        tryCreateUi();
+        maybeCreateUi();
     }
 
     override protected function getLocalSavedGames () :SavedEndlessGameList
