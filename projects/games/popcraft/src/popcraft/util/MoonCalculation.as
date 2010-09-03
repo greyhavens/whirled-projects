@@ -41,7 +41,7 @@ public class MoonCalculation
         return (moonToday > moonYesterday && moonToday > moonTomorrow);*/
     }
 
-    public static function dateToMoonPhase (date :Date) :Number
+    protected static function dateToMoonPhase (date :Date) :Number
     {
         /*
           Calculates more accurately than Moon_phase , the phase of the moon at
