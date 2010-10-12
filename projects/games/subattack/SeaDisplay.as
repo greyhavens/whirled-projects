@@ -20,10 +20,10 @@ import flash.utils.getTimer; // function import
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Random;
 
-import com.threerings.flash.ColorUtil;
-import com.threerings.flash.FilterUtil;
-import com.threerings.flash.SiningTextAnimation;
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.display.ColorUtil;
+import com.threerings.display.FilterUtil;
+import com.threerings.display.SiningTextAnimation;
+import com.threerings.text.TextFieldUtil;
 
 public class SeaDisplay extends Sprite
 {

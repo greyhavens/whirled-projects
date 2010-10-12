@@ -38,6 +38,7 @@ public class Board
         _explode = Sound(new EXPLODE_SOUND());
 
         var playerIds :Array = _gameCtrl.game.seating.getPlayerIds();
+        trace("===== got player ids: " + playerIds.join());
         const playerCount :int = playerIds.length;
         const dimIndex :int = Math.min(DIMENSIONS.length - 1, playerCount);
         _width = int(DIMENSIONS[dimIndex][0]);
@@ -101,6 +102,7 @@ public class Board
         var sub :Submarine;
         for (ii = 0; ii < playerCount; ii++) {
             var playerId :int = (playerIds[ii] as int);
+            trace("::: setting up sub for playerId " + playerId);
             var p :Point = getStartingPosition(ii, playerCount);
 
             sub = new Submarine(
@@ -219,6 +221,23 @@ public class Board
     public function showPoints (x :int, y :int, points :int) :void
     {
         new PointsSprite(points, x, y, _seaDisplay);
+    }
+
+    public function excavate (x :int, y :int, orient :int) :Boolean
+    {
+        switch (orient) {
+        case Action.LEFT: x--; break;
+        case Action.RIGHT: x++; break;
+        case Action.UP: y--; break;
+        case Action.DOWN: y++; break;
+        default: return false;
+        }
+        if (isDestructable(0, x, y)) {
+            setBlank(x, y);
+            return true;
+        }
+        // bzzt!
+        return false;
     }
 
     /**
@@ -378,17 +397,11 @@ public class Board
 
         } else if (isAnimal(val)) {
             Submarine(_subs[playerIndex]).animalKilled(xx, yy, getAnimalName(val));
-            val = BLANK;
+            _board[idx] = BLANK;
 
-        } else {
-            val = BLANK;
+            // update the display
+            _seaDisplay.updateTraversable(xx, yy, val, this);
         }
-
-        // record the new traversability
-        _board[idx] = val;
-
-        // update the display
-        _seaDisplay.updateTraversable(xx, yy, val, this);
         // we are exploding because we hit a non-traversable tile, so we don't affect
         // any subs on that tile...
         return false;
@@ -694,8 +707,6 @@ public class Board
     protected static const DIMENSIONS :Array = [
         [  0,  0 ], // 0 player game
         [ 10, 10 ], // 1 player game
-//        [ 90, 60], // TEST!
-//        [ 10, 10 ], // 2 player game (testing)
         [ 50, 25 ], // 2 player game
         [ 60, 30 ], // 3 player game
         [ 60, 40 ], // 4 player game

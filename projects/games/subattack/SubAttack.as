@@ -27,8 +27,7 @@ import flash.utils.Timer;
 
 import com.threerings.util.StringUtil;
 
-import com.threerings.flash.KeyRepeatLimiter;
-import com.threerings.flash.FPSDisplay;
+import com.threerings.ui.KeyRepeatLimiter;
 
 import com.whirled.game.*;
 import com.whirled.net.*;
@@ -277,6 +276,7 @@ public class SubAttack extends Sprite
      */
     protected function keyEvent (event :KeyboardEvent) :void
     {
+        trace("Key event: " + event);
         var action :int = getActionForKey(event);
         if (action == Action.NONE) {
             return;
@@ -343,6 +343,9 @@ public class SubAttack extends Sprite
 
         case Keyboard.ENTER:
             return Action.RESPAWN;
+
+        case Keyboard.Z:
+            return Action.EXCAVATE;
 
         default:
             return Action.NONE;

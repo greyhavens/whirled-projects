@@ -13,7 +13,7 @@ import flash.text.TextFormat;
 
 import com.threerings.util.Log;
 
-import com.threerings.flash.FilterUtil;
+import com.threerings.display.FilterUtil;
 
 import com.whirled.game.GameControl;
 
@@ -165,10 +165,12 @@ public class Submarine extends BaseSprite
             _totalDeaths += int(array[1]);
             updateVisual();
         }
+        trace("===: Got new cookie for pid=" + _playerId + ": " + _totalKills + ", " + _totalDeaths);
     }
 
     public function getNewCookie () :Object
     {
+        trace("===: Saving new cookie for pid=" + _playerId + ": " + _totalKills + ", " + _totalDeaths);
         return [ _totalKills, _totalDeaths ];
     }
 
@@ -238,19 +240,33 @@ public class Submarine extends BaseSprite
 
     protected function performActionInternal (action :int) :int
     {
-        if (_dead || action == Action.RESPAWN) {
-            if (_dead && action == Action.RESPAWN) {
+        if (_dead) {
+            if (action == Action.RESPAWN) {
                 _board.respawn(this);
                 return OK;
             }
             return DROP;
-        }
 
-        if (_movedOrShot) {
+        } else if (_movedOrShot) {
             return CANT;
         }
 
-        if (action == Action.SHOOT) {
+        switch (action) {
+        case Action.RESPAWN:
+            return DROP; // can only be handled by if (dead), above
+
+        case Action.EXCAVATE:
+            _movedOrShot = true;
+            if (_board.excavate(_x, _y, _orient)) {
+                return OK;
+            }
+            if (_cantShootSound != null) {
+                _cantShootSound.play();
+            }
+            return DROP
+
+        case Action.SHOOT:
+            // try shooting
             _movedOrShot = true;
             if (_torpedos.length == MAX_TORPEDOS) {
                 // shoot once per tick, max 2 in-flight
@@ -258,20 +274,24 @@ public class Submarine extends BaseSprite
                     _cantShootSound.play();
                 }
                 return DROP;
-
-            } else {
-                _torpedos.push(_lastTorp = new Torpedo(this, _board));
-                _board.playSound(_shootSound, _x, _y);
-                updateVisual();
-                return OK;
             }
+
+            _torpedos.push(_lastTorp = new Torpedo(this, _board));
+            _board.playSound(_shootSound, _x, _y);
+            updateVisual();
+            return OK;
+
+        case Action.UP: case Action.DOWN: case Action.LEFT: case Action.RIGHT: // fall throughs
+            // we can always reorient
+            if (_orient != action) {
+                _orient = action;
+                updateVisual();
+            }
+            break;
         }
 
-        // we can always re-orient
-        if (_orient != action) {
-            _orient = action;
-            updateVisual();
-        }
+        // now try to move in our new orientation
+        _movedOrShot = true;
         if (!advanceLocation()) {
             // maybe we can shoot?
             if (_board.isDestructable(_playerIdx, advancedX(), advancedY()) &&
@@ -287,7 +307,6 @@ public class Submarine extends BaseSprite
         }
 
         // we did it!
-        _movedOrShot = true;
         return OK;
     }
 
