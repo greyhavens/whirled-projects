@@ -12,7 +12,7 @@ import flash.text.TextFormat;
 import flash.display.Shape;
 import flash.display.Sprite;
 
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.text.TextFieldUtil;
 
 public class Letter extends Sprite
 {

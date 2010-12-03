@@ -20,7 +20,7 @@ import flash.display.Sprite;
 import flash.geom.ColorTransform;
 import flash.geom.Rectangle;
 
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.text.TextFieldUtil;
 import com.threerings.util.MultiLoader;
 
 /**
