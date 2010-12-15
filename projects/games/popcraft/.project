@@ -16,19 +16,19 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>[source path] assemblage-aspirin-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/assemblage/aspirin/src/as</locationURI>
+		</link>
+		<link>
 			<name>[source path] narya-src-main-as</name>
 			<type>2</type>
-			<locationURI>EXPORT_ROOT/ooo-libs/narya/src/main/as</locationURI>
+			<locationURI>EXPORT_ROOT/assemblage/narya/src/main/as</locationURI>
 		</link>
 		<link>
-			<name>[source path] ooo-libs-aspirin-src-as</name>
+			<name>[source path] nenya-src-main-as</name>
 			<type>2</type>
-			<locationURI>EXPORT_ROOT/ooo-libs/aspirin/src/as</locationURI>
-		</link>
-		<link>
-			<name>[source path] ooo-libs-nenya-src-as</name>
-			<type>2</type>
-			<locationURI>EXPORT_ROOT/ooo-libs/nenya/src/as</locationURI>
+			<locationURI>EXPORT_ROOT/assemblage/nenya/src/main/as</locationURI>
 		</link>
 		<link>
 			<name>[source path] src</name>
@@ -38,7 +38,7 @@
 		<link>
 			<name>[source path] vilya-src-main-as</name>
 			<type>2</type>
-			<locationURI>EXPORT_ROOT/ooo-libs/vilya/src/main/as</locationURI>
+			<locationURI>EXPORT_ROOT/assemblage/vilya/src/main/as</locationURI>
 		</link>
 		<link>
 			<name>[source path] whirled-contrib-src-as</name>

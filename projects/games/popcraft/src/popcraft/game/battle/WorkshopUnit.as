@@ -31,12 +31,9 @@ public class WorkshopUnit extends Unit
         return new Vector2(_loc.x + offset.x, _loc.y + offset.y);
     }
 
-    override public function getObjectGroup (groupNum :int) :String
+    override public function get objectGroups () :Array
     {
-        switch (groupNum) {
-        case 0: return GROUP_NAME;
-        default: return super.getObjectGroup(groupNum - 1);
-        }
+        return [ GROUP_NAME ].concat(super.objectGroups);
     }
 
     override public function receiveAttack (attack :UnitAttack, maxDamage :Number=Number.MAX_VALUE)

@@ -55,12 +55,9 @@ public class PlayerStatusView extends SceneObject
         frame.addChild(headshot);
     }
 
-    override public function getObjectGroup (groupNum :int) :String
+    override public function get objectGroups () :Array
     {
-        switch(groupNum) {
-        case 0: return GROUP_NAME;
-        default: return super.getObjectGroup(groupNum - 1);
-        }
+        return [ GROUP_NAME ].concat(super.objectGroups);
     }
 
     override public function get displayObject () :DisplayObject

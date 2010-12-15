@@ -5,6 +5,7 @@ package popcraft.game.battle {
 
 import com.threerings.flashbang.GameObject;
 import com.threerings.flashbang.tasks.*;
+import com.threerings.flashbang.util.BoxedNumber;
 
 import popcraft.*;
 import popcraft.game.*;
@@ -44,7 +45,7 @@ public class DiurnalCycle extends GameObject
 
             // set initial values
             _phaseOfDay = newPhase;
-            _timeTillNextPhase["value"] = getPhaseLength(newPhase);
+            _timeTillNextPhase.value = getPhaseLength(newPhase);
         }
     }
 
@@ -149,7 +150,7 @@ public class DiurnalCycle extends GameObject
 
     public function get timeTillNextPhase () :Number
     {
-        return _timeTillNextPhase["value"];
+        return _timeTillNextPhase.value;
     }
 
     public function get phaseOfDay () :int
@@ -163,7 +164,7 @@ public class DiurnalCycle extends GameObject
     }
 
     protected var _phaseOfDay :int;
-    protected var _timeTillNextPhase :Object = { value: 0 };
+    protected var _timeTillNextPhase :BoxedNumber = new BoxedNumber(0);
     protected var _lastUpdateTimestamp :Number = 0;
     protected var _dayCount :int = 1;
 }
