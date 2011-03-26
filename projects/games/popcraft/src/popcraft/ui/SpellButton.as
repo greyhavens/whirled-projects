@@ -48,10 +48,10 @@ public class SpellButton extends SceneObject
         }
     }
 
-    override protected function destroyed () :void
+    override protected function cleanup () :void
     {
         SwfResource.releaseMovieClip(_movie);
-        super.destroyed();
+        super.cleanup();
     }
 
     override public function get displayObject () :DisplayObject

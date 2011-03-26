@@ -31,12 +31,12 @@ public class DiurnalCycleView extends SceneObject
         dayPhaseChanged(GameCtx.gameData.initialDayPhase, true);
     }
 
-    override protected function destroyed () :void
+    override protected function cleanup () :void
     {
         SwfResource.releaseMovieClip(_sun);
         SwfResource.releaseMovieClip(_moon);
         SwfResource.releaseMovieClip(_eclipse);
-        super.destroyed();
+        super.cleanup();
     }
 
     override protected function update (dt :Number) :void

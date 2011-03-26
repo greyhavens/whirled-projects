@@ -46,10 +46,10 @@ public class ResourceValueAnim extends SceneObject
         return _movie;
     }
 
-    override protected function destroyed () :void
+    override protected function cleanup () :void
     {
         SwfResource.releaseMovieClip(_movie);
-        super.destroyed();
+        super.cleanup();
     }
 
     protected var _movie :MovieClip;

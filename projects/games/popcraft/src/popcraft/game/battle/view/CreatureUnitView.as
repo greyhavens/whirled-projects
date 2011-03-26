@@ -409,9 +409,9 @@ public class CreatureUnitView extends BattlefieldSprite
         return (_bitmapAnimView != null);
     }
 
-    override protected function destroyed () :void
+    override protected function cleanup () :void
     {
-        super.destroyed();
+        super.cleanup();
         _animStanding.forEach(releaseEachMC);
         _animAttacking.forEach(releaseEachMC);
         _animMoving.forEach(releaseEachMC);

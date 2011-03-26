@@ -20,7 +20,7 @@ public class ShoutView extends SceneObject
         showShout(-1);
     }
 
-    override protected function destroyed () :void
+    override protected function cleanup () :void
     {
         SwfResource.releaseMovieClip(_movie);
     }

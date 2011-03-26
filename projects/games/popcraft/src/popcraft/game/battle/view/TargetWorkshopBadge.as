@@ -25,10 +25,10 @@ public class TargetWorkshopBadge extends SceneObject
         _movie.filters = [ new ColorMatrix().colorize(_owningPlayerInfo.color).createFilter() ];
     }
 
-    override protected function destroyed () :void
+    override protected function cleanup () :void
     {
         SwfResource.releaseMovieClip(_movie);
-        super.destroyed();
+        super.cleanup();
     }
 
     override public function get displayObject () :DisplayObject

@@ -55,13 +55,13 @@ public class BattleBoardView extends SceneObject
         _bg.cacheAsBitmap = true;
     }
 
-    override protected function destroyed () :void
+    override protected function cleanup () :void
     {
         _diurnalMeterParent.parent.removeChild(_diurnalMeterParent);
         _unitViewParent.parent.removeChild(_unitViewParent);
         SwfResource.releaseMovieClip(_bg);
 
-        super.destroyed();
+        super.cleanup();
     }
 
     override protected function addedToDB () :void

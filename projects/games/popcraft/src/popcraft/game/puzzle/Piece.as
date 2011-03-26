@@ -68,10 +68,10 @@ public class Piece extends SceneObject
         _sprite.addChild(pieceMovie);
     }
 
-    override protected function destroyed () :void
+    override protected function cleanup () :void
     {
         SpriteUtil.releaseMC(_sprite.getChildAt(0) as MovieClip);
-        super.destroyed();
+        super.cleanup();
     }
 
     protected var _boardIndex :int;

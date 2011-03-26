@@ -52,10 +52,10 @@ public class DeadWorkshopView extends BattlefieldSprite
         updateLoc(unit.x, unit.y);
     }
 
-    override protected function destroyed () :void
+    override protected function cleanup () :void
     {
         SwfResource.releaseMovieClip(_rubble);
-        super.destroyed();
+        super.cleanup();
     }
 
     override public function get objectName () :String

@@ -29,10 +29,10 @@ public class SpellDropView extends BattlefieldSprite
             ScaleTask.CreateEaseOut(1, 1, 0.3)));
     }
 
-    override protected function destroyed () :void
+    override protected function cleanup () :void
     {
         SwfResource.releaseMovieClip(_movie);
-        super.destroyed();
+        super.cleanup();
     }
 
     override public function get displayObject () :DisplayObject

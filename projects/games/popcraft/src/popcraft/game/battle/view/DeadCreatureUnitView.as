@@ -90,9 +90,9 @@ public class DeadCreatureUnitView extends BattlefieldSprite
         super.removedFromDB();
     }
 
-    override protected function destroyed () :void
+    override protected function cleanup () :void
     {
-        super.destroyed();
+        super.cleanup();
         if (_sprite.numChildren > 0) {
             var disp :DisplayObject = _sprite.getChildAt(0);
             if (disp is MovieClip) {
