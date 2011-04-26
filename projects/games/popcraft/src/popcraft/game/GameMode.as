@@ -14,6 +14,7 @@ import com.whirled.contrib.messagemgr.Message;
 import com.whirled.game.OccupantChangedEvent;
 
 import flash.display.DisplayObjectContainer;
+import flash.event.KeyboardEvent;
 import flash.geom.Point;
 
 import popcraft.*;
@@ -258,12 +259,15 @@ public class GameMode extends TransitionMode
         _messageMgr.run();
     }
 
-    override public function onKeyDown (keyCode :uint) :void
+    override public function onKeyDown (keyEvent :KeyboardEvent) :void
     {
+        super.onKeyDown(keyEvent);
+
         if (_gameOver) {
             return;
         }
 
+        var keyCode :uint = keyEvent.keyCode;
         var teamShout :int;
         var numShouts :int = Constants.SHOUT__LIMIT;
         if (keyCode >= KeyboardCodes.NUMBER_1 && keyCode < KeyboardCodes.NUMBER_1 + numShouts) {
