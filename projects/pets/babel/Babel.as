@@ -16,7 +16,7 @@ public class Babel extends Sprite
     {
         addChild(_image = Bitmap(new IMAGE()));
 
-        _svc = new GoogleTranslator();
+        _svc = new BingTranslator();
         _svc.addEventListener(Translator.TRANSLATE, onTranslate);
 
         _ctrl = new PetControl(this);
@@ -27,7 +27,11 @@ public class Babel extends Sprite
 
     protected function onTranslate (event :TranslationEvent) :void
     {
-        _ctrl.sendChat(event.translatedText + " (" + LANGUAGES[event.sourceLang] + ")");
+        var chat :String = '"' + event.translatedText + '"';
+        if (event.sourceLang != null) {
+            chat += " (" + LANGUAGES[event.sourceLang] + ")";
+        }
+        _ctrl.sendChat(chat);
     }
 
     protected function getLangCode (desc :String) :String
@@ -99,7 +103,7 @@ public class Babel extends Sprite
         'cs': 'Czech',
         'da': 'Danish',
         'dv': 'Dhivehi',
-        'nl': 'Dutch',  
+        'nl': 'Dutch',
         'en': 'English',
         'eo': 'Esperanto',
         'et': 'Estonian',
